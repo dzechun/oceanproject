@@ -347,8 +347,8 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
 
                     //查找是否有条码
                     SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
-                    searchWmsInnerMaterialBarcodeReOrder.setOrderId(wmsInPlanReceivingOrder.getPlanReceivingOrderId().toString());
-                    searchWmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInPlanReceivingOrderDet.getPlanReceivingOrderDetId().toString());
+                    searchWmsInnerMaterialBarcodeReOrder.setOrderId(wmsInPlanReceivingOrder.getPlanReceivingOrderId());
+                    searchWmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInPlanReceivingOrderDet.getPlanReceivingOrderDetId());
                     searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode("IN-SPO");
                     ResponseEntity<List<WmsInnerMaterialBarcodeReOrderDto>> listResponseEntity = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder);
                     if(listResponseEntity.getCode()!=0){

@@ -1,6 +1,5 @@
 package com.fantechs.common.base.general.entity.om;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
@@ -56,7 +55,7 @@ public class OmHtSalesOrderDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name="customerOrderLineNumber",value = "客户订单行号")
 //    @Excel(name = "客户订单行号", height = 20, width = 30,orderNum="")
     @Column(name = "customer_order_line_number")
-    private Long customerOrderLineNumber;
+    private String customerOrderLineNumber;
 
     /**
      * 项目号

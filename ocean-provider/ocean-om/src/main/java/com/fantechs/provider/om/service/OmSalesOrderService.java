@@ -15,8 +15,8 @@ import java.util.Map;
 public interface OmSalesOrderService extends IService<OmSalesOrder> {
     List<OmSalesOrderDto> findList(Map<String, Object> map);
     List<OmSalesOrderDto> findAll();
-    int saveDto(OmSalesOrderDto omSalesOrderDto);
-    int updateDto(OmSalesOrderDto omSalesOrderDto);
+    int save(OmSalesOrderDto omSalesOrderDto);
+    int update(OmSalesOrderDto omSalesOrderDto);
     int issueWarehouse(Long id);
     int batchUpdate(List<OmSalesOrder> orders);
 }

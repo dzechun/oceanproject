@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 ;
 ;
@@ -232,10 +233,9 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
     @Excel(name = "创建时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd", orderNum = "19")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JSONField(format ="yyyy-MM-dd")
     @Column(name = "create_time")
-    private String createTime;
+    private Date createTime;
 
     /**
      * 修改人ID
@@ -250,10 +250,9 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
     @Excel(name = "修改时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd", orderNum = "21")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JSONField(format = "yyyy-MM-dd")
     @Column(name = "modified_time")
-    private String modifiedTime;
+    private Date modifiedTime;
 
     /**
      * 逻辑删除（0、删除 1、正常）

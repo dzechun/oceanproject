@@ -5,8 +5,8 @@ import com.fantechs.common.base.general.entity.om.OmSalesOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Transient;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -30,7 +30,7 @@ public class OmSalesOrderDto extends OmSalesOrder implements Serializable {
      */
     @ApiModelProperty(name="omSalesOrderDetDtoList", value="表体")
 //    @Excel(name = "表体")
-    private List<OmSalesOrderDetDto> omSalesOrderDetDtoList;
+    private List<OmSalesOrderDetDto> omSalesOrderDetDtoList = new ArrayList<>();
 
     /**
      * 创建用户名称

@@ -10,31 +10,35 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
+import com.fantechs.common.base.general.dto.om.OmHtSalesOrderDetDto;
+import com.fantechs.common.base.general.dto.om.OmHtSalesOrderDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
-import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialOwner;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
-import com.fantechs.common.base.general.entity.om.OmHtSalesOrder;
+import com.fantechs.common.base.general.entity.om.OmHtSalesOrderDet;
 import com.fantechs.common.base.general.entity.om.OmSalesOrder;
+import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.*;
+import com.fantechs.common.base.utils.CodeUtils;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.om.mapper.OmSalesOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmSalesOrderMapper;
-import com.fantechs.provider.om.service.OmSalesOrderDetService;
+import com.fantechs.provider.om.mapper.ht.OmHtSalesOrderDetMapper;
+import com.fantechs.provider.om.mapper.ht.OmHtSalesOrderMapper;
 import com.fantechs.provider.om.service.OmSalesOrderService;
-import com.fantechs.provider.om.service.ht.OmHtSalesOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -54,9 +58,9 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
     @Resource
     private OmSalesOrderDetMapper omSalesOrderDetMapper;
     @Resource
-    private OmSalesOrderDetService omSalesOrderDetService;
+    private OmHtSalesOrderMapper omHtSalesOrderMapper;
     @Resource
-    private OmHtSalesOrderService omHtSalesOrderService;
+    private OmHtSalesOrderDetMapper omHtSalesOrderDetMapper;
     @Resource
     private OutFeignApi outFeignApi;
     @Resource
@@ -65,69 +69,105 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
     private SecurityFeignApi securityFeignApi;
 
     @Override
-    public int saveDto(OmSalesOrderDto omSalesOrderDto) {
-        SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
+    @Transactional(rollbackFor = Exception.class)
+    public int save(OmSalesOrderDto omSalesOrderDto) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
-        OmSalesOrder omSalesOrder = new OmSalesOrder();
-
-        BeanUtils.autoFillEqFields(omSalesOrderDto, omSalesOrder);
-
-        if(this.save(omSalesOrder, currentUserInfo) <= 0) {
-//            throw new BizErrorException(ErrorCodeEnum.GL99990005.getCode(), "保存表头失败");
-            return 0;
-        }
-        for(int i = 0; i < omSalesOrderDto.getOmSalesOrderDetDtoList().size(); i++) {
-            OmSalesOrderDetDto omSalesOrderDetDto = omSalesOrderDto.getOmSalesOrderDetDtoList().get(i);
-            omSalesOrderDetDto.setSalesOrderId(omSalesOrder.getSalesOrderId());
-            if(omSalesOrderDetService.saveDto(omSalesOrderDetDto, omSalesOrder.getCustomerOrderCode(), i, currentUserInfo) <= 0) {
-                return 0;
-            }
-        }
-
-        return 1;
-    }
-
-
-    private int save(OmSalesOrder omSalesOrder, SysUser currentUserInfo) {
-//        SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-//        if(StringUtils.isEmpty(currentUserInfo)) {
-//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-//        }
-
-//        if(StringUtils.isEmpty(omSalesOrder.getContractCode())) {
-//            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "合同号不能为空");
-//        }
-//
-//        if(StringUtils.isEmpty(omSalesOrder.getCustomerOrderCode())) {
-//            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "客户订单号不能为空");
-//        }
-
-        omSalesOrder.setSalesOrderId(null);
         SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
         searchSysSpecItem.setSpecCode("wanbaoSyncData");
         List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
         if (specItems.isEmpty()){
-            omSalesOrder.setSalesOrderCode(CodeUtils.getId("SEORD"));
+            omSalesOrderDto.setSalesOrderCode(CodeUtils.getId("SEORD"));
         }else {
             JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
-            if(!jsonObject.get("enable").equals(1) || StringUtils.isEmpty(omSalesOrder.getSalesOrderCode())){
-                omSalesOrder.setSalesOrderCode(CodeUtils.getId("SEORD"));
+            if(!jsonObject.get("enable").equals(1) || StringUtils.isEmpty(omSalesOrderDto.getSalesOrderCode())){
+                omSalesOrderDto.setSalesOrderCode(CodeUtils.getId("SEORD"));
             }
         }
-        omSalesOrder.setOrgId(currentUserInfo.getOrganizationId());
-        omSalesOrder.setCreateTime(DateUtils.getDateTimeString(new DateTime()));
-        omSalesOrder.setCreateUserId(currentUserInfo.getUserId());
-        omSalesOrder.setModifiedUserId(currentUserInfo.getUserId());
-        omSalesOrder.setModifiedTime(DateUtils.getDateTimeString(new DateTime()));
+        omSalesOrderDto.setOrgId(user.getOrganizationId());
+        omSalesOrderDto.setCreateTime(new DateTime());
+        omSalesOrderDto.setCreateUserId(user.getUserId());
+        omSalesOrderDto.setModifiedUserId(user.getUserId());
+        omSalesOrderDto.setModifiedTime(new DateTime());
+        int i = omSalesOrderMapper.insertUseGeneratedKeys(omSalesOrderDto);
 
-        int result = omSalesOrderMapper.insertSelective(omSalesOrder);
+        //明细
+        int lineNumber = 1;
+        List<OmHtSalesOrderDet> htList = new LinkedList<>();
+        List<OmSalesOrderDetDto> omSalesOrderDetDtoList = omSalesOrderDto.getOmSalesOrderDetDtoList();
+        if(StringUtils.isNotEmpty(omSalesOrderDetDtoList)){
+            for (OmSalesOrderDetDto omSalesOrderDetDto:omSalesOrderDetDtoList){
+                omSalesOrderDetDto.setLineNumber(lineNumber+"");
+                omSalesOrderDetDto.setSalesOrderId(omSalesOrderDto.getSalesOrderId());
+                omSalesOrderDetDto.setCreateUserId(user.getUserId());
+                omSalesOrderDetDto.setCreateTime(new Date());
+                omSalesOrderDetDto.setModifiedUserId(user.getUserId());
+                omSalesOrderDetDto.setModifiedTime(new Date());
+                omSalesOrderDetDto.setOrgId(user.getOrganizationId());
 
-        recordHistory(omSalesOrder, currentUserInfo, "新增");
-//
-        return result;
+                OmHtSalesOrderDetDto omHtSalesOrderDetDto = new OmHtSalesOrderDetDto();
+                org.springframework.beans.BeanUtils.copyProperties(omSalesOrderDetDto, omHtSalesOrderDetDto);
+                htList.add(omHtSalesOrderDetDto);
+            }
+            omSalesOrderDetMapper.insertList(omSalesOrderDetDtoList);
+            omHtSalesOrderDetMapper.insertList(htList);
+        }
+
+        //履历
+        OmHtSalesOrderDto omHtSalesOrderDto = new OmHtSalesOrderDto();
+        org.springframework.beans.BeanUtils.copyProperties(omSalesOrderDto, omHtSalesOrderDto);
+        omHtSalesOrderMapper.insertSelective(omHtSalesOrderDto);
+
+        return i;
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int update(OmSalesOrderDto omSalesOrderDto) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
+        //删除原明细
+        Example example = new Example(OmSalesOrderDet.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("salesOrderId",omSalesOrderDto.getSalesOrderId());
+        omSalesOrderDetMapper.deleteByExample(example);
+
+        //明细
+        int lineNumber = 1;
+        List<OmHtSalesOrderDet> htList = new LinkedList<>();
+        List<OmSalesOrderDetDto> omSalesOrderDetDtoList = omSalesOrderDto.getOmSalesOrderDetDtoList();
+        if(StringUtils.isNotEmpty(omSalesOrderDetDtoList)){
+            for (OmSalesOrderDetDto omSalesOrderDetDto:omSalesOrderDetDtoList){
+                omSalesOrderDetDto.setLineNumber(lineNumber+"");
+                omSalesOrderDetDto.setSalesOrderId(omSalesOrderDto.getSalesOrderId());
+                omSalesOrderDetDto.setCreateUserId(user.getUserId());
+                omSalesOrderDetDto.setCreateTime(new Date());
+                omSalesOrderDetDto.setModifiedUserId(user.getUserId());
+                omSalesOrderDetDto.setModifiedTime(new Date());
+                omSalesOrderDetDto.setOrgId(user.getOrganizationId());
+
+                OmHtSalesOrderDetDto omHtSalesOrderDetDto = new OmHtSalesOrderDetDto();
+                org.springframework.beans.BeanUtils.copyProperties(omSalesOrderDetDto, omHtSalesOrderDetDto);
+                htList.add(omHtSalesOrderDetDto);
+            }
+            omSalesOrderDetMapper.insertList(omSalesOrderDetDtoList);
+            omHtSalesOrderDetMapper.insertList(htList);
+        }
+
+        omSalesOrderDto.setModifiedUserId(user.getUserId());
+        omSalesOrderDto.setModifiedTime(new Date());
+        int i = omSalesOrderMapper.updateByPrimaryKeySelective(omSalesOrderDto);
+
+        //履历
+        OmHtSalesOrderDto omHtSalesOrderDto = new OmHtSalesOrderDto();
+        org.springframework.beans.BeanUtils.copyProperties(omSalesOrderDto, omHtSalesOrderDto);
+        omHtSalesOrderMapper.insertSelective(omHtSalesOrderDto);
+
+        return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchDelete(String ids) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(currentUserInfo)) {
@@ -136,129 +176,26 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
 
         String[] idArray = ids.split(",");
         for(String id : idArray) {
-            OmSalesOrder omSalesOrder = omSalesOrderMapper.selectByPrimaryKey(Long.valueOf(id));
+            OmSalesOrder omSalesOrder = omSalesOrderMapper.selectByPrimaryKey(id);
             if(StringUtils.isEmpty(omSalesOrder)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
-            recordHistory(omSalesOrder, currentUserInfo, "删除");
-            //获取对应表体id
-            //删除表体先
-            SearchOmSalesOrderDetDto searchOmSalesOrderDetDto = new SearchOmSalesOrderDetDto();
-            searchOmSalesOrderDetDto.setSalesOrderId(omSalesOrder.getSalesOrderId());
-            List<OmSalesOrderDetDto> list = omSalesOrderDetService.findList(ControllerUtil.dynamicConditionByEntity(searchOmSalesOrderDetDto));
-            StringBuffer detIds = new StringBuffer();
-            for(OmSalesOrderDetDto omSalesOrderDetDto : list) {
-                detIds.append(omSalesOrderDetDto.getSalesOrderDetId().toString());
-                detIds.append(',');
-            }
-            if(detIds.length() > 0) {
-                detIds.deleteCharAt(detIds.length()-1);
-                if(omSalesOrderDetService.batchDelete(detIds.toString()) <= 0) {
-                    return 0;
-                }
-            }
 
-        }
-        if(omSalesOrderMapper.deleteByIds(ids)<=0) {
-            return 0;
-        }
-        return 1;
-    }
-
-    @Override
-    public int updateDto(OmSalesOrderDto omSalesOrderDto) {
-        SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(currentUserInfo)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+            //删除表体
+            Example example  = new Example(OmSalesOrderDet.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("salesOrderId",id);
+            omSalesOrderDetMapper.deleteByExample(example);
         }
 
-        OmSalesOrder omSalesOrder = new OmSalesOrder();
-
-        BeanUtils.autoFillEqFields(omSalesOrderDto, omSalesOrder);
-
-        if(this.update(omSalesOrder, currentUserInfo) <= 0) {
-            return 0;
-        }
-
-        Map<String, Object> findParaMap = new HashMap<>();
-        findParaMap.put("salesOrderId", omSalesOrder.getSalesOrderId());
-        List<OmSalesOrderDetDto> dbOmSalesOrderDet = omSalesOrderDetService.findList(findParaMap);
-
-        List<Long> dbDataList = new ArrayList<>();
-        int maxLineNumber = 0;
-        for(OmSalesOrderDetDto omSalesOrderDetDto : dbOmSalesOrderDet) {
-            dbDataList.add(omSalesOrderDetDto.getSalesOrderDetId());
-            int lineNumber = Integer.parseInt(omSalesOrderDetDto.getSourceLineNumber());
-            maxLineNumber = Math.max(lineNumber, maxLineNumber);
-        }
-
-        List<Long> newDataList = new ArrayList<>();
-        for(OmSalesOrderDetDto omSalesOrderDetDto : omSalesOrderDto.getOmSalesOrderDetDtoList()) {
-            if(omSalesOrderDetDto.getSalesOrderDetId() == null) {
-                omSalesOrderDetDto.setSalesOrderId(omSalesOrder.getSalesOrderId());
-                if(omSalesOrderDetService.saveDto(omSalesOrderDetDto, omSalesOrder.getCustomerOrderCode(), maxLineNumber + 1, currentUserInfo) <= 0) {
-                    return 0;
-                }
-                ++maxLineNumber;
-            } else {
-                newDataList.add(omSalesOrderDetDto.getSalesOrderDetId());
-                if(omSalesOrderDetService.updateDto(omSalesOrderDetDto, currentUserInfo) <= 0) {
-                    return 0;
-                }
-            }
-        }
-
-        String result = this.getDiffList(newDataList, dbDataList);
-        if(!StringUtils.isEmpty(result)) {
-            if(omSalesOrderDetService.batchDelete(this.getDiffList(newDataList, dbDataList)) <= 0 ) {
-                return 0;
-            }
-        }
-
-        return 1;
-    }
-
-    private int update(OmSalesOrder omSalesOrder, SysUser currentUserInfo) {
-//        SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-//        if(StringUtils.isEmpty((currentUserInfo))) {
-//            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-//        }
-
-        if(StringUtils.isEmpty(omSalesOrder.getSalesOrderCode())) {
-            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "销售订单号不能为空");
-        }
-
-        if(StringUtils.isEmpty(omSalesOrder.getContractCode())) {
-            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "合同号不能为空");
-        }
-
-        if(StringUtils.isEmpty(omSalesOrder.getCustomerOrderCode())) {
-            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "客户订单号不能为空");
-        }
-
-        omSalesOrder.setModifiedUserId(currentUserInfo.getUserId());
-        omSalesOrder.setModifiedTime(DateUtils.getDateTimeString(new DateTime()));
-
-
-        if(omSalesOrderMapper.updateByPrimaryKeySelective(omSalesOrder)<=0) {
-            return 0;
-        }
-        recordHistory(omSalesOrder, currentUserInfo, "更新");
-        return 1;
+        return omSalesOrderMapper.deleteByIds(ids);
     }
 
     @Override
     public List<OmSalesOrderDto> findList(Map<String, Object> map) {
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
-
         map.put("orgId",currentUserInfo.getOrganizationId());
-        List<OmSalesOrderDto> omSalesOrderDtoList = omSalesOrderMapper.findList(map);
-        for(OmSalesOrderDto omSalesOrderDto : omSalesOrderDtoList) {
-            Map<String, Object> omSalesOrderDetMap = new HashMap<>();
-            omSalesOrderDetMap.put("salesOrderId", omSalesOrderDto.getSalesOrderId());
-            omSalesOrderDto.setOmSalesOrderDetDtoList(omSalesOrderDetService.findList(omSalesOrderDetMap));
-        }
-        return omSalesOrderDtoList;
+        return omSalesOrderMapper.findList(map);
     }
 
     @Override
@@ -266,48 +203,7 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
         Map<String, Object> map = new HashMap<>();
         map.put("orgId",currentUserInfo.getOrganizationId());
-        List<OmSalesOrderDto> omSalesOrderDtoList = omSalesOrderMapper.findList(map);
-        return omSalesOrderDtoList;
-    }
-
-
-    private void recordHistory(OmSalesOrder omSalesOrder, SysUser currentUserInfo, String operation) {
-        OmHtSalesOrder omHtSalesOrder = new OmHtSalesOrder();
-        if(StringUtils.isEmpty(omSalesOrder)) {
-            return;
-        }
-        BeanUtils.autoFillEqFields(omSalesOrder, omHtSalesOrder);
-        omHtSalesOrder.setOption1(operation);
-//        omHtSalesOrder.setOrgId(currentUserInfo.getOrganizationId());
-//        omHtSalesOrder.setCreateTime(new Date());
-//        omHtSalesOrder.setCreateUserId(currentUserInfo.getUserId());
-        omHtSalesOrder.setModifiedTime(DateUtils.getDateTimeString(new DateTime()));
-        omHtSalesOrder.setModifiedUserId(currentUserInfo.getUserId());
-
-        omHtSalesOrderService.save(omHtSalesOrder);
-    }
-
-    private String getDiffList(List<Long> newDataList, List<Long> dbDataList) {
-        StringBuffer idsString = new StringBuffer();
-        if(dbDataList != null && !dbDataList.isEmpty() && newDataList != null && !newDataList.isEmpty()) {
-            Map<Long, Long> newDataMap = new HashMap<>();
-            for(Long newDataId : newDataList) {
-                newDataMap.put(newDataId, newDataId);
-            }
-
-
-            for(Long dbId : dbDataList) {
-                if(!newDataMap.containsKey(dbId)) {
-                    idsString.append(dbId);
-                    idsString.append(',');
-                }
-            }
-            if(idsString.length() > 0) {
-                idsString.deleteCharAt(idsString.length()-1);
-            }
-        }
-
-        return idsString.toString();
+        return omSalesOrderMapper.findList(map);
     }
 
     /**
@@ -385,6 +281,7 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchUpdate(List<OmSalesOrder> orders) {
         return omSalesOrderMapper.batchUpdate(orders);
     }
