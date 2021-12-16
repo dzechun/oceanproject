@@ -4,7 +4,7 @@ server:
 
 spring:
   profiles:
-    include: leisai
+    include: dev
   application:
     name: @pom.artifactId@
 

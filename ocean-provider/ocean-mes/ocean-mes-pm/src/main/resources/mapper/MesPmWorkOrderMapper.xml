@@ -172,7 +172,7 @@
             <if test="materialId!=null and materialId!=''">
                 and swo.material_id=#{materialId}
             </if>
-            <if test="workOrderStatus!=null and (workOrderStatusList == null or workOrderStatusList.size() = 0)">
+            <if test="workOrderStatus!=null and workOrderStatus!=''">
                 and swo.work_order_status =#{workOrderStatus}
             </if>
             <if test="workOrderStatusList != null and workOrderStatusList.size() > 0">
@@ -186,6 +186,12 @@
             </if>
             <if test="materialDesc!=null and materialDesc!=''">
                 and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
+            </if>
+            <if test="salesOrderCode!=null and salesOrderCode!=''">
+                and oso.sales_order_code like CONCAT('%', #{salesOrderCode}, '%')
+            </if>
+            <if test="routeName!=null and routeName!=''">
+                and sr.route_name like CONCAT('%', #{routeName}, '%')
             </if>
             <if test="proName!=null and proName!=''">
                 and spl.pro_name like CONCAT('%', #{proName}, '%')
