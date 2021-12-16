@@ -76,7 +76,13 @@ public class SearchMesPmWorkOrder extends BaseQuery implements Serializable {
      * 产线名称
      */
     @ApiModelProperty(name="proName" ,value="产线名称")
-    private Long proName;
+    private String proName;
+
+    @ApiModelProperty(name="salesOrderCode" ,value="订单号")
+    private String salesOrderCode;
+
+    @ApiModelProperty(name="routeName" ,value="工艺路线")
+    private String routeName;
 
     /**
      * 是否打印（0、打印 1、不打印）
