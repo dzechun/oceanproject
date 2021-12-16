@@ -343,16 +343,25 @@ public class BaseProductProcessRouteServiceImpl extends BaseService<BaseProductP
         //依照物料，产品，产线，默认的优先级进行查询
         if(StringUtils.isNotEmpty(map.get("materialId"))) {
             maps.put("materialId", map.get("materialId"));
-            list = baseProductProcessRouteMapper.findList(map);
+            list = baseProductProcessRouteMapper.findList(maps);
+            if(StringUtils.isNotEmpty(list)){
+                setName(list);
+                return list;
+            }
+        }
+        if(StringUtils.isNotEmpty(map.get("materialCode"))) {
+            maps.remove("materialId");
+            maps.put("materialCode", map.get("materialCode"));
+            list = baseProductProcessRouteMapper.findList(maps);
             if(StringUtils.isNotEmpty(list)){
                 setName(list);
                 return list;
             }
         }
         if(StringUtils.isNotEmpty(map.get("productModelId"))) {
-            maps.remove("materialId");
+            maps.remove("materialCode");
             maps.put("productModelId", map.get("productModelId"));
-            list = baseProductProcessRouteMapper.findList(map);
+            list = baseProductProcessRouteMapper.findList(maps);
             if(StringUtils.isNotEmpty(list)){
                 setName(list);
                 return list;
@@ -361,7 +370,7 @@ public class BaseProductProcessRouteServiceImpl extends BaseService<BaseProductP
         if(StringUtils.isNotEmpty(map.get("proLineId"))) {
             maps.remove("productModelId");
             maps.put("proLineId", map.get("proLineId"));
-            list = baseProductProcessRouteMapper.findList(map);
+            list = baseProductProcessRouteMapper.findList(maps);
             if(StringUtils.isNotEmpty(list)){
                 setName(list);
                 return list;
