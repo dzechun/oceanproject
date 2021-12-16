@@ -678,6 +678,7 @@ public class BarcodeUtils {
     }
 
     public static int updateBarcodeProcess(UpdateProcessDto dto) throws Exception {
+        String passTimeIsOK="0";
         // 获取条码
         MesSfcBarcodeProcess mesSfcBarcodeProcess = barcodeUtils.mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
                 .barcode(dto.getBarCode())
@@ -855,6 +856,18 @@ public class BarcodeUtils {
                 }
 
                 BaseRouteProcess routeProcess = routeProcessOptional.get();
+                String standardTimeS=routeProcess.getStandardTime().toString();
+                if(StringUtils.isEmpty(standardTimeS))
+                    standardTimeS="0";
+                Double standardTimeD=Double.parseDouble(standardTimeS);
+                try{
+                    Double passTimeD=Double.parseDouble(StringUtils.isEmpty(dto.getPassTime())?"0":dto.getPassTime());
+                    if(passTimeD>standardTimeD)
+                        passTimeIsOK="1";
+
+                }catch (Exception ex){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"耗时转为数字异常");
+                }
                 processResponseEntity = barcodeUtils.baseFeignApi.processDetail(routeProcess.getNextProcessId());
                 if (processResponseEntity.getCode() != 0) {
                     throw new BizErrorException(ErrorCodeEnum.PDA40012012, routeProcess.getNextProcessId());
@@ -968,6 +981,10 @@ public class BarcodeUtils {
         mesSfcBarcodeProcessRecord.setModifiedUserId(dto.getOperatorUserId());
         //雷赛增加过站耗时记录 用预留栏位 option1 记录
         mesSfcBarcodeProcessRecord.setOption1(dto.getPassTime());
+
+        //雷赛增加工序标准时间与设备耗时比较 option2 记录 passTimeIsOK 0 正常 1 超时
+        mesSfcBarcodeProcessRecord.setOption2(passTimeIsOK);
+
         barcodeUtils.mesSfcBarcodeProcessRecordService.save(mesSfcBarcodeProcessRecord);
 
         /**

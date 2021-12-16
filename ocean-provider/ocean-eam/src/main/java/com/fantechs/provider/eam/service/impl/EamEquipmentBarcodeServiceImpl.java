@@ -57,6 +57,7 @@ public class EamEquipmentBarcodeServiceImpl extends BaseService<EamEquipmentBarc
             currentUsageTime=eamEquipmentBarcode.getCurrentUsageTime();
 
         eamEquipmentBarcode.setCurrentUsageTime(currentUsageTime+num);
+        eamEquipmentBarcode.setEquipmentStatus((byte)4);//更新状态为生产中
         return eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
     }
 
