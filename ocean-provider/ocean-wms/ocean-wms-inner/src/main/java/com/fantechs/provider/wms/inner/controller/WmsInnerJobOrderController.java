@@ -2,7 +2,9 @@ package com.fantechs.provider.wms.inner.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
+import com.fantechs.common.base.general.dto.wms.inner.SaveHaveInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
@@ -27,6 +29,7 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -86,7 +89,22 @@ public class WmsInnerJobOrderController {
         return ControllerUtil.returnCRUD(wmsInPutawayOrderService.singleReceivingByBarcode(wmsInPutawayOrderDet,ids));
     }
 
-    //singleReceivingByBarcode
+    @ApiOperation("Web端单一确认作业 扫描条码")
+    @PostMapping("/checkBarcodeOrderWeb")
+    public ResponseEntity<WmsInnerMaterialBarcodeDto> checkBarcodeOrderWeb(@ApiParam(value = "是否系统条码(0 否 1 是)")@RequestParam @NotBlank(message = "是否系统条码不能为空") String ifSysBarcode,
+                                                                    @ApiParam(value = "作业单主表id")@RequestParam Long orderId,
+                                                                    @ApiParam(value = "明细ID")@RequestParam Long orderDetId,
+                                                                    @ApiParam(value = "条码")@RequestParam String barCode){
+        WmsInnerMaterialBarcodeDto materialBarcodeDto = wmsInPutawayOrderService.checkBarcodeOrderWeb(ifSysBarcode,orderId,orderDetId,barCode);
+        return ControllerUtil.returnDataSuccess(materialBarcodeDto,StringUtils.isEmpty(materialBarcodeDto)?0:1);
+    }
+
+    @ApiOperation("上架作业Web端扫描条码提交")
+    @PostMapping("/saveHaveInnerJobOrder")
+    public ResponseEntity<WmsInnerJobOrderDet> saveHaveInnerJobOrder(@RequestBody(required = true) List<SaveHaveInnerJobOrderDto> list){
+        WmsInnerJobOrderDet wmsInnerJobOrderDet=wmsInPutawayOrderService.saveHaveInnerJobOrder(list);
+        return ControllerUtil.returnDataSuccess(wmsInnerJobOrderDet,StringUtils.isEmpty(wmsInnerJobOrderDet)?0:1);
+    }
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")

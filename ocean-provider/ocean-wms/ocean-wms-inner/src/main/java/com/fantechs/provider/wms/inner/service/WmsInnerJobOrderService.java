@@ -4,6 +4,7 @@ import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
 import com.fantechs.common.base.general.dto.wms.inner.SaveHaveInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.SaveInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcode;
@@ -106,7 +107,7 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
      * @param barCode 条码
      * @return
      */
-    WmsInnerMaterialBarcode checkBarcodeOrderWeb(String ifSysBarcode, Long orderId, Long orderDetId, String barCode);
+    WmsInnerMaterialBarcodeDto checkBarcodeOrderWeb(String ifSysBarcode, Long orderId, Long orderDetId, String barCode);
 
     /**
      * PDA先单后作业
