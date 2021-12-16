@@ -9,6 +9,7 @@ import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper
@@ -20,5 +21,8 @@ public interface WmsInnerMaterialBarcodeMapper extends MyMapper<WmsInnerMaterial
     PrintModel findPrintModel(@Param("id")Long id);
 
     LabelRuteDto findRule(@Param("code")String code, @Param("materialId")Long materialId , @Param("orgId")Long orgId);
+
+    //获取已打印物料总数量
+    Integer getTotalMaterialQty(SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode);
 
 }

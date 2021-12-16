@@ -161,8 +161,8 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
         if("IN-IPO".equals(baseOrderFlow.getNextOrderTypeCode())){
             //生成入库计划单
             List<WmsInInPlanOrderDetDto> detList = new LinkedList<>();
+            int lineNumber = 1;
             for(QmsIncomingInspectionOrder qmsIncomingInspectionOrder : qmsIncomingInspectionOrders){
-                int lineNumber = 1;
                 WmsInInPlanOrderDetDto wmsInInPlanOrderDet = new WmsInInPlanOrderDetDto();
                 wmsInInPlanOrderDet.setCoreSourceOrderCode(qmsIncomingInspectionOrder.getCoreSourceOrderCode());
                 wmsInInPlanOrderDet.setSourceOrderCode(qmsIncomingInspectionOrder.getIncomingInspectionOrderCode());
@@ -172,6 +172,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 wmsInInPlanOrderDet.setPlanQty(qmsIncomingInspectionOrder.getOrderQty());
                 wmsInInPlanOrderDet.setLineStatus((byte)1);
                 detList.add(wmsInInPlanOrderDet);
+                lineNumber++;
             }
 
             WmsInInPlanOrderDto wmsInInPlanOrder = new WmsInInPlanOrderDto();
@@ -196,8 +197,8 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
         }else if("IN-IWK".equals(baseOrderFlow.getNextOrderTypeCode())){
             //生成上架作业单
             List<WmsInnerJobOrderDet> detList = new LinkedList<>();
+            int lineNumber = 1;
             for(QmsIncomingInspectionOrder qmsIncomingInspectionOrder : qmsIncomingInspectionOrders){
-                int lineNumber = 1;
                 WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
                 wmsInnerJobOrderDet.setCoreSourceOrderCode(qmsIncomingInspectionOrder.getCoreSourceOrderCode());
                 wmsInnerJobOrderDet.setSourceOrderCode(qmsIncomingInspectionOrder.getIncomingInspectionOrderCode());
@@ -207,6 +208,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 wmsInnerJobOrderDet.setPlanQty(qmsIncomingInspectionOrder.getOrderQty());
                 wmsInnerJobOrderDet.setLineStatus((byte)1);
                 detList.add(wmsInnerJobOrderDet);
+                lineNumber++;
             }
 
             WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
@@ -319,6 +321,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
         return i;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
     public int insertMaterialBarcode(QmsIncomingInspectionOrderDto qmsIncomingInspectionOrderDto){
         int i = 0;
@@ -343,12 +346,16 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 for (WmsInnerMaterialBarcodeReOrderDto materialBarcodeReOrderDto : materialBarcodeReOrderDtos) {
                     WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
                     wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(materialBarcodeReOrderDto.getMaterialBarcodeId());
-                    wmsInnerMaterialBarcodeReOrder.setOrderTypeCode(qmsIncomingInspectionOrderDto.getSysOrderTypeCode());
+                    wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("QMS-MIIO");
                     wmsInnerMaterialBarcodeReOrder.setOrderCode(qmsIncomingInspectionOrderDto.getIncomingInspectionOrderCode());
                     wmsInnerMaterialBarcodeReOrder.setOrderId(qmsIncomingInspectionOrderDto.getIncomingInspectionOrderId());
                     barcodeReOrderList.add(wmsInnerMaterialBarcodeReOrder);
+                    i++;
                 }
-                i = innerFeignApi.batchAdd(barcodeReOrderList).getCount();
+                ResponseEntity responseEntity = innerFeignApi.batchAdd(barcodeReOrderList);
+                if(responseEntity.getCode() != 0){
+                    throw new BizErrorException("条码写入当前单据失败");
+                }
             }
         }
 
@@ -428,6 +435,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
      *  根据检验单明细返写检验单检验结果
      * @param list
      */
+    @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
     public void checkInspectionResult(List<QmsIncomingInspectionOrderDet> list){
         if(StringUtils.isNotEmpty(list)) {
@@ -484,6 +492,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
     public int updateInspectionStatus(List<Long> idList, Byte inspectionResult) {
         int i = 0;
@@ -551,13 +560,6 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
         StringBuilder failInfo = new StringBuilder();
         Integer succeedCount = 0;
         Integer failCount = 0;
-        SysImportAndExportLog sysImportAndExportLog = new SysImportAndExportLog();
-        sysImportAndExportLog.setModuleNames("QMS");
-        sysImportAndExportLog.setFileName("来料检验单导入信息表");
-        sysImportAndExportLog.setType((byte)1);
-        sysImportAndExportLog.setOperatorUserId(user.getUserId());
-        sysImportAndExportLog.setResult((byte)1);
-        sysImportAndExportLog.setTotalCount(qmsIncomingInspectionOrderImports.size());
 
         for (int i = 0; i < qmsIncomingInspectionOrderImports.size(); i++) {
             QmsIncomingInspectionOrderImport qmsIncomingInspectionOrderImport = qmsIncomingInspectionOrderImports.get(i);
@@ -685,6 +687,14 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
             succeedInfo.append(i+4+"").append(",");
             incomingInspectionOrderImports.add(qmsIncomingInspectionOrderImport);
         }
+
+        SysImportAndExportLog sysImportAndExportLog = new SysImportAndExportLog();
+        sysImportAndExportLog.setModuleNames("QMS");
+        sysImportAndExportLog.setFileName("来料检验单导入信息表");
+        sysImportAndExportLog.setType((byte)1);
+        sysImportAndExportLog.setOperatorUserId(user.getUserId());
+        sysImportAndExportLog.setResult((byte)1);
+        sysImportAndExportLog.setTotalCount(qmsIncomingInspectionOrderImports.size());
         sysImportAndExportLog.setFailCount(failCount);
         sysImportAndExportLog.setSucceedCount(succeedCount);
         sysImportAndExportLog.setFailInfo(failInfo.toString());

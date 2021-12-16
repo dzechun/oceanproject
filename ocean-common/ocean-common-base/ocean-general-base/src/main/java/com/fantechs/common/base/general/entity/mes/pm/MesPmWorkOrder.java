@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -84,6 +85,22 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
     @Excel(name = "完工数量", height = 20, width = 30)
     @Column(name = "output_qty")
     private BigDecimal outputQty;
+
+    /**
+     * 累计下发数量
+     */
+    @ApiModelProperty(name="totalIssueQty",value = "累计下发数量")
+    @Excel(name = "累计下发数量", height = 20, width = 30)
+    @Column(name = "total_issue_qty")
+    private BigDecimal totalIssueQty;
+
+    /**
+     * 是否已全部下发(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifAllIssued",value = "是否已全部下发(0-否 1-是)")
+    @Excel(name = "是否已全部下发(0-否 1-是)", height = 20, width = 30)
+    @Column(name = "if_all_issued")
+    private Byte ifAllIssued;
 
     /**
      * 当前排产数量
@@ -275,5 +292,14 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
     @Column(name = "batch_code")
     private String batchCode;
 
+    @Transient
+    @ApiModelProperty("下发数量")
+    private BigDecimal qty;
 
+    /**
+     * 仓库ID
+     */
+    @Transient
+    @ApiModelProperty(name="warehouseId",value = "仓库ID")
+    private Long warehouseId;
 }

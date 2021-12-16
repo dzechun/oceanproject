@@ -1,14 +1,18 @@
 package com.fantechs.provider.wms.inner.service;
 
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
+import com.fantechs.common.base.general.dto.wms.inner.SaveHaveInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.SaveInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcode;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.support.IService;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 /**
@@ -64,30 +68,53 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
      */
     int singleReceiving(List<WmsInnerJobOrderDet> wmsInPutawayOrderDets);
 
+    /**
+     * 按条码单一确认
+     * @param wmsInnerJobOrderDet 明细
+     * @param ids 条码ID 多个条码用逗号隔开
+     * @return
+     */
+    int singleReceivingByBarcode(WmsInnerJobOrderDet wmsInnerJobOrderDet,String ids);
+
     Map<String,Object> checkBarcode(String barCode,Long jobOrderDetId);
 
-    WmsInnerJobOrderDet scanStorageBackQty(String storageCode,Long jobOrderDetId,BigDecimal qty,String barcode);
+    WmsInnerJobOrderDet scanStorageBackQty(String storageCode, Long jobOrderDetId, BigDecimal qty, String barcode);
 
     WmsInnerJobOrder packageAutoAdd(WmsInnerJobOrder wmsInnerJobOrder);
 
     /**
      * PDA先单后作业 扫描检验条码
-     * @param notSysCode 是否非系统条码
+     * @param ifSysBarcode 是否系统条码
      * @param orderId 主表ID
      * @param orderDetId 明细ID
      * @param barCode 条码
      * @return
      */
-    Map<String,Object> checkBarcodeHaveOrder(String notSysCode,Long orderId,
+    Map<String,Object> checkBarcodeHaveOrder(String ifSysBarcode,Long orderId,
                                              Long orderDetId, String barCode);
 
     /**
      * PDA先作业后单 扫描检验条码
-     * @param notSysCode 是否非系统条码
+     * @param ifSysBarcode 是否系统条码
      * @param barCode 条码
      * @return
      */
-    Map<String,Object> checkBarcodeNotOrder(String notSysCode,String barCode);
+    Map<String,Object> checkBarcodeNotOrder(String ifSysBarcode,String barCode);
+
+    /**
+     * Web端单一确认作业 扫描条码
+     * @param ifSysBarcode 是否系统条码
+     * @param barCode 条码
+     * @return
+     */
+    WmsInnerMaterialBarcodeDto checkBarcodeOrderWeb(String ifSysBarcode, Long orderId, Long orderDetId, String barCode);
+
+    /**
+     * PDA先单后作业
+     * @param list
+     * @return
+     */
+    WmsInnerJobOrderDet saveHaveInnerJobOrder(List<SaveHaveInnerJobOrderDto> list);
 
     /**
      * PDA先作业后单 产生上架单

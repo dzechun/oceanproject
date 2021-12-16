@@ -41,13 +41,15 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
     public List<MesPmDailyPlanDto> findList(SearchMesPmDailyPlan searchMesPmDailyPlan) {
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+
         searchMesPmDailyPlan.setOrgId(user.getOrganizationId());
         if(StringUtils.isNotEmpty(searchMesPmDailyPlan.getPlanTime())) {
-            searchMesPmDailyPlan.setStartTime(searchMesPmDailyPlan.getPlanTime());
-            searchMesPmDailyPlan.setEndTime(searchMesPmDailyPlan.getPlanTime());
+            try {
+                searchMesPmDailyPlan.setStartTime(DateUtils.getStrToDateTime(searchMesPmDailyPlan.getPlanTime()));
+                searchMesPmDailyPlan.setEndTime(DateUtils.getStrToDateTime(searchMesPmDailyPlan.getPlanTime()));
+            } catch (ParseException e) {
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"时间格式转化错误");
+            }
         }
         return mesPmDailyPlanMapper.findList(searchMesPmDailyPlan);
     }
@@ -59,19 +61,16 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
 
         searchMesPmDailyPlan.setOrgId(user.getOrganizationId());
         //如未填写计划日期则取当天时间
-
         Calendar calendar = Calendar.getInstance();
         if(StringUtils.isEmpty(searchMesPmDailyPlan.getPlanTime())) {
-            calendar.setTime(new Date());
-         //   calendar.add(Calendar.DATE, +1);
-            searchMesPmDailyPlan.setPlanTime(DateUtils.getDateString(calendar.getTime()));
+            searchMesPmDailyPlan.setStartTime(new Date());
+        }else{
+            searchMesPmDailyPlan.setStartTime(DateUtils.getStrToDateTime(searchMesPmDailyPlan.getPlanTime()));
         }
-        searchMesPmDailyPlan.setStartTime(searchMesPmDailyPlan.getPlanTime());
-        Date strToDate = DateUtils.getStrToDate(searchMesPmDailyPlan.getPlanTime());
-        calendar.setTime(strToDate);
+
+        calendar.setTime(searchMesPmDailyPlan.getStartTime());
         calendar.add(Calendar.DATE, +2);
-        String endTime = DateUtils.getDateString(calendar.getTime());
-        searchMesPmDailyPlan.setEndTime(endTime);
+        searchMesPmDailyPlan.setEndTime(calendar.getTime());
         searchMesPmDailyPlan.setStatus((byte)1);
         return mesPmDailyPlanMapper.findList(searchMesPmDailyPlan);
     }

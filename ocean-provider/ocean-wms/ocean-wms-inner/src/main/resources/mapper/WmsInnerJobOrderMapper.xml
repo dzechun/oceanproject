@@ -35,6 +35,7 @@
                type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto">
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="order_type_name" jdbcType="VARCHAR" property="orderTypeName"/>
+        <result column="core_order_type_name" jdbcType="VARCHAR" property="coreOrderTypeName"/>
         <result column="work_name" jdbcType="VARCHAR" property="workName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
@@ -64,7 +65,9 @@
         wipo.is_delete,
         wipo.option1,
         wipo.option2,
-        wipo.option3
+        wipo.option3,
+        CASE wipo.core_source_sys_order_type_code WHEN 'IN-PO' THEN '采购订单' WHEN 'IN-SRO' THEN '销退订单' WHEN 'IN-OIO' THEN '其他入库订单'
+        WHEN 'MES-WO' THEN '生产订单' WHEN 'SRM-ASN' THEN '预收货通知单' ELSE '' END AS core_order_type_name
 
     </sql>
     <select id="findList" resultMap="BaseResultMapDto" parameterType="java.util.Map">
@@ -93,6 +96,14 @@
             </if>
             <if test="warehouseName!=null and warehouseName!=''">
                 and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
+            </if>
+
+            <if test="coreSourceSysOrderTypeCode!=null and coreSourceSysOrderTypeCode!=''">
+                and wipo.core_source_sys_order_type_code = #{coreSourceSysOrderTypeCode}
+            </if>
+
+            <if test="sourceSysOrderTypeCode!=null and sourceSysOrderTypeCode!=''">
+                and wipo.source_sys_order_type_code = #{sourceSysOrderTypeCode}
             </if>
 
             <if test="workName!=null and workName!=''">

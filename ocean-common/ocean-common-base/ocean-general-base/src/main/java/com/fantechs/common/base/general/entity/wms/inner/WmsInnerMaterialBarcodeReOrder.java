@@ -56,7 +56,7 @@ public class WmsInnerMaterialBarcodeReOrder extends ValidGroup implements Serial
     @ApiModelProperty(name="orderId",value = "单据ID")
     @Excel(name = "单据ID", height = 20, width = 30,orderNum="")
     @Column(name = "order_id")
-    private String orderId;
+    private Long orderId;
 
     /**
      * 单据明细ID
@@ -64,7 +64,7 @@ public class WmsInnerMaterialBarcodeReOrder extends ValidGroup implements Serial
     @ApiModelProperty(name="orderDetId",value = "单据明细ID")
     @Excel(name = "单据明细ID", height = 20, width = 30,orderNum="")
     @Column(name = "order_det_id")
-    private String orderDetId;
+    private Long orderDetId;
 
     /**
      * 来料条码ID

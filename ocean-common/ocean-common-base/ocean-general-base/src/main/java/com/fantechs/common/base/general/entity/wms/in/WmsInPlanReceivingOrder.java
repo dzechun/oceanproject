@@ -2,6 +2,7 @@ package com.fantechs.common.base.general.entity.wms.in;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.general.dto.wms.in.WmsInPlanReceivingOrderDetDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -147,7 +148,7 @@ public class WmsInPlanReceivingOrder extends ValidGroup implements Serializable 
     private String option3;
 
     @Transient
-    private List<WmsInPlanReceivingOrderDet> inPlanReceivingOrderDets;
+    private List<WmsInPlanReceivingOrderDetDto> inPlanReceivingOrderDets;
 
     private static final long serialVersionUID = 1L;
 }

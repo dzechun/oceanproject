@@ -2,6 +2,7 @@ package com.fantechs.common.base.general.entity.wms.in;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderBarcode;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -220,8 +221,8 @@ public class WmsInReceivingOrderDet extends ValidGroup implements Serializable {
     private String option3;
 
     @Transient
-    @ApiModelProperty(name = "barcodes",value = "条码id")
-    private List<Long> barcodes;
+    @ApiModelProperty(name = "wmsInReceivingOrderBarcodeList",value = "条码id")
+    private List<WmsInReceivingOrderBarcode> wmsInReceivingOrderBarcodeList;
 
     private static final long serialVersionUID = 1L;
 }

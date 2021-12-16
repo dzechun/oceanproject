@@ -1,6 +1,7 @@
 package com.fantechs.common.base.general.entity.wms.inner.search;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -20,10 +22,34 @@ public class SearchWmsInnerMaterialBarcode extends BaseQuery implements Serializ
     private Long materialBarcodeId;
 
     /**
+     * 打印单据类型
+     */
+    @ApiModelProperty(name="printOrderTypeCode",value = "打印单据类型")
+    private String printOrderTypeCode;
+
+    /**
      * 条码
      */
     @ApiModelProperty(name="barcode",value = "条码")
     private String barcode;
+
+    /**
+     * 彩盒号
+     */
+    @ApiModelProperty(name="colorBoxCode",value = "彩盒号")
+    private String colorBoxCode;
+
+    /**
+     * 箱号
+     */
+    @ApiModelProperty(name="cartonCode",value = "箱号")
+    private String cartonCode;
+
+    /**
+     * 栈板号
+     */
+    @ApiModelProperty(name="palletCode",value = "栈板号")
+    private String palletCode;
 
     /**
      * 来料条码ID
@@ -32,9 +58,9 @@ public class SearchWmsInnerMaterialBarcode extends BaseQuery implements Serializ
     private Long printOrderDetId;
 
     /**
-     * 条码
+     * 打印单据编码
      */
-    @ApiModelProperty(name="printOrderCode",value = "条码")
+    @ApiModelProperty(name="printOrderCode",value = "打印单据编码")
     private String printOrderCode;
 
     /**
@@ -42,6 +68,18 @@ public class SearchWmsInnerMaterialBarcode extends BaseQuery implements Serializ
      */
     @ApiModelProperty(name="materialId",value = "物料ID")
     private Long materialId;
+
+    /**
+     * 物料编码
+     */
+    @ApiModelProperty(name="materialCode",value = "物料编码")
+    private String materialCode;
+
+    /**
+     * 物料名称
+     */
+    @ApiModelProperty(name="materialName",value = "物料名称")
+    private String materialName;
 
     /**
      * 供应商ID
@@ -54,6 +92,30 @@ public class SearchWmsInnerMaterialBarcode extends BaseQuery implements Serializ
      */
     @ApiModelProperty(name="materialBarcodeIdList",value = "来料条码ID列表")
     private List<Long> materialBarcodeIdList;
+
+    /**
+     * 是否系统条码(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifSysBarcode",value = "是否系统条码(0-否 1-是)")
+    private Byte ifSysBarcode;
+
+    /**
+     * 批号
+     */
+    @ApiModelProperty(name="batchCode",value = "批号")
+    private String batchCode;
+
+    /**
+     * 生产时间开始
+     */
+    @ApiModelProperty(name="productionTimeStart",value = "生产时间")
+    private String productionTimeStart;
+
+    /**
+     * 生产时间结束
+     */
+    @ApiModelProperty(name="productionTimeEnd",value = "生产时间结束")
+    private String productionTimeEnd;
 
     private static final long serialVersionUID = 1L;
 }

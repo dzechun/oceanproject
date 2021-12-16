@@ -211,7 +211,8 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
                 wmsInInPlanOrderDetDto.setOrgId(user.getOrganizationId());
                 addlist.add(wmsInInPlanOrderDetDto);
             }
-            wmsInInPlanOrderDetMapper.insertList(addlist);
+            if (StringUtils.isNotEmpty(addlist))
+                wmsInInPlanOrderDetMapper.insertList(addlist);
         }
         return i;
     }
@@ -231,7 +232,8 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
                 BeanUtils.copyProperties(wmsInInPlanOrderDetDto, wmsInHtInPlanOrderDet);
                 htList.add(wmsInHtInPlanOrderDet);
             }
-            i = wmsInHtInPlanOrderDetMapper.insertList(htList);
+            if (StringUtils.isNotEmpty(htList))
+                i = wmsInHtInPlanOrderDetMapper.insertList(htList);
         }
         return i;
     }

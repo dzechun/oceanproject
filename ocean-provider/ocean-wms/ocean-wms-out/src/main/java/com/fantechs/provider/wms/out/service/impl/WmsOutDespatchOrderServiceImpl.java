@@ -19,8 +19,6 @@ import com.fantechs.common.base.general.dto.wms.out.WmsOutDespatchOrderReJoReDet
 import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.general.entity.om.OmOtherOutOrderDet;
 import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
-import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
-import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryLog;

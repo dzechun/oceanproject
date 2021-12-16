@@ -177,6 +177,8 @@ public class SrmPlanDeliveryOrderServiceImpl extends BaseService<SrmPlanDelivery
         record.setOrderStatus((byte) 1);
         int i = srmPlanDeliveryOrderMapper.insertUseGeneratedKeys(record);
 
+        verify(record);
+
         SrmHtPlanDeliveryOrder srmHtPlanDeliveryOrder = new SrmHtPlanDeliveryOrder();
         BeanUtils.copyProperties(record, srmHtPlanDeliveryOrder);
         srmHtPlanDeliveryOrderMapper.insertUseGeneratedKeys(srmHtPlanDeliveryOrder);
@@ -203,6 +205,16 @@ public class SrmPlanDeliveryOrderServiceImpl extends BaseService<SrmPlanDelivery
         example.createCriteria().andEqualTo("planDeliveryOrderId",entity.getPlanDeliveryOrderId());
 
 
+        verify(entity);
+
+        srmPlanDeliveryOrderDetMapper.deleteByExample(example);
+
+        ht(entity,srmHtPlanDeliveryOrder);
+
+        return i;
+    }
+
+    private void verify(SrmPlanDeliveryOrder entity) {
         //提交的时候反写采购订单的累计计划送货数量
         if (StringUtils.isNotEmpty(entity.getOrderStatus()) && entity.getOrderStatus() == 2) {
 
@@ -239,7 +251,7 @@ public class SrmPlanDeliveryOrderServiceImpl extends BaseService<SrmPlanDelivery
             Map<Long, List<SrmPlanDeliveryOrderDetDto>> collect = entity.getList().stream().collect(Collectors.groupingBy(SrmPlanDeliveryOrderDetDto::getPurchaseOrderDetId));
             for (Long aLong : collect.keySet()) {
                 List<SrmPlanDeliveryOrderDetDto> srmPlanDeliveryOrderDetDtos = collect.get(aLong);
-                BigDecimal bigDecimal = srmPlanDeliveryOrderDetDtos.get(0).getTotalPlanDeliveryQty();
+                BigDecimal bigDecimal = StringUtils.isEmpty(srmPlanDeliveryOrderDetDtos.get(0).getTotalPlanDeliveryQty())?new BigDecimal(0):srmPlanDeliveryOrderDetDtos.get(0).getTotalPlanDeliveryQty();
                 for (SrmPlanDeliveryOrderDetDto srmPlanDeliveryOrderDetDto : srmPlanDeliveryOrderDetDtos) {
                     bigDecimal = bigDecimal.add(srmPlanDeliveryOrderDetDto.getPlanDeliveryQty());
                 }
@@ -248,12 +260,6 @@ public class SrmPlanDeliveryOrderServiceImpl extends BaseService<SrmPlanDelivery
                 }
             }
         }
-
-        srmPlanDeliveryOrderDetMapper.deleteByExample(example);
-
-        ht(entity,srmHtPlanDeliveryOrder);
-
-        return i;
     }
 
     @Override

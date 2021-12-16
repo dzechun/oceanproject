@@ -53,10 +53,10 @@ public class SaveInnerJobOrderDto implements Serializable {
     private Date productionTime;
 
     /**
-     * 非系统条码(0 是 1 否)
+     * 是否系统条码(0-否 1-是)
      */
-    @ApiModelProperty(name="notSysCode",value = "非系统条码(0 是 1 否)")
-    private String notSysCode;
+    @ApiModelProperty(name="ifSysBarcode",value = "是否系统条码(0-否 1-是)")
+    private String ifSysBarcode;
 
 
 
