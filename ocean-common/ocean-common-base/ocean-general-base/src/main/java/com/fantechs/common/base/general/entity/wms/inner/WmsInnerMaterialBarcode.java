@@ -3,8 +3,10 @@ package com.fantechs.common.base.general.entity.wms.inner;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -154,8 +156,9 @@ public class WmsInnerMaterialBarcode extends ValidGroup implements Serializable 
      * 生产时间
      */
     @ApiModelProperty(name="productionTime",value = "生产时间")
-    @Excel(name = "生产时间", height = 20, width = 30,orderNum="11",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "生产时间", height = 20, width = 30,orderNum="11",exportFormat ="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "production_time")
     private Date productionTime;
 
@@ -211,7 +214,8 @@ public class WmsInnerMaterialBarcode extends ValidGroup implements Serializable 
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     @Column(name = "create_time")
     private Date createTime;
 
@@ -226,7 +230,8 @@ public class WmsInnerMaterialBarcode extends ValidGroup implements Serializable 
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     @Column(name = "modified_time")
     private Date modifiedTime;
 

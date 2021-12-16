@@ -27,5 +27,5 @@ public interface WmsInnerMaterialBarcodeService extends IService<WmsInnerMateria
 
     int print(String ids,int printQty,String printName,int printType);
 
-    Map<String, Object> importExcel(List<WmsInnerMaterialBarcodeImport> importList, List<WmsInnerMaterialBarcodeDto> list);
+    Map<String, Object> importExcel(List<WmsInnerMaterialBarcodeImport> importList, List<WmsInnerMaterialBarcodeDto> list,Integer type);
 }

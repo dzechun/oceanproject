@@ -118,7 +118,7 @@ public class QmsIncomingInspectionOrderDet extends ValidGroup implements Seriali
     @ApiModelProperty(name="aqlValue",value = "AQL值")
     @Excel(name = "AQL值", height = 20, width = 30,orderNum="10")
     @Column(name = "aql_value")
-    private Integer aqlValue;
+    private BigDecimal aqlValue;
 
     /**
      * AC值

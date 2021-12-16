@@ -23,6 +23,6 @@ public interface WmsInnerMaterialBarcodeMapper extends MyMapper<WmsInnerMaterial
     LabelRuteDto findRule(@Param("code")String code, @Param("materialId")Long materialId , @Param("orgId")Long orgId);
 
     //获取已打印物料总数量
-    BigDecimal getTotalMaterialQty(SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode);
+    Integer getTotalMaterialQty(SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode);
 
 }

@@ -95,11 +95,11 @@ public class WmsInnerMaterialBarcodeController {
 
     @PostMapping(value = "/import")
     @ApiOperation(value = "从excel导入",notes = "从excel导入")
-    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true) @RequestPart(value="file") MultipartFile file,@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<WmsInnerMaterialBarcodeDto> list){
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true) @RequestPart(value="file") MultipartFile file,@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<WmsInnerMaterialBarcodeDto> list,@ApiParam(value = "必传：打印类型（1，ASN单 2，收货作业单 3，来料检验单 4，上架作业单）",required = true)@RequestParam Integer type){
         try {
             // 导入操作
             List<WmsInnerMaterialBarcodeImport> importList = EasyPoiUtils.importExcel(file, 2, 1, WmsInnerMaterialBarcodeImport.class);
-            Map<String, Object> resultMap = wmsInnerMaterialBarcodeService.importExcel(importList,list);
+            Map<String, Object> resultMap = wmsInnerMaterialBarcodeService.importExcel(importList,list,type);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
             e.printStackTrace();

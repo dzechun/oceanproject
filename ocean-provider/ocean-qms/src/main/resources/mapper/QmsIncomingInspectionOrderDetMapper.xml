@@ -16,7 +16,7 @@
     <result column="specification_upper_limit" jdbcType="DECIMAL" property="specificationUpperLimit" />
     <result column="specification_floor" jdbcType="DECIMAL" property="specificationFloor" />
     <result column="unit_name" jdbcType="VARCHAR" property="unitName" />
-    <result column="aql_value" jdbcType="INTEGER" property="aqlValue" />
+    <result column="aql_value" jdbcType="DECIMAL" property="aqlValue" />
     <result column="ac_value" jdbcType="INTEGER" property="acValue" />
     <result column="re_value" jdbcType="INTEGER" property="reValue" />
     <result column="inspection_standard_det_id" jdbcType="BIGINT" property="inspectionStandardDetId" />
