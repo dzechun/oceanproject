@@ -4,10 +4,7 @@ import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 
 /**
@@ -92,4 +89,6 @@ public class SearchBaseMaterial extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name = "materialProperty",value = "物料属性(0.半成品，1.成品)")
     private Integer materialProperty;
+
+    private String idCode;
 }
