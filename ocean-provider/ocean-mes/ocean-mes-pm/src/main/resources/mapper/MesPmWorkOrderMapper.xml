@@ -16,6 +16,8 @@
         <result column="route_id" jdbcType="BIGINT" property="routeId"/>
         <result column="barcode_rule_set_id" jdbcType="BIGINT" property="barcodeRuleSetId"/>
         <result column="work_order_type" jdbcType="TINYINT" property="workOrderType"/>
+        <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty"/>
+        <result column="if_all_issued" jdbcType="TINYINT" property="ifAllIssued"/>
         <result column="schedule_date" jdbcType="TIMESTAMP" property="scheduleDate"/>
         <result column="plan_start_time" jdbcType="TIMESTAMP" property="planStartTime"/>
         <result column="plan_end_time" jdbcType="TIMESTAMP" property="planEndTime"/>
@@ -23,12 +25,10 @@
         <result column="actual_end_time" jdbcType="TIMESTAMP" property="actualEndTime"/>
         <result column="org_id" jdbcType="BIGINT" property="orgId"/>
         <result column="contract_no" jdbcType="BIGINT" property="contractNo"/>
-
         <result column="put_into_process_id" jdbcType="BIGINT" property="putIntoProcessId"/>
         <result column="output_process_id" jdbcType="BIGINT" property="outputProcessId"/>
         <result column="scrap_qty" jdbcType="DECIMAL" property="scrapQty"/>
         <result column="inventory_qty" jdbcType="DECIMAL" property="inventoryQty"/>
-
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -95,6 +95,8 @@
         swo.production_qty,
         swo.output_qty,
         swo.scheduled_qty,
+        swo.total_issue_qty,
+        swo.if_all_issued,
         swo.work_order_status,
         swo.pro_line_id,
         swo.barcode_rule_set_id,

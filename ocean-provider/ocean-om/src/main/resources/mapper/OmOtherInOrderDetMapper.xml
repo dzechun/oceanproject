@@ -27,6 +27,7 @@
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
     </resultMap>
+
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
                type="com.fantechs.common.base.general.dto.om.OmOtherInOrderDetDto">
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>

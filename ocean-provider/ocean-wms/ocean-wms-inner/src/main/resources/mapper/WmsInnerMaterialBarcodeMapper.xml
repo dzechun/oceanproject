@@ -183,7 +183,7 @@
 
     </select>
 
-    <select id="getTotalMaterialQty" resultMap="BaseResultMapDto">
+    <select id="getTotalMaterialQty" resultType="Integer" parameterType="com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode">
         SELECT sum(wimb.material_qty)
         FROM wms_inner_material_barcode wimb
         LEFT JOIN base_material bm on bm.material_id = wimb.material_id

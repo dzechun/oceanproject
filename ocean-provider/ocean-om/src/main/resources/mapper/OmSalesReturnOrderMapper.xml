@@ -29,6 +29,9 @@
         <result column="option1" jdbcType="VARCHAR" property="option1"/>
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
+        <collection property="omSalesReturnOrderDets" ofType="com.fantechs.common.base.general.entity.om.OmSalesReturnOrderDet"
+                    column="{salesReturnOrderId=sales_return_order_id}"  select="com.fantechs.provider.om.mapper.OmSalesReturnOrderDetMapper.findList">
+        </collection>
     </resultMap>
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
                type="com.fantechs.common.base.general.dto.om.OmSalesReturnOrderDto">
