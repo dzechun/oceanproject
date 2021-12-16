@@ -116,6 +116,9 @@
                     #{materialCategoryCode}
                 </foreach>
             </if>
+            <if test="idCode!=null and idCode!=''">
+                and sm.option1=#{idCode}
+            </if>
         </where>
         order by sm.create_time desc
     </select>
