@@ -17,10 +17,7 @@ import com.fantechs.provider.eam.service.EamEquipmentBarcodeService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -58,6 +55,7 @@ public class EamEquipmentBarcodeServiceImpl extends BaseService<EamEquipmentBarc
 
         eamEquipmentBarcode.setCurrentUsageTime(currentUsageTime+num);
         eamEquipmentBarcode.setEquipmentStatus((byte)4);//更新状态为生产中
+        eamEquipmentBarcode.setModifiedTime(new Date());
         return eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
     }
 
