@@ -73,19 +73,22 @@ public class WmsInnerInventoryUtil {
             if (addOrSubtract==((byte)1) && StringUtils.isEmpty(wmsInnerInventorys)) {
                 //添加库存
                 WmsInnerInventory inv = new WmsInnerInventory();
-                inv.setStorageId(wmsInnerJobOrderDet.getOutStorageId());
-                inv.setWarehouseId(wmsInnerJobOrder.getWarehouseId());
                 inv.setRelevanceOrderCode(wmsInnerJobOrder.getJobOrderCode());
-                inv.setPackingQty(finalQty);
-                inv.setJobStatus((byte) 2);
-                inv.setInventoryId(null);
+                inv.setMaterialId(wmsInnerJobOrderDet.getMaterialId());
+                inv.setWarehouseId(wmsInnerJobOrder.getWarehouseId());
+                inv.setStorageId(wmsInnerJobOrderDet.getOutStorageId());
+                inv.setInventoryStatusId(wmsInnerJobOrderDet.getInventoryStatusId());
                 inv.setBatchCode(wmsInnerJobOrderDet.getBatchCode());
                 inv.setJobOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
+                inv.setPackingQty(finalQty);
+                inv.setJobStatus((byte) 2);
                 inv.setOrgId(sysUser.getOrganizationId());
                 inv.setCreateUserId(sysUser.getUserId());
                 inv.setCreateTime(new Date());
                 inv.setModifiedTime(new Date());
                 inv.setModifiedUserId(sysUser.getUserId());
+                inv.setInventoryId(null);
+
                 //记录库存日志
                 BigDecimal qty=new BigDecimal(0);
                 BigDecimal chaQty=finalQty;
