@@ -181,13 +181,12 @@
         SELECT
             msbpr.work_order_code AS workOrderCode,
             msbpr.process_name AS processName,
-            brp.standard_time AS standardTime,
+            bmt.takt AS standardTime,
             msbpr.option1 AS practicalTime,
             1 as numberOfTimes
         FROM
             mes_sfc_barcode_process_record msbpr
-            LEFT JOIN base_route_process brp ON brp.route_id = msbpr.route_id
-            AND brp.process_id = msbpr.process_id
+            LEFT JOIN base_material_tab bmt ON bmt.material_id = msbpr.material_id
         <where>
             <if test="workOrderId != null and workOrderId != ''">
                 and msbpr.work_order_id = #{workOrderId}
@@ -195,7 +194,7 @@
             and msbpr.option2 = 1
         </where>
         ORDER BY
-            create_time DESC
+        msbpr.create_time DESC
 
     </select>
 </mapper>
