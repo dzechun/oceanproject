@@ -28,9 +28,11 @@ public class BaseTabServiceImpl extends BaseService<BaseTab> implements BaseTabS
 
     @Override
     public List<BaseTabDto> findList(Map<String, Object> map) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (!StringUtils.isEmpty(user)) {
-            map.put("orgId", user.getOrganizationId());
+        if(StringUtils.isEmpty(map.get("orgId"))) {
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            if (!StringUtils.isEmpty(user)) {
+                map.put("orgId", user.getOrganizationId());
+            }
         }
         return baseTabMapper.findList(map);
     }
