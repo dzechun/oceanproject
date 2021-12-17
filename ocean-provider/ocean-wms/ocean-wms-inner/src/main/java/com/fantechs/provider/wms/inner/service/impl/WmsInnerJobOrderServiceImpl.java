@@ -327,6 +327,14 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             BigDecimal distributionQty = BigDecimal.ZERO;
             WmsInnerJobOrderDet wms = new WmsInnerJobOrderDet();
 
+            if(StringUtils.isEmpty(wmsInPutawayOrderDet.getInStorageId())){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"移入库位ID不能为空");
+            }
+
+            if(StringUtils.isEmpty(wmsInPutawayOrderDet.getOutStorageId())){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"移出库位ID不能为空");
+            }
+
             if(wmsInPutawayOrderDet.getInStorageId().equals(wmsInPutawayOrderDet.getOutStorageId())){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"移入库位不能与当前库位相同");
             }
