@@ -396,6 +396,17 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
         List<WmsInnerHtMaterialBarcode> htList = new ArrayList<>();
         Example example = new Example(WmsInnerMaterialBarcode.class);
 
+        //判断打印类型（1，ASN单 2，收货作业单 3，来料检验单 4，上架作业单）
+        if (type == 1) {
+            searchWmsInnerMaterialBarcode.setPrintOrderTypeCode("SRM-ASN");
+        }else if (type == 2) {
+            searchWmsInnerMaterialBarcode.setPrintOrderTypeCode("IN-SWK");
+        }else if (type == 3) {
+            searchWmsInnerMaterialBarcode.setPrintOrderTypeCode("QMS-MIIO");
+        }else if (type == 4) {
+            searchWmsInnerMaterialBarcode.setPrintOrderTypeCode("IN-IWK");
+        }
+
         for (WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto : list) {
             for (int i = 0; i < importList.size(); i++) {
                 //导入的实体
