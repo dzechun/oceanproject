@@ -20,6 +20,7 @@ import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.basic.search.SearchBasePackageSpecification;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBom;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentBarcode;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentMaterialList;
 import com.fantechs.common.base.general.entity.eam.EamJig;
@@ -906,10 +907,19 @@ public class BarcodeUtils {
                 }
 
                 BaseRouteProcess routeProcess = routeProcessOptional.get();
-                String standardTimeS=routeProcess.getStandardTime().toString();
-                if(StringUtils.isEmpty(standardTimeS))
-                    standardTimeS="0";
-                Double standardTimeD=Double.parseDouble(standardTimeS);
+                //String standardTimeS=routeProcess.getStandardTime().toString();
+                Long materialId=mesPmWorkOrder.getMaterialId();
+                SearchBaseTab searchBaseTab=new SearchBaseTab();
+                searchBaseTab.setMaterialId(materialId);
+                searchBaseTab.setOrgId(mesPmWorkOrder.getOrgId());
+                ResponseEntity<List<BaseTabDto>> listResponseEntity=barcodeUtils.baseFeignApi.findTabList(searchBaseTab);
+                String takt="0";
+                if(StringUtils.isNotEmpty(listResponseEntity.getData())){
+                    takt=listResponseEntity.getData().get(0).getTakt().toString();
+                }
+                if(StringUtils.isEmpty(takt))
+                    takt="0";
+                Double standardTimeD=Double.parseDouble(takt);
                 try{
                     Double passTimeD=Double.parseDouble(StringUtils.isEmpty(dto.getPassTime())?"0":dto.getPassTime());
                     if(passTimeD>standardTimeD)
