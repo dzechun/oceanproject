@@ -91,11 +91,17 @@ public class PDAWmsInnerJobOrderController {
         return ControllerUtil.returnDataSuccess(qty,StringUtils.isEmpty(qty)?0:1);
     }
 
-    @ApiOperation("PDA先作业后单提交")
+    @ApiOperation("PDA先作业后单 提交")
     @PostMapping("/saveInnerJobOrder")
     public ResponseEntity<WmsInnerJobOrder> saveInnerJobOrder(@RequestBody(required = true) List<SaveInnerJobOrderDto> list){
         WmsInnerJobOrder wmsInnerJobOrder=wmsInnerJobOrderService.saveInnerJobOrder(list);
         return ControllerUtil.returnDataSuccess(wmsInnerJobOrder,StringUtils.isEmpty(wmsInnerJobOrder)?0:1);
+    }
+
+    @ApiOperation(" PDA先作业后单 提交完成")
+    @PostMapping("/updateInnerJobOrderFinish")
+    public ResponseEntity updateInnerJobOrderFinish(@ApiParam(value = "对象ID",required = true) @RequestParam @NotBlank(message="id不能为空") Long jobOrderId){
+        return ControllerUtil.returnCRUD(wmsInnerJobOrderService.updateInnerJobOrderFinish(jobOrderId));
     }
 
     /*@ApiOperation("条码校验")

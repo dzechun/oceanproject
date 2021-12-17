@@ -127,6 +127,13 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
     WmsInnerJobOrder saveInnerJobOrder(List<SaveInnerJobOrderDto> list);
 
     /**
+     * PDA先作业后单 更新上架单完成状态
+     * @param jobOrderId
+     * @return
+     */
+    int updateInnerJobOrderFinish(Long jobOrderId);
+
+    /**
      * PDA激活关闭栈板
      * @param jobOrderId
      * @return
