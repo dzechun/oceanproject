@@ -60,7 +60,7 @@ public class WmsInnerMaterialBarcodeImport implements Serializable {
      */
     @ApiModelProperty(name="ifSysBarcode",value = "是否系统条码(0-否 1-是)")
     @Excel(name = "是否系统条码", height = 20, width = 30,orderNum="7",replace = {"否_0","是_1"})
-    private Byte ifSysBarcode;
+    private Integer ifSysBarcode;
 
     /**
      * 批号
