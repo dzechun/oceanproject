@@ -160,4 +160,12 @@
       </if>
     </where>
   </select>
+
+  <update id="batchUpdate" parameterType="java.util.List">
+    <foreach collection="list" item="item" separator=";">
+      update qms_incoming_inspection_order qiio set
+      qiio.if_all_issued = #{item.ifAllIssued}
+      where qiio.incoming_inspection_order_id = #{item.incomingInspectionOrderId}
+    </foreach>
+  </update>
 </mapper>

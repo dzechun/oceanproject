@@ -66,11 +66,11 @@ public class OmSalesOrderController {
         return ControllerUtil.returnCRUD(omSalesOrderService.batchSave(salesOrders));
     }
 
-    @ApiOperation(value = "下发仓库",notes = "下发仓库")
+    /*@ApiOperation(value = "下发仓库",notes = "下发仓库")
     @PostMapping("/issueWarehouse")
     public ResponseEntity issueWarehouse(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
         return ControllerUtil.returnCRUD(omSalesOrderService.issueWarehouse(id));
-    }
+    }*/
 
     @ApiOperation("删除")
     @PostMapping("/delete")
