@@ -5,7 +5,6 @@ import com.fantechs.common.base.general.entity.om.OmOtherOutOrderDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -41,12 +40,20 @@ public class OmOtherOutOrderDetDto extends OmOtherOutOrderDet implements Seriali
     private String materialName;
 
     /**
-     * 包装单位
+     * 包装单位(0.箱 1.圈 2.桶)
      */
     @Transient
-    @ApiModelProperty(name = "mainUnit",value = "包装单位")
-    @Excel(name = "包装单位", height = 20, width = 30,orderNum="4")
-    private String mainUnit;
+    @ApiModelProperty(name = "packingUnit",value = "包装单位(0.箱 1.圈 2.桶)")
+    @Excel(name = "包装单位(0.箱 1.圈 2.桶)", height = 20, width = 30,orderNum="4")
+    private Integer packingUnit;
+
+    /**
+     * 包装数量
+     */
+    @Transient
+    @ApiModelProperty(name = "packingQty",value = "包装数量")
+    @Excel(name = "包装数量", height = 20, width = 30,orderNum="5")
+    private Integer packingQty;
 
     /**
      * 体积

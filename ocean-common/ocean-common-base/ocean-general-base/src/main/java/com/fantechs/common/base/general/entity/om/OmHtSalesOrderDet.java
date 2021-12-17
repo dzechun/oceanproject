@@ -337,6 +337,22 @@ public class OmHtSalesOrderDet extends ValidGroup implements Serializable {
     private Byte lineStatus;
 
     /**
+     * 累计下发数量
+     */
+    @ApiModelProperty(name="totalIssueQty",value = "累计下发数量")
+    //@Excel(name = "累计下发数量", height = 20, width = 30,orderNum="")
+    @Column(name = "total_issue_qty")
+    private BigDecimal totalIssueQty;
+
+    /**
+     * 是否已全部下发(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifAllIssued",value = "是否已全部下发(0-否 1-是)")
+    //@Excel(name = "是否已全部下发(0-否 1-是)", height = 20, width = 30,orderNum="")
+    @Column(name = "if_all_issued")
+    private Byte ifAllIssued;
+
+    /**
      * 状态
      */
     @ApiModelProperty(name="status",value = "状态")

@@ -2,11 +2,15 @@ package com.fantechs.provider.om.service.impl;
 
 
 import cn.hutool.core.date.DateTime;
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
-import com.fantechs.common.base.general.dto.om.*;
+import com.fantechs.common.base.general.dto.om.OmHtSalesOrderDetDto;
+import com.fantechs.common.base.general.dto.om.OmHtSalesOrderDto;
+import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
+import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
@@ -16,6 +20,8 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.om.OmHtSalesOrderDet;
 import com.fantechs.common.base.general.entity.om.OmSalesOrder;
 import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
@@ -23,6 +29,7 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.om.mapper.OmSalesOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmSalesOrderMapper;
@@ -37,6 +44,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -59,28 +67,76 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
     private OutFeignApi outFeignApi;
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private InnerFeignApi innerFeignApi;
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int pushDown(List<OmSalesOrderDetDto> omSalesOrderDetDtoList) {
         int i = 0;
-        /*for (OmSalesOrderDetDto omSalesOrderDetDto : omSalesOrderDetDtoList){
+        for (OmSalesOrderDetDto omSalesOrderDetDto : omSalesOrderDetDtoList){
             BigDecimal add = omSalesOrderDetDto.getTotalIssueQty().add(omSalesOrderDetDto.getIssueQty());
             if(add.compareTo(omSalesOrderDetDto.getOrderQty()) == 1){
                 throw new BizErrorException("下发数量不能大于订单数量");
+            }else if(add.compareTo(omSalesOrderDetDto.getOrderQty()) == 0){
+                omSalesOrderDetDto.setIfAllIssued((byte)1);
             }
-        }*/
+            omSalesOrderDetDto.setTotalIssueQty(add);
+        }
+        i = omSalesOrderDetMapper.batchUpdate(omSalesOrderDetDtoList);
 
         //查当前单据的下游单据
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
-        searchBaseOrderFlow.setOrderTypeCode("OUT-OOO");
+        searchBaseOrderFlow.setOrderTypeCode("OUT-SO");
         BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
         if(StringUtils.isEmpty(baseOrderFlow)){
             throw new BizErrorException("未找到当前单据配置的下游单据");
         }
 
-        if("".equals(baseOrderFlow.getNextOrderTypeCode())){
+        //按仓库分组，不同仓库生成多张单
+        HashMap<Long, List<OmSalesOrderDetDto>> collect = omSalesOrderDetDtoList.stream().collect(Collectors.groupingBy(OmSalesOrderDetDto::getWarehouseId, HashMap::new, Collectors.toList()));
+        Set<Long> set = collect.keySet();
+        for (Long id : set) {
+            List<OmSalesOrderDetDto> omSalesOrderDetDtos = collect.get(id);
+            if ("".equals(baseOrderFlow.getNextOrderTypeCode())) {
+                //出库通知单
 
+            } else if ("".equals(baseOrderFlow.getNextOrderTypeCode())) {
+                //出库计划
+
+            } else if ("".equals(baseOrderFlow.getNextOrderTypeCode())) {
+                //拣货作业
+                int lineNumber = 1;
+                List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();
+                for (OmSalesOrderDetDto omSalesOrderDetDto : omSalesOrderDetDtos) {
+                    WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                    wmsInnerJobOrderDet.setCoreSourceOrderCode(omSalesOrderDetDto.getCoreSourceOrderCode());
+                    wmsInnerJobOrderDet.setSourceOrderCode(omSalesOrderDetDto.getSourceOrderCode());
+                    wmsInnerJobOrderDet.setCoreSourceId(omSalesOrderDetDto.getCoreSourceId());
+                    wmsInnerJobOrderDet.setSourceId(omSalesOrderDetDto.getSalesOrderDetId());
+                    wmsInnerJobOrderDet.setLineNumber(lineNumber + "");
+                    lineNumber++;
+                    wmsInnerJobOrderDet.setMaterialId(omSalesOrderDetDto.getMaterialId());
+                    wmsInnerJobOrderDet.setPlanQty(omSalesOrderDetDto.getOrderQty());
+                    wmsInnerJobOrderDet.setLineStatus((byte) 1);
+                    wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
+                }
+                WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+                wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("OUT-OOO");
+                wmsInnerJobOrder.setSourceSysOrderTypeCode("OUT-OOO");
+                wmsInnerJobOrder.setWarehouseId(omSalesOrderDetDtos.get(0).getWarehouseId());
+                wmsInnerJobOrder.setJobOrderType((byte) 2);
+                wmsInnerJobOrder.setWmsInPutawayOrderDets(wmsInnerJobOrderDets);
+                ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
+                if (responseEntity.getCode() != 0) {
+                    throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
+                } else {
+                    i++;
+                }
+            } else {
+                throw new BizErrorException("单据流配置错误");
+            }
         }
 
         return i;
@@ -100,12 +156,10 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
         int i = omSalesOrderMapper.insertUseGeneratedKeys(omSalesOrderDto);
 
         //明细
-        int lineNumber = 1;
         List<OmHtSalesOrderDet> htList = new LinkedList<>();
         List<OmSalesOrderDetDto> omSalesOrderDetDtoList = omSalesOrderDto.getOmSalesOrderDetDtoList();
         if(StringUtils.isNotEmpty(omSalesOrderDetDtoList)){
             for (OmSalesOrderDetDto omSalesOrderDetDto:omSalesOrderDetDtoList){
-                omSalesOrderDetDto.setLineNumber(lineNumber+"");
                 omSalesOrderDetDto.setSalesOrderId(omSalesOrderDto.getSalesOrderId());
                 omSalesOrderDetDto.setCreateUserId(user.getUserId());
                 omSalesOrderDetDto.setCreateTime(new Date());
@@ -134,37 +188,54 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
     public int update(OmSalesOrderDto omSalesOrderDto) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
+        omSalesOrderDto.setModifiedUserId(user.getUserId());
+        omSalesOrderDto.setModifiedTime(new Date());
+        int i = omSalesOrderMapper.updateByPrimaryKeySelective(omSalesOrderDto);
+
+        //原来有的明细只更新
+        ArrayList<Long> idList = new ArrayList<>();
+        List<OmSalesOrderDetDto> omSalesOrderDetDtoList = omSalesOrderDto.getOmSalesOrderDetDtoList();
+        if(StringUtils.isNotEmpty(omSalesOrderDetDtoList)) {
+            for (OmSalesOrderDetDto omSalesOrderDetDto : omSalesOrderDetDtoList) {
+                if (StringUtils.isNotEmpty(omSalesOrderDetDto.getSalesOrderDetId())) {
+                    omSalesOrderDetMapper.updateByPrimaryKeySelective(omSalesOrderDetDto);
+                    idList.add(omSalesOrderDetDto.getSalesOrderDetId());
+                }
+            }
+        }
+
         //删除原明细
         Example example = new Example(OmSalesOrderDet.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("salesOrderId",omSalesOrderDto.getSalesOrderId());
+        if (idList.size() > 0) {
+            criteria.andNotIn("salesOrderDetId", idList);
+        }
         omSalesOrderDetMapper.deleteByExample(example);
 
         //明细
-        int lineNumber = 1;
         List<OmHtSalesOrderDet> htList = new LinkedList<>();
-        List<OmSalesOrderDetDto> omSalesOrderDetDtoList = omSalesOrderDto.getOmSalesOrderDetDtoList();
         if(StringUtils.isNotEmpty(omSalesOrderDetDtoList)){
+            List<OmSalesOrderDetDto> addDetList = new LinkedList<>();
             for (OmSalesOrderDetDto omSalesOrderDetDto:omSalesOrderDetDtoList){
-                omSalesOrderDetDto.setLineNumber(lineNumber+"");
+                OmHtSalesOrderDetDto omHtSalesOrderDetDto = new OmHtSalesOrderDetDto();
+                org.springframework.beans.BeanUtils.copyProperties(omSalesOrderDetDto, omHtSalesOrderDetDto);
+                htList.add(omHtSalesOrderDetDto);
+
+                if (idList.contains(omSalesOrderDetDto.getSalesOrderDetId())) {
+                    continue;
+                }
                 omSalesOrderDetDto.setSalesOrderId(omSalesOrderDto.getSalesOrderId());
                 omSalesOrderDetDto.setCreateUserId(user.getUserId());
                 omSalesOrderDetDto.setCreateTime(new Date());
                 omSalesOrderDetDto.setModifiedUserId(user.getUserId());
                 omSalesOrderDetDto.setModifiedTime(new Date());
                 omSalesOrderDetDto.setOrgId(user.getOrganizationId());
-
-                OmHtSalesOrderDetDto omHtSalesOrderDetDto = new OmHtSalesOrderDetDto();
-                org.springframework.beans.BeanUtils.copyProperties(omSalesOrderDetDto, omHtSalesOrderDetDto);
-                htList.add(omHtSalesOrderDetDto);
+                addDetList.add(omSalesOrderDetDto);
             }
-            omSalesOrderDetMapper.insertList(omSalesOrderDetDtoList);
+            omSalesOrderDetMapper.insertList(addDetList);
             omHtSalesOrderDetMapper.insertList(htList);
         }
-
-        omSalesOrderDto.setModifiedUserId(user.getUserId());
-        omSalesOrderDto.setModifiedTime(new Date());
-        int i = omSalesOrderMapper.updateByPrimaryKeySelective(omSalesOrderDto);
 
         //履历
         OmHtSalesOrderDto omHtSalesOrderDto = new OmHtSalesOrderDto();

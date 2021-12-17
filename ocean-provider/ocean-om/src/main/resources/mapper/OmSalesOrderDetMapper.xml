@@ -39,6 +39,8 @@
         <result column="total_not_production_qty" jdbcType="DECIMAL" property="totalNotProductionQty"/>
         <result column="return_arrange_dispatch_qty" jdbcType="DECIMAL" property="returnArrangeDispatchQty"/>
         <result column="line_status" jdbcType="TINYINT" property="lineStatus"/>
+        <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty"/>
+        <result column="if_all_issued" jdbcType="TINYINT" property="ifAllIssued"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
@@ -100,6 +102,8 @@
         sod.total_not_production_qty,
         sod.return_arrange_dispatch_qty,
         sod.line_status,
+        sod.total_issue_qty,
+        sod.if_all_issued,
         sod.status,
         sod.is_delete,
         sod.remark,
@@ -152,4 +156,13 @@
         </where>
         order by oso.modified_time desc
     </select>
+
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="item" separator=";">
+            update om_sales_order_det sod set
+            sod.total_issue_qty = #{item.totalIssueQty},
+            sod.if_all_issued = #{item.ifAllIssued}
+            where sod.sales_order_det_id = #{item.salesOrderDetId}
+        </foreach>
+    </update>
 </mapper>
