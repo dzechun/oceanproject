@@ -10,6 +10,7 @@ import lombok.Data;
 
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,4 +117,8 @@ public class QmsIncomingInspectionOrderDto extends QmsIncomingInspectionOrder im
     @ApiModelProperty(name="list",value = "来料检验单明细")
     @ExcelCollection(name="来料检验单明细",orderNum="21")
     private List<QmsIncomingInspectionOrderDet> list = new ArrayList<>();
+
+    @Transient
+    @ApiModelProperty(name="totalMaterialQty",value = "已打印物料总数量")
+    private BigDecimal totalMaterialQty;
 }

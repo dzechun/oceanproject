@@ -11,6 +11,35 @@ import java.util.List;
 
 @Data
 public class OmSalesOrderDto extends OmSalesOrder implements Serializable {
+
+    /**
+     * 销售部门
+     */
+    @ApiModelProperty(name = "salesDept", value = "销售部门")
+    @Excel(name = "销售部门", height = 20, width = 30, orderNum = "18")
+    private String salesDept;
+
+    /**
+     * 销售人员
+     */
+    @ApiModelProperty(name = "salesUserName", value = "销售人员")
+    @Excel(name = "销售人员", height = 20, width = 30, orderNum = "18")
+    private String salesUserName;
+
+    /**
+     * 制单人员
+     */
+    @ApiModelProperty(name = "makeOrderUserName", value = "制单人员")
+    @Excel(name = "制单人员", height = 20, width = 30, orderNum = "18")
+    private String makeOrderUserName;
+
+    /**
+     * 审核人员
+     */
+    @ApiModelProperty(name = "auditUserName", value = "审核人员")
+    @Excel(name = "审核人员", height = 20, width = 30, orderNum = "18")
+    private String auditUserName;
+
     /**
      * 客户名
      */

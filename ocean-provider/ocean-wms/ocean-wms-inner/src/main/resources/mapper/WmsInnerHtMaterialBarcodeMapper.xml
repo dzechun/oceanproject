@@ -12,7 +12,7 @@
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
     <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
     <result column="material_qty" jdbcType="DECIMAL" property="materialQty" />
-    <result column="production_date" jdbcType="TIMESTAMP" property="productionDate" />
+    <result column="production_time" jdbcType="TIMESTAMP" property="productionTime" />
     <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId" />
     <result column="label_id" jdbcType="BIGINT" property="labelId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />

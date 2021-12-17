@@ -25,7 +25,7 @@ public interface WmsInnerMaterialBarcodeService extends IService<WmsInnerMateria
 
     LabelRuteDto findLabelRute(Long barcodeRuleSetId,Long materialId);
 
-    int print(String ids,int printQty,String printName,int printType);
+    int print(String ids,int printQty,String printName,String printType,int printMode);
 
     Map<String, Object> importExcel(List<WmsInnerMaterialBarcodeImport> importList, List<WmsInnerMaterialBarcodeDto> list,Integer type);
 }

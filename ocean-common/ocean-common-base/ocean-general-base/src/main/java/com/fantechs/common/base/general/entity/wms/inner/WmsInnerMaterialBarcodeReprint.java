@@ -10,29 +10,28 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 ;
 ;
 
 /**
- * 来料条码表履历表
- * wms_inner_ht_material_barcode
- * @author 81947
- * @date 2021-07-03 14:29:26
+ * 来料条码补打表
+ * wms_inner_material_barcode_reprint
+ * @author jbb
+ * @date 2021-12-16 18:09:38
  */
 @Data
-@Table(name = "wms_inner_ht_material_barcode")
-public class WmsInnerHtMaterialBarcode extends ValidGroup implements Serializable {
+@Table(name = "wms_inner_material_barcode_reprint")
+public class WmsInnerMaterialBarcodeReprint extends ValidGroup implements Serializable {
     /**
-     * 来料条码履历ID
+     * 来料条码补打表ID
      */
-    @ApiModelProperty(name="htMaterialBarcodeId",value = "来料条码履历ID")
-    @Excel(name = "来料条码履历ID", height = 20, width = 30,orderNum="")
+    @ApiModelProperty(name="materialBarcodeReprintId",value = "来料条码补打表ID")
+    @Excel(name = "来料条码补打表ID", height = 20, width = 30,orderNum="")
     @Id
-    @Column(name = "ht_material_barcode_id")
-    private Long htMaterialBarcodeId;
+    @Column(name = "material_barcode_reprint_id")
+    private Long materialBarcodeReprintId;
 
     /**
      * 来料条码ID
@@ -43,67 +42,20 @@ public class WmsInnerHtMaterialBarcode extends ValidGroup implements Serializabl
     private Long materialBarcodeId;
 
     /**
-     * 条码
+     * 打印指来源端IP
      */
-    @ApiModelProperty(name="barcode",value = "条码")
-    @Excel(name = "条码", height = 20, width = 30,orderNum="")
-    private String barcode;
+    @ApiModelProperty(name="printOrderSourceIp",value = "打印指来源端IP")
+    @Excel(name = "打印指来源端IP", height = 20, width = 30,orderNum="")
+    @Column(name = "print_order_source_ip")
+    private String printOrderSourceIp;
 
     /**
-     * 物料ID
+     * 打印机名称
      */
-    @ApiModelProperty(name="materialId",value = "物料ID")
-    @Excel(name = "物料ID", height = 20, width = 30,orderNum="")
-    @Column(name = "material_id")
-    private Long materialId;
-
-    /**
-     * 供应商ID
-     */
-    @ApiModelProperty(name="supplierId",value = "供应商ID")
-    @Excel(name = "供应商ID", height = 20, width = 30,orderNum="")
-    @Column(name = "supplier_id")
-    private Long supplierId;
-
-    /**
-     * 批号
-     */
-    @ApiModelProperty(name="batchCode",value = "批号")
-    @Excel(name = "批号", height = 20, width = 30,orderNum="")
-    @Column(name = "batch_code")
-    private String batchCode;
-
-    /**
-     * 物料数量
-     */
-    @ApiModelProperty(name="materialQty",value = "物料数量")
-    @Excel(name = "物料数量", height = 20, width = 30,orderNum="")
-    @Column(name = "material_qty")
-    private BigDecimal materialQty;
-
-    /**
-     * 生产日期
-     */
-    @ApiModelProperty(name="productionTime",value = "生产日期")
-    @Excel(name = "生产日期", height = 20, width = 30,orderNum="")
-    @Column(name = "production_time")
-    private Date productionTime;
-
-    /**
-     * 条码规则ID
-     */
-    @ApiModelProperty(name="barcodeRuleId",value = "条码规则ID")
-    @Excel(name = "条码规则ID", height = 20, width = 30,orderNum="")
-    @Column(name = "barcode_rule_id")
-    private Long barcodeRuleId;
-
-    /**
-     * 标签信息ID
-     */
-    @ApiModelProperty(name="labelId",value = "标签信息ID")
-    @Excel(name = "标签信息ID", height = 20, width = 30,orderNum="")
-    @Column(name = "label_id")
-    private Long labelId;
+    @ApiModelProperty(name="printerName",value = "打印机名称")
+    @Excel(name = "打印机名称", height = 20, width = 30,orderNum="")
+    @Column(name = "printer_name")
+    private String printerName;
 
     /**
      * 备注

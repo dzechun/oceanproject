@@ -1,8 +1,10 @@
 package com.fantechs.provider.om.service.impl;
 
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.om.OmOtherOutOrderDetDto;
 import com.fantechs.common.base.general.entity.om.OmOtherOutOrderDet;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.provider.om.mapper.OmOtherOutOrderDetMapper;
 import com.fantechs.provider.om.service.OmOtherOutOrderDetService;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,8 @@ public class OmOtherOutOrderDetServiceImpl extends BaseService<OmOtherOutOrderDe
 
     @Override
     public List<OmOtherOutOrderDetDto> findList(Map<String, Object> map) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId",sysUser.getOrganizationId());
         return omOtherOutOrderDetMapper.findList(map);
     }
 }

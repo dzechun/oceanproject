@@ -1,9 +1,11 @@
 package com.fantechs.common.base.general.entity.wms.inner.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -94,6 +96,12 @@ public class SearchWmsInnerMaterialBarcodeReOrder extends BaseQuery implements S
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
     private Byte isDelete;
+
+    /**
+     * 是否系统条码(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifSysBarcode",value = "是否系统条码(0-否 1-是)")
+    private Byte ifSysBarcode;
 
     private static final long serialVersionUID = 1L;
 }

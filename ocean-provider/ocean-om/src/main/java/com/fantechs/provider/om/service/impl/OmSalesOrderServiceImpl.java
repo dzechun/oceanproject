@@ -2,21 +2,16 @@ package com.fantechs.provider.om.service.impl;
 
 
 import cn.hutool.core.date.DateTime;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
-import com.fantechs.common.base.general.dto.om.OmHtSalesOrderDetDto;
-import com.fantechs.common.base.general.dto.om.OmHtSalesOrderDto;
-import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
-import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
+import com.fantechs.common.base.general.dto.om.*;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
+import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialOwner;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.om.OmHtSalesOrderDet;
 import com.fantechs.common.base.general.entity.om.OmSalesOrder;
@@ -28,7 +23,6 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.om.mapper.OmSalesOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmSalesOrderMapper;
@@ -65,25 +59,39 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
     private OutFeignApi outFeignApi;
     @Resource
     private BaseFeignApi baseFeignApi;
-    @Resource
-    private SecurityFeignApi securityFeignApi;
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int pushDown(List<OmSalesOrderDetDto> omSalesOrderDetDtoList) {
+        int i = 0;
+        /*for (OmSalesOrderDetDto omSalesOrderDetDto : omSalesOrderDetDtoList){
+            BigDecimal add = omSalesOrderDetDto.getTotalIssueQty().add(omSalesOrderDetDto.getIssueQty());
+            if(add.compareTo(omSalesOrderDetDto.getOrderQty()) == 1){
+                throw new BizErrorException("下发数量不能大于订单数量");
+            }
+        }*/
+
+        //查当前单据的下游单据
+        SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
+        searchBaseOrderFlow.setOrderTypeCode("OUT-OOO");
+        BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
+        if(StringUtils.isEmpty(baseOrderFlow)){
+            throw new BizErrorException("未找到当前单据配置的下游单据");
+        }
+
+        if("".equals(baseOrderFlow.getNextOrderTypeCode())){
+
+        }
+
+        return i;
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int save(OmSalesOrderDto omSalesOrderDto) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
-        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-        searchSysSpecItem.setSpecCode("wanbaoSyncData");
-        List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-        if (specItems.isEmpty()){
-            omSalesOrderDto.setSalesOrderCode(CodeUtils.getId("SEORD"));
-        }else {
-            JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
-            if(!jsonObject.get("enable").equals(1) || StringUtils.isEmpty(omSalesOrderDto.getSalesOrderCode())){
-                omSalesOrderDto.setSalesOrderCode(CodeUtils.getId("SEORD"));
-            }
-        }
+        omSalesOrderDto.setSalesOrderCode(CodeUtils.getId("OUT-SO"));
         omSalesOrderDto.setOrgId(user.getOrganizationId());
         omSalesOrderDto.setCreateTime(new DateTime());
         omSalesOrderDto.setCreateUserId(user.getUserId());

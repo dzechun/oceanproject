@@ -24,4 +24,8 @@ public class SearchWmsInnerJobOrderDet extends BaseQuery implements Serializable
 
     @ApiModelProperty(name="nonShiftStorageStatus",value = "不等于，移位状态(1-待作业 2-拣货中 3-上架中 4-已完成)")
     private byte nonShiftStorageStatus;
+
+    @ApiModelProperty(name="ifFiltrate",value = "是否筛选（0，否  1，是）")
+    private byte ifFiltrate;
+
 }
