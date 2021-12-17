@@ -2308,6 +2308,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     @Transactional(rollbackFor = RuntimeException.class)
     public WmsInnerJobOrderDet saveHaveInnerJobOrder(List<SaveHaveInnerJobOrderDto> list) {
         SysUser sysUser = currentUser();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         //是否系统条码(0-否 1-是)
         String ifSysBarcode=list.get(0).getIfSysBarcode();
         //明细ID
@@ -2409,7 +2410,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 wmsInnerMaterialBarcode.setBatchCode(item.getBatchCode());
                 wmsInnerMaterialBarcode.setMaterialQty(item.getMaterialQty());
                 wmsInnerMaterialBarcode.setIfSysBarcode((byte) 0);
-                wmsInnerMaterialBarcode.setProductionTime(item.getProductionTime());
+                try {
+                    wmsInnerMaterialBarcode.setProductionTime(sdf.parse(item.getProductionTime()));
+                }catch (Exception ex){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"参数生产日期转换为时间类型异常");
+                }
                 //产生类型(1-供应商条码 2-自己打印 3-生产条码)
                 wmsInnerMaterialBarcode.setCreateType((byte) 1);
                 //条码状态(1-已生成 2-已打印 3-已收货 4-已质检 5-已上架 6-已出库)
@@ -2633,7 +2638,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 wmsInnerMaterialBarcode.setBatchCode(saveInnerJobOrderDto.getBatchCode());
                 wmsInnerMaterialBarcode.setMaterialQty(saveInnerJobOrderDto.getMaterialQty());
                 wmsInnerMaterialBarcode.setIfSysBarcode((byte)0);
-                wmsInnerMaterialBarcode.setProductionTime(saveInnerJobOrderDto.getProductionTime());
+                try {
+                    wmsInnerMaterialBarcode.setProductionTime(sdf.parse(saveInnerJobOrderDto.getProductionTime()));
+                }catch (Exception ex){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"参数生产日期转换为时间类型异常");
+                }
                 //产生类型(1-供应商条码 2-自己打印 3-生产条码)
                 wmsInnerMaterialBarcode.setCreateType((byte)1);
                 //条码状态(1-已生成 2-已打印 3-已收货 4-已质检 5-已上架 6-已出库)
@@ -2722,33 +2731,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             throw new BizErrorException(ErrorCodeEnum.OPT20012006.getCode(),"更新上架单完成失败");
         }
         return 0;
-    }
-
-    /**
-     * PDA先作业后单 非系统条码新增到条码表
-     * @param
-     * @return
-     */
-    public int insertMaterialBarcode(List<SaveInnerJobOrderDto> list,SysUser sysuer){
-        int num=0;
-        for (SaveInnerJobOrderDto saveInnerJobOrderDto : list) {
-            WmsInnerMaterialBarcode wmsInnerMaterialBarcode=new WmsInnerMaterialBarcode();
-            wmsInnerMaterialBarcode.setMaterialId(saveInnerJobOrderDto.getMaterialId());
-            wmsInnerMaterialBarcode.setBarcode(saveInnerJobOrderDto.getBarcode());
-            wmsInnerMaterialBarcode.setBatchCode(saveInnerJobOrderDto.getBatchCode());
-            wmsInnerMaterialBarcode.setMaterialQty(saveInnerJobOrderDto.getMaterialQty());
-            wmsInnerMaterialBarcode.setProductionTime(saveInnerJobOrderDto.getProductionTime());
-            //产生类型(1-供应商条码 2-自己打印 3-生产条码)
-            wmsInnerMaterialBarcode.setCreateType((byte)1);
-            //条码状态(1-已生成 2-已打印 3-已收货 4-已质检 5-已上架 6-已出库)
-            wmsInnerMaterialBarcode.setBarcodeStatus((byte)5);
-            wmsInnerMaterialBarcode.setOrgId(sysuer.getOrganizationId());
-            wmsInnerMaterialBarcode.setCreateTime(new Date());
-            wmsInnerMaterialBarcode.setCreateUserId(sysuer.getUserId());
-            num+=wmsInnerMaterialBarcodeMapper.insertSelective(wmsInnerMaterialBarcode);
-        }
-
-        return num;
     }
 
     /**

@@ -56,7 +56,7 @@ public class SaveInnerJobOrderDto implements Serializable {
      * 生产日期
      */
     @ApiModelProperty(name="productionTime",value = "生产日期")
-    private Date productionTime;
+    private String productionTime;
 
     /**
      * 是否系统条码(0-否 1-是)
