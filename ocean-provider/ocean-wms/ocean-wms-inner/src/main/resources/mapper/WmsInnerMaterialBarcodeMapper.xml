@@ -62,6 +62,7 @@
         wimb.supplier_id,
         wimb.batch_code,
         wimb.material_qty,
+        wimb.production_time,
         wimb.label_id,
         wimb.inspection_status,
         wimb.barcode_status,
