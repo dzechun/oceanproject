@@ -89,6 +89,13 @@ public class BaseStorageTaskPoint extends ValidGroup implements Serializable {
     private Integer usePriority;
 
     /**
+     * 层级类别
+     */
+    @ApiModelProperty(name="hierarchicalCategory",value = "层级类别")
+    @Column(name = "hierarchical_category")
+    private String hierarchicalCategory;
+
+    /**
      * 配送方式
      */
     @ApiModelProperty(name="type",value = "配送方式")
