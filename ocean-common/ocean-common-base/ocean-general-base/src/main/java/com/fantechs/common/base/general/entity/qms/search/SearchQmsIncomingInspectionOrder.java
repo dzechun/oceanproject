@@ -63,4 +63,8 @@ public class SearchQmsIncomingInspectionOrder extends BaseQuery implements Seria
      */
     @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
     private Integer codeQueryMark;
+
+    @ApiModelProperty(name="ifFiltrate",value = "是否筛选（0，否  1，是）")
+    private byte ifFiltrate;
+
 }

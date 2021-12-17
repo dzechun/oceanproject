@@ -52,6 +52,8 @@
         <result column="createUser_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modifiedUser_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+        <result column="total_material_qty" jdbcType="DECIMAL" property="totalMaterialQty"/>
     </resultMap>
 
     <sql id="BaseColumnList">
@@ -85,6 +87,7 @@
   </sql>
 
     <select id="findList" resultMap="BaseResultMapDto">
+        select * from (
         select
         <include refid="BaseColumnList"/>,
         opo.purchase_order_code,opod.delivery_date AS order_date,bm.material_code,opod.order_qty AS order_qty,
@@ -93,7 +96,9 @@
         su.user_name AS create_user_name,
         sus.user_name AS modified_user_name,
         bo.organization_name AS organization_Name,
-        wiao.asn_code
+        wiao.asn_code,
+        bs.supplier_name,
+        sum(wimb.material_qty) as total_material_qty
         FROM wms_in_asn_order_det wiaod
         LEFT JOIN wms_in_asn_order wiao on wiao.asn_order_id = wiaod.asn_order_id
         LEFT JOIN om_purchase_order_det opod ON wiaod.source_order_id = opod.purchase_order_det_id
@@ -104,10 +109,13 @@
         LEFT JOIN sys_user su ON wiaod.create_user_id = su.user_id
         LEFT JOIN sys_user sus ON wiaod.modified_user_id = sus.user_id
         LEFT JOIN base_organization bo ON wiaod.org_id = bo.organization_id
+        left join base_supplier bs on bs.supplier_id=wiao.supplier_id
+        left join wms_inner_material_barcode wimb on wimb.print_order_code = wiao.asn_code and wimb.material_id = wiaod.material_id
         <where>
             <if test="asnOrderId !=null and asnOrderId !=''">
                 and wiaod.asn_order_id=#{asnOrderId}
             </if>
+
             <if test="asnOrderIdList !=null and asnOrderIdList !=''">
                 <foreach collection="asnOrderIdList" item="item" index="index" open="and wiaod.asn_order_id in(" separator="," close=")">
                     {item}
@@ -127,6 +135,12 @@
             </if>
         </where>
         group by wiaod.asn_order_det_id
+        ) d
+        <where>
+            <if test="ifFiltrate!=null and ifFiltrate == 1">
+                (d.total_material_qty &lt; d.delivery_qty || d.total_material_qty is null)
+            </if>
+        </where>
     </select>
 
     <update id="batchUpdate" parameterType="list">

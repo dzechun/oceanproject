@@ -155,7 +155,7 @@
     </update>
 
     <select id="findPrintModel" resultType="com.fantechs.common.base.general.dto.mes.sfc.PrintModel">
-        select * FROM view_material
+        select * FROM ${labelCode}
         <where>
             id = #{id}
         </where>

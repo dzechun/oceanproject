@@ -4,7 +4,9 @@ import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrderDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * @Author mr.lei
@@ -12,6 +14,9 @@ import java.io.Serializable;
  */
 @Data
 public class WmsInReceivingOrderDetDto extends WmsInReceivingOrderDet implements Serializable {
+    @ApiModelProperty(name = "receivingOrderCode",value = "上架单号")
+    private String receivingOrderCode;
+
     @ApiModelProperty(name = "materialCode",value = "物料编码")
     private String materialCode;
 
@@ -35,4 +40,7 @@ public class WmsInReceivingOrderDetDto extends WmsInReceivingOrderDet implements
 
     @ApiModelProperty(name = "operatorUserName",value = "操作人")
     private String operatorUserName;
+
+    @ApiModelProperty(name="totalMaterialQty",value = "已打印物料总数量")
+    private BigDecimal totalMaterialQty;
 }

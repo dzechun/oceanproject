@@ -18,7 +18,7 @@ public interface WmsInnerMaterialBarcodeMapper extends MyMapper<WmsInnerMaterial
 
     int batchUpdate(List<WmsInnerMaterialBarcodeDto> list);
 
-    PrintModel findPrintModel(@Param("id")Long id);
+    PrintModel findPrintModel(@Param("id")Long id,@Param("labelCode")String labelCode);
 
     LabelRuteDto findRule(@Param("code")String code, @Param("materialId")Long materialId , @Param("orgId")Long orgId);
 

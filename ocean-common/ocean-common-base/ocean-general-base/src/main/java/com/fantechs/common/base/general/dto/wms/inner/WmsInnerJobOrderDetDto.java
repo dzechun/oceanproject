@@ -12,6 +12,13 @@ import java.math.BigDecimal;
 public class WmsInnerJobOrderDetDto extends WmsInnerJobOrderDet implements Serializable {
 
     /**
+     * 收货作业单号
+     */
+    @Transient
+    @ApiModelProperty(name = "jobOrderCode",value = "收货作业单号")
+    private String jobOrderCode;
+
+    /**
      * 移出库位
      */
     @Transient

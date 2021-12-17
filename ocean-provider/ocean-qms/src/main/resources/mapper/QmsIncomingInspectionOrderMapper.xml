@@ -45,6 +45,7 @@
     <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
     <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+    <result column="total_material_qty" jdbcType="DECIMAL" property="totalMaterialQty"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     <result column="inspection_way_desc" jdbcType="VARCHAR" property="inspectionWayDesc"/>
     <result column="inspection_standard_name" jdbcType="VARCHAR" property="inspectionStandardName"/>
@@ -87,13 +88,15 @@
   </sql>
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+    select * from (
     select <include refid="Base_Column_List"></include>,
     bm.material_code,bm.material_desc,bm.material_version,bpm.product_model_name,
     bs.supplier_name,bw.warehouse_name,biw.inspection_way_desc,bis.inspection_standard_name,
     bf.access_url,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
-    bo.organization_name
+    bo.organization_name,
+    sum(wimb.material_qty) as total_material_qty
     from qms_incoming_inspection_order qiio
     left join base_material bm on qiio.material_id=bm.material_id
     left join base_material_tab bmt on bm.material_id=bmt.material_id
@@ -106,6 +109,7 @@
     left join sys_user u on qiio.create_user_id=u.user_id
     left join sys_user s on qiio.modified_user_id=s.user_id
     left join base_organization bo ON qiio.org_id = bo.organization_id
+    left join wms_inner_material_barcode wimb on wimb.print_order_code = qiio.incoming_inspection_order_code
     <where>
       <if test="incomingInspectionOrderId != null">
         and qiio.incoming_inspection_order_id = #{incomingInspectionOrderId}
@@ -147,6 +151,13 @@
         and qiio.org_id=#{orgId}
       </if>
     </where>
+    GROUP BY qiio.incoming_inspection_order_id
     order by qiio.create_time desc
+    ) d
+    <where>
+      <if test="ifFiltrate!=null and ifFiltrate == 1">
+        (d.total_material_qty &lt; d.order_qty || d.total_material_qty is null)
+      </if>
+    </where>
   </select>
 </mapper>

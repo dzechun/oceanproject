@@ -59,6 +59,12 @@ public class WmsInnerMaterialBarcodeController {
         return ControllerUtil.returnDataSuccess(list,StringUtils.isEmpty(list)?0:1);
     }
 
+    @ApiOperation("删除")
+    @PostMapping("/delete")
+    public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
+        return ControllerUtil.returnCRUD(wmsInnerMaterialBarcodeService.batchDelete(ids));
+    }
+
     @ApiOperation("规则解析及标签模版")
     @PostMapping("/findRule")
     public ResponseEntity<LabelRuteDto> findRule(@ApiParam(value = "barcodeRuleSetId",required = true)@RequestParam Long barcodeRuleSetId,@ApiParam(value = "materialId",required = true)@RequestParam Long materialId){
@@ -68,8 +74,8 @@ public class WmsInnerMaterialBarcodeController {
 
     @ApiOperation("打印/补打")
     @PostMapping("/print")
-    public ResponseEntity print(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids,@RequestParam int printQty,String printName,@RequestParam int printType){
-        return ControllerUtil.returnCRUD(wmsInnerMaterialBarcodeService.print(ids,printQty,printName,printType));
+    public ResponseEntity print(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids,@RequestParam int printQty,String printName,@RequestParam String printType,@ApiParam(value = "打印方式（0，打印 1，补打）",required = true) @RequestParam int printMode){
+        return ControllerUtil.returnCRUD(wmsInnerMaterialBarcodeService.print(ids,printQty,printName,printType,printMode));
     }
 
     @ApiOperation("列表")
