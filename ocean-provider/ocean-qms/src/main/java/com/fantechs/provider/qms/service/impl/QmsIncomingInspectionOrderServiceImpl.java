@@ -187,22 +187,25 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                     throw new BizErrorException("未找到当前单据配置的下游单据");
                 }
 
-                if(map.get(baseOrderFlow.getNextOrderTypeCode())==null){
+                String key = id+"_"+baseOrderFlow.getNextOrderTypeCode();
+                if(map.get(key)==null){
                     List<QmsIncomingInspectionOrder> diffGroupOrders = new LinkedList<>();
                     diffGroupOrders.add(incomingInspectionOrder);
-                    map.put(baseOrderFlow.getNextOrderTypeCode(),diffGroupOrders);
+                    map.put(key,diffGroupOrders);
                 }else {
-                    List<QmsIncomingInspectionOrder> diffGroupOrders = map.get(baseOrderFlow.getNextOrderTypeCode());
+                    List<QmsIncomingInspectionOrder> diffGroupOrders = map.get(key);
                     diffGroupOrders.add(incomingInspectionOrder);
-                    map.put(baseOrderFlow.getNextOrderTypeCode(),diffGroupOrders);
+                    map.put(key,diffGroupOrders);
                 }
             }
         }
 
 
-        Set<String> nextOrderTypeCodes = map.keySet();
-        for (String nextOrderTypeCode : nextOrderTypeCodes){
-            List<QmsIncomingInspectionOrder> orders = map.get(nextOrderTypeCode);
+        Set<String> codes = map.keySet();
+        for (String code : codes){
+            String[] split = code.split("_");
+            String nextOrderTypeCode = split[1];//下游单据类型
+            List<QmsIncomingInspectionOrder> orders = map.get(code);
             String sysOrderTypeCode = orders.get(0).getSysOrderTypeCode();//当前单据类型编码
             String coreSourceSysOrderTypeCode = orders.get(0).getCoreSourceSysOrderTypeCode();//核心单据类型编码
 
