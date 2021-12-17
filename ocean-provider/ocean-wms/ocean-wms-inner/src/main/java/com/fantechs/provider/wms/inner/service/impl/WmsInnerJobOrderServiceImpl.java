@@ -53,6 +53,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -2514,6 +2515,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     @Transactional(rollbackFor = RuntimeException.class)
     public WmsInnerJobOrder saveInnerJobOrder(List<SaveInnerJobOrderDto> list) {
         SysUser sysUser = currentUser();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         int num=0;
         //判断是否已创建上架单
         Long jobOrderIdExist=list.get(0).getJobOrderId();
