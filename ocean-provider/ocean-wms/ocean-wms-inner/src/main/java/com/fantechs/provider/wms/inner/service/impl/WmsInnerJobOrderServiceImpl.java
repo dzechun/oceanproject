@@ -336,7 +336,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
 
             if(wmsInPutawayOrderDet.getInStorageId().equals(wmsInPutawayOrderDet.getOutStorageId())){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"移入库位不能与当前库位相同");
+                throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"移入库位不能与移出库位相同");
             }
 
             //当货品分配时未全部分配完时新增一条剩余待分配数量的记录
