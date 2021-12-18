@@ -2445,7 +2445,25 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 WmsInnerMaterialBarcode wmsInnerMaterialBarcode = new WmsInnerMaterialBarcode();
                 wmsInnerMaterialBarcode.setMaterialBarcodeId(item.getMaterialBarcodeId());
                 wmsInnerMaterialBarcode.setBarcodeStatus((byte) 5);
+                wmsInnerMaterialBarcode.setModifiedUserId(sysUser.getUserId());
+                wmsInnerMaterialBarcode.setModifiedTime(new Date());
                 num += wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(wmsInnerMaterialBarcode);
+
+                //更新条码关系表条码状态
+                SearchWmsInnerMaterialBarcodeReOrder sReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
+                sReOrder.setOrderTypeCode("IN-IWK");
+                sReOrder.setOrderId(wmsInnerJobOrder.getJobOrderId());
+                sReOrder.setMaterialBarcodeId(item.getMaterialBarcodeId());
+                List<WmsInnerMaterialBarcodeReOrderDto> reOrderDtoList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sReOrder));
+                if(reOrderDtoList.size()<=0){
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"条码关系表找不到此条码数据 条码ID-->"+item.getMaterialBarcodeId().toString());
+                }
+                WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder=new WmsInnerMaterialBarcodeReOrder();
+                wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeReOrderId(reOrderDtoList.get(0).getMaterialBarcodeReOrderId());
+                wmsInnerMaterialBarcodeReOrder.setScanStatus((byte)3);
+                wmsInnerMaterialBarcodeReOrder.setModifiedUserId(sysUser.getUserId());
+                wmsInnerMaterialBarcodeReOrder.setModifiedTime(new Date());
+                wmsInnerMaterialBarcodeReOrderMapper.updateByPrimaryKeySelective(wmsInnerMaterialBarcodeReOrder);
             }
         }
         //非系统条码增加到关系表
@@ -2592,6 +2610,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
             record.setWarehouseId(warehouseId);
             record.setWorkerId(sysUser.getUserId());
+            //开始作业时间
+            record.setWorkStartTime(new Date());
             record.setCreateTime(new Date());
             record.setCreateUserId(sysUser.getUserId());
             record.setModifiedTime(new Date());
@@ -2666,6 +2686,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 WmsInnerMaterialBarcode wmsInnerMaterialBarcode=new WmsInnerMaterialBarcode();
                 wmsInnerMaterialBarcode.setMaterialBarcodeId(saveInnerJobOrderDto.getMaterialBarcodeId());
                 wmsInnerMaterialBarcode.setBarcodeStatus((byte)5);
+                wmsInnerMaterialBarcode.setModifiedUserId(sysUser.getUserId());
+                wmsInnerMaterialBarcode.setModifiedTime(new Date());
                 num+=wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(wmsInnerMaterialBarcode);
             }
         }
@@ -2730,13 +2752,15 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"上架单已完成");
         }
         wmsInnerJobOrder.setOrderStatus((byte)5);
+        //作业结束时间
+        wmsInnerJobOrder.setWorkEndtTime(new Date());
         wmsInnerJobOrder.setModifiedUserId(sysUser.getUserId());
         wmsInnerJobOrder.setModifiedTime(new Date());
         num=wmsInPutawayOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
         if(num<=0){
             throw new BizErrorException(ErrorCodeEnum.OPT20012006.getCode(),"更新上架单完成失败");
         }
-        return 0;
+        return num;
     }
 
     /**
