@@ -2542,6 +2542,10 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"扫描的库位无效");
         }
         BaseStorage baseStorage=rbaseStorage.getData();
+        if(baseStorage.getStorageType()!=(byte)1){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"扫描的库位不是存货库位");
+        }
+
         //仓库
         Long warehouseId=baseStorage.getWarehouseId();
         if(StringUtils.isEmpty(warehouseId)){
@@ -2549,8 +2553,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         }
 
         //如果已提交生成的上架单仓库和此次提交的库位仓库不相等 报错
-        if(StringUtils.isNotEmpty(warehouseIdExist) && warehouseIdExist!=warehouseId){
-            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"此次提交库位对应仓库与以提交的库位仓库不相等");
+        if(StringUtils.isNotEmpty(warehouseIdExist) && warehouseIdExist.longValue()!=warehouseId.longValue()){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"此次提交库位对应仓库与已提交的库位仓库不相等");
         }
 
         //找仓库合格状态
@@ -2571,6 +2575,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         }
         //收货库位
         Long outStorageId=rBaseStorageList.getData().get(0).getStorageId();
+
         //创建上架单
         if(StringUtils.isEmpty(jobOrderIdExist)) {
             record.setJobOrderType((byte) 1);
@@ -2625,6 +2630,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 wmsInnerJobOrderDet.setInventoryStatusId(inventoryStatusId);
                 wmsInnerJobOrderDet.setBatchCode(saveInnerJobOrderDto.getBatchCode());
                 wmsInnerJobOrderDet.setWorkStartTime(new Date());
+                wmsInnerJobOrderDet.setWorkEndTime(new Date());
                 wmsInnerJobOrderDet.setCreateTime(new Date());
                 wmsInnerJobOrderDet.setCreateUserId(sysUser.getUserId());
                 list1.add(wmsInnerJobOrderDet);
