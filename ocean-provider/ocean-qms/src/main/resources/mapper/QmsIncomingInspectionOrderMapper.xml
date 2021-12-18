@@ -41,6 +41,8 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
     <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
     <result column="product_model_name" jdbcType="VARCHAR" property="productModelName"/>
@@ -90,7 +92,8 @@
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select * from (
     select <include refid="Base_Column_List"></include>,
-    bm.material_code,bm.material_desc,bm.material_version,bpm.product_model_name,
+    bm.material_code,bm.material_name,bm.material_desc,bm.material_version,
+    bmt.main_unit,bpm.product_model_name,
     bs.supplier_name,bw.warehouse_name,biw.inspection_way_desc,bis.inspection_standard_name,
     bf.access_url,
     u.user_name as create_user_name,
@@ -125,6 +128,15 @@
       </if>
       <if test="materialCode != null and materialCode!=''">
         and bm.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
+      <if test="materialName != null and materialName!=''">
+        and bm.material_name like CONCAT('%', #{materialName}, '%')
+      </if>
+      <if test="materialDesc != null and materialDesc!=''">
+        and bm.material_desc like CONCAT('%', #{materialDesc}, '%')
+      </if>
+      <if test="materialVersion != null and materialVersion!=''">
+        and bm.material_version like CONCAT('%', #{materialVersion}, '%')
       </if>
       <if test="inspectionStatus != null">
         and qiio.inspection_status = #{inspectionStatus}

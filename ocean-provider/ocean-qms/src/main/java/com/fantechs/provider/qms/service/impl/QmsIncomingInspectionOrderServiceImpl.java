@@ -147,12 +147,14 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         //查当前单据的下游单据
-        SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
+        /*SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
         searchBaseOrderFlow.setOrderTypeCode("QMS-MIIO");
+        searchBaseOrderFlow.setMaterialId();
+        searchBaseOrderFlow.setSupplierId();
         BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
         if (StringUtils.isEmpty(baseOrderFlow)) {
             throw new BizErrorException("未找到当前单据配置的下游单据");
-        }
+        }*/
 
         //根据单据流生成入库计划单或上架作业单
         int i = 0;
@@ -167,18 +169,51 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
         }
 
         //根据仓库分组，不同仓库生成多张单
+        Map<String,List<QmsIncomingInspectionOrder>> map = new HashMap<>();
         HashMap<Long, List<QmsIncomingInspectionOrder>> collect = qmsIncomingInspectionOrders.stream().collect(Collectors.groupingBy(QmsIncomingInspectionOrder::getWarehouseId, HashMap::new, Collectors.toList()));
         Set<Long> set = collect.keySet();
         for (Long id : set) {
             List<QmsIncomingInspectionOrder> incomingInspectionOrders = collect.get(id);
-            String sysOrderTypeCode = incomingInspectionOrders.get(0).getSysOrderTypeCode();//当前单据类型编码
-            String coreSourceSysOrderTypeCode = incomingInspectionOrders.get(0).getCoreSourceSysOrderTypeCode();//核心单据类型编码
 
-            if ("IN-IPO".equals(baseOrderFlow.getNextOrderTypeCode())) {
+            //不同单据流分组
+            for (QmsIncomingInspectionOrder incomingInspectionOrder : incomingInspectionOrders){
+                //查当前单据的下游单据
+                SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
+                searchBaseOrderFlow.setOrderTypeCode("QMS-MIIO");
+                searchBaseOrderFlow.setMaterialId(incomingInspectionOrder.getMaterialId());
+                searchBaseOrderFlow.setSupplierId(incomingInspectionOrder.getSupplierId());
+                BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
+                if (StringUtils.isEmpty(baseOrderFlow)) {
+                    throw new BizErrorException("未找到当前单据配置的下游单据");
+                }
+
+                String key = id+"_"+baseOrderFlow.getNextOrderTypeCode();
+                if(map.get(key)==null){
+                    List<QmsIncomingInspectionOrder> diffGroupOrders = new LinkedList<>();
+                    diffGroupOrders.add(incomingInspectionOrder);
+                    map.put(key,diffGroupOrders);
+                }else {
+                    List<QmsIncomingInspectionOrder> diffGroupOrders = map.get(key);
+                    diffGroupOrders.add(incomingInspectionOrder);
+                    map.put(key,diffGroupOrders);
+                }
+            }
+        }
+
+
+        Set<String> codes = map.keySet();
+        for (String code : codes){
+            String[] split = code.split("_");
+            String nextOrderTypeCode = split[1];//下游单据类型
+            List<QmsIncomingInspectionOrder> orders = map.get(code);
+            String sysOrderTypeCode = orders.get(0).getSysOrderTypeCode();//当前单据类型编码
+            String coreSourceSysOrderTypeCode = orders.get(0).getCoreSourceSysOrderTypeCode();//核心单据类型编码
+
+            if ("IN-IPO".equals(nextOrderTypeCode)) {
                 //生成入库计划单
                 List<WmsInInPlanOrderDetDto> detList = new LinkedList<>();
                 int lineNumber = 1;
-                for (QmsIncomingInspectionOrder qmsIncomingInspectionOrder : incomingInspectionOrders) {
+                for (QmsIncomingInspectionOrder qmsIncomingInspectionOrder : orders) {
                     WmsInInPlanOrderDetDto wmsInInPlanOrderDet = new WmsInInPlanOrderDetDto();
                     wmsInInPlanOrderDet.setCoreSourceOrderCode(qmsIncomingInspectionOrder.getCoreSourceOrderCode());
                     wmsInInPlanOrderDet.setSourceOrderCode(qmsIncomingInspectionOrder.getIncomingInspectionOrderCode());
@@ -198,7 +233,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 wmsInInPlanOrder.setMakeOrderUserId(user.getUserId());
                 wmsInInPlanOrder.setSourceSysOrderTypeCode(sysOrderTypeCode);
                 wmsInInPlanOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
-                wmsInInPlanOrder.setWarehouseId(incomingInspectionOrders.get(0).getWarehouseId());
+                wmsInInPlanOrder.setWarehouseId(orders.get(0).getWarehouseId());
                 wmsInInPlanOrder.setOrderStatus((byte) 1);
                 wmsInInPlanOrder.setCreateUserId(user.getUserId());
                 wmsInInPlanOrder.setCreateTime(new Date());
@@ -212,14 +247,14 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 if (responseEntity.getCode() != 0) {
                     throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
                 } else {
-                    qmsIncomingInspectionOrderMapper.batchUpdate(incomingInspectionOrders);
+                    qmsIncomingInspectionOrderMapper.batchUpdate(orders);
                     i++;
                 }
-            } else if ("IN-IWK".equals(baseOrderFlow.getNextOrderTypeCode())) {
+            } else if ("IN-IWK".equals(nextOrderTypeCode)) {
                 //生成上架作业单
                 List<WmsInnerJobOrderDet> detList = new LinkedList<>();
                 int lineNumber = 1;
-                for (QmsIncomingInspectionOrder qmsIncomingInspectionOrder : incomingInspectionOrders) {
+                for (QmsIncomingInspectionOrder qmsIncomingInspectionOrder : orders) {
                     WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
                     wmsInnerJobOrderDet.setCoreSourceOrderCode(qmsIncomingInspectionOrder.getCoreSourceOrderCode());
                     wmsInnerJobOrderDet.setSourceOrderCode(qmsIncomingInspectionOrder.getIncomingInspectionOrderCode());
@@ -238,7 +273,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
                 wmsInnerJobOrder.setSourceSysOrderTypeCode(sysOrderTypeCode);
                 wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
-                wmsInnerJobOrder.setWarehouseId(incomingInspectionOrders.get(0).getWarehouseId());
+                wmsInnerJobOrder.setWarehouseId(orders.get(0).getWarehouseId());
                 wmsInnerJobOrder.setJobOrderType((byte) 1);
                 wmsInnerJobOrder.setOrderStatus((byte) 1);
                 wmsInnerJobOrder.setCreateUserId(user.getUserId());
@@ -253,13 +288,14 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 if (responseEntity.getCode() != 0) {
                     throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
                 } else {
-                    qmsIncomingInspectionOrderMapper.batchUpdate(incomingInspectionOrders);
+                    qmsIncomingInspectionOrderMapper.batchUpdate(orders);
                     i++;
                 }
             } else {
                 throw new BizErrorException("单据流配置错误");
             }
         }
+
 
         return i;
     }
