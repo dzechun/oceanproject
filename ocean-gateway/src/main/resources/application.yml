@@ -7,7 +7,7 @@ server:
      direct-buffers: true
 spring:
   profiles:
-    active: wuhuan
+    active: dev
   application:
     name: @pom.artifactId@
   servlet:
@@ -79,4 +79,4 @@ url:
   securityUrl: http://localhost:8768/ocean-security/clientGetToken
 
 constant-base:
-  orgId: 29
+  orgId: 1004
