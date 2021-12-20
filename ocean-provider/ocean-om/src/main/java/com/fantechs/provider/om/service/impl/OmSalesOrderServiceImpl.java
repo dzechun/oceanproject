@@ -78,7 +78,8 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
     public int pushDown(List<OmSalesOrderDetDto> omSalesOrderDetDtoList) {
         int i = 0;
         for (OmSalesOrderDetDto omSalesOrderDetDto : omSalesOrderDetDtoList){
-            BigDecimal add = omSalesOrderDetDto.getTotalIssueQty().add(omSalesOrderDetDto.getIssueQty());
+            BigDecimal totalIssueQty = omSalesOrderDetDto.getTotalIssueQty() == null ? BigDecimal.ZERO : omSalesOrderDetDto.getTotalIssueQty();
+            BigDecimal add = totalIssueQty.add(omSalesOrderDetDto.getIssueQty());
             if(add.compareTo(omSalesOrderDetDto.getOrderQty()) == 1){
                 throw new BizErrorException("下发数量不能大于订单数量");
             }else if(add.compareTo(omSalesOrderDetDto.getOrderQty()) == 0){
@@ -260,8 +261,12 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
                 omSalesOrderDetDto.setOrgId(user.getOrganizationId());
                 addDetList.add(omSalesOrderDetDto);
             }
-            omSalesOrderDetMapper.insertList(addDetList);
-            omHtSalesOrderDetMapper.insertList(htList);
+            if(StringUtils.isNotEmpty(addDetList)) {
+                omSalesOrderDetMapper.insertList(addDetList);
+            }
+            if(StringUtils.isNotEmpty(htList)) {
+                omHtSalesOrderDetMapper.insertList(htList);
+            }
         }
 
         //履历

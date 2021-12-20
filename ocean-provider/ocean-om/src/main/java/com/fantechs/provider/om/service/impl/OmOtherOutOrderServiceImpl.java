@@ -79,7 +79,8 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
     public int pushDown(List<OmOtherOutOrderDetDto> omOtherOutOrderDets) {
         int i;
         for (OmOtherOutOrderDetDto omOtherOutOrderDetDto : omOtherOutOrderDets){
-            BigDecimal add = omOtherOutOrderDetDto.getTotalIssueQty().add(omOtherOutOrderDetDto.getIssueQty());
+            BigDecimal totalIssueQty = omOtherOutOrderDetDto.getTotalIssueQty() == null ? BigDecimal.ZERO : omOtherOutOrderDetDto.getTotalIssueQty();
+            BigDecimal add = totalIssueQty.add(omOtherOutOrderDetDto.getIssueQty());
             if(add.compareTo(omOtherOutOrderDetDto.getOrderQty()) == 1){
                 throw new BizErrorException("下发数量不能大于订单数量");
             }else if(add.compareTo(omOtherOutOrderDetDto.getOrderQty()) == 0){
@@ -245,7 +246,9 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
                 omOtherOutOrderDet.setOrgId(sysUser.getOrganizationId());
                 addDetList.add(omOtherOutOrderDet);
             }
-            num += omOtherOutOrderDetMapper.insertList(addDetList);
+            if(StringUtils.isNotEmpty(addDetList)) {
+                num += omOtherOutOrderDetMapper.insertList(addDetList);
+            }
         }
 
         this.addHt(entity,omOtherOutOrderDets);
