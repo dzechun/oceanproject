@@ -3432,6 +3432,7 @@ public class BarcodeUtils {
             BaseProductBomDto baseProductBomDto = responseEntityPB.getData().get(0);
             long productBomId=baseProductBomDto.getProductBomId();
             searchBaseProductBom.setProductBomId(productBomId);
+            searchBaseProductBom.setPageSize(2000);
             ResponseEntity<BaseProductBomDto> responseEntityBom= barcodeUtils.deviceInterFaceUtils.findNextLevelProductBomDet(searchBaseProductBom);
             if(StringUtils.isNotEmpty(responseEntityBom.getData())){
                 List<BaseProductBomDetDto> baseProductBomDetDtos = responseEntityBom.getData().getBaseProductBomDetDtos();

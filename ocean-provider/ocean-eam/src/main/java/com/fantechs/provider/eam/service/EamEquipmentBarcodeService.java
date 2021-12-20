@@ -17,4 +17,8 @@ public interface EamEquipmentBarcodeService extends IService<EamEquipmentBarcode
     int plusCurrentUsageTime(Long equipmentBarCodeId, Integer num);
 
     int equipmentWarning();
+
+    int updateEquipmentStatus();
+
+    int updateEquipmentStatusByLongTime();
 }

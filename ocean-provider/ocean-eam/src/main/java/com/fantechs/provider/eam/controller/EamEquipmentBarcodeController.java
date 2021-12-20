@@ -1,11 +1,9 @@
 package com.fantechs.provider.eam.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentBarcode;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentBarcode;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.eam.service.EamEquipmentBarcodeService;
 import com.github.pagehelper.Page;
@@ -17,7 +15,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -84,4 +81,18 @@ public class EamEquipmentBarcodeController {
     public ResponseEntity equipmentWarning() {
         return ControllerUtil.returnCRUD(eamEquipmentBarcodeService.equipmentWarning());
     }
+
+    @ApiOperation(value = "将设备状态4改成5",notes = "将设备状态4改成5")
+    @GetMapping("/updateEquipmentStatus")
+    public ResponseEntity updateEquipmentStatus() {
+        return ControllerUtil.returnCRUD(eamEquipmentBarcodeService.updateEquipmentStatus());
+    }
+
+    @ApiOperation(value = "将数分钟内没有更新过的设备改成待生产",notes = "将数分钟内没有更新过的设备改成待生产")
+    @GetMapping("/updateEquipmentStatusByLongTime")
+    public ResponseEntity updateEquipmentStatusByLongTime() {
+        return ControllerUtil.returnCRUD(eamEquipmentBarcodeService.updateEquipmentStatusByLongTime());
+    }
+
+
 }

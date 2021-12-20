@@ -104,4 +104,10 @@ public class SearchBaseStorageTaskPoint extends BaseQuery implements Serializabl
      */
     @ApiModelProperty(name="usePriority",value = "优先级")
     private Integer usePriority;
+
+    /**
+     * 层级类别
+     */
+    @ApiModelProperty(name="hierarchicalCategory",value = "层级类别")
+    private String hierarchicalCategory;
 }
