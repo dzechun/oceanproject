@@ -9,18 +9,18 @@ import com.fantechs.common.base.general.entity.eam.EamEquipment;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentBarcode;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.eam.mapper.EamEquipmentBarcodeMapper;
 import com.fantechs.provider.eam.mapper.EamEquipmentMapper;
 import com.fantechs.provider.eam.service.EamEquipmentBarcodeService;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.util.*;
 
 /**
  *
@@ -57,6 +57,8 @@ public class EamEquipmentBarcodeServiceImpl extends BaseService<EamEquipmentBarc
             currentUsageTime=eamEquipmentBarcode.getCurrentUsageTime();
 
         eamEquipmentBarcode.setCurrentUsageTime(currentUsageTime+num);
+        eamEquipmentBarcode.setEquipmentStatus((byte)4);//更新状态为生产中
+        eamEquipmentBarcode.setModifiedTime(new Date());
         return eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
     }
 
@@ -133,6 +135,39 @@ public class EamEquipmentBarcodeServiceImpl extends BaseService<EamEquipmentBarc
         return sum;
     }
 
+    @Override
+    public int updateEquipmentStatus() {
+
+        //将所有设备状态为运行中的值都改成5待运行
+        Example example = new Example(EamEquipmentBarcode.class);
+        example.createCriteria().andEqualTo("equipment_status",4);
+        EamEquipmentBarcode eamEquipmentBarcode = new EamEquipmentBarcode();
+        eamEquipmentBarcode.setEquipmentStatus((byte)5);
+        return eamEquipmentBarcodeMapper.updateByExampleSelective(eamEquipmentBarcode,example);
+    }
+
+    @Override
+    public int updateEquipmentStatusByLongTime() {
+        Date nd = new Date();
+        Long lnd = nd.getTime();
+        Example example = new Example(EamEquipmentBarcode.class);
+        example.createCriteria().andEqualTo("equipment_status",4);
+        List<EamEquipmentBarcode> eamEquipmentBarcodes = eamEquipmentBarcodeMapper.selectByExample(example);
+        if(eamEquipmentBarcodes.size() > 0){
+            for (EamEquipmentBarcode eamEquipmentBarcode : eamEquipmentBarcodes) {
+                Long lod = eamEquipmentBarcode.getModifiedTime().getTime();
+                //180000 = 3分钟 3分钟内没修改过数据，则修改设备状态为待生产
+                if(lnd - lod > 180000){
+                    eamEquipmentBarcode.setEquipmentStatus((byte)5);
+                    eamEquipmentBarcodeMapper.updateByPrimaryKeySelective(eamEquipmentBarcode);
+                }
+            }
+        }
+
+        
+        return 0;
+    }
+
     public void equipmentContinueUseWarning(EamEquipmentBarcode eamEquipmentBarcode,EamEquipment eamEquipment,List<String> messages){
         String msg = "";
         boolean tag = false;
@@ -157,6 +192,22 @@ public class EamEquipmentBarcodeServiceImpl extends BaseService<EamEquipmentBarc
             msg = "设备条码为"+eamEquipmentBarcode.getEquipmentBarcode()+"的设备使用次数（天数）已达到最大使用次数（天数）";
             messages.add(msg);
         }
+
+    }
+
+    public static void main(String[] args) throws ParseException {
+
+
+
+        Date now = DateUtils.getStrToDate("yyyy-MM-dd HH:mm:ss","2021-12-17 10:44:28");
+        Date old = DateUtils.getStrToDate("yyyy-MM-dd HH:mm:ss","2021-12-17 10:39:28");
+
+        Long nowTime = now.getTime();
+        Long oldTime = old.getTime();
+
+        System.out.println("now = " + now);
+        System.out.println("old = " + old);
+        System.out.println(nowTime - oldTime);
 
     }
 }

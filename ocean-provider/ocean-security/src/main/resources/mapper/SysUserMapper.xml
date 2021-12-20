@@ -72,8 +72,6 @@
         left join ocean_v2.sys_user s on su.modified_user_id=s.user_id
         left join fantech_imes_v2.base_factory sf on su.factory_id= sf.factory_id
         left join fantech_imes_v2.base_dept sd on su.dept_id=sd.dept_id
-        /*LEFT JOIN ocean_v2.sys_user_role sur ON su.user_id = sur.user_id
-        LEFT JOIN ocean_v2.sys_role sr ON sur.role_id = sr.role_id*/
         LEFT JOIN fantech_imes_v2.base_organization bo ON su.organization_id = bo.organization_id
         <where>
             1=1

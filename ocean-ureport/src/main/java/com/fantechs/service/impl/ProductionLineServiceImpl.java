@@ -111,11 +111,13 @@ public class ProductionLineServiceImpl implements ProductionLineService {
                 searchProLineBoard.setWorkOrderId(null);
                 productDailyPlanModel = proLineBoardMapper.findNextPlan(searchProLineBoard);
 
-                productLineLeft.setNextMaterialName(productDailyPlanModel.getMaterialName());
-                productLineLeft.setNextscheduledQty(productDailyPlanModel.getScheduledQty().longValue());
-                productLineLeft.setNextWorkOrderCode(productDailyPlanModel.getWorkOrderCode());
-                productionLine.setProductLineLeft(productLineLeft);
+                if(productDailyPlanModel != null){
+                    productLineLeft.setNextMaterialName(productDailyPlanModel.getMaterialName());
+                    productLineLeft.setNextscheduledQty(productDailyPlanModel.getScheduledQty().longValue());
+                    productLineLeft.setNextWorkOrderCode(productDailyPlanModel.getWorkOrderCode());
+                }
             }
+            productionLine.setProductLineLeft(productLineLeft);
         }
 
         //right节拍

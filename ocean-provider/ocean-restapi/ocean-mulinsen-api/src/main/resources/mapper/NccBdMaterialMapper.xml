@@ -39,6 +39,9 @@
       <if test="materialtype != null and materialtype != ''">
         and nbm.MATERIALTYPE like CONCAT('%', #{materialtype}, '%')
       </if>
+      <if test="materialCode != null and materialCode != ''">
+        and nbm.CODE like CONCAT('%', #{materialCode}, '%')
+      </if>
     </where>
   </select>
 </mapper>
