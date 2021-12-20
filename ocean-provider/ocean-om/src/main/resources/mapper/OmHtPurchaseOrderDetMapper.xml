@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.om.mapper.ht.OmHtPurchaseOrderDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmHtPurchaseOrderDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_purchase_order_det_id" jdbcType="BIGINT" property="htPurchaseOrderDetId" />
+    <result column="purchase_order_det_id" jdbcType="BIGINT" property="purchaseOrderDetId" />
+    <result column="purchase_order_id" jdbcType="BIGINT" property="purchaseOrderId" />
+    <result column="project_code" jdbcType="VARCHAR" property="projectCode" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="unit_name" jdbcType="VARCHAR" property="unitName" />
+    <result column="order_qty" jdbcType="DECIMAL" property="orderQty" />
+    <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
+    <result column="factory_id" jdbcType="BIGINT" property="factoryId" />
+    <result column="delivery_date" jdbcType="TIMESTAMP" property="deliveryDate" />
+    <result column="unit_price" jdbcType="DECIMAL" property="unitPrice" />
+    <result column="material_total_price" jdbcType="DECIMAL" property="materialTotalPrice" />
+    <result column="total_receiving_qty" jdbcType="DECIMAL" property="totalReceivingQty" />
+    <result column="total_sales_return_qty" jdbcType="DECIMAL" property="totalSalesReturnQty" />
+    <result column="total_plan_delivery_qty" jdbcType="DECIMAL" property="totalPlanDeliveryQty" />
+    <result column="iqc_temporary_qty" jdbcType="DECIMAL" property="iqcTemporaryQty" />
+    <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty" />
+    <result column="if_all_issued" jdbcType="TINYINT" property="ifAllIssued" />
+    <result column="delivery_address" jdbcType="VARCHAR" property="deliveryAddress" />
+    <result column="material_status" jdbcType="TINYINT" property="materialStatus" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+</mapper>

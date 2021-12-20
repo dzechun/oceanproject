@@ -10,6 +10,12 @@ import java.io.Serializable;
 public class SearchWmsInInPlanOrder extends BaseQuery implements Serializable {
 
     /**
+     * 入库计划单编码
+     */
+    @ApiModelProperty(name="inPlanOrderCode",value = "入库计划单编码")
+    private String inPlanOrderCode;
+
+    /**
      * 系统单据类型编码
      */
     @ApiModelProperty(name="sysOrderTypeCode",value = "系统单据类型编码")
