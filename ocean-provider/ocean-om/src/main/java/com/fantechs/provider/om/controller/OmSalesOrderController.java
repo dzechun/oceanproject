@@ -3,6 +3,7 @@ package com.fantechs.provider.om.controller;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmHtSalesOrderDto;
+import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
 import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDto;
 import com.fantechs.common.base.general.entity.om.OmSalesOrder;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.List;
@@ -44,10 +46,16 @@ public class OmSalesOrderController {
     @Resource
     private OmHtSalesOrderService omHtSalesOrderService;
 
+    @ApiOperation(value = "下推",notes = "下推")
+    @PostMapping("/pushDown")
+    public ResponseEntity pushDown(@ApiParam(value = "必传：",required = true)@RequestBody @Validated @NotEmpty List<OmSalesOrderDetDto> omSalesOrderDetDtoList) {
+        return ControllerUtil.returnCRUD(omSalesOrderService.pushDown(omSalesOrderDetDtoList));
+    }
+
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated OmSalesOrderDto omSalesOrderDto) {
-        return ControllerUtil.returnCRUD(omSalesOrderService.saveDto(omSalesOrderDto));
+        return ControllerUtil.returnCRUD(omSalesOrderService.save(omSalesOrderDto));
     }
 
     @ApiOperation(value = "批量新增",notes = "批量新增")
@@ -58,11 +66,11 @@ public class OmSalesOrderController {
         return ControllerUtil.returnCRUD(omSalesOrderService.batchSave(salesOrders));
     }
 
-    @ApiOperation(value = "下发仓库",notes = "下发仓库")
+    /*@ApiOperation(value = "下发仓库",notes = "下发仓库")
     @PostMapping("/issueWarehouse")
     public ResponseEntity issueWarehouse(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
         return ControllerUtil.returnCRUD(omSalesOrderService.issueWarehouse(id));
-    }
+    }*/
 
     @ApiOperation("删除")
     @PostMapping("/delete")
@@ -73,7 +81,7 @@ public class OmSalesOrderController {
     @ApiOperation("修改")
     @PostMapping("/update")
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=OmSalesOrder.update.class) OmSalesOrderDto omSalesOrderDto) {
-        return ControllerUtil.returnCRUD(omSalesOrderService.updateDto(omSalesOrderDto));
+        return ControllerUtil.returnCRUD(omSalesOrderService.update(omSalesOrderDto));
     }
 
     @ApiOperation("批量修改")

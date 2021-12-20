@@ -3,11 +3,8 @@ package com.fantechs.provider.wms.inner.controller;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
-import com.fantechs.common.base.general.dto.srm.imports.SrmPlanDeliveryOrderImport;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerMaterialBarcodeImport;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -19,7 +16,6 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -59,6 +55,12 @@ public class WmsInnerMaterialBarcodeController {
         return ControllerUtil.returnDataSuccess(list,StringUtils.isEmpty(list)?0:1);
     }
 
+    @ApiOperation("删除")
+    @PostMapping("/delete")
+    public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
+        return ControllerUtil.returnCRUD(wmsInnerMaterialBarcodeService.batchDelete(ids));
+    }
+
     @ApiOperation("规则解析及标签模版")
     @PostMapping("/findRule")
     public ResponseEntity<LabelRuteDto> findRule(@ApiParam(value = "barcodeRuleSetId",required = true)@RequestParam Long barcodeRuleSetId,@ApiParam(value = "materialId",required = true)@RequestParam Long materialId){
@@ -68,8 +70,8 @@ public class WmsInnerMaterialBarcodeController {
 
     @ApiOperation("打印/补打")
     @PostMapping("/print")
-    public ResponseEntity print(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids,@RequestParam int printQty,String printName,@RequestParam int printType){
-        return ControllerUtil.returnCRUD(wmsInnerMaterialBarcodeService.print(ids,printQty,printName,printType));
+    public ResponseEntity print(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids,@RequestParam int printQty,String printName,@RequestParam String printType,@ApiParam(value = "打印方式（0，打印 1，补打）",required = true) @RequestParam int printMode){
+        return ControllerUtil.returnCRUD(wmsInnerMaterialBarcodeService.print(ids,printQty,printName,printType,printMode));
     }
 
     @ApiOperation("列表")
@@ -95,12 +97,26 @@ public class WmsInnerMaterialBarcodeController {
 
     @PostMapping(value = "/import")
     @ApiOperation(value = "从excel导入",notes = "从excel导入")
-    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true) @RequestPart(value="file") MultipartFile file,@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<WmsInnerMaterialBarcodeDto> list){
+    public ResponseEntity importExcel(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<WmsInnerMaterialBarcodeImport> importList,@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<WmsInnerMaterialBarcodeDto> list,@ApiParam(value = "必传：打印类型（1，ASN单 2，收货作业单 3，来料检验单 4，上架作业单）",required = true)@RequestParam Integer type){
+        try {
+            // 导入操作
+//            List<WmsInnerMaterialBarcodeImport> importList = EasyPoiUtils.importExcel(file, 2, 1, WmsInnerMaterialBarcodeImport.class);
+            Map<String, Object> resultMap = wmsInnerMaterialBarcodeService.importExcel(importList,list,type);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
+        }
+    }
+
+    @PostMapping(value = "/analysis")
+    @ApiOperation(value = "从excel导入",notes = "从excel导入")
+    public ResponseEntity<List<WmsInnerMaterialBarcodeImport>> analysis(@ApiParam(value ="输入excel文件",required = true) @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
             List<WmsInnerMaterialBarcodeImport> importList = EasyPoiUtils.importExcel(file, 2, 1, WmsInnerMaterialBarcodeImport.class);
-            Map<String, Object> resultMap = wmsInnerMaterialBarcodeService.importExcel(importList,list);
-            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+            return ControllerUtil.returnDataSuccess(importList,importList.size());
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());

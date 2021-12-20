@@ -35,6 +35,24 @@ public class SearchQmsIncomingInspectionOrder extends BaseQuery implements Seria
     private String materialCode;
 
     /**
+     * 产品名称
+     */
+    @ApiModelProperty(name = "materialName", value = "产品名称")
+    private String materialName;
+
+    /**
+     * 产品描述
+     */
+    @ApiModelProperty(name = "materialDesc", value = "产品描述")
+    private String materialDesc;
+
+    /**
+     * 产品版本
+     */
+    @ApiModelProperty(name = "materialVersion", value = "产品版本")
+    private String materialVersion;
+
+    /**
      * 检验状态(1-待检验 2-检验中 3-已检验)
      */
     @ApiModelProperty(name="inspectionStatus",value = "检验状态(1-待检验 2-检验中 3-已检验)")
@@ -63,4 +81,8 @@ public class SearchQmsIncomingInspectionOrder extends BaseQuery implements Seria
      */
     @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
     private Integer codeQueryMark;
+
+    @ApiModelProperty(name="ifFiltrate",value = "是否筛选（0，否  1，是）")
+    private byte ifFiltrate;
+
 }

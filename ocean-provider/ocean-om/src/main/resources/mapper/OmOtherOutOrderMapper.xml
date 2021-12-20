@@ -8,19 +8,11 @@
         <id column="other_out_order_id" jdbcType="BIGINT" property="otherOutOrderId"/>
         <result column="other_out_order_code" jdbcType="VARCHAR" property="otherOutOrderCode"/>
         <result column="customer_order_code" jdbcType="VARCHAR" property="customerOrderCode"/>
-        <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId"/>
+        <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="coreSourceSysOrderTypeCode"/>
+        <result column="source_sys_order_type_code" jdbcType="VARCHAR" property="sourceSysOrderTypeCode"/>
+        <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode"/>
         <result column="customer_id" jdbcType="BIGINT" property="customerId"/>
-        <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty"/>
-        <result column="total_dispatch_qty" jdbcType="DECIMAL" property="totalDispatchQty"/>
         <result column="consignee_id" jdbcType="BIGINT" property="consigneeId"/>
-        <result column="link_man_name" jdbcType="VARCHAR" property="linkManName"/>
-        <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone"/>
-        <result column="fax_number" jdbcType="VARCHAR" property="faxNumber"/>
-        <result column="address" jdbcType="VARCHAR" property="address"/>
-        <result column="total_qty" jdbcType="DECIMAL" property="totalQty"/>
-        <result column="total_volume" jdbcType="DECIMAL" property="totalVolume"/>
-        <result column="total_net_weight" jdbcType="DECIMAL" property="totalNetWeight"/>
-        <result column="total_gross_weight" jdbcType="DECIMAL" property="totalGrossWeight"/>
         <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="order_date" jdbcType="TIMESTAMP" property="orderDate"/>
@@ -37,21 +29,32 @@
         <result column="option1" jdbcType="VARCHAR" property="option1"/>
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
+        <collection property="omOtherOutOrderDets" ofType="com.fantechs.common.base.general.dto.om.OmOtherOutOrderDetDto"
+                    column="{otherOutOrderId=other_out_order_id}" select="com.fantechs.provider.om.mapper.OmOtherOutOrderDetMapper.findList">
+        </collection>
     </resultMap>
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
                type="com.fantechs.common.base.general.dto.om.OmOtherOutOrderDto">
-        <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
+        <result column="link_man_name" jdbcType="VARCHAR" property="linkManName"/>
+        <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone"/>
+        <result column="fax_number" jdbcType="VARCHAR" property="faxNumber"/>
+        <result column="address" jdbcType="VARCHAR" property="address"/>
+        <result column="total_order_qty" jdbcType="DECIMAL" property="totalOrderQty"/>
+        <result column="total_actual_qty" jdbcType="DECIMAL" property="totalActualQty"/>
         <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
         <result column="consignee_name" jdbcType="VARCHAR" property="consigneeName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     </resultMap>
+
     <sql id="Base_Column_List">
         ouo.other_out_order_id,
         ouo.other_out_order_code,
         ouo.customer_order_code,
-        ouo.material_owner_id,
+        ouo.core_source_sys_order_type_code,
+        ouo.source_sys_order_type_code,
+        ouo.sys_order_type_code,
         ouo.customer_id,
         ouo.consignee_id,
         ouo.order_status,
@@ -71,27 +74,16 @@
         ouo.option2,
         ouo.option3
   </sql>
+
     <select id="findList" resultMap="BaseResultMapDto">
-        SELECT<include refid="Base_Column_List"/>,bmo.material_owner_name,bc.consignee_name,su.user_name as
-        create_user_name,sus.user_name as modified_user_name,bo.organization_name,
-        bs.supplier_name,bc.link_man_name,bc.link_man_phone,bc.fax_number,bc.e_mail_address,bc.address,
+        SELECT<include refid="Base_Column_List"/>,
+        su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name,
+        bc.consignee_name, bs.supplier_name,bc.link_man_name,bc.link_man_phone,bc.fax_number,bc.e_mail_address,bc.address,
         (SELECT SUM(ouod.order_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id =
-        ouo.other_out_order_id) as total_qty,
-        (SELECT SUM(ouod.issue_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id =
-        ouo.other_out_order_id) as total_issue_qty,
-        (SELECT SUM(ouod.dispatch_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id =
-        ouo.other_out_order_id) as total_dispatch_qty,
-        (SELECT IFNULL(SUM(bmb.volume*ouod.order_qty),0) FROM om_other_out_order_det ouod left join base_material_tab
-        bmb ON ouod.material_id = bmb.material_id where ouod.other_out_order_id = ouo.other_out_order_id) as
-        total_volume,
-        (SELECT IFNULL(SUM(bmb.net_weight*ouod.order_qty),0) FROM om_other_out_order_det ouod left join
-        base_material_tab bmb ON ouod.material_id = bmb.material_id where ouod.other_out_order_id =
-        ouo.other_out_order_id) as total_net_weight,
-        (SELECT IFNULL(SUM(bmb.gross_weight*ouod.order_qty),0) FROM om_other_out_order_det ouod left join
-        base_material_tab bmb ON ouod.material_id = bmb.material_id where ouod.other_out_order_id =
-        ouo.other_out_order_id) as total_gross_weight
+        ouo.other_out_order_id) as total_order_qty,
+        (SELECT SUM(ouod.actual_qty) FROM om_other_out_order_det ouod where ouod.other_out_order_id =
+        ouo.other_out_order_id) as total_actual_qty
         FROM om_other_out_order ouo
-        LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = ouo.material_owner_id
         LEFT JOIN base_supplier bs ON ouo.customer_id = bs.supplier_id
         LEFT JOIN base_consignee bc ON ouo.consignee_id = bc.consignee_id
         left join sys_user su on ouo.create_user_id = su.user_id
@@ -135,10 +127,4 @@
         </where>
         order by ouo.create_time desc
     </select>
-    <select id="findMaterial" resultMap="BaseResultMap">
-    select IFNULL(bmb.volume,0) as total_volume,IFNULL(bmb.net_weight,0) as total_net_weight,IFNULL(bmb.gross_weight,0) as total_gross_weight
-    From base_material bm
-           left join base_material_tab bmb ON bm.material_id = bmb.material_id
-    where bm.material_id = #{materialId}
-  </select>
 </mapper>

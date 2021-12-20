@@ -2,28 +2,27 @@ package com.fantechs.provider.om.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmHtOtherOutOrderDto;
+import com.fantechs.common.base.general.dto.om.OmOtherOutOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmOtherOutOrderDto;
-import com.fantechs.common.base.general.entity.om.OmOtherInOrder;
 import com.fantechs.common.base.general.entity.om.OmOtherOutOrder;
-import com.fantechs.common.base.general.entity.om.OmOtherOutOrderDet;
 import com.fantechs.common.base.general.entity.om.search.SearchOmOtherOutOrder;
-import com.fantechs.provider.om.service.OmOtherOutOrderService;
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.om.service.OmOtherOutOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -39,6 +38,12 @@ public class OmOtherOutOrderController {
 
     @Resource
     private OmOtherOutOrderService omOtherOutOrderService;
+
+    @ApiOperation(value = "下推",notes = "下推")
+    @PostMapping("/pushDown")
+    public ResponseEntity pushDown(@ApiParam(value = "必传：",required = true)@RequestBody @Validated @NotEmpty List<OmOtherOutOrderDetDto> omOtherOutOrderDets) {
+        return ControllerUtil.returnCRUD(omOtherOutOrderService.pushDown(omOtherOutOrderDets));
+    }
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -92,17 +97,5 @@ public class OmOtherOutOrderController {
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
-    }
-
-    @ApiOperation("下发生成出库单")
-    @PostMapping("/packageAutoOutOrder")
-    public ResponseEntity packageAutoOutOrder(@RequestBody(required = true) OmOtherOutOrder omOtherOutOrder){
-        return ControllerUtil.returnCRUD(omOtherOutOrderService.packageAutoOutOrder(omOtherOutOrder));
-    }
-
-    @ApiOperation("数量反写")
-    @PostMapping("/writeQty")
-    public ResponseEntity writeQty(@RequestBody OmOtherOutOrderDet omOtherOutOrderDet){
-        return ControllerUtil.returnCRUD(omOtherOutOrderService.writeQty(omOtherOutOrderDet));
     }
 }

@@ -4,12 +4,17 @@ import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
 import com.fantechs.common.base.general.dto.wms.inner.SaveHaveInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.SaveInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
+import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
+import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerStockOrderImport;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcode;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.support.IService;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +71,14 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
      */
     int singleReceiving(List<WmsInnerJobOrderDet> wmsInPutawayOrderDets);
 
+    /**
+     * 按条码单一确认
+     * @param wmsInnerJobOrderDet 明细
+     * @param ids 条码ID 多个条码用逗号隔开
+     * @return
+     */
+    int singleReceivingByBarcode(WmsInnerJobOrderDet wmsInnerJobOrderDet,String ids);
+
     Map<String,Object> checkBarcode(String barCode,Long jobOrderDetId);
 
     WmsInnerJobOrderDet scanStorageBackQty(String storageCode, Long jobOrderDetId, BigDecimal qty, String barcode);
@@ -92,6 +105,14 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
     Map<String,Object> checkBarcodeNotOrder(String ifSysBarcode,String barCode);
 
     /**
+     * Web端单一确认作业 扫描条码
+     * @param ifSysBarcode 是否系统条码
+     * @param barCode 条码
+     * @return
+     */
+    WmsInnerMaterialBarcodeDto checkBarcodeOrderWeb(String ifSysBarcode, Long orderId, Long orderDetId, String barCode);
+
+    /**
      * PDA先单后作业
      * @param list
      * @return
@@ -104,6 +125,13 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
      * @return
      */
     WmsInnerJobOrder saveInnerJobOrder(List<SaveInnerJobOrderDto> list);
+
+    /**
+     * PDA先作业后单 更新上架单完成状态
+     * @param jobOrderId
+     * @return
+     */
+    int updateInnerJobOrderFinish(Long jobOrderId);
 
     /**
      * PDA激活关闭栈板
@@ -143,4 +171,6 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
      * @return
      */
     Boolean storageCapacity(Long materialId,Long storageId,BigDecimal qty);
+
+    Map<String, Object> importExcel(List<WmsInnerJobOrderImport> wmsInnerJobOrderImportList) throws ParseException;
 }

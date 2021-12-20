@@ -6,28 +6,26 @@
           WARNING - @mbg.generated
         -->
         <id column="sales_order_id" jdbcType="BIGINT" property="salesOrderId"/>
+        <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="coreSourceSysOrderTypeCode"/>
+        <result column="source_sys_order_type_code" jdbcType="VARCHAR" property="sourceSysOrderTypeCode"/>
+        <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode"/>
         <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode"/>
         <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
         <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
         <result column="customer_order_code" jdbcType="VARCHAR" property="customerOrderCode"/>
-        <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode"/>
-        <result column="source_order_line_number" jdbcType="VARCHAR" property="sourceOrderLineNumber"/>
         <result column="barcode_rule_set_id" jdbcType="BIGINT" property="barcodeRuleSetId"/>
         <result column="delivery_type" jdbcType="VARCHAR" property="deliveryType"/>
-        <result column="sales_dept" jdbcType="VARCHAR" property="salesDept"/>
-        <result column="sales_user_name" jdbcType="VARCHAR" property="salesUserName"/>
+        <result column="sales_dept_id" jdbcType="BIGINT" property="salesDeptId"/>
+        <result column="sales_user_id" jdbcType="BIGINT" property="salesUserId"/>
         <result column="data_source" jdbcType="VARCHAR" property="dataSource"/>
-        <result column="order_type" jdbcType="VARCHAR" property="orderType"/>
+        <result column="sales_order_type" jdbcType="VARCHAR" property="salesOrderType"/>
         <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="order_date" jdbcType="TIMESTAMP" property="orderDate"/>
-        <result column="make_order_user_name" jdbcType="VARCHAR" property="makeOrderUserName"/>
+        <result column="make_order_user_id" jdbcType="BIGINT" property="makeOrderUserId"/>
         <result column="make_order_date" jdbcType="TIMESTAMP" property="makeOrderDate"/>
-        <result column="audit_user_name" jdbcType="VARCHAR" property="auditUserName"/>
+        <result column="audit_user_id" jdbcType="BIGINT" property="auditUserId"/>
         <result column="audit_date" jdbcType="TIMESTAMP" property="auditDate"/>
-        <result column="sales_code" jdbcType="VARCHAR" property="salesCode"/>
-        <result column="make_code" jdbcType="VARCHAR" property="makeCode"/>
-        <result column="sales_code_qty" jdbcType="DECIMAL" property="salesCodeQty"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="org_id" jdbcType="BIGINT" property="orgId"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
@@ -42,36 +40,42 @@
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
                type="com.fantechs.common.base.general.dto.om.OmSalesOrderDto">
+        <result column="sales_dept" jdbcType="VARCHAR" property="salesDept"/>
+        <result column="sales_user_name" jdbcType="VARCHAR" property="salesUserName"/>
+        <result column="make_order_user_name" jdbcType="VARCHAR" property="makeOrderUserName"/>
+        <result column="audit_user_name" jdbcType="VARCHAR" property="auditUserName"/>
         <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
         <result column="barcode_rule_set_name" jdbcType="VARCHAR" property="barcodeRuleSetName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <collection property="omSalesOrderDetDtoList" ofType="com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto"
+                    column="{salesOrderId=sales_order_id}" select="com.fantechs.provider.om.mapper.OmSalesOrderDetMapper.findList">
+        </collection>
     </resultMap>
 
     <sql id="Base_Column_List">
         so.sales_order_id,
+        so.core_source_sys_order_type_code,
+        so.source_sys_order_type_code,
+        so.sys_order_type_code,
         so.sales_order_code,
         so.contract_code,
         so.supplier_id,
         so.customer_order_code,
-        so.source_order_code,
-        so.source_order_line_number,
         so.barcode_rule_set_id,
         so.delivery_type,
-        so.sales_dept,
-        so.sales_user_name,
+        so.sales_dept_id,
+        so.sales_user_id,
         so.data_source,
-        so.order_type,
+        so.sales_order_type,
         so.order_status,
         so.status,
         so.order_date,
-        so.make_order_user_name,
+        so.make_order_user_id,
         so.make_order_date,
-        so.audit_user_name,
+        so.audit_user_id,
         so.audit_date,
-        so.sales_code,
-        so.make_code,
         so.remark,
         so.org_id,
         so.create_user_id,
@@ -87,17 +91,24 @@
     <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
         select
         <include refid="Base_Column_List"/>,
-        bs.supplier_name,
+        bs.supplier_name,bd.dept_name as sales_dept,
+        susales.user_name as sales_user_name,
+        sumake.user_name as make_order_user_name,
+        suaudit.user_name as audit_user_name,
         bbrs.barcode_rule_set_name,
         suc.user_name as create_user_name,
         bo.organization_name,
         sumod.user_name as modified_user_name
         from om_sales_order so
+        left join base_dept bd on so.sales_dept_id = bd.dept_id
         left join base_supplier bs on so.supplier_id = bs.supplier_id
         left join base_barcode_rule_set bbrs on so.barcode_rule_set_id = bbrs.barcode_rule_set_id
         left join sys_user suc on so.create_user_id = suc.user_id
         left join base_organization bo on so.org_id = bo.organization_id
         left join sys_user sumod on so.modified_user_id = sumod.user_id
+        left join sys_user susales on so.sales_user_id = susales.user_id
+        left join sys_user sumake on so.make_order_user_id = sumake.user_id
+        left join sys_user suaudit on so.audit_user_id = suaudit.user_id
         <if test="workOrderId != null and workOrderId != ''">
             left join mes_pm_work_order mpwo on so.sales_order_id = mpwo.sales_order_id
         </if>
@@ -105,27 +116,21 @@
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
                 and date_format(so.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
-
             <if test="status != null">
                 and so.status = #{status}
             </if>
-
             <if test="orgId != null">
                 and so.org_id = #{orgId}
             </if>
-
             <if test="salesOrderCode != null and salesOrderCode != ''">
                 and so.sales_order_code like CONCAT('%', #{salesOrderCode}, '%')
             </if>
-
             <if test="customerOrderCode != null and customerOrderCode != ''">
                 and so.customer_order_code like CONCAT('%', #{customerOrderCode}, '%')
             </if>
-
             <if test="contractCode != null and contractCode != ''">
                 and so.contract_code like CONCAT('%', #{contractCode}, '%')
             </if>
-
             <if test="salesOrderId != null">
                 and so.sales_order_id = #{salesOrderId}
             </if>
@@ -149,23 +154,16 @@
             oso.contract_code = #{item.contractCode},
             oso.supplier_id = #{item.supplierId},
             oso.customer_order_code = #{item.customerOrderCode},
-            oso.source_order_code = #{item.sourceOorderCode},
-            oso.source_order_line_number = #{item.sourceOrderLineNumber},
             oso.barcode_rule_set_id = #{item.barcodeRuleSetId},
             oso.delivery_type = #{item.deliveryType},
-            oso.sales_dept = #{item.salesDept},
-            oso.sales_user_name = #{item.salesUserName},
             oso.data_source = #{item.dataSource},
-            oso.order_type = #{item.orderType},
+            oso.sales_order_type = #{item.salesOrderType},
             oso.order_status = #{item.orderStatus},
             oso.status = #{item.status},
             oso.order_date = #{item.orderDate},
-            oso.make_order_user_name = #{item.makeOrderUserName},
             oso.make_order_date = #{item.makeOrderDate},
-            oso.audit_user_name = #{item.auditUserName},
             oso.audit_date = #{item.auditDate},
             oso.remark = #{item.remark},
-            oso.order_date = #{item.orderDate},
             oso.org_id = #{item.orgId},
             oso.create_user_id = #{item.createUserId},
             oso.create_time = #{item.createTime},

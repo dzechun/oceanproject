@@ -7,13 +7,13 @@ import lombok.Data;
 
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 public class OmSalesOrderDetDto extends OmSalesOrderDet implements Serializable {
     /**
-     *
+     *销售订单号
      */
-
     @ApiModelProperty(name = "salesOrderCode", value = "销售订单号")
     @Excel(name = "销售订单号", height = 20, width = 30)
     private String salesOrderCode;
@@ -71,5 +71,12 @@ public class OmSalesOrderDetDto extends OmSalesOrderDet implements Serializable 
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     @Excel(name = "组织名称", height = 20, width = 30)
     private String organizationName;
+
+    /**
+     * 下发数量
+     */
+    @ApiModelProperty(name="issueQty",value = "下发数量")
+    @Transient
+    private BigDecimal issueQty;
 
 }

@@ -11,4 +11,6 @@ import java.util.Map;
 @Mapper
 public interface QmsIncomingInspectionOrderMapper extends MyMapper<QmsIncomingInspectionOrder> {
     List<QmsIncomingInspectionOrderDto> findList(Map<String, Object> map);
+
+    int batchUpdate(List<QmsIncomingInspectionOrder> list);
 }

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerMaterialBarcodeReprintMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcodeReprint">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="material_barcode_reprint_id" jdbcType="BIGINT" property="materialBarcodeReprintId" />
+    <result column="material_barcode_id" jdbcType="BIGINT" property="materialBarcodeId" />
+    <result column="print_order_source_ip" jdbcType="VARCHAR" property="printOrderSourceIp" />
+    <result column="printer_name" jdbcType="VARCHAR" property="printerName" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+             type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReprintDto">
+  </resultMap>
+  <sql id="BaseColumnList">
+    wimbr.material_barcode_reprint_id,
+    wimbr.material_barcode_id,
+    wimbr.print_order_source_ip,
+    wimbr.printer_name,
+    wimbr.status,
+    wimbr.remark,
+    wimbr.org_id,
+    wimbr.create_user_id,
+    wimbr.create_time,
+    wimbr.modified_user_id,
+    wimbr.modified_time,
+    wimbr.is_delete,
+    wimbr.option1,
+    wimbr.option2,
+    wimbr.option3
+  </sql>
+
+
+  <select id="findList" resultMap="BaseResultMapDto">
+    SELECT<include refid="BaseColumnList"/>,
+    su.user_name AS create_user_name,
+    sus.user_name AS modified_user_name,
+    bo.organization_name AS organization_name
+    FROM wms_inner_material_barcode_reprint wimbr
+    LEFT JOIN sys_user su ON wimbr.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON wimbr.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON wimbr.org_id = bo.organization_id
+  </select>
+
+</mapper>

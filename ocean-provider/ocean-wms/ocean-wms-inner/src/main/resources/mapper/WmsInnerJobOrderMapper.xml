@@ -98,6 +98,14 @@
                 and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
             </if>
 
+            <if test="coreSourceSysOrderTypeCode!=null and coreSourceSysOrderTypeCode!=''">
+                and wipo.core_source_sys_order_type_code = #{coreSourceSysOrderTypeCode}
+            </if>
+
+            <if test="sourceSysOrderTypeCode!=null and sourceSysOrderTypeCode!=''">
+                and wipo.source_sys_order_type_code = #{sourceSysOrderTypeCode}
+            </if>
+
             <if test="workName!=null and workName!=''">
                 and wr.user_name =#{workName}
             </if>

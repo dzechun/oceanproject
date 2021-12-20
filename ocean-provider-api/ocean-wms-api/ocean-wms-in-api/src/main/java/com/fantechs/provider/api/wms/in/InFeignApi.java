@@ -21,11 +21,11 @@ public interface InFeignApi {
     @PostMapping("/wmsInInPlanOrder/add")
     ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInInPlanOrder wmsInInPlanOrder);
 
-    @ApiOperation(value = "新增",notes = "新增")
+    @ApiOperation(value = "收货计划新增",notes = "收货计划新增")
     @PostMapping("/wmsInPlanReceivingOrder/add")
     ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInPlanReceivingOrder wmsInPlanReceivingOrder);
 
-    @ApiOperation(value = "新增",notes = "新增")
+    @ApiOperation(value = "收货作业新增",notes = "收货作业新增")
     @PostMapping("/wmsInReceivingOrder/add")
     ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInReceivingOrder wmsInReceivingOrder);
 }

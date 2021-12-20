@@ -62,6 +62,7 @@
         wimb.supplier_id,
         wimb.batch_code,
         wimb.material_qty,
+        wimb.production_time,
         wimb.label_id,
         wimb.inspection_status,
         wimb.barcode_status,
@@ -155,7 +156,7 @@
     </update>
 
     <select id="findPrintModel" resultType="com.fantechs.common.base.general.dto.mes.sfc.PrintModel">
-        select * FROM view_material
+        select * FROM ${labelCode}
         <where>
             id = #{id}
         </where>
@@ -183,7 +184,7 @@
 
     </select>
 
-    <select id="getTotalMaterialQty" resultMap="BaseResultMapDto">
+    <select id="getTotalMaterialQty" resultType="Integer" parameterType="com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode">
         SELECT sum(wimb.material_qty)
         FROM wms_inner_material_barcode wimb
         LEFT JOIN base_material bm on bm.material_id = wimb.material_id

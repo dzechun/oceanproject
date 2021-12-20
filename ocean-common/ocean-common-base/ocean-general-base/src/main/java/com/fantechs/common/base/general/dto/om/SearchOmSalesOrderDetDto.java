@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class SearchOmSalesOrderDetDto extends BaseQuery implements Serializable {
@@ -25,4 +26,13 @@ public class SearchOmSalesOrderDetDto extends BaseQuery implements Serializable 
 
     @ApiModelProperty(name="salesCode",value = "销售编码")
     private String salesCode;
+
+    /**
+     * 销售订单ID列表
+     */
+    @ApiModelProperty(name="salesOrderIdList",value = "销售订单ID列表")
+    private List<Long> salesOrderIdList;
+
+    @ApiModelProperty(name="ifAllIssued",value = "是否已全部下发(0-否 1-是)")
+    private Integer ifAllIssued;
 }

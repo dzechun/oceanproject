@@ -5,11 +5,11 @@ import cn.afterturn.easypoi.excel.annotation.ExcelCollection;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrderDet;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +45,20 @@ public class QmsIncomingInspectionOrderDto extends QmsIncomingInspectionOrder im
     @ApiModelProperty(name = "materialCode",value = "产品料号")
     @Excel(name = "产品料号", height = 20, width = 30,orderNum="4",needMerge = true)
     private String materialCode;
+
+    /**
+     * 产品名称
+     */
+    @Transient
+    @ApiModelProperty(name = "materialName",value = "产品名称")
+    private String materialName;
+
+    /**
+     * 单位
+     */
+    @Transient
+    @ApiModelProperty(name = "mainUnit",value = "单位")
+    private String mainUnit;
 
     /**
      * 产品描述
@@ -116,4 +130,8 @@ public class QmsIncomingInspectionOrderDto extends QmsIncomingInspectionOrder im
     @ApiModelProperty(name="list",value = "来料检验单明细")
     @ExcelCollection(name="来料检验单明细",orderNum="21")
     private List<QmsIncomingInspectionOrderDet> list = new ArrayList<>();
+
+    @Transient
+    @ApiModelProperty(name="totalMaterialQty",value = "已打印物料总数量")
+    private BigDecimal totalMaterialQty;
 }

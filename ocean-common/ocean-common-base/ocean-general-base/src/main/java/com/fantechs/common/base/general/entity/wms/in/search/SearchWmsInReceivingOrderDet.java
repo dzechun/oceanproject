@@ -1,6 +1,7 @@
 package com.fantechs.common.base.general.entity.wms.in.search;
 
 import com.fantechs.common.base.dto.BaseQuery;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -16,4 +17,8 @@ public class SearchWmsInReceivingOrderDet extends BaseQuery implements Serializa
     private Long receivingOrderId;
 
     private List<Byte> lineStatusList;
+
+    @ApiModelProperty(name="ifFiltrate",value = "是否筛选（0，否  1，是）")
+    private byte ifFiltrate;
+
 }

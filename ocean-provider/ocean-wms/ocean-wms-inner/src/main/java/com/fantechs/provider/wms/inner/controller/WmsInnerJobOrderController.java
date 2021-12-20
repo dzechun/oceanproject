@@ -1,8 +1,13 @@
 package com.fantechs.provider.wms.inner.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
+import com.fantechs.common.base.general.dto.wms.inner.SaveHaveInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
+import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
+import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerStockOrderImport;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
@@ -16,8 +21,10 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
@@ -27,6 +34,7 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -36,6 +44,7 @@ import java.util.List;
 @Api(tags = "上架作业")
 @RequestMapping("/wmsInnerJobOrder")
 @Validated
+@Slf4j
 public class WmsInnerJobOrderController {
 
     @Resource
@@ -77,6 +86,30 @@ public class WmsInnerJobOrderController {
         List<WmsInnerJobOrderDet> list = new ArrayList<>();
         list.add(wmsInnerJobOrderDet);
         return ControllerUtil.returnCRUD(wmsInPutawayOrderService.singleReceiving(list));
+    }
+
+    @ApiOperation("按条码单一确认")
+    @PostMapping("/singleReceivingByBarcode")
+    public ResponseEntity singleReceivingByBarcode(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerJobOrderDet wmsInPutawayOrderDet,
+                                                   @ApiParam(value = "条码ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids){
+        return ControllerUtil.returnCRUD(wmsInPutawayOrderService.singleReceivingByBarcode(wmsInPutawayOrderDet,ids));
+    }
+
+    @ApiOperation("Web端单一确认作业 扫描条码")
+    @PostMapping("/checkBarcodeOrderWeb")
+    public ResponseEntity<WmsInnerMaterialBarcodeDto> checkBarcodeOrderWeb(@ApiParam(value = "是否系统条码(0 否 1 是)")@RequestParam @NotBlank(message = "是否系统条码不能为空") String ifSysBarcode,
+                                                                    @ApiParam(value = "作业单主表id")@RequestParam Long orderId,
+                                                                    @ApiParam(value = "明细ID")@RequestParam Long orderDetId,
+                                                                    @ApiParam(value = "条码")@RequestParam String barCode){
+        WmsInnerMaterialBarcodeDto materialBarcodeDto = wmsInPutawayOrderService.checkBarcodeOrderWeb(ifSysBarcode,orderId,orderDetId,barCode);
+        return ControllerUtil.returnDataSuccess(materialBarcodeDto,StringUtils.isEmpty(materialBarcodeDto)?0:1);
+    }
+
+    @ApiOperation("上架作业Web端扫描条码提交")
+    @PostMapping("/saveHaveInnerJobOrder")
+    public ResponseEntity<WmsInnerJobOrderDet> saveHaveInnerJobOrder(@RequestBody(required = true) List<SaveHaveInnerJobOrderDto> list){
+        WmsInnerJobOrderDet wmsInnerJobOrderDet=wmsInPutawayOrderService.saveHaveInnerJobOrder(list);
+        return ControllerUtil.returnDataSuccess(wmsInnerJobOrderDet,StringUtils.isEmpty(wmsInnerJobOrderDet)?0:1);
     }
 
     @ApiOperation(value = "新增",notes = "新增")
@@ -140,6 +173,32 @@ public class WmsInnerJobOrderController {
         EasyPoiUtils.exportExcel(list, "导出信息", "WmsInPutawayOrder信息", WmsInnerJobOrderDto.class, "WmsInPutawayOrder.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
+        }
+    }
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入信息",notes = "从excel导入信息")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file,
+                                      @RequestParam Long stockOrderId){
+        try {
+            // 导入操作
+            List<WmsInnerJobOrderImport> wmsInnerJobOrderImports = EasyPoiUtils.importExcel(file, 0, 1, WmsInnerJobOrderImport.class);
+            Map<String, Object> resultMap = wmsInPutawayOrderService.importExcel(wmsInnerJobOrderImports);
+            return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
+        }catch (RuntimeException e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());
+        }catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 

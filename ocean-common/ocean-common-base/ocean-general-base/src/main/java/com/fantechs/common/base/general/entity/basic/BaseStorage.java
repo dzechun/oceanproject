@@ -2,8 +2,10 @@ package com.fantechs.common.base.general.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.support.ValidGroup;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -296,6 +298,8 @@ public class BaseStorage extends ValidGroup implements Serializable {
     @Column(name = "create_time")
     @ApiModelProperty(name = "createTime",value = "创建时间")
     @Excel(name = "创建时间", height = 20, width = 30,orderNum="21",exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -319,6 +323,8 @@ public class BaseStorage extends ValidGroup implements Serializable {
     @Column(name = "modified_time")
     @ApiModelProperty(name = "modifiedTime",value = "修改时间")
     @Excel(name = "修改时间", height = 20, width = 30,orderNum="23",exportFormat = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
 
     /**

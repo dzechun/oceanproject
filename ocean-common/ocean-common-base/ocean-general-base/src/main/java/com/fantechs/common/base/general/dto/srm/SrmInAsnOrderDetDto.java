@@ -116,4 +116,11 @@ public class SrmInAsnOrderDetDto extends SrmInAsnOrderDet implements Serializabl
     @ApiModelProperty(name="supplierId",value = "供应商ID")
     private Long supplierId;
 
+    @Transient
+    @ApiModelProperty(name = "supplierName",value = "供应商名称")
+    private String supplierName;
+
+    @Transient
+    @ApiModelProperty(name="totalMaterialQty",value = "已打印物料总数量")
+    private BigDecimal totalMaterialQty;
 }
