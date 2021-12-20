@@ -7,6 +7,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
+import com.fantechs.common.base.general.dto.basic.BaseOrderFlowDto;
 import com.fantechs.common.base.general.dto.om.OmHtSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmHtSalesOrderDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
@@ -36,6 +37,7 @@ import com.fantechs.provider.om.mapper.OmSalesOrderMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtSalesOrderDetMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtSalesOrderMapper;
 import com.fantechs.provider.om.service.OmSalesOrderService;
+import com.fantechs.provider.om.util.OrderFlowUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,26 +88,51 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
         }
         i = omSalesOrderDetMapper.batchUpdate(omSalesOrderDetDtoList);
 
-        //查当前单据的下游单据
+        //查当前单据类型的所有单据流
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
         searchBaseOrderFlow.setOrderTypeCode("OUT-SO");
-        BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
-        if(StringUtils.isEmpty(baseOrderFlow)){
-            throw new BizErrorException("未找到当前单据配置的下游单据");
+        List<BaseOrderFlowDto> baseOrderFlowDtos = baseFeignApi.findList(searchBaseOrderFlow).getData();
+        if (StringUtils.isEmpty(baseOrderFlowDtos)) {
+            throw new BizErrorException("未找到当前单据配置的单据流");
         }
 
         //按仓库分组，不同仓库生成多张单
+        Map<String,List<OmSalesOrderDetDto>> map = new HashMap<>();
         HashMap<Long, List<OmSalesOrderDetDto>> collect = omSalesOrderDetDtoList.stream().collect(Collectors.groupingBy(OmSalesOrderDetDto::getWarehouseId, HashMap::new, Collectors.toList()));
         Set<Long> set = collect.keySet();
         for (Long id : set) {
             List<OmSalesOrderDetDto> omSalesOrderDetDtos = collect.get(id);
-            if ("".equals(baseOrderFlow.getNextOrderTypeCode())) {
+
+            //不同单据流分组
+            for (OmSalesOrderDetDto omSalesOrderDetDto : omSalesOrderDetDtos){
+                //查当前单据的下游单据
+                BaseOrderFlow baseOrderFlow = OrderFlowUtil.getOrderFlow(baseOrderFlowDtos, omSalesOrderDetDto.getMaterialId(), null);
+
+                String key = id+"_"+baseOrderFlow.getNextOrderTypeCode();
+                if(map.get(key)==null){
+                    List<OmSalesOrderDetDto> diffOrderFlows = new LinkedList<>();
+                    diffOrderFlows.add(omSalesOrderDetDto);
+                    map.put(key,diffOrderFlows);
+                }else {
+                    List<OmSalesOrderDetDto> diffOrderFlows = map.get(key);
+                    diffOrderFlows.add(omSalesOrderDetDto);
+                    map.put(key,diffOrderFlows);
+                }
+            }
+        }
+
+        Set<String> codes = map.keySet();
+        for (String code : codes) {
+            String[] split = code.split("_");
+            String nextOrderTypeCode = split[1];//下游单据类型
+            List<OmSalesOrderDetDto> omSalesOrderDetDtos = map.get(code);
+            if ("".equals(nextOrderTypeCode)) {
                 //出库通知单
 
-            } else if ("".equals(baseOrderFlow.getNextOrderTypeCode())) {
+            } else if ("".equals(nextOrderTypeCode)) {
                 //出库计划
 
-            } else if ("".equals(baseOrderFlow.getNextOrderTypeCode())) {
+            } else if ("".equals(nextOrderTypeCode)) {
                 //拣货作业
                 int lineNumber = 1;
                 List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();

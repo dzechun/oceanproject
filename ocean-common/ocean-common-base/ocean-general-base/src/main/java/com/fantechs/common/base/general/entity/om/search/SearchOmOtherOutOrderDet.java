@@ -18,4 +18,7 @@ public class SearchOmOtherOutOrderDet extends BaseQuery implements Serializable 
 
     @ApiModelProperty(name = "otherOutOrderIdList",value = "其他出库订单id列表")
     private List<Long> otherOutOrderIdList;
+
+    @ApiModelProperty(name="ifAllIssued",value = "是否已全部下发(0-否 1-是)")
+    private Integer ifAllIssued;
 }

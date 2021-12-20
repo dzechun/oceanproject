@@ -4,7 +4,10 @@ import com.fantechs.common.base.general.dto.basic.*;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -586,4 +589,8 @@ public interface BaseFeignApi {
     @ApiOperation("查询上下游单据")
     @PostMapping("/baseOrderFlow/findOrderFlow")
     ResponseEntity<BaseOrderFlow> findOrderFlow(@ApiParam(value = "查询对象")@RequestBody SearchBaseOrderFlow searchBaseOrderFlow);
+
+    @ApiOperation("查询单据流列表")
+    @PostMapping("/baseOrderFlow/findList")
+    ResponseEntity<List<BaseOrderFlowDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseOrderFlow searchBaseOrderFlow);
 }

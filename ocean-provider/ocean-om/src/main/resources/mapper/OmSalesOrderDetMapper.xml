@@ -141,6 +141,9 @@
             <if test="status != null">
                 and sod.status = #{status}
             </if>
+            <if test="ifAllIssued != null">
+                and sod.if_all_issued = #{ifAllIssued}
+            </if>
             <if test="salesOrderId != null">
                 and sod.sales_order_id = #{salesOrderId}
             </if>

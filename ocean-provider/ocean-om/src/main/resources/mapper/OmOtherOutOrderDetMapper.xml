@@ -88,6 +88,9 @@
             <if test="otherOutOrderId !=null and otherOutOrderId!=''">
                 and ouod.other_out_order_id = #{otherOutOrderId}
             </if>
+            <if test="ifAllIssued != null">
+                and ouod.if_all_issued = #{ifAllIssued}
+            </if>
             <if test="otherOutOrderIdList != null and otherOutOrderIdList.size() > 0">
                 and ouod.other_out_order_id
                 <foreach collection="otherOutOrderIdList" open="in (" close=")" item="item" separator="," index="index">
