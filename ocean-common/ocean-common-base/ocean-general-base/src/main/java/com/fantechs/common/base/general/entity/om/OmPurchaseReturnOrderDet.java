@@ -109,7 +109,7 @@ public class OmPurchaseReturnOrderDet extends ValidGroup implements Serializable
      * 单位名称
      */
     @ApiModelProperty(name="unitName",value = "单位名称")
-    @Excel(name = "单位名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "单位名称", height = 20, width = 30,orderNum="10")
     @Column(name = "unit_name")
     private String unitName;
 

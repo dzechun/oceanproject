@@ -40,7 +40,6 @@
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
-    <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
     <result column="volume" jdbcType="VARCHAR" property="volume"/>
     <result column="net_weight" jdbcType="VARCHAR" property="netWeight"/>
     <result column="gross_weight" jdbcType="VARCHAR" property="grossWeight"/>
@@ -79,7 +78,7 @@
     select
     <include refid="Base_Column_List"/>,
     bm.material_code,bm.material_name,bm.material_version,bm.material_desc,
-    bmb.main_unit,bmb.volume,bmb.net_weight,bmb.gross_weight,
+    bmb.volume,bmb.net_weight,bmb.gross_weight,
     bw.warehouse_name,opro.purchase_return_order_code,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
@@ -109,4 +108,13 @@
     </where>
     order by oprod.create_time desc
   </select>
+
+  <update id="batchUpdate" parameterType="java.util.List">
+    <foreach collection="list" item="item" separator=";">
+      update om_purchase_return_order_det oprod set
+      oprod.total_issue_qty = #{item.totalIssueQty},
+      oprod.if_all_issued = #{item.ifAllIssued}
+      where oprod.purchase_return_order_det_id = #{item.purchaseReturnOrderDetId}
+    </foreach>
+  </update>
 </mapper>
