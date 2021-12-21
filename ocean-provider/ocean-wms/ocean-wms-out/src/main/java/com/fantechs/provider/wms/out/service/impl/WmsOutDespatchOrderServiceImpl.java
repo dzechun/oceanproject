@@ -163,7 +163,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                     //添加库存日志
                     WmsInnerInventoryLog wmsInnerInventoryLog = new WmsInnerInventoryLogDto();
                     BeanUtil.copyProperties(wmsInnerInventory,wmsInnerInventoryLog);
-                    wmsInnerInventoryLog.setAsnCode(wmsInnerJobOrder.getRelatedOrderCode());
+//                    wmsInnerInventoryLog.setAsnCode(wmsInnerJobOrder.getRelatedOrderCode());
                     wmsInnerInventoryLog.setRelatedOrderCode(wmsInnerJobOrder.getJobOrderCode());
                     //发运
                     wmsInnerInventoryLog.setJobOrderType((byte)8);
@@ -172,13 +172,13 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                     wmsInnerInventoryLog.setWarehouseId(wmsInnerJobOrder.getWarehouseId());
                     wmsInnerInventoryLog.setMaterialId(wmsInnerJobOrderDetDto.getMaterialId());
                     wmsInnerInventoryLog.setProductionDate(wmsInnerJobOrderDetDto.getProductionDate());
-                    wmsInnerInventoryLog.setExpiredDate(wmsInnerJobOrderDetDto.getExpiredDate());
+//                    wmsInnerInventoryLog.setExpiredDate(wmsInnerJobOrderDetDto.getExpiredDate());
                     wmsInnerInventoryLog.setBatchCode(wmsInnerJobOrderDetDto.getBatchCode());
-                    wmsInnerInventoryLog.setPalletCode(wmsInnerJobOrderDetDto.getPalletCode());
+//                    wmsInnerInventoryLog.setPalletCode(wmsInnerJobOrderDetDto.getPalletCode());
                     wmsInnerInventoryLog.setInventoryStatusId(wmsInnerJobOrderDetDto.getInventoryStatusId());
                     wmsInnerInventoryLog.setInitialQty(wmsInnerJobOrderDetDto.getActualQty());
                     wmsInnerInventoryLog.setChangeQty(wmsInnerJobOrderDetDto.getActualQty());
-                    wmsInnerInventoryLog.setMaterialOwnerId(wmsInnerJobOrder.getMaterialOwnerId());
+//                    wmsInnerInventoryLog.setMaterialOwnerId(wmsInnerJobOrder.getMaterialOwnerId());
                     wmsInnerInventoryLog.setOrgId(sysUser.getOrganizationId());
                     innerFeignApi.add(wmsInnerInventoryLog);
 
@@ -204,7 +204,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                         engPackingOrderSummaryDetDto.setQty(wmsInnerJobOrderDetDto.getActualQty());
                         lists.add(engPackingOrderSummaryDetDto);
                         EngPackingOrder engPackingOrder = new EngPackingOrder();
-                        engPackingOrder.setPackingOrderCode(wmsInnerJobOrder.getRelatedOrderCode());
+//                        engPackingOrder.setPackingOrderCode(wmsInnerJobOrder.getRelatedOrderCode());
                         engPackingOrder.setSummaryDetList(lists);
                         engFeignApi.saveRecord(engPackingOrder,(byte)7,"出库");
                     }
@@ -262,7 +262,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
             List<Byte> byteList = new ArrayList<>();
             byteList.add((byte)4);
             byteList.add((byte)5);
-            searchWmsInnerJobOrderDet.setOrderStatusList(byteList);
+//            searchWmsInnerJobOrderDet.setOrderStatusList(byteList);
             ResponseEntity<List<WmsInnerJobOrderDetDto>> responseEntity = innerFeignApi.findList(searchWmsInnerJobOrderDet);
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404);
@@ -371,7 +371,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                 ResponseEntity responseEntity = innerFeignApi.retrographyStatus(WmsInnerJobOrderDet.builder()
                         .jobOrderDetId(wmsOutDespatchOrderReJoReDet.getJobOrderDetId())
                         .jobOrderId(wms.getJobOrderId())
-                        .orderStatus((byte)5)
+//                        .orderStatus((byte)5)
                         .build());
                 if(responseEntity.getCode()!=0){
                     throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
@@ -388,7 +388,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
      */
     private int writeDeliveryOrderQty(WmsInnerJobOrderDto wmsInnerJobOrderDto,WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto){
         SysUser sysUser = currentUser();
-        WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet = wmsOutDeliveryOrderDetMapper.selectByPrimaryKey(wmsInnerJobOrderDetDto.getSourceDetId());
+        WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet = wmsOutDeliveryOrderDetMapper.selectByPrimaryKey(wmsInnerJobOrderDetDto.getSourceId());
         if(StringUtils.isEmpty(wmsOutDeliveryOrderDet)){
             throw new BizErrorException("未匹配到关联的出库单");
         }
@@ -401,7 +401,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
 //        example.createCriteria().andEqualTo("sourceOrderId",wmsOutDeliveryOrderDet.getDeliveryOrderId());
 //        List<WmsInnerJobOrder> list =
 
-        WmsOutDeliveryOrder wmsOutDeliveryOrder  =  wmsOutDeliveryOrderMapper.selectByPrimaryKey(wmsInnerJobOrderDto.getSourceOrderId());
+        WmsOutDeliveryOrder wmsOutDeliveryOrder  =  wmsOutDeliveryOrderMapper.selectByPrimaryKey(null);
         if(StringUtils.isEmpty(wmsOutDeliveryOrder)){
             throw new BizErrorException(ErrorCodeEnum.GL9999404);
         }
@@ -416,7 +416,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                     omSalesOrderDet.setSalesOrderId(wmsOutDeliveryOrderDet.getSourceOrderId());
                     omSalesOrderDet.setSalesOrderDetId(wmsOutDeliveryOrderDet.getOrderDetId());
                     omSalesOrderDet.setTotalOutboundQty(wmsInnerJobOrderDetDto.getActualQty());
-                    omSalesOrderDet.setActualDeliverDate(DateUtils.getDateString(new Date(),"yyyy-MM-dd"));
+//                    omSalesOrderDet.setActualDeliverDate(DateUtils.getDateString(new Date(),"yyyy-MM-dd"));
                     ResponseEntity responseEntity = omFeignApi.update(omSalesOrderDet);
                 }
                 num+=wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);
@@ -426,8 +426,8 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                 num+=wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);
 
                 //生成调拨入库单
-                WmsInAsnOrder wmsInAsnOrder = new WmsInAsnOrder();
-                List<WmsInAsnOrderDet> wmsInAsnOrderDets = new ArrayList<>();
+//                WmsInAsnOrder wmsInAsnOrder = new WmsInAsnOrder();
+//                List<WmsInAsnOrderDet> wmsInAsnOrderDets = new ArrayList<>();
                 //获取调拨出库单
                 WmsOutDeliveryOrder res = wmsOutDeliveryOrderMapper.selectByPrimaryKey(wmsOutDeliveryOrder.getDeliveryOrderId());
 
@@ -443,46 +443,46 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                 if(StringUtils.isEmpty(storageId)){
                     throw new BizErrorException("未获取到该仓库下的收货库位");
                 }
-                wmsInAsnOrder.setSourceOrderId(res.getSourceOrderId());
-                wmsInAsnOrder.setMaterialOwnerId(res.getMaterialOwnerId());
-                wmsInAsnOrder.setSupplierId(res.getSupplierId());
-                //调拨订单号
-                wmsInAsnOrder.setRelatedOrderCode1(res.getRelatedOrderCode1());
-                //调拨出库单号
-                wmsInAsnOrder.setRelatedOrderCode2(res.getDeliveryOrderCode());
-                wmsInAsnOrder.setCustomerOrderCode(res.getCustomerOrderCode());
-                wmsInAsnOrder.setOrderDate(res.getOrderDate());
-                wmsInAsnOrder.setWarehouseId(warehouseId);
-                wmsInAsnOrder.setStorageId(storageId);
-                wmsInAsnOrder.setPlanAgoDate(new Date());
-                wmsInAsnOrder.setLinkManName(res.getLinkManName());
-                wmsInAsnOrder.setLinkManPhone(res.getLinkManPhone());
-                wmsInAsnOrder.setFaxNumber(res.getFaxNumber());
-                wmsInAsnOrder.setEMailAddress(res.getEmailAddress());
+//                wmsInAsnOrder.setSourceOrderId(res.getSourceOrderId());
+//                wmsInAsnOrder.setMaterialOwnerId(res.getMaterialOwnerId());
+//                wmsInAsnOrder.setSupplierId(res.getSupplierId());
+//                //调拨订单号
+//                wmsInAsnOrder.setRelatedOrderCode1(res.getRelatedOrderCode1());
+//                //调拨出库单号
+//                wmsInAsnOrder.setRelatedOrderCode2(res.getDeliveryOrderCode());
+//                wmsInAsnOrder.setCustomerOrderCode(res.getCustomerOrderCode());
+//                wmsInAsnOrder.setOrderDate(res.getOrderDate());
+//                wmsInAsnOrder.setWarehouseId(warehouseId);
+//                wmsInAsnOrder.setStorageId(storageId);
+//                wmsInAsnOrder.setPlanAgoDate(new Date());
+//                wmsInAsnOrder.setLinkManName(res.getLinkManName());
+//                wmsInAsnOrder.setLinkManPhone(res.getLinkManPhone());
+//                wmsInAsnOrder.setFaxNumber(res.getFaxNumber());
+//                wmsInAsnOrder.setEMailAddress(res.getEmailAddress());
                 SearchWmsOutDeliveryOrderDet searchWmsOutDeliveryOrderDet = new SearchWmsOutDeliveryOrderDet();
                 searchWmsOutDeliveryOrderDet.setDeliveryOrderId(res.getDeliveryOrderId());
                 int i = 0;
                 List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDets = wmsOutDeliveryOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutDeliveryOrderDet));
                 for (WmsOutDeliveryOrderDetDto dets : wmsOutDeliveryOrderDets) {
                     i++;
-                    WmsInAsnOrderDet wmsInAsnOrderDet = new WmsInAsnOrderDet();
-                    wmsInAsnOrderDet.setSourceOrderId(dets.getDeliveryOrderId());
-                    wmsInAsnOrderDet.setOrderDetId(dets.getDeliveryOrderDetId());
-                    wmsInAsnOrderDet.setWarehouseId(warehouseId);
-                    wmsInAsnOrderDet.setStorageId(storageId);
-                    wmsInAsnOrderDet.setLineNumber(i);
-                    wmsInAsnOrderDet.setInventoryStatusId(dets.getInventoryStatusId());
-                    wmsInAsnOrderDet.setMaterialId(dets.getMaterialId());
-                    wmsInAsnOrderDet.setPackingUnitName(dets.getPackingUnitName());
-                    wmsInAsnOrderDet.setPackingQty(dets.getPackingQty());
-                    wmsInAsnOrderDet.setBatchCode(dets.getBatchCode());
-                    wmsInAsnOrderDets.add(wmsInAsnOrderDet);
+//                    WmsInAsnOrderDet wmsInAsnOrderDet = new WmsInAsnOrderDet();
+//                    wmsInAsnOrderDet.setSourceOrderId(dets.getDeliveryOrderId());
+//                    wmsInAsnOrderDet.setOrderDetId(dets.getDeliveryOrderDetId());
+//                    wmsInAsnOrderDet.setWarehouseId(warehouseId);
+//                    wmsInAsnOrderDet.setStorageId(storageId);
+//                    wmsInAsnOrderDet.setLineNumber(i);
+//                    wmsInAsnOrderDet.setInventoryStatusId(dets.getInventoryStatusId());
+//                    wmsInAsnOrderDet.setMaterialId(dets.getMaterialId());
+//                    wmsInAsnOrderDet.setPackingUnitName(dets.getPackingUnitName());
+//                    wmsInAsnOrderDet.setPackingQty(dets.getPackingQty());
+//                    wmsInAsnOrderDet.setBatchCode(dets.getBatchCode());
+//                    wmsInAsnOrderDets.add(wmsInAsnOrderDet);
                 }
-                wmsInAsnOrder.setWmsInAsnOrderDetList(wmsInAsnOrderDets);
-                ResponseEntity rer = inFeignApi.save(wmsInAsnOrder);
-                if(rer.getCode()!=0){
-                    throw new BizErrorException(rer.getMessage());
-                }
+//                wmsInAsnOrder.setWmsInAsnOrderDetList(wmsInAsnOrderDets);
+//                ResponseEntity rer = inFeignApi.save(wmsInAsnOrder);
+//                if(rer.getCode()!=0){
+//                    throw new BizErrorException(rer.getMessage());
+//                }
 
                 break;
             case "7":
@@ -491,7 +491,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                     OmOtherOutOrderDet omOtherOutOrderDet = new OmOtherOutOrderDet();
                     omOtherOutOrderDet.setOtherOutOrderId(wmsOutDeliveryOrder.getSourceOrderId());
                     omOtherOutOrderDet.setOtherOutOrderDetId(wmsOutDeliveryOrderDet.getOrderDetId());
-                    omOtherOutOrderDet.setDispatchQty(wmsInnerJobOrderDetDto.getActualQty());
+//                    omOtherOutOrderDet.setDispatchQty(wmsInnerJobOrderDetDto.getActualQty());
                     ResponseEntity responseEntity = omFeignApi.writeQtyToOut(omOtherOutOrderDet);
                 }
                 num+=wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDet);
@@ -557,7 +557,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
         ResponseEntity responseEntity = innerFeignApi.retrographyStatus(WmsInnerJobOrderDet.builder()
                 .jobOrderDetId(wmsInnerJobOrderDetDto.getJobOrderDetId())
                 .jobOrderId(wmsInnerJobOrderDetDto.getJobOrderId())
-                .orderStatus((byte)6)
+//                .orderStatus((byte)6)
                 .build());
         if(responseEntity.getCode()!=0){
             throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());

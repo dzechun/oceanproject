@@ -71,27 +71,4 @@ public class PickingOrderController {
         List<WmsInnerJobOrderDto> list = pickingOrderService.findList(searchWmsInnerJobOrder);
         return ControllerUtil.returnDataSuccess(list, StringUtils.isEmpty(list)?0:1);
     }
-
-    @PostMapping("/retrographyStatus")
-    public ResponseEntity retrographyStatus(@RequestBody WmsInnerJobOrderDet wmsInnerJobOrderDet){
-        return ControllerUtil.returnCRUD(pickingOrderService.retrographyStatus(wmsInnerJobOrderDet));
-    }
-
-    @ApiOperation("调拨出库单快捷发运")
-    @PostMapping("/autoOutOrder")
-    public ResponseEntity autoOutOrder(@RequestParam Long outDeliveryOrderId,@RequestParam Byte orderTypeId){
-        return ControllerUtil.returnCRUD(pickingOrderService.autoOutOrder(outDeliveryOrderId,orderTypeId));
-    }
-
-    @PostMapping("/sealOrder")
-    @ApiOperation("封单")
-    public ResponseEntity sealOrder(@RequestBody(required = false) List<Long> outDeliveryOrderIds,@RequestParam(required = false) Byte type){
-        return ControllerUtil.returnCRUD(pickingOrderService.sealOrder(outDeliveryOrderIds,type));
-    }
-
-    @GetMapping("/AutoSealOrder")
-    @ApiOperation("封单")
-    public ResponseEntity AutoSealOrder(@RequestParam(required = false) Byte type){
-        return ControllerUtil.returnCRUD(pickingOrderService.sealOrder(null,type));
-    }
 }
