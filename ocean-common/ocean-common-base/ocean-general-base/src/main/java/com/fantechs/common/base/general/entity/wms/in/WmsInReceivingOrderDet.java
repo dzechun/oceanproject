@@ -230,5 +230,9 @@ public class WmsInReceivingOrderDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name = "wmsInReceivingOrderBarcodeList",value = "条码id")
     private List<WmsInReceivingOrderBarcode> wmsInReceivingOrderBarcodeList;
 
+    @ApiModelProperty(name = "ifSysBarcode",value = "是否系统条码（0-否 1-是）")
+    @Transient
+    private Byte ifSysBarcode;
+
     private static final long serialVersionUID = 1L;
 }
