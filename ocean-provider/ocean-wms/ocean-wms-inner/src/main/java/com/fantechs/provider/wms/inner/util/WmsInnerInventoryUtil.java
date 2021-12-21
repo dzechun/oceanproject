@@ -6,12 +6,10 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryLog;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
+import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
+import com.fantechs.provider.wms.inner.service.WmsInnerInventoryDetService;
 import com.fantechs.provider.wms.inner.service.WmsInnerInventoryLogService;
 import org.springframework.stereotype.Component;
 import tk.mybatis.mapper.entity.Example;
@@ -21,6 +19,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,6 +32,8 @@ public class WmsInnerInventoryUtil {
 
     @Resource
     private WmsInnerInventoryMapper wmsInnerInventoryMapper;
+    @Resource
+    private WmsInnerInventoryDetService wmsInnerInventoryDetService;
 
     private static WmsInnerInventoryUtil wmsInnerInventoryUtil;
 
@@ -40,6 +41,7 @@ public class WmsInnerInventoryUtil {
     public void init(){
         wmsInnerInventoryUtil = this;
         wmsInnerInventoryUtil.wmsInnerInventoryMapper=wmsInnerInventoryMapper;
+        wmsInnerInventoryUtil.wmsInnerInventoryDetService=wmsInnerInventoryDetService;
     }
 
     /**
@@ -179,5 +181,20 @@ public class WmsInnerInventoryUtil {
 
         return num;
     }
+
+    /**
+     * 加库存明细
+     * @param wmsInnerInventoryDets 拣货/上架
+     */
+    public static int updateInventoryDet(List<WmsInnerInventoryDet> wmsInnerInventoryDets) {
+        int num=0;
+        // 上架 增加条码库存
+        num=wmsInnerInventoryUtil.wmsInnerInventoryDetService.add(wmsInnerInventoryDets);
+        if(num<=0){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012006.getCode(),"新增条码库存明细出错");
+        }
+        return num;
+    }
+
 
 }

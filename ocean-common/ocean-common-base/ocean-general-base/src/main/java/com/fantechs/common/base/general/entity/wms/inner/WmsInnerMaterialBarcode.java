@@ -41,6 +41,13 @@ public class WmsInnerMaterialBarcode extends ValidGroup implements Serializable 
     private Byte createType;
 
     /**
+     * 条码类型(1-SN码 2-彩盒号 3-箱号 4-栈板号)
+     */
+    @ApiModelProperty(name="barcodeType",value = "条码类型(1-SN码 2-彩盒号 3-箱号 4-栈板号)")
+    @Column(name = "barcode_type")
+    private Byte barcodeType;
+
+    /**
      * 打印指来源端IP
      */
     @ApiModelProperty(name="printOrderSourceIp",value = "打印指来源端IP")
