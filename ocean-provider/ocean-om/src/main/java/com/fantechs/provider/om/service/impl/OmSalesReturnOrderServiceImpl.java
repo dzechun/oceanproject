@@ -6,6 +6,7 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseOrderFlowDto;
 import com.fantechs.common.base.general.dto.om.OmHtSalesReturnOrderDto;
 import com.fantechs.common.base.general.dto.om.OmSalesReturnOrderDto;
 import com.fantechs.common.base.general.dto.qms.QmsIncomingInspectionOrderDto;
@@ -15,10 +16,7 @@ import com.fantechs.common.base.general.dto.wms.in.WmsInPlanReceivingOrderDetDto
 import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
-import com.fantechs.common.base.general.entity.om.OmHtSalesReturnOrder;
-import com.fantechs.common.base.general.entity.om.OmHtSalesReturnOrderDet;
-import com.fantechs.common.base.general.entity.om.OmSalesReturnOrder;
-import com.fantechs.common.base.general.entity.om.OmSalesReturnOrderDet;
+import com.fantechs.common.base.general.entity.om.*;
 import com.fantechs.common.base.general.entity.wms.in.WmsInPlanReceivingOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
@@ -38,6 +36,7 @@ import com.fantechs.provider.om.mapper.OmSalesReturnOrderMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtSalesReturnOrderDetMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtSalesReturnOrderMapper;
 import com.fantechs.provider.om.service.OmSalesReturnOrderService;
+import com.fantechs.provider.om.util.OrderFlowUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -125,7 +124,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(OmSalesReturnOrder record) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        record.setSalesReturnOrderCode(CodeUtils.getId("XSTH-"));
+        record.setSalesReturnOrderCode(CodeUtils.getId("IN-SRO"));
         record.setCreateTime(new Date());
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
@@ -246,293 +245,344 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
     public int pushDown(List<OmSalesReturnOrderDet> omSalesReturnOrderDets) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         String coreSourceSysOrderTypeCode = null;
-        int i = 0;
         List<OmSalesReturnOrderDet> list = new ArrayList<>();
-        //查当前单据的下游单据
-        SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
-        searchBaseOrderFlow.setBusinessType((byte)1);
-        searchBaseOrderFlow.setOrderNode((byte)5);
-        BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
-        if(StringUtils.isEmpty(baseOrderFlow)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未找到当前单据配置的下游单据");
-        }
-
+        List<OmSalesReturnOrder> orderList = new ArrayList<>();
+        int i = 0;
         HashSet<Long> set = new HashSet();
-        for(OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrderDets){
-            set.add(omSalesReturnOrderDet.getWarehouseId());
-            if(omSalesReturnOrderDet.getOrderQty().compareTo(omSalesReturnOrderDet.getTotalIssueQty().add(omSalesReturnOrderDet.getQty())) == -1 )
-                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "累计下发数量大于包装数量");
-
+        for (OmSalesReturnOrderDet order : omSalesReturnOrderDets) {
+            if (order.getIfAllIssued() != null && order.getIfAllIssued() == (byte) 1) {
+                throw new BizErrorException("订单已下推，无法再次下推");
+            }
+            if (order.getOrderQty().compareTo(order.getTotalIssueQty().add(order.getQty())) == -1) {
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "累计下发数量大于包装总数");
+            }
+            set.add(order.getWarehouseId());
         }
-        if (set.size()>1)
+
+        if (set.size() > 1)
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "请选择相同仓库的进行下发操作");
 
 
-        if("IN-SPO".equals(baseOrderFlow.getNextOrderTypeCode())){
-            //生成收货计划
-            List<WmsInPlanReceivingOrderDetDto> detList = new LinkedList<>();
-
-            for(OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrderDets){
-                int lineNumber = 1;
-
-                Map map = new HashMap();
-                map.put("salesReturnOrderId",omSalesReturnOrderDet.getSalesReturnOrderId());
-                List<OmSalesReturnOrderDto> omSalesReturnOrderDto = omSalesReturnOrderMapper.findList(map);
-                coreSourceSysOrderTypeCode = "IN-SRO";
-
-                WmsInPlanReceivingOrderDetDto wmsInPlanReceivingOrderDetDto = new WmsInPlanReceivingOrderDetDto();
-                wmsInPlanReceivingOrderDetDto.setCoreSourceOrderCode(omSalesReturnOrderDto.get(0).getSalesReturnOrderCode());
-                wmsInPlanReceivingOrderDetDto.setSourceOrderCode(omSalesReturnOrderDto.get(0).getSalesReturnOrderCode());
-                wmsInPlanReceivingOrderDetDto.setLineNumber(lineNumber+"");
-                wmsInPlanReceivingOrderDetDto.setSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
-                wmsInPlanReceivingOrderDetDto.setMaterialId(omSalesReturnOrderDet.getMaterialId());
-                wmsInPlanReceivingOrderDetDto.setPlanQty(omSalesReturnOrderDet.getOrderQty());
-                wmsInPlanReceivingOrderDetDto.setLineStatus((byte)1);
-                wmsInPlanReceivingOrderDetDto.setActualQty(omSalesReturnOrderDet.getReceivingQty());
-                wmsInPlanReceivingOrderDetDto.setOperatorUserId(user.getUserId());
-                detList.add(wmsInPlanReceivingOrderDetDto);
-                omSalesReturnOrderDet.setTotalIssueQty(omSalesReturnOrderDet.getTotalIssueQty().add(omSalesReturnOrderDet.getQty()));
-                if(omSalesReturnOrderDet.getTotalIssueQty().compareTo(omSalesReturnOrderDet.getOrderQty())== 0) {
-                    omSalesReturnOrderDet.setIfAllIssued((byte) 1);
-                }else {
-                    omSalesReturnOrderDet.setIfAllIssued((byte) 0);
-                }
-                list.add(omSalesReturnOrderDet);
-            }
-            WmsInPlanReceivingOrder wmsInPlanReceivingOrder = new WmsInPlanReceivingOrder();
-            wmsInPlanReceivingOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
-            wmsInPlanReceivingOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
-            wmsInPlanReceivingOrder.setOrderStatus((byte)1);
-            wmsInPlanReceivingOrder.setCreateUserId(user.getUserId());
-            wmsInPlanReceivingOrder.setCreateTime(new Date());
-            wmsInPlanReceivingOrder.setModifiedUserId(user.getUserId());
-            wmsInPlanReceivingOrder.setModifiedTime(new Date());
-            wmsInPlanReceivingOrder.setStatus((byte)1);
-            wmsInPlanReceivingOrder.setOrgId(user.getOrganizationId());
-            wmsInPlanReceivingOrder.setWarehouseId(omSalesReturnOrderDets.get(0).getWarehouseId());
-            wmsInPlanReceivingOrder.setInPlanReceivingOrderDets(detList);
-
-            ResponseEntity responseEntity = inFeignApi.add(wmsInPlanReceivingOrder);
-            if(responseEntity.getCode() != 0){
-                throw new BizErrorException("下推生成收货计划单失败");
-            }else {
-                i++;
-            }
-        }else if ("IN-SWK".equals(baseOrderFlow.getNextOrderTypeCode())){
-            //生成收货作业
-
-            List<WmsInReceivingOrderDetDto> detList = new LinkedList<>();
-
-            for(OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrderDets){
-                int lineNumber = 1;
-                Map map = new HashMap();
-                map.put("salesReturnOrderId",omSalesReturnOrderDet.getSalesReturnOrderId());
-                List<OmSalesReturnOrderDto> omSalesReturnOrderDto = omSalesReturnOrderMapper.findList(map);
-                coreSourceSysOrderTypeCode = "IN-SRO";
-
-                WmsInReceivingOrderDetDto wmsInReceivingOrderDetDto = new WmsInReceivingOrderDetDto();
-                wmsInReceivingOrderDetDto.setCoreSourceOrderCode(omSalesReturnOrderDto.get(0).getSalesReturnOrderCode());
-                wmsInReceivingOrderDetDto.setSourceOrderCode(omSalesReturnOrderDto.get(0).getSalesReturnOrderCode());
-                wmsInReceivingOrderDetDto.setLineNumber(lineNumber+"");
-                wmsInReceivingOrderDetDto.setSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
-                wmsInReceivingOrderDetDto.setMaterialId(omSalesReturnOrderDet.getMaterialId());
-                wmsInReceivingOrderDetDto.setPlanQty(omSalesReturnOrderDet.getOrderQty());
-                wmsInReceivingOrderDetDto.setLineStatus((byte)1);
-                wmsInReceivingOrderDetDto.setActualQty(omSalesReturnOrderDet.getReceivingQty());
-                wmsInReceivingOrderDetDto.setOperatorUserId(user.getUserId());
-                detList.add(wmsInReceivingOrderDetDto);
-                omSalesReturnOrderDet.setTotalIssueQty(omSalesReturnOrderDet.getTotalIssueQty().add(omSalesReturnOrderDet.getQty()));
-                if(omSalesReturnOrderDet.getTotalIssueQty().compareTo(omSalesReturnOrderDet.getOrderQty())== 0) {
-                    omSalesReturnOrderDet.setIfAllIssued((byte) 1);
-                }else {
-                    omSalesReturnOrderDet.setIfAllIssued((byte) 0);
-                }
-                list.add(omSalesReturnOrderDet);
-            }
-            WmsInReceivingOrder wmsInReceivingOrder = new WmsInReceivingOrder();
-            wmsInReceivingOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
-            wmsInReceivingOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
-            wmsInReceivingOrder.setOrderStatus((byte)1);
-            wmsInReceivingOrder.setCreateUserId(user.getUserId());
-            wmsInReceivingOrder.setCreateTime(new Date());
-            wmsInReceivingOrder.setModifiedUserId(user.getUserId());
-            wmsInReceivingOrder.setModifiedTime(new Date());
-            wmsInReceivingOrder.setStatus((byte)1);
-            wmsInReceivingOrder.setOrgId(user.getOrganizationId());
-            wmsInReceivingOrder.setWarehouseId(omSalesReturnOrderDets.get(0).getWarehouseId());
-            wmsInReceivingOrder.setWmsInReceivingOrderDets(detList);
-
-            ResponseEntity responseEntity = inFeignApi.add(wmsInReceivingOrder);
-            if(responseEntity.getCode() != 0){
-                throw new BizErrorException("下推生成收货作业单失败");
-            }else {
-                i++;
-            }
-        }else if ("QMS-MIIO".equals(baseOrderFlow.getNextOrderTypeCode())){
-            //生成来料检验单
-
-            List<QmsIncomingInspectionOrderDto> detList = new LinkedList<>();
-            for(OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrderDets){
-                int lineNumber = 1;
-
-                Map map = new HashMap();
-                map.put("salesReturnOrderId",omSalesReturnOrderDet.getSalesReturnOrderId());
-                List<OmSalesReturnOrderDto> omSalesReturnOrderDto = omSalesReturnOrderMapper.findList(map);
-                coreSourceSysOrderTypeCode = "IN-SRO";
-
-                QmsIncomingInspectionOrderDto qmsIncomingInspectionOrderDto = new QmsIncomingInspectionOrderDto();
-                qmsIncomingInspectionOrderDto.setCoreSourceOrderCode(omSalesReturnOrderDto.get(0).getSalesReturnOrderCode());
-                qmsIncomingInspectionOrderDto.setSourceOrderCode(omSalesReturnOrderDto.get(0).getSalesReturnOrderCode());
-                qmsIncomingInspectionOrderDto.setSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
-                qmsIncomingInspectionOrderDto.setMaterialId(omSalesReturnOrderDet.getMaterialId());
-                qmsIncomingInspectionOrderDto.setWarehouseId(omSalesReturnOrderDet.getWarehouseId());
-                qmsIncomingInspectionOrderDto.setOrderQty(omSalesReturnOrderDet.getOrderQty());
-                qmsIncomingInspectionOrderDto.setInspectionStatus((byte)1);
-                qmsIncomingInspectionOrderDto.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
-                qmsIncomingInspectionOrderDto.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
-                qmsIncomingInspectionOrderDto.setCreateUserId(user.getUserId());
-                qmsIncomingInspectionOrderDto.setCreateTime(new Date());
-                qmsIncomingInspectionOrderDto.setModifiedUserId(user.getUserId());
-                qmsIncomingInspectionOrderDto.setModifiedTime(new Date());
-                qmsIncomingInspectionOrderDto.setStatus((byte)1);
-                qmsIncomingInspectionOrderDto.setOrgId(user.getOrganizationId());
-                detList.add(qmsIncomingInspectionOrderDto);
-                omSalesReturnOrderDet.setTotalIssueQty(omSalesReturnOrderDet.getTotalIssueQty().add(omSalesReturnOrderDet.getQty()));
-                if(omSalesReturnOrderDet.getTotalIssueQty().compareTo(omSalesReturnOrderDet.getOrderQty())== 0) {
-                    omSalesReturnOrderDet.setIfAllIssued((byte) 1);
-                }else {
-                    omSalesReturnOrderDet.setIfAllIssued((byte) 0);
-                }
-                list.add(omSalesReturnOrderDet);
-            }
-            ResponseEntity responseEntity = qmsFeignApi.batchAdd(detList);
-
-            if(responseEntity.getCode() != 0){
-                throw new BizErrorException("下推生成来料检验单失败");
-            }else {
-                i++;
-            }
-
-        }else if("IN-IPO".equals(baseOrderFlow.getNextOrderTypeCode())){
-            //生成入库计划单
-            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-            searchSysSpecItem.setSpecCode("InPlanOrderIsWork");
-            List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-            if(StringUtils.isEmpty(specItems))
-                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"需先配置作业循序先后");
-            if("0".equals(StringUtils.isEmpty(specItems.get(0).getParaValue())))
-                throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"先作业后单据无法进行下推操作");
-
-            List<WmsInInPlanOrderDetDto> detList = new LinkedList<>();
-
-            for(OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrderDets){
-                int lineNumber = 1;
-
-                Map map = new HashMap();
-                map.put("salesReturnOrderId",omSalesReturnOrderDet.getSalesReturnOrderId());
-                List<OmSalesReturnOrderDto> omSalesReturnOrderDto = omSalesReturnOrderMapper.findList(map);
-                coreSourceSysOrderTypeCode = "IN-SRO";
-
-                WmsInInPlanOrderDetDto wmsInInPlanOrderDet = new WmsInInPlanOrderDetDto();
-                wmsInInPlanOrderDet.setCoreSourceOrderCode(omSalesReturnOrderDto.get(0).getSalesReturnOrderCode());
-                wmsInInPlanOrderDet.setSourceOrderCode(omSalesReturnOrderDto.get(0).getSalesReturnOrderCode());
-                wmsInInPlanOrderDet.setLineNumber(lineNumber+"");
-                wmsInInPlanOrderDet.setSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
-                wmsInInPlanOrderDet.setMaterialId(omSalesReturnOrderDet.getMaterialId());
-                wmsInInPlanOrderDet.setPlanQty(omSalesReturnOrderDet.getOrderQty());
-                wmsInInPlanOrderDet.setLineStatus((byte)1);
-                detList.add(wmsInInPlanOrderDet);
-                omSalesReturnOrderDet.setTotalIssueQty(omSalesReturnOrderDet.getTotalIssueQty().add(omSalesReturnOrderDet.getQty()));
-                if(omSalesReturnOrderDet.getTotalIssueQty().compareTo(omSalesReturnOrderDet.getOrderQty())== 0) {
-                    omSalesReturnOrderDet.setIfAllIssued((byte) 1);
-                }else {
-                    omSalesReturnOrderDet.setIfAllIssued((byte) 0);
-                }
-                list.add(omSalesReturnOrderDet);
-            }
-
-            WmsInInPlanOrderDto wmsInInPlanOrder = new WmsInInPlanOrderDto();
-            wmsInInPlanOrder.setMakeOrderUserId(user.getUserId());
-            wmsInInPlanOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
-            wmsInInPlanOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
-            wmsInInPlanOrder.setOrderStatus((byte)1);
-            wmsInInPlanOrder.setWarehouseId(omSalesReturnOrderDets.get(0).getWarehouseId());
-            wmsInInPlanOrder.setCreateUserId(user.getUserId());
-            wmsInInPlanOrder.setCreateTime(new Date());
-            wmsInInPlanOrder.setModifiedUserId(user.getUserId());
-            wmsInInPlanOrder.setModifiedTime(new Date());
-            wmsInInPlanOrder.setStatus((byte)1);
-            wmsInInPlanOrder.setOrgId(user.getOrganizationId());
-            wmsInInPlanOrder.setWmsInInPlanOrderDetDtos(detList);
-
-            ResponseEntity responseEntity = inFeignApi.add(wmsInInPlanOrder);
-            if(responseEntity.getCode() != 0){
-                throw new BizErrorException("下推生成入库计划单失败");
-            }else {
-
-                i++;
-            }
-        }else if("IN-IWK".equals(baseOrderFlow.getNextOrderTypeCode())){
-            //生成上架作业单
-
-            List<WmsInnerJobOrderDet> detList = new LinkedList<>();
-            for(OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrderDets){
-                int lineNumber = 1;
-
-                Map map = new HashMap();
-                map.put("salesReturnOrderId",omSalesReturnOrderDet.getSalesReturnOrderId());
-                List<OmSalesReturnOrderDto> omSalesReturnOrderDto = omSalesReturnOrderMapper.findList(map);
-                coreSourceSysOrderTypeCode = "IN-SRO";
-
-                WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
-                wmsInnerJobOrderDet.setCoreSourceOrderCode(omSalesReturnOrderDto.get(0).getSalesReturnOrderCode());
-                wmsInnerJobOrderDet.setSourceOrderCode(omSalesReturnOrderDto.get(0).getSalesReturnOrderCode());
-                wmsInnerJobOrderDet.setSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
-                wmsInnerJobOrderDet.setLineNumber(lineNumber+"");
-                wmsInnerJobOrderDet.setMaterialId(omSalesReturnOrderDet.getMaterialId());
-                wmsInnerJobOrderDet.setPlanQty(omSalesReturnOrderDet.getQty());
-                wmsInnerJobOrderDet.setLineStatus((byte)1);
-                detList.add(wmsInnerJobOrderDet);
-                omSalesReturnOrderDet.setTotalIssueQty(omSalesReturnOrderDet.getTotalIssueQty().add(omSalesReturnOrderDet.getQty()));
-                if(omSalesReturnOrderDet.getTotalIssueQty().compareTo(omSalesReturnOrderDet.getOrderQty())== 0) {
-                    omSalesReturnOrderDet.setIfAllIssued((byte) 1);
-                }else {
-                    omSalesReturnOrderDet.setIfAllIssued((byte) 0);
-                }
-                list.add(omSalesReturnOrderDet);
-            }
-
-            WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
-            wmsInnerJobOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
-            wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
-            wmsInnerJobOrder.setJobOrderType((byte)1);
-            wmsInnerJobOrder.setWarehouseId(omSalesReturnOrderDets.get(0).getWarehouseId());
-            wmsInnerJobOrder.setOrderStatus((byte)1);
-            wmsInnerJobOrder.setCreateUserId(user.getUserId());
-            wmsInnerJobOrder.setCreateTime(new Date());
-            wmsInnerJobOrder.setModifiedUserId(user.getUserId());
-            wmsInnerJobOrder.setModifiedTime(new Date());
-            wmsInnerJobOrder.setStatus((byte)1);
-            wmsInnerJobOrder.setOrgId(user.getOrganizationId());
-            wmsInnerJobOrder.setWmsInPutawayOrderDets(detList);
-
-            ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
-            if(responseEntity.getCode() != 0){
-                throw new BizErrorException("下推生成上架作业单失败");
-            }else {
-                i++;
-            }
-        }else {
-            throw new BizErrorException("单据流配置错误");
+        //查当前单据的下游单据
+        SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
+        searchBaseOrderFlow.setOrderTypeCode("IN-OIO");
+        List<BaseOrderFlowDto> baseOrderFlowDtos = baseFeignApi.findList(searchBaseOrderFlow).getData();
+        if (StringUtils.isEmpty(baseOrderFlowDtos)) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未找到当前单据配置的下游单据");
         }
 
+        //根据仓库分组，不同仓库生成多张单
+        Map<String, List<OmSalesReturnOrderDet>> detMap = new HashMap<>();
+        //不同单据流分组
+        for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrderDets) {
+            //当前单据的下游单据
+            BaseOrderFlow baseOrderFlow = OrderFlowUtil.getOrderFlow(baseOrderFlowDtos, omSalesReturnOrderDet.getMaterialId(), null);
+            String key = baseOrderFlow.getNextOrderTypeCode();
+            if (detMap.get(key) == null) {
+                List<OmSalesReturnOrderDet> diffOrderFlows = new LinkedList<>();
+                diffOrderFlows.add(omSalesReturnOrderDet);
+                detMap.put(key, diffOrderFlows);
+            } else {
+                List<OmSalesReturnOrderDet> diffOrderFlows = detMap.get(key);
+                diffOrderFlows.add(omSalesReturnOrderDet);
+                detMap.put(key, diffOrderFlows);
+            }
+        }
+
+        Set<String> codes = detMap.keySet();
+        for (String code : codes) {
+            String[] split = code.split("_");
+            String nextOrderTypeCode = split[1];//下游单据类型
+
+            if ("IN-SPO".equals(nextOrderTypeCode)) {
+                //生成收货计划
+                List<WmsInPlanReceivingOrderDetDto> detList = new LinkedList<>();
+
+                for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrderDets) {
+                    int lineNumber = 1;
+
+                    Map map = new HashMap();
+                    map.put("salesReturnOrderId", omSalesReturnOrderDet.getSalesReturnOrderId());
+                    List<OmSalesReturnOrderDto> omSalesReturnOrderDto = omSalesReturnOrderMapper.findList(map);
+                    OmSalesReturnOrderDto order = omSalesReturnOrderDto.get(0);
+                    coreSourceSysOrderTypeCode = order.getSysOrderTypeCode();
+
+                    WmsInPlanReceivingOrderDetDto wmsInPlanReceivingOrderDetDto = new WmsInPlanReceivingOrderDetDto();
+                    wmsInPlanReceivingOrderDetDto.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
+                    wmsInPlanReceivingOrderDetDto.setSourceOrderCode(order.getSalesReturnOrderCode());
+                    wmsInPlanReceivingOrderDetDto.setLineNumber(lineNumber + "");
+                    wmsInPlanReceivingOrderDetDto.setSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
+                    wmsInPlanReceivingOrderDetDto.setMaterialId(omSalesReturnOrderDet.getMaterialId());
+                    wmsInPlanReceivingOrderDetDto.setPlanQty(omSalesReturnOrderDet.getOrderQty());
+                    wmsInPlanReceivingOrderDetDto.setLineStatus((byte) 1);
+                    wmsInPlanReceivingOrderDetDto.setActualQty(omSalesReturnOrderDet.getReceivingQty());
+                    wmsInPlanReceivingOrderDetDto.setOperatorUserId(user.getUserId());
+                    detList.add(wmsInPlanReceivingOrderDetDto);
+                    omSalesReturnOrderDet.setTotalIssueQty(omSalesReturnOrderDet.getTotalIssueQty().add(omSalesReturnOrderDet.getQty()));
+                    if (omSalesReturnOrderDet.getTotalIssueQty().compareTo(omSalesReturnOrderDet.getOrderQty()) == 0) {
+                        omSalesReturnOrderDet.setIfAllIssued((byte) 1);
+                        order.setOrderStatus((byte)3);
+                    } else {
+                        omSalesReturnOrderDet.setIfAllIssued((byte) 0);
+                        order.setOrderStatus((byte)2);
+                    }
+                    list.add(omSalesReturnOrderDet);
+                    orderList.add(order);
+                }
+                WmsInPlanReceivingOrder wmsInPlanReceivingOrder = new WmsInPlanReceivingOrder();
+                wmsInPlanReceivingOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                wmsInPlanReceivingOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                wmsInPlanReceivingOrder.setOrderStatus((byte) 1);
+                wmsInPlanReceivingOrder.setCreateUserId(user.getUserId());
+                wmsInPlanReceivingOrder.setCreateTime(new Date());
+                wmsInPlanReceivingOrder.setModifiedUserId(user.getUserId());
+                wmsInPlanReceivingOrder.setModifiedTime(new Date());
+                wmsInPlanReceivingOrder.setStatus((byte) 1);
+                wmsInPlanReceivingOrder.setOrgId(user.getOrganizationId());
+                wmsInPlanReceivingOrder.setWarehouseId(omSalesReturnOrderDets.get(0).getWarehouseId());
+                wmsInPlanReceivingOrder.setInPlanReceivingOrderDets(detList);
+
+                ResponseEntity responseEntity = inFeignApi.add(wmsInPlanReceivingOrder);
+                if (responseEntity.getCode() != 0) {
+                    throw new BizErrorException("下推生成收货计划单失败");
+                } else {
+                    i++;
+                }
+            } else if ("IN-SWK".equals(nextOrderTypeCode)) {
+                //生成收货作业
+
+                List<WmsInReceivingOrderDetDto> detList = new LinkedList<>();
+
+                for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrderDets) {
+                    int lineNumber = 1;
+                    Map map = new HashMap();
+                    map.put("salesReturnOrderId", omSalesReturnOrderDet.getSalesReturnOrderId());
+                    List<OmSalesReturnOrderDto> omSalesReturnOrderDto = omSalesReturnOrderMapper.findList(map);
+                    OmSalesReturnOrderDto order = omSalesReturnOrderDto.get(0);
+                    coreSourceSysOrderTypeCode = order.getSysOrderTypeCode();
+
+                    WmsInReceivingOrderDetDto wmsInReceivingOrderDetDto = new WmsInReceivingOrderDetDto();
+                    wmsInReceivingOrderDetDto.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
+                    wmsInReceivingOrderDetDto.setSourceOrderCode(order.getSalesReturnOrderCode());
+                    wmsInReceivingOrderDetDto.setLineNumber(lineNumber + "");
+                    wmsInReceivingOrderDetDto.setSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
+                    wmsInReceivingOrderDetDto.setMaterialId(omSalesReturnOrderDet.getMaterialId());
+                    wmsInReceivingOrderDetDto.setPlanQty(omSalesReturnOrderDet.getOrderQty());
+                    wmsInReceivingOrderDetDto.setLineStatus((byte) 1);
+                    wmsInReceivingOrderDetDto.setActualQty(omSalesReturnOrderDet.getReceivingQty());
+                    wmsInReceivingOrderDetDto.setOperatorUserId(user.getUserId());
+                    detList.add(wmsInReceivingOrderDetDto);
+                    omSalesReturnOrderDet.setTotalIssueQty(omSalesReturnOrderDet.getTotalIssueQty().add(omSalesReturnOrderDet.getQty()));
+                    if (omSalesReturnOrderDet.getTotalIssueQty().compareTo(omSalesReturnOrderDet.getOrderQty()) == 0) {
+                        omSalesReturnOrderDet.setIfAllIssued((byte) 1);
+                        order.setOrderStatus((byte)3);
+                    } else {
+                        omSalesReturnOrderDet.setIfAllIssued((byte) 0);
+                        order.setOrderStatus((byte)2);
+                    }
+                    list.add(omSalesReturnOrderDet);
+                    orderList.add(order);
+                }
+                WmsInReceivingOrder wmsInReceivingOrder = new WmsInReceivingOrder();
+                wmsInReceivingOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                wmsInReceivingOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                wmsInReceivingOrder.setOrderStatus((byte) 1);
+                wmsInReceivingOrder.setCreateUserId(user.getUserId());
+                wmsInReceivingOrder.setCreateTime(new Date());
+                wmsInReceivingOrder.setModifiedUserId(user.getUserId());
+                wmsInReceivingOrder.setModifiedTime(new Date());
+                wmsInReceivingOrder.setStatus((byte) 1);
+                wmsInReceivingOrder.setOrgId(user.getOrganizationId());
+                wmsInReceivingOrder.setWarehouseId(omSalesReturnOrderDets.get(0).getWarehouseId());
+                wmsInReceivingOrder.setWmsInReceivingOrderDets(detList);
+
+                ResponseEntity responseEntity = inFeignApi.add(wmsInReceivingOrder);
+                if (responseEntity.getCode() != 0) {
+                    throw new BizErrorException("下推生成收货作业单失败");
+                } else {
+                    i++;
+                }
+            } else if ("QMS-MIIO".equals(nextOrderTypeCode)) {
+                //生成来料检验单
+
+                List<QmsIncomingInspectionOrderDto> detList = new LinkedList<>();
+                for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrderDets) {
+                    int lineNumber = 1;
+
+                    Map map = new HashMap();
+                    map.put("salesReturnOrderId", omSalesReturnOrderDet.getSalesReturnOrderId());
+                    List<OmSalesReturnOrderDto> omSalesReturnOrderDto = omSalesReturnOrderMapper.findList(map);
+                    OmSalesReturnOrderDto order = omSalesReturnOrderDto.get(0);
+                    coreSourceSysOrderTypeCode = order.getSysOrderTypeCode();
+
+                    QmsIncomingInspectionOrderDto qmsIncomingInspectionOrderDto = new QmsIncomingInspectionOrderDto();
+                    qmsIncomingInspectionOrderDto.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
+                    qmsIncomingInspectionOrderDto.setSourceOrderCode(order.getSalesReturnOrderCode());
+                    qmsIncomingInspectionOrderDto.setSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
+                    qmsIncomingInspectionOrderDto.setMaterialId(omSalesReturnOrderDet.getMaterialId());
+                    qmsIncomingInspectionOrderDto.setWarehouseId(omSalesReturnOrderDet.getWarehouseId());
+                    qmsIncomingInspectionOrderDto.setOrderQty(omSalesReturnOrderDet.getOrderQty());
+                    qmsIncomingInspectionOrderDto.setInspectionStatus((byte) 1);
+                    qmsIncomingInspectionOrderDto.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                    qmsIncomingInspectionOrderDto.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                    qmsIncomingInspectionOrderDto.setCreateUserId(user.getUserId());
+                    qmsIncomingInspectionOrderDto.setCreateTime(new Date());
+                    qmsIncomingInspectionOrderDto.setModifiedUserId(user.getUserId());
+                    qmsIncomingInspectionOrderDto.setModifiedTime(new Date());
+                    qmsIncomingInspectionOrderDto.setStatus((byte) 1);
+                    qmsIncomingInspectionOrderDto.setOrgId(user.getOrganizationId());
+                    detList.add(qmsIncomingInspectionOrderDto);
+                    omSalesReturnOrderDet.setTotalIssueQty(omSalesReturnOrderDet.getTotalIssueQty().add(omSalesReturnOrderDet.getQty()));
+                    if (omSalesReturnOrderDet.getTotalIssueQty().compareTo(omSalesReturnOrderDet.getOrderQty()) == 0) {
+                        omSalesReturnOrderDet.setIfAllIssued((byte) 1);
+                        order.setOrderStatus((byte)3);
+                    } else {
+                        omSalesReturnOrderDet.setIfAllIssued((byte) 0);
+                        order.setOrderStatus((byte)2);
+                    }
+                    list.add(omSalesReturnOrderDet);
+                    orderList.add(order);
+                }
+                ResponseEntity responseEntity = qmsFeignApi.batchAdd(detList);
+
+                if (responseEntity.getCode() != 0) {
+                    throw new BizErrorException("下推生成来料检验单失败");
+                } else {
+                    i++;
+                }
+
+            } else if ("IN-IPO".equals(nextOrderTypeCode)) {
+                //生成入库计划单
+                SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+                searchSysSpecItem.setSpecCode("InPlanOrderIsWork");
+                List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+                if (StringUtils.isEmpty(specItems))
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "需先配置作业循序先后");
+                if ("0".equals(StringUtils.isEmpty(specItems.get(0).getParaValue())))
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(), "先作业后单据无法进行下推操作");
+
+                List<WmsInInPlanOrderDetDto> detList = new LinkedList<>();
+
+                for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrderDets) {
+                    int lineNumber = 1;
+
+                    Map map = new HashMap();
+                    map.put("salesReturnOrderId", omSalesReturnOrderDet.getSalesReturnOrderId());
+                    List<OmSalesReturnOrderDto> omSalesReturnOrderDto = omSalesReturnOrderMapper.findList(map);
+                    OmSalesReturnOrderDto order = omSalesReturnOrderDto.get(0);
+                    coreSourceSysOrderTypeCode = order.getSysOrderTypeCode();
+
+                    WmsInInPlanOrderDetDto wmsInInPlanOrderDet = new WmsInInPlanOrderDetDto();
+                    wmsInInPlanOrderDet.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
+                    wmsInInPlanOrderDet.setSourceOrderCode(order.getSalesReturnOrderCode());
+                    wmsInInPlanOrderDet.setLineNumber(lineNumber + "");
+                    wmsInInPlanOrderDet.setSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
+                    wmsInInPlanOrderDet.setMaterialId(omSalesReturnOrderDet.getMaterialId());
+                    wmsInInPlanOrderDet.setPlanQty(omSalesReturnOrderDet.getOrderQty());
+                    wmsInInPlanOrderDet.setLineStatus((byte) 1);
+                    detList.add(wmsInInPlanOrderDet);
+                    omSalesReturnOrderDet.setTotalIssueQty(omSalesReturnOrderDet.getTotalIssueQty().add(omSalesReturnOrderDet.getQty()));
+                    if (omSalesReturnOrderDet.getTotalIssueQty().compareTo(omSalesReturnOrderDet.getOrderQty()) == 0) {
+                        omSalesReturnOrderDet.setIfAllIssued((byte) 1);
+                        order.setOrderStatus((byte)3);
+                    } else {
+                        omSalesReturnOrderDet.setIfAllIssued((byte) 0);
+                        order.setOrderStatus((byte)2);
+                    }
+                    list.add(omSalesReturnOrderDet);
+                    orderList.add(order);
+                }
+
+                WmsInInPlanOrderDto wmsInInPlanOrder = new WmsInInPlanOrderDto();
+                wmsInInPlanOrder.setMakeOrderUserId(user.getUserId());
+                wmsInInPlanOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                wmsInInPlanOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                wmsInInPlanOrder.setOrderStatus((byte) 1);
+                wmsInInPlanOrder.setWarehouseId(omSalesReturnOrderDets.get(0).getWarehouseId());
+                wmsInInPlanOrder.setCreateUserId(user.getUserId());
+                wmsInInPlanOrder.setCreateTime(new Date());
+                wmsInInPlanOrder.setModifiedUserId(user.getUserId());
+                wmsInInPlanOrder.setModifiedTime(new Date());
+                wmsInInPlanOrder.setStatus((byte) 1);
+                wmsInInPlanOrder.setOrgId(user.getOrganizationId());
+                wmsInInPlanOrder.setWmsInInPlanOrderDetDtos(detList);
+
+                ResponseEntity responseEntity = inFeignApi.add(wmsInInPlanOrder);
+                if (responseEntity.getCode() != 0) {
+                    throw new BizErrorException("下推生成入库计划单失败");
+                } else {
+
+                    i++;
+                }
+            } else if ("IN-IWK".equals(nextOrderTypeCode)) {
+                //生成上架作业单
+
+                List<WmsInnerJobOrderDet> detList = new LinkedList<>();
+                for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrderDets) {
+                    int lineNumber = 1;
+
+                    Map map = new HashMap();
+                    map.put("salesReturnOrderId", omSalesReturnOrderDet.getSalesReturnOrderId());
+                    List<OmSalesReturnOrderDto> omSalesReturnOrderDto = omSalesReturnOrderMapper.findList(map);
+                    OmSalesReturnOrderDto order = omSalesReturnOrderDto.get(0);
+                    coreSourceSysOrderTypeCode = order.getSysOrderTypeCode();
+
+                    WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                    wmsInnerJobOrderDet.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
+                    wmsInnerJobOrderDet.setSourceOrderCode(order.getSalesReturnOrderCode());
+                    wmsInnerJobOrderDet.setSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
+                    wmsInnerJobOrderDet.setLineNumber(lineNumber + "");
+                    wmsInnerJobOrderDet.setMaterialId(omSalesReturnOrderDet.getMaterialId());
+                    wmsInnerJobOrderDet.setPlanQty(omSalesReturnOrderDet.getQty());
+                    wmsInnerJobOrderDet.setLineStatus((byte) 1);
+                    detList.add(wmsInnerJobOrderDet);
+                    omSalesReturnOrderDet.setTotalIssueQty(omSalesReturnOrderDet.getTotalIssueQty().add(omSalesReturnOrderDet.getQty()));
+                    if (omSalesReturnOrderDet.getTotalIssueQty().compareTo(omSalesReturnOrderDet.getOrderQty()) == 0) {
+                        omSalesReturnOrderDet.setIfAllIssued((byte) 1);
+                        order.setOrderStatus((byte)3);
+                    } else {
+                        omSalesReturnOrderDet.setIfAllIssued((byte) 0);
+                        order.setOrderStatus((byte)2);
+                    }
+                    list.add(omSalesReturnOrderDet);
+                    orderList.add(order);
+                }
+
+                WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+                wmsInnerJobOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                wmsInnerJobOrder.setJobOrderType((byte) 1);
+                wmsInnerJobOrder.setWarehouseId(omSalesReturnOrderDets.get(0).getWarehouseId());
+                wmsInnerJobOrder.setOrderStatus((byte) 1);
+                wmsInnerJobOrder.setCreateUserId(user.getUserId());
+                wmsInnerJobOrder.setCreateTime(new Date());
+                wmsInnerJobOrder.setModifiedUserId(user.getUserId());
+                wmsInnerJobOrder.setModifiedTime(new Date());
+                wmsInnerJobOrder.setStatus((byte) 1);
+                wmsInnerJobOrder.setOrgId(user.getOrganizationId());
+                wmsInnerJobOrder.setWmsInPutawayOrderDets(detList);
+
+                ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
+                if (responseEntity.getCode() != 0) {
+                    throw new BizErrorException("下推生成上架作业单失败");
+                } else {
+                    i++;
+                }
+            } else {
+                throw new BizErrorException("单据流配置错误");
+            }
+        }
         //返写下推数据
         if(StringUtils.isNotEmpty(list)) {
             for (OmSalesReturnOrderDet omSalesReturnOrderDet : list) {
                 omSalesReturnOrderDetMapper.updateByPrimaryKeySelective(omSalesReturnOrderDet);
             }
         }
-
+        if (StringUtils.isNotEmpty(orderList)) {
+            for (OmSalesReturnOrder omSalesReturnOrder : orderList) {
+                omSalesReturnOrderMapper.updateByPrimaryKeySelective(omSalesReturnOrder);
+            }
+        }
         return i;
     }
 
