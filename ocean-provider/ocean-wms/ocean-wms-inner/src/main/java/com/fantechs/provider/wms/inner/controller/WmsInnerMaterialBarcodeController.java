@@ -5,6 +5,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerMaterialBarcodeImport;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcode;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -46,6 +47,12 @@ public class WmsInnerMaterialBarcodeController {
     @PostMapping("/batchUpdate")
     public ResponseEntity batchUpdate(@ApiParam(value = "必传：",required = true)@RequestBody @Validated @NotEmpty List<WmsInnerMaterialBarcodeDto> list) {
         return ControllerUtil.returnCRUD(wmsInnerMaterialBarcodeService.batchUpdate(list));
+    }
+
+    @ApiOperation(value = "批量新增",notes = "批量新增")
+    @PostMapping("/batchAdd")
+    public ResponseEntity<List<WmsInnerMaterialBarcodeDto>> batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated @NotEmpty List<WmsInnerMaterialBarcodeDto> list) {
+        return ControllerUtil.returnDataSuccess(wmsInnerMaterialBarcodeService.batchAdd(list),StringUtils.isEmpty(list)?0:1);
     }
 
     @ApiOperation(value = "生成条码",notes = "生成条码")

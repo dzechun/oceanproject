@@ -1,14 +1,14 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.*;
+import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
+import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDetDto;
+import com.fantechs.common.base.general.dto.basic.BaseLabelDto;
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
@@ -16,10 +16,11 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerMaterialBarcodeImport;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
-import com.fantechs.common.base.general.entity.basic.BaseTab;
 import com.fantechs.common.base.general.entity.basic.search.*;
-import com.fantechs.common.base.general.entity.wms.inner.*;
-import com.fantechs.common.base.general.entity.wms.inner.history.WmsHtInnerInventory;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerHtMaterialBarcode;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcode;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcodeReOrder;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcodeReprint;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
@@ -42,7 +43,6 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -108,6 +108,31 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
     }
 
     @Override
+    public List<WmsInnerMaterialBarcodeDto> batchAdd(List<WmsInnerMaterialBarcodeDto> list) {
+        SysUser sysUser = currentUser();
+
+        //履历集合
+        List<WmsInnerHtMaterialBarcode> htList = new ArrayList<>();
+
+        for (WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcode : list) {
+            wmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
+            wmsInnerMaterialBarcode.setCreateTime(new Date());
+            wmsInnerMaterialBarcode.setCreateUserId(sysUser.getUserId());
+            wmsInnerMaterialBarcode.setModifiedTime(new Date());
+            wmsInnerMaterialBarcode.setModifiedUserId(sysUser.getUserId());
+            wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(wmsInnerMaterialBarcode);
+            //添加履历
+            WmsInnerHtMaterialBarcode wmsInnerHtMaterialBarcode = new WmsInnerHtMaterialBarcode();
+            BeanUtil.copyProperties(wmsInnerMaterialBarcode,wmsInnerHtMaterialBarcode);
+            htList.add(wmsInnerHtMaterialBarcode);
+        }
+        if (StringUtils.isNotEmpty(htList)) {
+            wmsInnerHtMaterialBarcodeMapper.insertList(htList);
+        }
+        return list;
+    }
+
+    @Override
     public List<WmsInnerMaterialBarcodeDto> add(List<WmsInnerMaterialBarcodeDto> barcodeDtoList,Integer type) {
         SysUser sysUser = currentUser();
 
@@ -121,6 +146,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
         List<WmsInnerHtMaterialBarcode> htList = new ArrayList<>();
 
         SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
+        SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
 
         for (WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto : barcodeDtoList) {
             if(StringUtils.isEmpty(wmsInnerMaterialBarcodeDto.getMaterialId())){
@@ -162,13 +188,32 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
             List<BaseMaterial> baseMaterialList = baseFeignApi.findList(searchBaseMaterial).getData();
 
 
-
             if (StringUtils.isEmpty(baseMaterialList) || StringUtils.isEmpty(baseMaterialList.get(0).getBarcodeRuleSetId())) {
                 //取系统配置默认编码
                 baseBarCode = getBaseBarCode();
                 searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
             }else {
-                searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseMaterialList.get(0).getBarcodeRuleSetId());
+                searchBaseBarcodeRuleSetDet.setBarcodeRuleSetId(baseMaterialList.get(0).getBarcodeRuleSetId());
+                List<BaseBarcodeRuleSetDetDto> barcodeRuleSetDetList = baseFeignApi.findBarcodeRuleSetDetList(searchBaseBarcodeRuleSetDet).getData();
+                if (StringUtils.isEmpty(barcodeRuleSetDetList)) {
+                    //取系统配置默认编码
+                    baseBarCode = getBaseBarCode();
+                    searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
+                }
+                Long barcodeRuleId = null;
+                for (BaseBarcodeRuleSetDetDto baseBarcodeRuleSetDetDto : barcodeRuleSetDetList) {
+                    if ("物料条码".equals(baseBarcodeRuleSetDetDto.getBarcodeRuleCategoryName())) {
+                        barcodeRuleId = baseBarcodeRuleSetDetDto.getBarcodeRuleId();
+                        break;
+                    }
+                }
+
+                if (StringUtils.isEmpty(barcodeRuleId)) {
+                    //取系统配置默认编码
+                    baseBarCode = getBaseBarCode();
+                    searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
+                }
+                searchBaseBarcodeRuleSpec.setBarcodeRuleId(barcodeRuleId);
             }
 
 
