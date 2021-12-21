@@ -384,12 +384,10 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
             throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"先作业后单据无法进行下推操作");
 
         int i = 0;
-//        List<WmsInInPlanOrderDetDto> wmsInInPlanOrderDetDtos = wmsInInPlanOrderDetService.findListByIds(ids);
         List<WmsInInPlanOrderDet> wmsInInPlanOrderDets = wmsInInPlanOrderDetMapper.selectByIds(ids);
         //查当前单据的下游单据
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
-        searchBaseOrderFlow.setBusinessType((byte)1);
-        searchBaseOrderFlow.setOrderNode((byte)5);
+        searchBaseOrderFlow.setOrderTypeCode("IN-IPO");
         BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
         if(StringUtils.isEmpty(baseOrderFlow)){
             throw new BizErrorException("未找到当前单据配置的下游单据");
