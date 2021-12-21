@@ -519,7 +519,6 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
     public void checkInspectionResult(List<QmsIncomingInspectionOrderDet> list){
         if(StringUtils.isNotEmpty(list)) {
             Byte inspectionResult = 1;
-            Byte inspectionStatus = 1;
             int mustInspectioncount = 0;//必检项目数
             int haveInspectioncount = 0;//已检验项目数
             int mustAndHaveInspectioncount = 0;//必检且已检验项目数
@@ -555,13 +554,12 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 List<Long> idList = materialBarcodeReOrderDtos.stream().map(WmsInnerMaterialBarcodeReOrderDto::getMaterialBarcodeId).collect(Collectors.toList());
                 updateInspectionStatus(idList,inspectionResult);
             }
-            if(haveInspectioncount > 0){
-                inspectionStatus = 2;
-            }
+            /*if(haveInspectioncount > 0){
+                qmsIncomingInspectionOrder.setInspectionStatus((byte)2);
+            }*/
             if(mustInspectioncount == mustAndHaveInspectioncount){
-                inspectionStatus = 3;
+                qmsIncomingInspectionOrder.setInspectionStatus((byte)3);
             }
-            qmsIncomingInspectionOrder.setInspectionStatus(inspectionStatus);
             qmsIncomingInspectionOrderMapper.updateByPrimaryKeySelective(qmsIncomingInspectionOrder);
 
             //履历
