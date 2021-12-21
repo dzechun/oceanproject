@@ -223,7 +223,19 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
             searchSysSpecItem.setSpecCode("inventory_status_value");
             List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-            List<WmsInnerInventoryDto> dtos = innerInventoryDtos.stream().filter(item -> item.getInventoryStatusName().equals(specItems.get(0).getParaValue())).collect(Collectors.toList());
+            List<WmsInnerInventoryDto> dtos = new ArrayList<>();
+            if (specItems.size() > 0 && !innerInventoryDtos.isEmpty() && innerInventoryDtos.size() > 0){
+                for (WmsInnerInventoryDto inventoryDto : innerInventoryDtos){
+                    if (inventoryDto.getInventoryStatusName().equals(specItems.get(0).getParaValue())){
+                        dtos.add(inventoryDto);
+                    }
+                }
+                if (dtos.size() <= 0){
+                    throw new BizErrorException(ErrorCodeEnum.PDA5001012.getCode(), "暂无库存或存库状态为待捡，不可操作");
+                }
+            }else {
+                dtos = innerInventoryDtos;
+            }
             WmsInnerInventoryDto innerInventoryDto = dtos.get(0);
             if (innerInventoryDto.getPackingQty().compareTo(dto.getMaterialQty()) < -1) {
                 throw new BizErrorException(ErrorCodeEnum.PDA5001012);
