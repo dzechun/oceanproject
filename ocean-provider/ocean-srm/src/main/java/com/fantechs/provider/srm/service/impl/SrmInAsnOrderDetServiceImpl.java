@@ -13,6 +13,8 @@ import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDetDto;
 import com.fantechs.common.base.general.dto.srm.imports.SrmInAsnOrderDetImport;
 import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDto;
+import com.fantechs.common.base.general.dto.wms.in.WmsInPlanReceivingOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
@@ -24,10 +26,7 @@ import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrderDet;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDet;
 import com.fantechs.common.base.general.entity.srm.history.SrmInHtAsnOrderDet;
-import com.fantechs.common.base.general.entity.wms.in.WmsInInPlanOrder;
-import com.fantechs.common.base.general.entity.wms.in.WmsInInPlanOrderDet;
-import com.fantechs.common.base.general.entity.wms.in.WmsInPlanReceivingOrder;
-import com.fantechs.common.base.general.entity.wms.in.WmsInPlanReceivingOrderDet;
+import com.fantechs.common.base.general.entity.wms.in.*;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.support.BaseService;
@@ -102,7 +101,12 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
             //收货计划表头
             WmsInPlanReceivingOrder wmsInPlanReceivingOrder = new WmsInPlanReceivingOrder();
             //明细
-            List<WmsInPlanReceivingOrderDet> wmsInPlanReceivingOrderDetList = new ArrayList<>();
+            List<WmsInPlanReceivingOrderDetDto> wmsInPlanReceivingOrderDetList = new ArrayList<>();
+
+            //收货作业表头
+            WmsInReceivingOrder wmsInReceivingOrder = new WmsInReceivingOrder();
+            //明细
+            List<WmsInReceivingOrderDetDto> wmsInReceivingOrderDetList = new ArrayList<>();
 
             //来料检验
             List<QmsIncomingInspectionOrderDto> qmsIncomingInspectionOrderList = new ArrayList<>();
@@ -151,10 +155,24 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
                             .sourceId(srmInAsnOrderDetDto.getAsnOrderDetId())
                             .materialId(srmInAsnOrderDetDto.getMaterialId())
                             .batchCode(srmInAsnOrderDetDto.getBatchCode())
+                            .lineStatus((byte) 1)
                             .planQty(srmInAsnOrderDetDto.getIssueQty()).build();
-                    wmsInPlanReceivingOrderDetList.add(wmsInPlanReceivingOrderDet);
+                    wmsInPlanReceivingOrderDetList.add((WmsInPlanReceivingOrderDetDto) wmsInPlanReceivingOrderDet);
 
                 }else if ("IN-SWK".equals(baseOrderFlowDto.getNextOrderTypeCode())) {
+                    wmsInReceivingOrder.setWarehouseId(srmInAsnOrderDetDto.getWarehouseId());
+                    wmsInReceivingOrder.setOrderStatus((byte) 1);
+
+                    WmsInReceivingOrderDet wmsInReceivingOrderDet = WmsInReceivingOrderDet.builder()
+                            .coreSourceOrderCode(srmInAsnOrderDetDto.getCoreSourceOrderCode())
+                            .coreSourceId(srmInAsnOrderDetDto.getCoreSourceId())
+                            .sourceOrderCode(srmInAsnOrderDetDto.getAsnCode())
+                            .sourceId(srmInAsnOrderDetDto.getAsnOrderDetId())
+                            .materialId(srmInAsnOrderDetDto.getMaterialId())
+                            .batchCode(srmInAsnOrderDetDto.getBatchCode())
+                            .lineStatus((byte) 1)
+                            .planQty(srmInAsnOrderDetDto.getIssueQty()).build();
+                    wmsInReceivingOrderDetList.add((WmsInReceivingOrderDetDto) wmsInReceivingOrderDet);
 
                 }else if ("QMS-MIIO".equals(baseOrderFlowDto.getNextOrderTypeCode())) {
                     QmsIncomingInspectionOrder qmsIncomingInspectionOrder = QmsIncomingInspectionOrder.builder()
@@ -209,7 +227,8 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
 
 
             if (StringUtils.isNotEmpty(wmsInPlanReceivingOrderDetList)) {
-
+                wmsInPlanReceivingOrder.setInPlanReceivingOrderDets(wmsInPlanReceivingOrderDetList);
+                inFeignApi.add(wmsInPlanReceivingOrder);
             }else if (StringUtils.isNotEmpty(qmsIncomingInspectionOrderList)) {
                 qmsFeignApi.batchAdd(qmsIncomingInspectionOrderList);
             }else if (StringUtils.isNotEmpty(wmsInnerJobOrderDetList)) {
@@ -218,8 +237,9 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
             }else if (StringUtils.isNotEmpty(wmsInInPlanOrderDetList)) {
                 wmsInInPlanOrder.setWmsInInPlanOrderDetDtos(wmsInInPlanOrderDetList);
                 inFeignApi.add(wmsInInPlanOrder);
-            }else if (StringUtils.isNotEmpty(null)) {
-
+            }else if (StringUtils.isNotEmpty(wmsInReceivingOrderDetList)) {
+                wmsInReceivingOrder.setWmsInReceivingOrderDets(wmsInReceivingOrderDetList);
+                inFeignApi.add(wmsInReceivingOrder);
             }
 
             srmInAsnOrderDetMapper.batchUpdate(list);
