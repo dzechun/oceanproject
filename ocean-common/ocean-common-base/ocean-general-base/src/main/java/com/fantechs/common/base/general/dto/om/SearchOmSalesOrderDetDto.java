@@ -32,4 +32,7 @@ public class SearchOmSalesOrderDetDto extends BaseQuery implements Serializable 
      */
     @ApiModelProperty(name="salesOrderIdList",value = "销售订单ID列表")
     private List<Long> salesOrderIdList;
+
+    @ApiModelProperty(name="ifAllIssued",value = "是否已全部下发(0-否 1-是)")
+    private Integer ifAllIssued;
 }

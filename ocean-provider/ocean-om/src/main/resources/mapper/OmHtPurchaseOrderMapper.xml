@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.om.mapper.ht.OmHtPurchaseOrderMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmHtPurchaseOrder">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_purchase_order_id" jdbcType="BIGINT" property="htPurchaseOrderId" />
+    <result column="purchase_order_id" jdbcType="BIGINT" property="purchaseOrderId" />
+    <result column="purchase_order_code" jdbcType="VARCHAR" property="purchaseOrderCode" />
+    <result column="source_big_type" jdbcType="TINYINT" property="sourceBigType" />
+    <result column="order_type" jdbcType="VARCHAR" property="orderType" />
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
+    <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
+    <result column="purchase_dept_id" jdbcType="BIGINT" property="purchaseDeptId" />
+    <result column="purchase_user_id" jdbcType="BIGINT" property="purchaseUserId" />
+    <result column="make_order_user_id" jdbcType="BIGINT" property="makeOrderUserId" />
+    <result column="make_order_date" jdbcType="TIMESTAMP" property="makeOrderDate" />
+    <result column="audit_user_id" jdbcType="BIGINT" property="auditUserId" />
+    <result column="audit_date" jdbcType="TIMESTAMP" property="auditDate" />
+    <result column="item_category_name" jdbcType="VARCHAR" property="itemCategoryName" />
+    <result column="order_unit_name" jdbcType="VARCHAR" property="orderUnitName" />
+    <result column="inventory_site" jdbcType="VARCHAR" property="inventorySite" />
+    <result column="free_item" jdbcType="VARCHAR" property="freeItem" />
+    <result column="sales_return_item" jdbcType="VARCHAR" property="salesReturnItem" />
+    <result column="currency_id" jdbcType="BIGINT" property="currencyId" />
+    <result column="plan_delivery_date" jdbcType="TIMESTAMP" property="planDeliveryDate" />
+    <result column="audit_status" jdbcType="TINYINT" property="auditStatus" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+
+  <sql id="Base_Column_List">
+        ohpo.ht_purchase_order_id,
+        ohpo.purchase_order_id,
+        ohpo.purchase_order_code,
+        ohpo.order_type,
+        ohpo.order_status,
+        ohpo.supplier_id,
+        ohpo.warehouse_id,
+        ohpo.order_date,
+        ohpo.purchase_dept_id,
+        ohpo.purchase_user_id,
+        ohpo.make_order_user_id,
+        ohpo.make_order_date,
+        ohpo.audit_user_id,
+        ohpo.audit_date,
+        ohpo.item_category_name,
+        ohpo.order_unit_name,
+        ohpo.inventory_site,
+        ohpo.free_item,
+        ohpo.sales_return_item,
+        ohpo.currency_id,
+        ohpo.plan_delivery_date,
+        ohpo.audit_status,
+        ohpo.status,
+        ohpo.remark,
+        ohpo.org_id,
+        ohpo.create_user_id,
+        ohpo.create_time,
+        ohpo.modified_user_id,
+        ohpo.modified_time,
+        ohpo.is_delete,
+        ohpo.option1,
+        ohpo.option2,
+        ohpo.option3
+  </sql>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+             type="com.fantechs.common.base.general.dto.om.OmHtPurchaseOrderDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="mobile_phone" jdbcType="VARCHAR" property="mobilePhone"/>
+    <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
+    <result column="complete_detail" jdbcType="VARCHAR" property="completeDetail"/>
+    <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+  </resultMap>
+
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+    select
+    <include refid="Base_Column_List"/>,
+    bs.supplier_code as supplierCode, bs.supplier_name as supplierName,bs.e_mail as
+    eMail,bs.mobile_phone,bs.telephone,ba.complete_detail,bw.warehouse_name as warehouse_name,
+    bc.currency_name as currencyName,
+    bd.dept_code as deptCode,bd.dept_name as deptName,sum(ohpod.material_total_price) as totalPrice,
+    supu.nick_name as purchaseUserName, supu.nick_name as makeOrderUserName, supu.nick_name as auditUserName,
+    u.user_name as create_user_name,
+    s.user_name as modified_user_name,
+    bo.organization_name
+    from om_ht_purchase_order ohpo
+    left join sys_user suc on ohpo.create_user_id = suc.user_id
+    left join sys_user sumod on ohpo.modified_user_id = sumod.user_id
+    left join base_supplier bs on ohpo.supplier_id = bs.supplier_id
+    left join base_dept bd on ohpo.purchase_dept_id = bd.dept_id
+    left join base_currency bc on ohpo.currency_id = bc.currency_id
+    left join om_purchase_order_det ohpod on ohpo.purchase_order_id = ohpod.purchase_order_id
+    left join base_warehouse bw on ohpo.warehouse_id = bw.warehouse_id
+    left join sys_user supu on ohpo.purchase_user_id = supu.user_id
+    left join sys_user sumou on ohpo.make_order_user_id = sumou.user_id
+    left join sys_user suau on ohpo.audit_user_id = suau.user_id
+    left join sys_user u on ohpo.create_user_id=u.user_id
+    left join sys_user s on ohpo.modified_user_id=s.user_id
+    left join base_organization bo on ohpo.org_id = bo.organization_id
+    left join base_supplier_re_user bsru on bsru.supplier_id = bs.supplier_id
+    left join base_address ba on ba.address_id = bs.address_id
+    <where>
+      <if test="userId != null">
+        and bsru.user_id = #{userId}
+      </if>
+      <if test="supplierId != null">
+        and ohpo.supplier_id = #{supplierId}
+      </if>
+      <if test="status != null">
+        and ohpo.status = #{status}
+      </if>
+      <if test="orgId != null">
+        and ohpo.org_id = #{orgId}
+      </if>
+      <if test="warehouseId != null">
+        and ohpo.warehouse_id = #{warehouseId}
+      </if>
+      <if test="purchaseOrderCode != null and purchaseOrderCode != '' and codeQueryMark != 1">
+        and ohpo.purchase_order_code like CONCAT('%', #{purchaseOrderCode}, '%')
+      </if>
+      <if test="warehouseName != null and warehouseName != ''">
+        and bw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+      </if>
+      <if test="purchaseOrderCode != null and purchaseOrderCode != '' and codeQueryMark ==1">
+        and ohpo.purchase_order_code = #{purchaseOrderCode}
+      </if>
+      <if test="orderStatus != null">
+        and ohpo.order_status = #{orderStatus}
+      </if>
+      <if test="supplierCode != null and supplierCode != ''">
+        and bs.supplier_code like CONCAT('%', #{supplierCode}, '%')
+      </if>
+      <if test="supplierName != null and supplierName != ''">
+        and bs.supplier_name like CONCAT('%', #{supplierName}, '%')
+      </if>
+      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+        and date_format(ohpo.create_time, '%Y-%m-%d') <![CDATA[ >= ]]> #{startTime}
+        and date_format(ohpo.create_time, '%Y-%m-%d') <![CDATA[ <= ]]> #{endTime}
+      </if>
+    </where>
+    group by ohpo.purchase_order_id
+    order by ohpo.create_time desc
+  </select>
+
+</mapper>

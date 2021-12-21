@@ -94,6 +94,9 @@
             <if test="sysOrderTypeCode!=null and sysOrderTypeCode!=''">
                 and wiipo.sys_order_type_code = #{sysOrderTypeCode}
             </if>
+            <if test="inPlanOrderCode!=null and inPlanOrderCode!=''">
+                and wiipo.in_plan_order_code = #{inPlanOrderCode}
+            </if>
             <if test="warehouseName!=null and warehouseName!=''">
                 and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
             </if>
