@@ -9,6 +9,7 @@
     <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="coreSourceSysOrderTypeCode" />
     <result column="source_sys_order_type_code" jdbcType="VARCHAR" property="sourceSysOrderTypeCode" />
     <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode" />
+    <result column="source_big_type" jdbcType="TINYINT" property="sourceBigType"/>
     <result column="plan_receiving_order_code" jdbcType="VARCHAR" property="planReceivingOrderCode" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
@@ -36,6 +37,7 @@
   <sql id="base_Column_list">
     wipro.plan_receiving_order_id,
     wipro.core_source_sys_order_type_code,
+wipro.source_big_type,
 wipro.source_sys_order_type_code,
 wipro.sys_order_type_code,
 wipro.plan_receiving_order_code,

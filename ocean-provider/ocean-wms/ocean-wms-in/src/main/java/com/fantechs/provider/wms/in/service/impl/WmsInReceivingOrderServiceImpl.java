@@ -9,6 +9,7 @@ import com.fantechs.common.base.general.dto.qms.QmsIncomingInspectionOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderBarcode;
 import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.imports.WmsInReceivingOrderImport;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
@@ -72,6 +73,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
     public List<WmsInReceivingOrderDto> findList(Map<String, Object> map) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",sysUser.getOrganizationId());
+        List<WmsInReceivingOrderDto> list = wmsInReceivingOrderMapper.findList(map);
         return wmsInReceivingOrderMapper.findList(map);
     }
 
@@ -89,6 +91,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
         record.setModifiedUserId(sysUser.getUserId());
         record.setOrgId(sysUser.getOrganizationId());
         if(StringUtils.isNotEmpty(record.getIsPdaCreate()) && record.getIsPdaCreate()==1){
+            record.setSourceBigType((byte)2);
             record.setOrderStatus((byte)3);
         }else {
             record.setOrderStatus((byte)1);
@@ -117,21 +120,67 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                     wmsInReceivingOrderDet.setPlanQty(wmsInReceivingOrderDet.getActualQty());
                     wmsInReceivingOrderDet.setLineStatus((byte)3);
                     wmsInReceivingOrderDetMapper.insertUseGeneratedKeys(wmsInReceivingOrderDet);
-                    //条码记录
 
-//                    List<WmsInnerMaterialBarcodeReOrder> wmsInnerMaterialBarcodeReOrders = new ArrayList<>();
-//                    for (WmsInReceivingOrderBarcode wmsInReceivingOrderBarcode : wmsInReceivingOrderDet.getWmsInReceivingOrderBarcodeList()) {
-//                        WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
-//                        wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeReOrderId(wmsInReceivingOrderBarcode.getMaterialBarcodeReOrderId());
-//                        wmsInnerMaterialBarcodeReOrder.setScanStatus((byte)3);
-//                        wmsInnerMaterialBarcodeReOrders.add(wmsInnerMaterialBarcodeReOrder);
-//                    }
-//                    if(!wmsInnerMaterialBarcodeReOrders.isEmpty()){
-//                        ResponseEntity responseEntity = innerFeignApi.batchUpdate(wmsInnerMaterialBarcodeReOrders);
-//                        if(responseEntity.getCode()!=0){
-//                            throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
-//                        }
-//                    }
+                    List<WmsInnerMaterialBarcodeDto> wmsInnerMaterialBarcodeList = new LinkedList<>();
+                    for (WmsInReceivingOrderBarcode wmsInReceivingOrderBarcode : wmsInReceivingOrderDet.getWmsInReceivingOrderBarcodeList()) {
+                        //是否非系统条码
+                        if(wmsInReceivingOrderDet.getIfSysBarcode()==0){
+
+                            WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcode=new WmsInnerMaterialBarcodeDto();
+                            wmsInnerMaterialBarcode.setMaterialId(wmsInReceivingOrderDet.getMaterialId());
+                            wmsInnerMaterialBarcode.setBarcode(wmsInReceivingOrderBarcode.getBarCode());
+                            wmsInnerMaterialBarcode.setBatchCode(wmsInReceivingOrderDet.getBatchCode());
+                            wmsInnerMaterialBarcode.setMaterialQty(wmsInReceivingOrderBarcode.getMaterialQty());
+                            wmsInnerMaterialBarcode.setIfSysBarcode((byte)0);
+                            wmsInnerMaterialBarcode.setProductionTime(wmsInReceivingOrderDet.getProductionTime());
+                            //产生类型(1-供应商条码 2-自己打印 3-生产条码)
+                            wmsInnerMaterialBarcode.setCreateType((byte)1);
+                            //条码状态(1-已生成 2-已打印 3-已收货 4-已质检 5-已上架 6-已出库)
+                            wmsInnerMaterialBarcode.setBarcodeStatus((byte)5);
+                            wmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
+                            wmsInnerMaterialBarcode.setCreateTime(new Date());
+                            wmsInnerMaterialBarcode.setCreateUserId(sysUser.getUserId());
+
+                            //num+=innerFeignApi.batchSave(wmsInnerMaterialBarcode);
+                            wmsInnerMaterialBarcodeList.add(wmsInnerMaterialBarcode);
+                            //设置来料条码ID
+                        }
+                        else {
+                            //系统条码更新条码状态
+                            WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcode=new WmsInnerMaterialBarcodeDto();
+                            wmsInnerMaterialBarcode.setMaterialBarcodeId(wmsInReceivingOrderBarcode.getMaterialBarcodeId());
+                            wmsInnerMaterialBarcode.setBarcodeStatus((byte)5);
+                            wmsInnerMaterialBarcode.setModifiedUserId(sysUser.getUserId());
+                            wmsInnerMaterialBarcode.setModifiedTime(new Date());
+                            wmsInnerMaterialBarcodeList.add(wmsInnerMaterialBarcode);
+                        }
+                    }
+                    //更新条码状态
+                    if(wmsInReceivingOrderDet.getIfSysBarcode()==1 && !wmsInnerMaterialBarcodeList.isEmpty()){
+                        innerFeignApi.batchUpdate(wmsInnerMaterialBarcodeList);
+                    }else {
+                        innerFeignApi.batchSave(wmsInnerMaterialBarcodeList);
+                    }
+                    //条码新增到来料条码关系表
+                    List<WmsInnerMaterialBarcodeReOrder> list = new LinkedList<>();
+                    for (WmsInnerMaterialBarcodeDto wmsInReceivingOrderBarcode : wmsInnerMaterialBarcodeList) {
+                        WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder=new WmsInnerMaterialBarcodeReOrder();
+                        wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("IN-SWK");//类型 上架
+                        wmsInnerMaterialBarcodeReOrder.setOrderCode(record.getReceivingOrderCode());
+                        wmsInnerMaterialBarcodeReOrder.setOrderId(record.getReceivingOrderId());
+                        //来料条码ID
+                        wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(wmsInReceivingOrderBarcode.getMaterialBarcodeId());
+
+                        wmsInnerMaterialBarcodeReOrder.setScanStatus((byte)3);
+                        wmsInnerMaterialBarcodeReOrder.setOrgId(sysUser.getOrganizationId());
+                        wmsInnerMaterialBarcodeReOrder.setCreateTime(new Date());
+                        wmsInnerMaterialBarcodeReOrder.setCreateUserId(sysUser.getUserId());
+
+                        list.add(wmsInnerMaterialBarcodeReOrder);
+                    }
+                    if(!list.isEmpty()){
+                        innerFeignApi.batchAdd(list);
+                    }
                 }else {
                     if(StringUtils.isEmpty(wmsInReceivingOrderDet.getPlanQty()) || wmsInReceivingOrderDet.getPlanQty().compareTo(BigDecimal.ZERO)<1){
                         throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"计划数量必须大于0");

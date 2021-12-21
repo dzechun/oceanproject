@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * @Author mr.lei
@@ -17,4 +18,10 @@ public class WmsInReceivingOrderBarcode implements Serializable {
 
     @ApiModelProperty(name = "materialBarcodeId",value = "来料条码ID")
     private Long materialBarcodeId;
+
+    @ApiModelProperty(name = "barCode",value = "条码")
+    private String barCode;
+
+    @ApiModelProperty(name = "materialQty",value = "物料数量")
+    private BigDecimal materialQty;
 }

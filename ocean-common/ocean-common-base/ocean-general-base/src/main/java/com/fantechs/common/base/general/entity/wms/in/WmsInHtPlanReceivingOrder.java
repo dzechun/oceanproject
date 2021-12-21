@@ -52,6 +52,13 @@ public class WmsInHtPlanReceivingOrder extends ValidGroup implements Serializabl
     private String sourceSysOrderTypeCode;
 
     /**
+     * 来源大类(1-系统下推 2-自建 3-第三方系统)
+     */
+    @ApiModelProperty(name = "sourceBigType",value = "来源大类(1-系统下推 2-自建 3-第三方系统)")
+    @Column(name = "source_big_type")
+    private Byte sourceBigType;
+
+    /**
      * 系统单据类型编码
      */
     @ApiModelProperty(name="sysOrderTypeCode",value = "系统单据类型编码")
