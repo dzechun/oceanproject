@@ -93,6 +93,9 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
         record.setModifiedUserId(sysUser.getUserId());
         record.setOrderStatus((byte)1);
         record.setOrgId(sysUser.getOrganizationId());
+        if(StringUtils.isEmpty(record.getSourceBigType())){
+            record.setSourceBigType((byte)2);
+        }
         int num = wmsInPlanReceivingOrderMapper.insertUseGeneratedKeys(record);
 
         //履历记录
@@ -134,6 +137,11 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(WmsInPlanReceivingOrder entity) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+
+        if(entity.getSourceBigType()==1){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012004.getCode(),"下推单据,无法修改");
+        }
+
         if(StringUtils.isEmpty(entity.getWarehouseId())){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"仓库不能为空");
         }
@@ -182,6 +190,9 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
             WmsInPlanReceivingOrder wmsInPlanReceivingOrder = wmsInPlanReceivingOrderMapper.selectByPrimaryKey(id);
             if(StringUtils.isEmpty(wmsInPlanReceivingOrder)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012000,id);
+            }
+            if(wmsInPlanReceivingOrder.getSourceBigType()==1){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012004.getCode(),"下推单据,无法删除");
             }
             if(wmsInPlanReceivingOrder.getOrderStatus()>1){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012004);
@@ -368,6 +379,7 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
                     receivingOrderDets.add(wmsInReceivingOrderDet);
                 }
                 WmsInReceivingOrder wmsInReceivingOrder = new WmsInReceivingOrder();
+                wmsInReceivingOrder.setSourceBigType((byte)1);
                 wmsInReceivingOrder.setSourceSysOrderTypeCode(sysOrderTypeCode);
                 wmsInReceivingOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInReceivingOrder.setCreateUserId(sysUser.getUserId());
