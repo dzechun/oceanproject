@@ -5,7 +5,6 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -156,8 +155,7 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="orderDate",value = "订单日期")
     @Excel(name = "订单日期", height = 20, width = 30, orderNum = "11")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JSONField(format ="yyyy-MM-dd")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "order_date")
     private Date orderDate;
 
@@ -174,8 +172,7 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="makeOrderDate",value = "制单日期")
     @Excel(name = "制单日期", height = 20, width = 30, orderNum = "13")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JSONField(format ="yyyy-MM-dd")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "make_order_date")
     private Date makeOrderDate;
 
@@ -192,8 +189,7 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="auditDate",value = "审核日期")
     @Excel(name = "审核日期", height = 20, width = 30, orderNum = "15")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JSONField(format ="yyyy-MM-dd")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "audit_date")
     private Date auditDate;
 
@@ -225,8 +221,8 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd", orderNum = "19")
-    @JSONField(format ="yyyy-MM-dd")
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss", orderNum = "19")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
 
@@ -242,8 +238,8 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd", orderNum = "21")
-    @JSONField(format = "yyyy-MM-dd")
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss", orderNum = "21")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
 

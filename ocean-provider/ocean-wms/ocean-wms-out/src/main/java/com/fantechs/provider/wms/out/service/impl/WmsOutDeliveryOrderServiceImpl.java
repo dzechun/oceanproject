@@ -10,7 +10,6 @@ import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutTransferDeliveryOrderDto;
@@ -23,10 +22,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialOw
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtDeliveryOrder;
@@ -291,13 +287,13 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         }
 
         //查询是否创建作业单
-        SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
+        /*SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
         searchWmsInnerJobOrder.setSourceOrderId(wmsOutDeliveryOrder.getDeliveryOrderId());
         searchWmsInnerJobOrder.setOrderTypeId(wmsOutDeliveryOrder.getOrderTypeId());
         List<WmsInnerJobOrderDto> wmsInnerJobOrderDtos = innerFeignApi.findList(searchWmsInnerJobOrder).getData();
         if(StringUtils.isNotEmpty(wmsInnerJobOrderDtos)){
             throw new BizErrorException("对应的拣货作业单已存在,该出库单不允许修改！");
-        }
+        }*/
 
         //出库单
         wmsOutDeliveryOrder.setModifiedTime(new Date());
@@ -421,7 +417,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
     public int createJobOrder(Long id,Long platformId) {
-        Map<String, Object> map = new HashMap<>();
+        /*Map<String, Object> map = new HashMap<>();
         map.put("deliveryOrderId", id);
         List<WmsOutDeliveryOrderDto> list = wmsOutDeliveryOrderMapper.findList(map);
         if (StringUtils.isEmpty(list)) {
@@ -526,7 +522,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             wmsOutDeliveryOrderMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDto);
         } else {
             throw new BizErrorException("拣货作业单已存在");
-        }
+        }*/
         return 1;
     }
 
@@ -561,7 +557,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
     @Transactional(rollbackFor = Exception.class)
     public int saveByApi(WmsOutDeliveryOrder wmsOutDeliveryOrder) {
         //判断是否已产生上架单
-        SearchWmsInnerJobOrder searchWmsInnerJobOrder=new SearchWmsInnerJobOrder();
+        /*SearchWmsInnerJobOrder searchWmsInnerJobOrder=new SearchWmsInnerJobOrder();
         searchWmsInnerJobOrder.setRelatedOrderCode(wmsOutDeliveryOrder.getDeliveryOrderCode());
         searchWmsInnerJobOrder.setOrgId(wmsOutDeliveryOrder.getOrgId());
         ResponseEntity<List<WmsInnerJobOrderDto>> responseEntityDto=innerFeignApi.findList(searchWmsInnerJobOrder);
@@ -569,7 +565,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             //领料出库单已产生上架单 返回 不更新
             if(StringUtils.isNotEmpty(responseEntityDto.getData().get(0).getJobOrderCode()))
                 return 0;
-        }
+        }*/
 
         Example example = new Example(WmsOutDeliveryOrder.class);
         Example.Criteria criteria = example.createCriteria();

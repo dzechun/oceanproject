@@ -99,8 +99,10 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
         record.setModifiedTime(new Date());
         record.setModifiedUserId(sysUser.getUserId());
         record.setOrgId(sysUser.getOrganizationId());
-        if(StringUtils.isNotEmpty(record.getIsPdaCreate()) && record.getIsPdaCreate()==1){
+        if(StringUtils.isEmpty(record.getSourceBigType())){
             record.setSourceBigType((byte)2);
+        }
+        if(StringUtils.isNotEmpty(record.getIsPdaCreate()) && record.getIsPdaCreate()==1){
             record.setOrderStatus((byte)3);
         }else {
             record.setOrderStatus((byte)1);
@@ -137,9 +139,13 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
 
                             WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcode=new WmsInnerMaterialBarcodeDto();
                             wmsInnerMaterialBarcode.setMaterialId(wmsInReceivingOrderDet.getMaterialId());
-                            wmsInnerMaterialBarcode.setBarcode(wmsInReceivingOrderBarcode.getBarCode());
+                            wmsInnerMaterialBarcode.setBarcode(wmsInReceivingOrderBarcode.getBarcode());
                             wmsInnerMaterialBarcode.setBatchCode(wmsInReceivingOrderDet.getBatchCode());
                             wmsInnerMaterialBarcode.setMaterialQty(wmsInReceivingOrderBarcode.getMaterialQty());
+                            wmsInnerMaterialBarcode.setPrintOrderTypeCode("IN-SWK");
+                            wmsInnerMaterialBarcode.setPrintOrderCode(record.getReceivingOrderCode());
+                            wmsInnerMaterialBarcode.setPrintOrderId(record.getReceivingOrderId());
+                            wmsInnerMaterialBarcode.setPrintOrderDetId(wmsInReceivingOrderDet.getReceivingOrderDetId());
                             wmsInnerMaterialBarcode.setIfSysBarcode((byte)0);
                             wmsInnerMaterialBarcode.setProductionTime(wmsInReceivingOrderDet.getProductionTime());
                             //产生类型(1-供应商条码 2-自己打印 3-生产条码)
@@ -168,7 +174,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                     if(wmsInReceivingOrderDet.getIfSysBarcode()==1 && !wmsInnerMaterialBarcodeList.isEmpty()){
                         innerFeignApi.batchUpdate(wmsInnerMaterialBarcodeList);
                     }else {
-                        innerFeignApi.batchSave(wmsInnerMaterialBarcodeList);
+                        wmsInnerMaterialBarcodeList = innerFeignApi.batchSave(wmsInnerMaterialBarcodeList).getData();
                     }
                     //条码新增到来料条码关系表
                     List<WmsInnerMaterialBarcodeReOrder> list = new LinkedList<>();
@@ -232,6 +238,10 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(sysUser.getUserId());
         Boolean isPDA = false;
+        WmsInReceivingOrder wmsInReceivingOrder = wmsInReceivingOrderMapper.selectByPrimaryKey(entity.getReceivingOrderId());
+        if(wmsInReceivingOrder.getOrderStatus()==3){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012004.getCode(),"单据已完成,无法更改");
+        }
         if(StringUtils.isNotEmpty(entity.getIsPdaCreate()) && entity.getIsPdaCreate()==1){
             isPDA=true;
         }else {
@@ -266,10 +276,27 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                 wmsInReceivingOrderDetMapper.updateByPrimaryKeySelective(wmsInReceivingOrderDet);
                 wmsInReceivingOrderDet.setSourceId(inReceivingOrderDet.getSourceId());
                 //反写收货计划实收数量
-                this.writeQty(wmsInReceivingOrderDet);
+                if(wmsInReceivingOrder.getSourceBigType()==1){
+                    this.writeQty(wmsInReceivingOrderDet);
+                }
+                List<WmsInnerMaterialBarcodeDto> wmsInnerMaterialBarcodeDtos = new LinkedList<>();
+                for (WmsInReceivingOrderBarcode wmsInReceivingOrderBarcode : wmsInReceivingOrderDet.getWmsInReceivingOrderBarcodeList()) {
+                    //系统条码更新条码状态
+                    WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcode=new WmsInnerMaterialBarcodeDto();
+                    wmsInnerMaterialBarcode.setMaterialBarcodeId(wmsInReceivingOrderBarcode.getMaterialBarcodeId());
+                    wmsInnerMaterialBarcode.setBarcodeStatus((byte)5);
+                    wmsInnerMaterialBarcode.setModifiedUserId(sysUser.getUserId());
+                    wmsInnerMaterialBarcode.setModifiedTime(new Date());
+                    wmsInnerMaterialBarcodeDtos.add(wmsInnerMaterialBarcode);
 
-                //新增条码记录
-
+                    WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
+                    wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeReOrderId(wmsInReceivingOrderBarcode.getMaterialBarcodeReOrderId());
+                    wmsInnerMaterialBarcodeReOrder.setScanStatus((byte)3);
+                    innerFeignApi.update(wmsInnerMaterialBarcodeReOrder);
+                }
+                if(!wmsInnerMaterialBarcodeDtos.isEmpty()){
+                    innerFeignApi.batchUpdate(wmsInnerMaterialBarcodeDtos);
+                }
             } else {
                 i++;
                 if(StringUtils.isEmpty(wmsInReceivingOrderDet.getPlanQty()) || wmsInReceivingOrderDet.getPlanQty().compareTo(BigDecimal.ZERO)<1){
@@ -451,8 +478,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
         String coreSourceSysOrderTypeCode = null;//核心单据类型编码
         //查当前单据的下游单据
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
-        searchBaseOrderFlow.setBusinessType((byte)1);
-        searchBaseOrderFlow.setOrderNode((byte)4);
+        searchBaseOrderFlow.setOrderTypeCode("IN-SWK");
         BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
         if(StringUtils.isEmpty(baseOrderFlow)){
             throw new BizErrorException("未找到当前单据配置的下游单据");
