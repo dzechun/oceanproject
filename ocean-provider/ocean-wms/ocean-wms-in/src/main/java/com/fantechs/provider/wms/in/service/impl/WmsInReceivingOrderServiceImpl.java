@@ -239,6 +239,9 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
         entity.setModifiedUserId(sysUser.getUserId());
         Boolean isPDA = false;
         WmsInReceivingOrder wmsInReceivingOrder = wmsInReceivingOrderMapper.selectByPrimaryKey(entity.getReceivingOrderId());
+        if(wmsInReceivingOrder.getSourceBigType()==1){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012004.getCode(),"下推单据,无法修改");
+        }
         if(wmsInReceivingOrder.getOrderStatus()==3){
             throw new BizErrorException(ErrorCodeEnum.OPT20012004.getCode(),"单据已完成,无法更改");
         }
@@ -334,6 +337,9 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
             WmsInReceivingOrder wmsInReceivingOrder = wmsInReceivingOrderMapper.selectByPrimaryKey(s);
             if(StringUtils.isEmpty(wmsInReceivingOrder)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012000,s);
+            }
+            if(wmsInReceivingOrder.getSourceBigType()==1){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012004.getCode(),"下推单据无法删除");
             }
             if(wmsInReceivingOrder.getOrderStatus()>1){
                 throw new BizErrorException("已作业的单无法删除");
