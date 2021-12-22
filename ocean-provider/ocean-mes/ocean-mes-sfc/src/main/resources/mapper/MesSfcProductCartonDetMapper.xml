@@ -23,6 +23,18 @@
   <resultMap id="BaseResultDtoMap" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductCartonDetDto">
   </resultMap>
 
+  <resultMap id="BaseResultDto" type="com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto">
+    <result column="product_pallet_id" jdbcType="BIGINT" property="productPalletId" />
+    <result column="source_order_id" jdbcType="BIGINT" property="sourceOrderId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />
+    <result column="packing_qty" jdbcType="DECIMAL" property="packingQty" />
+    <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
+    <result column="supplier_name" jdbcType="VARCHAR" property="customerName" />
+    <result column="sales_code" jdbcType="VARCHAR" property="salesOrderCode" />
+    <result column="sales_user_name" jdbcType="VARCHAR" property="salesManName" />
+  </resultMap>
+
   <sql id="BaseColumnList">
     mspcd.product_carton_det_id,
     mspcd.product_carton_id,
@@ -58,6 +70,42 @@
         and mspc.close_status = #{closeStatus}
       </if>
     </where>
+  </select>
+
+  <select id="findListGroupByWorkOrder" resultMap="BaseResultDto" parameterType="map">
+    SELECT
+    mspcd.product_carton_id AS product_pallet_id,
+    mswob.work_order_id AS source_order_id,
+    mpwo.material_id AS material_id,
+    sps.package_specification_quantity AS packing_unit_name,
+    COUNT( mspcd.work_order_barcode_id ) AS packing_qty,
+    COUNT( mspcd.work_order_barcode_id ) AS actual_qty,
+    bs.supplier_name,
+    oscrs.sales_code,
+    oso.sales_user_name
+    FROM
+    mes_sfc_product_carton_det mspcd
+    LEFT JOIN mes_sfc_work_order_barcode mswob ON mspcd.work_order_barcode_id = mswob.work_order_barcode_id
+    LEFT JOIN mes_pm_work_order mpwo ON mswob.work_order_id = mpwo.work_order_id
+    LEFT JOIN base_material_tab bt ON bt.material_id = mpwo.material_id
+    LEFT JOIN base_package_specification sps ON sps.package_specification_id = bt.package_specification_id
+    LEFT JOIN om_sales_order oso ON mpwo.sales_order_id = oso.sales_order_id
+    LEFT JOIN base_supplier bs ON oso.supplier_id = bs.supplier_id
+    LEFT JOIN mes_sfc_barcode_process msbp ON mswob.work_order_barcode_id = msbp.work_order_barcode_id
+    LEFT JOIN om_sales_code_re_spc oscrs ON msbp.sales_code_re_spc_id = oscrs.sales_code_re_spc_id
+    <where>
+      <if test="orgId != null">
+        and mspcd.org_id = #{orgId}
+      </if>
+      <if test="list != null">
+        <foreach collection="list" open="and mspcd.product_carton_id IN (" separator="," close=")" item="value">
+          #{value}
+        </foreach>
+      </if>
+    </where>
+    GROUP BY
+    mspcd.product_carton_id,
+    mswob.work_order_id
   </select>
 
 </mapper>
