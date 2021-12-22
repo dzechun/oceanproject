@@ -1,17 +1,16 @@
 package com.fantechs.common.base.general.dto.wms.out;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryReqOrderDet;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutPlanDeliveryOrderDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Data
-public class WmsOutDeliveryReqOrderDetDto extends WmsOutDeliveryReqOrderDet implements Serializable {
+public class WmsOutPlanDeliveryOrderDetDto extends WmsOutPlanDeliveryOrderDet implements Serializable {
 
     /**
      * 组织名称
@@ -31,16 +30,8 @@ public class WmsOutDeliveryReqOrderDetDto extends WmsOutDeliveryReqOrderDet impl
      * 修改用户名称
      */
     @Transient
-    @ApiModelProperty(name = "modifiedUserName",value = "修改用户名称")
+    @ApiModelProperty(name = "createUserName",value = "修改用户名称")
     private String modifiedUserName;
-
-    /**
-     * 出库人
-     */
-    @Transient
-    @ApiModelProperty(name = "deliveryUserName",value = "出库人")
-    @Excel(name = "出库人", height = 20, width = 30,orderNum="8")
-    private String deliveryUserName;
 
     /**
      * 物料编码
@@ -75,12 +66,12 @@ public class WmsOutDeliveryReqOrderDetDto extends WmsOutDeliveryReqOrderDet impl
     private String materialVersion;
 
     /**
-     * 出货通知单号
+     * 出库计划单号
      */
     @Transient
-    @ApiModelProperty(name = "deliveryReqOrderCode",value = "出货通知单号")
+    @ApiModelProperty(name = "planDeliveryOrderCode",value = "出库计划单号")
     //@Excel(name = "出货通知单号", height = 20, width = 30,orderNum="23")
-    private String deliveryReqOrderCode;
+    private String planDeliveryOrderCode;
 
     /**
      * 仓库ID
@@ -95,5 +86,4 @@ public class WmsOutDeliveryReqOrderDetDto extends WmsOutDeliveryReqOrderDet impl
     @ApiModelProperty(name="warehouseName",value = "仓库名称")
     @Transient
     private String warehouseName;
-
 }
