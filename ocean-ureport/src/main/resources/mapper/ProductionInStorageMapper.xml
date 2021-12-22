@@ -72,12 +72,18 @@
             <if test="proId!=null and proId!=''">
                 and bpl.pro_line_id =#{proId}
             </if>
-        <if test="workOrderId!=null and workOrderId!=''">
-            and mpwo.work_order_id = #{workOrderId}
-        </if>
-        <if test="salesOrderId!=null and salesOrderId!=''">
-            and oso.sales_order_code =#{salesOrderId}
-        </if>
+            <if test="workOrderId!=null and workOrderId!=''">
+                and mpwo.work_order_id = #{workOrderId}
+            </if>
+            <if test="salesOrderId!=null and salesOrderId!=''">
+                and oso.sales_order_id = #{salesOrderId}
+            </if>
+            <if test="salesOrderCode!=null and salesOrderCode!=''">
+                and oso.sales_order_code like CONCAT('%',#{salesOrderCode},'%')
+            </if>
+            <if test="workOrderCode!=null and workOrderCode!=''">
+                and mpwo.work_order_code like CONCAT('%',#{workOrderCode},'%')
+            </if>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
                 and date_format(wijod.work_end_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
@@ -119,7 +125,13 @@
                 and bo.organization_id =#{orgId}
             </if>
             <if test="salesOrderId!=null and salesOrderId!=''">
-                and oso.sales_order_code =#{salesOrderId}
+                and oso.sales_order_id = #{salesOrderId}
+            </if>
+            <if test="salesOrderCode!=null and salesOrderCode!=''">
+                and oso.sales_order_code like CONCAT('%',#{salesOrderCode},'%')
+            </if>
+            <if test="workOrderCode!=null and workOrderCode!=''">
+                and mpwo.work_order_code like CONCAT('%',#{workOrderCode},'%')
             </if>
             <if test="supplierId!=null and supplierId!=''">
                 and oso.supplier_id = #{supplierId}
@@ -189,7 +201,13 @@
                 and mpwo.work_order_id = #{workOrderId}
             </if>
             <if test="salesOrderId!=null and salesOrderId!=''">
-                and oso.sales_order_code =#{salesOrderId}
+                and oso.sales_order_id = #{salesOrderId}
+            </if>
+            <if test="salesOrderCode!=null and salesOrderCode!=''">
+                and oso.sales_order_code like CONCAT('%',#{salesOrderCode},'%')
+            </if>
+            <if test="workOrderCode!=null and workOrderCode!=''">
+                and mpwo.work_order_code like CONCAT('%',#{workOrderCode},'%')
             </if>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
                 and date_format(wijod.work_end_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
