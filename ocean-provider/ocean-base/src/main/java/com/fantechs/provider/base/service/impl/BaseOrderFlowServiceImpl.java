@@ -88,12 +88,15 @@ public class BaseOrderFlowServiceImpl extends BaseService<BaseOrderFlow> impleme
         Example example = new Example(BaseOrderFlow.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("businessType", entity.getBusinessType());//业务类型
-        criteria.andEqualTo("orderNode", entity.getOrderNode());//单据节点
+        criteria.andEqualTo("orderTypeCode", entity.getOrderTypeCode());//单据节点
         criteria.andEqualTo("orderFlowDimension", entity.getOrderFlowDimension());//单据流维度
         if(entity.getOrderFlowDimension()==(byte)2)
             criteria.andEqualTo("supplierId", entity.getSupplierId());
         else if(entity.getOrderFlowDimension()==(byte)3)
             criteria.andEqualTo("materialId", entity.getMaterialId());
+
+        criteria.andEqualTo("sourceOrderTypeCode",entity.getSourceOrderTypeCode());
+        criteria.andEqualTo("nextOrderTypeCode",entity.getNextOrderTypeCode());
         List<BaseOrderFlow> baseOrderFlows = baseOrderFlowMapper.selectByExample(example);
         if (baseOrderFlows.size()>1) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"单据节点和单据流维度已存在");
