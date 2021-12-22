@@ -166,9 +166,5 @@ public class WmsInReceivingOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name = "wmsInReceivingOrderDets",value = "收货作业明细集合")
     private List<WmsInReceivingOrderDetDto> wmsInReceivingOrderDets;
 
-    @Transient
-    @ApiModelProperty(name = "wmsInnerMaterialBarcodeReOrderDtos",value = "条码明细集合")
-    private List<WmsInnerMaterialBarcodeReOrderDto> wmsInnerMaterialBarcodeReOrderDtos;
-
     private static final long serialVersionUID = 1L;
 }
