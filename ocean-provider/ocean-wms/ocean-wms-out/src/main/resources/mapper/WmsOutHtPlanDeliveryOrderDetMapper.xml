@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.out.mapper.WmsOutHtPlanDeliveryOrderDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtPlanDeliveryOrderDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_plan_delivery_order_det_id" jdbcType="BIGINT" property="htPlanDeliveryOrderDetId" />
+    <result column="plan_delivery_order_det_id" jdbcType="BIGINT" property="planDeliveryOrderDetId" />
+    <result column="core_source_order_code" jdbcType="VARCHAR" property="coreSourceOrderCode" />
+    <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode" />
+    <result column="core_source_id" jdbcType="BIGINT" property="coreSourceId" />
+    <result column="source_id" jdbcType="BIGINT" property="sourceId" />
+    <result column="plan_delivery_order_id" jdbcType="BIGINT" property="planDeliveryOrderId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="order_qty" jdbcType="DECIMAL" property="orderQty" />
+    <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
+    <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty" />
+    <result column="line_status" jdbcType="TINYINT" property="lineStatus" />
+    <result column="if_all_issued" jdbcType="TINYINT" property="ifAllIssued" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="plan_delivery_order_code" jdbcType="VARCHAR" property="planDeliveryOrderCode"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    wopdod.ht_plan_delivery_order_det_id,
+    wopdod.plan_delivery_order_det_id,
+    wopdod.core_source_order_code,
+    wopdod.source_order_code,
+    wopdod.core_source_id,
+    wopdod.source_id,
+    wopdod.plan_delivery_order_id,
+    wopdod.material_id,
+    wopdod.order_qty,
+    wopdod.actual_qty,
+    wopdod.total_issue_qty,
+    wopdod.line_status,
+    wopdod.if_all_issued,
+    wopdod.status,
+    wopdod.remark,
+    wopdod.org_id,
+    wopdod.create_user_id,
+    wopdod.create_time,
+    wopdod.modified_user_id,
+    wopdod.modified_time,
+    wopdod.is_delete
+  </sql>
+
+  <select id="findHtList" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>,
+    wopdo.plan_delivery_order_code,
+    bm.material_code,bm.material_name,
+    bm.material_desc,bm.material_version,
+    su.user_name AS create_user_name,
+    sus.user_name AS modified_user_name,
+    bo.organization_name
+    FROM wms_out_ht_plan_delivery_order_det wopdod
+    LEFT JOIN base_material bm ON wopdod.material_id = bm.material_id
+    LEFT JOIN wms_out_plan_delivery_order wopdo ON wopdod.plan_delivery_order_id = wopdo.plan_delivery_order_id
+    LEFT JOIN base_warehouse bw ON wopdod.warehouse_id = bw.warehouse_id
+    LEFT JOIN sys_user su ON wopdod.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON wopdod.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON wopdod.org_id = bo.organization_id
+    <where>
+      <if test="planDeliveryOrderId != null">
+        and wopdod.plan_delivery_order_id = #{planDeliveryOrderId}
+      </if>
+      <if test="orgId!=null">
+        and wopdod.org_id = #{orgId}
+      </if>
+      <if test="status != null">
+        and wopdod.status = #{status}
+      </if>
+      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+        and date_format(wopdod.create_time, '%Y-%m-%d') <![CDATA[ >= ]]> #{startTime}
+        and date_format(wopdod.create_time, '%Y-%m-%d') <![CDATA[ <= ]]> #{endTime}
+      </if>
+    </where>
+    order by wopdod.create_time desc
+  </select>
+</mapper>

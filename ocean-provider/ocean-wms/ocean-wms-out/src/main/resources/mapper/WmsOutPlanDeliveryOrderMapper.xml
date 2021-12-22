@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.out.mapper.WmsOutPlanDeliveryOrderMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.out.WmsOutPlanDeliveryOrder">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="plan_delivery_order_id" jdbcType="BIGINT" property="planDeliveryOrderId" />
+    <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="coreSourceSysOrderTypeCode" />
+    <result column="source_sys_order_type_code" jdbcType="VARCHAR" property="sourceSysOrderTypeCode" />
+    <result column="source_big_type" jdbcType="TINYINT" property="sourceBigType" />
+    <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode" />
+    <result column="plan_delivery_order_code" jdbcType="VARCHAR" property="planDeliveryOrderCode" />
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDto">
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <collection property="wmsOutPlanDeliveryOrderDetDtos" ofType="com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDetDto"
+                column="{planDeliveryOrderId=plan_delivery_order_id}" select="com.fantechs.provider.wms.out.mapper.WmsOutPlanDeliveryOrderDetMapper.findList">
+    </collection>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    wopdo.plan_delivery_order_id,
+    wopdo.core_source_sys_order_type_code,
+    wopdo.source_sys_order_type_code,
+    wopdo.source_big_type,
+    wopdo.sys_order_type_code,
+    wopdo.plan_delivery_order_code,
+    wopdo.warehouse_id,
+    wopdo.order_status,
+    wopdo.status,
+    wopdo.remark,
+    wopdo.org_id,
+    wopdo.create_user_id,
+    wopdo.create_time,
+    wopdo.modified_user_id,
+    wopdo.modified_time,
+    wopdo.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto">
+    SELECT <include refid="Base_Column_List"/>,
+    bw.warehouse_name,
+    su.user_name AS create_user_name,
+    sus.user_name AS modified_user_name,
+    bo.organization_name
+    FROM wms_out_plan_delivery_order wopdo
+    LEFT JOIN base_warehouse bw ON wopdo.warehouse_id = bw.warehouse_id
+    LEFT JOIN sys_user su ON wopdo.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON wopdo.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON wopdo.org_id = bo.organization_id
+    <where>
+      <if test="planDeliveryOrderCode!=null and planDeliveryOrderCode!=''">
+        and wopdo.plan_delivery_order_code like CONCAT('%', #{planDeliveryOrderCode}, '%')
+      </if>
+      <if test="warehouseName!=null and warehouseName!=''">
+        and bw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+      </if>
+      <if test="sourceSysOrderTypeCode != null and sourceSysOrderTypeCode!=''">
+        and wopdo.source_sys_order_type_code = #{sourceSysOrderTypeCode}
+      </if>
+      <if test="orderStatus != null">
+        and wopdo.order_status = #{orderStatus}
+      </if>
+      <if test="orgId!=null">
+        and wopdo.org_id = #{orgId}
+      </if>
+      <if test="status != null">
+        and wopdo.status = #{status}
+      </if>
+      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+        and date_format(wopdo.create_time, '%Y-%m-%d') <![CDATA[ >= ]]> #{startTime}
+        and date_format(wopdo.create_time, '%Y-%m-%d') <![CDATA[ <= ]]> #{endTime}
+      </if>
+    </where>
+    order by wopdo.create_time desc
+  </select>
+</mapper>

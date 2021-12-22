@@ -7,6 +7,8 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrderFlowDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryReqOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryReqOrderDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.imports.WmsOutDeliveryReqOrderImport;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
@@ -33,6 +35,7 @@ import com.fantechs.provider.wms.out.mapper.WmsOutDeliveryReqOrderMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutHtDeliveryReqOrderDetMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutHtDeliveryReqOrderMapper;
 import com.fantechs.provider.wms.out.service.WmsOutDeliveryReqOrderService;
+import com.fantechs.provider.wms.out.service.WmsOutPlanDeliveryOrderService;
 import com.fantechs.provider.wms.out.util.OrderFlowUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -40,7 +43,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -65,6 +67,8 @@ public class WmsOutDeliveryReqOrderServiceImpl extends BaseService<WmsOutDeliver
     private SecurityFeignApi securityFeignApi;
     @Resource
     private InnerFeignApi innerFeignApi;
+    @Resource
+    private WmsOutPlanDeliveryOrderService wmsOutPlanDeliveryOrderService;
 
     @Override
     public List<WmsOutDeliveryReqOrderDto> findList(Map<String, Object> map) {
@@ -89,14 +93,8 @@ public class WmsOutDeliveryReqOrderServiceImpl extends BaseService<WmsOutDeliver
             if(!warehouseId.equals(wmsOutDeliveryReqOrderDetDto.getWarehouseId())){
                 throw new BizErrorException("所选数据的仓库需一致");
             }
-            BigDecimal totalIssueQty = wmsOutDeliveryReqOrderDetDto.getTotalIssueQty() == null ? BigDecimal.ZERO : wmsOutDeliveryReqOrderDetDto.getTotalIssueQty();
-            BigDecimal add = totalIssueQty.add(wmsOutDeliveryReqOrderDetDto.getIssueQty());
-            if(add.compareTo(wmsOutDeliveryReqOrderDetDto.getOrderQty()) == 1){
-                throw new BizErrorException("下发数量不能大于订单数量");
-            }else if(add.compareTo(wmsOutDeliveryReqOrderDetDto.getOrderQty()) == 0){
-                wmsOutDeliveryReqOrderDetDto.setIfAllIssued((byte)1);
-            }
-            wmsOutDeliveryReqOrderDetDto.setTotalIssueQty(add);
+            wmsOutDeliveryReqOrderDetDto.setTotalIssueQty(wmsOutDeliveryReqOrderDetDto.getOrderQty());
+            wmsOutDeliveryReqOrderDetDto.setIfAllIssued((byte)1);
         }
         i = wmsOutDeliveryReqOrderDetMapper.batchUpdate(wmsOutDeliveryReqOrderDetDtos);
 
@@ -131,7 +129,26 @@ public class WmsOutDeliveryReqOrderServiceImpl extends BaseService<WmsOutDeliver
             List<WmsOutDeliveryReqOrderDetDto> deliveryReqOrderDetDtos = map.get(code);
             if ("OUT-PDO".equals(code)) {
                 //出库计划
-
+                List<WmsOutPlanDeliveryOrderDetDto> wmsOutPlanDeliveryOrderDetDtos = new LinkedList<>();
+                for (WmsOutDeliveryReqOrderDetDto wmsOutDeliveryReqOrderDetDto : deliveryReqOrderDetDtos) {
+                    WmsOutPlanDeliveryOrderDetDto wmsOutPlanDeliveryOrderDetDto = new WmsOutPlanDeliveryOrderDetDto();
+                    wmsOutPlanDeliveryOrderDetDto.setCoreSourceOrderCode(wmsOutDeliveryReqOrderDetDto.getCoreSourceOrderCode());
+                    wmsOutPlanDeliveryOrderDetDto.setSourceOrderCode(wmsOutDeliveryReqOrderDetDto.getDeliveryReqOrderCode());
+                    wmsOutPlanDeliveryOrderDetDto.setCoreSourceId(wmsOutDeliveryReqOrderDetDto.getCoreSourceId());
+                    wmsOutPlanDeliveryOrderDetDto.setSourceId(wmsOutDeliveryReqOrderDetDto.getDeliveryReqOrderDetId());
+                    wmsOutPlanDeliveryOrderDetDto.setMaterialId(wmsOutDeliveryReqOrderDetDto.getMaterialId());
+                    wmsOutPlanDeliveryOrderDetDto.setOrderQty(wmsOutDeliveryReqOrderDetDto.getOrderQty());
+                    wmsOutPlanDeliveryOrderDetDto.setLineStatus((byte) 1);
+                    wmsOutPlanDeliveryOrderDetDtos.add(wmsOutPlanDeliveryOrderDetDto);
+                }
+                WmsOutPlanDeliveryOrderDto wmsOutPlanDeliveryOrderDto = new WmsOutPlanDeliveryOrderDto();
+                //wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("OUT-PRO");
+                wmsOutPlanDeliveryOrderDto.setSourceSysOrderTypeCode("OUT-DRO");
+                wmsOutPlanDeliveryOrderDto.setSourceBigType((byte)1);
+                wmsOutPlanDeliveryOrderDto.setWarehouseId(warehouseId);
+                wmsOutPlanDeliveryOrderDto.setWmsOutPlanDeliveryOrderDetDtos(wmsOutPlanDeliveryOrderDetDtos);
+                wmsOutPlanDeliveryOrderService.save(wmsOutPlanDeliveryOrderDto);
+                i++;
             } else if ("OUT-IWK".equals(code)) {
                 //拣货作业
                 int lineNumber = 1;
