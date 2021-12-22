@@ -26,4 +26,8 @@ public class SearchOmInStorage extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name = "supplierId",value = "客户")
     private Long supplierId;
+
+    private String workOrderCode;
+
+    private String salesOrderCode;
 }
