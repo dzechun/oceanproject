@@ -287,7 +287,7 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
             wmsInInPlanOrder.setModifiedTime(new Date());
             wmsInInPlanOrder.setStatus((byte) 1);
             wmsInInPlanOrder.setOrgId(user.getOrganizationId());
-            wmsInInPlanOrder.setInPlanOrderCode(CodeUtils.getId("RKJH"));
+            wmsInInPlanOrder.setInPlanOrderCode(CodeUtils.getId("IN-IPO"));
             wmsInInPlanOrder.setWarehouseId(baseWarehouses.get(0).getWarehouseId());
             wmsInInPlanOrder.setMakeOrderUserId(user.getUserId());
             wmsInInPlanOrder.setOrderStatus((byte) 1);
