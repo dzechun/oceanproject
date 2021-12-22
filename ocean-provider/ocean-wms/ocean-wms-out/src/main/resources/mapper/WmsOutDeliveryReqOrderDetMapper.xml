@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.out.mapper.WmsOutDeliveryReqOrderDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryReqOrderDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="delivery_req_order_det_id" jdbcType="BIGINT" property="deliveryReqOrderDetId" />
+    <result column="core_source_order_code" jdbcType="VARCHAR" property="coreSourceOrderCode" />
+    <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode" />
+    <result column="core_source_id" jdbcType="BIGINT" property="coreSourceId" />
+    <result column="source_id" jdbcType="BIGINT" property="sourceId" />
+    <result column="delivery_req_order_id" jdbcType="BIGINT" property="deliveryReqOrderId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="order_qty" jdbcType="DECIMAL" property="orderQty" />
+    <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
+    <result column="line_status" jdbcType="TINYINT" property="lineStatus" />
+    <result column="delivery_user_id" jdbcType="BIGINT" property="deliveryUserId" />
+    <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty" />
+    <result column="if_all_issued" jdbcType="TINYINT" property="ifAllIssued" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryReqOrderDetDto">
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="delivery_user_name" jdbcType="VARCHAR" property="deliveryUserName"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="delivery_req_order_code" jdbcType="VARCHAR" property="deliveryReqOrderCode"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    wodrod.delivery_req_order_det_id,
+    wodrod.core_source_order_code,
+    wodrod.source_order_code,
+    wodrod.core_source_id,
+    wodrod.source_id,
+    wodrod.delivery_req_order_id,
+    wodrod.material_id,
+    wodrod.order_qty,
+    wodrod.actual_qty,
+    wodrod.line_status,
+    wodrod.delivery_user_id,
+    wodrod.total_issue_qty,
+    wodrod.if_all_issued,
+    wodrod.status,
+    wodrod.remark,
+    wodrod.org_id,
+    wodrod.create_user_id,
+    wodrod.create_time,
+    wodrod.modified_user_id,
+    wodrod.modified_time,
+    wodrod.is_delete
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto">
+    SELECT <include refid="Base_Column_List"/>,
+    wodro.delivery_req_order_code,
+    bm.material_code,bm.material_name,
+    bm.material_desc,bm.material_version,
+    sudelivery.user_name as delivery_user_name,
+    su.user_name AS create_user_name,
+    sus.user_name AS modified_user_name,
+    bo.organization_name AS organization_Name
+    FROM wms_out_delivery_req_order_det wodrod
+    LEFT JOIN base_material bm ON wodrod.material_id = bm.material_id
+    LEFT JOIN wms_out_delivery_req_order wodro ON wodrod.delivery_req_order_id = wodro.delivery_req_order_id
+    LEFT JOIN sys_user sudelivery ON wodrod.delivery_user_id = sudelivery.user_id
+    LEFT JOIN sys_user su ON wodrod.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON wodrod.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON wodrod.org_id = bo.organization_id
+    <where>
+      <if test="deliveryReqOrderId!=null">
+        and wodrod.delivery_req_order_id = #{deliveryReqOrderId}
+      </if>
+      <if test="orgId!=null">
+        and wodrod.org_id = #{orgId}
+      </if>
+      <if test="status != null">
+        and wodrod.status = #{status}
+      </if>
+      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+        and date_format(wodrod.create_time, '%Y-%m-%d') <![CDATA[ >= ]]> #{startTime}
+        and date_format(wodrod.create_time, '%Y-%m-%d') <![CDATA[ <= ]]> #{endTime}
+      </if>
+    </where>
+    order by wodrod.create_time desc
+  </select>
+
+  <update id="batchUpdate" parameterType="java.util.List">
+    <foreach collection="list" item="item" separator=";">
+      update wms_out_delivery_req_order_det wodrod set
+      wodrod.total_issue_qty = #{item.totalIssueQty},
+      wodrod.if_all_issued = #{item.ifAllIssued}
+      where wodrod.delivery_req_order_det_id = #{item.deliveryReqOrderDetId}
+    </foreach>
+  </update>
+</mapper>
