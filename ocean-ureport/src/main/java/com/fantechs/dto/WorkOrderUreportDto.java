@@ -41,8 +41,8 @@ public class WorkOrderUreportDto implements Serializable {
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     private Date planStartTime;
 
-    @ApiModelProperty(name="productionQty",value = "计划生产数量")
-    @Excel(name = "计划生产数量", height = 20, width = 30)
+    @ApiModelProperty(name="productionQty",value = "实际生产数量")
+    @Excel(name = "实际生产数量", height = 20, width = 30)
     private BigDecimal productionQty;
 
     @ApiModelProperty(name="actualStartTime",value = "实际开始时间")
@@ -50,8 +50,8 @@ public class WorkOrderUreportDto implements Serializable {
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     private Date actualStartTime;
 
-    @ApiModelProperty(name="scheduledQty",value = "实际生产数量")
-    @Excel(name = "实际生产数量", height = 20, width = 30)
+    @ApiModelProperty(name="scheduledQty",value = "计划生产数量")
+    @Excel(name = "计划生产数量", height = 20, width = 30)
     private BigDecimal scheduledQty;
 
     @ApiModelProperty(name="actualEndTime",value = "实际完成时间")

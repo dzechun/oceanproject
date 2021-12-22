@@ -70,7 +70,7 @@
                and bws.work_shop_id =#{workShopId}
             </if>
             <if test="proId!=null and proId!=''">
-                and bpl.pro_id =#{proId}
+                and bpl.pro_line_id =#{proId}
             </if>
         <if test="workOrderId!=null and workOrderId!=''">
             and mpwo.work_order_id = #{workOrderId}
