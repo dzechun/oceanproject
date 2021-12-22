@@ -83,7 +83,8 @@
         <include refid="Base_Column_List"/>,
         bm.material_code as materialCode, bm.material_name as materialName, bm.material_desc as materialDesc,
         bm.material_version as materialVersion, bm.material_source as materialSource,bmc.material_category_name as materialCategoryName,
-        bpm.product_model_name as productModelName,opo.purchase_order_code,bs.supplier_name as supplierName,
+        bpm.product_model_name as productModelName,opo.purchase_order_code,bs.supplier_name as supplierName,bmt.volume as volume,
+        bmt.net_weight as netWeight,bmt.gross_weight as grossWeight,
         u.user_name as create_user_name,
         s.user_name as modified_user_name,
         bo.organization_name

@@ -7,6 +7,8 @@
         -->
         <id column="purchase_order_id" jdbcType="BIGINT" property="purchaseOrderId"/>
         <result column="purchase_order_code" jdbcType="VARCHAR" property="purchaseOrderCode"/>
+        <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode"/>
+        <result column="source_big_type" jdbcType="TINYINT" property="sourceBigType"/>
         <result column="order_type" jdbcType="VARCHAR" property="orderType"/>
         <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
         <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
@@ -42,6 +44,8 @@
     <sql id="Base_Column_List">
         opo.purchase_order_id,
         opo.purchase_order_code,
+        opo.sys_order_type_code,
+        opo.source_big_type,
         opo.order_type,
         opo.order_status,
         opo.supplier_id,

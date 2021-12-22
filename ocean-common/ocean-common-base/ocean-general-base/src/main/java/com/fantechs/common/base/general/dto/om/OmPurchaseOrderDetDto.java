@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 public class OmPurchaseOrderDetDto extends OmPurchaseOrderDet implements Serializable {
@@ -73,5 +74,21 @@ public class OmPurchaseOrderDetDto extends OmPurchaseOrderDet implements Seriali
     @ApiModelProperty(name="purchaseOrderCode",value = "采购订单编码")
     private String purchaseOrderCode;
 
+    /**
+     * 体积
+     */
+    @ApiModelProperty(name="volume",value = "体积")
+    private BigDecimal volume;
 
+    /**
+     * 净重
+     */
+    @ApiModelProperty(name="netWeight",value = "净重")
+    private BigDecimal netWeight;
+
+    /**
+     * 毛重
+     */
+    @ApiModelProperty(name="grossWeight",value = "毛重")
+    private BigDecimal grossWeight;
 }

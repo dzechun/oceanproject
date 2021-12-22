@@ -53,14 +53,6 @@ public class OmPurchaseReturnOrderDetDto extends OmPurchaseReturnOrderDet implem
     private String materialVersion;
 
     /**
-     * 包装单位
-     */
-    @Transient
-    @ApiModelProperty(name = "mainUnit",value = "包装单位")
-    @Excel(name = "包装单位", height = 20, width = 30,orderNum="10")
-    private String mainUnit;
-
-    /**
      * 体积
      */
     @Transient
@@ -87,12 +79,14 @@ public class OmPurchaseReturnOrderDetDto extends OmPurchaseReturnOrderDet implem
     /**
      * 创建用户名称
      */
+    @Transient
     @ApiModelProperty(name = "createUserName", value = "创建用户名称")
     //@Excel(name = "创建账号", height = 20, width = 30, orderNum = "18")
     private String createUserName;
     /**
      * 修改用户名称
      */
+    @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
     //@Excel(name = "修改账号", height = 20, width = 30, orderNum = "20")
     private String modifiedUserName;
@@ -100,6 +94,7 @@ public class OmPurchaseReturnOrderDetDto extends OmPurchaseReturnOrderDet implem
     /**
      * 组织名称
      */
+    @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     //@Excel(name = "组织名称", height = 20, width = 30)
     private String organizationName;
@@ -111,4 +106,11 @@ public class OmPurchaseReturnOrderDetDto extends OmPurchaseReturnOrderDet implem
     @ApiModelProperty(name = "purchaseReturnOrderCode",value = "采退订单号")
     @Excel(name = "采退订单号", height = 20, width = 30,orderNum="1")
     private String purchaseReturnOrderCode;
+
+    /**
+     * 下发数量
+     */
+    @ApiModelProperty(name="issueQty",value = "下发数量")
+    @Transient
+    private BigDecimal issueQty;
 }

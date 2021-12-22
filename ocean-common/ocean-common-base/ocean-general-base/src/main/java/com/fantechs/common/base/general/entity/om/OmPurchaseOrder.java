@@ -43,6 +43,20 @@ public class OmPurchaseOrder extends ValidGroup implements Serializable {
     private String purchaseOrderCode;
 
     /**
+     * 系统单据类型编码
+     */
+    @ApiModelProperty(name="sysOrderTypeCode",value = "系统单据类型编码")
+    @Column(name = "sys_order_type_code")
+    private String sysOrderTypeCode;
+
+    /**
+     * 来源大类(1-系统下推 2-自建 3-第三方系统)
+     */
+    @ApiModelProperty(name="sourceBigType",value = "来源大类(1-系统下推 2-自建 3-第三方系统)")
+    @Column(name = "source_big_type")
+    private Byte sourceBigType;
+
+    /**
      * 订单类型
      */
     @ApiModelProperty(name="orderType",value = "订单类型")

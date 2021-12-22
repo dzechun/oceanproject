@@ -3,6 +3,7 @@ package com.fantechs.common.base.general.entity.wms.in;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReOrderDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -50,6 +51,13 @@ public class WmsInReceivingOrder extends ValidGroup implements Serializable {
     @Excel(name = "来源系统单据类型编码", height = 20, width = 30,orderNum="2")
     @Column(name = "source_sys_order_type_code")
     private String sourceSysOrderTypeCode;
+
+    /**
+     * 来源大类(1-系统下推 2-自建 3-第三方系统)
+     */
+    @ApiModelProperty(name = "sourceBigType",value = "来源大类(1-系统下推 2-自建 3-第三方系统)")
+    @Column(name = "source_big_type")
+    private Byte sourceBigType;
 
     /**
      * 系统单据类型编码
@@ -152,7 +160,12 @@ public class WmsInReceivingOrder extends ValidGroup implements Serializable {
     private Byte isPdaCreate;
 
     @Transient
+    @ApiModelProperty(name = "wmsInReceivingOrderDets",value = "收货作业明细集合")
     private List<WmsInReceivingOrderDetDto> wmsInReceivingOrderDets;
+
+    @Transient
+    @ApiModelProperty(name = "wmsInnerMaterialBarcodeReOrderDtos",value = "条码明细集合")
+    private List<WmsInnerMaterialBarcodeReOrderDto> wmsInnerMaterialBarcodeReOrderDtos;
 
     private static final long serialVersionUID = 1L;
 }

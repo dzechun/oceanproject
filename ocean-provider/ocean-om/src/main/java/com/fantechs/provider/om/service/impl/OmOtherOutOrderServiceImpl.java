@@ -24,6 +24,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
+import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.om.mapper.OmOtherOutOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmOtherOutOrderMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtOtherOutOrderDetMapper;
@@ -58,6 +59,8 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
     private BaseFeignApi baseFeignApi;
     @Resource
     private InnerFeignApi innerFeignApi;
+    @Resource
+    private OutFeignApi outFeignApi;
 
     @Override
     public List<OmOtherOutOrderDto> findList(Map<String, Object> map) {
@@ -128,13 +131,13 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
             String[] split = code.split("_");
             String nextOrderTypeCode = split[1];//下游单据类型
             List<OmOtherOutOrderDetDto> omOtherOutOrderDetDtos = map.get(code);
-            if ("".equals(nextOrderTypeCode)) {
+            if ("OUT-DRO".equals(nextOrderTypeCode)) {
                 //出库通知单
 
-            } else if ("".equals(nextOrderTypeCode)) {
+            } else if ("OUT-PDO".equals(nextOrderTypeCode)) {
                 //出库计划
 
-            } else if ("".equals(nextOrderTypeCode)) {
+            } else if ("OUT-IWK".equals(nextOrderTypeCode)) {
                 //拣货作业
                 int lineNumber = 1;
                 List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();

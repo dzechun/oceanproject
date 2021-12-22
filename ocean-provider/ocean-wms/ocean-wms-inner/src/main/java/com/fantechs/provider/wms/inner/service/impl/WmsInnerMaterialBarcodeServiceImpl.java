@@ -1,8 +1,6 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -19,8 +17,10 @@ import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerMaterialBa
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.*;
-import com.fantechs.common.base.general.entity.wms.inner.*;
-import com.fantechs.common.base.general.entity.wms.inner.history.WmsHtInnerInventory;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerHtMaterialBarcode;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcode;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcodeReOrder;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcodeReprint;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
@@ -108,6 +108,31 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
     }
 
     @Override
+    public List<WmsInnerMaterialBarcodeDto> batchAdd(List<WmsInnerMaterialBarcodeDto> list) {
+        SysUser sysUser = currentUser();
+
+        //履历集合
+        List<WmsInnerHtMaterialBarcode> htList = new ArrayList<>();
+
+        for (WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcode : list) {
+            wmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
+            wmsInnerMaterialBarcode.setCreateTime(new Date());
+            wmsInnerMaterialBarcode.setCreateUserId(sysUser.getUserId());
+            wmsInnerMaterialBarcode.setModifiedTime(new Date());
+            wmsInnerMaterialBarcode.setModifiedUserId(sysUser.getUserId());
+            wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(wmsInnerMaterialBarcode);
+            //添加履历
+            WmsInnerHtMaterialBarcode wmsInnerHtMaterialBarcode = new WmsInnerHtMaterialBarcode();
+            BeanUtil.copyProperties(wmsInnerMaterialBarcode,wmsInnerHtMaterialBarcode);
+            htList.add(wmsInnerHtMaterialBarcode);
+        }
+        if (StringUtils.isNotEmpty(htList)) {
+            wmsInnerHtMaterialBarcodeMapper.insertList(htList);
+        }
+        return list;
+    }
+
+    @Override
     public List<WmsInnerMaterialBarcodeDto> add(List<WmsInnerMaterialBarcodeDto> barcodeDtoList,Integer type) {
         SysUser sysUser = currentUser();
 
@@ -119,6 +144,9 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
 
         //履历集合
         List<WmsInnerHtMaterialBarcode> htList = new ArrayList<>();
+
+        SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
+        SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
 
         for (WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto : barcodeDtoList) {
             if(StringUtils.isEmpty(wmsInnerMaterialBarcodeDto.getMaterialId())){
@@ -154,9 +182,41 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
 
             SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
 
-            //取系统配置默认编码
-            BaseBarcodeRuleDto baseBarCode = getBaseBarCode();
-            searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
+            BaseBarcodeRuleDto baseBarCode = new BaseBarcodeRuleDto();
+
+            searchBaseMaterial.setMaterialId(wmsInnerMaterialBarcodeDto.getMaterialId());
+            List<BaseMaterial> baseMaterialList = baseFeignApi.findList(searchBaseMaterial).getData();
+
+
+            if (StringUtils.isEmpty(baseMaterialList) || StringUtils.isEmpty(baseMaterialList.get(0).getBarcodeRuleSetId())) {
+                //取系统配置默认编码
+                baseBarCode = getBaseBarCode();
+                searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
+            }else {
+                searchBaseBarcodeRuleSetDet.setBarcodeRuleSetId(baseMaterialList.get(0).getBarcodeRuleSetId());
+                List<BaseBarcodeRuleSetDetDto> barcodeRuleSetDetList = baseFeignApi.findBarcodeRuleSetDetList(searchBaseBarcodeRuleSetDet).getData();
+                if (StringUtils.isEmpty(barcodeRuleSetDetList)) {
+                    //取系统配置默认编码
+                    baseBarCode = getBaseBarCode();
+                    searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
+                }
+                Long barcodeRuleId = null;
+                for (BaseBarcodeRuleSetDetDto baseBarcodeRuleSetDetDto : barcodeRuleSetDetList) {
+                    if ("物料条码".equals(baseBarcodeRuleSetDetDto.getBarcodeRuleCategoryName())) {
+                        barcodeRuleId = baseBarcodeRuleSetDetDto.getBarcodeRuleId();
+                        break;
+                    }
+                }
+
+                if (StringUtils.isEmpty(barcodeRuleId)) {
+                    //取系统配置默认编码
+                    baseBarCode = getBaseBarCode();
+                    searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
+                }
+                searchBaseBarcodeRuleSpec.setBarcodeRuleId(barcodeRuleId);
+            }
+
+
 
             ResponseEntity<List<BaseBarcodeRuleSpec>> barcodeRuleSpecList= baseFeignApi.findSpec(searchBaseBarcodeRuleSpec);
             if(barcodeRuleSpecList.getCode()!=0) throw new BizErrorException(barcodeRuleSpecList.getMessage());
@@ -202,6 +262,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                 wmsInnerMaterialBarCode.setCreateUserId(sysUser.getUserId());
                 wmsInnerMaterialBarCode.setModifiedTime(new Date());
                 wmsInnerMaterialBarCode.setModifiedUserId(sysUser.getUserId());
+                wmsInnerMaterialBarCode.setCreateType((byte) 3);
                 wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(wmsInnerMaterialBarCode);
 
                 //添加履历
@@ -396,15 +457,20 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
         List<WmsInnerHtMaterialBarcode> htList = new ArrayList<>();
         Example example = new Example(WmsInnerMaterialBarcode.class);
 
+        String printOrderTypeCode = "";
         //判断打印类型（1，ASN单 2，收货作业单 3，来料检验单 4，上架作业单）
         if (type == 1) {
             searchWmsInnerMaterialBarcode.setPrintOrderTypeCode("SRM-ASN");
+            printOrderTypeCode = "SRM-ASN";
         }else if (type == 2) {
             searchWmsInnerMaterialBarcode.setPrintOrderTypeCode("IN-SWK");
+            printOrderTypeCode = "IN-SWK";
         }else if (type == 3) {
             searchWmsInnerMaterialBarcode.setPrintOrderTypeCode("QMS-MIIO");
+            printOrderTypeCode = "QMS-MIIO";
         }else if (type == 4) {
             searchWmsInnerMaterialBarcode.setPrintOrderTypeCode("IN-IWK");
+            printOrderTypeCode = "IN-IWK";
         }
 
         for (WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto : list) {
@@ -415,20 +481,16 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                 searchBaseMaterial.setMaterialCode(wmsInnerMaterialBarcodeImport.getMaterialCode());
                 List<BaseMaterial> baseMaterialList = baseFeignApi.findList(searchBaseMaterial).getData();
                 if (StringUtils.isEmpty(baseMaterialList)) {
-                    fail.add(i + 4);
+                    fail.add(i + 1);
                     continue;
                 }
 
                 //判断条码是否存在
-                example.createCriteria().orEqualTo("barcode",wmsInnerMaterialBarcodeImport.getBarcode())
-                        .orEqualTo("colorBoxCode",wmsInnerMaterialBarcodeImport.getColorBoxCode())
-                        .orEqualTo("cartonCode",wmsInnerMaterialBarcodeImport.getCartonCode())
-                        .orEqualTo("palletCode",wmsInnerMaterialBarcodeImport.getPalletCode());
-
+                example.createCriteria().orEqualTo("barcode",wmsInnerMaterialBarcodeImport.getBarcode());
                 List<WmsInnerMaterialBarcode> wmsInnerMaterialBarcodes = wmsInnerMaterialBarcodeMapper.selectByExample(example);
                 example.clear();
                 if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodes)) {
-                    fail.add(i + 4);
+                    fail.add(i + 1);
                     continue;
                 }
 
@@ -448,18 +510,34 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                     Integer totalMaterialQty = wmsInnerMaterialBarcodeMapper.getTotalMaterialQty(searchWmsInnerMaterialBarcode);
                     wmsInnerMaterialBarcodeDto.setTotalMaterialQty(new BigDecimal(StringUtils.isNotEmpty(totalMaterialQty)?totalMaterialQty:0));
                     if (StringUtils.isEmpty(addWmsInnerMaterialBarcode.getMaterialQty())) {
-                        fail.add(i + 4);
+                        fail.add(i + 1);
                         continue;
                     } else if (wmsInnerMaterialBarcodeDto.getOrderQty().compareTo(addWmsInnerMaterialBarcode.getMaterialQty().add(StringUtils.isNotEmpty(wmsInnerMaterialBarcodeDto.getTotalMaterialQty())?wmsInnerMaterialBarcodeDto.getTotalMaterialQty():new BigDecimal(0))) == -1) {
-                        fail.add(i + 4);
+                        fail.add(i + 1);
                         continue;
                     }
+                    //按照最大的条码维度确定导入条码类型
+                    if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeImport.getPalletCode())) {
+//                        addWmsInnerMaterialBarcode
+                    }else if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeImport.getCartonCode())) {
+//                        addWmsInnerMaterialBarcode
+                    }else if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeImport.getColorBoxCode())) {
+//                        addWmsInnerMaterialBarcode
+                    }else if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeImport.getBarcode())) {
+//                        addWmsInnerMaterialBarcode
+                    }
+                    addWmsInnerMaterialBarcode.setCreateType((byte) 3);
+                    addWmsInnerMaterialBarcode.setPrintOrderTypeCode(printOrderTypeCode);
                     wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(addWmsInnerMaterialBarcode);
                     dataList.add(addWmsInnerMaterialBarcode);
                     //添加履历
                     WmsInnerHtMaterialBarcode wmsInnerHtMaterialBarcode = new WmsInnerHtMaterialBarcode();
                     BeanUtil.copyProperties(addWmsInnerMaterialBarcode,wmsInnerHtMaterialBarcode);
                     htList.add(wmsInnerHtMaterialBarcode);
+                    success++;
+                }else {
+                    fail.add(i + 1);
+                    continue;
                 }
             }
         }
@@ -468,7 +546,6 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
         }
         resultMap.put("操作成功总数",success);
         resultMap.put("操作失败行数",fail);
-        resultMap.put("data",dataList);
         return resultMap;
     }
 

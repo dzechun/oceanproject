@@ -5,6 +5,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerMaterialBarcodeImport;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcode;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -46,6 +47,12 @@ public class WmsInnerMaterialBarcodeController {
     @PostMapping("/batchUpdate")
     public ResponseEntity batchUpdate(@ApiParam(value = "必传：",required = true)@RequestBody @Validated @NotEmpty List<WmsInnerMaterialBarcodeDto> list) {
         return ControllerUtil.returnCRUD(wmsInnerMaterialBarcodeService.batchUpdate(list));
+    }
+
+    @ApiOperation(value = "批量新增",notes = "批量新增")
+    @PostMapping("/batchAdd")
+    public ResponseEntity<List<WmsInnerMaterialBarcodeDto>> batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated @NotEmpty List<WmsInnerMaterialBarcodeDto> list) {
+        return ControllerUtil.returnDataSuccess(wmsInnerMaterialBarcodeService.batchAdd(list),StringUtils.isEmpty(list)?0:1);
     }
 
     @ApiOperation(value = "生成条码",notes = "生成条码")
@@ -97,11 +104,11 @@ public class WmsInnerMaterialBarcodeController {
 
     @PostMapping(value = "/import")
     @ApiOperation(value = "从excel导入",notes = "从excel导入")
-    public ResponseEntity importExcel(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<WmsInnerMaterialBarcodeImport> importList,@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<WmsInnerMaterialBarcodeDto> list,@ApiParam(value = "必传：打印类型（1，ASN单 2，收货作业单 3，来料检验单 4，上架作业单）",required = true)@RequestParam Integer type){
+    public ResponseEntity importExcel(@RequestBody WmsInnerMaterialBarcodeImport importDto,@ApiParam(value = "必传：打印类型（1，ASN单 2，收货作业单 3，来料检验单 4，上架作业单）",required = true)@RequestParam Integer type){
         try {
             // 导入操作
 //            List<WmsInnerMaterialBarcodeImport> importList = EasyPoiUtils.importExcel(file, 2, 1, WmsInnerMaterialBarcodeImport.class);
-            Map<String, Object> resultMap = wmsInnerMaterialBarcodeService.importExcel(importList,list,type);
+            Map<String, Object> resultMap = wmsInnerMaterialBarcodeService.importExcel(importDto.getImportList(),importDto.getList(),type);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {
             e.printStackTrace();

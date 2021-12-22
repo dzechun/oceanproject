@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.*;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.StringUtils;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
@@ -119,4 +120,8 @@ public interface InnerFeignApi {
     @ApiOperation("列表")
     @PostMapping("/wmsInnerMaterialBarcodeReOrder/findList")
     ResponseEntity<List<WmsInnerMaterialBarcodeReOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder);
+
+    @ApiOperation(value = "批量新增",notes = "批量新增")
+    @PostMapping("/wmsInnerMaterialBarcode/batchAdd")
+    ResponseEntity<List<WmsInnerMaterialBarcodeDto>> batchSave(@ApiParam(value = "必传：",required = true)@RequestBody List<WmsInnerMaterialBarcodeDto> list);
 }

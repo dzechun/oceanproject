@@ -85,12 +85,14 @@
     sus.user_name AS modified_user_name,
     bo.organization_name AS organization_Name,
     bm.material_name as materialName,
-    bm.material_code as materialCode
+    bm.material_code as materialCode,
+    bs.supplier_name as supplierName
     FROM wms_inner_material_barcode wimb
     LEFT JOIN sys_user su ON wimb.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON wimb.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON wimb.org_id = bo.organization_id
     LEFT JOIN base_material bm on bm.material_id = wimb.material_id
+    LEFT JOIN base_supplier bs on bs.supplier_id = wimb.supplier_id
     <where>
         <if test="orgId!=null and orgId!=''">
             and wimb.org_id = #{orgId}
@@ -99,7 +101,7 @@
             and wimb.material_barcode_id = #{materialBarcodeId}
         </if>
         <if test="barcode!=null and barcode!=''">
-            and wimb.barcode = #{barcode}
+            and wimb.barcode like CONCAT('%',#{barcode},'%')
         </if>
         <if test="printOrderTypeCode!=null and printOrderTypeCode!=''">
             and wimb.print_order_type_code = #{printOrderTypeCode}
@@ -129,7 +131,7 @@
             and wimb.print_order_det_id = #{printOrderDetId}
         </if>
         <if test="printOrderCode!=null and printOrderCode!=''">
-            and wimb.print_order_code = #{printOrderCode}
+            and wimb.print_order_code like CONCAT('%',#{printOrderCode},'%')
         </if>
         <if test="materialId!=null and materialId!=''">
             and wimb.material_id = #{materialId}

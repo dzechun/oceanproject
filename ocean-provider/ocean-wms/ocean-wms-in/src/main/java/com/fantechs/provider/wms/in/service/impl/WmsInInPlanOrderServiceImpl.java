@@ -287,7 +287,7 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
             wmsInInPlanOrder.setModifiedTime(new Date());
             wmsInInPlanOrder.setStatus((byte) 1);
             wmsInInPlanOrder.setOrgId(user.getOrganizationId());
-            wmsInInPlanOrder.setInPlanOrderCode(CodeUtils.getId("RKJH"));
+            wmsInInPlanOrder.setInPlanOrderCode(CodeUtils.getId("IN-IPO"));
             wmsInInPlanOrder.setWarehouseId(baseWarehouses.get(0).getWarehouseId());
             wmsInInPlanOrder.setMakeOrderUserId(user.getUserId());
             wmsInInPlanOrder.setOrderStatus((byte) 1);
@@ -384,12 +384,10 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
             throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"先作业后单据无法进行下推操作");
 
         int i = 0;
-//        List<WmsInInPlanOrderDetDto> wmsInInPlanOrderDetDtos = wmsInInPlanOrderDetService.findListByIds(ids);
         List<WmsInInPlanOrderDet> wmsInInPlanOrderDets = wmsInInPlanOrderDetMapper.selectByIds(ids);
         //查当前单据的下游单据
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
-        searchBaseOrderFlow.setBusinessType((byte)1);
-        searchBaseOrderFlow.setOrderNode((byte)5);
+        searchBaseOrderFlow.setOrderTypeCode("IN-IPO");
         BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
         if(StringUtils.isEmpty(baseOrderFlow)){
             throw new BizErrorException("未找到当前单据配置的下游单据");
@@ -397,14 +395,13 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
 
         Example example = new Example(WmsInInPlanOrder.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("inPlanOrderCode",wmsInInPlanOrderDets.get(0).getInPlanOrderId());
+        criteria.andEqualTo("inPlanOrderId",wmsInInPlanOrderDets.get(0).getInPlanOrderId());
         List<WmsInInPlanOrder> wmsInInPlanOrders = wmsInInPlanOrderMapper.selectByExample(example);
         if(StringUtils.isEmpty(wmsInInPlanOrders))
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到对应的入库计划");
 
         if("IN-IWK".equals(baseOrderFlow.getNextOrderTypeCode())){
             //生成上架作业单
-            //TODO 移除移入库位
             List<WmsInnerJobOrderDet> detList = new LinkedList<>();
             for(WmsInInPlanOrderDet wmsInInPlanOrderDet : wmsInInPlanOrderDets){
                 int lineNumber = 1;

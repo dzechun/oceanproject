@@ -17,7 +17,6 @@ import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMa
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.qms.mapper.*;
 import com.fantechs.provider.qms.service.QmsIncomingInspectionOrderDetSampleService;
@@ -162,6 +161,13 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
         }
         qmsIncomingInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsIncomingInspectionOrderDet);
 
+        //修改检验单状态
+        QmsIncomingInspectionOrder qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(qmsIncomingInspectionOrderDet.getIncomingInspectionOrderId());
+        if (qmsIncomingInspectionOrder.getInspectionStatus() == (byte) 1) {
+            qmsIncomingInspectionOrder.setInspectionStatus((byte) 2);
+            qmsIncomingInspectionOrderMapper.updateByPrimaryKeySelective(qmsIncomingInspectionOrder);
+        }
+
         return i;
     }
 
@@ -256,7 +262,7 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
                         qmsIncomingInspectionOrderDet.setInspectionResult((byte) 0);
                     }
                 }
-                i += qmsIncomingInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsIncomingInspectionOrderDet);
+                qmsIncomingInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsIncomingInspectionOrderDet);
 
                 QmsIncomingInspectionOrderDetSample qmsIncomingInspectionOrderDetSample = new QmsIncomingInspectionOrderDetSample();
                 qmsIncomingInspectionOrderDetSample.setIncomingInspectionOrderDetId(detId);
