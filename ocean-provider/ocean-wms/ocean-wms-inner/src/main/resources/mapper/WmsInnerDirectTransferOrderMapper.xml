@@ -1,45 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerDirectTransferOrderMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerDirectTransferOrder">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="direct_transfer_order_id" jdbcType="BIGINT" property="directTransferOrderId" />
-    <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="coreSourceSysOrderTypeCode" />
-    <result column="source_sys_order_type_code" jdbcType="VARCHAR" property="sourceSysOrderTypeCode" />
-    <result column="source_big_type" jdbcType="TINYINT" property="sourceBigType" />
-    <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode" />
-    <result column="worker_user_id" jdbcType="BIGINT" property="workerUserId" />
-    <result column="direct_transfer_order_code" jdbcType="VARCHAR" property="directTransferOrderCode" />
-    <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="org_id" jdbcType="BIGINT" property="orgId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerDirectTransferOrder">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="direct_transfer_order_id" jdbcType="BIGINT" property="directTransferOrderId"/>
+        <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="coreSourceSysOrderTypeCode"/>
+        <result column="source_sys_order_type_code" jdbcType="VARCHAR" property="sourceSysOrderTypeCode"/>
+        <result column="source_big_type" jdbcType="TINYINT" property="sourceBigType"/>
+        <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode"/>
+        <result column="worker_user_id" jdbcType="BIGINT" property="workerUserId"/>
+        <result column="direct_transfer_order_code" jdbcType="VARCHAR" property="directTransferOrderCode"/>
+        <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
 
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap"
-             type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerDirectTransferOrderDto">
-    <result column="qty" jdbcType="DECIMAL" property="qty"/>
-    <result column="worker_user_name" jdbcType="VARCHAR" property="workerUserName"/>
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-    <collection property="wmsInnerDirectTransferOrderDetDtos" ofType="com.fantechs.common.base.general.dto.wms.inner.WmsInnerDirectTransferOrderDetDto"
-                column="{directTransferOrderId=direct_transfer_order_id}"
-                select="com.fantechs.provider.wms.inner.mapper..WmsInnerDirectTransferOrderDetMapper.findList">
-    </collection>
-  </resultMap>
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerDirectTransferOrderDto">
+        <result column="qty" jdbcType="DECIMAL" property="qty"/>
+        <result column="worker_user_name" jdbcType="VARCHAR" property="workerUserName"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <collection property="wmsInnerDirectTransferOrderDetDtos"
+                    ofType="com.fantechs.common.base.general.dto.wms.inner.WmsInnerDirectTransferOrderDetDto"
+                    column="{directTransferOrderId=direct_transfer_order_id}"
+                    select="com.fantechs.provider.wms.inner.mapper..WmsInnerDirectTransferOrderDetMapper.findList">
+        </collection>
+    </resultMap>
 
-  <sql id="BaseColumnList">
+    <sql id="BaseColumnList">
         widto.direct_transfer_order_id,
         widto.core_source_sys_order_type_code,
         widto.source_sys_order_type_code,
@@ -61,35 +62,36 @@
         widto.option3
     </sql>
 
-  <select id="findList" resultMap="BaseResultMapDto">
-    SELECT<include refid="BaseColumnList"/>,
-    (SELECT SUM(widtod.actual_qty) FROM wms_inner_direct_transfer_order_det widtod where widtod.direct_transfer_order_id =
-    widto.direct_transfer_order_id) as qty,
-    su.user_name AS worker_user_name,
-    u.user_name AS create_user_name,
-    s.user_name AS modified_user_name,
-    bo.organization_name
-    FROM wms_inner_direct_transfer_order widto
-    LEFT JOIN sys_user u ON widto.create_user_id=u.user_id
-    LEFT JOIN sys_user s ON widto.modified_user_id=s.user_id
-    LEFT JOIN sys_user su ON widto.worker_user_id=su.user_id
-    LEFT JOIN base_organization bo ON widto.org_id = bo.organization_id
-    <where>
-      <if test="orgId!=null and orgId!=''">
-        and widto.org_id = #{orgId}
-      </if>
-      <if test="directTransferOrderCode!=null and directTransferOrderCode!=''">
-        and widto.direct_transfer_order_code = #{directTransferOrderCode}
-      </if>
-      <if test="orderStatus!=null and orderStatus!=''">
-        and widto.order_status = #{orderStatus}
-      </if>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(widto.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>
-    </where>
-    order by widto.create_time desc
-  </select>
+    <select id="findList" resultMap="BaseResultMapDto">
+        SELECT<include refid="BaseColumnList"/>,
+        (SELECT SUM(widtod.actual_qty) FROM wms_inner_direct_transfer_order_det widtod where
+        widtod.direct_transfer_order_id =
+        widto.direct_transfer_order_id) as qty,
+        su.user_name AS worker_user_name,
+        u.user_name AS create_user_name,
+        s.user_name AS modified_user_name,
+        bo.organization_name
+        FROM wms_inner_direct_transfer_order widto
+        LEFT JOIN sys_user u ON widto.create_user_id=u.user_id
+        LEFT JOIN sys_user s ON widto.modified_user_id=s.user_id
+        LEFT JOIN sys_user su ON widto.worker_user_id=su.user_id
+        LEFT JOIN base_organization bo ON widto.org_id = bo.organization_id
+        <where>
+            <if test="orgId!=null and orgId!=''">
+                and widto.org_id = #{orgId}
+            </if>
+            <if test="directTransferOrderCode!=null and directTransferOrderCode!=''">
+                and widto.direct_transfer_order_code = #{directTransferOrderCode}
+            </if>
+            <if test="orderStatus!=null and orderStatus!=''">
+                and widto.order_status = #{orderStatus}
+            </if>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(widto.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+        order by widto.create_time desc
+    </select>
 
 
 </mapper>
