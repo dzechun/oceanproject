@@ -26,6 +26,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
+import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.om.mapper.OmPurchaseReturnOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmPurchaseReturnOrderMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtPurchaseReturnOrderDetMapper;
@@ -63,6 +64,8 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
     private SecurityFeignApi securityFeignApi;
     @Resource
     private InnerFeignApi innerFeignApi;
+    @Resource
+    private OutFeignApi outFeignApi;
 
     @Override
     public List<OmPurchaseReturnOrderDto> findList(Map<String, Object> map) {
@@ -124,13 +127,13 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
         Set<String> codes = map.keySet();
         for (String code : codes) {
             List<OmPurchaseReturnOrderDetDto> purchaseReturnOrderDetDtos = map.get(code);
-            if ("".equals(code)) {
+            if ("OUT-DRO".equals(code)) {
                 //出库通知单
 
-            } else if ("".equals(code)) {
+            } else if ("OUT-PDO".equals(code)) {
                 //出库计划
 
-            } else if ("".equals(code)) {
+            } else if ("OUT-IWK".equals(code)) {
                 //拣货作业
                 int lineNumber = 1;
                 List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();
@@ -149,8 +152,8 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
                 }
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
-                wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("OUT-OOO");
-                wmsInnerJobOrder.setSourceSysOrderTypeCode("OUT-OOO");
+                wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("OUT-PRO");
+                wmsInnerJobOrder.setSourceSysOrderTypeCode("OUT-PRO");
                 wmsInnerJobOrder.setWarehouseId(purchaseReturnOrderDetDtos.get(0).getWarehouseId());
                 wmsInnerJobOrder.setJobOrderType((byte) 2);
                 wmsInnerJobOrder.setWmsInPutawayOrderDets(wmsInnerJobOrderDets);

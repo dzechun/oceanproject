@@ -127,13 +127,13 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
             String[] split = code.split("_");
             String nextOrderTypeCode = split[1];//下游单据类型
             List<OmSalesOrderDetDto> omSalesOrderDetDtos = map.get(code);
-            if ("".equals(nextOrderTypeCode)) {
+            if ("OUT-DRO".equals(nextOrderTypeCode)) {
                 //出库通知单
 
-            } else if ("".equals(nextOrderTypeCode)) {
+            } else if ("OUT-PDO".equals(nextOrderTypeCode)) {
                 //出库计划
 
-            } else if ("".equals(nextOrderTypeCode)) {
+            } else if ("OUT-IWK".equals(nextOrderTypeCode)) {
                 //拣货作业
                 int lineNumber = 1;
                 List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();
@@ -151,8 +151,8 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
                 }
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
-                wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("OUT-OOO");
-                wmsInnerJobOrder.setSourceSysOrderTypeCode("OUT-OOO");
+                wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("OUT-SO");
+                wmsInnerJobOrder.setSourceSysOrderTypeCode("OUT-SO");
                 wmsInnerJobOrder.setWarehouseId(omSalesOrderDetDtos.get(0).getWarehouseId());
                 wmsInnerJobOrder.setJobOrderType((byte) 2);
                 wmsInnerJobOrder.setWmsInPutawayOrderDets(wmsInnerJobOrderDets);
