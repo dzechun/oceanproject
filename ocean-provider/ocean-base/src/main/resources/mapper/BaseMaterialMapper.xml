@@ -119,6 +119,15 @@
             <if test="idCode!=null and idCode!=''">
                 and sm.option1=#{idCode}
             </if>
+            <if test="option1!=null and option1!=''">
+                and sm.option1 like CONCAT('%',#{option1},'%')
+            </if>
+            <if test="option2!=null and option2!=''">
+                and sm.option2 like CONCAT('%',#{option2},'%')
+            </if>
+            <if test="option3!=null and option3!=''">
+                and sm.option3 like CONCAT('%',#{option3},'%')
+            </if>
         </where>
         order by sm.create_time desc
     </select>
