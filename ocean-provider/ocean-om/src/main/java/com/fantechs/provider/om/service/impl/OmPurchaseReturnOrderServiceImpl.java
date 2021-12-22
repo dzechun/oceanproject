@@ -445,6 +445,7 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
                 OmPurchaseReturnOrder omPurchaseReturnOrder = new OmPurchaseReturnOrder();
                 //新增父级数据
                 BeanUtils.copyProperties(omPurchaseReturnOrderImports1.get(0), omPurchaseReturnOrder);
+                omPurchaseReturnOrder.setPurchaseReturnOrderCode(CodeUtils.getId("OUT-PRO"));
                 omPurchaseReturnOrder.setCreateTime(new Date());
                 omPurchaseReturnOrder.setCreateUserId(user.getUserId());
                 omPurchaseReturnOrder.setModifiedUserId(user.getUserId());

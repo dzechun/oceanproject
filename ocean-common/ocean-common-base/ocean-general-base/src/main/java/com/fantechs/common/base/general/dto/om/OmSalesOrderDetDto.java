@@ -14,16 +14,19 @@ public class OmSalesOrderDetDto extends OmSalesOrderDet implements Serializable 
     /**
      *销售订单号
      */
+    @Transient
     @ApiModelProperty(name = "salesOrderCode", value = "销售订单号")
     @Excel(name = "销售订单号", height = 20, width = 30)
     private String salesOrderCode;
 
+    @Transient
     @ApiModelProperty(name = "materialCode", value = "物料编码")
     @Excel(name = "物料编码", height = 20, width = 30)
     private String materialCode;
     /**
      * 物料名称
      */
+    @Transient
     @ApiModelProperty(name = "materialName", value = "物料名称")
     @Excel(name="物料名称" , height = 20, width = 30)
     private String materialName;
@@ -31,6 +34,7 @@ public class OmSalesOrderDetDto extends OmSalesOrderDet implements Serializable 
     /**
      * 物料版本
      */
+    @Transient
     @ApiModelProperty(name = "materialVersion", value = "物料版本")
     @Excel(name = "版本", height = 20, width = 30)
     private String materialVersion;
@@ -38,6 +42,7 @@ public class OmSalesOrderDetDto extends OmSalesOrderDet implements Serializable 
     /**
      * 物料描述
      */
+    @Transient
     @ApiModelProperty(name = "materialDesc", value = "物料描述")
     @Excel(name = "物料描述", height = 20, width = 30)
     private String materialDesc;
@@ -45,6 +50,7 @@ public class OmSalesOrderDetDto extends OmSalesOrderDet implements Serializable 
     /**
      * 仓库名
      */
+    @Transient
     @ApiModelProperty(name="warehouseName", value = "仓库名称")
     @Excel(name = "仓库名称", height = 20, width = 30)
     private String warehouseName;
