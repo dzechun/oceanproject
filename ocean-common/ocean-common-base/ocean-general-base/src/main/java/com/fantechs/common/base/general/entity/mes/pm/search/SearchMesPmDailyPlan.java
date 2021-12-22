@@ -58,9 +58,6 @@ public class SearchMesPmDailyPlan extends BaseQuery implements Serializable {
     @ApiModelProperty(name="ifOrderInserting",value = "是否插单(0-否 1-是)")
     private Byte ifOrderInserting;
 
-    @ApiModelProperty(name="status" ,value="状态")
-    private String status;
-
     /**
      * 备注
      */

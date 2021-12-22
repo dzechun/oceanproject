@@ -478,8 +478,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
         String coreSourceSysOrderTypeCode = null;//核心单据类型编码
         //查当前单据的下游单据
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
-        searchBaseOrderFlow.setBusinessType((byte)1);
-        searchBaseOrderFlow.setOrderNode((byte)4);
+        searchBaseOrderFlow.setOrderTypeCode("IN-SWK");
         BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
         if(StringUtils.isEmpty(baseOrderFlow)){
             throw new BizErrorException("未找到当前单据配置的下游单据");

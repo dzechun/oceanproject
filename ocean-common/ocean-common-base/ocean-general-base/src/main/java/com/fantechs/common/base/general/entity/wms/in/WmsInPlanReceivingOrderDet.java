@@ -3,6 +3,7 @@ package com.fantechs.common.base.general.entity.wms.in;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
 import com.fantechs.common.base.support.ValidGroup;;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 收货计划单明细
@@ -104,7 +106,8 @@ public class WmsInPlanReceivingOrderDet extends ValidGroup implements Serializab
      */
     @ApiModelProperty(name="productionTime",value = "生产时间")
     @Excel(name = "生产时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     @Column(name = "production_time")
     private Date productionTime;
 
@@ -183,7 +186,8 @@ public class WmsInPlanReceivingOrderDet extends ValidGroup implements Serializab
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
     @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     @Column(name = "create_time")
     private Date createTime;
 
@@ -200,7 +204,8 @@ public class WmsInPlanReceivingOrderDet extends ValidGroup implements Serializab
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
     @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     @Column(name = "modified_time")
     private Date modifiedTime;
 
