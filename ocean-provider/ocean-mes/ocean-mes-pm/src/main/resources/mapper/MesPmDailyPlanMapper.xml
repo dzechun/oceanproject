@@ -6,10 +6,14 @@
       WARNING - @mbg.generated
     -->
     <id column="daily_plan_id" jdbcType="BIGINT" property="dailyPlanId" />
-    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
-    <result column="schedule_qty" jdbcType="DECIMAL" property="scheduleQty" />
-    <result column="finished_qty" jdbcType="DECIMAL" property="finishedQty" />
-    <result column="plan_time" jdbcType="TIMESTAMP" property="planTime" />
+    <result column="pro_line_id" jdbcType="BIGINT" property="proLineId" />
+    <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="coreSourceSysOrderTypeCode" />
+    <result column="source_sys_order_type_code" jdbcType="VARCHAR" property="sourceSysOrderTypeCode" />
+    <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode" />
+    <result column="source_big_type" jdbcType="TINYINT" property="sourceBigType" />
+    <result column="daily_plan_code" jdbcType="VARCHAR" property="dailyPlanCode" />
+    <result column="work_order_type" jdbcType="TINYINT" property="workOrderType" />
+    <result column="plan_start_time" jdbcType="TIMESTAMP" property="planStartTime" />
     <result column="if_order_inserting" jdbcType="TINYINT" property="ifOrderInserting" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -22,63 +26,81 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+
   </resultMap>
 
   <sql id="Base_Column_List">
     mpdp.daily_plan_id,
-    mpdp.work_order_id,
-    mpdp.schedule_qty,
-    mpdp.finished_qty,
-    mpdp.plan_time,
+    mpdp.pro_line_id,
+    mpdp.core_source_sys_order_type_code,
+    mpdp.source_sys_order_type_code,
+    mpdp.sys_order_type_code,
+    mpdp.source_big_type,
+    mpdp.daily_plan_code,
+    mpdp.work_order_type,
+    mpdp.plan_start_time,
     mpdp.if_order_inserting,
     mpdp.status,
-    mpdp.create_time
+    mpdp.remark,
+    mpdp.org_id,
+    mpdp.create_user_id,
+    mpdp.create_time,
+    mpdp.modified_user_id,
+    mpdp.modified_time,
+    mpdp.is_delete,
+    mpdp.option1,
+    mpdp.option2,
+    mpdp.option3
   </sql>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDto">
-    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
-    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
-    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
-    <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
     <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
-    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
-    <result column="work_order_qty" jdbcType="VARCHAR" property="workOrderQty"/>
-    <result column="no_schedule_qty" jdbcType="VARCHAR" property="noScheduleQty"/>
-    <result column="production_qty" jdbcType="VARCHAR" property="productionQty"/>
-    <result column="scheduled_qty" jdbcType="VARCHAR" property="scheduledQty"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
   </resultMap>
 
   <select id="findList" parameterType="com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmDailyPlan"
           resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
-    mpwo.material_id,mpwo.work_order_qty AS work_order_qty,mpwo.production_qty as production_qty,mpwo.work_order_status,
-    mpwo.pro_line_id,bpl.pro_name AS proName,mpwo.scheduled_qty as scheduled_qty,
-    date_format(mpdp.plan_time, '%Y-%m-%d') AS planDate,mpwo.work_order_code as work_order_code,
-    bpl.pro_name as pro_name,bm.material_name as material_name,bm.material_code as material_code,bm.material_desc as material_desc,
-    (mpwo.work_order_qty-mpwo.scheduled_qty) AS no_schedule_qty
+    bpl.pro_name AS proName,
+    su.user_name AS create_user_name,
+    sus.user_name AS modified_user_name,
+    bo.organization_name AS organization_Name
     from mes_pm_daily_plan mpdp
-    LEFT JOIN mes_pm_work_order mpwo ON mpdp.work_order_id = mpwo.work_order_id
-    LEFT JOIN base_pro_line bpl ON  mpwo.pro_line_id =bpl.pro_line_id
-    LEFT JOIN base_material bm ON  mpwo.material_id = bm.material_id
+    LEFT JOIN base_pro_line bpl ON  mpdp.pro_line_id =bpl.pro_line_id
+    LEFT JOIN sys_user su ON mpdp.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON mpdp.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON mpdp.org_id = bo.organization_id
     <where>
       <if test="dailyPlanId!=null and dailyPlanId!=''">
         and mpdp.daily_plan_id = #{dailyPlanId}
       </if>
-      <if test="workOrderId!=null and workOrderId!=''">
-        and mpdp.work_order_id = #{workOrderId}
-      </if>
-      <if test="materialId!=null and materialId!=''">
-        and mpwo.material_id = #{materialId}
-      </if>
       <if test="proLineId!=null and proLineId!=''">
-        and mpwo.pro_line_id = #{proLineId}
+        and mpdp.pro_line_id = #{proLineId}
       </if>
-      <if test="workOrderCode!=null and workOrderCode!=''">
-        and mpwo.work_order_code = #{workOrderCode}
+      <if test="coreSourceSysOrderTypeCode!=null and coreSourceSysOrderTypeCode!=''">
+        and mpdp.core_source_sys_order_type_code = #{coreSourceSysOrderTypeCode}
       </if>
-      <if test="workOrderStatus!=null and workOrderStatus!=''">
-        and mpwo.work_order_status = #{workOrderStatus}
+      <if test="sourceSysOrderTypeCode!=null and sourceSysOrderTypeCode!=''">
+        and mpdp.source_sys_order_type_code = #{sourceSysOrderTypeCode}
       </if>
+      <if test="sysOrderTypeCode!=null and sysOrderTypeCode!=''">
+        and mpdp.sys_order_type_code = #{sysOrderTypeCode}
+      </if>
+      <if test="sourceBigType!=null and sourceBigType!=''">
+        and mpdp.source_big_type = #{sourceBigType}
+      </if>
+      <if test="dailyPlanCode!=null and dailyPlanCode!=''">
+        and mpdp.daily_plan_code = #{dailyPlanCode}
+      </if>
+      <if test="workOrderType!=null and workOrderType!=''">
+        and mpdp.work_order_type = #{workOrderType}
+      </if>
+      <if test="remark!=null and remark!=''">
+        and mpdp.remark = #{remark}
+      </if>
+
       <if test="status!=null">
         and mpdp.status = #{status}
       </if>
@@ -91,7 +113,6 @@
     </where>
     order by mpdp.create_time desc
   </select>
-
 
 
 </mapper>

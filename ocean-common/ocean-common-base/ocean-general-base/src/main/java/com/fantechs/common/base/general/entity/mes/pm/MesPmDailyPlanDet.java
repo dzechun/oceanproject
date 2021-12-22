@@ -2,88 +2,95 @@ package com.fantechs.common.base.general.entity.mes.pm;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.*;
 import lombok.Data;
 
 /**
- * 日计划
- * mes_pm_daily_plan
+ * 日计划明细表
+ * mes_pm_daily_plan_det
  * @author Dylan
- * @date 2021-12-21 13:54:18
+ * @date 2021-12-21 13:54:19
  */
 @Data
-@Table(name = "mes_pm_daily_plan")
-public class MesPmDailyPlan extends ValidGroup implements Serializable {
+@Table(name = "mes_pm_daily_plan_det")
+public class MesPmDailyPlanDet extends ValidGroup implements Serializable {
+    /**
+     * 日计划明细ID
+     */
+    @ApiModelProperty(name="dailyPlanDetId",value = "日计划明细ID")
+    @Excel(name = "日计划明细ID", height = 20, width = 30,orderNum="") 
+    @Id
+    @Column(name = "daily_plan_det_id")
+    private Long dailyPlanDetId;
+
+    /**
+     * 核心单据编码
+     */
+    @ApiModelProperty(name="coreSourceOrderCode",value = "核心单据编码")
+    @Excel(name = "核心单据编码", height = 20, width = 30,orderNum="") 
+    @Column(name = "core_source_order_code")
+    private String coreSourceOrderCode;
+
+    /**
+     * 来源单据编码
+     */
+    @ApiModelProperty(name="sourceOrderCode",value = "来源单据编码")
+    @Excel(name = "来源单据编码", height = 20, width = 30,orderNum="") 
+    @Column(name = "source_order_code")
+    private String sourceOrderCode;
+
+    /**
+     * 核心来源ID
+     */
+    @ApiModelProperty(name="coreSourceId",value = "核心来源ID")
+    @Excel(name = "核心来源ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "core_source_id")
+    private Long coreSourceId;
+
+    /**
+     * 来源ID
+     */
+    @ApiModelProperty(name="sourceId",value = "来源ID")
+    @Excel(name = "来源ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "source_id")
+    private Long sourceId;
+
     /**
      * 日计划ID
      */
     @ApiModelProperty(name="dailyPlanId",value = "日计划ID")
     @Excel(name = "日计划ID", height = 20, width = 30,orderNum="") 
-    @Id
     @Column(name = "daily_plan_id")
     private Long dailyPlanId;
 
     /**
-     * 产线ID
+     * 工单ID
      */
-    @ApiModelProperty(name="proLineId",value = "产线ID")
-    @Excel(name = "产线ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "pro_line_id")
-    private Long proLineId;
+    @ApiModelProperty(name="workOrderId",value = "工单ID")
+    @Excel(name = "工单ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "work_order_id")
+    private Long workOrderId;
 
     /**
-     * 核心系统单据类型编码
+     * 排产数量
      */
-    @ApiModelProperty(name="coreSourceSysOrderTypeCode",value = "核心系统单据类型编码")
-    @Excel(name = "核心系统单据类型编码", height = 20, width = 30,orderNum="") 
-    @Column(name = "core_source_sys_order_type_code")
-    private String coreSourceSysOrderTypeCode;
+    @ApiModelProperty(name="scheduleQty",value = "排产数量")
+    @Excel(name = "排产数量", height = 20, width = 30,orderNum="") 
+    @Column(name = "schedule_qty")
+    private BigDecimal scheduleQty;
 
     /**
-     * 来源系统单据类型编码
+     * 完成数量
      */
-    @ApiModelProperty(name="sourceSysOrderTypeCode",value = "来源系统单据类型编码")
-    @Excel(name = "来源系统单据类型编码", height = 20, width = 30,orderNum="") 
-    @Column(name = "source_sys_order_type_code")
-    private String sourceSysOrderTypeCode;
-
-    /**
-     * 系统单据类型编码
-     */
-    @ApiModelProperty(name="sysOrderTypeCode",value = "系统单据类型编码")
-    @Excel(name = "系统单据类型编码", height = 20, width = 30,orderNum="") 
-    @Column(name = "sys_order_type_code")
-    private String sysOrderTypeCode;
-
-    /**
-     * 来源大类(1-系统下推 2-自建 3-第三方系统)
-     */
-    @ApiModelProperty(name="sourceBigType",value = "来源大类(1-系统下推 2-自建 3-第三方系统)")
-    @Excel(name = "来源大类(1-系统下推 2-自建 3-第三方系统)", height = 20, width = 30,orderNum="") 
-    @Column(name = "source_big_type")
-    private Byte sourceBigType;
-
-    /**
-     * 日计划编码
-     */
-    @ApiModelProperty(name="dailyPlanCode",value = "日计划编码")
-    @Excel(name = "日计划编码", height = 20, width = 30,orderNum="") 
-    @Column(name = "daily_plan_code")
-    private String dailyPlanCode;
-
-    /**
-     * 工单类型(0、量产 1、试产 2、返工 3、维修)
-     */
-    @ApiModelProperty(name="workOrderType",value = "工单类型(0、量产 1、试产 2、返工 3、维修)")
-    @Excel(name = "工单类型(0、量产 1、试产 2、返工 3、维修)", height = 20, width = 30,orderNum="") 
-    @Column(name = "work_order_type")
-    private Byte workOrderType;
+    @ApiModelProperty(name="finishedQty",value = "完成数量")
+    @Excel(name = "完成数量", height = 20, width = 30,orderNum="") 
+    @Column(name = "finished_qty")
+    private BigDecimal finishedQty;
 
     /**
      * 计划开始时间
@@ -165,13 +172,6 @@ public class MesPmDailyPlan extends ValidGroup implements Serializable {
     @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
-
-    /**
-     * 生产日计划明细
-     */
-    @Transient
-    @ApiModelProperty("生产日计划明细")
-    private List<MesPmDailyPlanDet> mesPmDailyPlanDets;
 
     private String option1;
 
