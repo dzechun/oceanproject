@@ -1,15 +1,10 @@
 package com.fantechs.common.base.general.entity.wms.inner.search;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -122,6 +117,12 @@ public class SearchWmsInnerMaterialBarcode extends BaseQuery implements Serializ
      */
     @ApiModelProperty(name="productionTimeEnd",value = "生产时间结束")
     private String productionTimeEnd;
+
+    /**
+     * (未知条码)
+     */
+    @ApiModelProperty(name="barcode",value = "未知条码")
+    private String code;
 
     private static final long serialVersionUID = 1L;
 }
