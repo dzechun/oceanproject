@@ -92,7 +92,7 @@
         select
         <include refid="Base_Column_List"/>,
         bs.supplier_name,bd.dept_name as sales_dept,
-        susales.user_name as sales_user_name,
+        staff.staff_name as sales_user_name,
         sumake.user_name as make_order_user_name,
         suaudit.user_name as audit_user_name,
         bbrs.barcode_rule_set_name,
@@ -100,13 +100,13 @@
         bo.organization_name,
         sumod.user_name as modified_user_name
         from om_sales_order so
+        left join base_staff staff on so.sales_user_id = staff.staff_id
         left join base_dept bd on so.sales_dept_id = bd.dept_id
         left join base_supplier bs on so.supplier_id = bs.supplier_id
         left join base_barcode_rule_set bbrs on so.barcode_rule_set_id = bbrs.barcode_rule_set_id
         left join sys_user suc on so.create_user_id = suc.user_id
         left join base_organization bo on so.org_id = bo.organization_id
         left join sys_user sumod on so.modified_user_id = sumod.user_id
-        left join sys_user susales on so.sales_user_id = susales.user_id
         left join sys_user sumake on so.make_order_user_id = sumake.user_id
         left join sys_user suaudit on so.audit_user_id = suaudit.user_id
         <if test="workOrderId != null and workOrderId != ''">

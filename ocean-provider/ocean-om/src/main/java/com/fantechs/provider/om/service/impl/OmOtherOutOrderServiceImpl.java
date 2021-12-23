@@ -9,6 +9,10 @@ import com.fantechs.common.base.general.dto.basic.BaseOrderFlowDto;
 import com.fantechs.common.base.general.dto.om.OmHtOtherOutOrderDto;
 import com.fantechs.common.base.general.dto.om.OmOtherOutOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmOtherOutOrderDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryReqOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryReqOrderDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
 import com.fantechs.common.base.general.entity.om.OmHtOtherOutOrder;
@@ -133,10 +137,56 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
             List<OmOtherOutOrderDetDto> omOtherOutOrderDetDtos = map.get(code);
             if ("OUT-DRO".equals(nextOrderTypeCode)) {
                 //出库通知单
-
+                List<WmsOutDeliveryReqOrderDetDto> wmsOutDeliveryReqOrderDetDtos = new LinkedList<>();
+                for (OmOtherOutOrderDetDto omOtherOutOrderDetDto : omOtherOutOrderDetDtos) {
+                    WmsOutDeliveryReqOrderDetDto wmsOutDeliveryReqOrderDetDto = new WmsOutDeliveryReqOrderDetDto();
+                    wmsOutDeliveryReqOrderDetDto.setCoreSourceOrderCode(omOtherOutOrderDetDto.getCoreSourceOrderCode());
+                    wmsOutDeliveryReqOrderDetDto.setSourceOrderCode(omOtherOutOrderDetDto.getOtherOutOrderCode());
+                    wmsOutDeliveryReqOrderDetDto.setCoreSourceId(omOtherOutOrderDetDto.getCoreSourceId());
+                    wmsOutDeliveryReqOrderDetDto.setSourceId(omOtherOutOrderDetDto.getOtherOutOrderDetId());
+                    wmsOutDeliveryReqOrderDetDto.setMaterialId(omOtherOutOrderDetDto.getMaterialId());
+                    wmsOutDeliveryReqOrderDetDto.setOrderQty(omOtherOutOrderDetDto.getOrderQty());
+                    wmsOutDeliveryReqOrderDetDto.setLineStatus((byte) 1);
+                    wmsOutDeliveryReqOrderDetDtos.add(wmsOutDeliveryReqOrderDetDto);
+                }
+                WmsOutDeliveryReqOrderDto wmsOutDeliveryReqOrderDto = new WmsOutDeliveryReqOrderDto();
+                wmsOutDeliveryReqOrderDto.setCoreSourceSysOrderTypeCode("OUT-OOO");
+                wmsOutDeliveryReqOrderDto.setSourceSysOrderTypeCode("OUT-OOO");
+                wmsOutDeliveryReqOrderDto.setSourceBigType((byte)1);
+                wmsOutDeliveryReqOrderDto.setWarehouseId(omOtherOutOrderDetDtos.get(0).getWarehouseId());
+                wmsOutDeliveryReqOrderDto.setWmsOutDeliveryReqOrderDetDtos(wmsOutDeliveryReqOrderDetDtos);
+                ResponseEntity responseEntity = outFeignApi.add(wmsOutDeliveryReqOrderDto);
+                if (responseEntity.getCode() != 0) {
+                    throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
+                } else {
+                    i++;
+                }
             } else if ("OUT-PDO".equals(nextOrderTypeCode)) {
                 //出库计划
-
+                List<WmsOutPlanDeliveryOrderDetDto> wmsOutPlanDeliveryOrderDetDtos = new LinkedList<>();
+                for (OmOtherOutOrderDetDto omOtherOutOrderDetDto : omOtherOutOrderDetDtos) {
+                    WmsOutPlanDeliveryOrderDetDto wmsOutPlanDeliveryOrderDetDto = new WmsOutPlanDeliveryOrderDetDto();
+                    wmsOutPlanDeliveryOrderDetDto.setCoreSourceOrderCode(omOtherOutOrderDetDto.getCoreSourceOrderCode());
+                    wmsOutPlanDeliveryOrderDetDto.setSourceOrderCode(omOtherOutOrderDetDto.getOtherOutOrderCode());
+                    wmsOutPlanDeliveryOrderDetDto.setCoreSourceId(omOtherOutOrderDetDto.getCoreSourceId());
+                    wmsOutPlanDeliveryOrderDetDto.setSourceId(omOtherOutOrderDetDto.getOtherOutOrderDetId());
+                    wmsOutPlanDeliveryOrderDetDto.setMaterialId(omOtherOutOrderDetDto.getMaterialId());
+                    wmsOutPlanDeliveryOrderDetDto.setOrderQty(omOtherOutOrderDetDto.getOrderQty());
+                    wmsOutPlanDeliveryOrderDetDto.setLineStatus((byte) 1);
+                    wmsOutPlanDeliveryOrderDetDtos.add(wmsOutPlanDeliveryOrderDetDto);
+                }
+                WmsOutPlanDeliveryOrderDto wmsOutPlanDeliveryOrderDto = new WmsOutPlanDeliveryOrderDto();
+                wmsOutPlanDeliveryOrderDto.setCoreSourceSysOrderTypeCode("OUT-OOO");
+                wmsOutPlanDeliveryOrderDto.setSourceSysOrderTypeCode("OUT-OOO");
+                wmsOutPlanDeliveryOrderDto.setSourceBigType((byte)1);
+                wmsOutPlanDeliveryOrderDto.setWarehouseId(omOtherOutOrderDetDtos.get(0).getWarehouseId());
+                wmsOutPlanDeliveryOrderDto.setWmsOutPlanDeliveryOrderDetDtos(wmsOutPlanDeliveryOrderDetDtos);
+                ResponseEntity responseEntity = outFeignApi.add(wmsOutPlanDeliveryOrderDto);
+                if (responseEntity.getCode() != 0) {
+                    throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
+                } else {
+                    i++;
+                }
             } else if ("OUT-IWK".equals(nextOrderTypeCode)) {
                 //拣货作业
                 int lineNumber = 1;

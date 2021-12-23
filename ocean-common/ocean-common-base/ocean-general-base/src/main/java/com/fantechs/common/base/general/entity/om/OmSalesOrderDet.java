@@ -5,7 +5,6 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -179,8 +178,7 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="planRevertDate",value = "计划回复日期")
     @Excel(name = "计划回复日期", height = 20, width = 30,orderNum="")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JSONField(format = "yyyy-MM-dd")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "plan_revert_date")
     private Date planRevertDate;
 
@@ -189,8 +187,7 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="planDeliverDate",value = "计划发货日期")
     @Excel(name = "计划发货日期", height = 20, width = 30,orderNum="")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JSONField(format = "yyyy-MM-dd")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "plan_deliver_date")
     private Date planDeliverDate;
 
@@ -199,8 +196,7 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="actualDeliverDate",value = "实际发货日期")
     @Excel(name = "实际发货日期", height = 20, width = 30,orderNum="")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JSONField(format = "yyyy-MM-dd")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "actual_deliver_date")
     private Date actualDeliverDate;
 
@@ -209,8 +205,7 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="planDeliveryDate",value = "计划交货日期")
     @Excel(name = "计划交货日期", height = 20, width = 30,orderNum="")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JSONField(format = "yyyy-MM-dd")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "plan_delivery_date")
     private Date planDeliveryDate;
 
@@ -219,8 +214,7 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="actualDeliveryDate",value = "实际交货日期")
     @Excel(name = "实际交货日期", height = 20, width = 30,orderNum="")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JSONField(format = "yyyy-MM-dd")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "actual_delivery_date")
     private Date actualDeliveryDate;
 
