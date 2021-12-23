@@ -1,41 +1,31 @@
-package com.fantechs.common.base.general.entity.mes.pm;
+package com.fantechs.common.base.general.entity.wms.out;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.*;
 import lombok.Data;
 
 /**
- * 日计划
- * mes_pm_daily_plan
+ * 备料计划单
+ * wms_out_plan_stock_list_order
  * @author Dylan
- * @date 2021-12-21 13:54:18
+ * @date 2021-12-22 19:17:47
  */
 @Data
-@Table(name = "mes_pm_daily_plan")
-public class MesPmDailyPlan extends ValidGroup implements Serializable {
+@Table(name = "wms_out_plan_stock_list_order")
+public class WmsOutPlanStockListOrder extends ValidGroup implements Serializable {
     /**
-     * 日计划ID
+     * 备料计划单ID
      */
-    @ApiModelProperty(name="dailyPlanId",value = "日计划ID")
-    @Excel(name = "日计划ID", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="planStockListOrderId",value = "备料计划单ID")
+    @Excel(name = "备料计划单ID", height = 20, width = 30,orderNum="") 
     @Id
-    @Column(name = "daily_plan_id")
-    private Long dailyPlanId;
-
-    /**
-     * 产线ID
-     */
-    @ApiModelProperty(name="proLineId",value = "产线ID")
-    @Excel(name = "产线ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "pro_line_id")
-    private Long proLineId;
+    @Column(name = "plan_stock_list_order_id")
+    private Long planStockListOrderId;
 
     /**
      * 核心系统单据类型编码
@@ -54,14 +44,6 @@ public class MesPmDailyPlan extends ValidGroup implements Serializable {
     private String sourceSysOrderTypeCode;
 
     /**
-     * 系统单据类型编码
-     */
-    @ApiModelProperty(name="sysOrderTypeCode",value = "系统单据类型编码")
-    @Excel(name = "系统单据类型编码", height = 20, width = 30,orderNum="") 
-    @Column(name = "sys_order_type_code")
-    private String sysOrderTypeCode;
-
-    /**
      * 来源大类(1-系统下推 2-自建 3-第三方系统)
      */
     @ApiModelProperty(name="sourceBigType",value = "来源大类(1-系统下推 2-自建 3-第三方系统)")
@@ -70,43 +52,42 @@ public class MesPmDailyPlan extends ValidGroup implements Serializable {
     private Byte sourceBigType;
 
     /**
-     * 日计划编码
+     * 系统单据类型编码
      */
-    @ApiModelProperty(name="dailyPlanCode",value = "日计划编码")
-    @Excel(name = "日计划编码", height = 20, width = 30,orderNum="") 
-    @Column(name = "daily_plan_code")
-    private String dailyPlanCode;
+    @ApiModelProperty(name="sysOrderTypeCode",value = "系统单据类型编码")
+    @Excel(name = "系统单据类型编码", height = 20, width = 30,orderNum="") 
+    @Column(name = "sys_order_type_code")
+    private String sysOrderTypeCode;
 
     /**
-     * 工单类型(0、量产 1、试产 2、返工 3、维修)
+     * 备料计划单编码
      */
-    @ApiModelProperty(name="workOrderType",value = "工单类型(0、量产 1、试产 2、返工 3、维修)")
-    @Excel(name = "工单类型(0、量产 1、试产 2、返工 3、维修)", height = 20, width = 30,orderNum="") 
-    @Column(name = "work_order_type")
-    private Byte workOrderType;
+    @ApiModelProperty(name="planStockListOrderCode",value = "备料计划单编码")
+    @Excel(name = "备料计划单编码", height = 20, width = 30,orderNum="") 
+    @Column(name = "plan_stock_list_order_code")
+    private String planStockListOrderCode;
 
     /**
-     * 计划开始时间
+     * 仓库ID
      */
-    @ApiModelProperty(name="planStartTime",value = "计划开始时间")
-    @Excel(name = "计划开始时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
-    @Column(name = "plan_start_time")
-    private Date planStartTime;
+    @ApiModelProperty(name="warehouseId",value = "仓库ID")
+    @Excel(name = "仓库ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "warehouse_id")
+    private Long warehouseId;
 
     /**
-     * 是否插单(0-否 1-是)
+     * 订单状态(1-待执行 2-执行中 3-已执行)
      */
-    @ApiModelProperty(name="ifOrderInserting",value = "是否插单(0-否 1-是)")
-    @Excel(name = "是否插单(0-否 1-是)", height = 20, width = 30,orderNum="") 
-    @Column(name = "if_order_inserting")
-    private Byte ifOrderInserting;
+    @ApiModelProperty(name="orderStatus",value = "订单状态(1-待执行 2-执行中 3-已执行)")
+    @Excel(name = "订单状态(1-待执行 2-执行中 3-已执行)", height = 20, width = 30,orderNum="") 
+    @Column(name = "order_status")
+    private Byte orderStatus;
 
     /**
-     * 状态(0无效，1有效)
+     * 状态（0、无效 1、有效）
      */
-    @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
+    @Excel(name = "状态（0、无效 1、有效）", height = 20, width = 30,orderNum="") 
     private Byte status;
 
     /**
@@ -166,10 +147,25 @@ public class MesPmDailyPlan extends ValidGroup implements Serializable {
     @Column(name = "is_delete")
     private Byte isDelete;
 
+    /**
+     * 扩展字段1
+     */
+    @ApiModelProperty(name="option1",value = "扩展字段1")
+    @Excel(name = "扩展字段1", height = 20, width = 30,orderNum="") 
     private String option1;
 
+    /**
+     * 扩展字段2
+     */
+    @ApiModelProperty(name="option2",value = "扩展字段2")
+    @Excel(name = "扩展字段2", height = 20, width = 30,orderNum="") 
     private String option2;
 
+    /**
+     * 扩展字段3
+     */
+    @ApiModelProperty(name="option3",value = "扩展字段3")
+    @Excel(name = "扩展字段3", height = 20, width = 30,orderNum="") 
     private String option3;
 
     private static final long serialVersionUID = 1L;
