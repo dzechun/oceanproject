@@ -11,10 +11,11 @@ import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface WmsInnerMaterialBarcodeMapper extends MyMapper<WmsInnerMaterialBarcode> {
-    List<WmsInnerMaterialBarcodeDto> findList(SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode);
+    List<WmsInnerMaterialBarcodeDto> findList(Map<String,Object> map);
 
     int batchUpdate(List<WmsInnerMaterialBarcodeDto> list);
 

@@ -17,7 +17,7 @@ import java.util.Map;
 
 public interface WmsInnerMaterialBarcodeService extends IService<WmsInnerMaterialBarcode> {
 
-    List<WmsInnerMaterialBarcodeDto> findList(SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode);
+    List<WmsInnerMaterialBarcodeDto> findList(Map<String,Object> map);
 
     List<WmsInnerMaterialBarcodeDto> add(List<WmsInnerMaterialBarcodeDto> barcodeDtoList,Integer type);
 
@@ -30,4 +30,7 @@ public interface WmsInnerMaterialBarcodeService extends IService<WmsInnerMateria
     int print(String ids,int printQty,String printName,String printType,int printMode);
 
     Map<String, Object> importExcel(List<WmsInnerMaterialBarcodeImport> importList, List<WmsInnerMaterialBarcodeDto> list,Integer type);
+
+    List<WmsInnerMaterialBarcodeDto> findListByCode(List<String> codes);
+
 }

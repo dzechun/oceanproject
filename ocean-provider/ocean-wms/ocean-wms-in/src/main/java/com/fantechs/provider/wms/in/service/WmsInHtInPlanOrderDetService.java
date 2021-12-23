@@ -1,6 +1,6 @@
 package com.fantechs.provider.wms.in.service;
 
-import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.in.WmsInHtInPlanOrderDetDto;
 import com.fantechs.common.base.general.entity.wms.in.WmsInHtInPlanOrderDet;
 import com.fantechs.common.base.support.IService;
 
@@ -12,5 +12,5 @@ import java.util.Map;
  */
 
 public interface WmsInHtInPlanOrderDetService extends IService<WmsInHtInPlanOrderDet> {
-    List<WmsInInPlanOrderDetDto> findList(Map<String, Object> map);
+    List<WmsInHtInPlanOrderDetDto> findList(Map<String, Object> map);
 }

@@ -8,6 +8,7 @@ import lombok.Data;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class WmsInnerJobOrderDetDto extends WmsInnerJobOrderDet implements Serializable {
@@ -116,4 +117,12 @@ public class WmsInnerJobOrderDetDto extends WmsInnerJobOrderDet implements Seria
     @ApiModelProperty(name="totalMaterialQty",value = "已打印物料总数量")
     @Transient
     private BigDecimal totalMaterialQty;
+
+    /**
+     * 已打印物料总数量
+     */
+    @ApiModelProperty(name="inventoryDetList",value = "已打印物料总数量")
+    @Transient
+    private List<WmsInnerInventoryDetDto> inventoryDetList;
+
 }

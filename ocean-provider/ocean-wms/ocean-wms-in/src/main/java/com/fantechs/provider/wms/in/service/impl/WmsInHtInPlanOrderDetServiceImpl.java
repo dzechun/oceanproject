@@ -1,7 +1,7 @@
 package com.fantechs.provider.wms.in.service.impl;
 
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.in.WmsInHtInPlanOrderDetDto;
 import com.fantechs.common.base.general.entity.wms.in.WmsInHtInPlanOrderDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -25,12 +25,11 @@ public class WmsInHtInPlanOrderDetServiceImpl extends BaseService<WmsInHtInPlanO
     private WmsInHtInPlanOrderDetMapper wmsInHtInPlanOrderDetMapper;
 
     @Override
-    public List<WmsInInPlanOrderDetDto> findList(Map<String, Object> map) {
+    public List<WmsInHtInPlanOrderDetDto> findList(Map<String, Object> map) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(map.get("orgId"))){
             map.put("orgId",sysUser.getOrganizationId());
         }
-    //    return wmsInHtInPlanOrderDetMapper.findList(map);
-        return null;
+        return wmsInHtInPlanOrderDetMapper.findList(map);
     }
 }
