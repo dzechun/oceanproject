@@ -1023,7 +1023,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         if(StringUtils.isEmpty(ids)){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未选择需确认的条码信息");
         }
-        
+
         List<WmsInnerMaterialBarcodeReOrderDto> reOrderDtoList=new ArrayList<>();
         BigDecimal totalQty=new BigDecimal(0);
         BigDecimal distributionQty=StringUtils.isEmpty(wmsInPutawayOrderDet.getDistributionQty())?new BigDecimal(0):wmsInPutawayOrderDet.getDistributionQty();
@@ -1038,7 +1038,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 reOrderDtoList.add(barcodeReOrderDtoList.get(0));
             }
         }
-        
+
         //判断是否大于分配数
         if(totalQty.compareTo(distributionQty)==1){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"确认条码物料总数大于明细分配数量");
@@ -1047,7 +1047,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
         searchWmsInnerJobOrderDet.setJobOrderDetId(wmsInPutawayOrderDet.getJobOrderDetId());
         WmsInnerJobOrderDetDto oldDto = wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
-        
+
         Long jobOrderDetId = null;
         if (totalQty.compareTo(wmsInPutawayOrderDet.getDistributionQty()) == -1) {
             WmsInnerJobOrderDet wms = new WmsInnerJobOrderDet();
@@ -1102,7 +1102,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             //增加上架库存
             num=WmsInnerInventoryUtil.updateInventory(wmsInnerJobOrder,wmsInnerJobOrderDetDto,sysUser);
         }
-        
+
         //更新条码状态
         for (WmsInnerMaterialBarcodeReOrderDto reOrderDto : reOrderDtoList) {
             reOrderDto.setScanStatus((byte)3);
@@ -2044,7 +2044,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         }
         SearchWmsInnerMaterialBarcode swmsInnerMaterialBarcode=new SearchWmsInnerMaterialBarcode();
         swmsInnerMaterialBarcode.setBarcode(barCode);
-        List<WmsInnerMaterialBarcodeDto> materialBarcodeList=wmsInnerMaterialBarcodeService.findList(swmsInnerMaterialBarcode);
+        List<WmsInnerMaterialBarcodeDto> materialBarcodeList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(swmsInnerMaterialBarcode));
 
         if(ifSysBarcode.equals("1")){
             map=checkBarcodeType(barCode);
@@ -2137,7 +2137,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         Map<String, Object> map = new HashMap<>();
         SearchWmsInnerMaterialBarcode swmsInnerMaterialBarcode=new SearchWmsInnerMaterialBarcode();
         swmsInnerMaterialBarcode.setBarcode(barCode);
-        List<WmsInnerMaterialBarcodeDto> materialBarcodeList=wmsInnerMaterialBarcodeService.findList(swmsInnerMaterialBarcode);
+        List<WmsInnerMaterialBarcodeDto> materialBarcodeList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(swmsInnerMaterialBarcode));
         if(ifSysBarcode.equals("1")){
             //系统条码判断
             map=checkBarcodeType(barCode);
@@ -2214,7 +2214,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
         SearchWmsInnerMaterialBarcode swmsInnerMaterialBarcode=new SearchWmsInnerMaterialBarcode();
         swmsInnerMaterialBarcode.setBarcode(barCode);
-        List<WmsInnerMaterialBarcodeDto> materialBarcodeList=wmsInnerMaterialBarcodeService.findList(swmsInnerMaterialBarcode);
+        List<WmsInnerMaterialBarcodeDto> materialBarcodeList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(swmsInnerMaterialBarcode));
 
         if(ifSysBarcode.equals("1")){
             //系统条码判断
@@ -2277,7 +2277,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
             swmsInnerMaterialBarcode.setBarcode(null);
             swmsInnerMaterialBarcode.setMaterialBarcodeId(materialBarcodeId);
-            materialBarcodeList=wmsInnerMaterialBarcodeService.findList(swmsInnerMaterialBarcode);
+            materialBarcodeList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(swmsInnerMaterialBarcode));
             wmsInnerMaterialBarcodeDto=materialBarcodeList.get(0);
 
             return wmsInnerMaterialBarcodeDto;
@@ -2485,7 +2485,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 else if(item.getBarcodeType()==((byte)4)){
                     sWmsBarcode.setPalletCode(item.getBatchCode());
                 }
-                List<WmsInnerMaterialBarcodeDto> materialDtoList=wmsInnerMaterialBarcodeService.findList(sWmsBarcode);
+                List<WmsInnerMaterialBarcodeDto> materialDtoList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(sWmsBarcode));
                 for (WmsInnerMaterialBarcodeDto materialBarcodeDto : materialDtoList) {
                     WmsInnerMaterialBarcode upBarcode=new WmsInnerMaterialBarcode();
                     upBarcode.setMaterialBarcodeId(materialBarcodeDto.getMaterialBarcodeId());
@@ -2784,7 +2784,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 else if(saveInnerJobOrderDto.getBarcodeType()==((byte)4)){
                     sWmsBarcode.setPalletCode(saveInnerJobOrderDto.getBatchCode());
                 }
-                List<WmsInnerMaterialBarcodeDto> materialDtoList=wmsInnerMaterialBarcodeService.findList(sWmsBarcode);
+                List<WmsInnerMaterialBarcodeDto> materialDtoList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(sWmsBarcode));
                 for (WmsInnerMaterialBarcodeDto materialBarcodeDto : materialDtoList) {
                     WmsInnerMaterialBarcode upBarcode=new WmsInnerMaterialBarcode();
                     upBarcode.setMaterialBarcodeId(materialBarcodeDto.getMaterialBarcodeId());
@@ -3248,7 +3248,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         Map<String, Object> returnMap=new HashMap<>();
         SearchWmsInnerMaterialBarcode swmsInnerMaterialBarcode=new SearchWmsInnerMaterialBarcode();
         swmsInnerMaterialBarcode.setBarcode(barCode);
-        List<WmsInnerMaterialBarcodeDto> materialBarcodeList=wmsInnerMaterialBarcodeService.findList(swmsInnerMaterialBarcode);
+        List<WmsInnerMaterialBarcodeDto> materialBarcodeList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(swmsInnerMaterialBarcode));
         if(materialBarcodeList.size()>0){
             //SN
             returnMap.put("barcodeType","1");
@@ -3260,7 +3260,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             //彩盒
             swmsInnerMaterialBarcode.setBarcode(null);
             swmsInnerMaterialBarcode.setColorBoxCode(barCode);
-            materialBarcodeList=wmsInnerMaterialBarcodeService.findList(swmsInnerMaterialBarcode);
+            materialBarcodeList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(swmsInnerMaterialBarcode));
             if(materialBarcodeList.size()>0){
                 Optional<WmsInnerMaterialBarcodeDto> barcodeOptional = materialBarcodeList.stream()
                         .filter(i -> i.getBarcodeType()==((byte)2))
@@ -3280,7 +3280,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 swmsInnerMaterialBarcode.setBarcode(null);
                 swmsInnerMaterialBarcode.setColorBoxCode(null);
                 swmsInnerMaterialBarcode.setCartonCode(barCode);
-                materialBarcodeList = wmsInnerMaterialBarcodeService.findList(swmsInnerMaterialBarcode);
+                materialBarcodeList = wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(swmsInnerMaterialBarcode));
                 if(materialBarcodeList.size()>0){
                     Optional<WmsInnerMaterialBarcodeDto> barcodeOptional = materialBarcodeList.stream()
                             .filter(i -> i.getBarcodeType()==((byte)3))
@@ -3301,7 +3301,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     swmsInnerMaterialBarcode.setColorBoxCode(null);
                     swmsInnerMaterialBarcode.setCartonCode(null);
                     swmsInnerMaterialBarcode.setPalletCode(barCode);
-                    materialBarcodeList = wmsInnerMaterialBarcodeService.findList(swmsInnerMaterialBarcode);
+                    materialBarcodeList = wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(swmsInnerMaterialBarcode));
                     if(materialBarcodeList.size()>0){
                         Optional<WmsInnerMaterialBarcodeDto> barcodeOptional = materialBarcodeList.stream()
                                 .filter(i -> i.getBarcodeType()==((byte)4))

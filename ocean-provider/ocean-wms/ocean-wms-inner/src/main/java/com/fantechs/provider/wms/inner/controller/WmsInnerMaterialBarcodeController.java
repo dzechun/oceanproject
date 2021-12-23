@@ -85,7 +85,7 @@ public class WmsInnerMaterialBarcodeController {
     @PostMapping("/findList")
     public ResponseEntity<List<WmsInnerMaterialBarcodeDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode) {
         Page<Object> page = PageHelper.startPage(searchWmsInnerMaterialBarcode.getStartPage(),searchWmsInnerMaterialBarcode.getPageSize());
-        List<WmsInnerMaterialBarcodeDto> list = wmsInnerMaterialBarcodeService.findList(searchWmsInnerMaterialBarcode);
+        List<WmsInnerMaterialBarcodeDto> list = wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -93,7 +93,7 @@ public class WmsInnerMaterialBarcodeController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode){
-        List<WmsInnerMaterialBarcodeDto> list = wmsInnerMaterialBarcodeService.findList(searchWmsInnerMaterialBarcode);
+        List<WmsInnerMaterialBarcodeDto> list = wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
         try {
             // 导出操作
             EasyPoiUtils.exportExcel(list, "导出信息", "条码信息", WmsInnerMaterialBarcodeDto.class, "条码信息.xls", response);

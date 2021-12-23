@@ -69,24 +69,24 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
     private WmsInnerHtMaterialBarcodeMapper wmsInnerHtMaterialBarcodeMapper;
 
     @Override
-    public List<WmsInnerMaterialBarcodeDto> findList(SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode) {
-        if(StringUtils.isEmpty(searchWmsInnerMaterialBarcode.getOrgId())){
+    public List<WmsInnerMaterialBarcodeDto> findList(Map<String,Object> map) {
+        if(StringUtils.isEmpty(map.get("orgId"))){
             SysUser sysUser = currentUser();
-            searchWmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
-            searchWmsInnerMaterialBarcode.setSupplierId(sysUser.getSupplierId());
+            map.put("orgId",sysUser.getOrganizationId());
+            map.put("supplierId",sysUser.getSupplierId());
         }
 
-        if (StringUtils.isNotEmpty(searchWmsInnerMaterialBarcode.getPrintOrderTypeCode()) && Integer.valueOf(searchWmsInnerMaterialBarcode.getPrintOrderTypeCode()) == 1) {
-            searchWmsInnerMaterialBarcode.setPrintOrderTypeCode("SRM-ASN");
-        }else if (StringUtils.isNotEmpty(searchWmsInnerMaterialBarcode.getPrintOrderTypeCode()) && Integer.valueOf(searchWmsInnerMaterialBarcode.getPrintOrderTypeCode()) == 2) {
-            searchWmsInnerMaterialBarcode.setPrintOrderTypeCode("IN-SWK");
-        }else if (StringUtils.isNotEmpty(searchWmsInnerMaterialBarcode.getPrintOrderTypeCode()) && Integer.valueOf(searchWmsInnerMaterialBarcode.getPrintOrderTypeCode()) == 3) {
-            searchWmsInnerMaterialBarcode.setPrintOrderTypeCode("QMS-MIIO");
-        }else if (StringUtils.isNotEmpty(searchWmsInnerMaterialBarcode.getPrintOrderTypeCode()) && Integer.valueOf(searchWmsInnerMaterialBarcode.getPrintOrderTypeCode()) == 4) {
-            searchWmsInnerMaterialBarcode.setPrintOrderTypeCode("IN-IWK");
+        if (StringUtils.isNotEmpty(map.get("printOrderTypeCode")) && Integer.valueOf(map.get("printOrderTypeCode").toString()) == 1) {
+            map.put("printOrderTypeCode","SRM-ASN");
+        }else if (StringUtils.isNotEmpty(map.get("printOrderTypeCode")) && Integer.valueOf(map.get("printOrderTypeCode").toString()) == 2) {
+            map.put("printOrderTypeCode","IN-SWK");
+        }else if (StringUtils.isNotEmpty(map.get("printOrderTypeCode")) && Integer.valueOf(map.get("printOrderTypeCode").toString()) == 3) {
+            map.put("printOrderTypeCode","QMS-MIIO");
+        }else if (StringUtils.isNotEmpty(map.get("printOrderTypeCode")) && Integer.valueOf(map.get("printOrderTypeCode").toString()) == 4) {
+            map.put("printOrderTypeCode","IN-IWK");
         }
 
-        return wmsInnerMaterialBarcodeMapper.findList(searchWmsInnerMaterialBarcode);
+        return wmsInnerMaterialBarcodeMapper.findList(map);
     }
 
     @Override
@@ -146,7 +146,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
         List<WmsInnerHtMaterialBarcode> htList = new ArrayList<>();
 
         SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
-        SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
+        SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
 
         for (WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto : barcodeDtoList) {
             if(StringUtils.isEmpty(wmsInnerMaterialBarcodeDto.getMaterialId())){
@@ -193,17 +193,17 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                 baseBarCode = getBaseBarCode();
                 searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
             }else {
-                searchBaseBarcodeRuleSetDet.setBarcodeRuleSetId(baseMaterialList.get(0).getBarcodeRuleSetId());
-                List<BaseBarcodeRuleSetDetDto> barcodeRuleSetDetList = baseFeignApi.findBarcodeRuleSetDetList(searchBaseBarcodeRuleSetDet).getData();
-                if (StringUtils.isEmpty(barcodeRuleSetDetList)) {
+                searchBaseBarcodeRule.setBarcodeRuleSetId(baseMaterialList.get(0).getBarcodeRuleSetId());
+                List<BaseBarcodeRuleDto> baseBarcodeRuleList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule).getData();
+                if (StringUtils.isEmpty(baseBarcodeRuleList)) {
                     //取系统配置默认编码
                     baseBarCode = getBaseBarCode();
                     searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
                 }
                 Long barcodeRuleId = null;
-                for (BaseBarcodeRuleSetDetDto baseBarcodeRuleSetDetDto : barcodeRuleSetDetList) {
-                    if ("物料条码".equals(baseBarcodeRuleSetDetDto.getBarcodeRuleCategoryName())) {
-                        barcodeRuleId = baseBarcodeRuleSetDetDto.getBarcodeRuleId();
+                for (BaseBarcodeRuleDto baseBarcodeRuleDto : baseBarcodeRuleList) {
+                    if ("物料条码".equals(baseBarcodeRuleDto.getLabelCategoryName())) {
+                        barcodeRuleId = baseBarcodeRuleDto.getBarcodeRuleId();
                         break;
                     }
                 }
@@ -212,15 +212,21 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                     //取系统配置默认编码
                     baseBarCode = getBaseBarCode();
                     searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
+                }else {
+                    searchBaseBarcodeRuleSpec.setBarcodeRuleId(barcodeRuleId);
                 }
-                searchBaseBarcodeRuleSpec.setBarcodeRuleId(barcodeRuleId);
+
             }
 
 
 
             ResponseEntity<List<BaseBarcodeRuleSpec>> barcodeRuleSpecList= baseFeignApi.findSpec(searchBaseBarcodeRuleSpec);
-            if(barcodeRuleSpecList.getCode()!=0) throw new BizErrorException(barcodeRuleSpecList.getMessage());
-            if(barcodeRuleSpecList.getData().size()<1) throw new BizErrorException("请设置条码规则");
+            if(barcodeRuleSpecList.getCode()!=0) {
+                throw new BizErrorException(barcodeRuleSpecList.getMessage());
+            }
+            if(barcodeRuleSpecList.getData().size()<1) {
+                throw new BizErrorException("请设置条码规则");
+            }
             List<BaseBarcodeRuleSpec>  list = barcodeRuleSpecList.getData();
 
             Integer materialQty = StringUtils.isEmpty(wmsInnerMaterialBarcodeDto.getMaterialQty())?1:wmsInnerMaterialBarcodeDto.getMaterialQty().intValue();
@@ -317,15 +323,21 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
         SearchSysSpecItem lableItem = new SearchSysSpecItem();
         lableItem.setSpecCode("BaseLabel");
         ResponseEntity<List<SysSpecItem>> lableList = securityFeignApi.findSpecItemList(lableItem);
-        if(StringUtils.isEmpty(lableList.getData())) throw new BizErrorException("未设置默认标签");
+        if(StringUtils.isEmpty(lableList.getData())) {
+            throw new BizErrorException("未设置默认标签");
+        }
         LabelRuteDto labelRuteDto = wmsInnerMaterialBarcodeMapper.findRule(lableList.getData().get(0).getParaValue(),materialId,sysUser.getOrganizationId());
-        if(StringUtils.isEmpty(labelRuteDto)) throw new BizErrorException("标签卡为空");
+        if(StringUtils.isEmpty(labelRuteDto)) {
+            throw new BizErrorException("标签卡为空");
+        }
 
         if(barcodeRuleSetId != 0) {
             SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
             searchBaseBarcodeRuleSetDet.setBarcodeRuleSetId(barcodeRuleSetId);
             ResponseEntity<List<BaseBarcodeRuleSetDetDto>> barcodeRuleSetDetList = baseFeignApi.findBarcodeRuleSetDetList(searchBaseBarcodeRuleSetDet);
-            if (StringUtils.isEmpty(barcodeRuleSetDetList.getData())) throw new BizErrorException("未找到对应条码集合");
+            if (StringUtils.isEmpty(barcodeRuleSetDetList.getData())) {
+                throw new BizErrorException("未找到对应条码集合");
+            }
             SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
             for (BaseBarcodeRuleSetDetDto dto : barcodeRuleSetDetList.getData()) {
                 searchBaseBarcodeRule.setBarcodeRuleId(dto.getBarcodeRuleId());
@@ -426,7 +438,13 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
     public String sub(List<BaseBarcodeRuleSpec> list){
         StringBuffer sb = new StringBuffer();
         for (BaseBarcodeRuleSpec baseBarcodeRuleSpec : list) {
-            sb.append(baseBarcodeRuleSpec.getSpecification());
+            StringBuffer s = new StringBuffer(baseBarcodeRuleSpec.getSpecification());
+            String specification = "";
+            for (Integer i = 0; i < baseBarcodeRuleSpec.getBarcodeLength() - 1; i++) {
+                specification += baseBarcodeRuleSpec.getSpecification().substring(1, 2);
+            }
+            s.insert(1,specification);
+            sb.append(s.toString());
         }
         return sb.toString();
     }
@@ -436,11 +454,15 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
         SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
         searchSysSpecItem.setSpecCode("BaseBarCodeRule");
         List<SysSpecItem> specItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-        if(StringUtils.isEmpty(specItemList)) throw new BizErrorException("未设置默认编码规则，无法生成编码");
+        if(StringUtils.isEmpty(specItemList)) {
+            throw new BizErrorException("未设置默认编码规则，无法生成编码");
+        }
         SearchBaseBarcodeRule searchBaseBarcodeRule = new SearchBaseBarcodeRule();
         searchBaseBarcodeRule.setBarcodeRuleCode(specItemList.get(0).getParaValue());
         ResponseEntity<List<BaseBarcodeRuleDto>> barcodeRulList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule);
-        if(StringUtils.isEmpty(barcodeRulList.getData())) throw new BizErrorException("未查询到配置项配置的默认编码规则");
+        if(StringUtils.isEmpty(barcodeRulList.getData())) {
+            throw new BizErrorException("未查询到配置项配置的默认编码规则");
+        }
         return barcodeRulList.getData().get(0);
     }
 
