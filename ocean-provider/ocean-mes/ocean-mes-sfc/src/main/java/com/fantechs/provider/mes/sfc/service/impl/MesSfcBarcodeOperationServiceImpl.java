@@ -459,9 +459,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             List<Long> cartonIds = new ArrayList<>();
             cartonIds.add(sfcProductCarton.getProductCartonId());
             if (mesPmWorkOrder.getOutputProcessId().equals(dto.getProcessId())){
-                List<MesSfcWorkOrderBarcodeDto> barcodeDtos = new ArrayList<>();
-                barcodeDtos.add(orderBarcodeDto);
-                this.beforeCartonAutoAsnOrder(cartonIds, user.getOrganizationId(), barcodeDtos);
+                this.beforeCartonAutoAsnOrder(cartonIds, user.getOrganizationId(), null);
             }
 
             //雷赛包箱数据是否同步到WMS开始
@@ -846,8 +844,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
         searchSysSpecItem.setSpecCode("autoWipCompletion");
         List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-        log.info("程序配置项autoWipCompletion值："+ specItems.get(0).getParaValue());
-        if (specItems.isEmpty() && specItems.size() > 0 && specItems.get(0).getParaValue().equals("1")){
+        if (!specItems.isEmpty() && specItems.get(0).getParaValue().equals("1")){
             Map<String, Object> map = new HashMap<>();
             map.put("list", cartonIds);
             map.put("orgId", orgId);

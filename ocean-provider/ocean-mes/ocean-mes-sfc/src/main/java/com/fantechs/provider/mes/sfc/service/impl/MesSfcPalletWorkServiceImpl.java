@@ -684,7 +684,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         searchSysSpecItem.setSpecCode("autoWipCompletion");
         List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
         log.info("程序配置项autoWipCompletion值："+ specItems.get(0).getParaValue());
-        if (specItems.isEmpty() && specItems.size() > 0 && specItems.get(0).getParaValue().equals("1")){
+        if (!specItems.isEmpty() && specItems.size() > 0 && specItems.get(0).getParaValue().equals("1")){
             Map<String, Object> map = new HashMap<>();
             map.put("list", palletIds);
             map.put("orgId", orgId);
