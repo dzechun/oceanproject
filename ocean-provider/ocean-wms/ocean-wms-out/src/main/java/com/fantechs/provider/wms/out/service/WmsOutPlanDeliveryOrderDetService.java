@@ -16,4 +16,5 @@ import java.util.Map;
 public interface WmsOutPlanDeliveryOrderDetService extends IService<WmsOutPlanDeliveryOrderDet> {
     List<WmsOutPlanDeliveryOrderDetDto> findList(Map<String, Object> map);
     List<WmsOutHtPlanDeliveryOrderDet> findHtList(Map<String, Object> map);
+    int updateActualQty(WmsOutPlanDeliveryOrderDetDto wmsOutPlanDeliveryOrderDetDto);
 }
