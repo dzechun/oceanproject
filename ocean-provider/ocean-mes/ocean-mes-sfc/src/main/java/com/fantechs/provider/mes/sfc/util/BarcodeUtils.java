@@ -1636,6 +1636,7 @@ public class BarcodeUtils {
             //设备条码判断
             String equipmentBarCode=restapiSNDataTransferApiDto.getEquipmentBarCode();
             if(StringUtils.isNotEmpty(equipmentBarCode)) {
+                equipmentBarCode=equipmentBarCode.trim();
                 EamEquipmentBarcode eamEquipmentBarcode=null;
                 SearchEamEquipmentBarcode searchEamEquipmentBarcode = new SearchEamEquipmentBarcode();
                 searchEamEquipmentBarcode.setEquipmentBarcode(equipmentBarCode);
@@ -1669,6 +1670,7 @@ public class BarcodeUtils {
             //治具条码处理
             String eamJigBarCode=restapiSNDataTransferApiDto.getEamJigBarCode();
             if(StringUtils.isNotEmpty(eamJigBarCode)){
+                eamJigBarCode=eamJigBarCode.trim();
                 String[] jigBarCodeA=eamJigBarCode.split(",");
                 for (String item : jigBarCodeA) {
                     if(StringUtils.isNotEmpty(item)) {
@@ -1690,6 +1692,7 @@ public class BarcodeUtils {
             //产线处理
             String proCode=restapiSNDataTransferApiDto.getProCode();
             if(StringUtils.isEmpty(proCode)){
+                proCode=proCode.trim();
                 throw new Exception("产线编码不能为空");
             }
             else{
@@ -1704,6 +1707,7 @@ public class BarcodeUtils {
             //工位处理
             String stationCode=restapiSNDataTransferApiDto.getStationCode();
             if(StringUtils.isNotEmpty(stationCode)){
+                stationCode=stationCode.trim();
                 ResponseEntity<List<BaseStation>> responseEntityStation=barcodeUtils.deviceInterFaceUtils.getStation(stationCode,orgId);
                 if(StringUtils.isEmpty(responseEntityStation.getData())){
                     throw new Exception("工位编码信息不存在-->"+stationCode);
@@ -1715,6 +1719,7 @@ public class BarcodeUtils {
             //工序处理
             String processCode=restapiSNDataTransferApiDto.getProcessCode();
             if(StringUtils.isEmpty(processCode)){
+                processCode=processCode.trim();
                 throw new Exception("工序编码不能为空");
             }
             else {
@@ -1733,20 +1738,21 @@ public class BarcodeUtils {
                 throw new Exception("作业结果不能为空");
             }
             else if(StringUtils.isNotEmpty(opResult)){
+                opResult=opResult.trim();
                 if("OK".equals(opResult)==false && "NG".equals(opResult)==false){
                     throw new Exception("作业结果请传 OK 或 NG");
                 }
             }
 
             //条码处理
-            String partBarcode=restapiSNDataTransferApiDto.getPartBarcode();
-            String barcodeCode=restapiSNDataTransferApiDto.getBarCode();
+            String partBarcode=restapiSNDataTransferApiDto.getPartBarcode().trim();
+            String barcodeCode=restapiSNDataTransferApiDto.getBarCode().trim();
             if(StringUtils.isEmpty(partBarcode) && StringUtils.isEmpty(barcodeCode)){
                 throw new Exception("半成品SN和成品SN不能同时为空");
             }
 
             //工单号处理
-            String workOrderCode=restapiSNDataTransferApiDto.getWorkOrderCode();
+            String workOrderCode=restapiSNDataTransferApiDto.getWorkOrderCode().trim();
             if(StringUtils.isNotEmpty(partBarcode) && StringUtils.isEmpty(workOrderCode)){
                 throw new Exception("成品工单号不能为空");
             }
@@ -2172,6 +2178,7 @@ public class BarcodeUtils {
 
             //设备条码判断
             if(StringUtils.isNotEmpty(equipmentBarCode)) {
+                equipmentBarCode=equipmentBarCode.trim();
                 SearchEamEquipmentBarcode searchEamEquipmentBarcode = new SearchEamEquipmentBarcode();
                 searchEamEquipmentBarcode.setEquipmentBarcode(equipmentBarCode);
                 searchEamEquipmentBarcode.setOrgId(orgId);
@@ -2236,6 +2243,7 @@ public class BarcodeUtils {
                 throw new Exception("产线编码不能为空");
             }
             else{
+                proCode=proCode.trim();
                 ResponseEntity<List<BaseProLine>> baseProLinelist=barcodeUtils.deviceInterFaceUtils.getProLine(proCode,orgId);
                 if(StringUtils.isEmpty(baseProLinelist.getData())){
                     throw new Exception("产线编码不存在");
@@ -2244,6 +2252,7 @@ public class BarcodeUtils {
                 updateProcessDto.setProLineId(baseProLinelist.getData().get(0).getProLineId());
             }
             if(StringUtils.isNotEmpty(stationCode)){
+                stationCode=stationCode.trim();
                 ResponseEntity<List<BaseStation>> responseEntityStation=barcodeUtils.deviceInterFaceUtils.getStation(stationCode,orgId);
                 if(StringUtils.isEmpty(responseEntityStation.getData())){
                     throw new Exception("工位编码信息不存在-->"+stationCode);
@@ -2255,6 +2264,7 @@ public class BarcodeUtils {
                 throw new Exception("工序编码不能为空");
             }
             else {
+                processCode=processCode.trim();
                 ResponseEntity<List<BaseProcess>> baseProcesslist=barcodeUtils.deviceInterFaceUtils.getProcess(processCode,orgId);
                 if(StringUtils.isEmpty(baseProcesslist.getData())){
                     throw new Exception("工序编码不存在");
@@ -2284,6 +2294,7 @@ public class BarcodeUtils {
 
             //检查半成品条码
             if(StringUtils.isNotEmpty(partBarcode)) {
+                partBarcode=partBarcode.trim();
                 //获取配置项 采购订单在条码中的位置 WorkOrderPositionOnBarcode
                 String paraValueHalf = getSysSpecItemValue("WorkOrderPositionOnBarcode");
                 int beginIndexHalf = 0;
@@ -2321,6 +2332,7 @@ public class BarcodeUtils {
             //成品工单判断
             MesPmWorkOrderDto mesPmWorkOrderDto=null;
             if(StringUtils.isNotEmpty(workOrderCode)){
+                workOrderCode=workOrderCode.trim();
                 SearchMesPmWorkOrder searchMesPmWorkOrder=new SearchMesPmWorkOrder();
                 searchMesPmWorkOrder.setOrgId(orgId);
                 searchMesPmWorkOrder.setWorkOrderCode(workOrderCode);
