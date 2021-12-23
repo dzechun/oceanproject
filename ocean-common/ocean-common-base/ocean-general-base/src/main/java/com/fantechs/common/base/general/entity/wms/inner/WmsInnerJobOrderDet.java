@@ -2,11 +2,14 @@ package com.fantechs.common.base.general.entity.wms.inner;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
@@ -250,6 +253,8 @@ public class WmsInnerJobOrderDet extends ValidGroup implements Serializable {
     private String option2;
 
     private String option3;
+
+    List<WmsInnerInventoryDto> wmsInnerInventory = new ArrayList<>();
 
     private static final long serialVersionUID = 1L;
 }

@@ -10,7 +10,6 @@ import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderBarcode;
 import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.imports.WmsInReceivingOrderImport;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
@@ -21,7 +20,6 @@ import com.fantechs.common.base.general.entity.wms.in.*;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcodeReOrder;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcodeReOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -75,15 +73,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
     public List<WmsInReceivingOrderDto> findList(Map<String, Object> map) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",sysUser.getOrganizationId());
-        List<WmsInReceivingOrderDto> list = wmsInReceivingOrderMapper.findList(map);
-        for (WmsInReceivingOrderDto wmsInReceivingOrderDto : list) {
-            SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
-            searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode("IN-SWK");
-            searchWmsInnerMaterialBarcodeReOrder.setOrderId(wmsInReceivingOrderDto.getReceivingOrderId());
-            List<WmsInnerMaterialBarcodeReOrderDto> wmsInnerMaterialBarcodeReOrderDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder).getData();
-            wmsInReceivingOrderDto.setWmsInnerMaterialBarcodeReOrderDtos(wmsInnerMaterialBarcodeReOrderDtos);
-        }
-        return list;
+        return wmsInReceivingOrderMapper.findList(map);
     }
 
     @Override
@@ -239,15 +229,15 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
         entity.setModifiedUserId(sysUser.getUserId());
         Boolean isPDA = false;
         WmsInReceivingOrder wmsInReceivingOrder = wmsInReceivingOrderMapper.selectByPrimaryKey(entity.getReceivingOrderId());
-        if(wmsInReceivingOrder.getSourceBigType()==1){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012004.getCode(),"下推单据,无法修改");
-        }
         if(wmsInReceivingOrder.getOrderStatus()==3){
             throw new BizErrorException(ErrorCodeEnum.OPT20012004.getCode(),"单据已完成,无法更改");
         }
         if(StringUtils.isNotEmpty(entity.getIsPdaCreate()) && entity.getIsPdaCreate()==1){
             isPDA=true;
         }else {
+            if(wmsInReceivingOrder.getSourceBigType()==1){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012004.getCode(),"下推单据,无法修改");
+            }
             //删除原有单据
             Example example = new Example(WmsInReceivingOrderDet.class);
             example.createCriteria().andEqualTo("receivingOrderId",entity.getReceivingOrderId());
@@ -269,6 +259,9 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                     inReceivingOrderDet.setActualQty(BigDecimal.ZERO);
                 }
                 BigDecimal totalActualQty = inReceivingOrderDet.getActualQty().add(wmsInReceivingOrderDet.getActualQty());
+                if(totalActualQty.compareTo(inReceivingOrderDet.getPlanQty())==1){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"实收数量不能大于计划数量");
+                }
                 if (inReceivingOrderDet.getPlanQty().compareTo(totalActualQty) == 0) {
                     wmsInReceivingOrderDet.setLineStatus((byte) 3);
                 } else {
@@ -354,12 +347,12 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
 
     private void writeQty(WmsInReceivingOrderDet wmsInReceivingOrderDet){
         WmsInPlanReceivingOrderDet wmsInPlanReceivingOrderDet = wmsInPlanReceivingOrderDetMapper.selectByPrimaryKey(wmsInReceivingOrderDet.getSourceId());
-        wmsInPlanReceivingOrderDet.setActualQty(wmsInPlanReceivingOrderDet.getActualQty());
-        wmsInPlanReceivingOrderDet.setOperatorUserId(wmsInPlanReceivingOrderDet.getOperatorUserId());
+        wmsInPlanReceivingOrderDet.setActualQty(wmsInReceivingOrderDet.getActualQty());
+        wmsInPlanReceivingOrderDet.setOperatorUserId(wmsInReceivingOrderDet.getOperatorUserId());
         wmsInPlanReceivingOrderDet.setLineStatus(wmsInReceivingOrderDet.getLineStatus());
         wmsInPlanReceivingOrderDetMapper.updateByPrimaryKeySelective(wmsInPlanReceivingOrderDet);
         Example example = new Example(WmsInPlanReceivingOrderDet.class);
-        example.createCriteria().andEqualTo("planReceivingOrderId");
+        example.createCriteria().andEqualTo("planReceivingOrderId",wmsInPlanReceivingOrderDet.getPlanReceivingOrderId());
         List<WmsInPlanReceivingOrderDet> list = wmsInPlanReceivingOrderDetMapper.selectByExample(example);
         WmsInPlanReceivingOrder wmsInPlanReceivingOrder = new WmsInPlanReceivingOrder();
         wmsInPlanReceivingOrder.setPlanReceivingOrderId(wmsInPlanReceivingOrderDet.getPlanReceivingOrderId());
@@ -557,6 +550,10 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                 if(rs.getCode() != 0){
                     throw new BizErrorException("下推生成上架作业单失败");
                 }
+                break;
+            case "IN-IPO":
+                //入库计划
+
                 break;
             default:
                 throw new BizErrorException("单据流配置错误");

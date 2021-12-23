@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -79,6 +80,14 @@ public class WmsInnerMaterialBarcodeReOrderDto extends WmsInnerMaterialBarcodeRe
     @Transient
     @ApiModelProperty(name="batchCode",value = "批次号")
     private String batchCode;
+
+    /**
+     * 产生类型(1-供应商条码 2-自己打印 3-生产条码)
+     */
+    @Transient
+    @ApiModelProperty(name="createType",value = "产生类型(1-供应商条码 2-自己打印 3-生产条码)")
+    private Byte createType;
+
 
 
     private static final long serialVersionUID = 1L;

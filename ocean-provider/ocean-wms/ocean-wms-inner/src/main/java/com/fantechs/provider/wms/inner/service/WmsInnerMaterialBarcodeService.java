@@ -17,7 +17,7 @@ import java.util.Map;
 
 public interface WmsInnerMaterialBarcodeService extends IService<WmsInnerMaterialBarcode> {
 
-    List<WmsInnerMaterialBarcodeDto> findList(SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode);
+    List<WmsInnerMaterialBarcodeDto> findList(Map<String,Object> map);
 
     List<WmsInnerMaterialBarcodeDto> add(List<WmsInnerMaterialBarcodeDto> barcodeDtoList,Integer type);
 

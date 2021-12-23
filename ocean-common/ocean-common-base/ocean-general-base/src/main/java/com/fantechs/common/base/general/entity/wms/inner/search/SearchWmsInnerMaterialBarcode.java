@@ -88,6 +88,12 @@ public class SearchWmsInnerMaterialBarcode extends BaseQuery implements Serializ
     private Long supplierId;
 
     /**
+     * 供应商名称
+     */
+    @ApiModelProperty(name="supplierName",value = "供应商名称")
+    private String supplierName;
+
+    /**
      * 来料条码ID列表
      */
     @ApiModelProperty(name="materialBarcodeIdList",value = "来料条码ID列表")
