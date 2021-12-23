@@ -11,4 +11,7 @@ public class SearchNccBdMaterial extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name="materialtype",value = "规格型号")
     private String materialtype;
+
+    @ApiModelProperty(name="materialCode",value = "物料编码")
+    private String materialCode;
 }

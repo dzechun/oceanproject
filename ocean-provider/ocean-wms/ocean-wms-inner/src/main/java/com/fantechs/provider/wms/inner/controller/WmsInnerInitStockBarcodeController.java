@@ -35,8 +35,8 @@ public class WmsInnerInitStockBarcodeController {
     @ApiOperation("列表")
     @PostMapping("/findList")
     public ResponseEntity<List<WmsInnerInitStockBarcode>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerInitStockBarcode searchWmsInnerInitStockBarcode) {
-        Page<Object> page = PageHelper.startPage(searchWmsInnerInitStockBarcode.getStartPage(),searchWmsInnerInitStockBarcode.getPageSize());
+//        Page<Object> page = PageHelper.startPage(searchWmsInnerInitStockBarcode.getStartPage(),searchWmsInnerInitStockBarcode.getPageSize());
         List<WmsInnerInitStockBarcode> list = wmsInnerInitStockBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerInitStockBarcode));
-        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+        return ControllerUtil.returnDataSuccess(list, list.size());
     }
 }

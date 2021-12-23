@@ -1,12 +1,13 @@
 server:
-  port: 8102
+  port: 8810
   max-http-header-size: 10000000
 
 spring:
   profiles:
-    include: dev
+    include: chestnut
   application:
     name: @pom.artifactId@
 
 logging:
   file: /data/logs/ocean/@pom.artifactId@/info/@pom.artifactId@.log
+

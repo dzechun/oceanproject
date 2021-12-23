@@ -12,6 +12,7 @@
     <result column="task_point_type" jdbcType="TINYINT" property="taskPointType" />
     <result column="xyz_code" jdbcType="VARCHAR" property="xyzCode" />
     <result column="use_priority" jdbcType="INTEGER" property="usePriority" />
+    <result column="hierarchical_category" jdbcType="VARCHAR" property="hierarchicalCategory" />
     <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="storage_task_point_status" jdbcType="TINYINT" property="storageTaskPointStatus" />
     <result column="warehouse_area_id" jdbcType="BIGINT" property="warehouseAreaId" />
@@ -51,6 +52,7 @@
     bstp.task_point_type,
     bstp.xyz_code,
     bstp.use_priority,
+    bstp.hierarchical_category,
     bstp.type,
     bstp.storage_task_point_status,
     bs.warehouse_area_id,
@@ -97,6 +99,9 @@
       </if>
       <if test="usePriority != null">
         and bstp.use_priority = #{usePriority}
+      </if>
+      <if test="hierarchicalCategory != null and hierarchicalCategory != ''">
+        and bstp.hierarchical_category = #{hierarchicalCategory}
       </if>
       <if test="taskPointCode!=null and taskPointCode!=''">
         and bstp.task_point_code like CONCAT('%', #{taskPointCode}, '%')

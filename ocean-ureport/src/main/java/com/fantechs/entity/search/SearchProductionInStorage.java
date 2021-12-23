@@ -33,4 +33,8 @@ public class SearchProductionInStorage extends BaseQuery implements Serializable
 
     @ApiModelProperty(name = "salesOrderId",value = "订单")
     private Long salesOrderId;
+
+    private String workOrderCode;
+
+    private String salesOrderCode;
 }

@@ -15,6 +15,8 @@ import com.fantechs.provider.guest.meidi.service.MeterialPrepationService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.xml.bind.DatatypeConverter;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +33,7 @@ public class MeterialPrepationServiceImpl implements MeterialPrepationService {
 
     private String completedUrl= "http://127.0.0.1:9600/FCS/PDA/MeterialPrepationCompleted";
     private String canceUrl= "http://127.0.0.1:9600/FCS/PDA/MeterialPrepationCance";
-
+  //  private String completedUrl= "http://127.0.0.1:9023/meidiApi/get";
     @Override
     public int send(MeterialPrepation meterialPrepation) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -40,20 +42,35 @@ public class MeterialPrepationServiceImpl implements MeterialPrepationService {
             throw  new BizErrorException("库位编码或接口请求类型不能为空");
         MeterialPrepationRequest req = new MeterialPrepationRequest();
         Map<String,Object> map = new HashMap<>();
+        String result = null;
     //    req.setRequestCode();
         String data = "{\"locationCode\":\""+meterialPrepation.getStorageCode()+"\",\""+user.getNickName()+"\":\""+user.getNickName()+"\"}";
-        System.out.println("---------请求参数-------------"+data);
         req.setRequestData(data);
+        //请求头
+        Map<String,String> header = new HashMap<String, String>();
+        //username:password--->访问的用户名，密码,并使用base64进行加密，将加密的字节信息转化为string类型，encoding--->token
+        String encoding = null;
+        try {
+            encoding = DatatypeConverter.printBase64Binary("kermit:kermit".getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        header.put("Authorization", "Basic " + encoding);
+
         if("1".equals(meterialPrepation.getType())){
             req.setRequsetName("MeterialPreparationCompleted");
-            String result = HTTPUtils.postMap(completedUrl, new HashMap<>(), ControllerUtil.dynamicConditionByEntity(req));
+            req.setRequestCode(meterialPrepation.getStorageCode());
+            System.out.println("---------请求参数-------------"+req);
+            result = HTTPUtils.sendHttp(completedUrl,ControllerUtil.dynamicConditionByEntity(req), header);
             if(StringUtils.isNotEmpty(result)){
                 map =  JsonUtils.jsonToMap(result);
                 System.out.println("---------请求结果map1-------------"+map);
             }
         }else if("2".equals(meterialPrepation.getType())){
             req.setRequsetName("MeterialPreparationCancel");
-            String result = HTTPUtils.postMap(canceUrl, new HashMap<>(), ControllerUtil.dynamicConditionByEntity(req));
+            req.setRequestCode(meterialPrepation.getStorageCode());
+            System.out.println("---------请求参数-------------"+req);
+            result = HTTPUtils.sendHttp(canceUrl,ControllerUtil.dynamicConditionByEntity(req), header);
             if(StringUtils.isNotEmpty(result)){
                 map = JsonUtils.jsonToMap(result);
                 System.out.println("---------请求结果map2------------"+map);
@@ -64,9 +81,9 @@ public class MeterialPrepationServiceImpl implements MeterialPrepationService {
 
         //保存日志
         if("success".equals(map.get("responseMessag"))){
-            addlog((byte)1,user.getOrganizationId(),ControllerUtil.dynamicConditionByEntity(req).toString(),map.get("requestData").toString());
+            addlog((byte)1,user.getOrganizationId(),ControllerUtil.dynamicConditionByEntity(req).toString(),result);
         }else{
-            addlog((byte)2,user.getOrganizationId(),ControllerUtil.dynamicConditionByEntity(req).toString(),map.get("requestData").toString());
+            addlog((byte)2,user.getOrganizationId(),ControllerUtil.dynamicConditionByEntity(req).toString(),result);
         }
         return 1;
     }

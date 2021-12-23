@@ -91,4 +91,10 @@ public class SearchBaseMaterial extends BaseQuery implements Serializable {
     private Integer materialProperty;
 
     private String idCode;
+
+    private String option1;
+
+    private String option2;
+
+    private String option3;
 }

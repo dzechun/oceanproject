@@ -1,5 +1,6 @@
 package com.fantechs.provider.guest.meidi.controller;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.guest.meidi.entity.MeterialPrepation;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -35,4 +38,13 @@ public class MeterialPrepationController {
         return ControllerUtil.returnCRUD(meterialPrepationService.send(meterialPrepation));
     }
 
+
+    @ApiOperation(value = "调用接口",notes = "调用接口")
+    @PostMapping("/get")
+    public String get(@ApiParam(value = "查询对象")@RequestBody Object object) {
+        System.out.println("---接收的数据-----"+object);
+        Map map = new HashMap<>();
+        map.put("code","success");
+        return JSONUtils.toJSONString(map);
+    }
 }

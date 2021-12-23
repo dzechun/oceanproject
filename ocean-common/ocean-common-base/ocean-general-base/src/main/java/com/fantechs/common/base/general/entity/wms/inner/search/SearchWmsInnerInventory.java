@@ -1,14 +1,11 @@
 package com.fantechs.common.base.general.entity.wms.inner.search;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
 import java.io.Serializable;
-import java.util.Date;
 
 @Data
 public class SearchWmsInnerInventory extends BaseQuery implements Serializable {
@@ -36,6 +33,10 @@ public class SearchWmsInnerInventory extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="warehouseName",value = "仓库名称")
     private String warehouseName;
+
+
+    @ApiModelProperty(name = "storageId",value = "库位id")
+    private Long storagrId;
 
     /**
      * 库位名称
