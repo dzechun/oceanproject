@@ -1,15 +1,9 @@
 package com.fantechs.provider.wms.inner.controller.PDA;
 
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.PDAWmsInnerDirectTransferOrderDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerDirectTransferOrderDto;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerDirectTransferOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.provider.wms.inner.service.WmsInnerDirectTransferOrderService;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -20,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -59,7 +52,7 @@ public class PDAWmsInnerDirectTransferOrderController {
     public ResponseEntity<WmsInnerDirectTransferOrder> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
         WmsInnerDirectTransferOrder  wmsInnerDirectTransferOrder = wmsInnerDirectTransferOrderService.selectByKey(id);
         return  ControllerUtil.returnDataSuccess(wmsInnerDirectTransferOrder,StringUtils.isEmpty(wmsInnerDirectTransferOrder)?0:1);
-    }*/
+    }
 
     @ApiOperation("列表")
     @PostMapping("/findList")
@@ -67,26 +60,6 @@ public class PDAWmsInnerDirectTransferOrderController {
         Page<Object> page = PageHelper.startPage(searchWmsInnerDirectTransferOrder.getStartPage(),searchWmsInnerDirectTransferOrder.getPageSize());
         List<WmsInnerDirectTransferOrderDto> list = wmsInnerDirectTransferOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerDirectTransferOrder));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-    }
-
-    @ApiOperation("列表(不分页)")
-    @PostMapping("/findAll")
-    public ResponseEntity<List<WmsInnerDirectTransferOrderDto>> findAll(@ApiParam(value = "查询对象") @RequestBody SearchWmsInnerDirectTransferOrder searchWmsInnerDirectTransferOrder) {
-        List<WmsInnerDirectTransferOrderDto> list = wmsInnerDirectTransferOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerDirectTransferOrder));
-        return ControllerUtil.returnDataSuccess(list, list.size());
-    }
-
-    @PostMapping(value = "/export")
-    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
-    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
-    @RequestBody(required = false) SearchWmsInnerDirectTransferOrder searchWmsInnerDirectTransferOrder){
-    List<WmsInnerDirectTransferOrderDto> list = wmsInnerDirectTransferOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerDirectTransferOrder));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "WmsInnerDirectTransferOrder信息", WmsInnerDirectTransferOrderDto.class, "WmsInnerDirectTransferOrder.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
-    }
+    }*/
 
 }

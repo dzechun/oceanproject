@@ -5,7 +5,6 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerMaterialBarcodeImport;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcode;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -129,6 +128,13 @@ public class WmsInnerMaterialBarcodeController {
             log.error(e.getMessage());
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
+    }
+
+    @ApiOperation("通过条码进行查询（按照SN码、彩盒码、箱码、栈板码关系递进查询）")
+    @PostMapping("/findListByCode")
+    public ResponseEntity<List<WmsInnerMaterialBarcodeDto>> findListByCode(@ApiParam(value = "查询对象")@RequestBody List<String> codes) {
+        List<WmsInnerMaterialBarcodeDto> list = wmsInnerMaterialBarcodeService.findListByCode(codes);
+        return ControllerUtil.returnDataSuccess(list,list.size());
     }
 
 }
