@@ -2,6 +2,7 @@ package com.fantechs.provider.wms.in.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.wms.in.WmsInHtInPlanOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.imports.WmsInInPlanOrderImport;
 import com.fantechs.common.base.general.entity.wms.in.WmsInInPlanOrder;
@@ -94,9 +95,9 @@ public class WmsInInPlanOrderController {
 
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<WmsInInPlanOrderDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInInPlanOrder searchWmsInInPlanOrder) {
+    public ResponseEntity<List<WmsInHtInPlanOrderDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInInPlanOrder searchWmsInInPlanOrder) {
         Page<Object> page = PageHelper.startPage(searchWmsInInPlanOrder.getStartPage(),searchWmsInInPlanOrder.getPageSize());
-        List<WmsInInPlanOrderDto> list = wmsInHtInPlanOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInInPlanOrder));
+        List<WmsInHtInPlanOrderDto> list = wmsInHtInPlanOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInInPlanOrder));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

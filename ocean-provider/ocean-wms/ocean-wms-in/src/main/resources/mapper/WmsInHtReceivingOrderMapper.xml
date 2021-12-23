@@ -93,6 +93,6 @@ LEFT JOIN base_organization bo ON wiro.org_id = bo.organization_id
     and wiro.org_id=#{orgId}
   </if>
 </where>
-order by wiro.create_time
+order by wiro.create_time desc
 </select>
 </mapper>

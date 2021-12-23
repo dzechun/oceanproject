@@ -109,6 +109,12 @@
         <if test="ifSysBarcode!=null and ifSysBarcode!=''">
             and wimb.if_sys_barcode = #{ifSysBarcode}
         </if>
+        <if test="batchCode!=null and batchCode!=''">
+            and wimb.batch_code like CONCAT('%',#{batchCode},'%')
+        </if>
+        <if test="supplierName!=null and supplierName!=''">
+            and bs.supplier_name like CONCAT('%',#{supplierName},'%')
+        </if>
         <if test="colorBoxCode!=null and colorBoxCode!=''">
             and wimb.color_box_code like CONCAT('%',#{colorBoxCode},'%')
         </if>
@@ -139,12 +145,19 @@
         <if test="supplierId!=null and supplierId!=''">
             and wimb.supplier_id = #{supplierId}
         </if>
-        <if test="materialBarcodeIdList != null and materialBarcodeIdList.size() > 0">
+        <if test="barCodes != null and barCodes.size() > 0">
             and wimb.material_barcode_id
-            <foreach collection="materialBarcodeIdList" open="in (" close=")" item="item" separator="," index="index">
+            <foreach collection="barCodes" open="in (" close=")" item="item" separator="," index="index">
                 #{item}
             </foreach>
         </if>
+        <if test="materialBarcodeList != null and materialBarcodeList.size() > 0">
+            and wimb.barcode
+            <foreach collection="materialBarcodeList" open="in (" close=")" item="item" separator="," index="index">
+                #{item}
+            </foreach>
+        </if>
+
     </where>
     order by wimb.create_time desc
     </select>

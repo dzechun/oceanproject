@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerDirectTransferOrderDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerDirectTransferOrderDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="direct_transfer_order_det_id" jdbcType="BIGINT" property="directTransferOrderDetId" />
+    <result column="direct_transfer_order_id" jdbcType="BIGINT" property="directTransferOrderId" />
+    <result column="core_source_order_code" jdbcType="VARCHAR" property="coreSourceOrderCode" />
+    <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode" />
+    <result column="core_source_id" jdbcType="BIGINT" property="coreSourceId" />
+    <result column="source_id" jdbcType="BIGINT" property="sourceId" />
+    <result column="line_number" jdbcType="VARCHAR" property="lineNumber" />
+    <result column="in_storage_id" jdbcType="BIGINT" property="inStorageId" />
+    <result column="out_storage_id" jdbcType="BIGINT" property="outStorageId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="plan_qty" jdbcType="DECIMAL" property="planQty" />
+    <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
+    <result column="line_status" jdbcType="TINYINT" property="lineStatus" />
+    <result column="if_all_issued" jdbcType="TINYINT" property="ifAllIssued" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+             type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerDirectTransferOrderDetDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+  </resultMap>
+
+  <sql id="BaseColumnList">
+        widtod.direct_transfer_order_det_id,
+        widtod.direct_transfer_order_id,
+        widtod.core_source_order_code,
+        widtod.source_order_code,
+        widtod.core_source_id,
+        widtod.source_id,
+        widtod.line_number,
+        widtod.in_storage_id,
+        widtod.out_storage_id,
+        widtod.material_id,
+        widtod.plan_qty,
+        widtod.actual_qty,
+        widtod.line_status,
+        widtod.if_all_issued,
+        widtod.status,
+        widtod.remark,
+        widtod.org_id,
+        widtod.create_user_id,
+        widtod.create_time,
+        widtod.modified_user_id,
+        widtod.modified_time,
+        widtod.is_delete,
+        widtod.option1,
+        widtod.option2,
+        widtod.option3
+    </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto">
+    SELECT<include refid="BaseColumnList"/>,
+    bm.material_name as materialName,bm.material_code as materialCode,bm.material_desc as materialDesc,bm.material_version as materialVersion,
+    ibs.storage_name as inStorageName,obs.outStorageName as storageName,ibw.warehouse_name as inWarehouseName,obw.warehouse_name as outWarehouseName,
+    u.user_name AS create_user_name,
+    s.user_name AS modified_user_name,
+    bo.organization_name
+    FROM wms_inner_direct_transfer_order_det widtod
+    LEFT JOIN base_material bm ON widtod.material_id=bm.material_id
+    LEFT JOIN base_storage ibs ON widtod.in_storage_id=ibs.storage_id
+    LEFT JOIN base_storage obs ON widtod.out_storage_id=obs.storage_id
+    LEFT JOIN base_warehouse ibw ON ibs.warehouse_id=ibw.warehouse_id
+    LEFT JOIN base_warehouse obw ON obs.warehouse_id=obw.warehouse_id
+    LEFT JOIN sys_user u ON widtod.create_user_id=u.user_id
+    LEFT JOIN sys_user s ON widtod.modified_user_id=s.user_id
+    LEFT JOIN base_organization bo ON widtod.org_id = bo.organization_id
+    <where>
+      <if test="orgId!=null and orgId!=''">
+        and widtod.org_id = #{orgId}
+      </if>
+      <if test="directTransferOrderId!=null and directTransferOrderId!=''">
+        and widtod.direct_transfer_order_id = #{directTransferOrderId}
+      </if>
+    </where>
+    order by widtod.create_time desc
+  </select>
+
+
+
+
+
+</mapper>

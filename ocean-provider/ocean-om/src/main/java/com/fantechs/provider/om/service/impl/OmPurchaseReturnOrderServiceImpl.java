@@ -10,6 +10,10 @@ import com.fantechs.common.base.general.dto.basic.BaseOrderFlowDto;
 import com.fantechs.common.base.general.dto.om.OmPurchaseReturnOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmPurchaseReturnOrderDto;
 import com.fantechs.common.base.general.dto.om.imports.OmPurchaseReturnOrderImport;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryReqOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryReqOrderDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.om.OmHtPurchaseReturnOrder;
@@ -129,10 +133,56 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
             List<OmPurchaseReturnOrderDetDto> purchaseReturnOrderDetDtos = map.get(code);
             if ("OUT-DRO".equals(code)) {
                 //出库通知单
-
+                List<WmsOutDeliveryReqOrderDetDto> wmsOutDeliveryReqOrderDetDtos = new LinkedList<>();
+                for (OmPurchaseReturnOrderDetDto omPurchaseReturnOrderDetDto : purchaseReturnOrderDetDtos) {
+                    WmsOutDeliveryReqOrderDetDto wmsOutDeliveryReqOrderDetDto = new WmsOutDeliveryReqOrderDetDto();
+                    wmsOutDeliveryReqOrderDetDto.setCoreSourceOrderCode(omPurchaseReturnOrderDetDto.getCoreSourceOrderCode());
+                    wmsOutDeliveryReqOrderDetDto.setSourceOrderCode(omPurchaseReturnOrderDetDto.getPurchaseReturnOrderCode());
+                    wmsOutDeliveryReqOrderDetDto.setCoreSourceId(omPurchaseReturnOrderDetDto.getCoreSourceId());
+                    wmsOutDeliveryReqOrderDetDto.setSourceId(omPurchaseReturnOrderDetDto.getPurchaseReturnOrderDetId());
+                    wmsOutDeliveryReqOrderDetDto.setMaterialId(omPurchaseReturnOrderDetDto.getMaterialId());
+                    wmsOutDeliveryReqOrderDetDto.setOrderQty(omPurchaseReturnOrderDetDto.getOrderQty());
+                    wmsOutDeliveryReqOrderDetDto.setLineStatus((byte) 1);
+                    wmsOutDeliveryReqOrderDetDtos.add(wmsOutDeliveryReqOrderDetDto);
+                }
+                WmsOutDeliveryReqOrderDto wmsOutDeliveryReqOrderDto = new WmsOutDeliveryReqOrderDto();
+                wmsOutDeliveryReqOrderDto.setCoreSourceSysOrderTypeCode("OUT-PRO");
+                wmsOutDeliveryReqOrderDto.setSourceSysOrderTypeCode("OUT-PRO");
+                wmsOutDeliveryReqOrderDto.setSourceBigType((byte)1);
+                wmsOutDeliveryReqOrderDto.setWarehouseId(purchaseReturnOrderDetDtos.get(0).getWarehouseId());
+                wmsOutDeliveryReqOrderDto.setWmsOutDeliveryReqOrderDetDtos(wmsOutDeliveryReqOrderDetDtos);
+                ResponseEntity responseEntity = outFeignApi.add(wmsOutDeliveryReqOrderDto);
+                if (responseEntity.getCode() != 0) {
+                    throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
+                } else {
+                    i++;
+                }
             } else if ("OUT-PDO".equals(code)) {
                 //出库计划
-
+                List<WmsOutPlanDeliveryOrderDetDto> wmsOutPlanDeliveryOrderDetDtos = new LinkedList<>();
+                for (OmPurchaseReturnOrderDetDto omPurchaseReturnOrderDetDto : purchaseReturnOrderDetDtos) {
+                    WmsOutPlanDeliveryOrderDetDto wmsOutPlanDeliveryOrderDetDto = new WmsOutPlanDeliveryOrderDetDto();
+                    wmsOutPlanDeliveryOrderDetDto.setCoreSourceOrderCode(omPurchaseReturnOrderDetDto.getCoreSourceOrderCode());
+                    wmsOutPlanDeliveryOrderDetDto.setSourceOrderCode(omPurchaseReturnOrderDetDto.getPurchaseReturnOrderCode());
+                    wmsOutPlanDeliveryOrderDetDto.setCoreSourceId(omPurchaseReturnOrderDetDto.getCoreSourceId());
+                    wmsOutPlanDeliveryOrderDetDto.setSourceId(omPurchaseReturnOrderDetDto.getPurchaseReturnOrderDetId());
+                    wmsOutPlanDeliveryOrderDetDto.setMaterialId(omPurchaseReturnOrderDetDto.getMaterialId());
+                    wmsOutPlanDeliveryOrderDetDto.setOrderQty(omPurchaseReturnOrderDetDto.getOrderQty());
+                    wmsOutPlanDeliveryOrderDetDto.setLineStatus((byte) 1);
+                    wmsOutPlanDeliveryOrderDetDtos.add(wmsOutPlanDeliveryOrderDetDto);
+                }
+                WmsOutPlanDeliveryOrderDto wmsOutPlanDeliveryOrderDto = new WmsOutPlanDeliveryOrderDto();
+                wmsOutPlanDeliveryOrderDto.setCoreSourceSysOrderTypeCode("OUT-PRO");
+                wmsOutPlanDeliveryOrderDto.setSourceSysOrderTypeCode("OUT-PRO");
+                wmsOutPlanDeliveryOrderDto.setSourceBigType((byte)1);
+                wmsOutPlanDeliveryOrderDto.setWarehouseId(purchaseReturnOrderDetDtos.get(0).getWarehouseId());
+                wmsOutPlanDeliveryOrderDto.setWmsOutPlanDeliveryOrderDetDtos(wmsOutPlanDeliveryOrderDetDtos);
+                ResponseEntity responseEntity = outFeignApi.add(wmsOutPlanDeliveryOrderDto);
+                if (responseEntity.getCode() != 0) {
+                    throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
+                } else {
+                    i++;
+                }
             } else if ("OUT-IWK".equals(code)) {
                 //拣货作业
                 int lineNumber = 1;
@@ -445,6 +495,7 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
                 OmPurchaseReturnOrder omPurchaseReturnOrder = new OmPurchaseReturnOrder();
                 //新增父级数据
                 BeanUtils.copyProperties(omPurchaseReturnOrderImports1.get(0), omPurchaseReturnOrder);
+                omPurchaseReturnOrder.setPurchaseReturnOrderCode(CodeUtils.getId("OUT-PRO"));
                 omPurchaseReturnOrder.setCreateTime(new Date());
                 omPurchaseReturnOrder.setCreateUserId(user.getUserId());
                 omPurchaseReturnOrder.setModifiedUserId(user.getUserId());

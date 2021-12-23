@@ -1,6 +1,9 @@
 package com.fantechs.provider.wms.inner.service;
 
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerPdaJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 
@@ -32,7 +35,7 @@ public interface PickingOrderService {
      * @param list
      * @return
      */
-    int handDistribution(List<WmsInnerJobOrderDet> list);
+    int handDistribution(List<WmsInnerJobOrderDetDto> list);
 
     int cancelDistribution(String ids);
 
@@ -65,4 +68,10 @@ public interface PickingOrderService {
     Map<String ,Object> checkBarcode(String barCode, Long jobOrderDetId);
 
     int sealOrder(List<Long> outDeliveryOrderIds,Byte type);
+
+    int closeDocuments(String id);
+
+    WmsInnerInventoryDetDto scan(Long storageId, Long materialId, String barcode);
+
+    int pdaSubmit(WmsInnerPdaJobOrderDet wmsInnerPdaJobOrderDet);
 }
