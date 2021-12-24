@@ -44,6 +44,13 @@ public class EsopWiFileController {
         return  ControllerUtil.returnDataSuccess(path,1);
     }
 
+    @ApiOperation("文件上传")
+    @PostMapping("/batchUploadFile")
+    public ResponseEntity batchUploadFile(@ApiParam(value = "文件必传",required = true) @RequestPart(value = "file") MultipartFile file) {
+        return ControllerUtil.returnCRUD(esopWiFileService.batchUploadFile(file));
+    }
+
+
     @ApiOperation(value = "批量新增",notes = "批量新增")
     @PostMapping("/batchAdd")
     public ResponseEntity batchAdd(@ApiParam(value = "必传：accessUrl",required = true)@RequestBody List<EsopWiFile> esopWiFiles) {

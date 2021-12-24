@@ -20,4 +20,6 @@ public interface EsopWiFileService extends IService<EsopWiFile> {
     int batchUpdate(List<EsopWiFile> esopWiFiles);
 
     List<EsopWiFile> findList(Map<String, Object> map);
+
+    int batchUploadFile(MultipartFile file);
 }

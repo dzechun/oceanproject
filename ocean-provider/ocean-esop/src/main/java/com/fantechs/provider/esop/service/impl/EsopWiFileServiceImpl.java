@@ -17,10 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by leifengzhi on 2021/07/06.
@@ -42,6 +39,21 @@ public class EsopWiFileServiceImpl extends BaseService<EsopWiFile> implements Es
         Map<String, Object> data = (Map<String, Object>) fileFeignApi.fileUpload(file).getData();
         String path = data.get("url").toString();
         return path;
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int batchUploadFile(MultipartFile file) {
+        Map<String, Object> data = (Map<String, Object>) fileFeignApi.fileUpload(file).getData();
+        String path = data.get("url").toString();
+        String fileName = data.get("fileName").toString();
+        List<EsopWiFile> list = new ArrayList<>();
+        EsopWiFile esopWiFile = new EsopWiFile();
+        esopWiFile.setAccessUrl(path);
+        esopWiFile.setWiFileName(fileName);
+        list.add(esopWiFile);
+        return this.batchAdd(list);
     }
 
     @Override
