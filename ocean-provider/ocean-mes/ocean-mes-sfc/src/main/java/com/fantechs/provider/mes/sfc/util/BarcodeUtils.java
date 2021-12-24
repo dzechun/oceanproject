@@ -1045,6 +1045,11 @@ public class BarcodeUtils {
         //雷赛增加工序标准时间与设备耗时比较 option2 记录 passTimeIsOK 0 正常 1 超时
         mesSfcBarcodeProcessRecord.setOption2(passTimeIsOK);
 
+        //增加保存设备条码 用预留栏位 option3 记录
+        if(StringUtils.isNotEmpty(dto.getEquipmentCode())){
+            mesSfcBarcodeProcessRecord.setOption3(dto.getEquipmentCode());
+        }
+
         barcodeUtils.mesSfcBarcodeProcessRecordService.save(mesSfcBarcodeProcessRecord);
 
         /**
@@ -1873,6 +1878,9 @@ public class BarcodeUtils {
                     updateProcessDto.setBadnessPhenotypeCode(badnessPhenotypeCode);
                 }
             }
+
+            //设置设备条码 equipmentBarCode
+            updateProcessDto.setEquipmentCode(equipmentBarCode);
 
             //设置操作人员
             updateProcessDto.setOperatorUserId(1L);
