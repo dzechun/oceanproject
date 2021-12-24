@@ -18,6 +18,8 @@
         <result column="option1" jdbcType="VARCHAR" property="option1"/>
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
+        <result column="fixed_signature" jdbcType="VARCHAR" property="fixedSignature"/>
+        <result column="model_signature" jdbcType="VARCHAR" property="modelSignature"/>
 
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     </resultMap>
@@ -38,7 +40,9 @@
         ss.is_delete,
         ss.option1,
         ss.option2,
-        ss.option3
+        ss.option3,
+        ss.fixed_signature,
+        ss.model_signature
     </sql>
 
     <select id="findList" parameterType="map"

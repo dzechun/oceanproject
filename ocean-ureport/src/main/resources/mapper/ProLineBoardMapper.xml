@@ -169,6 +169,9 @@
             <if test="workOrderId != null and workOrderId != ''">
                 and mpdp.work_order_id = #{workOrderId}
             </if>
+            <if test="workOrderCode != null and workOrderCode != ''">
+                and mpwo.work_order_code = #{workOrderCode}
+            </if>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(mpdp.plan_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
@@ -194,7 +197,7 @@
             and msbpr.option2 = 1
         </where>
         ORDER BY
-        msbpr.create_time DESC
+        msbpr.create_time DESC limit 0,10
 
     </select>
 </mapper>

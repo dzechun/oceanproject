@@ -29,7 +29,7 @@ spring:
     filters: stat,wall,slf4j
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
   redis:
-    host: 192.168.204.151
+    host: 127.0.0.1
     #host: 10.182.163.246
     port: 6379
     password:

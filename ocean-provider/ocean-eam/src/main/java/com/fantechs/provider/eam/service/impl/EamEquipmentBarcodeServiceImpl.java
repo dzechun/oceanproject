@@ -151,7 +151,7 @@ public class EamEquipmentBarcodeServiceImpl extends BaseService<EamEquipmentBarc
         Date nd = new Date();
         Long lnd = nd.getTime();
         Example example = new Example(EamEquipmentBarcode.class);
-        example.createCriteria().andEqualTo("equipment_status",4);
+        example.createCriteria().andEqualTo("equipmentStatus",4);
         List<EamEquipmentBarcode> eamEquipmentBarcodes = eamEquipmentBarcodeMapper.selectByExample(example);
         if(eamEquipmentBarcodes.size() > 0){
             for (EamEquipmentBarcode eamEquipmentBarcode : eamEquipmentBarcodes) {
@@ -165,12 +165,13 @@ public class EamEquipmentBarcodeServiceImpl extends BaseService<EamEquipmentBarc
         }
 
         
-        return 0;
+        return 1;
     }
 
     public void equipmentContinueUseWarning(EamEquipmentBarcode eamEquipmentBarcode,EamEquipment eamEquipment,List<String> messages){
         String msg = "";
         boolean tag = false;
+
 
         if (StringUtils.isNotEmpty(eamEquipmentBarcode.getCurrentUsageTime(), eamEquipment.getMaxUsageTime())
                 && eamEquipment.getMaxUsageTime() != 0) {
@@ -192,7 +193,6 @@ public class EamEquipmentBarcodeServiceImpl extends BaseService<EamEquipmentBarc
             msg = "设备条码为"+eamEquipmentBarcode.getEquipmentBarcode()+"的设备使用次数（天数）已达到最大使用次数（天数）";
             messages.add(msg);
         }
-
     }
 
     public static void main(String[] args) throws ParseException {

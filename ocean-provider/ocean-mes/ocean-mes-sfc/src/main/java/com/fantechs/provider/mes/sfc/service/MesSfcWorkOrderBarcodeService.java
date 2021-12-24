@@ -43,4 +43,6 @@ public interface MesSfcWorkOrderBarcodeService extends IService<MesSfcWorkOrderB
 
     List<MesSfcWorkOrderBarcodeDto> findListByPalletDet(Map<String, Object> map);
 
+    List<MesSfcWorkOrderBarcodeDto> findListByCartonDet(Map<String, Object> map);
+
 }
