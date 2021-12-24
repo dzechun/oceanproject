@@ -24,7 +24,6 @@
         <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
         <result column="spec" jdbcType="VARCHAR" property="spec"/>
         <result column="purchase_req_order_code" jdbcType="VARCHAR" property="purchaseReqOrderCode"/>
-        <result column="carton_code" jdbcType="VARCHAR" property="cartonCode"/>
         <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId"/>
         <result column="inspection_order_code" jdbcType="VARCHAR" property="inspectionOrderCode"/>
         <result column="qc_date" jdbcType="TIMESTAMP" property="qcDate"/>
@@ -62,7 +61,6 @@
         wiid.is_delete,
         wiid.spec,
         wiid.purchase_req_order_code,
-        wiid.carton_code,
         wiid.inventory_status_id,
         wiid.inspection_order_code,
         wiid.qc_date,
@@ -76,13 +74,14 @@
         select<include refid="Base_Column_List"/>,
         bs.storage_code,bs.warehouse_id,bw.warehouse_name,bo.organization_name,bis.inventory_status_name,
         wimb.barcode as barcode,wimb.color_box_code as colorBoxCode,wimb.carton_code as cartonCode,wimb.pallet_code as palletCode,
-        wimb.batch_code as batchCode,wimb.material_qty as materialQty,
+        wimb.batch_code as batchCode,wimb.material_qty as materialQty,wimb.material_id as materialId,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name
         from wms_inner_inventory_det wiid
         LEFT JOIN base_inventory_status bis ON bis.inventory_status_id = wiid.inventory_status_id
         LEFT JOIN base_storage bs ON wiid.storage_id = bs.storage_id
         LEFT JOIN base_warehouse bw ON bs.warehouse_id = bw.warehouse_id
         LEFT JOIN wms_inner_material_barcode wimb ON wiid.material_barcode_id = wimb.material_barcode_id
+        LEFT JOIN base_material bm ON wimb.material_id = bm.material_id
         LEFT JOIN sys_user su ON wiid.create_user_id = su.user_id
         LEFT JOIN sys_user sus ON wiid.modified_user_id = sus.user_id
         LEFT JOIN base_organization bo ON wiid.org_id = bo.organization_id

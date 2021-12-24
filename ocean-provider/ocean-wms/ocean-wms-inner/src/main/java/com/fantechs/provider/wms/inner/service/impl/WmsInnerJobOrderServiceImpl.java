@@ -2513,7 +2513,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 //                    inventoryDet.setSupplierId(materialBarcodeDto.getSupplierId());
 //                    inventoryDet.setJobStatus((byte)2);//在库
                     inventoryDet.setIfStockLock((byte)0);
-                    inventoryDet.setCartonCode(materialBarcodeDto.getCartonCode());
+//                    inventoryDet.setCartonCode(materialBarcodeDto.getCartonCode());
                     inventoryDet.setInventoryStatusId(wmsInnerJobOrderDet.getInventoryStatusId());
                     inventoryDet.setBarcodeStatus((byte)3);//在库
                     inventoryDet.setCreateUserId(sysUser.getUserId());
@@ -2811,7 +2811,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 //                    inventoryDet.setSupplierId(materialBarcodeDto.getSupplierId());
 //                    inventoryDet.setJobStatus((byte)2);//在库
                     inventoryDet.setIfStockLock((byte)0);
-                    inventoryDet.setCartonCode(materialBarcodeDto.getCartonCode());
+//                     inventoryDet.setCartonCode(materialBarcodeDto.getCartonCode());
                     inventoryDet.setInventoryStatusId(null);
                     inventoryDet.setBarcodeStatus((byte)3);//在库
                     inventoryDet.setCreateUserId(sysUser.getUserId());

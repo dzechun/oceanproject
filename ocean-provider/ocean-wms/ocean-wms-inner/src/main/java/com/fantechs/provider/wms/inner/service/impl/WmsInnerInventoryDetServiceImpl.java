@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -72,7 +71,7 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
         SysUser sysUser = currentUser();
         Example example = new Example(WmsInnerInventoryDet.class);
         Example.Criteria criteria = example.createCriteria();
-        if(StringUtils.isEmpty(wmsInnerInventoryDet.getMaterialQty()) || wmsInnerInventoryDet.getMaterialQty().compareTo(BigDecimal.ZERO)<1){
+/*        if(StringUtils.isEmpty(wmsInnerInventoryDet.getMaterialQty()) || wmsInnerInventoryDet.getMaterialQty().compareTo(BigDecimal.ZERO)<1){
             throw new BizErrorException("出库数量错误");
         }
         if(StringUtils.isNotEmpty(wmsInnerInventoryDet.getBarcode())){
@@ -92,9 +91,9 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
         }
         criteria.andEqualTo("orgId",sysUser.getOrganizationId());
         List<WmsInnerInventoryDet> wms = wmsInnerInventoryDetMapper.selectByExample(example);
-        BigDecimal qty = wmsInnerInventoryDet.getMaterialQty();
+        BigDecimal qty = wmsInnerInventoryDet.getMaterialQty();*/
         int num=0;
-        for (WmsInnerInventoryDet wm : wms) {
+/*        for (WmsInnerInventoryDet wm : wms) {
             if(qty.compareTo(BigDecimal.ZERO)==0){
                 break;
             }
@@ -108,7 +107,7 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
                     qty.subtract(wmsInnerInventoryDet.getMaterialQty());
                 }
                 num+=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wm);
-        }
+        }*/
         return num;
     }
 

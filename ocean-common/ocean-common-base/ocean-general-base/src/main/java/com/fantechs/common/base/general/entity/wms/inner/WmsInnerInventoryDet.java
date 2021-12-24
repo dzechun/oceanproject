@@ -88,12 +88,6 @@ public class WmsInnerInventoryDet extends ValidGroup implements Serializable {
     @Column(name = "delivery_order_code")
     private String deliveryOrderCode;
 
-    /**
-     * 箱号
-     */
-    @ApiModelProperty(name="cartonCode",value = "箱号")
-    @Column(name = "carton_code")
-    private String cartonCode;
 
     /**
      * 库存状态ID

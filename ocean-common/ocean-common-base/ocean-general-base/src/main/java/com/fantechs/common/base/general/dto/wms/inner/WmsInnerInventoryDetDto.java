@@ -46,6 +46,13 @@ public class WmsInnerInventoryDetDto extends WmsInnerInventoryDet implements Ser
     private String materialCode;
 
     /**
+     * 物料ID
+     */
+    @ApiModelProperty(name="materialId",value = "物料ID")
+    @Transient
+        private Long materialId;
+
+    /**
      * 物料名称
      */
     @ApiModelProperty(name="materialName",value = "物料名称")
