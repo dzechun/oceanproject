@@ -1,13 +1,11 @@
 package com.fantechs.common.base.general.dto.wms.out;
 
-import com.fantechs.common.base.general.entity.mes.pm.MesPmDailyPlanStockList;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutPlanStockListOrderDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Transient;
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 @Data
 public class WmsOutPlanStockListOrderDetDto extends WmsOutPlanStockListOrderDet implements Serializable {

@@ -7,6 +7,7 @@ import lombok.Data;
 
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * @Author mr.lei
@@ -97,4 +98,41 @@ public class WmsInnerInventoryDetDto extends WmsInnerInventoryDet implements Ser
     @ApiModelProperty(name="samePackageCode",value = "同包装编码")
     @Transient
     private String samePackageCode;
+
+
+    /**
+     * 条码（SN码）
+     */
+    @ApiModelProperty(name="barcode",value = "条码（SN码）")
+    private String barcode;
+
+    /**
+     * 彩盒号
+     */
+    @ApiModelProperty(name="colorBoxCode",value = "彩盒号")
+    private String colorBoxCode;
+
+    /**
+     * 箱号
+     */
+    @ApiModelProperty(name="cartonCode",value = "箱号")
+    private String cartonCode;
+
+    /**
+     * 栈板号
+     */
+    @ApiModelProperty(name="palletCode",value = "栈板号")
+    private String palletCode;
+
+    /**
+     * 批号
+     */
+    @ApiModelProperty(name="batchCode",value = "批号")
+    private String batchCode;
+
+    /**
+     * 物料数量
+     */
+    @ApiModelProperty(name="materialQty",value = "物料数量")
+    private BigDecimal materialQty;
 }

@@ -11,15 +11,10 @@ import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
 import com.fantechs.common.base.general.dto.basic.JobRuleDto;
 import com.fantechs.common.base.general.dto.basic.StorageRuleDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
-import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessRecordDto;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
-import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerStockOrderImport;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
-import com.fantechs.common.base.general.entity.eam.EamEquipment;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentMaterial;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentMaterialList;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
@@ -44,8 +39,6 @@ import com.fantechs.provider.wms.inner.service.*;
 import com.fantechs.provider.wms.inner.util.InBarcodeUtil;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
 import com.fantechs.provider.wms.inner.util.WmsInnerInventoryUtil;
-import com.sun.javafx.fxml.BeanAdapter;
-import io.micrometer.core.instrument.search.Search;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -2459,12 +2452,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
                 WmsInnerInventoryDet inventoryDet=new WmsInnerInventoryDet();
                 inventoryDet.setStorageId(inStorageId);
-                inventoryDet.setMaterialId(item.getMaterialId());
+/*                inventoryDet.setMaterialId(item.getMaterialId());
                 inventoryDet.setBarcode(item.getBarcode());
                 inventoryDet.setMaterialQty(item.getMaterialQty());
                 inventoryDet.setProductionDate(productionTime);
                 inventoryDet.setProductionBatchCode(item.getBatchCode());
-                inventoryDet.setJobStatus((byte)2);//在库
+                inventoryDet.setJobStatus((byte)2);//在库*/
                 inventoryDet.setIfStockLock((byte)0);
                 inventoryDet.setInventoryStatusId(wmsInnerJobOrderDet.getInventoryStatusId());
                 inventoryDet.setBarcodeStatus((byte)3);//在库
@@ -2512,13 +2505,13 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
                     WmsInnerInventoryDet inventoryDet=new WmsInnerInventoryDet();
                     inventoryDet.setStorageId(inStorageId);
-                    inventoryDet.setMaterialId(materialBarcodeDto.getMaterialId());
-                    inventoryDet.setBarcode(materialBarcodeDto.getBarcode());
-                    inventoryDet.setMaterialQty(materialBarcodeDto.getMaterialQty());
-                    inventoryDet.setProductionDate(materialBarcodeDto.getProductionTime());
-                    inventoryDet.setProductionBatchCode(materialBarcodeDto.getBatchCode());
-                    inventoryDet.setSupplierId(materialBarcodeDto.getSupplierId());
-                    inventoryDet.setJobStatus((byte)2);//在库
+//                    inventoryDet.setMaterialId(materialBarcodeDto.getMaterialId());
+//                    inventoryDet.setBarcode(materialBarcodeDto.getBarcode());
+//                    inventoryDet.setMaterialQty(materialBarcodeDto.getMaterialQty());
+//                    inventoryDet.setProductionDate(materialBarcodeDto.getProductionTime());
+//                    inventoryDet.setProductionBatchCode(materialBarcodeDto.getBatchCode());
+//                    inventoryDet.setSupplierId(materialBarcodeDto.getSupplierId());
+//                    inventoryDet.setJobStatus((byte)2);//在库
                     inventoryDet.setIfStockLock((byte)0);
                     inventoryDet.setCartonCode(materialBarcodeDto.getCartonCode());
                     inventoryDet.setInventoryStatusId(wmsInnerJobOrderDet.getInventoryStatusId());
@@ -2757,12 +2750,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
                 WmsInnerInventoryDet inventoryDet=new WmsInnerInventoryDet();
                 inventoryDet.setStorageId(inStorageId);
-                inventoryDet.setMaterialId(saveInnerJobOrderDto.getMaterialId());
-                inventoryDet.setBarcode(saveInnerJobOrderDto.getBarcode());
-                inventoryDet.setMaterialQty(saveInnerJobOrderDto.getMaterialQty());
-                inventoryDet.setProductionDate(productionTime);
-                inventoryDet.setProductionBatchCode(saveInnerJobOrderDto.getBatchCode());
-                inventoryDet.setJobStatus((byte)2);//在库
+//                inventoryDet.setMaterialId(saveInnerJobOrderDto.getMaterialId());
+//                inventoryDet.setBarcode(saveInnerJobOrderDto.getBarcode());
+//                inventoryDet.setMaterialQty(saveInnerJobOrderDto.getMaterialQty());
+//                inventoryDet.setProductionDate(productionTime);
+//                inventoryDet.setProductionBatchCode(saveInnerJobOrderDto.getBatchCode());
+//                inventoryDet.setJobStatus((byte)2);//在库
                 inventoryDet.setIfStockLock((byte)0);
                 inventoryDet.setInventoryStatusId(null);
                 inventoryDet.setBarcodeStatus((byte)3);//在库
@@ -2810,13 +2803,13 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
                     WmsInnerInventoryDet inventoryDet=new WmsInnerInventoryDet();
                     inventoryDet.setStorageId(inStorageId);
-                    inventoryDet.setMaterialId(materialBarcodeDto.getMaterialId());
-                    inventoryDet.setBarcode(materialBarcodeDto.getBarcode());
-                    inventoryDet.setMaterialQty(materialBarcodeDto.getMaterialQty());
-                    inventoryDet.setProductionDate(materialBarcodeDto.getProductionTime());
-                    inventoryDet.setProductionBatchCode(materialBarcodeDto.getBatchCode());
-                    inventoryDet.setSupplierId(materialBarcodeDto.getSupplierId());
-                    inventoryDet.setJobStatus((byte)2);//在库
+//                    inventoryDet.setMaterialId(materialBarcodeDto.getMaterialId());
+//                    inventoryDet.setBarcode(materialBarcodeDto.getBarcode());
+//                    inventoryDet.setMaterialQty(materialBarcodeDto.getMaterialQty());
+//                    inventoryDet.setProductionDate(materialBarcodeDto.getProductionTime());
+//                    inventoryDet.setProductionBatchCode(materialBarcodeDto.getBatchCode());
+//                    inventoryDet.setSupplierId(materialBarcodeDto.getSupplierId());
+//                    inventoryDet.setJobStatus((byte)2);//在库
                     inventoryDet.setIfStockLock((byte)0);
                     inventoryDet.setCartonCode(materialBarcodeDto.getCartonCode());
                     inventoryDet.setInventoryStatusId(null);
@@ -2994,7 +2987,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             inv.setJobStatus((byte) 1);
             inv.setInventoryStatusId(newDto.getInventoryStatusId());
             inv.setStockLock((byte)0);
-            inv.setQcLock((byte)0);
             inv.setLockStatus((byte)0);
             inv.setOrgId(sysUser.getOrganizationId());
             inv.setPackingQty(newDto.getActualQty());

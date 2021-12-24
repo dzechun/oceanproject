@@ -219,9 +219,19 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(WmsInnerInventory record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+
+        Example example = new Example(WmsInnerInventory.class);
+        example.createCriteria()
+                .andEqualTo("warehouseId", record.getWarehouseId())
+                .andEqualTo("storageId", record.getStorageId())
+                .andEqualTo("materialId", record.getMaterialId())
+                /*.andEqualTo("lockStatus", record.getLockStatus())
+                .andEqualTo("stockLock", record.getStockLock())*/
+                .andEqualTo("packingUnitName", record.getPackingUnitName())
+                .andEqualTo("batchCode", record.getBatchCode());
+        List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(example);
+        if(StringUtils.isNotEmpty(wmsInnerInventories))
+            throw new BizErrorException("添加失败，存在相同的库存,请进行合并");
 
         record.setCreateTime(new Date());
         record.setCreateUserId(user.getUserId());
