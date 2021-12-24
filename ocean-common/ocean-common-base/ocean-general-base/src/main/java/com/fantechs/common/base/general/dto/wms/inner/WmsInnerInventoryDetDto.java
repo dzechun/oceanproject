@@ -15,10 +15,10 @@ import java.io.Serializable;
 @Data
 public class WmsInnerInventoryDetDto extends WmsInnerInventoryDet implements Serializable {
     /**
-     * 库位名称
+     * 库位编码
      */
-    @ApiModelProperty(name="storageCode",value = "库位名称")
-    @Excel(name = "库位名称", height = 20, width = 30,orderNum="1")
+    @ApiModelProperty(name="storageCode",value = "库位编码")
+    @Excel(name = "库位编码", height = 20, width = 30,orderNum="1")
     @Transient
     private String storageCode;
 

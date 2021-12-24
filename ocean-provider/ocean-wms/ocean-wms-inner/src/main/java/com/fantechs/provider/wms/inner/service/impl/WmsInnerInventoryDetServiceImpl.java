@@ -143,6 +143,7 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
         List<WmsInnerMaterialBarcodeDto> list = wmsInnerMaterialBarcodeService.findListByCode(codes);
         List<String> barCodes = new ArrayList<>();
         for(WmsInnerMaterialBarcodeDto dto : list){
+            if(StringUtils.isNotEmpty(dto.getBarcode()))
             barCodes.add(dto.getBarcode());
         }
         Map map = new HashMap();
