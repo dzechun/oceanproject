@@ -199,4 +199,12 @@ public class BaseSignature extends ValidGroup implements Serializable {
      */
     private String option3;
 
+    @Column(name = "fixed_signature")
+    @ApiModelProperty(name="fixedSignature" ,value="固定特征码")
+    private String fixedSignature;
+
+    @Column(name = "model_signature")
+    @ApiModelProperty(name="modelSignature" ,value="型号特征码")
+    private String modelSignature;
+
 }
