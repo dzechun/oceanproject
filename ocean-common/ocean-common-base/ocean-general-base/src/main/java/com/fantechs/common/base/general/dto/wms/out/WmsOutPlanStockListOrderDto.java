@@ -1,24 +1,24 @@
-package com.fantechs.common.base.general.dto.mes.pm;
+package com.fantechs.common.base.general.dto.wms.out;
 
+import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDetDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmDailyPlan;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutPlanStockListOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-public class MesPmDailyPlanDto extends MesPmDailyPlan implements Serializable {
+public class WmsOutPlanStockListOrderDto extends WmsOutPlanStockListOrder implements Serializable {
 
     /**
-     * 线别名称
+     * 仓库名称
      */
     @Transient
-    @ApiModelProperty(name="proName" ,value="线别名称")
-    private String proName;
+    @ApiModelProperty(name="warehouseName" ,value="仓库名称")
+    private String warehouseName;
 
     /**
      * 组织
@@ -42,10 +42,10 @@ public class MesPmDailyPlanDto extends MesPmDailyPlan implements Serializable {
     private String modifiedUserName;
 
     /**
-     * 生产日计划明细
+     * 备料计划明细
      */
 
     @Transient
-    List<MesPmDailyPlanDetDto> mesPmDailyPlanDetDtos;
+    List<WmsOutPlanStockListOrderDetDto> wmsOutPlanStockListOrderDetDtos;
 
 }

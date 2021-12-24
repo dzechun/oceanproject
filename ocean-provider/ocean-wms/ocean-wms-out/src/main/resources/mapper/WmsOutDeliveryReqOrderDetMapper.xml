@@ -41,6 +41,8 @@
     <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
     <result column="delivery_req_order_code" jdbcType="VARCHAR" property="deliveryReqOrderCode"/>
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -69,7 +71,7 @@
 
   <select id="findList" resultMap="BaseResultMapDto">
     SELECT <include refid="Base_Column_List"/>,
-    wodro.delivery_req_order_code,
+    wodro.delivery_req_order_code,wodro.warehouse_id,bw.warehouse_name,
     bm.material_code,bm.material_name,
     bm.material_desc,bm.material_version,
     sudelivery.user_name as delivery_user_name,
@@ -79,6 +81,7 @@
     FROM wms_out_delivery_req_order_det wodrod
     LEFT JOIN base_material bm ON wodrod.material_id = bm.material_id
     LEFT JOIN wms_out_delivery_req_order wodro ON wodrod.delivery_req_order_id = wodro.delivery_req_order_id
+    LEFT JOIN base_warehouse bw ON wodro.warehouse_id = bw.warehouse_id
     LEFT JOIN sys_user sudelivery ON wodrod.delivery_user_id = sudelivery.user_id
     LEFT JOIN sys_user su ON wodrod.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON wodrod.modified_user_id = sus.user_id

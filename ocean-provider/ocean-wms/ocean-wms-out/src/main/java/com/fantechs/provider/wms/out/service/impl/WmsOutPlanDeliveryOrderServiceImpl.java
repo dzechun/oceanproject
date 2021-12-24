@@ -4,15 +4,12 @@ import cn.hutool.core.date.DateTime;
 import com.fantechs.common.base.entity.security.SysImportAndExportLog;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.BaseOrderFlowDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.imports.WmsOutPlanDeliveryOrderImport;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
-import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -33,7 +30,6 @@ import com.fantechs.provider.wms.out.mapper.WmsOutHtPlanDeliveryOrderMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutPlanDeliveryOrderDetMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutPlanDeliveryOrderMapper;
 import com.fantechs.provider.wms.out.service.WmsOutPlanDeliveryOrderService;
-import com.fantechs.provider.wms.out.util.OrderFlowUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -93,67 +89,33 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
         }
         i = wmsOutPlanDeliveryOrderDetMapper.batchUpdate(wmsOutPlanDeliveryOrderDetDtos);
 
-        //查当前单据类型的所有单据流
-        SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
-        searchBaseOrderFlow.setOrderTypeCode("OUT-PDO");
-        List<BaseOrderFlowDto> baseOrderFlowDtos = baseFeignApi.findList(searchBaseOrderFlow).getData();
-        if (StringUtils.isEmpty(baseOrderFlowDtos)) {
-            throw new BizErrorException("未找到当前单据配置的单据流");
-        }
-
-        //不同单据流分组
-        Map<String, List<WmsOutPlanDeliveryOrderDetDto>> map = new HashMap<>();
+        //拣货作业
+        int lineNumber = 1;
+        List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();
         for (WmsOutPlanDeliveryOrderDetDto wmsOutPlanDeliveryOrderDetDto : wmsOutPlanDeliveryOrderDetDtos) {
-            //查当前单据的下游单据
-            BaseOrderFlow baseOrderFlow = OrderFlowUtil.getOrderFlow(baseOrderFlowDtos, wmsOutPlanDeliveryOrderDetDto.getMaterialId(), null);
-
-            String key = baseOrderFlow.getNextOrderTypeCode();
-            if (map.get(key) == null) {
-                List<WmsOutPlanDeliveryOrderDetDto> diffOrderFlows = new LinkedList<>();
-                diffOrderFlows.add(wmsOutPlanDeliveryOrderDetDto);
-                map.put(key, diffOrderFlows);
-            } else {
-                List<WmsOutPlanDeliveryOrderDetDto> diffOrderFlows = map.get(key);
-                diffOrderFlows.add(wmsOutPlanDeliveryOrderDetDto);
-                map.put(key, diffOrderFlows);
-            }
+            WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+            wmsInnerJobOrderDet.setCoreSourceOrderCode(wmsOutPlanDeliveryOrderDetDto.getCoreSourceOrderCode());
+            wmsInnerJobOrderDet.setSourceOrderCode(wmsOutPlanDeliveryOrderDetDto.getPlanDeliveryOrderCode());
+            wmsInnerJobOrderDet.setCoreSourceId(wmsOutPlanDeliveryOrderDetDto.getCoreSourceId());
+            wmsInnerJobOrderDet.setSourceId(wmsOutPlanDeliveryOrderDetDto.getPlanDeliveryOrderDetId());
+            wmsInnerJobOrderDet.setLineNumber(lineNumber + "");
+            lineNumber++;
+            wmsInnerJobOrderDet.setMaterialId(wmsOutPlanDeliveryOrderDetDto.getMaterialId());
+            wmsInnerJobOrderDet.setPlanQty(wmsOutPlanDeliveryOrderDetDto.getOrderQty());
+            wmsInnerJobOrderDet.setLineStatus((byte) 1);
+            wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
         }
-
-        Set<String> codes = map.keySet();
-        for (String code : codes) {
-            List<WmsOutPlanDeliveryOrderDetDto> planDeliveryOrderDetDtos = map.get(code);
-            if ("OUT-IWK".equals(code)) {
-                //拣货作业
-                int lineNumber = 1;
-                List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();
-                for (WmsOutPlanDeliveryOrderDetDto wmsOutPlanDeliveryOrderDetDto : planDeliveryOrderDetDtos) {
-                    WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
-                    wmsInnerJobOrderDet.setCoreSourceOrderCode(wmsOutPlanDeliveryOrderDetDto.getCoreSourceOrderCode());
-                    wmsInnerJobOrderDet.setSourceOrderCode(wmsOutPlanDeliveryOrderDetDto.getPlanDeliveryOrderCode());
-                    wmsInnerJobOrderDet.setCoreSourceId(wmsOutPlanDeliveryOrderDetDto.getCoreSourceId());
-                    wmsInnerJobOrderDet.setSourceId(wmsOutPlanDeliveryOrderDetDto.getPlanDeliveryOrderDetId());
-                    wmsInnerJobOrderDet.setLineNumber(lineNumber + "");
-                    lineNumber++;
-                    wmsInnerJobOrderDet.setMaterialId(wmsOutPlanDeliveryOrderDetDto.getMaterialId());
-                    wmsInnerJobOrderDet.setPlanQty(wmsOutPlanDeliveryOrderDetDto.getOrderQty());
-                    wmsInnerJobOrderDet.setLineStatus((byte) 1);
-                    wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
-                }
-                WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
-                //wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("OUT-PRO");
-                wmsInnerJobOrder.setSourceSysOrderTypeCode("OUT-PDO");
-                wmsInnerJobOrder.setWarehouseId(warehouseId);
-                wmsInnerJobOrder.setJobOrderType((byte) 2);
-                wmsInnerJobOrder.setWmsInPutawayOrderDets(wmsInnerJobOrderDets);
-                ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
-                if (responseEntity.getCode() != 0) {
-                    throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
-                } else {
-                    i++;
-                }
-            }else {
-                throw new BizErrorException("单据流配置错误");
-            }
+        WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+        //wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("OUT-PRO");
+        wmsInnerJobOrder.setSourceSysOrderTypeCode("OUT-PDO");
+        wmsInnerJobOrder.setWarehouseId(warehouseId);
+        wmsInnerJobOrder.setJobOrderType((byte) 2);
+        wmsInnerJobOrder.setWmsInPutawayOrderDets(wmsInnerJobOrderDets);
+        ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
+        if (responseEntity.getCode() != 0) {
+            throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
+        } else {
+            i++;
         }
 
         return i;
