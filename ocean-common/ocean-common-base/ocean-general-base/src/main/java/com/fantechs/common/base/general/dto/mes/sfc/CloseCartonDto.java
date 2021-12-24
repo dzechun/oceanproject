@@ -16,8 +16,9 @@ public class CloseCartonDto implements Serializable {
 
     @ApiModelProperty(name = "stationId", value = "工位ID", required = true)
     private Long stationId;
-/*    @ApiModelProperty(name = "processId", value = "工序ID", required = true)
+    @ApiModelProperty(name = "processId", value = "工序ID", required = true)
     private Long processId;
+/*
     @ApiModelProperty(name = "annex", value = "扫描附件码", required = true)
     private Boolean annex;*/
     @ApiModelProperty(name = "print", value = "打印条码", required = true)

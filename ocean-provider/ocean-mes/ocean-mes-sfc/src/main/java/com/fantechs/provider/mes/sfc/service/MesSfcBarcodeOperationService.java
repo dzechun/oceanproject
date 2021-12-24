@@ -33,7 +33,7 @@ public interface MesSfcBarcodeOperationService {
      * @param printName
      * @return
      */
-    int updateCartonDescNum(Long productCartonId, BigDecimal cartonDescNum, String packType, Boolean print, String printName);
+    int updateCartonDescNum(Long productCartonId, BigDecimal cartonDescNum, String packType, Boolean print, String printName, Long processId);
 
     /**
      * 包箱作业-检查是否有未关闭包箱

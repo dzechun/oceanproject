@@ -44,6 +44,22 @@ spring:
     #host: 10.182.163.246
     port: 6379
     password: qwe!@#
+
+  rabbitmq:
+    host: 192.168.5.85
+    port: 5672
+    username: admin
+    #password: admin
+    password: StrongPassword
+    # 消息发送至exchange callback
+    publisher-confirms: true
+    # 消息发送至queue 失败才callback
+    publisher-returns: true
+    # 消费消息手动删除
+    listener:
+      simple:
+        acknowledge-mode: manual
+
   jackson:
     date-format: yyyy-MM-dd HH:mm
     time-zone: GMT+8

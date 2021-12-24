@@ -1,7 +1,5 @@
 package com.fantechs.provider.mes.sfc.controller;
 
-import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.PalletWorkScanDto;
 import com.fantechs.common.base.general.dto.mes.sfc.RequestPalletWorkScanDto;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -54,10 +52,11 @@ public class MesSfcPalletWorkController {
     public ResponseEntity submitNoFullPallet(
             @ApiParam(value = "栈板表ID列表", required = true) @RequestBody List<Long> palletIdList,
             @ApiParam(value = "打印条码（0-否 1-是）", required = true) @RequestParam byte printBarcode,
-            @ApiParam(value = "打印名称", required = true) @RequestParam String printName) throws Exception {
+            @ApiParam(value = "打印名称", required = true) @RequestParam String printName,
+            @ApiParam(value = "工序", required = true) @RequestParam Long processId) throws Exception {
 
 
-        int i = mesSfcPalletWorkService.submitNoFullPallet(palletIdList, printBarcode, printName);
+        int i = mesSfcPalletWorkService.submitNoFullPallet(palletIdList, printBarcode, printName, processId);
         return ControllerUtil.returnCRUD(i);
     }
 
@@ -75,10 +74,11 @@ public class MesSfcPalletWorkController {
             @ApiParam(value = "产品栈板ID", required = true) @RequestParam Long productPalletId,
             @ApiParam(value = "包装规格数量", required = true) @RequestParam Double nowPackageSpecQty,
             @ApiParam(value = "是否打印", required = true) @RequestParam Boolean print,
-            @ApiParam(value = "打印名称", required = true) @RequestParam String printName) throws Exception {
+            @ApiParam(value = "打印名称", required = true) @RequestParam String printName,
+            @ApiParam(value = "工序", required = true) @RequestParam Long processId) throws Exception {
 
 
-        int i = mesSfcPalletWorkService.updateNowPackageSpecQty(productPalletId, nowPackageSpecQty, print, printName);
+        int i = mesSfcPalletWorkService.updateNowPackageSpecQty(productPalletId, nowPackageSpecQty, print, printName, processId);
         return ControllerUtil.returnCRUD(i);
     }
 

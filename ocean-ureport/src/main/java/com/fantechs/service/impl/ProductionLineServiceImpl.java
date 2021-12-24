@@ -99,7 +99,7 @@ public class ProductionLineServiceImpl implements ProductionLineService {
 
             //查询当前工单序号
             searchProLineBoard = new SearchProLineBoard();
-            searchProLineBoard.setWorkOrderId(productLineTop.getWorkOrderId());
+            searchProLineBoard.setWorkOrderCode(productLineLeft.getWorkOrderCode());
 //            searchProLineBoard.setStartTime(DateUtils.format(new Date(),"yyyy-MM-dd"));
 //            searchProLineBoard.setEndTime(DateUtils.format(new Date(),"yyyy-MM-dd"));
             searchProLineBoard.setStartTime(searchProductDailyPlan.getPlanDateBegin());
@@ -109,12 +109,13 @@ public class ProductionLineServiceImpl implements ProductionLineService {
                 //下一工单
                 searchProLineBoard.setSeqNum(productDailyPlanModel.getSeqNum() +1);
                 searchProLineBoard.setWorkOrderId(null);
-                productDailyPlanModel = proLineBoardMapper.findNextPlan(searchProLineBoard);
+                ProductDailyPlanModel productDailyPlanModelNext = new ProductDailyPlanModel();
+                productDailyPlanModelNext = proLineBoardMapper.findNextPlan(searchProLineBoard);
 
-                if(productDailyPlanModel != null){
-                    productLineLeft.setNextMaterialName(productDailyPlanModel.getMaterialName());
-                    productLineLeft.setNextscheduledQty(productDailyPlanModel.getScheduledQty().longValue());
-                    productLineLeft.setNextWorkOrderCode(productDailyPlanModel.getWorkOrderCode());
+                if(productDailyPlanModelNext != null){
+                    productLineLeft.setNextMaterialName(productDailyPlanModelNext.getMaterialName());
+                    productLineLeft.setNextscheduledQty(productDailyPlanModelNext.getScheduledQty().longValue());
+                    productLineLeft.setNextWorkOrderCode(productDailyPlanModelNext.getWorkOrderCode());
                 }
             }
             productionLine.setProductLineLeft(productLineLeft);

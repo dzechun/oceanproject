@@ -35,7 +35,7 @@ public class WorkOrderUreportController {
 
 
     @PostMapping("/findList")
-    @ApiModelProperty("月入报表")
+    @ApiModelProperty("生产报表")
     public ResponseEntity<List<WorkOrderUreportDto>> findWorkOrderList(@RequestBody(required = false)SearchWorkOrderUreportDto dto){
         Page<Object> page = PageHelper.startPage(dto.getStartPage(), dto.getPageSize());
         return ControllerUtil.returnDataSuccess(workOrderUreportService.findList(ControllerUtil.dynamicConditionByEntity(dto)), (int)page.getTotal());

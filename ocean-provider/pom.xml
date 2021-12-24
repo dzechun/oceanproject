@@ -37,5 +37,6 @@
         <module>ocean-esop</module>    <!-- esop -->
         <module>ocean-guest</module>   <!-- 定制化模块 -->
         <module>ocean-kreport</module>    <!-- 八马报表 -->
+        <module>ocean-lizi</module>
     </modules>
 </project>
