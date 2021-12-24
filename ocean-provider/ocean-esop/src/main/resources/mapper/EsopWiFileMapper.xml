@@ -57,7 +57,7 @@
             <if test="workInstructionId!=null and workInstructionId!=''">
                 and ewf.work_instruction_id = #{workInstructionId}
             </if>
-            <if test="isDistribut!=null and isDistribut!='' and isDistribut ==0 ">
+            <if test="isDistribut==0 ">
                 and ewf.work_instruction_id is null
             </if>
 
