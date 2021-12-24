@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.mapper.QmsProcessMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.entity.QmsProcessModel">
+        <result column="devote_hour" jdbcType="VARCHAR" property="devoteHour" />
+        <result column="devote_qty" jdbcType="VARCHAR" property="devoteQty" />
+        <result column="not_good_qty" jdbcType="VARCHAR" property="notGoodQty" />
+    </resultMap>
+    <select id="findDevoteQtyList" resultMap="BaseResultMap" parameterType="map">
+        SELECT 1 AS devote_qty,
+        SUBSTRING(msbpr.devote_time,12,2) AS devote_hour
+        FROM mes_sfc_barcode_process_record msbpr
+        <where>
+            <if test="nowDate!=null and nowDate!=''">
+                and date_format(msbpr.devote_time, '%Y-%m-%d') = #{nowDate}
+            </if>
+            <if test="proLineId!=null and proLineId!=''">
+                and msbpr.pro_line_id=#{proLineId}
+            </if>
+            <if test="processIdList !=null and processIdList.size()!=0">
+                and msbpr.process_id in
+                <foreach item="processId" collection="processIdList" open="(" separator="," close=")">
+                    #{processId}
+                </foreach>
+            </if>
+            <if test="orgId!=null and orgId!=''">
+                and msbpr.org_id=#{orgId}
+            </if>
+        </where>
+        order by devote_time ASC
+    </select>
+
+    <select id="findNotGoodList" resultMap="BaseResultMap" parameterType="map">
+        SELECT 1 AS not_good_qty,
+        SUBSTRING(msbpr.in_process_time,12,2) AS devote_hour
+        FROM mes_sfc_barcode_process_record msbpr
+        <where>
+            <if test="nowDate!=null and nowDate!=''">
+                and date_format(msbpr.in_process_time, '%Y-%m-%d') = #{nowDate}
+            </if>
+            <if test="proLineId!=null and proLineId!=''">
+                and msbpr.pro_line_id=#{proLineId}
+            </if>
+            <if test="processIdList !=null and processIdList.size()!=0">
+                and msbpr.process_id in
+                <foreach item="processId" collection="processIdList" open="(" separator="," close=")">
+                    #{processId}
+                </foreach>
+            </if>
+            <if test="orgId!=null and orgId!=''">
+                and msbpr.org_id=#{orgId}
+            </if>
+            and IFNULL(msbpr.barcode_status,'')='0'
+        </where>
+        order by in_process_time ASC
+    </select>
+</mapper>
