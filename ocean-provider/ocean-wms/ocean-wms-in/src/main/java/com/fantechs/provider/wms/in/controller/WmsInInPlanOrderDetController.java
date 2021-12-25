@@ -1,5 +1,6 @@
 package com.fantechs.provider.wms.in.controller;
 
+import com.fantechs.common.base.general.dto.wms.in.WmsInHtInPlanOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDetDto;
 import com.fantechs.common.base.general.entity.wms.in.WmsInInPlanOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInInPlanOrderDet;
@@ -87,9 +88,9 @@ public class WmsInInPlanOrderDetController {
 
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<WmsInInPlanOrderDetDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInInPlanOrderDet searchWmsInInPlanOrderDet) {
+    public ResponseEntity<List<WmsInHtInPlanOrderDetDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInInPlanOrderDet searchWmsInInPlanOrderDet) {
         Page<Object> page = PageHelper.startPage(searchWmsInInPlanOrderDet.getStartPage(),searchWmsInInPlanOrderDet.getPageSize());
-        List<WmsInInPlanOrderDetDto> list = wmsInHtInPlanOrderDetService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInInPlanOrderDet));
+        List<WmsInHtInPlanOrderDetDto> list = wmsInHtInPlanOrderDetService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInInPlanOrderDet));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

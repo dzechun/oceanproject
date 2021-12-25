@@ -1,14 +1,19 @@
 package com.fantechs.common.base.general.entity.wms.inner;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-import javax.persistence.*;
 import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.Date;
+
+;
+;
 
 /**
  * 库存明细
@@ -35,58 +40,11 @@ public class WmsInnerInventoryDet extends ValidGroup implements Serializable {
     private Long storageId;
 
     /**
-     * 物料ID
+     * 来料条码表ID
      */
-    @ApiModelProperty(name="materialId",value = "物料ID")
-    @Column(name = "material_id")
-    private Long materialId;
-
-    /**
-     * 条码
-     */
-    @ApiModelProperty(name="barcode",value = "条码")
-    @Excel(name = "条码", height = 20, width = 30,orderNum="5")
-    private String barcode;
-
-    /**
-     * 物料数量
-     */
-    @ApiModelProperty(name="materialQty",value = "物料数量")
-    @Excel(name = "物料数量", height = 20, width = 30,orderNum="6")
-    @Column(name = "material_qty")
-    private BigDecimal materialQty;
-
-
-    /**
-     * 生产日期
-     */
-    @ApiModelProperty(name="productionDate",value = "生产日期")
-    @Excel(name = "生产日期", height = 20, width = 30,orderNum="7")
-    @Column(name = "production_date")
-    private Date productionDate;
-
-    /**
-     * 生产批次号
-     */
-    @ApiModelProperty(name="productionBatchCode",value = "生产批次号")
-    @Excel(name = "生产批次号", height = 20, width = 30,orderNum="8")
-    @Column(name = "production_batch_code")
-    private String productionBatchCode;
-
-    /**
-     * 供应商ID
-     */
-    @ApiModelProperty(name="supplierId",value = "供应商ID")
-    @Column(name = "supplier_id")
-    private Long supplierId;
-
-    /**
-     * 作业状态(1-已收货、2-在库、3-已拣货、4-已出库 5-已取消)
-     */
-    @ApiModelProperty(name = "jobStatus",value = "作业状态(1-已收货、2-在库、3-已拣货、4-已出库 5-已取消)")
-    @Excel(name = "作业状态(1-已收货、2-在库、3-已拣货、4-已出库 5-已取消)",height = 20,width = 30,orderNum = "9")
-    @Column(name = "job_status")
-    private Byte jobStatus;
+    @ApiModelProperty(name="materialBarcodeId",value = "来料条码表ID")
+    @Column(name = "material_barcode_id")
+    private Long materialBarcodeId;
 
     /**
      * 盘点锁(0-否 1-是)
@@ -223,13 +181,6 @@ public class WmsInnerInventoryDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
     @Column(name = "is_delete")
     private Byte isDelete;
-
-    /**
-     * 合同号
-     */
-    @ApiModelProperty(name = "contractCode",value = "合同号")
-    @Column(name = "contract_code")
-    private String contractCode;
 
     /**
      * 规格

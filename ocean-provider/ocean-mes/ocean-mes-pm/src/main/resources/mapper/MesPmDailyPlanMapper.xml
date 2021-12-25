@@ -58,6 +58,9 @@
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <collection property="mesPmDailyPlanDetDtos" ofType="com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDetDto"
+                column="{dailyPlanId=daily_plan_id}" select="com.fantechs.provider.mes.pm.mapper.MesPmDailyPlanDetMapper.findList">
+    </collection>
   </resultMap>
 
   <select id="findList" parameterType="com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmDailyPlan"

@@ -595,4 +595,46 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
         wmsInnerHtMaterialBarcodeMapper.insertList(htList);
         return wmsInnerMaterialBarcodeMapper.deleteByIds(ids);
     }
+
+
+    @Override
+    public List<WmsInnerMaterialBarcodeDto> findListByCode(List<String> codes) {
+        List<WmsInnerMaterialBarcodeDto> list = new ArrayList<>();
+        for (String code : codes) {
+            //条码
+            Map map = new HashMap();
+            map.put("barcode",code);
+            List<WmsInnerMaterialBarcodeDto> list1 = wmsInnerMaterialBarcodeMapper.findList(map);
+            if(StringUtils.isNotEmpty(list1)){
+                list.addAll(list1);
+            }else{
+                //彩盒码
+                map = new HashMap();
+                map.put("colorBoxCode",code);
+                List<WmsInnerMaterialBarcodeDto> list2 = wmsInnerMaterialBarcodeMapper.findList(map);
+                if(StringUtils.isNotEmpty(list2)){
+                    list.addAll(list2);
+                }else{
+                    //箱码
+                    map = new HashMap();
+                    map.put("cartonCode",code);
+                    List<WmsInnerMaterialBarcodeDto> list3 = wmsInnerMaterialBarcodeMapper.findList(map);
+                    if(StringUtils.isNotEmpty(list3)){
+                        list.addAll(list3);
+                    }else{
+                        //栈板码
+                        map = new HashMap();
+                        map.put("palletCode",code);
+                        List<WmsInnerMaterialBarcodeDto> list4 = wmsInnerMaterialBarcodeMapper.findList(map);
+                        if(StringUtils.isNotEmpty(list4)){
+                            list.addAll(list4);
+                        }else{
+                            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+                        }
+                    }
+                }
+            }
+        }
+        return list;
+    }
 }

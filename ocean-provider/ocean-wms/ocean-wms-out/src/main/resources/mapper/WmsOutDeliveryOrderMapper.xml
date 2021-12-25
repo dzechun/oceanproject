@@ -119,15 +119,15 @@
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,
     bo.organization_name,
-    su.supplier_name,
+    bsu.supplier_name,
     bp.platform_name,
-    sus.supplier_name as 'customer_name'
+    bcu.supplier_name as customer_name
     from wms_out_delivery_order wodo
     LEFT JOIN base_material_owner bmo ON wodo.material_owner_id = bmo.material_owner_id
     LEFT JOIN base_warehouse bw ON wodo.warehouse_id = bw.warehouse_id
     LEFT JOIN base_storage bs ON wodo.storage_id = bs.storage_id
-    LEFT JOIN base_supplier su on  su.supplier_id = wodo.supplier_id
-    LEFT JOIN base_supplier sus on  sus.supplier_id = wodo.customer_id
+    LEFT JOIN base_supplier bsu on  bsu.supplier_id = wodo.supplier_id
+    LEFT JOIN base_supplier bcu on  bcu.supplier_id = wodo.customer_id
     LEFT JOIN base_platform bp on bp.platform_id = wodo.platform_id
     LEFT JOIN sys_user su ON wodo.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON wodo.modified_user_id = sus.user_id
@@ -176,7 +176,7 @@
         and wodo.order_status = #{orderStatus}
       </if>
       <if test="customerName!=null and customerName!=''">
-        and sus.supplier_name like CONCAT('%',#{customerName},'%')
+        and bcu.supplier_name like CONCAT('%',#{customerName},'%')
       </if>
 
       <if test="pickMaterialUserName!=null and pickMaterialUserName!=''">

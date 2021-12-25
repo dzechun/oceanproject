@@ -54,6 +54,7 @@ public class WmsInnerDirectTransferOrderDto extends WmsInnerDirectTransferOrder 
 
     List<WmsInnerDirectTransferOrderDetDto> wmsInnerDirectTransferOrderDetDtos;
 
+    List<WmsInnerMaterialBarcodeReOrderDto> wmsInnerMaterialBarcodeReOrderDtos;
 
     private static final long serialVersionUID = 1L;
 }

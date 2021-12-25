@@ -5,22 +5,22 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
 import com.fantechs.provider.wms.inner.service.WmsInnerInventoryDetService;
+import com.fantechs.provider.wms.inner.service.WmsInnerMaterialBarcodeService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -31,6 +31,8 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
 
     @Resource
     private WmsInnerInventoryDetMapper wmsInnerInventoryDetMapper;
+    @Resource
+    private WmsInnerMaterialBarcodeService wmsInnerMaterialBarcodeService;
 
     @Override
     public List<WmsInnerInventoryDetDto> findList(Map<String, Object> map) {
@@ -134,4 +136,18 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
         return null;
     }
 
+
+    @Override
+    public List<WmsInnerInventoryDto> findListByBarCode(List<String> codes) {
+        //查询出所有sn码
+        List<WmsInnerMaterialBarcodeDto> list = wmsInnerMaterialBarcodeService.findListByCode(codes);
+        List<String> barCodes = new ArrayList<>();
+        for(WmsInnerMaterialBarcodeDto dto : list){
+            if(StringUtils.isNotEmpty(dto.getBarcode()))
+            barCodes.add(dto.getBarcode());
+        }
+        Map map = new HashMap();
+        map.put("codes",barCodes);
+        return wmsInnerInventoryDetMapper.findList(map);
+    }
 }

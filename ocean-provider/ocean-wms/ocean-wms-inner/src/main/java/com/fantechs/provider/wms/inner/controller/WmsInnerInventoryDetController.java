@@ -3,12 +3,8 @@ package com.fantechs.provider.wms.inner.controller;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryLog;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
@@ -21,7 +17,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -84,5 +79,13 @@ public class WmsInnerInventoryDetController {
         } catch (Exception e) {
             throw new BizErrorException(e);
         }
+    }
+
+
+    @ApiOperation("直接调拨查询库位列表")
+    @PostMapping("/findListByBarCode")
+    public ResponseEntity<List<WmsInnerInventoryDto>> findListByBarCode(@ApiParam(value = "查询对象")@RequestBody List<String> codes) {
+        List<WmsInnerInventoryDto> list = wmsInnerInventoryDetService.findListByBarCode(codes);
+        return ControllerUtil.returnDataSuccess(list,list.size());
     }
 }

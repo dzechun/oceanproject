@@ -145,12 +145,19 @@
         <if test="supplierId!=null and supplierId!=''">
             and wimb.supplier_id = #{supplierId}
         </if>
-        <if test="materialBarcodeIdList != null and materialBarcodeIdList.size() > 0">
+        <if test="barCodes != null and barCodes.size() > 0">
             and wimb.material_barcode_id
-            <foreach collection="materialBarcodeIdList" open="in (" close=")" item="item" separator="," index="index">
+            <foreach collection="barCodes" open="in (" close=")" item="item" separator="," index="index">
                 #{item}
             </foreach>
         </if>
+        <if test="materialBarcodeList != null and materialBarcodeList.size() > 0">
+            and wimb.barcode
+            <foreach collection="materialBarcodeList" open="in (" close=")" item="item" separator="," index="index">
+                #{item}
+            </foreach>
+        </if>
+
     </where>
     order by wimb.create_time desc
     </select>

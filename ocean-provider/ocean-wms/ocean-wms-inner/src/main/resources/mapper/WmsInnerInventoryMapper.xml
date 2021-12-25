@@ -1,81 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="inventory_id" jdbcType="BIGINT" property="inventoryId" />
-    <result column="parent_inventory_id" jdbcType="BIGINT" property="parentInventoryId" />
-    <result column="sales_code" jdbcType="VARCHAR" property="salesCode" />
-    <result column="make_code" jdbcType="VARCHAR" property="makeCode" />
-    <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId"/>
-    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
-    <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
-    <result column="job_status" jdbcType="TINYINT" property="jobStatus" />
-    <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="relevance_order_code" jdbcType="VARCHAR" property="relevanceOrderCode" />
-    <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId" />
-    <result column="lock_status" jdbcType="TINYINT" property="lockStatus" />
-    <result column="stock_lock" jdbcType="TINYINT" property="stockLock" />
-    <result column="qc_lock" jdbcType="TINYINT" property="qcLock" />
-    <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />
-    <result column="packing_qty" jdbcType="DECIMAL" property="packingQty" />
-    <result column="inventory_total_qty" jdbcType="DECIMAL" property="inventoryTotalQty" />
-    <result column="package_specification_quantity" jdbcType="DECIMAL" property="packageSpecificationQuantity" />
-    <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
-    <result column="receiving_date" jdbcType="TIMESTAMP" property="receivingDate" />
-    <result column="qc_date" jdbcType="TIMESTAMP" property="qcDate" />
-    <result column="production_date" jdbcType="TIMESTAMP" property="productionDate" />
-    <result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate" />
-    <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
-    <result column="po_code" jdbcType="VARCHAR" property="poCode" />
-    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode" />
-    <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode" />
-    <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="org_id" jdbcType="BIGINT" property="orgId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="job_order_det_id" jdbcType="BIGINT" property="jobOrderDetId"/>
-    <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
-    <result column="spec" jdbcType="VARCHAR" property="spec"/>
-    <result column="purchase_req_order_code" jdbcType="VARCHAR" property="purchaseReqOrderCode"/>
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="inventory_id" jdbcType="BIGINT" property="inventoryId"/>
+        <result column="parent_inventory_id" jdbcType="BIGINT" property="parentInventoryId"/>
+        <result column="sales_code" jdbcType="VARCHAR" property="salesCode"/>
+        <result column="make_code" jdbcType="VARCHAR" property="makeCode"/>
+        <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId"/>
+        <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
+        <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
+        <result column="job_status" jdbcType="TINYINT" property="jobStatus"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="relevance_order_code" jdbcType="VARCHAR" property="relevanceOrderCode"/>
+        <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId"/>
+        <result column="lock_status" jdbcType="TINYINT" property="lockStatus"/>
+        <result column="stock_lock" jdbcType="TINYINT" property="stockLock"/>
+        <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName"/>
+        <result column="packing_qty" jdbcType="DECIMAL" property="packingQty"/>
+        <result column="inventory_total_qty" jdbcType="DECIMAL" property="inventoryTotalQty"/>
+        <result column="package_specification_quantity" jdbcType="DECIMAL" property="packageSpecificationQuantity"/>
+        <result column="pallet_code" jdbcType="VARCHAR" property="palletCode"/>
+        <result column="receiving_date" jdbcType="TIMESTAMP" property="receivingDate"/>
+        <result column="qc_date" jdbcType="TIMESTAMP" property="qcDate"/>
+        <result column="production_date" jdbcType="TIMESTAMP" property="productionDate"/>
+        <result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate"/>
+        <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
+        <result column="po_code" jdbcType="VARCHAR" property="poCode"/>
+        <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+        <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode"/>
+        <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="job_order_det_id" jdbcType="BIGINT" property="jobOrderDetId"/>
+        <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
+        <result column="spec" jdbcType="VARCHAR" property="spec"/>
+        <result column="purchase_req_order_code" jdbcType="VARCHAR" property="purchaseReqOrderCode"/>
+    </resultMap>
 
-  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto" extends="BaseResultMap">
-    <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName" />
-    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
-    <result column="storage_code" jdbcType="VARCHAR" property="storageCode" />
-    <result column="storage_type" jdbcType="TINYINT" property="storageType" />
-    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
-    <result column="material_name" jdbcType="VARCHAR" property="materialName" />
-    <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
-    <result column="inventory_status_name" jdbcType="VARCHAR" property="inventoryStatusName" />
-  </resultMap>
+    <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto"
+               extends="BaseResultMap">
+        <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
+        <result column="storage_type" jdbcType="TINYINT" property="storageType"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="inventory_status_name" jdbcType="VARCHAR" property="inventoryStatusName"/>
+    </resultMap>
 
-  <sql id="Base_Column_List">
+    <sql id="Base_Column_List">
     wii.inventory_id,
     wii.parent_inventory_id,
     wii.sales_code,
     wii.make_code,
-wii.material_owner_id,
-wii.warehouse_id,
-wii.storage_id,
+    wii.material_owner_id,
+    wii.warehouse_id,
+    wii.storage_id,
     wii.job_status,
     wii.material_id,
     wii.relevance_order_code,
     wii.inventory_status_id,
     wii.lock_status,
     wii.stock_lock,
-    wii.qc_lock,
     wii.packing_unit_name,
     wii.packing_qty,
     wii.inventory_total_qty,
@@ -98,168 +98,167 @@ wii.storage_id,
 	wii.modified_user_id,
 	wii.modified_time,
 	wii.is_delete,
-wii.contract_code,
-wii.spec,
-wii.purchase_req_order_code,
-wii.option1,
-wii.option2,
-wii.option3,
-wii.option4,
-wii.option5
+    wii.spec,
+    wii.option1,
+    wii.option2,
+    wii.option3,
+    wii.option4,
+    wii.option5
   </sql>
 
-  <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
-    select <include refid="Base_Column_List"/>,bmo.material_owner_name,bw.warehouse_name,bs.storage_code,bs.storage_type,bm.material_code,bm.material_name,bss.supplier_name,bo.organization_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name
-    ,bis.inventory_status_name,wii.packing_qty * wii.package_specification_quantity
-    from wms_inner_inventory wii
-    LEFT JOIN base_material_owner bmo ON wii.material_owner_id = bmo.material_owner_id
-    LEFT JOIN base_warehouse bw ON wii.warehouse_id = bw.warehouse_id
-    LEFT JOIN base_storage bs ON wii.storage_id = bs.storage_id
-    LEFT JOIN base_material bm ON wii.material_id = bm.material_id
-    LEFT JOIN base_supplier bss ON wii.supplier_id = bss.supplier_id
-    LEFT JOIN sys_user su  ON wii.create_user_id = su.user_id
-    LEFT JOIN sys_user sus ON wii.modified_user_id = sus.user_id
-    LEFT JOIN base_organization bo ON wii.org_id = bo.organization_id
-    LEFT JOIN base_inventory_status bis ON bis.inventory_status_id = wii.inventory_status_id
-    <where>
-      and wii.packing_qty > 0
-      <if test="isStorage!=null and isStorage!='' and isStorage==1">
-        and wii.lock_status=0 and wii.stock_lock=0 and wii.qc_lock=0 and wii.job_status=1
-      </if>
-      <if test="inventoryStatusName!=null and inventoryStatusName != ''">
-        and bis.inventory_status_name = #{inventoryStatusName}
-      </if>
-      <if test="storageType!=null and storageType!=''">
-        and bs.storage_type = #{storageType}
-      </if>
-      <if test="qcLock!=null">
-        and wii.qc_lock = #{qcLock}
-      </if>
-      <if test="lockStatus!=null and lockStatus != ''">
-        and wii.lock_status = #{lockStatus}
-      </if>
-      <if test="jobStatus!=null and jobStatus != ''">
-        and wii.job_status = #{jobStatus}
-      </if>
-      <if test="salesCode!=null and salesCode != ''">
-        and wii.sales_code like CONCAT("%",#{salesCode},"%")
-      </if>
-      <if test="makeCode!=null and makeCode != ''">
-        and wii.make_code like CONCAT("%",#{makeCode},"%")
-      </if>
-      <if test="materialOwnerName!=null and materialOwnerName != ''">
-        and bmo.material_owner_name like CONCAT("%",#{materialOwnerName},"%")
-      </if>
-      <if test="warehouseName!=null and warehouseName != ''">
-        and bw.warehouse_name like CONCAT("%",#{warehouseName},"%")
-      </if>
-      <if test="storageId!=null and storageId != ''">
-        and wii.storage_id = #{storageId}
-      </if>
-      <if test="storageName!=null and storageName != ''">
-        and bs.storage_code like CONCAT("%",#{storageName},"%")
-      </if>
-        <if test="storageCode!=null and storageCode!=''">
-          and bs.storage_code like CONCAT("%",#{storageCode},"%")
+    <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
+        select<include refid="Base_Column_List"/>,
+        bw.warehouse_name,bs.storage_code,bs.storage_type,bm.material_code,bm.material_name,bss.supplier_name,bo.organization_name,su.user_name
+        AS create_user_name, sus.user_name AS modified_user_name,bm.material_desc,bm.material_version,
+        bis.inventory_status_name,wii.packing_qty * wii.package_specification_quantity
+        from wms_inner_inventory wii
+        LEFT JOIN base_warehouse bw ON wii.warehouse_id = bw.warehouse_id
+        LEFT JOIN base_storage bs ON wii.storage_id = bs.storage_id
+        LEFT JOIN base_material bm ON wii.material_id = bm.material_id
+        LEFT JOIN base_supplier bss ON wii.supplier_id = bss.supplier_id
+        LEFT JOIN sys_user su ON wii.create_user_id = su.user_id
+        LEFT JOIN sys_user sus ON wii.modified_user_id = sus.user_id
+        LEFT JOIN base_organization bo ON wii.org_id = bo.organization_id
+        LEFT JOIN base_inventory_status bis ON bis.inventory_status_id = wii.inventory_status_id
+        <where>
+            and wii.packing_qty > 0
+            <if test="isStorage!=null and isStorage!='' and isStorage==1">
+                and wii.lock_status=0 and wii.stock_lock=0 and wii.job_status=1
+            </if>
+            <if test="inventoryStatusName!=null and inventoryStatusName != ''">
+                and bis.inventory_status_name = #{inventoryStatusName}
+            </if>
+            <if test="storageType!=null and storageType!=''">
+                and bs.storage_type = #{storageType}
+            </if>
+            <if test="lockStatus!=null and lockStatus != ''">
+                and wii.lock_status = #{lockStatus}
+            </if>
+            <if test="jobStatus!=null and jobStatus != ''">
+                and wii.job_status = #{jobStatus}
+            </if>
+            <if test="salesCode!=null and salesCode != ''">
+                and wii.sales_code like CONCAT("%",#{salesCode},"%")
+            </if>
+            <if test="makeCode!=null and makeCode != ''">
+                and wii.make_code like CONCAT("%",#{makeCode},"%")
+            </if>
+            <if test="warehouseName!=null and warehouseName != ''">
+                and bw.warehouse_name like CONCAT("%",#{warehouseName},"%")
+            </if>
+            <if test="storageId!=null and storageId != ''">
+                and wii.storage_id = #{storageId}
+            </if>
+            <if test="storageName!=null and storageName != ''">
+                and bs.storage_code like CONCAT("%",#{storageName},"%")
+            </if>
+            <if test="storageCode!=null and storageCode!=''">
+                and bs.storage_code like CONCAT("%",#{storageCode},"%")
+            </if>
+            <if test="materialId!=null and materialId != ''">
+                and wii.material_id = #{materialId}
+            </if>
+            <if test="materialCode!=null and materialCode != ''">
+                and bm.material_code like CONCAT("%",#{materialCode},"%")
+            </if>
+            <if test="materialName!=null and materialName != ''">
+                and bm.material_name like CONCAT("%",#{materialName},"%")
+            </if>
+            <if test="relevanceOrderCode!=null and relevanceOrderCode != ''">
+                and wii.relevance_order_code like CONCAT("%",#{relevanceOrderCode},"%")
+            </if>
+            <if test="palletCode!=null and palletCode != ''">
+                and wii.pallet_code like CONCAT("%",#{palletCode},"%")
+            </if>
+            <if test="receivingDate!=null and receivingDate != ''">
+                and date_format(wii.receiving_date, '%Y-%m-%d')=#{receivingDate}
+            </if>
+            <if test="batchCode!=null and batchCode != ''">
+                and wii.batch_code like CONCAT("%",#{batchCode},"%")
+            </if>
+            <if test="poCode!=null and poCode != ''">
+                and wii.po_code like CONCAT("%",#{poCode},"%")
+            </if>
+            <if test="workOrderCode!=null and workOrderCode != ''">
+                and wii.work_order_code like CONCAT("%",#{workOrderCode},"%")
+            </if>
+            <if test="salesOrderCode!=null and salesOrderCode != ''">
+                and wii.sales_order_code like CONCAT("%",#{salesOrderCode},"%")
+            </if>
+            <if test="inspectionOrderCode!=null and inspectionOrderCode != ''">
+                and wii.inspection_order_code like CONCAT("%",#{inspectionOrderCode},"%")
+            </if>
+            <if test="supplierName!=null and supplierName != ''">
+                and bss.supplier_name like CONCAT("%",#{supplierName},"%")
+            </if>
+            <if test="status!=null">
+                and wii.status=#{status}
+            </if>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(wii.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="productionStartDate!= null and productionStartDate!= '' and productionEndDate!= null and productionEndDate!= ''">
+                and date_format(wii.production_date, '%Y-%m-%d') BETWEEN #{productionStartDate} AND #{productionEndDate}
+            </if>
+            <if test="expiredStartDate!= null and expiredStartDate!= '' and expiredEndDate!= null and expiredEndDate!= ''">
+                and date_format(wii.expired_date, '%Y-%m-%d') BETWEEN #{expiredStartDate} AND #{expiredEndDate}
+            </if>
+            <if test="warehouseId!=null and warehouseId!=''">
+                and wii.warehouse_id = #{warehouseId}
+            </if>
+            <if test="storageCode!=null and storageCode!=''">
+                and bs.storage_code = #{storageCode}
+            </if>
+            <if test="orgId!=null and orgId!=''">
+                and wii.org_id = #{orgId}
+            </if>
+            <if test="inventoryStatusId!=null and inventoryStatusId != ''">
+                and wii.inventory_status_id = #{inventoryStatusId}
+            </if>
+            <if test="jobOrderDetId!=null and jobOrderDetId != ''">
+                and wii.job_order_det_id = #{jobOrderDetId}
+            </if>
+            <if test="jobOrderDetId!=null and jobOrderDetId != ''">
+                and wii.job_order_det_id = #{jobOrderDetId}
+            </if>
+            <if test="contractCode!=null and contractCode!=''">
+                and wii.contract_code like CONCAT('%',#{contractCode},'%')
+            </if>
+            <if test="spec!=null and spec!=''">
+                and wii.spec like CONCAT('%',#{spec},'%')
+            </if>
+            <if test="purchaseReqOrderCode!=null and purchaseReqOrderCode!=''">
+                and wii.purchase_req_order_code like CONCAT('%',#{purchaseReqOrderCode},'%')
+            </if>
+            <if test="option1!=null and option1!=''">
+                and wii.option1 like CONCAT('%',#{option1},'%')
+            </if>
+            <if test="option2!=null and option2!=''">
+                and wii.option2 like CONCAT('%',#{option2},'%')
+            </if>
+            <if test="option3!=null and option3!=''">
+                and wii.option3 like CONCAT('%',#{option3},'%')
+            </if>
+            <if test="option4!=null and option4!=''">
+                and wii.option4 like CONCAT('%',#{option4},'%')
+            </if>
+            <if test="inventoryId!=null and inventoryId != ''">
+                and wii.inventory_id = #{inventoryId}
+            </if>
+        </where>
+        <if test="isStorage!=null and isStorage!='' and isStorage==1">
+            group by wii.storage_id
         </if>
-      <if test="materialId!=null and materialId != ''">
-        and wii.material_id = #{materialId}
-      </if>
-      <if test="materialCode!=null and materialCode != ''">
-        and bm.material_code like CONCAT("%",#{materialCode},"%")
-      </if>
-      <if test="materialName!=null and materialName != ''">
-        and bm.material_name like CONCAT("%",#{materialName},"%")
-      </if>
-      <if test="relevanceOrderCode!=null and relevanceOrderCode != ''">
-        and wii.relevance_order_code like CONCAT("%",#{relevanceOrderCode},"%")
-      </if>
-      <if test="palletCode!=null and palletCode != ''">
-        and wii.pallet_code like CONCAT("%",#{palletCode},"%")
-      </if>
-      <if test="receivingDate!=null and receivingDate != ''">
-        and date_format(wii.receiving_date, '%Y-%m-%d')=#{receivingDate}
-      </if>
-      <if test="batchCode!=null and batchCode != ''">
-        and wii.batch_code like CONCAT("%",#{batchCode},"%")
-      </if>
-      <if test="poCode!=null and poCode != ''">
-        and wii.po_code like CONCAT("%",#{poCode},"%")
-      </if>
-      <if test="workOrderCode!=null and workOrderCode != ''">
-        and wii.work_order_code like CONCAT("%",#{workOrderCode},"%")
-      </if>
-      <if test="salesOrderCode!=null and salesOrderCode != ''">
-        and wii.sales_order_code like CONCAT("%",#{salesOrderCode},"%")
-      </if>
-      <if test="inspectionOrderCode!=null and inspectionOrderCode != ''">
-        and wii.inspection_order_code like CONCAT("%",#{inspectionOrderCode},"%")
-      </if>
-      <if test="supplierName!=null and supplierName != ''">
-        and bss.supplier_name like CONCAT("%",#{supplierName},"%")
-      </if>
-      <if test="status!=null">
-        and wii.status=#{status}
-      </if>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(wii.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>
-    <if test="warehouseId!=null and warehouseId!=''">
-      and wii.warehouse_id = #{warehouseId}
-    </if>
-    <if test="storageCode!=null and storageCode!=''">
-      and bs.storage_code = #{storageCode}
-    </if>
-      <if test="orgId!=null and orgId!=''">
-        and wii.org_id = #{orgId}
-      </if>
-      <if test="inventoryStatusId!=null and inventoryStatusId != ''">
-        and wii.inventory_status_id = #{inventoryStatusId}
-      </if>
-      <if test="jobOrderDetId!=null and jobOrderDetId != ''">
-        and wii.job_order_det_id = #{jobOrderDetId}
-      </if>
-      <if test="jobOrderDetId!=null and jobOrderDetId != ''">
-        and wii.job_order_det_id = #{jobOrderDetId}
-      </if>
-    <if test="contractCode!=null and contractCode!=''">
-      and wii.contract_code like CONCAT('%',#{contractCode},'%')
-    </if>
-    <if test="spec!=null and spec!=''">
-      and wii.spec like CONCAT('%',#{spec},'%')
-    </if>
-    <if test="purchaseReqOrderCode!=null and purchaseReqOrderCode!=''">
-      and wii.purchase_req_order_code like CONCAT('%',#{purchaseReqOrderCode},'%')
-    </if>
-      <if test="option1!=null and option1!=''">
-        and wii.option1 like CONCAT('%',#{option1},'%')
-      </if>
-      <if test="option2!=null and option2!=''">
-        and wii.option2 like CONCAT('%',#{option2},'%')
-      </if>
-      <if test="option3!=null and option3!=''">
-        and wii.option3 like CONCAT('%',#{option3},'%')
-      </if>
-      <if test="option4!=null and option4!=''">
-        and wii.option4 like CONCAT('%',#{option4},'%')
-      </if>
-      <if test="inventoryId!=null and inventoryId != ''">
-        and wii.inventory_id = #{inventoryId}
-      </if>
-    </where>
-    <if test="isStorage!=null and isStorage!='' and isStorage==1">
-      group by wii.storage_id
-    </if>
-    order by wii.create_time desc
-  </select>
+        order by wii.create_time desc
+    </select>
 
-  <update id="batchUpdate" parameterType="java.util.List">
-    <foreach collection="list" item="item" index="index" open="" close="" separator=";">
-      update wms_inner_inventory
-      <set>
-        packing_qty =#{item.packingQty},
-      </set>
-      where inventory_id =#{item.inventoryId}
-    </foreach>
-  </update>
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update wms_inner_inventory
+            <set>
+                packing_qty =#{item.packingQty},
+            </set>
+            where inventory_id =#{item.inventoryId}
+        </foreach>
+    </update>
 </mapper>

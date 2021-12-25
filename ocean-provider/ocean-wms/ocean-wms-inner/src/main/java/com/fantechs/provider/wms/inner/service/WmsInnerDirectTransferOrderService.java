@@ -15,5 +15,7 @@ import java.util.Map;
 public interface WmsInnerDirectTransferOrderService extends IService<WmsInnerDirectTransferOrder> {
     List<WmsInnerDirectTransferOrderDto> findList(Map<String, Object> map);
 
+    WmsInnerDirectTransferOrderDto detail(Long id);
+
     int save(List<PDAWmsInnerDirectTransferOrderDto> pdaWmsInnerDirectTransferOrderDtos);
 }
