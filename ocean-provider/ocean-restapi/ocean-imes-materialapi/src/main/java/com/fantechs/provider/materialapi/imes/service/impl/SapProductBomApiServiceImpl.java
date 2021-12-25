@@ -117,6 +117,7 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
                                     if(StringUtils.isEmpty(materialId)) throw new BizErrorException("未查询到物料信息，物料编码为："+bom.getIDNRK());
                                     BaseProductBomDet baseProductBomDet = new BaseProductBomDet();
                                     baseProductBomDet.setProductBomId(bomData.getProductBomId());
+                                    baseProductBomDet.setPosition(bom.getZWH());
                                     baseProductBomDet.setMaterialId(materialId);
                                     baseProductBomDet.setUsageQty(new BigDecimal(bom.getMENGE().trim()));
                                     baseProductBomDet.setBaseQty(new BigDecimal(bom.getBMENG().trim()));
