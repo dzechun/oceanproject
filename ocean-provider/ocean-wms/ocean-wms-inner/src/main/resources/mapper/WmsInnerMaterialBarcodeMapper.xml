@@ -23,6 +23,7 @@
         <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
         <result column="material_qty" jdbcType="DECIMAL" property="materialQty" />
         <result column="production_time" jdbcType="TIMESTAMP" property="productionTime" />
+        <result column="expired_time" jdbcType="TIMESTAMP" property="expiredTime" />
         <result column="inspection_status" jdbcType="TINYINT" property="inspectionStatus" />
         <result column="barcode_status" jdbcType="TINYINT" property="barcodeStatus" />
         <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId" />
@@ -63,6 +64,7 @@
         wimb.batch_code,
         wimb.material_qty,
         wimb.production_time,
+        wimb.expired_time,
         wimb.label_id,
         wimb.inspection_status,
         wimb.barcode_status,

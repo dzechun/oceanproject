@@ -15,8 +15,6 @@ public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializabl
 
     @ApiModelProperty("库位id")
     private Long storageId;
-    @ApiModelProperty("条码")
-    private String barcode;
     @ApiModelProperty("相关单号")
     private String relevanceOrderCode;
     @ApiModelProperty("是否是不相等 -- 0、相等 1、不相等")
@@ -52,4 +50,16 @@ public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializabl
 
     @ApiModelProperty(name="qcDate",value = "质检日期")
     private String qcDate;
+
+    @ApiModelProperty("SN码")
+    private String barcode;
+
+    @ApiModelProperty("彩盒码")
+    private String colorBoxCode;
+
+    @ApiModelProperty("箱码")
+    private String cartonCode;
+
+    @ApiModelProperty("栈板码")
+    private String palletCode;
 }

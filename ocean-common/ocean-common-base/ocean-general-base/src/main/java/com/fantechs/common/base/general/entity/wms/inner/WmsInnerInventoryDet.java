@@ -50,41 +50,40 @@ public class WmsInnerInventoryDet extends ValidGroup implements Serializable {
      * 盘点锁(0-否 1-是)
      */
     @ApiModelProperty(name = "ifStockLock",value = "盘点锁(0-否 1-是)")
-    @Excel(name = "盘点锁(0-否 1-是)",height = 20,width = 30,orderNum = "10")
     @Column(name = "if_stock_lock")
     private Byte ifStockLock;
 
     /**
-     * 收货日期
+     * 入库日期
      */
-    @ApiModelProperty(name = "receivingDate",value = "收货日期")
-    @Excel(name = "收货日期", height = 20, width = 30,orderNum="11")
+    @ApiModelProperty(name = "receivingDate",value = "入库日期")
+    @Excel(name = "入库日期", height = 20, width = 30,orderNum="17")
     @Column(name = "receiving_date")
     @JSONField(name = "yyyy-MM-dd HH:mm:ss")
     private Date receivingDate;
 
     /**
-     * 收货单号
+     * 入库单号
      */
-    @ApiModelProperty(name="asnCode",value = "收货单号")
-    @Excel(name = "收货单号", height = 20, width = 30,orderNum="12")
+    @ApiModelProperty(name="asnCode",value = "入库单号")
+    @Excel(name = "入库单号", height = 20, width = 30,orderNum="16")
     @Column(name = "asn_code")
     private String asnCode;
 
     /**
-     * 发货日期
+     * 出库日期
      */
-    @ApiModelProperty(name = "deliverDate",value = "发货日期")
-    @Excel(name = "发货日期", height = 20, width = 30,orderNum="13")
+    @ApiModelProperty(name = "deliverDate",value = "出库日期")
+    @Excel(name = "出库日期", height = 20, width = 30,orderNum="19")
     @Column(name = "deliver_date")
     @JSONField(name = "yyyy-MM-dd HH:mm:ss")
     private Date deliverDate;
 
     /**
-     * 出货单号
+     * 出库单号
      */
-    @ApiModelProperty(name="deliveryOrderCode",value = "出货单号")
-    @Excel(name = "出货单号", height = 20, width = 30,orderNum="14")
+    @ApiModelProperty(name="deliveryOrderCode",value = "出库单号")
+    @Excel(name = "出货单号", height = 20, width = 30,orderNum="18")
     @Column(name = "delivery_order_code")
     private String deliveryOrderCode;
 
@@ -121,6 +120,7 @@ public class WmsInnerInventoryDet extends ValidGroup implements Serializable {
      * 条码状态(1-待收货、2-已收货、3-在库、4-已拣选、5-已复核、6-已出库、7-已取消)
      */
     @ApiModelProperty(name = "barcodeStatus",value = "条码状态(1-待收货、2-已收货、3-在库、4-已拣选、5-已复核、6-已出库、7-已取消)")
+    @Excel(name = "条码状态(1-待收货、2-已收货、3-在库、4-已拣选、5-已复核、6-已出库、7-已取消)", height = 20, width = 30,orderNum="5")
     @Column(name = "barcode_status")
     private Byte barcodeStatus;
 
@@ -148,7 +148,7 @@ public class WmsInnerInventoryDet extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="18",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="21",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -164,7 +164,7 @@ public class WmsInnerInventoryDet extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="20",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="23",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;

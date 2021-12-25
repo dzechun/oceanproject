@@ -74,7 +74,8 @@
         select<include refid="Base_Column_List"/>,
         bs.storage_code,bs.warehouse_id,bw.warehouse_name,bo.organization_name,bis.inventory_status_name,
         wimb.barcode as barcode,wimb.color_box_code as colorBoxCode,wimb.carton_code as cartonCode,wimb.pallet_code as palletCode,
-        wimb.batch_code as batchCode,wimb.material_qty as materialQty,wimb.material_id as materialId,
+        wimb.batch_code as batchCode,wimb.material_qty as materialQty,wimb.material_id as materialId,bm.material_code as material_code,
+        bm.material_name as material_name,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name
         from wms_inner_inventory_det wiid
         LEFT JOIN base_inventory_status bis ON bis.inventory_status_id = wiid.inventory_status_id
@@ -88,6 +89,18 @@
         <where>
             <if test="warehouseName!=null and warehouseName!=''">
                 and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
+            </if>
+            <if test="barcode!=null and barcode!=''">
+                and wimb.barcode = #{barcode}
+            </if>
+            <if test="colorBoxCode!=null and colorBoxCode!=''">
+                and wimb.color_box_code = #{colorBoxCode}
+            </if>
+            <if test="cartonCode!=null and cartonCode!=''">
+                and wimb.carton_code = #{cartonCode}
+            </if>
+            <if test="storageCode!=null and storageCode!=''">
+                and wimb.pallet_code = #{palletCode}
             </if>
             <if test="storageId!=null and storageId!='' and notEqualMark!=1">
                 and wiid.storage_id = #{storageId}

@@ -1,9 +1,7 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
@@ -35,7 +33,7 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
 
     @Override
     public List<WmsInnerInventoryDetDto> findList(Map<String, Object> map) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",sysUser.getOrganizationId());
         return wmsInnerInventoryDetMapper.findList(map);
     }
@@ -48,7 +46,7 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int add(List<WmsInnerInventoryDet> wmsInnerInventoryDets) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         for (WmsInnerInventoryDet wmsInnerInventoryDet : wmsInnerInventoryDets) {
             wmsInnerInventoryDet.setCreateTime(new Date());
             wmsInnerInventoryDet.setCreateUserId(sysUser.getUserId());
@@ -68,7 +66,7 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
     @Transactional(rollbackFor = RuntimeException.class)
     @LcnTransaction
     public int subtract(WmsInnerInventoryDet wmsInnerInventoryDet) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         Example example = new Example(WmsInnerInventoryDet.class);
         Example.Criteria criteria = example.createCriteria();
 /*        if(StringUtils.isEmpty(wmsInnerInventoryDet.getMaterialQty()) || wmsInnerInventoryDet.getMaterialQty().compareTo(BigDecimal.ZERO)<1){
@@ -111,21 +109,9 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
         return num;
     }
 
-    /**
-     * 获取当前登录用户
-     * @return
-     */
-    private SysUser currentUser(){
-        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(sysUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-        return sysUser;
-    }
-
     @Override
     public WmsInnerInventoryDet findByOne(String barCode){
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         Example example = new Example(WmsInnerInventoryDet.class);
         example.createCriteria().andEqualTo("barcode",barCode).andEqualTo("orgId",sysUser.getOrganizationId());
         List<WmsInnerInventoryDet> wmsInnerInventoryDet = wmsInnerInventoryDetMapper.selectByExample(example);
