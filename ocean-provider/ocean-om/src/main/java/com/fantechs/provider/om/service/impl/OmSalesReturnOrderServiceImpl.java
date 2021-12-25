@@ -37,6 +37,7 @@ import com.fantechs.provider.om.mapper.ht.OmHtSalesReturnOrderDetMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtSalesReturnOrderMapper;
 import com.fantechs.provider.om.service.OmSalesReturnOrderService;
 import com.fantechs.provider.om.util.OrderFlowUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -150,31 +151,70 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(OmSalesReturnOrder entity) {
-        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        int i =0;
         if(entity.getOrderStatus()>1){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"单据已被操作，无法修改");
         }
         entity.setModifiedTime(new Date());
-        entity.setModifiedUserId(sysUser.getUserId());
-        //删除原有明细
-        Example example = new Example(OmSalesReturnOrderDet.class);
-        example.createCriteria().andEqualTo("salesReturnOrderId",entity.getSalesReturnOrderId());
-        omSalesReturnOrderDetMapper.deleteByExample(example);
-        for (OmSalesReturnOrderDet omSalesReturnOrderDet : entity.getOmSalesReturnOrderDets()) {
-            omSalesReturnOrderDet.setSalesReturnOrderId(entity.getSalesReturnOrderId());
-            omSalesReturnOrderDet.setCreateTime(new Date());
-            omSalesReturnOrderDet.setCreateUserId(sysUser.getUserId());
-            omSalesReturnOrderDet.setModifiedTime(new Date());
-            omSalesReturnOrderDet.setModifiedUserId(sysUser.getUserId());
-            omSalesReturnOrderDet.setOrgId(sysUser.getOrganizationId());
+        entity.setModifiedUserId(user.getUserId());
+        omSalesReturnOrderMapper.updateByPrimaryKeySelective(entity);
+
+        //保存履历表
+        OmHtSalesReturnOrder omHtSalesReturnOrder = new OmHtSalesReturnOrder();
+        BeanUtils.copyProperties(entity, omHtSalesReturnOrder);
+        omHtSalesReturnOrderMapper.insertSelective(omHtSalesReturnOrder);
+        
+        
+        //保存详情表
+        //更新原有明细
+        ArrayList<Long> idList = new ArrayList<>();
+        List<OmSalesReturnOrderDet> list = entity.getOmSalesReturnOrderDets();
+        if(StringUtils.isNotEmpty(list)) {
+            for (OmSalesReturnOrderDet det : list) {
+                if(StringUtils.isEmpty(det.getOrderQty()) || det.getOrderQty().compareTo(BigDecimal.ZERO) == -1)
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"计划数量需大于0");
+                if(StringUtils.isEmpty(det.getReceivingQty()) || det.getReceivingQty().compareTo(BigDecimal.ZERO) == -1)
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"交货数量需大于0");
+                if(det.getOrderQty().compareTo(det.getReceivingQty()) == -1)
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"交货数量不能大于计划数量");
+
+                if (StringUtils.isNotEmpty(det.getSalesReturnOrderId())) {
+                    omSalesReturnOrderDetMapper.updateByPrimaryKey(det);
+                    idList.add(det.getSalesReturnOrderId());
+                }
+            }
         }
-        int num = 0;
-        if(!entity.getOmSalesReturnOrderDets().isEmpty() && entity.getOmSalesReturnOrderDets().size()>0){
-            num+=omSalesReturnOrderDetMapper.insertList(entity.getOmSalesReturnOrderDets());
+
+        //删除更新之外的明细
+        Example example1 = new Example(OmSalesReturnOrderDet.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("purchaseOrderId", entity.getSalesReturnOrderId());
+        if (idList.size() > 0) {
+            criteria1.andNotIn("purchaseOrderDetId", idList);
         }
-        num+=omSalesReturnOrderMapper.updateByPrimaryKeySelective(entity);
-        num+=this.addHt(entity, entity.getOmSalesReturnOrderDets());
-        return num;
+        omSalesReturnOrderDetMapper.deleteByExample(example1);
+
+        //新增剩余的明细
+        if(StringUtils.isNotEmpty(list)){
+            List<OmSalesReturnOrderDet> addlist = new ArrayList<>();
+            for (OmSalesReturnOrderDet det  : list){
+                if (idList.contains(det.getSalesReturnOrderDetId())) {
+                    continue;
+                }
+                det.setSalesReturnOrderId(entity.getSalesReturnOrderId());
+                det.setCreateUserId(user.getUserId());
+                det.setCreateTime(new Date());
+                det.setModifiedUserId(user.getUserId());
+                det.setModifiedTime(new Date());
+                det.setStatus(StringUtils.isEmpty(det.getStatus())?1: det.getStatus());
+                det.setOrgId(user.getOrganizationId());
+                addlist.add(det);
+            }
+            if (StringUtils.isNotEmpty(addlist))
+                omSalesReturnOrderDetMapper.insertList(addlist);
+        }
+        return i;
     }
 
     @Override
