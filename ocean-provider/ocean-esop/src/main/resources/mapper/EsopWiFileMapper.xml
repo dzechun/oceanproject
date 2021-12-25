@@ -60,7 +60,9 @@
             <if test="isDistribut==0 ">
                 and ewf.work_instruction_id is null
             </if>
-
+            <if test="wiFileName!=null and wiFileName!=''">
+                and ewf.wi_file_name like CONCAT('%', #{wiFileName}, '%')
+            </if>
         </where>
     </select>
 

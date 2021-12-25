@@ -47,7 +47,7 @@ public class EsopWiFileServiceImpl extends BaseService<EsopWiFile> implements Es
     public int batchUploadFile(MultipartFile file) {
         Map<String, Object> data = (Map<String, Object>) fileFeignApi.fileUpload(file).getData();
         String path = data.get("url").toString();
-        String fileName = data.get("fileName").toString();
+        String fileName = file.getOriginalFilename();
         List<EsopWiFile> list = new ArrayList<>();
         EsopWiFile esopWiFile = new EsopWiFile();
         esopWiFile.setAccessUrl(path);

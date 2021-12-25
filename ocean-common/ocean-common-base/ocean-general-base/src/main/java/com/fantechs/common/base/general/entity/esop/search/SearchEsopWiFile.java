@@ -14,4 +14,10 @@ public class SearchEsopWiFile extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="isDistribut",value = "是否可分配(0-可分配,1-不能分配)")
     private Byte isDistribut;
+
+    /**
+     * 文件名
+     */
+    @ApiModelProperty(name="wiFileName",value = "文件名")
+    private String wiFileName;
 }
