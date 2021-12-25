@@ -1,7 +1,6 @@
 package com.fantechs.common.base.general.dto.om;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.om.OmHtTransferOrder;
 import com.fantechs.common.base.general.entity.om.OmHtTransferOrderDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -25,14 +24,6 @@ public class OmHtTransferOrderDto extends OmHtTransferOrderDet implements Serial
     private BigDecimal totalQty;
 
     /**
-     * 货主
-     */
-    @Transient
-    @ApiModelProperty(name = "materialOwnerName",value = "货主")
-    @Excel(name = "货主", height = 20, width = 30,orderNum="3")
-    private String materialOwnerName;
-
-    /**
      *调出仓库
      */
     @Transient
@@ -47,34 +38,6 @@ public class OmHtTransferOrderDto extends OmHtTransferOrderDet implements Serial
     @ApiModelProperty(name = "inWarehouseName",value = "调入仓库")
     @Excel(name = "调入仓库", height = 20, width = 30,orderNum="5")
     private String inWarehouseName;
-
-    /**
-     * 总数量
-     */
-    @Transient
-    @ApiModelProperty(name = "countOrderQty",value = "总数量")
-    private BigDecimal countOrderQty;
-
-    /**
-     * 总体积
-     */
-    @Transient
-    @ApiModelProperty(name = "countVolume",value = "总体积")
-    private BigDecimal countVolume;
-
-    /**
-     * 总净重
-     */
-    @Transient
-    @ApiModelProperty(name = "countNetWeight",value = "总净重")
-    private BigDecimal countNetWeight;
-
-    /**
-     * 总毛重
-     */
-    @Transient
-    @ApiModelProperty(name = "countGrossWeight",value = "总毛重")
-    private BigDecimal countGrossWeight;
 
     /**
      * 创建名称

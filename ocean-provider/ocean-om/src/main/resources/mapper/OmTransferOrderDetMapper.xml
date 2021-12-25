@@ -7,12 +7,18 @@
         -->
         <id column="transfer_order_det_id" jdbcType="BIGINT" property="transferOrderDetId"/>
         <result column="transfer_order_id" jdbcType="BIGINT" property="transferOrderId"/>
+        <result column="core_source_order_code" jdbcType="VARCHAR" property="coreSourceOrderCode"/>
+        <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode"/>
+        <result column="core_source_id" jdbcType="BIGINT" property="coreSourceId"/>
+        <result column="source_id" jdbcType="BIGINT" property="sourceId"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="unit_name" jdbcType="VARCHAR" property="unitName"/>
         <result column="order_qty" jdbcType="DECIMAL" property="orderQty"/>
         <result column="production_date" jdbcType="TIMESTAMP" property="productionDate"/>
         <result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate"/>
         <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
+        <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty"/>
+        <result column="if_all_issued" jdbcType="TINYINT" property="ifAllIssued"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
@@ -26,6 +32,8 @@
                type="com.fantechs.common.base.general.dto.om.OmTransferOrderDetDto">
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
         <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
         <result column="volume" jdbcType="DECIMAL" property="volume"/>
         <result column="net_weight" jdbcType="DECIMAL" property="netWeight"/>
@@ -33,16 +41,26 @@
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="transfer_order_code" jdbcType="VARCHAR" property="transferOrderCode"/>
+        <result column="out_warehouse_name" jdbcType="VARCHAR" property="outWarehouseName"/>
+        <result column="in_warehouse_name" jdbcType="VARCHAR" property="inWarehouseName"/>
+        <result column="out_warehouse_id" jdbcType="BIGINT" property="outWarehouseId"/>
     </resultMap>
     <sql id="Base_Column_List">
         otod.transfer_order_det_id,
         otod.transfer_order_id,
+        otod.core_source_order_code,
+        otod.source_order_code,
+        otod.core_source_id,
+        otod.source_id,
         otod.material_id,
         otod.unit_name,
         otod.order_qty,
         otod.production_date,
         otod.expired_date,
         otod.batch_code,
+        otod.total_issue_qty,
+        otod.if_all_issued,
         otod.status,
         otod.is_delete,
         otod.remark,
@@ -53,9 +71,15 @@
         otod.modified_time
   </sql>
     <select id="findList" resultMap="BaseResultMapDto">
-        SELECT<include refid="Base_Column_List"/>,bm.material_code,bm.material_name,bmb.main_unit,IFNULL(bmb.volume,0)
-        as volume,IFNULL(bmb.net_weight,0) as net_weight,IFNULL(bmb.gross_weight,0) as gross_weight,su.user_name as
-        create_user_name,sus.user_name as modified_user_name,bo.organization_name FROM om_transfer_order_det otod
+        SELECT<include refid="Base_Column_List"/>,oto.transfer_order_code,bw.warehouse_id as out_warehouse_id,
+        bw.warehouse_name as out_warehouse_name,bw1.warehouse_name as in_warehouse_name,
+        bm.material_code,bm.material_name,bm.material_desc,bm.material_version,bmb.main_unit,
+        IFNULL(bmb.volume,0) as volume,IFNULL(bmb.net_weight,0) as net_weight,IFNULL(bmb.gross_weight,0) as gross_weight,su.user_name as
+        create_user_name,sus.user_name as modified_user_name,bo.organization_name
+        FROM om_transfer_order_det otod
+        LEFT JOIN om_transfer_order oto ON otod.transfer_order_id = oto.transfer_order_id
+        LEFT JOIN base_warehouse bw ON oto.out_warehouse_id = bw.warehouse_id
+        LEFT JOIN base_warehouse bw1 ON oto.in_warehouse_id = bw1.warehouse_id
         LEFT JOIN base_material bm ON otod.material_id = bm.material_id
         left join base_material_tab bmb ON bm.material_id = bmb.material_id
         left join sys_user su on otod.create_user_id = su.user_id
@@ -67,4 +91,13 @@
             </if>
         </where>
     </select>
+
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="item" separator=";">
+            update om_transfer_order_det otod set
+            otod.total_issue_qty = #{item.totalIssueQty},
+            otod.if_all_issued = #{item.ifAllIssued}
+            where otod.transfer_order_det_id = #{item.transferOrderDetId}
+        </foreach>
+    </update>
 </mapper>
