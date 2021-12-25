@@ -16,4 +16,8 @@ public interface QmsProcessMapper {
 
     List<QmsProcessModel> findNotGoodList(Map<String, Object> map);
 
+    List<QmsProcessModel> findProcessQtyList(Map<String, Object> map);
+
+    List<QmsProcessModel> findProcessNotGoodQtyList(Map<String, Object> map);
+
 }

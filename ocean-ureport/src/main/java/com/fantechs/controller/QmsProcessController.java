@@ -3,6 +3,7 @@ package com.fantechs.controller;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.entity.QmsProcessModelShow;
+import com.fantechs.entity.QmsProcessPassRateModel;
 import com.fantechs.service.QmsProcessService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,6 +38,13 @@ public class QmsProcessController {
     @ApiOperation("中间部分柱状图")
     public ResponseEntity<List<QmsProcessModelShow>> findProcessRateList(){
         List<QmsProcessModelShow> resultList=qmsProcessService.findProcessRateList();
+        return ControllerUtil.returnDataSuccess(resultList,resultList.size());
+    }
+
+    @PostMapping("/findProcessPassRateList")
+    @ApiOperation("一次通过率")
+    public ResponseEntity<List<QmsProcessPassRateModel>> findProcessPassRateList(){
+        List<QmsProcessPassRateModel> resultList=qmsProcessService.findProcessPassRateList();
         return ControllerUtil.returnDataSuccess(resultList,resultList.size());
     }
 
