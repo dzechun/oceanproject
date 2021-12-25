@@ -15,10 +15,7 @@ import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
+import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
@@ -32,10 +29,7 @@ import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
-import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
-import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
-import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
-import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
+import com.fantechs.provider.wms.inner.mapper.*;
 import com.fantechs.provider.wms.inner.service.PickingOrderService;
 import com.fantechs.provider.wms.inner.util.InBarcodeUtil;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
@@ -76,6 +70,10 @@ public class PickingOrderServiceImpl implements PickingOrderService {
     private SecurityFeignApi securityFeignApi;
     @Resource
     private EngFeignApi engFeignApi;
+    @Resource
+    private WmsInnerMaterialBarcodeMapper wmsInnerMaterialBarcodeMapper;
+    @Resource
+    private WmsInnerMaterialBarcodeReOrderMapper wmsInnerMaterialBarcodeReOrderMapper;
 
     private String REDIS_KEY = "PICKINGID:";
 
@@ -110,10 +108,6 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         jobExample.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrderDet.getJobOrderId());
         WmsInnerJobOrder wmsInnerJobOrder = wmsInnerJobOrderMapper.selectOneByExample(jobExample);
 
-        Example inventoryExample = new Example(WmsInnerInventory.class);
-        Example inventoryDetExample = new Example(WmsInnerInventoryDet.class);
-
-
         //判断拣货数量是否等于分配数量
         if (wmsInnerJobOrderDet.getDistributionQty().compareTo(wmsInnerPdaJobOrderDet.getActualQty()) == 0) {
 
@@ -144,7 +138,54 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             log(wmsInnerPdaJobOrderDet,wmsInnerJobOrder,wmsInnerJobOrderDet,2);
         }
 
-        return 1;
+        if (StringUtils.isNotEmpty(wmsInnerPdaJobOrderDet.getInventoryDetList())) {
+
+            List<WmsInnerMaterialBarcodeReOrder> barcodeReOrderList = new ArrayList<>();
+            List<WmsInnerInventoryDet> inventoryDetList = new ArrayList<>();
+            Example example = new Example(WmsInnerMaterialBarcode.class);
+            Example inventoryDetExample = new Example(WmsInnerInventoryDet.class);
+            for (WmsInnerPdaInventoryDetDto wmsInnerPdaInventoryDetDto : wmsInnerPdaJobOrderDet.getInventoryDetList()) {
+
+                if (StringUtils.isNotEmpty(wmsInnerPdaInventoryDetDto.getInventoryDetId())) {
+//                    inventoryDetExample
+                }
+
+                example.createCriteria().andEqualTo("barcode",wmsInnerPdaInventoryDetDto.getBarcode());
+                List<WmsInnerMaterialBarcode> wmsInnerMaterialBarcodes = wmsInnerMaterialBarcodeMapper.selectByExample(example);
+                example.clear();
+                if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodes)) {
+                    WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
+                    wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(wmsInnerMaterialBarcodes.get(0).getMaterialBarcodeId());
+                    wmsInnerMaterialBarcodeReOrder.setOrderId(wmsInnerJobOrder.getJobOrderId());
+                    wmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
+                    wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("OUT-IWK");
+                    wmsInnerMaterialBarcodeReOrder.setOrderCode(wmsInnerJobOrder.getJobOrderCode());
+                    wmsInnerMaterialBarcodeReOrder.setScanStatus((byte) 3);
+                    barcodeReOrderList.add(wmsInnerMaterialBarcodeReOrder);
+                }
+                WmsInnerInventoryDet wmsInnerInventoryDet = new WmsInnerInventoryDet();
+                wmsInnerInventoryDet.setInventoryDetId(wmsInnerPdaInventoryDetDto.getInventoryDetId());
+                wmsInnerInventoryDet.setStorageId(wmsInnerPdaJobOrderDet.getInStorageId());
+                inventoryDetList.add(wmsInnerInventoryDet);
+            }
+            wmsInnerInventoryDetMapper.upddateStroage(inventoryDetList);
+            if (StringUtils.isNotEmpty(barcodeReOrderList)) {
+                wmsInnerMaterialBarcodeReOrderMapper.insertList(barcodeReOrderList);
+            }
+        }
+
+        jobDetExample.clear();
+        jobDetExample.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrder.getJobOrderId())
+                .andNotEqualTo("lineStatus",3);
+        List<WmsInnerJobOrderDet> wmsInnerJobOrderDetList = wmsInnerJobOrderDetMapper.selectByExample(jobDetExample);
+
+        if (StringUtils.isEmpty(wmsInnerJobOrderDetList)) {
+            wmsInnerJobOrder.setOrderStatus((byte) 3);
+        }else {
+            wmsInnerJobOrder.setOrderStatus((byte) 2);
+        }
+
+        return wmsInnerJobOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
     }
 
     public void log (WmsInnerPdaJobOrderDet wmsInnerPdaJobOrderDet,WmsInnerJobOrder wmsInnerJobOrder,WmsInnerJobOrderDet wmsInnerJobOrderDet,Integer status) {
