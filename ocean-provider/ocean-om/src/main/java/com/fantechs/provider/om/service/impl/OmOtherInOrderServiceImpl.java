@@ -269,10 +269,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             for (OmOtherInOrderDet det : list) {
                 if(StringUtils.isEmpty(det.getOrderQty()) || det.getOrderQty().compareTo(BigDecimal.ZERO) == -1)
                     throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"计划数量需大于0");
-                if(StringUtils.isEmpty(det.getReceivingQty()) || det.getReceivingQty().compareTo(BigDecimal.ZERO) == -1)
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"交货数量需大于0");
-                if(det.getOrderQty().compareTo(det.getReceivingQty()) == -1)
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"收货数量不能大于计划数量");
 
                 if (StringUtils.isNotEmpty(det.getOtherInOrderId())) {
                     omOtherInOrderDetMapper.updateByPrimaryKey(det);

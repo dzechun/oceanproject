@@ -166,8 +166,8 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
-        entity.setCreateUserId(user.getUserId());
-        entity.setCreateTime(new Date());
+        entity.setModifiedUserId(user.getUserId());
+        entity.setModifiedTime(new Date());
         int i = omPurchaseOrderMapper.updateByPrimaryKeySelective(entity);
 
         //保存履历表
@@ -183,10 +183,6 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
             for (OmPurchaseOrderDet det : list) {
                 if(StringUtils.isEmpty(det.getOrderQty()) || det.getOrderQty().compareTo(BigDecimal.ZERO) == -1)
                     throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"计划数量需大于0");
-                if(StringUtils.isEmpty(det.getActualQty()) || det.getActualQty().compareTo(BigDecimal.ZERO) == -1)
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"交货数量需大于0");
-                if(det.getOrderQty().compareTo(det.getActualQty()) == -1)
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"交货数量不能大于计划数量");
 
                 if (StringUtils.isNotEmpty(det.getPurchaseOrderId())) {
                     omPurchaseOrderDetMapper.updateByPrimaryKey(det);
