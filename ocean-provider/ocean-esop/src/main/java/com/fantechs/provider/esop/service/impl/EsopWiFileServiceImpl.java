@@ -94,8 +94,9 @@ public class EsopWiFileServiceImpl extends BaseService<EsopWiFile> implements Es
                 throw new BizErrorException("附件不能为空");
             file.setModifiedUserId(user.getUserId());
             file.setModifiedTime(new Date());
-            i = esopWiFileMapper.updateByPrimaryKeySelective(file);
-
+//            i = esopWiFileMapper.updateByPrimaryKeySelective(file);
+            //需要更新null，删除与wi的关联关系
+            i =esopWiFileMapper.updateByPrimaryKey(file);
             EsopHtWiFile esopHtWiFile = new EsopHtWiFile();
             BeanUtils.copyProperties(file, esopHtWiFile);
             htList.add(esopHtWiFile);
