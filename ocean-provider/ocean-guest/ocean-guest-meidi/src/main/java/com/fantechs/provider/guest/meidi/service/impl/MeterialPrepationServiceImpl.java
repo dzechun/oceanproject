@@ -4,14 +4,13 @@ import com.fantechs.common.base.entity.security.SysApiLog;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
-import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.HTTPUtils;
-import com.fantechs.common.base.utils.JsonUtils;
-import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.guest.meidi.entity.MeterialPrepation;
 import com.fantechs.provider.guest.meidi.entity.MeterialPrepationRequest;
 import com.fantechs.provider.guest.meidi.service.MeterialPrepationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,17 +26,17 @@ import java.util.Map;
  */
 @Service
 public class MeterialPrepationServiceImpl implements MeterialPrepationService {
-
+    protected static final Logger logger = LoggerFactory.getLogger(MeterialPrepationServiceImpl.class);
     @Resource
     private SecurityFeignApi securityFeignApi;
 
     private String completedUrl= "http://127.0.0.1:9600/FCS/PDA/MeterialPrepationCompleted";
     private String canceUrl= "http://127.0.0.1:9600/FCS/PDA/MeterialPrepationCance";
-  //  private String completedUrl= "http://127.0.0.1:9023/meidiApi/get";
+ //   private String completedUrl1= "http://127.0.0.1:9023/meidiApi/get";
     @Override
     public int send(MeterialPrepation meterialPrepation) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        System.out.println("---------调用接口-------------");
+        logger.info("---------调用接口-------------");
         if(StringUtils.isEmpty(meterialPrepation.getStorageCode()) || StringUtils.isEmpty())
             throw  new BizErrorException("库位编码或接口请求类型不能为空");
         MeterialPrepationRequest req = new MeterialPrepationRequest();
@@ -59,21 +58,33 @@ public class MeterialPrepationServiceImpl implements MeterialPrepationService {
 
         if("1".equals(meterialPrepation.getType())){
             req.setRequsetName("MeterialPreparationCompleted");
-            req.setRequestCode(meterialPrepation.getStorageCode());
-            System.out.println("---------请求参数-------------"+req);
+            req.setRequestCode(UUIDUtils.getUUID());
+            logger.info("---------请求参数-------------"+req);
             result = HTTPUtils.sendHttp(completedUrl,ControllerUtil.dynamicConditionByEntity(req), header);
             if(StringUtils.isNotEmpty(result)){
                 map =  JsonUtils.jsonToMap(result);
-                System.out.println("---------请求结果map1-------------"+map);
+                logger.info("---------请求结果map1-------------"+map);
+                if("success".equals(map.get("responseMessage"))){
+                    return 0;
+                }else{
+                    throw new BizErrorException("接口请求错误，错误信息为："+map.get("responseData")
+                    +"错误编码为："+map.get("requestCode"));
+                }
             }
         }else if("2".equals(meterialPrepation.getType())){
             req.setRequsetName("MeterialPreparationCancel");
-            req.setRequestCode(meterialPrepation.getStorageCode());
-            System.out.println("---------请求参数-------------"+req);
+            req.setRequestCode(UUIDUtils.getUUID());
+            logger.info("---------请求参数-------------"+req);
             result = HTTPUtils.sendHttp(canceUrl,ControllerUtil.dynamicConditionByEntity(req), header);
             if(StringUtils.isNotEmpty(result)){
                 map = JsonUtils.jsonToMap(result);
-                System.out.println("---------请求结果map2------------"+map);
+                logger.info("---------请求结果map2------------"+map);
+                if("success".equals(map.get("responseMessage"))){
+                    return 0;
+                }else{
+                    throw new BizErrorException("接口请求错误，错误信息为："+map.get("responseData")
+                            +"错误编码为："+map.get("requestCode"));
+                }
             }
         }else{
             throw  new BizErrorException("请求接口类型错误");
@@ -96,7 +107,7 @@ public class MeterialPrepationServiceImpl implements MeterialPrepationService {
      * @param responseData
      * @param requestParameter
      */
-    public void  addlog(Byte result,Long orgId,String responseData,String requestParameter){
+    public void  addlog(Byte result,Long orgId,String requestParameter,String responseData){
         SysApiLog sysApiLog = new SysApiLog();
         sysApiLog.setThirdpartySysName("美的");
         sysApiLog.setCallResult(result);

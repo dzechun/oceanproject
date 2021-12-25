@@ -100,6 +100,7 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
                 }
                 if(StringUtils.isNotEmpty(baseBarcodeRuleSetDtos))
                     mesPmWorkOrder.setBarcodeRuleSetId(baseBarcodeRuleSetDtos.get(0).getBarcodeRuleSetId());
+                mesPmWorkOrder.setBatchCode(restapiWorkOrderApiDto.getCHARG());
                 mesPmWorkOrder.setOrgId(orgId);
                 mesPmWorkOrder.setIsDelete((byte)1);
                 mesPmWorkOrder.setWorkOrderType((byte)0);

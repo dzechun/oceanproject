@@ -47,7 +47,7 @@ public class EsopWiFileServiceImpl extends BaseService<EsopWiFile> implements Es
     public int batchUploadFile(MultipartFile file) {
         Map<String, Object> data = (Map<String, Object>) fileFeignApi.fileUpload(file).getData();
         String path = data.get("url").toString();
-        String fileName = data.get("fileName").toString();
+        String fileName = file.getOriginalFilename();
         List<EsopWiFile> list = new ArrayList<>();
         EsopWiFile esopWiFile = new EsopWiFile();
         esopWiFile.setAccessUrl(path);
@@ -94,8 +94,9 @@ public class EsopWiFileServiceImpl extends BaseService<EsopWiFile> implements Es
                 throw new BizErrorException("附件不能为空");
             file.setModifiedUserId(user.getUserId());
             file.setModifiedTime(new Date());
-            i = esopWiFileMapper.updateByPrimaryKeySelective(file);
-
+//            i = esopWiFileMapper.updateByPrimaryKeySelective(file);
+            //需要更新null，删除与wi的关联关系
+            i =esopWiFileMapper.updateByPrimaryKey(file);
             EsopHtWiFile esopHtWiFile = new EsopHtWiFile();
             BeanUtils.copyProperties(file, esopHtWiFile);
             htList.add(esopHtWiFile);
