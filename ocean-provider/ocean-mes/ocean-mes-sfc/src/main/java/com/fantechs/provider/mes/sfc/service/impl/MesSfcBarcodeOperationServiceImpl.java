@@ -131,6 +131,21 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 .barcode(dto.getBarCode())
                 .nextProcessId(dto.getProcessId())
                 .build());
+        if (mesSfcBarcodeProcess != null) {
+            if (!mesSfcBarcodeProcess.getProLineId().equals(dto.getProLineId())){
+                throw new BizErrorException(ErrorCodeEnum.PDA40012003.getCode(), "该产品条码产线跟该工位产线不匹配");
+            }
+            // 已完成所有过站工序
+            if (mesSfcBarcodeProcess.getNextProcessId().equals(0L)){
+                throw new BizErrorException(ErrorCodeEnum.PDA40012003.getCode(), "该产品条码已完成所有工序过站");
+            }
+            //是否已不良
+            if (StringUtils.isNotEmpty(mesSfcBarcodeProcess.getBarcodeStatus()) && mesSfcBarcodeProcess.getBarcodeStatus().equals((byte)0)){
+                throw new BizErrorException("该产品条码已不良 不可继续");
+            }
+        }else {
+            throw new BizErrorException(ErrorCodeEnum.PDA40012002, orderBarcodeDto.getBarcode());
+        }
 
         boolean b= false;
         //工艺路线跟工序集合
