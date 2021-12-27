@@ -4,20 +4,12 @@ import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
-import com.fantechs.common.base.general.entity.basic.BaseInventoryStatus;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseInventoryStatus;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrderDetSample;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionOrderDet;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
 import com.fantechs.common.base.response.ControllerUtil;
-import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -192,7 +184,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
     public int splitInventory(String inspectionOrderCode,List<QmsInspectionOrderDetSample> unQualifiedBarcodes){
-        SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
+        /*SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
         searchBaseInventoryStatus.setInventoryStatusName("不合格");
         searchBaseInventoryStatus.setNameQueryMark(1);
         List<BaseInventoryStatus> inventoryStatusList1 = baseFeignApi.findList(searchBaseInventoryStatus).getData();
@@ -279,7 +271,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             innerInventoryDto.setInventoryStatusId(inventoryStatusList2.get(0).getInventoryStatusId());
             innerInventoryDto.setPackingQty(qty);
             innerFeignApi.add(innerInventoryDto);
-        }
+        }*/
 
         return 1;
     }
@@ -359,7 +351,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         }
 
         //手动添加变更质检锁
-        if(StringUtils.isNotEmpty(qmsInspectionOrder.getInventoryIds())){
+        /*if(StringUtils.isNotEmpty(qmsInspectionOrder.getInventoryIds())){
             String[] ids = qmsInspectionOrder.getInventoryIds().split(",");
             for(String id : ids){
                 SearchWmsInnerInventory  searchWmsInnerInventory = new SearchWmsInnerInventory();
@@ -389,7 +381,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 }
 
             }
-        }
+        }*/
         return i;
     }
 
@@ -516,7 +508,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     @LcnTransaction
     public int handleInventory(String inspectionOrderCode,Byte inspectionResult){
         //检验结果返写回库存
-        SearchWmsInnerInventory  searchWmsInnerInventory = new SearchWmsInnerInventory();
+        /*SearchWmsInnerInventory  searchWmsInnerInventory = new SearchWmsInnerInventory();
         searchWmsInnerInventory.setInspectionOrderCode(inspectionOrderCode);
         ResponseEntity<List<WmsInnerInventoryDto>> innerInventoryDtoList = innerFeignApi.findList(searchWmsInnerInventory);
         if(StringUtils.isEmpty(innerInventoryDtoList.getData())){
@@ -571,7 +563,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 wmsInnerInventoryDetDto.setQcDate(new Date());
                 innerFeignApi.update(wmsInnerInventoryDetDto);
             }
-        }
+        }*/
 
         return 1;
     }

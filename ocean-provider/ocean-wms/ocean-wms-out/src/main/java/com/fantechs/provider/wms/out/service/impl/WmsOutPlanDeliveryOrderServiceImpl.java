@@ -84,6 +84,9 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
             if(!warehouseId.equals(wmsOutPlanDeliveryOrderDetDto.getWarehouseId())){
                 throw new BizErrorException("所选数据的仓库需一致");
             }
+            if(wmsOutPlanDeliveryOrderDetDto.getIfAllIssued()!=null&&wmsOutPlanDeliveryOrderDetDto.getIfAllIssued()==(byte)1){
+                throw new BizErrorException("物料"+wmsOutPlanDeliveryOrderDetDto.getMaterialCode()+"已下推，不能重复下推");
+            }
             wmsOutPlanDeliveryOrderDetDto.setTotalIssueQty(wmsOutPlanDeliveryOrderDetDto.getOrderQty());
             wmsOutPlanDeliveryOrderDetDto.setIfAllIssued((byte)1);
         }

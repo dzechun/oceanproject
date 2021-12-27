@@ -67,7 +67,7 @@ public class QmsBadnessManageServiceImpl extends BaseService<QmsBadnessManage> i
         SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
         searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode("QMS-MIIO");
         searchWmsInnerMaterialBarcodeReOrder.setOrderId(incomingInspectionOrderId);
-        List<WmsInnerMaterialBarcodeReOrderDto> materialBarcodeReOrderDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder).getData();
+        List<WmsInnerMaterialBarcodeReOrderDto> materialBarcodeReOrderDtos = innerFeignApi.findAll(searchWmsInnerMaterialBarcodeReOrder).getData();
         if(StringUtils.isEmpty(materialBarcodeReOrderDtos)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未找到当前单据对应的条码");
         }
@@ -112,7 +112,7 @@ public class QmsBadnessManageServiceImpl extends BaseService<QmsBadnessManage> i
         SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
         searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode("QMS-MIIO");
         searchWmsInnerMaterialBarcodeReOrder.setOrderId(incomingInspectionOrderId);
-        List<WmsInnerMaterialBarcodeReOrderDto> materialBarcodeReOrderDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder).getData();
+        List<WmsInnerMaterialBarcodeReOrderDto> materialBarcodeReOrderDtos = innerFeignApi.findAll(searchWmsInnerMaterialBarcodeReOrder).getData();
         if(StringUtils.isEmpty(materialBarcodeReOrderDtos)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未找到当前单据对应的条码");
         }

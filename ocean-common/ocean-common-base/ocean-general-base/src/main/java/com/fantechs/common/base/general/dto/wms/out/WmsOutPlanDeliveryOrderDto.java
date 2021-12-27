@@ -1,6 +1,7 @@
 package com.fantechs.common.base.general.dto.wms.out;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import cn.afterturn.easypoi.excel.annotation.ExcelCollection;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutPlanDeliveryOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -49,6 +50,6 @@ public class WmsOutPlanDeliveryOrderDto extends WmsOutPlanDeliveryOrder implemen
      */
     @Transient
     @ApiModelProperty(name = "wmsOutPlanDeliveryOrderDetDtos",value = "出库计划明细")
-    @Excel(name = "出库计划明细", height = 20, width = 30,orderNum="10")
+    @ExcelCollection(name = "出库计划明细", orderNum="10")
     private List<WmsOutPlanDeliveryOrderDetDto> wmsOutPlanDeliveryOrderDetDtos = new ArrayList<>();
 }
