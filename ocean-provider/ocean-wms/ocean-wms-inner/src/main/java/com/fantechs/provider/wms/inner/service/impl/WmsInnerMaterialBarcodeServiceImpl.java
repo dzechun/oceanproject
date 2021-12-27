@@ -604,6 +604,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
             //条码
             Map map = new HashMap();
             map.put("barcode",code);
+            map.put("codeQueryMark",1);
             List<WmsInnerMaterialBarcodeDto> list1 = wmsInnerMaterialBarcodeMapper.findList(map);
             if(StringUtils.isNotEmpty(list1)){
                 list.addAll(list1);
@@ -611,6 +612,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                 //彩盒码
                 map = new HashMap();
                 map.put("colorBoxCode",code);
+                map.put("codeQueryMark",1);
                 List<WmsInnerMaterialBarcodeDto> list2 = wmsInnerMaterialBarcodeMapper.findList(map);
                 if(StringUtils.isNotEmpty(list2)){
                     list.addAll(list2);
@@ -618,6 +620,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                     //箱码
                     map = new HashMap();
                     map.put("cartonCode",code);
+                    map.put("codeQueryMark",1);
                     List<WmsInnerMaterialBarcodeDto> list3 = wmsInnerMaterialBarcodeMapper.findList(map);
                     if(StringUtils.isNotEmpty(list3)){
                         list.addAll(list3);
@@ -625,6 +628,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                         //栈板码
                         map = new HashMap();
                         map.put("palletCode",code);
+                        map.put("codeQueryMark",1);
                         List<WmsInnerMaterialBarcodeDto> list4 = wmsInnerMaterialBarcodeMapper.findList(map);
                         if(StringUtils.isNotEmpty(list4)){
                             list.addAll(list4);
