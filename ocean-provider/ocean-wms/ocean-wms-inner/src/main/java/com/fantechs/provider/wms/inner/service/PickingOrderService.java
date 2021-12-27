@@ -1,9 +1,6 @@
 package com.fantechs.provider.wms.inner.service;
 
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerPdaJobOrderDet;
+import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 
@@ -74,4 +71,6 @@ public interface PickingOrderService {
     WmsInnerInventoryDetDto scan(Long storageId, Long materialId, String barcode);
 
     int pdaSubmit(WmsInnerPdaJobOrderDet wmsInnerPdaJobOrderDet);
+
+    List<WmsInnerJobOrderDetDto> pdaSave(List<WmsInnerPdaInventoryDetDto> list);
 }

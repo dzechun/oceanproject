@@ -1,9 +1,6 @@
 package com.fantechs.provider.wms.inner.controller;
 
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerPdaJobOrderDet;
+import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
@@ -92,6 +89,12 @@ public class PickingOrderController {
     @PostMapping("/pdaSubmit")
     public ResponseEntity pdaSubmit(@RequestBody WmsInnerPdaJobOrderDet wmsInnerPdaJobOrderDet){
         return ControllerUtil.returnCRUD(pickingOrderService.pdaSubmit(wmsInnerPdaJobOrderDet));
+    }
+
+    @ApiOperation("pda保存")
+    @PostMapping("/pdaSave")
+    public ResponseEntity<List<WmsInnerJobOrderDetDto>> pdaSave(@RequestBody List<WmsInnerPdaInventoryDetDto> list){
+        return ControllerUtil.returnDataSuccess(pickingOrderService.pdaSave(list),list.size());
     }
 
 }
