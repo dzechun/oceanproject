@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.ews.mapper.EwsWarningEventConfigMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.ews.EwsWarningEventConfig">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="warning_event_config_id" jdbcType="BIGINT" property="warningEventConfigId" />
+    <result column="warning_event_id_code" jdbcType="VARCHAR" property="warningEventIdCode" />
+    <result column="warning_event_name" jdbcType="VARCHAR" property="warningEventName" />
+    <result column="warning_event_desc" jdbcType="VARCHAR" property="warningEventDesc" />
+    <result column="object_name" jdbcType="VARCHAR" property="objectName" />
+    <result column="object_type" jdbcType="VARCHAR" property="objectType" />
+    <result column="send_parameter" jdbcType="VARCHAR" property="sendParameter" />
+    <result column="calling_method" jdbcType="TINYINT" property="callingMethod" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="data_interaction_type" jdbcType="TINYINT" property="dataInteractionType" />
+    <result column="interval_time" jdbcType="VARCHAR" property="intervalTime" />
+    <result column="execute_status" jdbcType="TINYINT" property="executeStatus" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.ews.EwsWarningEventConfigDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+  </resultMap>
+  <sql id="base_column_list">
+ewec.warning_event_config_id,
+    ewec.warning_event_id_code,
+    ewec.warning_event_name,
+    ewec.warning_event_desc,
+ewec.object_name,
+ewec.object_type,
+ewec.send_parameter,
+ewec.calling_method,
+ewec.url,
+ewec.data_interaction_type,
+ewec.interval_time,
+ewec.execute_status,
+ewec.status,
+ewec.remark,
+ewec.org_id,
+ewec.create_user_id,
+ewec.create_time,
+ewec.modified_user_id,
+ewec.modified_time,
+ewec.option1,
+ewec.option2,
+ewec.option3
+  </sql>
+  <select id="findList" resultMap="BaseResultMapDto">
+    select <include refid="base_column_list"/>,su.user_name AS create_user_name,sus.user_name AS modified_user_name,bo.organization_name
+    FROM ews_warning_event_config ewec
+    LEFT JOIN sys_user su ON ewec.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON ewec.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON ewec.org_id = bo.organization_id
+    <where>
+        <if test="warningEventConfigId!=null and warningEventConfigId!=''">
+          and ewec.warning_event_config_id = #{warningEventConfigId}
+        </if>
+        <if test="warningEventIdCode!=null and warningEventIdCode!=''">
+          and ewec.warning_event_id_code like CONCAR('%',#{warningEventIdCode},'%')
+        </if>
+        <if test="warningEventName!=null and warningEventName!=''">
+          and ewec.warning_event_name like CONCAT('%',#{warningEventName},'%')
+        </if>
+    </where>
+    order by ewec.create_time desc
+  </select>
+</mapper>
