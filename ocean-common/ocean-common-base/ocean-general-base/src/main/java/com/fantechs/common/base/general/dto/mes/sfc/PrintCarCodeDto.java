@@ -40,4 +40,7 @@ public class PrintCarCodeDto implements Serializable {
 
     @ApiModelProperty(name = "printName", value = "打印机名称")
     private String printName;
+
+    @ApiModelProperty(name = "packingQty",value = "装箱数量")
+    private String packingQty;
 }

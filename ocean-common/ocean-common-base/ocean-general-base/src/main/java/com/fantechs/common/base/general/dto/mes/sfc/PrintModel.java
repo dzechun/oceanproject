@@ -69,4 +69,7 @@ public class PrintModel implements Serializable {
 
     //二维码内容
     private String qrCode;
+
+    @ApiModelProperty(name = "packingQty",value = "装箱数量")
+    private String packingQty;
 }
