@@ -2,7 +2,6 @@ package com.fantechs.provider.wms.inner.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -57,8 +56,8 @@ public class WmsInnerInventoryDetController {
 
     @ApiOperation("减库存明细")
     @PostMapping("/subtract")
-    public ResponseEntity subtract(@RequestBody WmsInnerInventoryDet wmsInnerInventoryDet){
-        return ControllerUtil.returnCRUD(wmsInnerInventoryDetService.subtract(wmsInnerInventoryDet));
+    public ResponseEntity subtract(@RequestBody WmsInnerInventoryDetDto wmsInnerInventoryDetDto){
+        return ControllerUtil.returnCRUD(wmsInnerInventoryDetService.subtract(wmsInnerInventoryDetDto));
     }
 
     @ApiOperation("按条件查询明细")
@@ -84,8 +83,8 @@ public class WmsInnerInventoryDetController {
 
     @ApiOperation("直接调拨查询库位列表")
     @PostMapping("/findListByBarCode")
-    public ResponseEntity<List<WmsInnerInventoryDto>> findListByBarCode(@ApiParam(value = "查询对象")@RequestBody List<String> codes) {
-        List<WmsInnerInventoryDto> list = wmsInnerInventoryDetService.findListByBarCode(codes);
+    public ResponseEntity<List<WmsInnerInventoryDetDto>> findListByBarCode(@ApiParam(value = "查询对象")@RequestBody List<String> codes) {
+        List<WmsInnerInventoryDetDto> list = wmsInnerInventoryDetService.findListByBarCode(codes);
         return ControllerUtil.returnDataSuccess(list,list.size());
     }
 }

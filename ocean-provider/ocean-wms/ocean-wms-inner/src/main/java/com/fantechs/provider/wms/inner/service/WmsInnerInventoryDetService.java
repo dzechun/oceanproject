@@ -1,7 +1,6 @@
 package com.fantechs.provider.wms.inner.service;
 
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.support.IService;
 
@@ -17,9 +16,9 @@ public interface WmsInnerInventoryDetService extends IService<WmsInnerInventoryD
 
     int add(List<WmsInnerInventoryDet> wmsInnerInventoryDets);
 
-    int subtract(WmsInnerInventoryDet wmsInnerInventoryDet);
+    int subtract(WmsInnerInventoryDetDto wmsInnerInventoryDetDto);
 
     WmsInnerInventoryDet findByOne(String barCode);
 
-    List<WmsInnerInventoryDto> findListByBarCode(List<String> codes);
+    List<WmsInnerInventoryDetDto> findListByBarCode(List<String> codes);
 }

@@ -115,13 +115,14 @@ public class InBarcodeUtil {
         if (StringUtils.isNotEmpty(inventoryStatusId)){
             list = list.stream().filter(li->li.getInventoryStatusId().equals(inventoryStatusId)).collect(Collectors.toList());
         }
-        BigDecimal totalQty =list.stream()
+/*        BigDecimal totalQty =list.stream()
                 .map(WmsInnerInventoryDet::getMaterialQty)
                 .reduce(BigDecimal.ZERO,BigDecimal::add);
         if(totalQty.compareTo(BigDecimal.ZERO)==0){
             throw new BizErrorException("暂无入库数量");
         }
-        return totalQty;
+        return totalQty;*/
+        return BigDecimal.ZERO;
     }
 
     /**

@@ -2,8 +2,8 @@ package com.fantechs.provider.wms.inner.service.impl;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.support.BaseService;
@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -59,53 +60,53 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
 
     /**
      * 减库存明细
-     * @param wmsInnerInventoryDet
+     * @param wmsInnerInventoryDetDto
      * @return
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     @LcnTransaction
-    public int subtract(WmsInnerInventoryDet wmsInnerInventoryDet) {
+    public int subtract(WmsInnerInventoryDetDto wmsInnerInventoryDetDto) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         Example example = new Example(WmsInnerInventoryDet.class);
         Example.Criteria criteria = example.createCriteria();
-/*        if(StringUtils.isEmpty(wmsInnerInventoryDet.getMaterialQty()) || wmsInnerInventoryDet.getMaterialQty().compareTo(BigDecimal.ZERO)<1){
+        if(StringUtils.isEmpty(wmsInnerInventoryDetDto.getMaterialQty()) || wmsInnerInventoryDetDto.getMaterialQty().compareTo(BigDecimal.ZERO)<1){
             throw new BizErrorException("出库数量错误");
         }
-        if(StringUtils.isNotEmpty(wmsInnerInventoryDet.getBarcode())){
-            criteria.andEqualTo("barcode",wmsInnerInventoryDet.getBarcode());
+        if(StringUtils.isNotEmpty(wmsInnerInventoryDetDto.getMaterialBarcodeId())){
+            criteria.andEqualTo("materialBarcodeId",wmsInnerInventoryDetDto.getMaterialBarcodeId());
         }
-        if(StringUtils.isNotEmpty(wmsInnerInventoryDet.getStorageId())){
-            criteria.andEqualTo("storageId",wmsInnerInventoryDet.getStorageId());
+        if(StringUtils.isNotEmpty(wmsInnerInventoryDetDto.getStorageId())){
+            criteria.andEqualTo("storageId",wmsInnerInventoryDetDto.getStorageId());
         }
-        if(StringUtils.isNotEmpty(wmsInnerInventoryDet.getMaterialId())){
-            criteria.andEqualTo("materialId",wmsInnerInventoryDet.getMaterialId());
+        if(StringUtils.isNotEmpty(wmsInnerInventoryDetDto.getMaterialId())){
+            criteria.andEqualTo("materialId",wmsInnerInventoryDetDto.getMaterialId());
         }
-        if(StringUtils.isNotEmpty(wmsInnerInventoryDet.getAsnCode())){
-            criteria.andEqualTo("asnCode",wmsInnerInventoryDet.getAsnCode());
+        if(StringUtils.isNotEmpty(wmsInnerInventoryDetDto.getAsnCode())){
+            criteria.andEqualTo("asnCode",wmsInnerInventoryDetDto.getAsnCode());
         }
-        if(StringUtils.isNotEmpty(wmsInnerInventoryDet.getDeliveryOrderCode())){
-            criteria.andEqualTo("deliveryOrderCode",wmsInnerInventoryDet.getDeliveryOrderCode());
+        if(StringUtils.isNotEmpty(wmsInnerInventoryDetDto.getDeliveryOrderCode())){
+            criteria.andEqualTo("deliveryOrderCode",wmsInnerInventoryDetDto.getDeliveryOrderCode());
         }
         criteria.andEqualTo("orgId",sysUser.getOrganizationId());
         List<WmsInnerInventoryDet> wms = wmsInnerInventoryDetMapper.selectByExample(example);
-        BigDecimal qty = wmsInnerInventoryDet.getMaterialQty();*/
+        BigDecimal qty = wmsInnerInventoryDetDto.getMaterialQty();
         int num=0;
-/*        for (WmsInnerInventoryDet wm : wms) {
+        for (WmsInnerInventoryDet wm : wms) {
             if(qty.compareTo(BigDecimal.ZERO)==0){
                 break;
             }
-                if(qty.compareTo(wmsInnerInventoryDet.getMaterialQty())==1){
-                    if(qty.compareTo(wmsInnerInventoryDet.getMaterialQty())==1){
+                if(qty.compareTo(wmsInnerInventoryDetDto.getMaterialQty())==1){
+                    if(qty.compareTo(wmsInnerInventoryDetDto.getMaterialQty())==1){
                         //删除记录
-                        wmsInnerInventoryDetMapper.deleteByPrimaryKey(wmsInnerInventoryDet.getInventoryDetId());
+                        wmsInnerInventoryDetMapper.deleteByPrimaryKey(wmsInnerInventoryDetDto.getInventoryDetId());
                     }else{
-                        wmsInnerInventoryDet.setMaterialQty(wmsInnerInventoryDet.getMaterialQty().subtract(qty));
+                        wmsInnerInventoryDetDto.setMaterialQty(wmsInnerInventoryDetDto.getMaterialQty().subtract(qty));
                     }
-                    qty.subtract(wmsInnerInventoryDet.getMaterialQty());
+                    qty.subtract(wmsInnerInventoryDetDto.getMaterialQty());
                 }
                 num+=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wm);
-        }*/
+        }
         return num;
     }
 
@@ -121,18 +122,38 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
         return null;
     }
 
-
+    /**
+     * 查询对应条码的库存(箱码只查询到箱码，栈板码只查询到栈板码，不查询下一级)
+     * @param codes
+     * @return
+     */
     @Override
-    public List<WmsInnerInventoryDto> findListByBarCode(List<String> codes) {
-        //查询出所有sn码
+    public List<WmsInnerInventoryDetDto> findListByBarCode(List<String> codes) {
         List<WmsInnerMaterialBarcodeDto> list = wmsInnerMaterialBarcodeService.findListByCode(codes);
-        List<String> barCodes = new ArrayList<>();
-        for(WmsInnerMaterialBarcodeDto dto : list){
-            if(StringUtils.isNotEmpty(dto.getBarcode()))
-            barCodes.add(dto.getBarcode());
+        List<Long> barCodes = new ArrayList<>();
+        if(StringUtils.isNotEmpty(list)){
+            for(String code : codes){
+                for(WmsInnerMaterialBarcodeDto dto : list) {
+                    if (code.equals(dto.getBarcode())) {
+                        barCodes.add(dto.getMaterialBarcodeId());
+                    }else if(code.equals(dto.getColorBoxCode())){
+                        //彩盒码,箱码为空
+                        if(StringUtils.isEmpty(dto.getBarcode()))
+                            barCodes.add(dto.getMaterialBarcodeId());
+                    }else if(code.equals(dto.getCartonCode())){
+                        //箱码,箱码为空
+                        if(StringUtils.isEmpty(dto.getBarcode()) ||  StringUtils.isEmpty(dto.getColorBoxCode()))
+                            barCodes.add(dto.getMaterialBarcodeId());
+                    }else if(code.equals(dto.getPalletCode())){
+                        //栈板码,箱码为空
+                        if(StringUtils.isEmpty(dto.getBarcode()) ||  StringUtils.isEmpty(dto.getColorBoxCode()) || StringUtils.isEmpty(dto.getCartonCode()))
+                            barCodes.add(dto.getMaterialBarcodeId());
+                    }
+                }
+            }
         }
         Map map = new HashMap();
-        map.put("codes",barCodes);
+        map.put("materialBarcodeIdList",barCodes);
         return wmsInnerInventoryDetMapper.findList(map);
     }
 }

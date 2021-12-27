@@ -31,6 +31,12 @@ public class SearchWmsInnerJobOrder extends BaseQuery implements Serializable {
     private String sourceSysOrderTypeCode;
 
     /**
+     * 来源大类(1-系统下推 2-自建 3-第三方系统)
+     */
+    @ApiModelProperty(name="sourceBigType",value = "来源大类(1-系统下推 2-自建 3-第三方系统)")
+    private Byte sourceBigType;
+
+    /**
      * 仓库
      */
     @ApiModelProperty(name="warehouseName",value = "仓库")

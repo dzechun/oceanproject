@@ -8,6 +8,7 @@
         <id column="job_order_id" jdbcType="BIGINT" property="jobOrderId" />
         <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="coreSourceSysOrderTypeCode" />
         <result column="source_sys_order_type_code" jdbcType="VARCHAR" property="sourceSysOrderTypeCode" />
+        <result column="source_big_type" jdbcType="TINYINT" property="sourceBigType" />
         <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
         <result column="worker_id" jdbcType="BIGINT" property="workerId" />
         <result column="job_order_code" jdbcType="VARCHAR" property="jobOrderCode" />
@@ -48,6 +49,7 @@
         wipo.job_order_id,
         wipo.core_source_sys_order_type_code,
         wipo.source_sys_order_type_code,
+        wipo.source_big_type,
         wipo.warehouse_id,
         wipo.worker_id,
         wipo.job_order_code,
@@ -104,6 +106,10 @@
 
             <if test="sourceSysOrderTypeCode!=null and sourceSysOrderTypeCode!=''">
                 and wipo.source_sys_order_type_code = #{sourceSysOrderTypeCode}
+            </if>
+
+            <if test="sourceBigType!=null and sourceBigType!=''">
+                and wipo.source_big_type = #{sourceBigType}
             </if>
 
             <if test="workName!=null and workName!=''">

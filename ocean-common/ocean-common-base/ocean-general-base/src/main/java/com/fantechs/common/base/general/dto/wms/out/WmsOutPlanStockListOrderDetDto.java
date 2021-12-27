@@ -25,6 +25,28 @@ public class WmsOutPlanStockListOrderDetDto extends WmsOutPlanStockListOrderDet 
     private String workOrderCode;
 
     /**
+     * 备料计划单号
+     */
+    @Transient
+    @ApiModelProperty(name="planStockListOrderCode",value = "备料计划单号")
+    private String planStockListOrderCode;
+
+    /**
+     * 仓库ID
+     */
+    @Transient
+    @ApiModelProperty(name="warehouseId",value = "仓库ID")
+    private Long warehouseId;
+
+    /**
+     * 核心单据编码
+     */
+    @Transient
+    @ApiModelProperty(name="coreSourceSysOrderTypeCode",value = "核心单据编码")
+    private String coreSourceSysOrderTypeCode;
+
+
+    /**
      * 产品编码.
      */
     @Transient

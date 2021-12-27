@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -95,17 +96,17 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                 Example example2 = new Example(WmsInnerMaterialBarcode.class);
                 Example.Criteria criteria2 = example2.createCriteria();
                 criteria2.andEqualTo("materialId", dto.getMaterialId());
-                criteria2.andEqualTo("barcode", det.getBarcode());
+                criteria2.andEqualTo("materialBarcodeId", det.getMaterialBarcodeId());
                 List<WmsInnerMaterialBarcode> wmsInnerMaterialBarcodes = wmsInnerMaterialBarcodeMapper.selectByExample(example2);
                 if(StringUtils.isNotEmpty(wmsInnerMaterialBarcodes)){
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到对应的物料条码，条码为："+det.getBarcode());
                 }
 
-                //查询库位条码
+                //查询库位条码,变更数量
                 Example example = new Example(WmsInnerInventoryDet.class);
                 Example.Criteria criteria = example.createCriteria();
                 criteria.andEqualTo("outStorageId", dto.getOutStorageId());
-                criteria.andEqualTo("barcode", det.getBarcode());
+                criteria.andEqualTo("materialBarcodeId", det.getMaterialBarcodeId());
                 criteria.andEqualTo("materialId", dto.getMaterialId());
                 List<WmsInnerInventoryDet> wmsInnerInventoryDets = wmsInnerInventoryDetMapper.selectByExample(example);
                 if(StringUtils.isEmpty(wmsInnerInventoryDets)){
@@ -146,23 +147,36 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                 wmsInnerMaterialBarcodeReOrder.setModifiedTime(new Date());
                 list.add(wmsInnerMaterialBarcodeReOrder);
 
+
+                //更新库存,默认一个箱码或者栈板码下只有一个一种物料类型
+                //更换到jobOrder表后,子表存在批次号,可考虑移到循环外
+                Example example1 = new Example(WmsInnerInventory.class);
+                Example.Criteria criteria1 = example1.createCriteria();
+                criteria1.andEqualTo("storageId", dto.getOutStorageId())
+                        .andEqualTo("batchCode", wmsInnerMaterialBarcodes.get(0).getBatchCode())
+                        .andEqualTo("materialId", dto.getMaterialId());
+                List<WmsInnerInventory> wmsInnerInventorys = wmsInnerInventoryMapper.selectByExample(example1);
+                if(StringUtils.isEmpty(wmsInnerInventorys)){
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到移出库位");
+                }
+                WmsInnerInventory wmsInnerInventory = wmsInnerInventorys.get(0);
+                wmsInnerInventory.setInventoryTotalQty(wmsInnerInventory.getInventoryTotalQty().subtract(new BigDecimal(1)));
+                wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
+
+                Example example3 = new Example(WmsInnerInventory.class);
+                Example.Criteria criteria3 = example1.createCriteria();
+                criteria3.andEqualTo("storageId", dto.getInStorageId())
+                        .andEqualTo("batchCode", wmsInnerMaterialBarcodes.get(0).getBatchCode())
+                        .andEqualTo("materialId", dto.getMaterialId());
+                List<WmsInnerInventory> inWmsInnerInventorys = wmsInnerInventoryMapper.selectByExample(example3);
+                if(StringUtils.isEmpty(inWmsInnerInventorys)){
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到移出库位");
+                }
+                WmsInnerInventory inWmsInnerInventory = wmsInnerInventorys.get(0);
+                inWmsInnerInventory.setInventoryTotalQty(inWmsInnerInventory.getInventoryTotalQty().add(new BigDecimal(1)));
+                wmsInnerInventoryMapper.updateByPrimaryKeySelective(inWmsInnerInventory);
+
             }
-
-            //TODO 需要修改移入、移除库位数量  锁定状态   判断移入库位类型
-            //默认一个箱码或者栈板码下只有一个一种物料类型
-            Example example1 = new Example(WmsInnerInventory.class);
-            Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andEqualTo("storageId", dto.getOutStorageId())
-                    .andEqualTo("batchCode", "")
-                    .andEqualTo("materialId", dto.getMaterialId());
-            List<WmsInnerInventory> wmsInnerInventorys = wmsInnerInventoryMapper.selectByExample(example1);
-            if(StringUtils.isEmpty(wmsInnerInventorys)){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到移出库位");
-            }
-
-
-
-
 
         }
         if(StringUtils.isNotEmpty(list)){
