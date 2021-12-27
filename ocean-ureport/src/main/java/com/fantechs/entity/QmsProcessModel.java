@@ -33,4 +33,10 @@ public class QmsProcessModel implements Serializable {
     @ApiModelProperty(name="notGoodQty" ,value="不良数")
     private int notGoodQty;
 
+    /**
+     * 工序ID
+     */
+    @ApiModelProperty(name="processId",value = "工序ID")
+    private Long processId;
+
 }

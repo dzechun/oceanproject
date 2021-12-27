@@ -2,6 +2,7 @@ package com.fantechs.service;
 
 import com.fantechs.entity.QmsProcessModel;
 import com.fantechs.entity.QmsProcessModelShow;
+import com.fantechs.entity.QmsProcessPassRateModel;
 
 import java.util.List;
 import java.util.Map;
@@ -18,4 +19,10 @@ public interface QmsProcessService {
     List<QmsProcessModelShow> findList();
 
     List<QmsProcessModelShow> findProcessRateList();
+
+    List<QmsProcessModel> findProcessQtyList(Map<String, Object> map);
+
+    List<QmsProcessModel> findProcessNotGoodQtyList(Map<String, Object> map);
+
+    List<QmsProcessPassRateModel> findProcessPassRateList();
 }

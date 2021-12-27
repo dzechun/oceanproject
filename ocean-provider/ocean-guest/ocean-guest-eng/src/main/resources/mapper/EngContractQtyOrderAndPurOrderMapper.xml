@@ -180,6 +180,6 @@
         and epro.purchase_req_order_code is not null
       </if>
     </where>
-    order by ecqo.create_time desc
+    order by ecqo.contract_qty_order_id desc
   </select>
 </mapper>

@@ -5,6 +5,7 @@
         <result column="devote_hour" jdbcType="VARCHAR" property="devoteHour" />
         <result column="devote_qty" jdbcType="VARCHAR" property="devoteQty" />
         <result column="not_good_qty" jdbcType="VARCHAR" property="notGoodQty" />
+        <result column="process_id" jdbcType="BIGINT" property="processId" />
     </resultMap>
     <select id="findDevoteQtyList" resultMap="BaseResultMap" parameterType="map">
         SELECT 1 AS devote_qty,
@@ -54,4 +55,43 @@
         </where>
         order by in_process_time ASC
     </select>
+
+    <select id="findProcessQtyList" resultMap="BaseResultMap" parameterType="map">
+        SELECT COUNT(DISTINCT(msbpr.barcode)) as devote_qty,
+        msbpr.process_id
+        FROM mes_sfc_barcode_process_record msbpr
+        <where>
+            <if test="nowDate!=null and nowDate!=''">
+                and date_format(msbpr.in_process_time, '%Y-%m-%d') = #{nowDate}
+            </if>
+            <if test="proLineId!=null and proLineId!=''">
+                and msbpr.pro_line_id=#{proLineId}
+            </if>
+            <if test="orgId!=null and orgId!=''">
+                and msbpr.org_id=#{orgId}
+            </if>
+            and msbpr.process_id in ('129','130','131','132') and msbpr.barcode_status=1
+        </where>
+        GROUP BY msbpr.process_id
+    </select>
+
+    <select id="findProcessNotGoodQtyList" resultMap="BaseResultMap" parameterType="map">
+        SELECT COUNT(DISTINCT(msbpr.barcode)) AS not_good_qty,
+        msbpr.process_id
+        FROM mes_sfc_barcode_process_record msbpr
+        <where>
+            <if test="nowDate!=null and nowDate!=''">
+                and date_format(msbpr.in_process_time, '%Y-%m-%d') = #{nowDate}
+            </if>
+            <if test="proLineId!=null and proLineId!=''">
+                and msbpr.pro_line_id=#{proLineId}
+            </if>
+            <if test="orgId!=null and orgId!=''">
+                and msbpr.org_id=#{orgId}
+            </if>
+            and msbpr.process_id in ('212','180','182') and msbpr.barcode_status=0
+        </where>
+        GROUP BY msbpr.process_id
+    </select>
+
 </mapper>

@@ -428,7 +428,7 @@ public class BarcodeUtils {
                                 MesSfcWorkOrderBarcodeDto barcodeDto = barcodeDtos.stream().filter(item -> item.getBarcode().equals(keyPartRelevanceDto.getPartBarcode())).findFirst().get();
                                 MesSfcWorkOrderBarcode barcode = new MesSfcWorkOrderBarcode();
                                 barcode.setWorkOrderBarcodeId(barcodeDto.getWorkOrderBarcodeId());
-                                barcode.setBarcodeStatus((byte) 3);
+                                barcode.setBarcodeStatus((byte) 1);
                                 barcodes.add(barcode);
                             }
                         }
@@ -490,7 +490,7 @@ public class BarcodeUtils {
                             MesSfcWorkOrderBarcodeDto barcodeDto = barcodeDtos.stream().filter(item -> item.getBarcode().equals(keyPartRelevanceDto.getPartBarcode())).findFirst().get();
                             MesSfcWorkOrderBarcode barcode = new MesSfcWorkOrderBarcode();
                             barcode.setWorkOrderBarcodeId(barcodeDto.getWorkOrderBarcodeId());
-                            barcode.setBarcodeStatus((byte) 3);
+                            barcode.setBarcodeStatus((byte) 2);
                             barcodes.add(barcode);
                         }
                     }
@@ -720,9 +720,9 @@ public class BarcodeUtils {
                 throw new BizErrorException(ErrorCodeEnum.PDA40012003.getCode(), "该产品条码已完成所有工序过站");
             }
             //是否已不良
-            if (StringUtils.isNotEmpty(mesSfcBarcodeProcess.getBarcodeStatus()) && mesSfcBarcodeProcess.getBarcodeStatus().equals((byte)0)){
-                throw new BizErrorException("该产品条码已不良 不可继续");
-            }
+//            if (StringUtils.isNotEmpty(mesSfcBarcodeProcess.getBarcodeStatus()) && mesSfcBarcodeProcess.getBarcodeStatus().equals((byte)0)){
+//                throw new BizErrorException("该产品条码已不良 不可继续");
+//            }
         }else {
             throw new BizErrorException(ErrorCodeEnum.PDA40012002, mesSfcWorkOrderBarcodeDto.getBarcode());
         }
@@ -966,7 +966,7 @@ public class BarcodeUtils {
                 // 2 如果是OK 则先找当前工序序号  再找比当前工序序号大的下一个工序
                 if(isRepairProcess==false) {
                     if (StringUtils.isNotEmpty(dto.getOpResult()) && "NG".equals(dto.getOpResult())) {
-                        long processCategoryId = baseProcess.getProcessCategoryId();
+                        /*long processCategoryId = baseProcess.getProcessCategoryId();
                         ResponseEntity<BaseProcessCategory> processCategoryEntity = barcodeUtils.baseFeignApi.processCategoryDetail(processCategoryId);
                         if (processCategoryEntity.getCode() != 0) {
                             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "工序类别信息不存在");
@@ -978,7 +978,26 @@ public class BarcodeUtils {
 
                         mesSfcBarcodeProcess.setNextProcessId(routeProcess.getNextProcessId());
                         mesSfcBarcodeProcess.setNextProcessCode(baseProcess.getProcessCode());
+                        mesSfcBarcodeProcess.setNextProcessName(baseProcess.getProcessName());*/
+
+                        int num = routeProcess.getOrderNum();
+                        Optional<BaseRouteProcess> routeProcessOptionalNext = routeProcessList.stream()
+                                .filter(i -> i.getOrderNum() > num && i.getIsPass() == 1 && i.getIsMustPass()==1)
+                                .findFirst();
+                        if (!routeProcessOptionalNext.isPresent()) {
+                            throw new BizErrorException(ErrorCodeEnum.PDA40012011.getCode(), "数据错误 未设置下一工序");
+                        }
+
+                        BaseRouteProcess routeProcessNext = routeProcessOptionalNext.get();
+                        processResponseEntity = barcodeUtils.baseFeignApi.processDetail(routeProcessNext.getProcessId());
+                        if (processResponseEntity.getCode() != 0) {
+                            throw new BizErrorException(ErrorCodeEnum.PDA40012012, routeProcessNext.getProcessId());
+                        }
+                        baseProcess = processResponseEntity.getData();
+                        mesSfcBarcodeProcess.setNextProcessId(routeProcessNext.getProcessId());
+                        mesSfcBarcodeProcess.setNextProcessCode(baseProcess.getProcessCode());
                         mesSfcBarcodeProcess.setNextProcessName(baseProcess.getProcessName());
+
 
                     } else if (StringUtils.isNotEmpty(dto.getOpResult()) && "OK".equals(dto.getOpResult())) {
                         int num = routeProcess.getOrderNum();

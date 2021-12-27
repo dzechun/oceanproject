@@ -7,15 +7,19 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
 import com.fantechs.common.base.general.dto.wms.inner.InitStockCheckBarCode;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInitStockDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInitStockDto;
 import com.fantechs.common.base.general.dto.wms.inner.imports.InitStockImport;
 import com.fantechs.common.base.general.entity.basic.BaseInventoryStatus;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseSignature;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInventoryStatus;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseSignature;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.wms.inner.*;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -34,6 +38,8 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -202,9 +208,7 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
     public int finish(Long initStockId) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         WmsInnerInitStock wmsInnerInitStock = wmsInnerInitStockMapper.selectByPrimaryKey(initStockId);
-        Example example = new Example(WmsInnerInitStockDet.class);
-        example.createCriteria().andEqualTo("initStockId",wmsInnerInitStock.getInitStockId());
-        List<WmsInnerInitStockDet> wmsInnerInitStockDets = wmsInnerInitStockDetMapper.selectByExample(example);
+        List<WmsInnerInitStockDetDto> wmsInnerInitStockDets = wmsInnerInitStockDetMapper.findList(ControllerUtil.dynamicCondition("initStockId",wmsInnerInitStock.getInitStockId()));
 
         //查询库位
         SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
@@ -229,15 +233,50 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
             throw new BizErrorException("未获取到仓库库存状态");
         }
 
-        for (WmsInnerInitStockDet innerInitStockDet : wmsInnerInitStockDets) {
+        for (WmsInnerInitStockDetDto innerInitStockDet : wmsInnerInitStockDets) {
             //查询条码
-            example = new Example(WmsInnerInitStockBarcode.class);
+            Example example = new Example(WmsInnerInitStockBarcode.class);
             example.createCriteria().andEqualTo("initStockDetId",innerInitStockDet.getInitStockDetId());
             List<WmsInnerInitStockBarcode> wmsInnerInitStockBarcodes = wmsInnerInitStockBarcodeMapper.selectByExample(example);
 
 
             //添加库存明细
             for (WmsInnerInitStockBarcode wmsInnerInitStockBarcode : wmsInnerInitStockBarcodes) {
+
+                //获取最短客户条码
+                //获取长度最
+                String clientCode = null;
+                if(wmsInnerInitStockBarcode.getClientBarcode1().length()<wmsInnerInitStockBarcode.getClientBarcode2().length() && wmsInnerInitStockBarcode.getClientBarcode1().length()<wmsInnerInitStockBarcode.getClientBarcode3().length()){
+                    clientCode = wmsInnerInitStockBarcode.getClientBarcode1();
+                }else if(wmsInnerInitStockBarcode.getClientBarcode2().length()<wmsInnerInitStockBarcode.getClientBarcode1().length() && wmsInnerInitStockBarcode.getClientBarcode2().length()<wmsInnerInitStockBarcode.getClientBarcode3().length()){
+                    clientCode = wmsInnerInitStockBarcode.getClientBarcode2();
+                }else{
+                    clientCode = wmsInnerInitStockBarcode.getClientBarcode3();
+                }
+                if (!StringUtils.isEmpty(clientCode)){
+                    // 匹配特征码字段
+                    SearchBaseSignature baseSignature = new SearchBaseSignature();
+                    baseSignature.setMaterialCode(innerInitStockDet.getMaterialCode());
+                    // 查找物料特征码
+                    List<BaseSignature> signatureList = baseFeignApi.findSignatureList(baseSignature).getData();
+                    if (signatureList.isEmpty()){
+                        throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码中客户条码与特征码不匹配，不允许操作");
+                    }
+                    boolean flag = false;
+                    for (BaseSignature signature : signatureList){
+                        // 校验附件码是否符合特征码规则
+                        Pattern pattern = Pattern.compile(signature.getSignatureRegex());
+                        Matcher matcher = pattern.matcher(clientCode);
+                        if (!matcher.matches()) {
+                            // 该附件码不满足特征码，检查零件料号特征码
+                            continue;
+                        }
+                        flag = true;
+                    }
+                    if (!flag){
+                        throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码中客户条码与特征码不匹配，不允许操作");
+                    }
+                }
                 example = new Example(WmsInnerInventoryDet.class);
                 example.createCriteria().andEqualTo("barcode", wmsInnerInitStockBarcode.getInPlantBarcode()).andEqualTo("storageId", wmsInnerInitStock.getStorageId()).andEqualTo("materialId", innerInitStockDet.getMaterialId()).andEqualTo("orgId",sysUser.getOrganizationId());
                 WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDetMapper.selectOneByExample(example);
@@ -257,6 +296,8 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
                     wmsInnerInventoryDet.setModifiedUserId(sysUser.getUserId());
                     wmsInnerInventoryDet.setOrgId(sysUser.getOrganizationId());
                     wmsInnerInventoryDet.setInventoryStatusId(rs.getData().get(0).getInventoryStatusId());
+                    wmsInnerInventoryDet.setSalesBarcode(wmsInnerInitStockBarcode.getSalesBarcode());
+                    wmsInnerInventoryDet.setCustomerBarcode(clientCode);
                     wmsInnerInventoryDetMapper.insertSelective(wmsInnerInventoryDet);
                 }
             }

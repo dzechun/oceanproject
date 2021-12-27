@@ -35,6 +35,8 @@
         <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId"/>
         <result column="inspection_order_code" jdbcType="VARCHAR" property="inspectionOrderCode"/>
         <result column="qc_date" jdbcType="TIMESTAMP" property="qcDate"/>
+        <result column="sales_barcode" jdbcType="VARCHAR" property="salesBarcode"/>
+        <result column="customer_barcode" jdbcType="VARCHAR" property="customerBarcode"/>
     </resultMap>
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto">
         <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
@@ -83,7 +85,9 @@ wiid.option1,
 wiid.option2,
 wiid.option3,
 wiid.option4,
-wiid.option5
+wiid.option5,
+wiid.sales_barcode,
+wiid.customer_barcode
     </sql>
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         select<include refid="Base_Column_List"/>,
