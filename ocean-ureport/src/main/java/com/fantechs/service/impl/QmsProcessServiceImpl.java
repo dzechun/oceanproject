@@ -38,7 +38,7 @@ public class QmsProcessServiceImpl implements QmsProcessService {
     @Override
     public List<QmsProcessModel> findDevoteQtyList(Map<String, Object> map) {
         map.put("nowDate", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
-        map.put("proLineId",119L);
+        map.put("proLineId",2370L);//高压精益线 固定
         return qmsProcessMapper.findDevoteQtyList(map);
     }
 
@@ -49,7 +49,7 @@ public class QmsProcessServiceImpl implements QmsProcessService {
     @Override
     public List<QmsProcessModel> findNotGoodList(Map<String, Object> map) {
         map.put("nowDate", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
-        map.put("proLineId",119L);
+        map.put("proLineId",2370L);//高压精益线 固定
         return qmsProcessMapper.findNotGoodList(map);
     }
 
@@ -116,8 +116,9 @@ public class QmsProcessServiceImpl implements QmsProcessService {
         Map<String, Object> map=new HashMap<>();
         List<Long> processIdList= new ArrayList<>();
         //按工序过滤
-        processIdList.add(3L);
-        processIdList.add(4L);
+        processIdList.add(212L);//组装
+        processIdList.add(180L);//LQC
+        processIdList.add(182L);//FQC
         map.put("processIdList",processIdList);
 
         List<QmsProcessModel> processModels=this.findDevoteQtyList(map);
@@ -156,7 +157,7 @@ public class QmsProcessServiceImpl implements QmsProcessService {
     @Override
     public List<QmsProcessModel> findProcessQtyList(Map<String, Object> map) {
         map.put("nowDate", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
-        map.put("proLineId",119L);
+        map.put("proLineId",2370L);
         return qmsProcessMapper.findProcessQtyList(map);
     }
 
@@ -167,7 +168,7 @@ public class QmsProcessServiceImpl implements QmsProcessService {
     @Override
     public List<QmsProcessModel> findProcessNotGoodQtyList(Map<String, Object> map) {
         map.put("nowDate", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
-        map.put("proLineId",119L);
+        map.put("proLineId",2370L);
         return qmsProcessMapper.findProcessNotGoodQtyList(map);
     }
 
@@ -197,20 +198,20 @@ public class QmsProcessServiceImpl implements QmsProcessService {
         List<QmsProcessModel> processNotGoods=this.findProcessNotGoodQtyList(map);
 
         List<Long> processIdList=new ArrayList<>();
-        processIdList.add(129L);//组装
-        processIdList.add(130L);//LQC
-        processIdList.add(131L);//FQC
+        processIdList.add(212L);//组装
+        processIdList.add(180L);//LQC
+        processIdList.add(182L);//FQC
         Double totalRate=new Double("1");
 
         for (Long aLong : processIdList) {
             QmsProcessPassRateModel passRateModel=new QmsProcessPassRateModel();
             String processName="";
-            if(aLong.longValue()==129L)
-                processName="组装";
-            else if(aLong.longValue()==130L)
-                processName="LQC";
-            else if(aLong.longValue()==131L)
-                processName="FQC";
+            if(aLong.longValue()==212L)
+                processName="组装";//212
+            else if(aLong.longValue()==180L)
+                processName="LQC";//180
+            else if(aLong.longValue()==182L)
+                processName="FQC";//182
 
             Double tempRate=new Double("0");
             List<QmsProcessModel> processQtyList = processQtys.stream().filter(u -> (u.getProcessId().longValue()==(aLong.longValue()))).collect(Collectors.toList());
@@ -225,7 +226,7 @@ public class QmsProcessServiceImpl implements QmsProcessService {
                     passRateModel.setPassRate(rate);
 
                     totalRate=totalRate*tempRate;
-                    if(aLong.longValue()==130L) {
+                    if(aLong.longValue()==180L) {
                         //如果是LQC工序 总的一次通过率乘多一次LQC工序的通过率(老化的通过率)
                         totalRate = totalRate * tempRate;
                     }
