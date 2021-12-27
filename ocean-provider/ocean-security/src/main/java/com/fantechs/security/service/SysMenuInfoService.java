@@ -29,4 +29,5 @@ public interface SysMenuInfoService  extends IService<SysMenuInfo>{
     //ID删除对象
     int deleteById(Long id);
 
+    List<Long> getMenu(Long menuId);
 }
