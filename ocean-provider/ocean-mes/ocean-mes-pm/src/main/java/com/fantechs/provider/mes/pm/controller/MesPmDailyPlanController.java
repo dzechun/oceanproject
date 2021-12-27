@@ -2,6 +2,8 @@ package com.fantechs.provider.mes.pm.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanStockListDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDetDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmDailyPlan;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmDailyPlan;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.text.ParseException;
 import java.util.List;
@@ -74,6 +77,12 @@ public class MesPmDailyPlanController {
         Page<Object> page = PageHelper.startPage(searchMesPmDailyPlan.getStartPage(),searchMesPmDailyPlan.getPageSize());
         List<MesPmDailyPlanDto> list = mesPmDailyPlanService.findList(searchMesPmDailyPlan);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation(value = "下推",notes = "下推")
+    @PostMapping("/pushDown")
+    public ResponseEntity pushDown(@ApiParam(value = "必传：",required = true)@RequestBody @Validated @NotEmpty List<MesPmDailyPlanStockListDto> mesPmDailyPlanStockListDtos) {
+        return ControllerUtil.returnCRUD(mesPmDailyPlanService.pushDown(mesPmDailyPlanStockListDtos));
     }
 
     @PostMapping(value = "/export")
