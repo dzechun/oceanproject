@@ -56,8 +56,8 @@ public class WmsInnerInventoryDetController {
 
     @ApiOperation("减库存明细")
     @PostMapping("/subtract")
-    public ResponseEntity subtract(@RequestBody WmsInnerInventoryDet wmsInnerInventoryDet){
-        return ControllerUtil.returnCRUD(wmsInnerInventoryDetService.subtract(wmsInnerInventoryDet));
+    public ResponseEntity subtract(@RequestBody WmsInnerInventoryDetDto wmsInnerInventoryDetDto){
+        return ControllerUtil.returnCRUD(wmsInnerInventoryDetService.subtract(wmsInnerInventoryDetDto));
     }
 
     @ApiOperation("按条件查询明细")
