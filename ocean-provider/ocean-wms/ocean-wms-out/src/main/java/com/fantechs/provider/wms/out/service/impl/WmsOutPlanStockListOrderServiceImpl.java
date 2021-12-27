@@ -3,6 +3,9 @@ package com.fantechs.provider.wms.out.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanStockListDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
@@ -19,6 +22,7 @@ import com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderBomMapper;
 import com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutPlanStockListOrderDetMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutPlanStockListOrderMapper;
+import com.fantechs.provider.wms.out.service.WmsOutPlanDeliveryOrderService;
 import com.fantechs.provider.wms.out.service.WmsOutPlanStockListOrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +31,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 备料计划
@@ -43,6 +48,8 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
     private MesPmWorkOrderMapper mesPmWorkOrderMapper;
     @Resource
     private MesPmWorkOrderBomMapper mesPmWorkOrderBomMapper;
+    @Resource
+    private WmsOutPlanDeliveryOrderService wmsOutPlanDeliveryOrderService;
 
     @Override
     public List<WmsOutPlanStockListOrderDto> findList(SearchWmsOutPlanStockListOrder searchWmsOutPlanStockListOrder) {
@@ -200,8 +207,84 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
     }
 
     /**
+     * 下推出库计划
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int pushDown(List<WmsOutPlanStockListOrderDetDto> wmsOutPlanStockListOrderDetDtos) {
+        int num=1;
+        SysUser user=currentUser();
+        Map<Long, List<WmsOutPlanStockListOrderDetDto>> collect = wmsOutPlanStockListOrderDetDtos.stream().collect(Collectors.groupingBy(WmsOutPlanStockListOrderDetDto::getWarehouseId));
+        if(collect.size()>1){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"下推数据存在不同仓库 请选择同一仓库后再下推");
+        }
+        //仓库ID
+        Long warehouseId=wmsOutPlanStockListOrderDetDtos.get(0).getWarehouseId();
+        //核心单据类型编码
+        String coreSourceSysOrderTypeCode=wmsOutPlanStockListOrderDetDtos.get(0).getCoreSourceSysOrderTypeCode();
+        if(StringUtils.isEmpty(coreSourceSysOrderTypeCode))
+            coreSourceSysOrderTypeCode="OUT-PSLO";
+
+        WmsOutPlanDeliveryOrderDto planDeliveryOrderDto=new WmsOutPlanDeliveryOrderDto();
+        List<WmsOutPlanDeliveryOrderDetDto> deliveryOrderDetDtos=new ArrayList<>();
+
+        planDeliveryOrderDto.setWarehouseId(warehouseId);
+        planDeliveryOrderDto.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);//核心单据编码
+        planDeliveryOrderDto.setSourceSysOrderTypeCode("OUT-PSLO");//来源单据编码 备料计划
+        planDeliveryOrderDto.setSourceBigType((byte)1);//来源大类 下推
+        planDeliveryOrderDto.setOrderStatus((byte)1);//待执行
+        planDeliveryOrderDto.setCreateUserId(user.getUserId());
+        planDeliveryOrderDto.setCreateTime(new Date());
+
+        for (WmsOutPlanStockListOrderDetDto listOrderDetDto : wmsOutPlanStockListOrderDetDtos) {
+            if (listOrderDetDto.getIfAllIssued() != null && listOrderDetDto.getIfAllIssued() == (byte) 1) {
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"备料计划物料已下推完成，无法再次下推");
+            }
+
+            WmsOutPlanDeliveryOrderDetDto deliveryorderDetDto=new WmsOutPlanDeliveryOrderDetDto();
+            //核心单据编号
+            String coreSourceOrderCode=listOrderDetDto.getCoreSourceOrderCode();
+            if(StringUtils.isEmpty(coreSourceOrderCode))
+                coreSourceOrderCode=listOrderDetDto.getPlanStockListOrderCode();
+
+            deliveryorderDetDto.setCoreSourceOrderCode(coreSourceOrderCode);
+            //来源单据编号
+            deliveryorderDetDto.setSourceOrderCode(listOrderDetDto.getPlanStockListOrderCode());
+
+            //核心单据ID
+            Long coreSourceId=listOrderDetDto.getCoreSourceId();
+            if(StringUtils.isEmpty(coreSourceId))
+                coreSourceId=listOrderDetDto.getPlanStockListOrderDetId();
+            deliveryorderDetDto.setCoreSourceId(coreSourceId);
+            //来源单据ID
+            deliveryorderDetDto.setSourceId(listOrderDetDto.getPlanStockListOrderDetId());
+            deliveryorderDetDto.setMaterialId(listOrderDetDto.getMaterialId());
+            deliveryorderDetDto.setOrderQty(listOrderDetDto.getOrderQty());
+            deliveryorderDetDto.setLineStatus((byte)1);
+            deliveryorderDetDto.setCreateUserId(user.getUserId());
+            deliveryorderDetDto.setCreateTime(new Date());
+            deliveryOrderDetDtos.add(deliveryorderDetDto);
+
+            //更新明细
+            WmsOutPlanStockListOrderDet stockListOrderDet=new WmsOutPlanStockListOrderDet();
+            stockListOrderDet.setPlanStockListOrderDetId(listOrderDetDto.getPlanStockListOrderDetId());
+            stockListOrderDet.setTotalIssueQty(listOrderDetDto.getOrderQty());
+            stockListOrderDet.setIfAllIssued((byte)1);
+            stockListOrderDet.setModifiedUserId(user.getUserId());
+            stockListOrderDet.setModifiedTime(new Date());
+            num=wmsOutPlanStockListOrderDetMapper.updateByPrimaryKeySelective(stockListOrderDet);
+        }
+        planDeliveryOrderDto.setWmsOutPlanDeliveryOrderDetDtos(deliveryOrderDetDtos);
+        num=wmsOutPlanDeliveryOrderService.save(planDeliveryOrderDto);
+        if(num<=0){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+        }
+        return num;
+    }
+
+    /**
      * 获取当前登录用户
-     *
      * @return
      */
     private SysUser currentUser() {

@@ -34,6 +34,9 @@
              type="com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDetDto">
     <result column="daily_plan_code" jdbcType="VARCHAR" property="dailyPlanCode"/>
     <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+    <result column="plan_stock_list_order_code" jdbcType="VARCHAR" property="planStockListOrderCode"/>
+    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="coreSourceSysOrderTypeCode"/>
     <result column="material_code_product" jdbcType="VARCHAR" property="materialCodeProduct"/>
     <result column="material_name_product" jdbcType="VARCHAR" property="materialNameProduct"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
@@ -76,6 +79,9 @@
     select<include refid="Base_Column_List"/>,
     mpdp.daily_plan_code,
     mpwo.work_order_code,
+    wopslo.plan_stock_list_order_code,
+    wopslo.warehouse_id,
+    wopslo.core_source_sys_order_type_code,
     smp.material_code AS material_code_product,
     smp.material_name AS material_name_product,
     sm.material_code,

@@ -36,6 +36,13 @@ public class MesPmDailyPlanStockListDto extends MesPmDailyPlanStockList implemen
     private String salesOrderCode;
 
     /**
+     * 核心单据编码
+     */
+    @Transient
+    @ApiModelProperty(name="coreSourceSysOrderTypeCode",value = "核心单据编码")
+    private String coreSourceSysOrderTypeCode;
+
+    /**
      * 产品编码.
      */
     @Transient

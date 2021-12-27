@@ -37,6 +37,15 @@ public class MesPmDailyPlanStockList extends ValidGroup implements Serializable 
     private Long dailyPlanDetId;
 
     /**
+     * 工单BOM明细表ID
+     */
+    @ApiModelProperty(name="workOrderBomId",value = "工单BOM明细表ID")
+    @Excel(name = "工单BOM明细表ID", height = 20, width = 30,orderNum="")
+    @Column(name = "work_order_bom_id")
+    private Long workOrderBomId;
+
+
+    /**
      * 零件物料ID
      */
     @ApiModelProperty(name="partMaterialId",value = "零件物料ID")

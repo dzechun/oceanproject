@@ -1,6 +1,8 @@
 package com.fantechs.provider.wms.out.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutPlanStockListOrder;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutPlanStockListOrder;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -75,6 +78,12 @@ public class WmsOutPlanStockListOrderController {
     public ResponseEntity<List<WmsOutPlanStockListOrderDto>> findAll(@ApiParam(value = "查询对象") @RequestBody SearchWmsOutPlanStockListOrder searchWmsOutPlanStockListOrder) {
         List<WmsOutPlanStockListOrderDto> list = wmsOutPlanStockListOrderService.findList(searchWmsOutPlanStockListOrder);
         return ControllerUtil.returnDataSuccess(list, list.size());
+    }
+
+    @ApiOperation(value = "下推",notes = "下推")
+    @PostMapping("/pushDown")
+    public ResponseEntity pushDown(@ApiParam(value = "必传：",required = true)@RequestBody @Validated @NotEmpty List<WmsOutPlanStockListOrderDetDto> wmsOutPlanStockListOrderDetDtos) {
+        return ControllerUtil.returnCRUD(wmsOutPlanStockListOrderService.pushDown(wmsOutPlanStockListOrderDetDtos));
     }
 
     @PostMapping(value = "/export")

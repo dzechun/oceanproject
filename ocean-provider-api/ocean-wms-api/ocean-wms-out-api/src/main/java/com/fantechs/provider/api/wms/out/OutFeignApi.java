@@ -1,10 +1,7 @@
 package com.fantechs.provider.api.wms.out;
 
 
-import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
-import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
-import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryReqOrderDto;
-import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDto;
+import com.fantechs.common.base.general.dto.wms.out.*;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrder;
@@ -88,4 +85,9 @@ public interface OutFeignApi {
     @PostMapping("/wmsOutDeliveryOrder/overIssue")
     @ApiOperation(value = "领料出库单封单回写接口",hidden = true)
     ResponseEntity overIssue(@RequestParam Long deliveryOrderId);
+
+    @ApiOperation(value = "备料计划新增",notes = "备料计划新增")
+    @PostMapping("/wmsOutPlanStockListOrder/add")
+    ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsOutPlanStockListOrderDto wmsOutPlanStockListOrderDto);
+
 }

@@ -6,13 +6,19 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDetDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanStockListDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDto;
 import com.fantechs.common.base.general.entity.mes.pm.*;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmDailyPlan;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutPlanStockListOrderDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.mes.pm.mapper.*;
 import com.fantechs.provider.mes.pm.service.MesPmDailyPlanService;
 import org.springframework.stereotype.Service;
@@ -42,6 +48,8 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
     private MesPmDailyPlanStockListMapper mesPmDailyPlanStockListMapper;
     @Resource
     private MesPmWorkOrderMapper mesPmWorkOrderMapper;
+    @Resource
+    private OutFeignApi outFeignApi;
 
     @Override
     public List<MesPmDailyPlanDto> findList(SearchMesPmDailyPlan searchMesPmDailyPlan) {
@@ -138,6 +146,8 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
 
                 //新增明细
                 mesPmDailyPlanDet.setDailyPlanId(mesPmDailyPlanDto.getDailyPlanId());
+                mesPmDailyPlanDet.setCoreSourceOrderCode(mesPmWorkOrder.getWorkOrderCode());
+                mesPmDailyPlanDet.setSourceOrderCode(mesPmWorkOrder.getSourceOrderCode());
                 mesPmDailyPlanDet.setCreateUserId(user.getUserId());
                 mesPmDailyPlanDet.setCreateTime(new Date());
                 mesPmDailyPlanDet.setIsDelete((byte)1);
@@ -298,7 +308,7 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
     }
 
     /**
-     * 下推
+     * 下推备料计划
      * @return
      */
     @Override
@@ -317,6 +327,64 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
             if(PlanStockListDto.getDailyPlanUsageQty().compareTo(PlanStockListDto.getTotalIssueQty().add(PlanStockListDto.getIssueQty())) == -1 )
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "累计下发数量大于日计划使用数量");
         }
+
+        Long warehouseId=mesPmDailyPlanStockListDtos.get(0).getWarehouseId();
+
+        //核心单据类型编码
+        String coreSourceSysOrderTypeCode=mesPmDailyPlanStockListDtos.get(0).getCoreSourceSysOrderTypeCode();
+        if(StringUtils.isEmpty(coreSourceSysOrderTypeCode))
+            coreSourceSysOrderTypeCode="MES-DPO";//为空 等于生产日计划
+
+        WmsOutPlanStockListOrderDto stockListOrderDto=new WmsOutPlanStockListOrderDto();
+        List<WmsOutPlanStockListOrderDetDto> stockListOrderDetDtos=new ArrayList<>();
+
+        stockListOrderDto.setWarehouseId(warehouseId);
+        stockListOrderDto.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);//核心单据编码
+        stockListOrderDto.setSourceSysOrderTypeCode("MES-DPO");//来源单据编码 生产日计划
+        stockListOrderDto.setSourceBigType((byte)1);//来源大类 下推
+        stockListOrderDto.setOrderStatus((byte)1);//待执行
+        stockListOrderDto.setCreateUserId(user.getUserId());
+        stockListOrderDto.setCreateTime(new Date());
+
+        for (MesPmDailyPlanStockListDto planStockListDto : mesPmDailyPlanStockListDtos) {
+            if (planStockListDto.getIfAllIssued() != null && planStockListDto.getIfAllIssued() == (byte) 1) {
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"生产日计划物料已下推完成，无法再次下推");
+            }
+
+            WmsOutPlanStockListOrderDetDto stockListOrderDetDto=new WmsOutPlanStockListOrderDetDto();
+            //核心单据编号 工单号
+            stockListOrderDetDto.setCoreSourceOrderCode(planStockListDto.getWorkOrderCode());
+            //来源单据编号 生产日计划单号
+            stockListOrderDetDto.setSourceOrderCode(planStockListDto.getDailyPlanCode());
+            //核心单据ID 工单BOM明细ID
+            stockListOrderDetDto.setCoreSourceId(planStockListDto.getWorkOrderBomId());
+            //来源单据ID
+            stockListOrderDetDto.setSourceId(planStockListDto.getDailyPlanStockListId());
+
+            stockListOrderDetDto.setMaterialId(planStockListDto.getPartMaterialId());
+            stockListOrderDetDto.setOrderQty(planStockListDto.getDailyPlanUsageQty());
+            stockListOrderDetDto.setLineStatus((byte)1);
+            stockListOrderDetDto.setCreateUserId(user.getUserId());
+            stockListOrderDetDto.setCreateTime(new Date());
+            stockListOrderDetDtos.add(stockListOrderDetDto);
+
+            //更新明细
+            MesPmDailyPlanStockList planStockList=new MesPmDailyPlanStockList();
+            planStockList.setDailyPlanStockListId(planStockListDto.getDailyPlanStockListId());
+            planStockList.setTotalIssueQty(planStockListDto.getTotalIssueQty().add(planStockListDto.getIssueQty()));
+            if(planStockListDto.getDailyPlanUsageQty().compareTo(planStockListDto.getTotalIssueQty().add(planStockListDto.getIssueQty()))==0)
+                planStockList.setIfAllIssued((byte)1);
+            planStockList.setModifiedUserId(user.getUserId());
+            planStockList.setModifiedTime(new Date());
+            num=mesPmDailyPlanStockListMapper.updateByPrimaryKeySelective(planStockList);
+            if(num<=0){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012006);
+            }
+        }
+        stockListOrderDto.setWmsOutPlanStockListOrderDetDtos(stockListOrderDetDtos);
+        //下推备料计划
+        outFeignApi.add(stockListOrderDto);
+
         return num;
     }
 
