@@ -698,6 +698,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                     BarPODto barPODto = new BarPODto();
                     barPODto.setBarCode(item.getBarcode());
                     barPODto.setPOCode(item.getSamePackageCode());
+                    barPODto.setCutsomerBarcode(item.getCutsomerBarcode());
+                    barPODto.setSalesBarcode(item.getSalesBarcode());
                     barPODtos.add(barPODto);
                 });
                 if(mesSfcWorkOrderBarcodeList != null && mesSfcWorkOrderBarcodeList.size() > 0) {
