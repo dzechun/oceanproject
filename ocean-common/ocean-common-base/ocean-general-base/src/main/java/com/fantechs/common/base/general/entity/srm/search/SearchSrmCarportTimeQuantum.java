@@ -20,16 +20,16 @@ public class SearchSrmCarportTimeQuantum extends BaseQuery implements Serializab
     /**
      * 开始时间
      */
-    @ApiModelProperty(name="startTime",value = "开始时间")
+    @ApiModelProperty(name="carportStartTime",value = "开始时间")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
-    private Date startTime;
+    private Date carportStartTime;
 
     /**
      * 结束时间
      */
-    @ApiModelProperty(name="endTime",value = "结束时间")
+    @ApiModelProperty(name="carportEndTime",value = "结束时间")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
-    private Date endTime;
+    private Date carportEndTime;
 
     private static final long serialVersionUID = 1L;
 }
