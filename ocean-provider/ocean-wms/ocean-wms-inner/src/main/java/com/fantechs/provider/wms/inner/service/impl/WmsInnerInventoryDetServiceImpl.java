@@ -2,6 +2,7 @@ package com.fantechs.provider.wms.inner.service.impl;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -58,53 +60,53 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
 
     /**
      * 减库存明细
-     * @param wmsInnerInventoryDet
+     * @param wmsInnerInventoryDetDto
      * @return
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     @LcnTransaction
-    public int subtract(WmsInnerInventoryDet wmsInnerInventoryDet) {
+    public int subtract(WmsInnerInventoryDetDto wmsInnerInventoryDetDto) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         Example example = new Example(WmsInnerInventoryDet.class);
         Example.Criteria criteria = example.createCriteria();
-/*        if(StringUtils.isEmpty(wmsInnerInventoryDet.getMaterialQty()) || wmsInnerInventoryDet.getMaterialQty().compareTo(BigDecimal.ZERO)<1){
+        if(StringUtils.isEmpty(wmsInnerInventoryDetDto.getMaterialQty()) || wmsInnerInventoryDetDto.getMaterialQty().compareTo(BigDecimal.ZERO)<1){
             throw new BizErrorException("出库数量错误");
         }
-        if(StringUtils.isNotEmpty(wmsInnerInventoryDet.getBarcode())){
-            criteria.andEqualTo("barcode",wmsInnerInventoryDet.getBarcode());
+        if(StringUtils.isNotEmpty(wmsInnerInventoryDetDto.getMaterialBarcodeId())){
+            criteria.andEqualTo("materialBarcodeId",wmsInnerInventoryDetDto.getMaterialBarcodeId());
         }
-        if(StringUtils.isNotEmpty(wmsInnerInventoryDet.getStorageId())){
-            criteria.andEqualTo("storageId",wmsInnerInventoryDet.getStorageId());
+        if(StringUtils.isNotEmpty(wmsInnerInventoryDetDto.getStorageId())){
+            criteria.andEqualTo("storageId",wmsInnerInventoryDetDto.getStorageId());
         }
-        if(StringUtils.isNotEmpty(wmsInnerInventoryDet.getMaterialId())){
-            criteria.andEqualTo("materialId",wmsInnerInventoryDet.getMaterialId());
+        if(StringUtils.isNotEmpty(wmsInnerInventoryDetDto.getMaterialId())){
+            criteria.andEqualTo("materialId",wmsInnerInventoryDetDto.getMaterialId());
         }
-        if(StringUtils.isNotEmpty(wmsInnerInventoryDet.getAsnCode())){
-            criteria.andEqualTo("asnCode",wmsInnerInventoryDet.getAsnCode());
+        if(StringUtils.isNotEmpty(wmsInnerInventoryDetDto.getAsnCode())){
+            criteria.andEqualTo("asnCode",wmsInnerInventoryDetDto.getAsnCode());
         }
-        if(StringUtils.isNotEmpty(wmsInnerInventoryDet.getDeliveryOrderCode())){
-            criteria.andEqualTo("deliveryOrderCode",wmsInnerInventoryDet.getDeliveryOrderCode());
+        if(StringUtils.isNotEmpty(wmsInnerInventoryDetDto.getDeliveryOrderCode())){
+            criteria.andEqualTo("deliveryOrderCode",wmsInnerInventoryDetDto.getDeliveryOrderCode());
         }
         criteria.andEqualTo("orgId",sysUser.getOrganizationId());
         List<WmsInnerInventoryDet> wms = wmsInnerInventoryDetMapper.selectByExample(example);
-        BigDecimal qty = wmsInnerInventoryDet.getMaterialQty();*/
+        BigDecimal qty = wmsInnerInventoryDetDto.getMaterialQty();
         int num=0;
-/*        for (WmsInnerInventoryDet wm : wms) {
+        for (WmsInnerInventoryDet wm : wms) {
             if(qty.compareTo(BigDecimal.ZERO)==0){
                 break;
             }
-                if(qty.compareTo(wmsInnerInventoryDet.getMaterialQty())==1){
-                    if(qty.compareTo(wmsInnerInventoryDet.getMaterialQty())==1){
+                if(qty.compareTo(wmsInnerInventoryDetDto.getMaterialQty())==1){
+                    if(qty.compareTo(wmsInnerInventoryDetDto.getMaterialQty())==1){
                         //删除记录
-                        wmsInnerInventoryDetMapper.deleteByPrimaryKey(wmsInnerInventoryDet.getInventoryDetId());
+                        wmsInnerInventoryDetMapper.deleteByPrimaryKey(wmsInnerInventoryDetDto.getInventoryDetId());
                     }else{
-                        wmsInnerInventoryDet.setMaterialQty(wmsInnerInventoryDet.getMaterialQty().subtract(qty));
+                        wmsInnerInventoryDetDto.setMaterialQty(wmsInnerInventoryDetDto.getMaterialQty().subtract(qty));
                     }
-                    qty.subtract(wmsInnerInventoryDet.getMaterialQty());
+                    qty.subtract(wmsInnerInventoryDetDto.getMaterialQty());
                 }
                 num+=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wm);
-        }*/
+        }
         return num;
     }
 

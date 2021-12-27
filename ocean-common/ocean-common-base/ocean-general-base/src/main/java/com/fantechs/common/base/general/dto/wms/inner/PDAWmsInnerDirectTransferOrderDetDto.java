@@ -22,11 +22,11 @@ public class PDAWmsInnerDirectTransferOrderDetDto implements Serializable {
     @ApiModelProperty(name="barcode",value = "条码")
     private String barcode;
 
-/*    *//**
+     /**
      * 条码
-     *//*
+     */
     @ApiModelProperty(name="barcodeId",value = "条码")
-    private Long materialBarcodeId;*/
+    private Long materialBarcodeId;
 
     private static final long serialVersionUID = 1L;
 }
