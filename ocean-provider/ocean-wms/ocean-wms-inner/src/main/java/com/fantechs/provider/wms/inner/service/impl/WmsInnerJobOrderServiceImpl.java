@@ -1734,6 +1734,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             //移位单
             record.setJobOrderCode(CodeUtils.getId("SHIFT-"));
         }
+        if(StringUtils.isEmpty(record.getSourceBigType()))
+            record.setSourceBigType((byte)2);
+
         record.setCreateTime(new Date());
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
@@ -1753,7 +1756,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
             wmsInPutawayOrderDetMapper.insertUseGeneratedKeys(wmsInPutawayOrderDet);
             //非自建单据新增条码关系表数据
-            if(record.getSourceSysOrderTypeCode().equals("SELF-CRT")==false) {
+            if(record.getSourceBigType()!=((byte)2) && StringUtils.isNotEmpty(record.getSourceBigType())) {
                 SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
                 sBarcodeReOrder.setOrderTypeCode(record.getSourceSysOrderTypeCode());//单据类型
                 sBarcodeReOrder.setOrderDetId(wmsInPutawayOrderDet.getSourceId());//明细ID
@@ -2085,7 +2088,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             //单据类型
             String sourceSysOrderTypeCode=wmsInnerJobOrder.getSourceSysOrderTypeCode();
 
-            if(sourceSysOrderTypeCode.equals("SELF-CRT")){
+            if(wmsInnerJobOrder.getSourceBigType()==((byte)2)){
                 // SELF-CRT 单据类型 自建
                 SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
                 sBarcodeReOrder.setMaterialBarcodeId(materialBarcodeId);
@@ -2102,7 +2105,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 }
 
             }
-            else if(StringUtils.isNotEmpty(sourceSysOrderTypeCode) && !sourceSysOrderTypeCode.equals("SELF-CRT")) {
+            else if(StringUtils.isNotEmpty(sourceSysOrderTypeCode) && wmsInnerJobOrder.getSourceBigType()!=((byte)2)) {
                 // 由上游单据下推
                 SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
                 sBarcodeReOrder.setMaterialBarcodeId(materialBarcodeId);
@@ -2256,7 +2259,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             //单据类型
             String sourceSysOrderTypeCode=wmsInnerJobOrder.getSourceSysOrderTypeCode();
 
-            if(sourceSysOrderTypeCode.equals("SELF-CRT")){
+            if(wmsInnerJobOrder.getSourceBigType()==((byte)2)){
                 // SELF-CRT 单据类型 自建
                 SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
                 sBarcodeReOrder.setMaterialBarcodeId(materialBarcodeId);
@@ -2273,7 +2276,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 }
 
             }
-            else if(StringUtils.isNotEmpty(sourceSysOrderTypeCode) && !sourceSysOrderTypeCode.equals("SELF-CRT")) {
+            else if(StringUtils.isNotEmpty(sourceSysOrderTypeCode) && wmsInnerJobOrder.getSourceBigType()!=((byte)2)) {
                 // 由上游单据下推
                 SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
                 sBarcodeReOrder.setMaterialBarcodeId(materialBarcodeId);
