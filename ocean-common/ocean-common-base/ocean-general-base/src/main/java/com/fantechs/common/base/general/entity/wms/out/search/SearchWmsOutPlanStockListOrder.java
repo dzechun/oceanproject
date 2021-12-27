@@ -47,9 +47,6 @@ public class SearchWmsOutPlanStockListOrder extends BaseQuery implements Seriali
     @ApiModelProperty(name="orderStatus",value = "订单状态(1-待执行 2-执行中 3-已执行)")
     private Byte orderStatus;
 
-    @ApiModelProperty(name="status" ,value="状态")
-    private String status;
-
     /**
      * 备注
      */

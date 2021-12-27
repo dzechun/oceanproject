@@ -1983,9 +1983,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     Example exampleInventory = new Example(WmsInnerInventory.class);
                     Example.Criteria criteriaInventory = exampleInventory.createCriteria();
                     criteriaInventory.andEqualTo("relevanceOrderCode", wmsInnerJobOrder.getJobOrderCode());
-                    criteriaInventory.andEqualTo("jobStatus", (byte) 2);
+                    criteriaInventory.andEqualTo("jobStatus", (byte) 2);//
                     criteriaInventory.andEqualTo("jobOrderDetId", item.getJobOrderDetId());
-                    criteriaInventory.andEqualTo("outStorageId",item.getOutStorageId());
+                    criteriaInventory.andEqualTo("storageId",item.getOutStorageId());
                     criteriaInventory.andEqualTo("orgId",sysUser.getOrganizationId());
                     num=wmsInnerInventoryMapper.deleteByExample(exampleInventory);
 
