@@ -1,16 +1,16 @@
 package com.fantechs.provider.wms.inner.util;
 
-import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
-import com.fantechs.common.base.general.entity.wms.inner.*;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.service.WmsInnerInventoryDetService;
-import com.fantechs.provider.wms.inner.service.WmsInnerInventoryLogService;
 import org.springframework.stereotype.Component;
 import tk.mybatis.mapper.entity.Example;
 
@@ -18,9 +18,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author
@@ -154,7 +152,6 @@ public class WmsInnerInventoryUtil {
                 inv.setJobStatus((byte) 1);
                 inv.setInventoryStatusId(newDto.getInventoryStatusId());
                 inv.setStockLock((byte) 0);
-                inv.setQcLock((byte) 0);
                 inv.setLockStatus((byte) 0);
                 inv.setOrgId(sysUser.getOrganizationId());
                 inv.setPackingQty(newDto.getActualQty());

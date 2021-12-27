@@ -8,6 +8,10 @@
         <id column="ht_transfer_order_det_id" jdbcType="BIGINT" property="htTransferOrderDetId"/>
         <result column="ht_transfer_order_id" jdbcType="BIGINT" property="htTransferOrderId"/>
         <result column="transfer_order_det_id" jdbcType="BIGINT" property="transferOrderDetId"/>
+        <result column="core_source_order_code" jdbcType="VARCHAR" property="coreSourceOrderCode"/>
+        <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode"/>
+        <result column="core_source_id" jdbcType="BIGINT" property="coreSourceId"/>
+        <result column="source_id" jdbcType="BIGINT" property="sourceId"/>
         <result column="transfer_order_id" jdbcType="BIGINT" property="transferOrderId"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="unit_name" jdbcType="VARCHAR" property="unitName"/>
@@ -15,6 +19,8 @@
         <result column="production_date" jdbcType="TIMESTAMP" property="productionDate"/>
         <result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate"/>
         <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
+        <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty"/>
+        <result column="if_all_issued" jdbcType="TINYINT" property="ifAllIssued"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
@@ -41,12 +47,18 @@
         otod.ht_transfer_order_id,
         otod.transfer_order_det_id,
         otod.transfer_order_id,
+        otod.core_source_order_code,
+        otod.source_order_code,
+        otod.core_source_id,
+        otod.source_id,
         otod.material_id,
         otod.unit_name,
         otod.order_qty,
         otod.production_date,
         otod.expired_date,
         otod.batch_code,
+        otod.total_issue_qty,
+        otod.if_all_issued,
         otod.status,
         otod.is_delete,
         otod.remark,

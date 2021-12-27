@@ -1,15 +1,24 @@
 package com.fantechs.common.base.general.entity.om;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.general.dto.om.OmTransferOrderDetDto;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.*;
-import lombok.Data;
+
+;
+;
 
 /**
  * 调拨订单
@@ -29,6 +38,34 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
     private Long transferOrderId;
 
     /**
+     * 核心系统单据类型编码
+     */
+    @ApiModelProperty(name="coreSourceSysOrderTypeCode",value = "核心系统单据类型编码")
+    @Column(name = "core_source_sys_order_type_code")
+    private String coreSourceSysOrderTypeCode;
+
+    /**
+     * 来源系统单据类型编码
+     */
+    @ApiModelProperty(name="sourceSysOrderTypeCode",value = "来源系统单据类型编码")
+    @Column(name = "source_sys_order_type_code")
+    private String sourceSysOrderTypeCode;
+
+    /**
+     * 系统单据类型编码
+     */
+    @ApiModelProperty(name="sysOrderTypeCode",value = "系统单据类型编码")
+    @Column(name = "sys_order_type_code")
+    private String sysOrderTypeCode;
+
+    /**
+     * 来源大类(1-系统下推 2-自建 3-第三方系统)
+     */
+    @ApiModelProperty(name="sourceBigType",value = "来源大类(1-系统下推 2-自建 3-第三方系统)")
+    @Column(name = "source_big_type")
+    private Byte sourceBigType;
+
+    /**
      * 调拨订单号
      */
     @ApiModelProperty(name="transferOrderCode",value = "调拨订单号")
@@ -40,16 +77,8 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      * 相关单号
      */
     @ApiModelProperty(name="relatedOrderCode",value = "相关单号")
-    @Excel(name = "相关单号", height = 20, width = 30,orderNum="2")
     @Column(name = "related_order_code")
     private String relatedOrderCode;
-
-    /**
-     * 货主ID
-     */
-    @ApiModelProperty(name="materialOwnerId",value = "货主ID")
-    @Column(name = "material_owner_id")
-    private Long materialOwnerId;
 
     /**
      * 调出仓库ID
@@ -93,7 +122,7 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      * 订单状态(1-打开 2-已下发 3-完成)
      */
     @ApiModelProperty(name="orderStatus",value = "订单状态(1-打开 2-已下发 3-完成)")
-    @Excel(name = "订单状态(1-打开 2-已下发 3-完成)", height = 20, width = 30,orderNum="10")
+    @Excel(name = "订单状态(1-打开 2-已下发 3-完成)", height = 20, width = 30,orderNum="2")
     @Column(name = "order_status")
     private Byte orderStatus;
 
@@ -107,7 +136,7 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      * 订单日期
      */
     @ApiModelProperty(name="orderDate",value = "订单日期")
-    @Excel(name = "订单日期", height = 20, width = 30,orderNum="11")
+    @Excel(name = "订单日期", height = 20, width = 30,orderNum="5")
     @Column(name = "order_date")
     private Date orderDate;
 
@@ -115,7 +144,7 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="12")
+    @Excel(name = "备注", height = 20, width = 30,orderNum="10")
     private String remark;
 
     /**
@@ -136,7 +165,7 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="14",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="12",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -152,7 +181,7 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="16",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="14",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -184,7 +213,7 @@ public class OmTransferOrder extends ValidGroup implements Serializable {
 
     @Transient
     @ApiModelProperty("明细")
-    private List<OmTransferOrderDet> omTransferOrderDets;
+    private List<OmTransferOrderDetDto> omTransferOrderDetDtos = new ArrayList<>();
 
     private static final long serialVersionUID = 1L;
 }

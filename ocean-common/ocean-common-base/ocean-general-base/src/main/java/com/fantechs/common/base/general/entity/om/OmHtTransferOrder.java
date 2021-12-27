@@ -35,6 +35,34 @@ public class OmHtTransferOrder extends ValidGroup implements Serializable {
     private Long transferOrderId;
 
     /**
+     * 核心系统单据类型编码
+     */
+    @ApiModelProperty(name="coreSourceSysOrderTypeCode",value = "核心系统单据类型编码")
+    @Column(name = "core_source_sys_order_type_code")
+    private String coreSourceSysOrderTypeCode;
+
+    /**
+     * 来源系统单据类型编码
+     */
+    @ApiModelProperty(name="sourceSysOrderTypeCode",value = "来源系统单据类型编码")
+    @Column(name = "source_sys_order_type_code")
+    private String sourceSysOrderTypeCode;
+
+    /**
+     * 系统单据类型编码
+     */
+    @ApiModelProperty(name="sysOrderTypeCode",value = "系统单据类型编码")
+    @Column(name = "sys_order_type_code")
+    private String sysOrderTypeCode;
+
+    /**
+     * 来源大类(1-系统下推 2-自建 3-第三方系统)
+     */
+    @ApiModelProperty(name="sourceBigType",value = "来源大类(1-系统下推 2-自建 3-第三方系统)")
+    @Column(name = "source_big_type")
+    private Byte sourceBigType;
+
+    /**
      * 调拨订单号
      */
     @ApiModelProperty(name="transferOrderCode",value = "调拨订单号")
@@ -49,13 +77,6 @@ public class OmHtTransferOrder extends ValidGroup implements Serializable {
     @Excel(name = "相关单号", height = 20, width = 30,orderNum="2")
     @Column(name = "related_order_code")
     private String relatedOrderCode;
-
-    /**
-     * 货主ID
-     */
-    @ApiModelProperty(name="materialOwnerId",value = "货主ID")
-    @Column(name = "material_owner_id")
-    private Long materialOwnerId;
 
     /**
      * 调出仓库ID

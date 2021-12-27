@@ -11,6 +11,8 @@ import com.fantechs.common.base.general.dto.qms.QmsIncomingInspectionOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.*;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
+import com.fantechs.common.base.general.entity.om.OmHtPurchaseOrder;
+import com.fantechs.common.base.general.entity.om.OmHtPurchaseOrderDet;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrder;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrder;
@@ -28,13 +30,17 @@ import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.om.mapper.OmPurchaseOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmPurchaseOrderMapper;
+import com.fantechs.provider.om.mapper.ht.OmHtPurchaseOrderDetMapper;
+import com.fantechs.provider.om.mapper.ht.OmHtPurchaseOrderMapper;
 import com.fantechs.provider.om.service.OmPurchaseOrderService;
 import com.fantechs.provider.om.util.OrderFlowUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -47,7 +53,11 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
     @Resource
     private OmPurchaseOrderMapper omPurchaseOrderMapper;
     @Resource
+    private OmHtPurchaseOrderMapper omHtPurchaseOrderMapper;
+    @Resource
     private OmPurchaseOrderDetMapper omPurchaseOrderDetMapper;
+    @Resource
+    private OmHtPurchaseOrderDetMapper omHtPurchaseOrderDetMapper;
     @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
@@ -102,40 +112,48 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
     @Override
     public int save(OmPurchaseOrder omPurchaseOrder) {
-
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-
+        int i=0;
+        List<OmPurchaseOrderDet> detList = new ArrayList<>();
+        List<OmHtPurchaseOrderDet> htdetList = new ArrayList<>();
         omPurchaseOrder.setPurchaseOrderCode(CodeUtils.getId("IN-PO"));
         omPurchaseOrder.setOrderStatus((byte) 1);
         omPurchaseOrder.setStatus((byte) 1);
         omPurchaseOrder.setOrgId(user.getOrganizationId());
         omPurchaseOrder.setCreateUserId(user.getUserId());
         omPurchaseOrder.setCreateTime(new Date());
+        omPurchaseOrder.setModifiedUserId(user.getUserId());
+        omPurchaseOrder.setModifiedTime(new Date());
         omPurchaseOrder.setIsDelete((byte) 1);
-        if (StringUtils.isNotEmpty(omPurchaseOrder.getPurchaseOrderId())) {
-            omPurchaseOrderMapper.updateByPrimaryKeySelective(omPurchaseOrder);
+        omPurchaseOrderMapper.insertUseGeneratedKeys(omPurchaseOrder);
 
-            //删除该采购订单下的所有详情表
-            Example detExample = new Example(OmPurchaseOrderDet.class);
-            Example.Criteria detCriteria = detExample.createCriteria();
-            detCriteria.andEqualTo("purchaseOrderId", omPurchaseOrder.getPurchaseOrderId());
-            omPurchaseOrderDetMapper.deleteByExample(detExample);
-        } else {
-            omPurchaseOrderMapper.insertUseGeneratedKeys(omPurchaseOrder);
-        }
+        //保存履历表
+        OmHtPurchaseOrder omHtPurchaseOrder = new OmHtPurchaseOrder();
+        BeanUtils.copyProperties(omPurchaseOrder, omHtPurchaseOrder);
+        omHtPurchaseOrderMapper.insertSelective(omHtPurchaseOrder);
+
         for (OmPurchaseOrderDet omPurchaseOrderDet : omPurchaseOrder.getOmPurchaseOrderDetList()) {
             omPurchaseOrderDet.setPurchaseOrderId(omPurchaseOrder.getPurchaseOrderId());
             omPurchaseOrderDet.setStatus((byte) 1);
             omPurchaseOrderDet.setOrgId(user.getOrganizationId());
             omPurchaseOrderDet.setCreateUserId(user.getUserId());
             omPurchaseOrderDet.setCreateTime(new Date());
+            omPurchaseOrderDet.setModifiedUserId(user.getUserId());
+            omPurchaseOrderDet.setModifiedTime(new Date());
             omPurchaseOrderDet.setIsDelete((byte) 1);
+            detList.add(omPurchaseOrderDet);
+            //保存履历表
+            OmHtPurchaseOrderDet omHtPurchaseOrderDet = new OmHtPurchaseOrderDet();
+            BeanUtils.copyProperties(omPurchaseOrderDet, omHtPurchaseOrderDet);
+            htdetList.add(omHtPurchaseOrderDet);
         }
-        if (!omPurchaseOrder.getOmPurchaseOrderDetList().isEmpty()) {
-            omPurchaseOrderDetMapper.insertList(omPurchaseOrder.getOmPurchaseOrderDetList());
+        if (StringUtils.isNotEmpty(detList)) {
+            i = omPurchaseOrderDetMapper.insertList(detList);
         }
-
-        return 1;
+        if (StringUtils.isNotEmpty(htdetList)) {
+            omHtPurchaseOrderDetMapper.insertList(htdetList);
+        }
+        return i;
     }
 
     @Override
@@ -148,26 +166,58 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
-        entity.setCreateUserId(user.getUserId());
-        entity.setCreateTime(new Date());
+        entity.setModifiedUserId(user.getUserId());
+        entity.setModifiedTime(new Date());
         int i = omPurchaseOrderMapper.updateByPrimaryKeySelective(entity);
 
-        //删除该采购订单下的所有详情表
-        Example detExample = new Example(OmPurchaseOrderDet.class);
-        Example.Criteria detCriteria = detExample.createCriteria();
-        detCriteria.andEqualTo("purchaseOrderId", entity.getPurchaseOrderId());
-        omPurchaseOrderDetMapper.deleteByExample(detExample);
+        //保存履历表
+        OmHtPurchaseOrder omHtPurchaseOrder = new OmHtPurchaseOrder();
+        BeanUtils.copyProperties(entity, omHtPurchaseOrder);
+        omHtPurchaseOrderMapper.insertSelective(omHtPurchaseOrder);
 
-        for (OmPurchaseOrderDet omPurchaseOrderDet : entity.getOmPurchaseOrderDetList()) {
-            omPurchaseOrderDet.setPurchaseOrderId(entity.getPurchaseOrderId());
-            omPurchaseOrderDet.setStatus((byte) 1);
-            omPurchaseOrderDet.setOrgId(user.getOrganizationId());
-            omPurchaseOrderDet.setCreateUserId(user.getUserId());
-            omPurchaseOrderDet.setCreateTime(new Date());
-            omPurchaseOrderDet.setIsDelete((byte) 1);
+        //保存详情表
+        //更新原有明细
+        ArrayList<Long> idList = new ArrayList<>();
+        List<OmPurchaseOrderDet> list = entity.getOmPurchaseOrderDetList();
+        if(StringUtils.isNotEmpty(list)) {
+            for (OmPurchaseOrderDet det : list) {
+                if(StringUtils.isEmpty(det.getOrderQty()) || det.getOrderQty().compareTo(BigDecimal.ZERO) == -1)
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"计划数量需大于0");
+
+                if (StringUtils.isNotEmpty(det.getPurchaseOrderId())) {
+                    omPurchaseOrderDetMapper.updateByPrimaryKey(det);
+                    idList.add(det.getPurchaseOrderId());
+                }
+            }
         }
-        if (StringUtils.isNotEmpty(entity.getOmPurchaseOrderDetList())) {
-            omPurchaseOrderDetMapper.insertList(entity.getOmPurchaseOrderDetList());
+
+        //删除更新之外的明细
+        Example example1 = new Example(OmPurchaseOrderDet.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("purchaseOrderId", entity.getPurchaseOrderId());
+        if (idList.size() > 0) {
+            criteria1.andNotIn("purchaseOrderDetId", idList);
+        }
+        omPurchaseOrderDetMapper.deleteByExample(example1);
+
+        //新增剩余的明细
+        if(StringUtils.isNotEmpty(list)){
+            List<OmPurchaseOrderDet> addlist = new ArrayList<>();
+            for (OmPurchaseOrderDet det  : list){
+                if (idList.contains(det.getPurchaseOrderDetId())) {
+                    continue;
+                }
+                det.setPurchaseOrderId(entity.getPurchaseOrderId());
+                det.setCreateUserId(user.getUserId());
+                det.setCreateTime(new Date());
+                det.setModifiedUserId(user.getUserId());
+                det.setModifiedTime(new Date());
+                det.setStatus(StringUtils.isEmpty(det.getStatus())?1: det.getStatus());
+                det.setOrgId(user.getOrganizationId());
+                addlist.add(det);
+            }
+            if (StringUtils.isNotEmpty(addlist))
+                omPurchaseOrderDetMapper.insertList(addlist);
         }
 
         return i;

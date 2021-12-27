@@ -1,9 +1,7 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
@@ -19,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -36,7 +33,7 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
 
     @Override
     public List<WmsInnerInventoryDetDto> findList(Map<String, Object> map) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",sysUser.getOrganizationId());
         return wmsInnerInventoryDetMapper.findList(map);
     }
@@ -49,7 +46,7 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int add(List<WmsInnerInventoryDet> wmsInnerInventoryDets) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         for (WmsInnerInventoryDet wmsInnerInventoryDet : wmsInnerInventoryDets) {
             wmsInnerInventoryDet.setCreateTime(new Date());
             wmsInnerInventoryDet.setCreateUserId(sysUser.getUserId());
@@ -69,10 +66,10 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
     @Transactional(rollbackFor = RuntimeException.class)
     @LcnTransaction
     public int subtract(WmsInnerInventoryDet wmsInnerInventoryDet) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         Example example = new Example(WmsInnerInventoryDet.class);
         Example.Criteria criteria = example.createCriteria();
-        if(StringUtils.isEmpty(wmsInnerInventoryDet.getMaterialQty()) || wmsInnerInventoryDet.getMaterialQty().compareTo(BigDecimal.ZERO)<1){
+/*        if(StringUtils.isEmpty(wmsInnerInventoryDet.getMaterialQty()) || wmsInnerInventoryDet.getMaterialQty().compareTo(BigDecimal.ZERO)<1){
             throw new BizErrorException("出库数量错误");
         }
         if(StringUtils.isNotEmpty(wmsInnerInventoryDet.getBarcode())){
@@ -92,9 +89,9 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
         }
         criteria.andEqualTo("orgId",sysUser.getOrganizationId());
         List<WmsInnerInventoryDet> wms = wmsInnerInventoryDetMapper.selectByExample(example);
-        BigDecimal qty = wmsInnerInventoryDet.getMaterialQty();
+        BigDecimal qty = wmsInnerInventoryDet.getMaterialQty();*/
         int num=0;
-        for (WmsInnerInventoryDet wm : wms) {
+/*        for (WmsInnerInventoryDet wm : wms) {
             if(qty.compareTo(BigDecimal.ZERO)==0){
                 break;
             }
@@ -108,25 +105,13 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
                     qty.subtract(wmsInnerInventoryDet.getMaterialQty());
                 }
                 num+=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wm);
-        }
+        }*/
         return num;
-    }
-
-    /**
-     * 获取当前登录用户
-     * @return
-     */
-    private SysUser currentUser(){
-        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(sysUser)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-        return sysUser;
     }
 
     @Override
     public WmsInnerInventoryDet findByOne(String barCode){
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         Example example = new Example(WmsInnerInventoryDet.class);
         example.createCriteria().andEqualTo("barcode",barCode).andEqualTo("orgId",sysUser.getOrganizationId());
         List<WmsInnerInventoryDet> wmsInnerInventoryDet = wmsInnerInventoryDetMapper.selectByExample(example);
@@ -143,6 +128,7 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
         List<WmsInnerMaterialBarcodeDto> list = wmsInnerMaterialBarcodeService.findListByCode(codes);
         List<String> barCodes = new ArrayList<>();
         for(WmsInnerMaterialBarcodeDto dto : list){
+            if(StringUtils.isNotEmpty(dto.getBarcode()))
             barCodes.add(dto.getBarcode());
         }
         Map map = new HashMap();

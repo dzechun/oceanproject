@@ -5,11 +5,8 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
-import com.fantechs.common.base.general.entity.basic.BaseBadnessCategory;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessCategory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.history.WmsHtInnerInventory;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -146,7 +143,7 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
         if(!StringUtils.isEmpty(map.get("inventoryStatusId"))){
             criteria.andEqualTo("inventoryStatusId",map.get("inventoryStatusId"));
         }
-        criteria.andEqualTo("stockLock", 0).andEqualTo("qcLock", 0).andEqualTo("lockStatus", 0);
+        criteria.andEqualTo("stockLock", 0).andEqualTo("lockStatus", 0);
         criteria.andEqualTo("orgId",sysUser.getOrganizationId());
         WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryMapper.selectOneByExample(example);
         return wmsInnerInventorys;
@@ -176,7 +173,7 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
         if(!StringUtils.isEmpty(map.get("jobOrderDetId")) && !StringUtils.isEmpty("jobStatus")){
             criteria.andEqualTo("jobOrderDetId",map.get("jobOrderDetId")).andEqualTo("jobStatus",map.get("jobStatus"));
         }
-        criteria.andEqualTo("stockLock", 0).andEqualTo("qcLock", 0).andEqualTo("lockStatus", 0);
+        criteria.andEqualTo("stockLock", 0).andEqualTo("lockStatus", 0);
         wmsInnerInventory.setPackingQty(new BigDecimal(Double.parseDouble(map.get("actualQty").toString())
         ));
         criteria.andEqualTo("orgId",sysUser.getOrganizationId());
@@ -222,9 +219,19 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(WmsInnerInventory record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+
+        Example example = new Example(WmsInnerInventory.class);
+        example.createCriteria()
+                .andEqualTo("warehouseId", record.getWarehouseId())
+                .andEqualTo("storageId", record.getStorageId())
+                .andEqualTo("materialId", record.getMaterialId())
+                /*.andEqualTo("lockStatus", record.getLockStatus())
+                .andEqualTo("stockLock", record.getStockLock())*/
+                .andEqualTo("packingUnitName", record.getPackingUnitName())
+                .andEqualTo("batchCode", record.getBatchCode());
+        List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(example);
+        if(StringUtils.isNotEmpty(wmsInnerInventories))
+            throw new BizErrorException("添加失败，存在相同的库存,请进行合并");
 
         record.setCreateTime(new Date());
         record.setCreateUserId(user.getUserId());

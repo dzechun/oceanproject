@@ -13,12 +13,6 @@ import java.io.Serializable;
  */
 @Data
 public class OmOtherInOrderDto extends OmOtherInOrder implements Serializable {
-    /**
-     * 货主
-     */
-    @Transient
-    @ApiModelProperty(name = "materialOwnerName",value = "货主")
-    private String materialOwnerName;
 
     /**
      * 创建名称

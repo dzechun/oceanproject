@@ -12,8 +12,4 @@ import java.util.Map;
 @Mapper
 public interface OmTransferOrderMapper extends MyMapper<OmTransferOrder> {
     List<OmTransferOrderDto> findList(Map<String,Object> map);
-
-    OmTransferOrder findMaterial(@Param("materialId")Long materialId);
-
-    Long findStorage(Map<String,Object> map);
 }

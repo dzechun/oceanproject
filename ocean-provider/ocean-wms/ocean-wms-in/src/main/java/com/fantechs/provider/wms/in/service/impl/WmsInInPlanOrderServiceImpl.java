@@ -99,7 +99,8 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
         }
 
         wmsInInPlanOrderDto.setInPlanOrderCode(CodeUtils.getId("IN-IPO"));
-        wmsInInPlanOrderDto.setMakeOrderUserId(user.getUserId());
+        if(StringUtils.isEmpty(wmsInInPlanOrderDto.getMakeOrderUserId()))
+            wmsInInPlanOrderDto.setMakeOrderUserId(user.getUserId());
         wmsInInPlanOrderDto.setCreateUserId(user.getUserId());
         wmsInInPlanOrderDto.setCreateTime(new Date());
         wmsInInPlanOrderDto.setModifiedUserId(user.getUserId());

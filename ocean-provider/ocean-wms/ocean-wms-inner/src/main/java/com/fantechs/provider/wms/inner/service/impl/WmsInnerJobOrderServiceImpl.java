@@ -11,15 +11,10 @@ import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
 import com.fantechs.common.base.general.dto.basic.JobRuleDto;
 import com.fantechs.common.base.general.dto.basic.StorageRuleDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
-import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessRecordDto;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
-import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerStockOrderImport;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
-import com.fantechs.common.base.general.entity.eam.EamEquipment;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentMaterial;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentMaterialList;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
@@ -44,8 +39,6 @@ import com.fantechs.provider.wms.inner.service.*;
 import com.fantechs.provider.wms.inner.util.InBarcodeUtil;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
 import com.fantechs.provider.wms.inner.util.WmsInnerInventoryUtil;
-import com.sun.javafx.fxml.BeanAdapter;
-import io.micrometer.core.instrument.search.Search;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -1807,43 +1800,46 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
             searchWmsInnerJobOrderDet.setJobOrderId(record.getJobOrderId());
             List<WmsInnerJobOrderDetDto> orderDetMapperList = wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet);
-            if (!orderDetMapperList.isEmpty()) {
-                // 查询明细对应的库存
-                Example example = new Example(WmsInnerInventory.class);
-                example.createCriteria().andIn("jobOrderDetId", orderDetMapperList.stream().map(WmsInnerJobOrderDet::getJobOrderDetId).collect(Collectors.toList()));
-                List<WmsInnerInventory> innerInventories = wmsInnerInventoryMapper.selectByExample(example);
-                // 查询明细库存对应的原库存
-                example.clear();
-                example.createCriteria().andIn("inventoryId", innerInventories.stream().map(WmsInnerInventory::getParentInventoryId).collect(Collectors.toList()));
-                List<WmsInnerInventory> sourceInnerInventories = wmsInnerInventoryMapper.selectByExample(example);
-                for (WmsInnerInventory source : sourceInnerInventories) {
-                    for (WmsInnerInventory innerInventory : innerInventories) {
-                        if (innerInventory.getParentInventoryId().equals(source.getInventoryId())) {
-                            source.setPackingQty(source.getPackingQty().add(innerInventory.getPackingQty()));
-                        }
-                    }
-                }
-
-                if (!sourceInnerInventories.isEmpty()) {
-                    // 批量修改原库存
-                    wmsInnerInventoryService.batchUpdate(sourceInnerInventories);
-                }
-                if (!innerInventories.isEmpty()) {
-                    // 删除明细库存
-                    wmsInnerInventoryService.batchDelete(innerInventories);
-                }
-                if (!innerInventories.isEmpty()) {
-                    // 删除明细
-                    List<WmsInnerJobOrderDet> detList = new ArrayList<>();
-                    for (WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto : orderDetMapperList) {
-                        WmsInnerJobOrderDet det = wmsInnerJobOrderDetDto;
-                        detList.add(det);
-                    }
-                    wmsInnerJobOrderDetService.batchDelete(detList);
-                }
-            }
+//            if (!orderDetMapperList.isEmpty()) {
+//                // 查询明细对应的库存
+//                Example example = new Example(WmsInnerInventory.class);
+//                example.createCriteria().andIn("jobOrderDetId", orderDetMapperList.stream().map(WmsInnerJobOrderDet::getJobOrderDetId).collect(Collectors.toList()));
+//                List<WmsInnerInventory> innerInventories = wmsInnerInventoryMapper.selectByExample(example);
+//                // 查询明细库存对应的原库存
+//                example.clear();
+//                example.createCriteria().andIn("inventoryId", innerInventories.stream().map(WmsInnerInventory::getParentInventoryId).collect(Collectors.toList()));
+//                List<WmsInnerInventory> sourceInnerInventories = wmsInnerInventoryMapper.selectByExample(example);
+//                for (WmsInnerInventory source : sourceInnerInventories) {
+//                    for (WmsInnerInventory innerInventory : innerInventories) {
+//                        if (innerInventory.getParentInventoryId().equals(source.getInventoryId())) {
+//                            source.setPackingQty(source.getPackingQty().add(innerInventory.getPackingQty()));
+//                        }
+//                    }
+//                }
+//
+//                if (!sourceInnerInventories.isEmpty()) {
+//                    // 批量修改原库存
+//                    wmsInnerInventoryService.batchUpdate(sourceInnerInventories);
+//                }
+//                if (!innerInventories.isEmpty()) {
+//                    // 删除明细库存
+//                    wmsInnerInventoryService.batchDelete(innerInventories);
+//                }
+//                if (!innerInventories.isEmpty()) {
+//                    // 删除明细
+//                    List<WmsInnerJobOrderDet> detList = new ArrayList<>();
+//                    for (WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto : orderDetMapperList) {
+//                        WmsInnerJobOrderDet det = wmsInnerJobOrderDetDto;
+//                        detList.add(det);
+//                    }
+//                    wmsInnerJobOrderDetService.batchDelete(detList);
+//                }
+//            }
 
             for (WmsInnerJobOrderDet wmsInPutawayOrderDet : record.getWmsInPutawayOrderDets()) {
+                Example example = new Example(WmsInnerInventory.class);
+                example.createCriteria().andEqualTo("jobOrderDetId",wmsInPutawayOrderDet.getJobOrderDetId());
+
                 wmsInPutawayOrderDet.setJobOrderId(record.getJobOrderId());
                 wmsInPutawayOrderDet.setCreateTime(new Date());
                 wmsInPutawayOrderDet.setCreateUserId(sysUser.getUserId());
@@ -1852,25 +1848,28 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 wmsInPutawayOrderDet.setOrgId(sysUser.getOrganizationId());
                 wmsInPutawayOrderDetMapper.insertUseGeneratedKeys(wmsInPutawayOrderDet);
 
-                // 生成库存，扣减原库存
-                WmsInnerInventory innerInventory = wmsInnerInventoryService.selectByKey(wmsInPutawayOrderDet.getSourceId());
-                if (innerInventory.getPackingQty().compareTo(wmsInPutawayOrderDet.getPlanQty()) < 0) {
-                    throw new BizErrorException(ErrorCodeEnum.PDA5001012);
-                }
                 WmsInnerInventory newInnerInventory = new WmsInnerInventory();
-                BeanUtil.copyProperties(innerInventory, newInnerInventory);
-                newInnerInventory.setJobStatus((byte) 2);
                 newInnerInventory.setJobOrderDetId(wmsInPutawayOrderDet.getJobOrderDetId());
-                newInnerInventory.setOrgId(sysUser.getOrganizationId());
-                newInnerInventory.setRelevanceOrderCode(record.getJobOrderCode());
-                newInnerInventory.setCreateTime(new Date());
-                newInnerInventory.setCreateUserId(sysUser.getUserId());
-                newInnerInventory.setParentInventoryId(innerInventory.getInventoryId());
-                newInnerInventory.setPackingQty(wmsInPutawayOrderDet.getPlanQty());
-                wmsInnerInventoryService.save(newInnerInventory);
-                // 变更减少原库存
-                innerInventory.setPackingQty(innerInventory.getPackingQty().subtract(wmsInPutawayOrderDet.getPlanQty()));
-                wmsInnerInventoryService.update(innerInventory);
+                wmsInnerInventoryMapper.updateByExampleSelective(newInnerInventory,example);
+//                // 生成库存，扣减原库存
+//                WmsInnerInventory innerInventory = wmsInnerInventoryService.selectByKey(wmsInPutawayOrderDet.getSourceId());
+//                if (innerInventory.getPackingQty().compareTo(wmsInPutawayOrderDet.getPlanQty()) < 0) {
+//                    throw new BizErrorException(ErrorCodeEnum.PDA5001012);
+//                }
+//                WmsInnerInventory newInnerInventory = new WmsInnerInventory();
+//                BeanUtil.copyProperties(innerInventory, newInnerInventory);
+//                newInnerInventory.setJobStatus((byte) 2);
+//                newInnerInventory.setJobOrderDetId(wmsInPutawayOrderDet.getJobOrderDetId());
+//                newInnerInventory.setOrgId(sysUser.getOrganizationId());
+//                newInnerInventory.setRelevanceOrderCode(record.getJobOrderCode());
+//                newInnerInventory.setCreateTime(new Date());
+//                newInnerInventory.setCreateUserId(sysUser.getUserId());
+//                newInnerInventory.setParentInventoryId(innerInventory.getInventoryId());
+//                newInnerInventory.setPackingQty(wmsInPutawayOrderDet.getPlanQty());
+//                wmsInnerInventoryService.save(newInnerInventory);
+//                // 变更减少原库存
+//                innerInventory.setPackingQty(innerInventory.getPackingQty().subtract(wmsInPutawayOrderDet.getPlanQty()));
+//                wmsInnerInventoryService.update(innerInventory);
             }
         }
         int i = wmsInPutawayOrderMapper.updateByPrimaryKey(record);
@@ -2459,12 +2458,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
                 WmsInnerInventoryDet inventoryDet=new WmsInnerInventoryDet();
                 inventoryDet.setStorageId(inStorageId);
-                inventoryDet.setMaterialId(item.getMaterialId());
+/*                inventoryDet.setMaterialId(item.getMaterialId());
                 inventoryDet.setBarcode(item.getBarcode());
                 inventoryDet.setMaterialQty(item.getMaterialQty());
                 inventoryDet.setProductionDate(productionTime);
                 inventoryDet.setProductionBatchCode(item.getBatchCode());
-                inventoryDet.setJobStatus((byte)2);//在库
+                inventoryDet.setJobStatus((byte)2);//在库*/
                 inventoryDet.setIfStockLock((byte)0);
                 inventoryDet.setInventoryStatusId(wmsInnerJobOrderDet.getInventoryStatusId());
                 inventoryDet.setBarcodeStatus((byte)3);//在库
@@ -2512,15 +2511,15 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
                     WmsInnerInventoryDet inventoryDet=new WmsInnerInventoryDet();
                     inventoryDet.setStorageId(inStorageId);
-                    inventoryDet.setMaterialId(materialBarcodeDto.getMaterialId());
-                    inventoryDet.setBarcode(materialBarcodeDto.getBarcode());
-                    inventoryDet.setMaterialQty(materialBarcodeDto.getMaterialQty());
-                    inventoryDet.setProductionDate(materialBarcodeDto.getProductionTime());
-                    inventoryDet.setProductionBatchCode(materialBarcodeDto.getBatchCode());
-                    inventoryDet.setSupplierId(materialBarcodeDto.getSupplierId());
-                    inventoryDet.setJobStatus((byte)2);//在库
+//                    inventoryDet.setMaterialId(materialBarcodeDto.getMaterialId());
+//                    inventoryDet.setBarcode(materialBarcodeDto.getBarcode());
+//                    inventoryDet.setMaterialQty(materialBarcodeDto.getMaterialQty());
+//                    inventoryDet.setProductionDate(materialBarcodeDto.getProductionTime());
+//                    inventoryDet.setProductionBatchCode(materialBarcodeDto.getBatchCode());
+//                    inventoryDet.setSupplierId(materialBarcodeDto.getSupplierId());
+//                    inventoryDet.setJobStatus((byte)2);//在库
                     inventoryDet.setIfStockLock((byte)0);
-                    inventoryDet.setCartonCode(materialBarcodeDto.getCartonCode());
+//                    inventoryDet.setCartonCode(materialBarcodeDto.getCartonCode());
                     inventoryDet.setInventoryStatusId(wmsInnerJobOrderDet.getInventoryStatusId());
                     inventoryDet.setBarcodeStatus((byte)3);//在库
                     inventoryDet.setCreateUserId(sysUser.getUserId());
@@ -2757,12 +2756,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
                 WmsInnerInventoryDet inventoryDet=new WmsInnerInventoryDet();
                 inventoryDet.setStorageId(inStorageId);
-                inventoryDet.setMaterialId(saveInnerJobOrderDto.getMaterialId());
-                inventoryDet.setBarcode(saveInnerJobOrderDto.getBarcode());
-                inventoryDet.setMaterialQty(saveInnerJobOrderDto.getMaterialQty());
-                inventoryDet.setProductionDate(productionTime);
-                inventoryDet.setProductionBatchCode(saveInnerJobOrderDto.getBatchCode());
-                inventoryDet.setJobStatus((byte)2);//在库
+//                inventoryDet.setMaterialId(saveInnerJobOrderDto.getMaterialId());
+//                inventoryDet.setBarcode(saveInnerJobOrderDto.getBarcode());
+//                inventoryDet.setMaterialQty(saveInnerJobOrderDto.getMaterialQty());
+//                inventoryDet.setProductionDate(productionTime);
+//                inventoryDet.setProductionBatchCode(saveInnerJobOrderDto.getBatchCode());
+//                inventoryDet.setJobStatus((byte)2);//在库
                 inventoryDet.setIfStockLock((byte)0);
                 inventoryDet.setInventoryStatusId(null);
                 inventoryDet.setBarcodeStatus((byte)3);//在库
@@ -2810,15 +2809,15 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
                     WmsInnerInventoryDet inventoryDet=new WmsInnerInventoryDet();
                     inventoryDet.setStorageId(inStorageId);
-                    inventoryDet.setMaterialId(materialBarcodeDto.getMaterialId());
-                    inventoryDet.setBarcode(materialBarcodeDto.getBarcode());
-                    inventoryDet.setMaterialQty(materialBarcodeDto.getMaterialQty());
-                    inventoryDet.setProductionDate(materialBarcodeDto.getProductionTime());
-                    inventoryDet.setProductionBatchCode(materialBarcodeDto.getBatchCode());
-                    inventoryDet.setSupplierId(materialBarcodeDto.getSupplierId());
-                    inventoryDet.setJobStatus((byte)2);//在库
+//                    inventoryDet.setMaterialId(materialBarcodeDto.getMaterialId());
+//                    inventoryDet.setBarcode(materialBarcodeDto.getBarcode());
+//                    inventoryDet.setMaterialQty(materialBarcodeDto.getMaterialQty());
+//                    inventoryDet.setProductionDate(materialBarcodeDto.getProductionTime());
+//                    inventoryDet.setProductionBatchCode(materialBarcodeDto.getBatchCode());
+//                    inventoryDet.setSupplierId(materialBarcodeDto.getSupplierId());
+//                    inventoryDet.setJobStatus((byte)2);//在库
                     inventoryDet.setIfStockLock((byte)0);
-                    inventoryDet.setCartonCode(materialBarcodeDto.getCartonCode());
+//                     inventoryDet.setCartonCode(materialBarcodeDto.getCartonCode());
                     inventoryDet.setInventoryStatusId(null);
                     inventoryDet.setBarcodeStatus((byte)3);//在库
                     inventoryDet.setCreateUserId(sysUser.getUserId());
@@ -2994,7 +2993,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             inv.setJobStatus((byte) 1);
             inv.setInventoryStatusId(newDto.getInventoryStatusId());
             inv.setStockLock((byte)0);
-            inv.setQcLock((byte)0);
             inv.setLockStatus((byte)0);
             inv.setOrgId(sysUser.getOrganizationId());
             inv.setPackingQty(newDto.getActualQty());

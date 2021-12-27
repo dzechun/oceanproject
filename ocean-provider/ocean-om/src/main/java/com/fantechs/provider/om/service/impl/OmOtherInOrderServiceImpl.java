@@ -17,7 +17,9 @@ import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInPlanReceivingOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.om.OmHtOtherInOrder;
 import com.fantechs.common.base.general.entity.om.OmHtOtherInOrderDet;
 import com.fantechs.common.base.general.entity.om.OmOtherInOrder;
@@ -45,6 +47,7 @@ import com.fantechs.provider.om.mapper.ht.OmHtOtherInOrderDetMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtOtherInOrderMapper;
 import com.fantechs.provider.om.service.OmOtherInOrderService;
 import com.fantechs.provider.om.util.OrderFlowUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -128,14 +131,14 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             String unitName = omSalesReturnOrderDetMapper.findUnitName(omOtherInOrderDet.getMaterialId());
 
             //获取发货库位
-            Map<String, Object> map = new HashMap<>();
-            map.put("orgId", sysUser.getOrganizationId());
-            map.put("warehouseId", omOtherInOrderDet.getWarehouseId());
-            map.put("storageType", 2);
-            Long storageId = omTransferOrderMapper.findStorage(map);
-            if (StringUtils.isEmpty(storageId)) {
+            SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+            searchBaseStorage.setWarehouseId(omOtherInOrderDet.getWarehouseId());
+            searchBaseStorage.setStorageType((byte)2);
+            List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+            if (StringUtils.isEmpty(baseStorages)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未获取到该仓库的发货库位");
             }
+            Long storageId = baseStorages.get(0).getStorageId();
 
             SrmInAsnOrderDetDto srmInAsnOrderDetDto = new SrmInAsnOrderDetDto();
             srmInAsnOrderDetDto.setSourceOrderId(omOtherInOrderDet.getOtherInOrderId());
@@ -247,32 +250,67 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(OmOtherInOrder entity) {
-        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        int i =0;
         if (entity.getOrderStatus() > 1) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "单据已被操作，无法修改");
         }
         entity.setModifiedTime(new Date());
-        entity.setModifiedUserId(sysUser.getUserId());
-        entity.setOrgId(sysUser.getOrganizationId());
-        //删除原有明细
-        Example example = new Example(OmOtherInOrderDet.class);
-        example.createCriteria().andEqualTo("otherInOrderId", entity.getOtherInOrderId());
-        omOtherInOrderDetMapper.deleteByExample(example);
-        for (OmOtherInOrderDet omOtherInOrderDet : entity.getOmOtherInOrderDets()) {
-            omOtherInOrderDet.setOtherInOrderId(entity.getOtherInOrderId());
-            omOtherInOrderDet.setCreateTime(new Date());
-            omOtherInOrderDet.setCreateUserId(sysUser.getUserId());
-            omOtherInOrderDet.setModifiedTime(new Date());
-            omOtherInOrderDet.setModifiedUserId(sysUser.getUserId());
-            omOtherInOrderDet.setOrgId(sysUser.getOrganizationId());
+        entity.setModifiedUserId(user.getUserId());
+        entity.setOrgId(user.getOrganizationId());
+        omOtherInOrderMapper.updateByPrimaryKeySelective(entity);
+
+        //保存履历表
+        OmHtOtherInOrder omHtOtherInOrder = new OmHtOtherInOrder();
+        BeanUtils.copyProperties(entity, omHtOtherInOrder);
+        omHtOtherInOrderMapper.insertSelective(omHtOtherInOrder);
+
+
+        //保存详情表
+        //更新原有明细
+        ArrayList<Long> idList = new ArrayList<>();
+        List<OmOtherInOrderDet> list = entity.getOmOtherInOrderDets();
+        if(StringUtils.isNotEmpty(list)) {
+            for (OmOtherInOrderDet det : list) {
+                if(StringUtils.isEmpty(det.getOrderQty()) || det.getOrderQty().compareTo(BigDecimal.ZERO) == -1)
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"计划数量需大于0");
+
+                if (StringUtils.isNotEmpty(det.getOtherInOrderId())) {
+                    omOtherInOrderDetMapper.updateByPrimaryKey(det);
+                    idList.add(det.getOtherInOrderId());
+                }
+            }
         }
-        int num = 0;
-        if (StringUtils.isNotEmpty(entity.getOmOtherInOrderDets())) {
-            num = omOtherInOrderDetMapper.insertList(entity.getOmOtherInOrderDets());
+
+        //删除更新之外的明细
+        Example example1 = new Example(OmOtherInOrderDet.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("purchaseOrderId", entity.getOtherInOrderId());
+        if (idList.size() > 0) {
+            criteria1.andNotIn("purchaseOrderDetId", idList);
         }
-        num += omOtherInOrderMapper.updateByPrimaryKeySelective(entity);
-        num += this.addHt(entity, entity.getOmOtherInOrderDets());
-        return num;
+        omOtherInOrderDetMapper.deleteByExample(example1);
+
+        //新增剩余的明细
+        if(StringUtils.isNotEmpty(list)){
+            List<OmOtherInOrderDet> addlist = new ArrayList<>();
+            for (OmOtherInOrderDet det  : list){
+                if (idList.contains(det.getOtherInOrderDetId())) {
+                    continue;
+                }
+                det.setOtherInOrderId(entity.getOtherInOrderId());
+                det.setCreateUserId(user.getUserId());
+                det.setCreateTime(new Date());
+                det.setModifiedUserId(user.getUserId());
+                det.setModifiedTime(new Date());
+                det.setStatus(StringUtils.isEmpty(det.getStatus())?1: det.getStatus());
+                det.setOrgId(user.getOrganizationId());
+                addlist.add(det);
+            }
+            if (StringUtils.isNotEmpty(addlist))
+                i = omOtherInOrderDetMapper.insertList(addlist);
+        }
+        return i;
     }
 
     @Override

@@ -7,13 +7,7 @@
         -->
         <id column="inventory_det_id" jdbcType="BIGINT" property="inventoryDetId"/>
         <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
-        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
-        <result column="barcode" jdbcType="VARCHAR" property="barcode"/>
-        <result column="material_qty" jdbcType="DECIMAL" property="materialQty"/>
-        <result column="production_date" jdbcType="TIMESTAMP" property="productionDate"/>
-        <result column="production_batch_code" jdbcType="VARCHAR" property="productionBatchCode"/>
-        <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
-        <result column="job_status" jdbcType="TINYINT" property="jobStatus"/>
+        <result column="material_barcode_id" jdbcType="BIGINT" property="materialBarcodeId"/>
         <result column="if_stock_lock" jdbcType="TINYINT" property="ifStockLock"/>
         <result column="receiving_date" jdbcType="TIMESTAMP" property="receivingDate"/>
         <result column="asn_code" jdbcType="VARCHAR" property="asnCode"/>
@@ -28,10 +22,8 @@
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
         <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
-        <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
         <result column="spec" jdbcType="VARCHAR" property="spec"/>
         <result column="purchase_req_order_code" jdbcType="VARCHAR" property="purchaseReqOrderCode"/>
-        <result column="carton_code" jdbcType="VARCHAR" property="cartonCode"/>
         <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId"/>
         <result column="inspection_order_code" jdbcType="VARCHAR" property="inspectionOrderCode"/>
         <result column="qc_date" jdbcType="TIMESTAMP" property="qcDate"/>
@@ -52,19 +44,13 @@
     <sql id="Base_Column_List">
         wiid.inventory_det_id,
         wiid.storage_id,
-        wiid.material_id,
-        wiid.barcode,
-        wiid.material_qty,
-        wiid.production_date,
-        wiid.production_batch_code,
-        wiid.supplier_id,
-wiid.job_status,
-wiid.if_stock_lock,
+        wiid.material_barcode_id,
+        wiid.if_stock_lock,
         wiid.receiving_date,
-wiid.asn_code,
-wiid.deliver_date,
-wiid.delivery_order_code,
-wiid.barcode_status,
+        wiid.asn_code,
+        wiid.deliver_date,
+        wiid.delivery_order_code,
+        wiid.barcode_status,
         wiid.status,
         wiid.remark,
         wiid.org_id,
@@ -73,35 +59,48 @@ wiid.barcode_status,
         wiid.modified_user_id,
         wiid.modified_time,
         wiid.is_delete,
-wiid.contract_code,
-wiid.spec,
-wiid.purchase_req_order_code,
-        wiid.carton_code,
+        wiid.spec,
+        wiid.purchase_req_order_code,
         wiid.inventory_status_id,
         wiid.inspection_order_code,
         wiid.qc_date,
-wiid.option1,
-wiid.option2,
-wiid.option3,
-wiid.option4,
-wiid.option5
+        wiid.option1,
+        wiid.option2,
+        wiid.option3,
+        wiid.option4,
+        wiid.option5
     </sql>
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         select<include refid="Base_Column_List"/>,
-        bs.storage_code,bs.warehouse_id,bw.warehouse_name,bm.material_code,bm.material_name,bss.supplier_name,bo.organization_name,bis.inventory_status_name,
+        bs.storage_code,bs.warehouse_id,bw.warehouse_name,bo.organization_name,bis.inventory_status_name,
+        wimb.barcode as barcode,wimb.color_box_code as colorBoxCode,wimb.carton_code as cartonCode,wimb.pallet_code as palletCode,
+        wimb.batch_code as batchCode,wimb.material_qty as materialQty,wimb.material_id as materialId,bm.material_code as material_code,
+        bm.material_name as material_name,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name
         from wms_inner_inventory_det wiid
         LEFT JOIN base_inventory_status bis ON bis.inventory_status_id = wiid.inventory_status_id
         LEFT JOIN base_storage bs ON wiid.storage_id = bs.storage_id
         LEFT JOIN base_warehouse bw ON bs.warehouse_id = bw.warehouse_id
-        LEFT JOIN base_material bm ON wiid.material_id = bm.material_id
-        LEFT JOIN base_supplier bss ON wiid.supplier_id = bss.supplier_id
+        LEFT JOIN wms_inner_material_barcode wimb ON wiid.material_barcode_id = wimb.material_barcode_id
+        LEFT JOIN base_material bm ON wimb.material_id = bm.material_id
         LEFT JOIN sys_user su ON wiid.create_user_id = su.user_id
         LEFT JOIN sys_user sus ON wiid.modified_user_id = sus.user_id
         LEFT JOIN base_organization bo ON wiid.org_id = bo.organization_id
         <where>
             <if test="warehouseName!=null and warehouseName!=''">
                 and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
+            </if>
+            <if test="barcode!=null and barcode!=''">
+                and wimb.barcode = #{barcode}
+            </if>
+            <if test="colorBoxCode!=null and colorBoxCode!=''">
+                and wimb.color_box_code = #{colorBoxCode}
+            </if>
+            <if test="cartonCode!=null and cartonCode!=''">
+                and wimb.carton_code = #{cartonCode}
+            </if>
+            <if test="storageCode!=null and storageCode!=''">
+                and wimb.pallet_code = #{palletCode}
             </if>
             <if test="storageId!=null and storageId!='' and notEqualMark!=1">
                 and wiid.storage_id = #{storageId}
@@ -118,26 +117,14 @@ wiid.option5
             <if test="ifInspectionOrderCodeNull!=null and ifInspectionOrderCodeNull==1">
                 and wiid.inspection_order_code is null
             </if>
-            <if test="materialId!=null and materialId!=''">
-                and wiid.material_id = #{materialId}
-            </if>
-            <if test="barcode!=null and barcode!=''">
-                and wiid.barcode = #{barcode}
-            </if>
             <if test="storageCode!=null and storageCode!=''">
                 and bs.storage_code = #{storageCode}
-            </if>
-            <if test="materialQty!=null and materialQty!=''">
-                and wiid.material_qty = #{materialQty}
             </if>
             <if test="materialCode!=null and materialCode!=''">
                 and bm.material_code like CONCAT('%',#{materialCode},'%')
             </if>
             <if test="materialName!=null and materialName!=''">
                 and bm.material_name like CONCAT('%',#{materialName},'%')
-            </if>
-            <if test="jobStatus!=null and jobStatus!=''">
-                and wiid.job_status = #{jobStatus}
             </if>
             <if test="ifStockLock!=null and ifStockLock>=0">
                 and wiid.if_stock_lock = #{ifStockLock}
@@ -147,9 +134,6 @@ wiid.option5
             </if>
             <if test="supplierName!=null and supplierName!=''">
                 and bss.supplier_name like CONCAT('%',#{supplierName},'%')
-            </if>
-            <if test="productionBatchCode!=null and productionBatchCode!=''">
-                and wiid.production_batch_code like CONCAT('%',#{productionBatchCode},'%')
             </if>
             <if test="createUserName!=null and createUserName!=''">
                 and su.user_name like CONCAT('%',#{createUserName},'%')
@@ -169,13 +153,20 @@ wiid.option5
             <if test="orgId!=null and orgId!=''">
                 and wiid.org_id = #{orgId}
             </if>
-            <if test="materialBarcodeIdList != null and materialBarcodeIdList.size() > 0">
-                and wimb.material_barcode_id
-                <foreach collection="materialBarcodeIdList" open="in (" close=")" item="item" separator="," index="index">
-                    #{item}
-                </foreach>
-            </if>
         </where>
         order by wiid.create_time desc
     </select>
+
+    <update id="upddateStroage" parameterType="com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet">
+        <foreach collection="inventoryDetList" item="item" index="index" separator=";">
+            update wms_inner_inventory_det wiid
+            <set>
+                <if test="item.storageId != null">
+                    wiid.storageId = #{item.storageId}
+                </if>
+            </set>
+            where wiid.inventory_det_id = #{item.inventoryDetId}
+        </foreach>
+    </update>
+
 </mapper>

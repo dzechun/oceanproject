@@ -1,10 +1,10 @@
 package com.fantechs.common.base.general.entity.wms.inner.search;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import java.io.Serializable;
@@ -24,12 +24,6 @@ public class SearchWmsInnerInventory extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="makeCode",value = "制造编码")
     private String makeCode;
-
-    /**
-     * 货主名称
-     */
-    @ApiModelProperty(name="materialOwnerName",value = "货主名称")
-    private String materialOwnerName;
 
     /**
      * 仓库名称
@@ -63,9 +57,9 @@ public class SearchWmsInnerInventory extends BaseQuery implements Serializable {
     private String materialName;
 
     /**
-     * 相关单号
+     * 单据号
      */
-    @ApiModelProperty(name="relevanceOrderCode",value = "相关单号")
+    @ApiModelProperty(name="relevanceOrderCode",value = "单据号")
     private String relevanceOrderCode;
 
     /**
@@ -165,12 +159,6 @@ public class SearchWmsInnerInventory extends BaseQuery implements Serializable {
     private Byte jobStatus;
 
     /**
-     * 质检锁(0-否 1-是)
-     */
-    @ApiModelProperty(name="qcLock",value = "质检锁(0-否 1-是)")
-    private Byte qcLock;
-
-    /**
      * 盘点锁(0-否 1-是)
      */
     @ApiModelProperty(name="stockLock",value = "盘点锁(0-否 1-是)")
@@ -205,6 +193,38 @@ public class SearchWmsInnerInventory extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name = "inventoryStatusName",value = "库存状态")
     private String inventoryStatusName;
+
+    /**
+     * 生产日期开始时间
+     */
+    @ApiModelProperty(name="endTime" ,value="生产日期开始时间(YYYY-MM-DD)")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date productionStartDate;
+
+    /**
+     * 生产日期结束时间
+     */
+    @ApiModelProperty(name="endTime" ,value="生产日期结束时间(YYYY-MM-DD)")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date productionEndDate;
+
+    /**
+     * 过期日期开始时间
+     */
+    @ApiModelProperty(name="endTime" ,value="过期日期开始时间(YYYY-MM-DD)")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date expiredStartDate;
+
+    /**
+     * 过期日期结束时间
+     */
+    @ApiModelProperty(name="endTime" ,value="过期日期结束时间(YYYY-MM-DD)")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date expiredEndDate;
 
     private static final long serialVersionUID = 1L;
 }

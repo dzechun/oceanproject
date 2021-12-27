@@ -132,12 +132,12 @@ public class OmOtherInOrder extends ValidGroup implements Serializable {
     private Date orderDate;
 
     /**
-     * 要求完成日期
+     * 计划完成日期
      */
-    @ApiModelProperty(name="completeDate",value = "要求完成日期")
-    @Excel(name = "要求完成日期", height = 20, width = 30,orderNum="14")
-    @Column(name = "complete_date")
-    private Date completeDate;
+    @ApiModelProperty(name="planCompleteTime",value = "计划完成日期")
+    @Excel(name = "计划完成日期", height = 20, width = 30,orderNum="14")
+    @Column(name = "plan_complete_time")
+    private Date planCompleteTime;
 
     /**
      * 备注

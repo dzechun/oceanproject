@@ -11,4 +11,6 @@ import java.util.Map;
 @Mapper
 public interface WmsInnerInventoryDetMapper extends MyMapper<WmsInnerInventoryDet> {
     List<WmsInnerInventoryDetDto> findList(Map<String,Object> map);
+
+    int upddateStroage(List<WmsInnerInventoryDet> inventoryDetList);
 }

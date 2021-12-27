@@ -1,6 +1,5 @@
 package com.fantechs.common.base.general.entity.wms.out.search;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -8,7 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 
 @Data
