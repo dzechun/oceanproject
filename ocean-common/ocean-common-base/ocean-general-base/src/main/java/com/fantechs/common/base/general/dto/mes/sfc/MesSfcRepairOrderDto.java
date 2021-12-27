@@ -1,15 +1,12 @@
 package com.fantechs.common.base.general.dto.mes.sfc;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcKeyPartRelevance;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Transient;
 import java.io.Serializable;
-import java.util.List;
 
 @Data
 public class MesSfcRepairOrderDto extends MesSfcRepairOrder implements Serializable {
@@ -93,4 +90,18 @@ public class MesSfcRepairOrderDto extends MesSfcRepairOrder implements Serializa
     @Transient
     @ApiModelProperty(name = "currentProcessName",value = "当前工序名称")
     private String currentProcessName;
+
+    /**
+     * 转接确认人
+     */
+    @Transient
+    @ApiModelProperty(name = "transferComfirmUserName",value = "转接确认人")
+    private String transferComfirmUserName;
+
+    /**
+     * 转出确认人
+     */
+    @Transient
+    @ApiModelProperty(name = "transferOutComfirmUserName",value = "转出确认人")
+    private String transferOutComfirmUserName;
 }

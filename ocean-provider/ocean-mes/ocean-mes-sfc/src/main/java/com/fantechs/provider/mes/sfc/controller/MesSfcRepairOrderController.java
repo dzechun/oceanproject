@@ -1,7 +1,7 @@
 package com.fantechs.provider.mes.sfc.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
+import com.fantechs.common.base.general.dto.basic.BaseProductBomDetDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcRepairOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcRepairOrderPrintParam;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcRepairOrder;
@@ -78,6 +78,13 @@ public class MesSfcRepairOrderController {
                                                           @ApiParam(value = "序列号类别（1-成品序列号 2-半成品序列号）")@RequestParam Integer SNCodeType) {
         MesSfcRepairOrderDto repairOrderDto = mesSfcRepairOrderService.getWorkOrder(SNCode, workOrderCode,SNCodeType);
         return  ControllerUtil.returnDataSuccess(repairOrderDto,StringUtils.isEmpty(repairOrderDto)?0:1);
+    }
+
+    @ApiOperation("查询半成品bom列表")
+    @PostMapping("/findSemiProductBom")
+    public ResponseEntity<List<BaseProductBomDetDto>> findSemiProductBom(@ApiParam(value = "序列号")@RequestParam String semiProductBarcode) {
+        List<BaseProductBomDetDto> semiProductBom = mesSfcRepairOrderService.findSemiProductBom(semiProductBarcode);
+        return ControllerUtil.returnDataSuccess(semiProductBom,semiProductBom.size());
     }
 
     @ApiOperation("列表")

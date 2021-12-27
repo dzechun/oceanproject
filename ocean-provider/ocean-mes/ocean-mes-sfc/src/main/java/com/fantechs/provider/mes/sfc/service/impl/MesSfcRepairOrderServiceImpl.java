@@ -6,6 +6,8 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseProductBomDetDto;
+import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
@@ -19,6 +21,7 @@ import com.fantechs.common.base.general.entity.basic.BaseProcess;
 import com.fantechs.common.base.general.entity.basic.BaseStation;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseFile;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProcess;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBom;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStation;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
@@ -112,6 +115,61 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",user.getOrganizationId());
         return mesSfcHtRepairOrderMapper.findHtList(map);
+    }
+
+    @Override
+    public List<BaseProductBomDetDto> findSemiProductBom(String semiProductBarcode) {
+        //截取采购单号
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("WorkOrderPositionOnBarcode");
+        List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        String paraValue = sysSpecItemList.get(0).getParaValue();
+        int beginIndex = 0;
+        int endIndex = 0;
+        if (StringUtils.isNotEmpty(paraValue)) {
+            String[] arry = paraValue.split("-");
+            if (arry.length == 2) {
+                beginIndex = Integer.parseInt(arry[0]);
+                endIndex = Integer.parseInt(arry[1]);
+            }
+        }
+        if(semiProductBarcode.length() < endIndex){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"半成品序列号有误");
+        }
+        String partPurchaseOrderCode = semiProductBarcode.substring(beginIndex, endIndex);
+        StringBuilder stringBuilder = new StringBuilder(partPurchaseOrderCode);
+        stringBuilder.insert(0,"4");
+        stringBuilder.insert(2,"000");
+        String purchaseOrderCode = stringBuilder.toString();
+
+        SearchOmPurchaseOrder searchOmPurchaseOrder = new SearchOmPurchaseOrder();
+        searchOmPurchaseOrder.setPurchaseOrderCode(purchaseOrderCode);
+        List<OmPurchaseOrderDto> purchaseOrderDtos = omFeignApi.findList(searchOmPurchaseOrder).getData();
+        if(StringUtils.isEmpty(purchaseOrderDtos)){
+            throw new BizErrorException("找不到采购单");
+        }
+        OmPurchaseOrderDto omPurchaseOrderDto = purchaseOrderDtos.get(0);
+
+        SearchOmPurchaseOrderDet searchOmPurchaseOrderDet = new SearchOmPurchaseOrderDet();
+        searchOmPurchaseOrderDet.setPurchaseOrderId(omPurchaseOrderDto.getPurchaseOrderId());
+        List<OmPurchaseOrderDetDto> purchaseOrderDetDtos = omFeignApi.findList(searchOmPurchaseOrderDet).getData();
+        if(StringUtils.isEmpty(purchaseOrderDetDtos)){
+            throw new BizErrorException("找不到采购单明细");
+        }
+        Long partMaterialId = purchaseOrderDetDtos.get(0).getMaterialId();
+
+        SearchBaseProductBom searchBaseProductBom = new SearchBaseProductBom();
+        searchBaseProductBom.setMaterialId(partMaterialId);
+        BaseProductBomDto baseProductBomDto = baseFeignApi.findNextLevelProductBomDet(searchBaseProductBom).getData();
+        if(StringUtils.isEmpty(baseProductBomDto)){
+            throw new BizErrorException("找不到该半成品");
+        }
+        List<BaseProductBomDetDto> baseProductBomDetDtos = baseProductBomDto.getBaseProductBomDetDtos();
+        if(StringUtils.isEmpty(baseProductBomDetDtos)){
+            throw new BizErrorException("找不到该半成品Bom");
+        }
+
+        return baseProductBomDetDtos;
     }
 
     @Override
