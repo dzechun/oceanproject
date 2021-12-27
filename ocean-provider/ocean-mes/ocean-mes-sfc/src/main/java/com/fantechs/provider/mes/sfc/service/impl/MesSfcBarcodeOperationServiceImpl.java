@@ -502,6 +502,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                         .labelTypeCode("09")
                         .workOrderId(mesPmWorkOrder.getWorkOrderId())
                         .printName(dto.getPrintName() != null ? dto.getPrintName() : "测试")
+                        .packingQty(mesSfcBarcodeProcessList.size() >= sfcProductCarton.getNowPackageSpecQty().intValue() ?
+                                mesSfcBarcodeProcessList.size()+"" : mesSfcBarcodeProcessList.size()+"尾")
                         .build());
             }
 
@@ -609,6 +611,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                         .labelTypeCode("09")
                         .workOrderId(mesSfcProductCarton.getWorkOrderId())
                         .printName(printName != null ? printName : "测试")
+                        .packingQty(mesSfcBarcodeProcessList.size() >= mesSfcProductCarton.getNowPackageSpecQty().intValue() ?
+                                mesSfcBarcodeProcessList.size()+"" : mesSfcBarcodeProcessList.size()+"尾")
                         .build());
             }
 
@@ -700,12 +704,18 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         mesSfcProductCarton.setModifiedTime(new Date());
         int update = mesSfcProductCartonService.update(mesSfcProductCarton);
         if (dto.getPrint() && update > 0) {
+            List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findBarcode(SearchMesSfcBarcodeProcess.builder()
+                    .cartonCode(productCartonDto.getCartonCode())
+                    .build());
+
             // 关箱后才能打印条码
             BarcodeUtils.printBarCode(PrintCarCodeDto.builder()
                     .barcode(productCartonDto.getCartonCode())
                     .labelTypeCode("09")
                     .workOrderId(productCartonDto.getWorkOrderId())
                     .printName(dto.getPrintName() != null ? dto.getPrintName() : "测试")
+                    .packingQty(mesSfcBarcodeProcessList.size() >= productCartonDto.getNowPackageSpecQty().intValue() ?
+                            mesSfcBarcodeProcessList.size()+"" : mesSfcBarcodeProcessList.size()+"尾")
                     .build());
         }
 

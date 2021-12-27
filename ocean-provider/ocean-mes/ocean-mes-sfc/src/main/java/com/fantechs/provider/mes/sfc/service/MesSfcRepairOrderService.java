@@ -1,5 +1,6 @@
 package com.fantechs.provider.mes.sfc.service;
 
+import com.fantechs.common.base.general.dto.basic.BaseProductBomDetDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcRepairOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcRepairOrderPrintParam;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcRepairOrder;
@@ -24,4 +25,6 @@ public interface MesSfcRepairOrderService extends IService<MesSfcRepairOrder> {
     int print(MesSfcRepairOrderPrintParam mesSfcRepairOrderPrintParam);
 
     MesSfcRepairOrder add(MesSfcRepairOrder record);
+
+    List<BaseProductBomDetDto> findSemiProductBom(String semiProductBarcode);
 }

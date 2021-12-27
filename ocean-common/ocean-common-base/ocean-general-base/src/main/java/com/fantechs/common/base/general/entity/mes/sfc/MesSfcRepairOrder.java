@@ -107,6 +107,52 @@ public class MesSfcRepairOrder extends ValidGroup implements Serializable {
     private Long currentProcessId;
 
     /**
+     * 转接确认状态(1-未确认 2-已确认)
+     */
+    @ApiModelProperty(name="transferComfirmStatus",value = "转接确认状态(1-未确认 2-已确认)")
+    //@Excel(name = "转接确认状态(1-未确认 2-已确认)", height = 20, width = 30,orderNum="10")
+    @Column(name = "transfer_comfirm_status")
+    private Byte transferComfirmStatus;
+
+    /**
+     * 转接确认人ID
+     */
+    @ApiModelProperty(name="transferComfirmUserId",value = "转接确认人ID")
+    @Column(name = "transfer_comfirm_user_id")
+    private Long transferComfirmUserId;
+
+    /**
+     * 转接确认时间
+     */
+    @ApiModelProperty(name="transferComfirmTime",value = "转接确认时间")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "transfer_comfirm_time")
+    private Date transferComfirmTime;
+
+    /**
+     * 转出确认状态(1-未确认 2-已确认)
+     */
+    @ApiModelProperty(name="transferOutComfirmStatus",value = "转出确认状态(1-未确认 2-已确认)")
+    //9@Excel(name = "转接确认状态(1-未确认 2-已确认)", height = 20, width = 30,orderNum="10")
+    @Column(name = "transfer_out_comfirm_status")
+    private Byte transferOutComfirmStatus;
+
+    /**
+     * 转出确认人ID
+     */
+    @ApiModelProperty(name="transferOutComfirmUserId",value = "转出确认人ID")
+    @Column(name = "transfer_out_comfirm_user_id")
+    private Long transferOutComfirmUserId;
+
+    /**
+     * 转出确认时间
+     */
+    @ApiModelProperty(name="transferOutComfirmTime",value = "转出确认时间")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "transfer_out_comfirm_time")
+    private Date transferOutComfirmTime;
+
+    /**
      * 单据状态(1、待维修 2、已维修)
      */
     @ApiModelProperty(name="orderStatus",value = "单据状态(1、待维修 2、已维修)")

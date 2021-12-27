@@ -17,6 +17,12 @@
     <result column="bad_process_id" jdbcType="BIGINT" property="badProcessId" />
     <result column="current_process_id" jdbcType="BIGINT" property="currentProcessId" />
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
+    <result column="transfer_comfirm_user_id" jdbcType="BIGINT" property="transferComfirmUserId" />
+    <result column="transfer_comfirm_status" jdbcType="TINYINT" property="transferComfirmStatus" />
+    <result column="transfer_comfirm_time" jdbcType="TIMESTAMP" property="transferComfirmTime" />
+    <result column="transfer_out_comfirm_user_id" jdbcType="BIGINT" property="transferOutComfirmUserId" />
+    <result column="transfer_out_comfirm_status" jdbcType="TINYINT" property="transferOutComfirmStatus" />
+    <result column="transfer_out_comfirm_time" jdbcType="TIMESTAMP" property="transferOutComfirmTime" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -51,6 +57,8 @@
     <result column="route_name" jdbcType="VARCHAR" property="routeName"/>
     <result column="bad_process_name" jdbcType="VARCHAR" property="badProcessName"/>
     <result column="current_process_name" jdbcType="VARCHAR" property="currentProcessName"/>
+    <result column="transfer_comfirm_user_name" jdbcType="VARCHAR" property="transferComfirmUserName"/>
+    <result column="transfer_out_comfirm_user_name" jdbcType="VARCHAR" property="transferOutComfirmUserName"/>
   </resultMap>
 
   <sql id="BaseColumnList">
@@ -65,6 +73,12 @@
     msro.route_id,
     msro.bad_process_id,
     msro.current_process_id,
+    msro.transfer_comfirm_status,
+    msro.transfer_comfirm_user_id,
+    msro.transfer_comfirm_time,
+    msro.transfer_out_comfirm_time,
+    msro.transfer_out_comfirm_user_id,
+    msro.transfer_out_comfirm_status,
     msro.order_status,
     msro.`status`,
     msro.remark,
@@ -83,6 +97,8 @@
     select <include refid="BaseColumnList"/>,
     mpwo.work_order_code,bm.material_code,bm.material_code,bm.material_desc,bmt.material_property,
     bpl.pro_name,br.route_name,bbp.process_name as bad_process_name,cbp.process_name as current_process_name,
+    tcsu.user_name as transfer_comfirm_user_name,
+    tocsu.user_name as transfer_out_comfirm_user_name,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
@@ -94,6 +110,8 @@
     left join fantech_imes_v2.base_route br ON msro.route_id = br.route_id
     left join fantech_imes_v2.base_process bbp ON msro.bad_process_id = bbp.process_id
     left join fantech_imes_v2.base_process cbp ON msro.current_process_id = cbp.process_id
+    left join ocean_v2.sys_user tcsu on msro.transfer_comfirm_user_id=tcsu.user_id
+    left join ocean_v2.sys_user tocsu on msro.transfer_out_comfirm_user_id=tocsu.user_id
     left join ocean_v2.sys_user u on msro.create_user_id=u.user_id
     left join ocean_v2.sys_user s on msro.modified_user_id=s.user_id
     left join fantech_imes_v2.base_organization bo ON msro.org_id = bo.organization_id
