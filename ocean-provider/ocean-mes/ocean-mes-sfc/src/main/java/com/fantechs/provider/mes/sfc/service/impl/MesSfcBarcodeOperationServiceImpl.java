@@ -149,20 +149,20 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             throw new BizErrorException(ErrorCodeEnum.PDA40012002, orderBarcodeDto.getBarcode());
         }
 
-        boolean b= false;
-        //工艺路线跟工序集合
-        List<BaseRouteProcess>  baseProcessList= baseFeignApi.findConfigureRout(mesPmWorkOrder .getRouteId()).getData();
-        for(BaseRouteProcess baseRouteProcess:baseProcessList){
-            if(mesSfcBarcodeProcess.getProcessId().equals(baseRouteProcess.getProcessId())
-                    &&baseRouteProcess.getNextProcessId().equals(dto.getProcessId())
-                    &&baseRouteProcess.getIsPass()==1){
-                b= true;
-                break;
-            }
-        }
-        if(!b){
-            throw new BizErrorException(ErrorCodeEnum.PDA40012009.getCode(), "工艺路线无此过站工序");
-        }
+//        boolean b= false;
+//        //工艺路线跟工序集合
+//        List<BaseRouteProcess>  baseProcessList= baseFeignApi.findConfigureRout(mesPmWorkOrder .getRouteId()).getData();
+//        for(BaseRouteProcess baseRouteProcess:baseProcessList){
+//            if(mesSfcBarcodeProcess.getProcessId().equals(baseRouteProcess.getProcessId())
+//                    &&baseRouteProcess.getNextProcessId().equals(dto.getProcessId())
+//                    &&baseRouteProcess.getIsPass()==1){
+//                b= true;
+//                break;
+//            }
+//        }
+//        if(!b){
+//            throw new BizErrorException(ErrorCodeEnum.PDA40012009.getCode(), "工艺路线无此过站工序");
+//        }
 
         // 2、校验条码是否关联包箱
         Map<String, Object> map = new HashMap<>();
