@@ -5,7 +5,6 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -13,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 ;
 ;
@@ -44,6 +44,34 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
     private Long salesOrderId;
 
     /**
+     * 核心单据编码
+     */
+    @ApiModelProperty(name = "coreSourceOrderCode",value = "核心单据编码")
+    @Column(name = "core_source_order_code")
+    private String coreSourceOrderCode;
+
+    /**
+     * 来源单据编码
+     */
+    @ApiModelProperty(name = "sourceOrderCode",value = "来源单据编码")
+    @Column(name = "source_order_code")
+    private String sourceOrderCode;
+
+    /**
+     * 核心来源ID
+     */
+    @ApiModelProperty(name = "coreSourceId",value = "核心来源ID")
+    @Column(name = "core_source_id")
+    private Long coreSourceId;
+
+    /**
+     * 来源ID
+     */
+    @ApiModelProperty(name = "sourceId",value = "来源ID")
+    @Column(name = "source_id")
+    private Long sourceId;
+
+    /**
      * 行号
      */
     @ApiModelProperty(name = "lineNumber",value = "行号")
@@ -51,12 +79,12 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
     private String lineNumber;
 
     /**
-     * 客户订单行号
+     * 客户订单号
      */
-    @ApiModelProperty(name="customerOrderLineNumber",value = "客户订单行号")
-    @Excel(name = "客户订单行号", height = 20, width = 30,orderNum="") 
-    @Column(name = "customer_order_line_number")
-    private String customerOrderLineNumber;
+    @ApiModelProperty(name="customerOrderCode",value = "客户订单号")
+    @Excel(name = "客户订单号", height = 20, width = 30,orderNum="")
+    @Column(name = "customer_order_code")
+    private String customerOrderCode;
 
     /**
      * 来源行号
@@ -150,50 +178,45 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="planRevertDate",value = "计划回复日期")
     @Excel(name = "计划回复日期", height = 20, width = 30,orderNum="")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JSONField(format = "yyyy-MM-dd")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "plan_revert_date")
-    private String planRevertDate;
+    private Date planRevertDate;
 
     /**
      * 计划发货日期
      */
     @ApiModelProperty(name="planDeliverDate",value = "计划发货日期")
     @Excel(name = "计划发货日期", height = 20, width = 30,orderNum="")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JSONField(format = "yyyy-MM-dd")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "plan_deliver_date")
-    private String planDeliverDate;
+    private Date planDeliverDate;
 
     /**
      * 实际发货日期
      */
     @ApiModelProperty(name="actualDeliverDate",value = "实际发货日期")
     @Excel(name = "实际发货日期", height = 20, width = 30,orderNum="")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JSONField(format = "yyyy-MM-dd")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "actual_deliver_date")
-    private String actualDeliverDate;
+    private Date actualDeliverDate;
 
     /**
      * 计划交货日期
      */
     @ApiModelProperty(name="planDeliveryDate",value = "计划交货日期")
     @Excel(name = "计划交货日期", height = 20, width = 30,orderNum="")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JSONField(format = "yyyy-MM-dd")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "plan_delivery_date")
-    private String planDeliveryDate;
+    private Date planDeliveryDate;
 
     /**
      * 实际交货日期
      */
     @ApiModelProperty(name="actualDeliveryDate",value = "实际交货日期")
     @Excel(name = "实际交货日期", height = 20, width = 30,orderNum="")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JSONField(format = "yyyy-MM-dd")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "actual_delivery_date")
-    private String actualDeliveryDate;
+    private Date actualDeliveryDate;
 
     /**
      * 送货地址
@@ -292,6 +315,30 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
     private BigDecimal returnArrangeDispatchQty;
 
     /**
+     * 行状态(1-作废”、2-审核、3-下达、4-冻结、5-关闭、6-变更中、7-完成)
+     */
+    @ApiModelProperty(name="lineStatus",value = "行状态(1-作废”、2-审核、3-下达、4-冻结、5-关闭、6-变更中、7-完成)")
+    @Excel(name = "行状态(1-作废”、2-审核、3-下达、4-冻结、5-关闭、6-变更中、7-完成)", height = 20, width = 30,orderNum="")
+    @Column(name = "line_status")
+    private Byte lineStatus;
+
+    /**
+     * 累计下发数量
+     */
+    @ApiModelProperty(name="totalIssueQty",value = "累计下发数量")
+    //@Excel(name = "累计下发数量", height = 20, width = 30,orderNum="")
+    @Column(name = "total_issue_qty")
+    private BigDecimal totalIssueQty;
+
+    /**
+     * 是否已全部下发(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifAllIssued",value = "是否已全部下发(0-否 1-是)")
+    //@Excel(name = "是否已全部下发(0-否 1-是)", height = 20, width = 30,orderNum="")
+    @Column(name = "if_all_issued")
+    private Byte ifAllIssued;
+
+    /**
      * 状态
      */
     @ApiModelProperty(name="status",value = "状态")
@@ -328,11 +375,10 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JSONField(format ="yyyy-MM-dd")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
-    private String createTime;
+    private Date createTime;
 
     /**
      * 修改人ID
@@ -346,23 +392,16 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JSONField(format ="yyyy-MM-dd")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
-    private String modifiedTime;
-
-
-    // =========== 2021-09-29 新增 start ===========
-    @ApiModelProperty(name="salesCode" ,value="销售编码")
-    @Column(name = "sales_code")
-    private String salesCode;
-    // =========== 2021-09-29 新增 end ===========
+    private Date modifiedTime;
 
     /**
      * 是否数量反写 1=是
      */
     @Transient
+    @ApiModelProperty(name="isWriteQty",value = "是否数量反写 1=是")
     private Integer isWriteQty;
 
     private static final long serialVersionUID = 1L;

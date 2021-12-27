@@ -1,11 +1,10 @@
 package com.fantechs.provider.om.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.om.OmHtTransferOrderDto;
+import com.fantechs.common.base.general.dto.om.OmTransferOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmTransferOrderDto;
 import com.fantechs.common.base.general.entity.om.OmTransferOrder;
-import com.fantechs.common.base.general.entity.om.OmTransferOrderDet;
 import com.fantechs.common.base.general.entity.om.search.SearchOmTransferOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -14,15 +13,16 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.om.service.OmTransferOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -38,6 +38,12 @@ public class OmTransferOrderController {
 
     @Resource
     private OmTransferOrderService omTransferOrderService;
+
+    @ApiOperation(value = "下推",notes = "下推")
+    @PostMapping("/pushDown")
+    public ResponseEntity pushDown(@ApiParam(value = "必传：",required = true)@RequestBody @Validated @NotEmpty List<OmTransferOrderDetDto> omTransferOrderDetDtos) {
+        return ControllerUtil.returnCRUD(omTransferOrderService.pushDown(omTransferOrderDetDtos));
+    }
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -83,12 +89,6 @@ public class OmTransferOrderController {
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
-    }
-
-    @ApiOperation("下发生成出库单")
-    @PostMapping("/packageAutoOutOrder")
-    public ResponseEntity packageAutoOutOrder(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids){
-        return ControllerUtil.returnCRUD(omTransferOrderService.packageAutoOutOrder(ids));
     }
 
     @ApiOperation("修改单据状态")

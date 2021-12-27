@@ -42,4 +42,7 @@ public class SearchSrmInAsnOrderDet extends BaseQuery implements Serializable {
     @ApiModelProperty(name="ifAllIssued",value = "是否已全部下发(0-否 1-是)")
     private Byte ifAllIssued;
 
+    @ApiModelProperty(name="ifFiltrate",value = "是否筛选（0，否  1，是）")
+    private byte ifFiltrate;
+
 }

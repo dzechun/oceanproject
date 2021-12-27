@@ -125,7 +125,7 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
             purchaseOrderDet.setMaterialId(baseMaterials.get(0).getMaterialId());
             purchaseOrderDet.setOrderQty(new BigDecimal(purchaseOrderApiDto.getMENGE().trim()));
             purchaseOrderDet.setStatus((byte)1);
-            purchaseOrderDet.setWarehouseId(baseWarehouseList.getData().get(0).getWarehouseId());
+//            purchaseOrderDet.setWarehouseId(baseWarehouseList.getData().get(0).getWarehouseId());
             purchaseOrderDet.setFactoryId(factoryList.getData().get(0).getFactoryId());
             purchaseOrderDet.setIsDelete((byte)1);
             purchaseOrderDet.setOrgId(orgId);

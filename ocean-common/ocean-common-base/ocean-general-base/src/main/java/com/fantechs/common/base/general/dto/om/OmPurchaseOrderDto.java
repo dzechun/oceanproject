@@ -1,5 +1,6 @@
 package com.fantechs.common.base.general.dto.om;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -15,6 +16,7 @@ public class OmPurchaseOrderDto extends OmPurchaseOrder implements Serializable 
     private String supplierCode;
 
     @ApiModelProperty(name="supplierName",value = "供应商名称")
+    @Excel(name = "供应商名称", height = 20, width = 30,orderNum="2")
     private String supplierName;
 
     @ApiModelProperty(name="eMail",value = "供应商邮箱")
@@ -33,9 +35,11 @@ public class OmPurchaseOrderDto extends OmPurchaseOrder implements Serializable 
     private String deptCode;
 
     @ApiModelProperty(name="deptName",value = "采购部门名称")
+    @Excel(name = "采购部门名称", height = 20, width = 30,orderNum="4")
     private String deptName;
 
     @ApiModelProperty(name="purchaseUserName",value = "采购人员名称")
+    @Excel(name = "采购人员名称", height = 20, width = 30,orderNum="3")
     private String purchaseUserName;
 
     @ApiModelProperty(name="makeOrderUserName",value = "制单人员名称")
@@ -48,15 +52,18 @@ public class OmPurchaseOrderDto extends OmPurchaseOrder implements Serializable 
     private String currencyName;
 
     @ApiModelProperty(name="modifiedUserName",value = "修改人员名称")
+    @Excel(name = "修改账号", height = 20, width = 30,orderNum="10")
     private String modifiedUserName;
 
     @ApiModelProperty(name="warehouseName",value = "仓库名称")
+    @Excel(name = "仓库名称", height = 20, width = 30,orderNum="5")
     private String warehouseName;
 
     /**
      * 创建名称
      */
     @ApiModelProperty(name = "createUserName",value = "创建名称")
+    @Excel(name = "创建账号", height = 20, width = 30,orderNum="8")
     private String createUserName;
 
     /**

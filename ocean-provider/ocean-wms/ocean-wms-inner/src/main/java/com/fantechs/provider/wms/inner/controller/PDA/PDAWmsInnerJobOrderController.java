@@ -59,9 +59,9 @@ public class PDAWmsInnerJobOrderController {
     @ApiOperation("PDA上架作业明细列表")
     @PostMapping("/findDetList")
     public ResponseEntity<List<WmsInnerJobOrderDetDto>> findDetList(@RequestBody(required = false) SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet){
-        List<Byte> bytes= new ArrayList<>();
-        bytes.add((byte)2);
-        searchWmsInnerJobOrderDet.setLineStatusList(bytes);
+//        List<Byte> bytes= new ArrayList<>();
+//        bytes.add((byte)3);
+//        searchWmsInnerJobOrderDet.setLineStatusList(bytes);
         List<WmsInnerJobOrderDetDto> list = wmsInnerJobOrderDetService.findList(searchWmsInnerJobOrderDet);
         return ControllerUtil.returnDataSuccess(list,StringUtils.isEmpty(list)?0:1);
     }
@@ -91,11 +91,17 @@ public class PDAWmsInnerJobOrderController {
         return ControllerUtil.returnDataSuccess(qty,StringUtils.isEmpty(qty)?0:1);
     }
 
-    @ApiOperation("PDA先作业后单提交")
+    @ApiOperation("PDA先作业后单 提交")
     @PostMapping("/saveInnerJobOrder")
     public ResponseEntity<WmsInnerJobOrder> saveInnerJobOrder(@RequestBody(required = true) List<SaveInnerJobOrderDto> list){
         WmsInnerJobOrder wmsInnerJobOrder=wmsInnerJobOrderService.saveInnerJobOrder(list);
         return ControllerUtil.returnDataSuccess(wmsInnerJobOrder,StringUtils.isEmpty(wmsInnerJobOrder)?0:1);
+    }
+
+    @ApiOperation(" PDA先作业后单 提交完成")
+    @PostMapping("/updateInnerJobOrderFinish")
+    public ResponseEntity updateInnerJobOrderFinish(@ApiParam(value = "对象ID",required = true) Long jobOrderId){
+        return ControllerUtil.returnCRUD(wmsInnerJobOrderService.updateInnerJobOrderFinish(jobOrderId));
     }
 
     /*@ApiOperation("条码校验")

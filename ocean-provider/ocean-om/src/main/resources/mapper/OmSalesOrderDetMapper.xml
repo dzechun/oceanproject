@@ -4,8 +4,12 @@
     <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmSalesOrderDet">
         <id column="sales_order_det_id" jdbcType="BIGINT" property="salesOrderDetId"/>
         <result column="sales_order_id" jdbcType="BIGINT" property="salesOrderId"/>
+        <result column="core_source_order_code" jdbcType="VARCHAR" property="coreSourceOrderCode"/>
+        <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode"/>
+        <result column="core_source_id" jdbcType="BIGINT" property="coreSourceId"/>
+        <result column="source_id" jdbcType="BIGINT" property="sourceId"/>
         <result column="line_number" jdbcType="VARCHAR" property="lineNumber"/>
-        <result column="customer_order_line_number" jdbcType="VARCHAR" property="customerOrderLineNumber"/>
+        <result column="customer_order_code" jdbcType="VARCHAR" property="customerOrderCode"/>
         <result column="source_line_number" jdbcType="VARCHAR" property="sourceLineNumber"/>
         <result column="project_code" jdbcType="VARCHAR" property="projectCode"/>
         <result column="inner_batch_number" jdbcType="VARCHAR" property="innerBatchNumber"/>
@@ -34,6 +38,9 @@
         <result column="total_production_qty" jdbcType="DECIMAL" property="totalProductionQty"/>
         <result column="total_not_production_qty" jdbcType="DECIMAL" property="totalNotProductionQty"/>
         <result column="return_arrange_dispatch_qty" jdbcType="DECIMAL" property="returnArrangeDispatchQty"/>
+        <result column="line_status" jdbcType="TINYINT" property="lineStatus"/>
+        <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty"/>
+        <result column="if_all_issued" jdbcType="TINYINT" property="ifAllIssued"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
@@ -42,7 +49,6 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
-        <result column="sales_code" jdbcType="VARCHAR" property="salesCode"/>
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
@@ -61,8 +67,12 @@
     <sql id="Base_Column_List">
         sod.sales_order_det_id,
         sod.sales_order_id,
+        sod.core_source_order_code,
+        sod.source_order_code,
+        sod.core_source_id,
+        sod.source_id,
         sod.line_number,
-        sod.customer_order_line_number,
+        sod.customer_order_code,
         sod.source_line_number,
         sod.project_code,
         sod.inner_batch_number,
@@ -91,7 +101,9 @@
         sod.total_production_qty,
         sod.total_not_production_qty,
         sod.return_arrange_dispatch_qty,
-        sod.sales_code,
+        sod.line_status,
+        sod.total_issue_qty,
+        sod.if_all_issued,
         sod.status,
         sod.is_delete,
         sod.remark,
@@ -117,14 +129,21 @@
         left join base_organization bo on sod.org_id = bo.organization_id
         left join sys_user sumod on sod.modified_user_id = sumod.user_id
         <where>
+            <if test="salesOrderIdList != null and salesOrderIdList.size() > 0">
+                and sod.sales_order_id
+                <foreach collection="salesOrderIdList" open="in (" close=")" item="item" separator="," index="index">
+                    #{item}
+                </foreach>
+            </if>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
                 and date_format(oso.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
-
             <if test="status != null">
                 and sod.status = #{status}
             </if>
-
+            <if test="ifAllIssued != null">
+                and sod.if_all_issued = #{ifAllIssued}
+            </if>
             <if test="salesOrderId != null">
                 and sod.sales_order_id = #{salesOrderId}
             </if>
@@ -137,10 +156,16 @@
             <if test="salesOrderDetId!=null and salesOrderDetId!=''">
                 and sod.sales_order_det_id = #{salesOrderDetId}
             </if>
-            <if test="salesCode != null">
-                and sod.sales_code = #{salesCode}
-            </if>
         </where>
-        order by oso.modified_time desc,sod.customer_order_line_number asc
+        order by oso.modified_time desc
     </select>
+
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="item" separator=";">
+            update om_sales_order_det sod set
+            sod.total_issue_qty = #{item.totalIssueQty},
+            sod.if_all_issued = #{item.ifAllIssued}
+            where sod.sales_order_det_id = #{item.salesOrderDetId}
+        </foreach>
+    </update>
 </mapper>

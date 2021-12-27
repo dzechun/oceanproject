@@ -84,8 +84,8 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         SearchSrmCarportTimeQuantum searchSrmCarportTimeQuantum = new SearchSrmCarportTimeQuantum();
-        searchSrmCarportTimeQuantum.setStartTime(DateUtils.getDateTimeString(srmDeliveryAppointDto.getAppointStartTime()));
-        searchSrmCarportTimeQuantum.setEndTime(DateUtils.getDateTimeString(srmDeliveryAppointDto.getAppointEndTime()));
+        searchSrmCarportTimeQuantum.setStartTime(srmDeliveryAppointDto.getAppointStartTime());
+        searchSrmCarportTimeQuantum.setEndTime(srmDeliveryAppointDto.getAppointEndTime());
         searchSrmCarportTimeQuantum.setWarehouseId(srmDeliveryAppointDto.getDeliveryWarehouseId());
         List<SrmCarportTimeQuantumDto> srmCarportTimeQuantumDtos = srmCarportTimeQuantumMapper.findList(ControllerUtil.dynamicConditionByEntity(searchSrmCarportTimeQuantum));
 

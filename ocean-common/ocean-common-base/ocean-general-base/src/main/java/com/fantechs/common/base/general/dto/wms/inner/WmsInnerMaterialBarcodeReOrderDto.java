@@ -1,9 +1,12 @@
 package com.fantechs.common.base.general.dto.wms.inner;
 
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcodeReOrder;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -46,6 +49,8 @@ public class WmsInnerMaterialBarcodeReOrderDto extends WmsInnerMaterialBarcodeRe
      */
     @Transient
     @ApiModelProperty(name="productionDate",value = "生产日期")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date productionDate;
 
     /**
@@ -75,6 +80,14 @@ public class WmsInnerMaterialBarcodeReOrderDto extends WmsInnerMaterialBarcodeRe
     @Transient
     @ApiModelProperty(name="batchCode",value = "批次号")
     private String batchCode;
+
+    /**
+     * 产生类型(1-供应商条码 2-自己打印 3-生产条码)
+     */
+    @Transient
+    @ApiModelProperty(name="createType",value = "产生类型(1-供应商条码 2-自己打印 3-生产条码)")
+    private Byte createType;
+
 
 
     private static final long serialVersionUID = 1L;

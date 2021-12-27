@@ -10,6 +10,7 @@
     <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="coreSourceSysOrderTypeCode" />
     <result column="source_sys_order_type_code" jdbcType="VARCHAR" property="sourceSysOrderTypeCode" />
     <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode" />
+    <result column="source_big_type" jdbcType="TINYINT" property="sourceBigType"/>
     <result column="receiving_order_code" jdbcType="VARCHAR" property="receivingOrderCode" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="order_status" jdbcType="TINYINT" property="orderStatus" />
@@ -39,6 +40,7 @@ wiro.ht_receiving_order_id,
 wiro.receiving_order_id,
     wiro.core_source_sys_order_type_code,
     wiro.source_sys_order_type_code,
+wiro.source_big_type,
 wiro.sys_order_type_code,
 wiro.receiving_order_code,
 wiro.warehouse_id,
@@ -91,6 +93,6 @@ LEFT JOIN base_organization bo ON wiro.org_id = bo.organization_id
     and wiro.org_id=#{orgId}
   </if>
 </where>
-order by wiro.create_time
+order by wiro.create_time desc
 </select>
 </mapper>

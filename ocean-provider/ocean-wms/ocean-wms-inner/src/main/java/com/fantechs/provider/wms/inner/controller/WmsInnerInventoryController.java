@@ -148,4 +148,5 @@ public class WmsInnerInventoryController {
         List<WmsInnerInventoryDto> list = wmsInnerInventoryService.findInvStorage(ControllerUtil.dynamicConditionByEntity(searchFindInvStorage));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
+
 }

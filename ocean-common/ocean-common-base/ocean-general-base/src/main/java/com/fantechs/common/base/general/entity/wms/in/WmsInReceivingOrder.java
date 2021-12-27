@@ -1,11 +1,13 @@
 package com.fantechs.common.base.general.entity.wms.in;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReOrderDto;
 import com.fantechs.common.base.support.ValidGroup;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -50,6 +52,13 @@ public class WmsInReceivingOrder extends ValidGroup implements Serializable {
     @Excel(name = "来源系统单据类型编码", height = 20, width = 30,orderNum="2")
     @Column(name = "source_sys_order_type_code")
     private String sourceSysOrderTypeCode;
+
+    /**
+     * 来源大类(1-系统下推 2-自建 3-第三方系统)
+     */
+    @ApiModelProperty(name = "sourceBigType",value = "来源大类(1-系统下推 2-自建 3-第三方系统)")
+    @Column(name = "source_big_type")
+    private Byte sourceBigType;
 
     /**
      * 系统单据类型编码
@@ -114,7 +123,8 @@ public class WmsInReceivingOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
     @Excel(name = "创建时间", height = 20, width = 30,orderNum="9",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     @Column(name = "create_time")
     private Date createTime;
 
@@ -130,7 +140,8 @@ public class WmsInReceivingOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
     @Excel(name = "修改时间", height = 20, width = 30,orderNum="11",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     @Column(name = "modified_time")
     private Date modifiedTime;
 
@@ -152,6 +163,7 @@ public class WmsInReceivingOrder extends ValidGroup implements Serializable {
     private Byte isPdaCreate;
 
     @Transient
+    @ApiModelProperty(name = "wmsInReceivingOrderDets",value = "收货作业明细集合")
     private List<WmsInReceivingOrderDetDto> wmsInReceivingOrderDets;
 
     private static final long serialVersionUID = 1L;

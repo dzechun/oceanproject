@@ -17,15 +17,20 @@ import java.util.Map;
 
 public interface WmsInnerMaterialBarcodeService extends IService<WmsInnerMaterialBarcode> {
 
-    List<WmsInnerMaterialBarcodeDto> findList(SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode);
+    List<WmsInnerMaterialBarcodeDto> findList(Map<String,Object> map);
 
     List<WmsInnerMaterialBarcodeDto> add(List<WmsInnerMaterialBarcodeDto> barcodeDtoList,Integer type);
 
     int batchUpdate(List<WmsInnerMaterialBarcodeDto> list);
 
+    List<WmsInnerMaterialBarcodeDto> batchAdd(List<WmsInnerMaterialBarcodeDto> list);
+
     LabelRuteDto findLabelRute(Long barcodeRuleSetId,Long materialId);
 
-    int print(String ids,int printQty,String printName,int printType);
+    int print(String ids,int printQty,String printName,String printType,int printMode);
 
     Map<String, Object> importExcel(List<WmsInnerMaterialBarcodeImport> importList, List<WmsInnerMaterialBarcodeDto> list,Integer type);
+
+    List<WmsInnerMaterialBarcodeDto> findListByCode(List<String> codes);
+
 }

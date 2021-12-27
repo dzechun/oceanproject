@@ -3,6 +3,8 @@ package com.fantechs.provider.api.wms.out;
 
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryReqOrderDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrder;
@@ -26,6 +28,14 @@ import java.util.List;
  */
 @FeignClient(name = "ocean-wms-out")
 public interface OutFeignApi {
+
+    @ApiOperation(value = "出库通知单新增",notes = "出库通知单新增")
+    @PostMapping("/wmsOutDeliveryReqOrder/add")
+    ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsOutDeliveryReqOrderDto wmsOutDeliveryReqOrderDto);
+
+    @ApiOperation(value = "出库计划新增",notes = "出库计划新增")
+    @PostMapping("/wmsOutPlanDeliveryOrder/add")
+    ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsOutPlanDeliveryOrderDto wmsOutPlanDeliveryOrderDto);
 
     @ApiOperation("获取详情")
     @PostMapping("/wmsOutDeliveryOrder/detail")

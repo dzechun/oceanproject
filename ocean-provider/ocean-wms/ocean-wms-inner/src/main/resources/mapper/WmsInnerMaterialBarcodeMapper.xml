@@ -23,6 +23,7 @@
         <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
         <result column="material_qty" jdbcType="DECIMAL" property="materialQty" />
         <result column="production_time" jdbcType="TIMESTAMP" property="productionTime" />
+        <result column="expired_time" jdbcType="TIMESTAMP" property="expiredTime" />
         <result column="inspection_status" jdbcType="TINYINT" property="inspectionStatus" />
         <result column="barcode_status" jdbcType="TINYINT" property="barcodeStatus" />
         <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId" />
@@ -62,6 +63,8 @@
         wimb.supplier_id,
         wimb.batch_code,
         wimb.material_qty,
+        wimb.production_time,
+        wimb.expired_time,
         wimb.label_id,
         wimb.inspection_status,
         wimb.barcode_status,
@@ -84,12 +87,14 @@
     sus.user_name AS modified_user_name,
     bo.organization_name AS organization_Name,
     bm.material_name as materialName,
-    bm.material_code as materialCode
+    bm.material_code as materialCode,
+    bs.supplier_name as supplierName
     FROM wms_inner_material_barcode wimb
     LEFT JOIN sys_user su ON wimb.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON wimb.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON wimb.org_id = bo.organization_id
     LEFT JOIN base_material bm on bm.material_id = wimb.material_id
+    LEFT JOIN base_supplier bs on bs.supplier_id = wimb.supplier_id
     <where>
         <if test="orgId!=null and orgId!=''">
             and wimb.org_id = #{orgId}
@@ -98,13 +103,19 @@
             and wimb.material_barcode_id = #{materialBarcodeId}
         </if>
         <if test="barcode!=null and barcode!=''">
-            and wimb.barcode = #{barcode}
+            and wimb.barcode like CONCAT('%',#{barcode},'%')
         </if>
         <if test="printOrderTypeCode!=null and printOrderTypeCode!=''">
             and wimb.print_order_type_code = #{printOrderTypeCode}
         </if>
         <if test="ifSysBarcode!=null and ifSysBarcode!=''">
             and wimb.if_sys_barcode = #{ifSysBarcode}
+        </if>
+        <if test="batchCode!=null and batchCode!=''">
+            and wimb.batch_code like CONCAT('%',#{batchCode},'%')
+        </if>
+        <if test="supplierName!=null and supplierName!=''">
+            and bs.supplier_name like CONCAT('%',#{supplierName},'%')
         </if>
         <if test="colorBoxCode!=null and colorBoxCode!=''">
             and wimb.color_box_code like CONCAT('%',#{colorBoxCode},'%')
@@ -128,7 +139,7 @@
             and wimb.print_order_det_id = #{printOrderDetId}
         </if>
         <if test="printOrderCode!=null and printOrderCode!=''">
-            and wimb.print_order_code = #{printOrderCode}
+            and wimb.print_order_code like CONCAT('%',#{printOrderCode},'%')
         </if>
         <if test="materialId!=null and materialId!=''">
             and wimb.material_id = #{materialId}
@@ -136,12 +147,19 @@
         <if test="supplierId!=null and supplierId!=''">
             and wimb.supplier_id = #{supplierId}
         </if>
-        <if test="materialBarcodeIdList != null and materialBarcodeIdList.size() > 0">
+        <if test="barCodes != null and barCodes.size() > 0">
             and wimb.material_barcode_id
-            <foreach collection="materialBarcodeIdList" open="in (" close=")" item="item" separator="," index="index">
+            <foreach collection="barCodes" open="in (" close=")" item="item" separator="," index="index">
                 #{item}
             </foreach>
         </if>
+        <if test="materialBarcodeList != null and materialBarcodeList.size() > 0">
+            and wimb.barcode
+            <foreach collection="materialBarcodeList" open="in (" close=")" item="item" separator="," index="index">
+                #{item}
+            </foreach>
+        </if>
+
     </where>
     order by wimb.create_time desc
     </select>
@@ -155,7 +173,7 @@
     </update>
 
     <select id="findPrintModel" resultType="com.fantechs.common.base.general.dto.mes.sfc.PrintModel">
-        select * FROM view_material
+        select * FROM ${labelCode}
         <where>
             id = #{id}
         </where>

@@ -2,20 +2,20 @@ package com.fantechs.common.base.general.entity.mes.pm;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 日计划
  * mes_pm_daily_plan
- * @author 81947
- * @date 2021-06-02 17:16:18
+ * @author Dylan
+ * @date 2021-12-21 13:54:18
  */
 @Data
 @Table(name = "mes_pm_daily_plan")
@@ -30,47 +30,77 @@ public class MesPmDailyPlan extends ValidGroup implements Serializable {
     private Long dailyPlanId;
 
     /**
-     * 工单ID
+     * 产线ID
      */
-    @ApiModelProperty(name="workOrderId",value = "工单ID")
-    @Excel(name = "工单ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "work_order_id")
-    private Long workOrderId;
+    @ApiModelProperty(name="proLineId",value = "产线ID")
+    @Excel(name = "产线ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "pro_line_id")
+    private Long proLineId;
 
     /**
-     * 排产数量
+     * 核心系统单据类型编码
      */
-    @ApiModelProperty(name="scheduleQty",value = "排产数量")
-    @Excel(name = "排产数量", height = 20, width = 30,orderNum="") 
-    @Column(name = "schedule_qty")
-    private BigDecimal scheduleQty;
+    @ApiModelProperty(name="coreSourceSysOrderTypeCode",value = "核心系统单据类型编码")
+    @Excel(name = "核心系统单据类型编码", height = 20, width = 30,orderNum="") 
+    @Column(name = "core_source_sys_order_type_code")
+    private String coreSourceSysOrderTypeCode;
 
     /**
-     * 完成数量
+     * 来源系统单据类型编码
      */
-    @ApiModelProperty(name="finishedQty",value = "完成数量")
-    @Excel(name = "完成数量", height = 20, width = 30,orderNum="") 
-    @Column(name = "finished_qty")
-    private BigDecimal finishedQty;
+    @ApiModelProperty(name="sourceSysOrderTypeCode",value = "来源系统单据类型编码")
+    @Excel(name = "来源系统单据类型编码", height = 20, width = 30,orderNum="") 
+    @Column(name = "source_sys_order_type_code")
+    private String sourceSysOrderTypeCode;
 
     /**
-     * 计划时间
+     * 系统单据类型编码
      */
-    @ApiModelProperty(name="planTime",value = "计划时间")
-    @Excel(name = "计划时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd")
-    @JSONField(format ="yyyy-MM-dd")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Column(name = "plan_time")
-    private Date planTime;
+    @ApiModelProperty(name="sysOrderTypeCode",value = "系统单据类型编码")
+    @Excel(name = "系统单据类型编码", height = 20, width = 30,orderNum="") 
+    @Column(name = "sys_order_type_code")
+    private String sysOrderTypeCode;
+
+    /**
+     * 来源大类(1-系统下推 2-自建 3-第三方系统)
+     */
+    @ApiModelProperty(name="sourceBigType",value = "来源大类(1-系统下推 2-自建 3-第三方系统)")
+    @Excel(name = "来源大类(1-系统下推 2-自建 3-第三方系统)", height = 20, width = 30,orderNum="") 
+    @Column(name = "source_big_type")
+    private Byte sourceBigType;
+
+    /**
+     * 日计划编码
+     */
+    @ApiModelProperty(name="dailyPlanCode",value = "日计划编码")
+    @Excel(name = "日计划编码", height = 20, width = 30,orderNum="") 
+    @Column(name = "daily_plan_code")
+    private String dailyPlanCode;
+
+    /**
+     * 工单类型(0、量产 1、试产 2、返工 3、维修)
+     */
+    @ApiModelProperty(name="workOrderType",value = "工单类型(0、量产 1、试产 2、返工 3、维修)")
+    @Excel(name = "工单类型(0、量产 1、试产 2、返工 3、维修)", height = 20, width = 30,orderNum="") 
+    @Column(name = "work_order_type")
+    private Byte workOrderType;
+
+    /**
+     * 计划开始时间
+     */
+    @ApiModelProperty(name="planStartTime",value = "计划开始时间")
+    @Excel(name = "计划开始时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "plan_start_time")
+    private Date planStartTime;
 
     /**
      * 是否插单(0-否 1-是)
      */
     @ApiModelProperty(name="ifOrderInserting",value = "是否插单(0-否 1-是)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="")
+    @Excel(name = "是否插单(0-否 1-是)", height = 20, width = 30,orderNum="") 
     @Column(name = "if_order_inserting")
     private Byte ifOrderInserting;
-
 
     /**
      * 状态(0无效，1有效)
@@ -143,8 +173,4 @@ public class MesPmDailyPlan extends ValidGroup implements Serializable {
     private String option3;
 
     private static final long serialVersionUID = 1L;
-
-    @Transient
-    @ApiModelProperty(name = "planDate",value = "计划日期（yyyy-MM-dd）")
-    private String planDate;
 }

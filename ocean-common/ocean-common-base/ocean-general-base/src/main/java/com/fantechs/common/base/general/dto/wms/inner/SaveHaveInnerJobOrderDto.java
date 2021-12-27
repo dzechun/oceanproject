@@ -3,6 +3,7 @@ package com.fantechs.common.base.general.dto.wms.inner;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -35,6 +36,12 @@ public class SaveHaveInnerJobOrderDto implements Serializable {
     private String barcode;
 
     /**
+     * 条码类型(1-SN码 2-彩盒号 3-箱号 4-栈板号)
+     */
+    @ApiModelProperty(name="barcodeType",value = "条码类型(1-SN码 2-彩盒号 3-箱号 4-栈板号)")
+    private Byte barcodeType;
+
+    /**
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")
@@ -56,7 +63,7 @@ public class SaveHaveInnerJobOrderDto implements Serializable {
      * 生产日期
      */
     @ApiModelProperty(name="productionTime",value = "生产日期")
-    private Date productionTime;
+    private String productionTime;
 
     /**
      * 是否系统条码(0-否 1-是)

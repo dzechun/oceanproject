@@ -1,13 +1,10 @@
 package com.fantechs.common.base.general.entity.wms.inner.search;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * @Author mr.lei
@@ -15,38 +12,22 @@ import java.util.Date;
  */
 @Data
 public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializable {
+
     @ApiModelProperty("库位id")
     private Long storageId;
-    @ApiModelProperty("物料id")
-    private Long materialId;
-    @ApiModelProperty("条码")
-    private String barcode;
     @ApiModelProperty("相关单号")
     private String relevanceOrderCode;
-    @ApiModelProperty("物料数量")
-    private BigDecimal materialQty;
     @ApiModelProperty("是否是不相等 -- 0、相等 1、不相等")
     private Integer notEqualMark;
 
-    @ApiModelProperty("作业状态")
-    private Byte jobStatus;
-
-    @ApiModelProperty("物料名称")
-    private String materialName;
-
-    private String materialCode;
-
     private String warehouseName;
-
-    private String supplierName;
 
     private String asnCode;
 
     private Byte ifStockLock;
 
-    private String productionBatchCode;
-
     private String createUserName;
+
     private String modifiedUserName;
 
     @ApiModelProperty("库位")
@@ -69,4 +50,16 @@ public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializabl
 
     @ApiModelProperty(name="qcDate",value = "质检日期")
     private String qcDate;
+
+    @ApiModelProperty("SN码")
+    private String barcode;
+
+    @ApiModelProperty("彩盒码")
+    private String colorBoxCode;
+
+    @ApiModelProperty("箱码")
+    private String cartonCode;
+
+    @ApiModelProperty("栈板码")
+    private String palletCode;
 }

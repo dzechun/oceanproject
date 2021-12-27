@@ -22,7 +22,7 @@
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
   </resultMap>
 
-  <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReOrderDto">
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReOrderDto">
     <result column="barcode" jdbcType="VARCHAR" property="barcode" />
     <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
     <result column="material_name" jdbcType="VARCHAR" property="materialName" />
@@ -32,6 +32,7 @@
     <result column="carton_code" jdbcType="VARCHAR" property="cartonCode" />
     <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
     <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
+    <result column="create_type" jdbcType="TINYINT" property="createType" />
   </resultMap>
 
   <sql id="BaseColumnList">
@@ -47,10 +48,7 @@
     wimbro.create_time,
     wimbro.modified_user_id,
     wimbro.modified_time,
-    wimbro.is_delete,
-    wimbro.option1,
-    wimbro.option2,
-    wimbro.option3
+    wimbro.is_delete
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDto">
@@ -58,9 +56,10 @@
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,
     bo.organization_name AS organization_Name,
-    bm.material_name as materialName,
-    bm.material_code as materialCode,
-    wimb.material_qty as qty,wimb.production_time as production_date,wimb.color_box_code,wimb.carton_code,wimb.pallet_code,wimb.batch_code
+    bm.material_name,
+    bm.material_code,
+    wimb.material_qty as qty,wimb.production_time as production_date,wimb.create_type,
+    wimb.color_box_code,wimb.carton_code,wimb.pallet_code,wimb.batch_code,wimb.barcode
     FROM wms_inner_material_barcode_re_order wimbro
     LEFT JOIN sys_user su ON wimbro.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON wimbro.modified_user_id = sus.user_id
@@ -68,6 +67,9 @@
     left join wms_inner_material_barcode wimb on wimb.material_barcode_id = wimbro.material_barcode_id
     LEFT JOIN base_material bm on bm.material_id = wimb.material_id
     <where>
+        <if test="ifSysBarcode !=null and ifSysBarcode!=''">
+            and wimb.if_sys_barcode = #{ifSysBarcode}
+        </if>
         <if test="orgId!=null and orgId!=''">
             and wimbro.org_id = #{orgId}
         </if>
@@ -81,12 +83,48 @@
         <if test="orderDetId !=null and orderDetId!=''">
             and wimbro.order_det_id = #{orderDetId}
         </if>
+        <if test="orderDetIdList !=null">
+            <foreach collection="orderDetIdList" item="item" index="index" open="and wimbro.order_det_id in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+
         <if test="materialBarcodeId!=null and materialBarcodeId!=''">
             and wimbro.material_barcode_id = #{materialBarcodeId}
         </if>
         <if test="scanStatus!=null and scanStatus!=''">
             and wimbro.scan_status = #{scanStatus}
         </if>
+
+
+        <if test="barcode!=null and barcode!='' and codeQueryMark == 1">
+            and wimb.barcode = #{barcode}
+        </if>
+        <if test="colorBoxCode!=null and colorBoxCode!='' and codeQueryMark == 1">
+            and wimb.color_box_code = #{colorBoxCode}
+        </if>
+        <if test="cartonCode!=null and cartonCode!='' and codeQueryMark == 1">
+            and wimb.carton_code = #{cartonCode}
+        </if>
+        <if test="palletCode!=null and palletCode!='' and codeQueryMark == 1">
+            and wimb.pallet_code = #{palletCode}
+        </if>
+
+
+        <if test="barcode!=null and barcode!='' and codeQueryMark != 1">
+            and wimb.barcode like CONCAT('%',#{barcode},'%')
+        </if>
+        <if test="colorBoxCode!=null and colorBoxCode!='' and codeQueryMark != 1">
+            and wimb.color_box_code like CONCAT('%',#{colorBoxCode},'%')
+        </if>
+        <if test="cartonCode!=null and cartonCode!='' and codeQueryMark != 1">
+            and wimb.carton_code like CONCAT('%',#{cartonCode},'%')
+        </if>
+        <if test="palletCode!=null and palletCode!='' and codeQueryMark != 1">
+            and wimb.pallet_code like CONCAT('%',#{palletCode},'%')
+        </if>
+
+
     </where>
     order by wimbro.create_time desc
   </select>

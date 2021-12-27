@@ -11,14 +11,15 @@ import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface WmsInnerMaterialBarcodeMapper extends MyMapper<WmsInnerMaterialBarcode> {
-    List<WmsInnerMaterialBarcodeDto> findList(SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode);
+    List<WmsInnerMaterialBarcodeDto> findList(Map<String,Object> map);
 
     int batchUpdate(List<WmsInnerMaterialBarcodeDto> list);
 
-    PrintModel findPrintModel(@Param("id")Long id);
+    PrintModel findPrintModel(@Param("id")Long id,@Param("labelCode")String labelCode);
 
     LabelRuteDto findRule(@Param("code")String code, @Param("materialId")Long materialId , @Param("orgId")Long orgId);
 

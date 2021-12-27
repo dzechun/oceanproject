@@ -3,6 +3,7 @@ package com.fantechs.common.base.general.entity.wms.inner;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
 import com.fantechs.common.base.support.ValidGroup;;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -14,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 作业单
@@ -89,7 +91,8 @@ public class WmsInnerJobOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="workStartTime",value = "作业开始时间")
     @Excel(name = "作业开始时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "work_start_time")
     private Date workStartTime;
 
@@ -98,7 +101,8 @@ public class WmsInnerJobOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="workEndtTime",value = "作业结束时间")
     @Excel(name = "作业结束时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "work_endt_time")
     private Date workEndtTime;
 
@@ -145,7 +149,8 @@ public class WmsInnerJobOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
     @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "create_time")
     private Date createTime;
 
@@ -162,7 +167,8 @@ public class WmsInnerJobOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
     @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "modified_time")
     private Date modifiedTime;
 

@@ -1,7 +1,6 @@
 package com.fantechs.common.base.general.entity.wms.inner;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
@@ -11,7 +10,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -39,6 +37,13 @@ public class WmsInnerMaterialBarcode extends ValidGroup implements Serializable 
     @ApiModelProperty(name="createType",value = "产生类型(1-供应商条码 2-自己打印 3-生产条码)")
     @Column(name = "create_type")
     private Byte createType;
+
+    /**
+     * 条码类型(1-SN码 2-彩盒号 3-箱号 4-栈板号)
+     */
+    @ApiModelProperty(name="barcodeType",value = "条码类型(1-SN码 2-彩盒号 3-箱号 4-栈板号)")
+    @Column(name = "barcode_type")
+    private Byte barcodeType;
 
     /**
      * 打印指来源端IP
@@ -161,6 +166,17 @@ public class WmsInnerMaterialBarcode extends ValidGroup implements Serializable 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "production_time")
     private Date productionTime;
+
+    /**
+     * 过期时间
+     */
+    @ApiModelProperty(name="expiredTime",value = "过期时间")
+//    @Excel(name = "过期时间", height = 20, width = 30,orderNum="11",exportFormat ="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Column(name = "expired_time")
+    private Date expiredTime;
+
 
     /**
      * 1-未质检 2-合格 3-不合格

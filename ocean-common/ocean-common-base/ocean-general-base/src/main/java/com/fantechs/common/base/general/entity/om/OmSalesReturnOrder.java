@@ -1,15 +1,22 @@
 package com.fantechs.common.base.general.entity.om;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.*;
-import lombok.Data;
+
+;
+;
 
 /**
  * 销退入库单
@@ -37,19 +44,18 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
     private String salesReturnOrderCode;
 
     /**
-     * 相关单号
+     * 系统单据类型编码
      */
-    @ApiModelProperty(name="relatedOrderCode",value = "相关单号")
-    @Excel(name = "相关单号", height = 20, width = 30,orderNum="2")
-    @Column(name = "related_order_code")
-    private String relatedOrderCode;
+    @ApiModelProperty(name="sysOrderTypeCode",value = "系统单据类型编码")
+    @Column(name = "sys_order_type_code")
+    private String sysOrderTypeCode;
 
     /**
-     * 货主ID
+     * 来源大类(1-系统下推 2-自建 3-第三方系统)
      */
-    @ApiModelProperty(name="materialOwnerId",value = "货主ID")
-    @Column(name = "material_owner_id")
-    private Long materialOwnerId;
+    @ApiModelProperty(name="sourceBigType",value = "来源大类(1-系统下推 2-自建 3-第三方系统)")
+    @Column(name = "source_big_type")
+    private Byte sourceBigType;
 
     /**
      * 总加入数量

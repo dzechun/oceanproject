@@ -38,6 +38,7 @@
     </resultMap>
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
                type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto">
+        <result column="job_order_code" jdbcType="VARCHAR" property="jobOrderCode"/>
         <result column="out_storage_name" jdbcType="VARCHAR" property="outStorageName"/>
         <result column="out_storage_code" jdbcType="VARCHAR" property="outStorageCode"/>
         <result column="in_storage_name" jdbcType="VARCHAR" property="inStorageName"/>
@@ -49,6 +50,7 @@
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="total_material_qty" jdbcType="DECIMAL" property="totalMaterialQty"/>
     </resultMap>
     <sql id="BaseColumnList">
         wipod.job_order_det_id,
@@ -83,6 +85,7 @@
         wipod.option3
     </sql>
     <select id="findList" resultMap="BaseResultMapDto">
+        select * from (
         SELECT<include refid="BaseColumnList"/>,
         bso.storage_code AS out_storage_name,
         bso.storage_code AS out_storage_code,
@@ -91,11 +94,14 @@
         bm.material_code,
         bm.material_name,
         bm.material_desc,
+        wijo.job_order_code,
         bis.inventory_status_name,
         su.user_name AS create_user_name,
         sus.user_name AS modified_user_name,
-        bo.organization_name AS organization_name
+        bo.organization_name AS organization_name,
+        sum(wimb.material_qty) as total_material_qty
         FROM wms_inner_job_order_det wipod
+        left join wms_inner_job_order wijo on wijo.job_order_id = wipod.job_order_id
         LEFT JOIN base_storage bso ON wipod.out_storage_id = bso.storage_id
         LEFT JOIN base_storage bsi ON wipod.in_storage_id = bsi.storage_id
         LEFT JOIN base_inventory_status bis ON wipod.inventory_status_id = bis.inventory_status_id
@@ -103,6 +109,7 @@
         LEFT JOIN sys_user su ON wipod.create_user_id = su.user_id
         LEFT JOIN sys_user sus ON wipod.modified_user_id = sus.user_id
         LEFT JOIN base_organization bo ON wipod.org_id = bo.organization_id
+        left join wms_inner_material_barcode wimb on wimb.print_order_code = wijo.job_order_code and wimb.material_id = wipod.material_id
         <where>
             <if test="jobOrderId!=null and jobOrderId!=''">
                 and wipod.job_order_id = #{jobOrderId}
@@ -118,6 +125,13 @@
             </if>
             <if test="orgId!=null and orgId!=''">
                 and wipod.org_id = #{orgId}
+            </if>
+        </where>
+        GROUP BY wipod.job_order_det_id
+        ) d
+        <where>
+            <if test="ifFiltrate!=null and ifFiltrate == 1">
+                (d.total_material_qty &lt; d.plan_qty || d.total_material_qty is null)
             </if>
         </where>
     </select>

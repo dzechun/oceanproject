@@ -49,6 +49,34 @@ public class OmHtTransferOrderDet extends ValidGroup implements Serializable {
     private Long transferOrderId;
 
     /**
+     * 核心单据编码
+     */
+    @ApiModelProperty(name="coreSourceOrderCode",value = "核心单据编码")
+    @Column(name = "core_source_order_code")
+    private String coreSourceOrderCode;
+
+    /**
+     * 来源单据编码
+     */
+    @ApiModelProperty(name="sourceOrderCode",value = "来源单据编码")
+    @Column(name = "source_order_code")
+    private String sourceOrderCode;
+
+    /**
+     * 核心来源ID
+     */
+    @ApiModelProperty(name="coreSourceId",value = "核心来源ID")
+    @Column(name = "core_source_id")
+    private Long coreSourceId;
+
+    /**
+     * 来源ID
+     */
+    @ApiModelProperty(name="sourceId",value = "来源ID")
+    @Column(name = "source_id")
+    private Long sourceId;
+
+    /**
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")
@@ -95,6 +123,22 @@ public class OmHtTransferOrderDet extends ValidGroup implements Serializable {
     @Excel(name = "批次号", height = 20, width = 30,orderNum="")
     @Column(name = "batch_code")
     private String batchCode;
+
+    /**
+     * 累计下发数量
+     */
+    @ApiModelProperty(name="totalIssueQty",value = "累计下发数量")
+    @Excel(name = "累计下发数量", height = 20, width = 30,orderNum="")
+    @Column(name = "total_issue_qty")
+    private BigDecimal totalIssueQty;
+
+    /**
+     * 是否已全部下发(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifAllIssued",value = "是否已全部下发(0-否 1-是)")
+    @Excel(name = "是否已全部下发(0-否 1-是)", height = 20, width = 30,orderNum="")
+    @Column(name = "if_all_issued")
+    private Byte ifAllIssued;
 
     /**
      * 状态

@@ -11,7 +11,6 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.wms.inner.*;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -632,11 +631,11 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             map.put("qty",0);
             return map;
         }
-        BigDecimal qty = list.stream()
+/*        BigDecimal qty = list.stream()
                 .map(WmsInnerInventoryDet::getMaterialQty)
-                .reduce(BigDecimal.ZERO,BigDecimal::add);
+                .reduce(BigDecimal.ZERO,BigDecimal::add);*/
         map.put("SN","true");
-        map.put("qty",qty);
+  //      map.put("qty",qty);
         return map;
     }
 
@@ -893,7 +892,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 if(StringUtils.isEmpty(wmsInnerInventoryDet)){
                     throw new BizErrorException("库存查询失败");
                 }
-                if(StringUtils.isEmpty(wmsInnerInventoryDet.getMaterialQty())||wmsInnerInventoryDet.getMaterialQty().compareTo(wmsInnerStockOrderDet.getStockQty())==-1){
+              /*  if(StringUtils.isEmpty(wmsInnerInventoryDet.getMaterialQty())||wmsInnerInventoryDet.getMaterialQty().compareTo(wmsInnerStockOrderDet.getStockQty())==-1){
                     //盘盈
                     wmsInnerInventoryDet.setMaterialQty(wmsInnerInventoryDet.getMaterialQty().add(wmsInnerStockOrderDet.getVarianceQty()));
                     num+=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
@@ -901,7 +900,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     //盘亏
                     wmsInnerInventoryDet.setMaterialQty(wmsInnerInventoryDet.getMaterialQty().subtract(wmsInnerStockOrderDet.getVarianceQty()));
                     num+=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
-                }
+                }*/
             }
         //添加库存日志
         if(wmsInnerInventoryLog.getChangeQty().compareTo(BigDecimal.ZERO)==1){

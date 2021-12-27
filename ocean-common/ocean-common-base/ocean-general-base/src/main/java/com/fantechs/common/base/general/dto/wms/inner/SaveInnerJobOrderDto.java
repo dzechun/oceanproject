@@ -11,6 +11,12 @@ import java.util.Date;
 public class SaveInnerJobOrderDto implements Serializable {
 
     /**
+     * 作业单ID
+     */
+    @ApiModelProperty(name="jobOrderId",value = "作业单ID")
+    private Long jobOrderId;
+
+    /**
      * 库位ID
      */
     @ApiModelProperty(name="storageId",value = "库位ID")
@@ -27,6 +33,12 @@ public class SaveInnerJobOrderDto implements Serializable {
      */
     @ApiModelProperty(name="barcode",value = "条码")
     private String barcode;
+
+    /**
+     * 条码类型(1-SN码 2-彩盒号 3-箱号 4-栈板号)
+     */
+    @ApiModelProperty(name="barcodeType",value = "条码类型(1-SN码 2-彩盒号 3-箱号 4-栈板号)")
+    private Byte barcodeType;
 
     /**
      * 物料ID
@@ -50,14 +62,13 @@ public class SaveInnerJobOrderDto implements Serializable {
      * 生产日期
      */
     @ApiModelProperty(name="productionTime",value = "生产日期")
-    private Date productionTime;
+    private String productionTime;
 
     /**
      * 是否系统条码(0-否 1-是)
      */
     @ApiModelProperty(name="ifSysBarcode",value = "是否系统条码(0-否 1-是)")
     private String ifSysBarcode;
-
 
 
 }

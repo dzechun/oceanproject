@@ -38,8 +38,8 @@ public class BaseOrderFlowServiceImpl extends BaseService<BaseOrderFlow> impleme
 
     @Override
     public BaseOrderFlow findOrderFlow(Map<String, Object> map) {
-        if(StringUtils.isEmpty(map.get("businessType"),map.get("orderNode"))){
-            throw new BizErrorException("业务类型或单据节点不能为空");
+        if(StringUtils.isEmpty(map.get("orderTypeCode"))){
+            throw new BizErrorException("单据类型编码不能为空");
         }
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",user.getOrganizationId());
@@ -53,7 +53,7 @@ public class BaseOrderFlowServiceImpl extends BaseService<BaseOrderFlow> impleme
         Example example = new Example(BaseOrderFlow.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("businessType", record.getBusinessType());//业务类型
-        criteria.andEqualTo("orderNode", record.getOrderNode());//单据节点
+        criteria.andEqualTo("orderTypeCode", record.getOrderTypeCode());//单据节点编码
         criteria.andEqualTo("orderFlowDimension", record.getOrderFlowDimension());//单据流维度
         if(record.getOrderFlowDimension()==(byte)2)
             criteria.andEqualTo("supplierId", record.getSupplierId());
@@ -88,12 +88,15 @@ public class BaseOrderFlowServiceImpl extends BaseService<BaseOrderFlow> impleme
         Example example = new Example(BaseOrderFlow.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("businessType", entity.getBusinessType());//业务类型
-        criteria.andEqualTo("orderNode", entity.getOrderNode());//单据节点
+        criteria.andEqualTo("orderTypeCode", entity.getOrderTypeCode());//单据节点
         criteria.andEqualTo("orderFlowDimension", entity.getOrderFlowDimension());//单据流维度
         if(entity.getOrderFlowDimension()==(byte)2)
             criteria.andEqualTo("supplierId", entity.getSupplierId());
         else if(entity.getOrderFlowDimension()==(byte)3)
             criteria.andEqualTo("materialId", entity.getMaterialId());
+
+        criteria.andEqualTo("sourceOrderTypeCode",entity.getSourceOrderTypeCode());
+        criteria.andEqualTo("nextOrderTypeCode",entity.getNextOrderTypeCode());
         List<BaseOrderFlow> baseOrderFlows = baseOrderFlowMapper.selectByExample(example);
         if (baseOrderFlows.size()>1) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"单据节点和单据流维度已存在");

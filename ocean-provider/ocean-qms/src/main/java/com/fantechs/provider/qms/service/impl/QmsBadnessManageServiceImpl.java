@@ -9,6 +9,7 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReOrderDto;
 import com.fantechs.common.base.general.entity.qms.QmsBadnessManage;
 import com.fantechs.common.base.general.entity.qms.QmsBadnessManageBarcode;
+import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcodeReOrder;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -45,6 +46,8 @@ public class QmsBadnessManageServiceImpl extends BaseService<QmsBadnessManage> i
     private QmsBadnessManageBarcodeMapper qmsBadnessManageBarcodeMapper;
     @Resource
     private InnerFeignApi innerFeignApi;
+    @Resource
+    private QmsIncomingInspectionOrderMapper qmsIncomingInspectionOrderMapper;
 
 
     @Override
@@ -91,7 +94,7 @@ public class QmsBadnessManageServiceImpl extends BaseService<QmsBadnessManage> i
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         int i = 0;
         Byte pickResult = pdaIncomingSelectToUseSubmitDto.getPickResult();
-        BigDecimal orderQty = pdaIncomingSelectToUseSubmitDto.getOrderQty();
+        BigDecimal qty = pdaIncomingSelectToUseSubmitDto.getOrderQty();
         Long incomingInspectionOrderId = pdaIncomingSelectToUseSubmitDto.getIncomingInspectionOrderId();
         List<PdaIncomingSelectToUseBarcodeDto> barcodeDtoList = pdaIncomingSelectToUseSubmitDto.getBarcodeDtoList();
         QmsBadnessManage qmsBadnessManage = new QmsBadnessManage();
@@ -114,16 +117,19 @@ public class QmsBadnessManageServiceImpl extends BaseService<QmsBadnessManage> i
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未找到当前单据对应的条码");
         }
 
+        QmsIncomingInspectionOrder qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(incomingInspectionOrderId);
+        BigDecimal orderQty = qmsIncomingInspectionOrder.getOrderQty();
+
         //提交
         qmsBadnessManage.setIncomingInspectionOrderId(incomingInspectionOrderId);
         List<Long> idList = new LinkedList<>();//挑选使用的条码id列表
         if(pickResult == 1){
-            qmsBadnessManage.setSpecialReceiveQty(new BigDecimal(barcodeDtoList.size()));
-            qmsBadnessManage.setReturnQty(orderQty.subtract(new BigDecimal(barcodeDtoList.size())));
+            qmsBadnessManage.setSpecialReceiveQty(qty);
+            qmsBadnessManage.setReturnQty(orderQty.subtract(qty));
             idList = barcodeDtoList.stream().map(PdaIncomingSelectToUseBarcodeDto::getMaterialBarcodeId).collect(Collectors.toList());
         }else if(pickResult == 0){
-            qmsBadnessManage.setSpecialReceiveQty(orderQty.subtract(new BigDecimal(barcodeDtoList.size())));
-            qmsBadnessManage.setReturnQty(new BigDecimal(barcodeDtoList.size()));
+            qmsBadnessManage.setSpecialReceiveQty(orderQty.subtract(qty));
+            qmsBadnessManage.setReturnQty(qty);
             for (WmsInnerMaterialBarcodeReOrderDto materialBarcodeReOrderDto : materialBarcodeReOrderDtos){
                 boolean isReturn = false;
                 for (PdaIncomingSelectToUseBarcodeDto barcodeDto : barcodeDtoList){

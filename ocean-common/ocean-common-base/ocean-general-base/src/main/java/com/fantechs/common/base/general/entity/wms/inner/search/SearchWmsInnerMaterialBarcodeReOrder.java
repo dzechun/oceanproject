@@ -1,11 +1,14 @@
 package com.fantechs.common.base.general.entity.wms.inner.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 
 @Data
@@ -16,6 +19,24 @@ public class SearchWmsInnerMaterialBarcodeReOrder extends BaseQuery implements S
      */
     @ApiModelProperty(name="barcode",value = "条码")
     private String barcode;
+
+    /**
+     * 彩盒号
+     */
+    @ApiModelProperty(name="colorBoxCode",value = "彩盒号")
+    private String colorBoxCode;
+
+    /**
+     * 箱号
+     */
+    @ApiModelProperty(name="cartonCode",value = "箱号")
+    private String cartonCode;
+
+    /**
+     * 栈板号
+     */
+    @ApiModelProperty(name="palletCode",value = "栈板号")
+    private String palletCode;
 
     /**
      * 单据类型编码
@@ -94,6 +115,25 @@ public class SearchWmsInnerMaterialBarcodeReOrder extends BaseQuery implements S
      */
     @ApiModelProperty(name="isDelete",value = "逻辑删除（0、删除 1、正常）")
     private Byte isDelete;
+
+    /**
+     * 是否系统条码(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifSysBarcode",value = "是否系统条码(0-否 1-是)")
+    private Byte ifSysBarcode;
+
+    /**
+     * 编码查询标记(设为1做等值查询)
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
+    private Integer codeQueryMark;
+
+    /**
+     * 单据明细ID集合
+     */
+    @ApiModelProperty(name="orderDetIdList",value = "单据明细ID集合")
+    private List<Long> orderDetIdList;
+
 
     private static final long serialVersionUID = 1L;
 }

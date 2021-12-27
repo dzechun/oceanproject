@@ -3,6 +3,14 @@
 <mapper namespace="com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMapper">
     <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder">
         <id column="work_order_id" jdbcType="BIGINT" property="workOrderId"/>
+        <result column="source_id" jdbcType="BIGINT" property="sourceId" />
+        <result column="core_source_id" jdbcType="BIGINT" property="coreSourceId" />
+        <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode" />
+        <result column="core_source_order_code" jdbcType="VARCHAR" property="coreSourceOrderCode" />
+        <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="coreSourceSysOrderTypeCode" />
+        <result column="source_sys_order_type_code" jdbcType="VARCHAR" property="sourceSysOrderTypeCode" />
+        <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode" />
+        <result column="source_big_type" jdbcType="TINYINT" property="sourceBigType"/>
         <result column="work_order_code" jdbcType="BIGINT" property="workOrderCode"/>
         <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
         <result column="sales_order_id" jdbcType="BIGINT" property="salesOrderId"/>
@@ -87,6 +95,14 @@
             resultMap="BaseResultMapDto">
         SELECT
         swo.work_order_id,
+        swo.source_id,
+        swo.source_order_code,
+        swo.core_source_order_code,
+        swo.core_source_sys_order_type_code,
+        swo.source_sys_order_type_code,
+        swo.sys_order_type_code,
+        swo.source_big_type,
+        swo.core_source_id,
         swo.work_order_code,
         swo.parent_id,
         swo.sales_order_id,

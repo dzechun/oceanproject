@@ -8,67 +8,10 @@ import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class MesPmDailyPlanDto extends MesPmDailyPlan implements Serializable {
-
-    /**
-     * 生产数量
-     */
-    @Transient
-    @ApiModelProperty(name="workOrderQty",value = "生产数量")
-    private BigDecimal workOrderQty;
-
-    /**
-     * 未排产数量
-     */
-    @Transient
-    @ApiModelProperty(name="scheduleQty",value = "未排产数量")
-    private BigDecimal noScheduleQty;
-
-    /**
-     * 投产数量
-     */
-    @ApiModelProperty(name="productionQty",value = "投产数量")
-    @Transient
-    private BigDecimal productionQty;
-
-
-    /**
-     * 当前排产数量
-     */
-    @ApiModelProperty(name="scheduledQty",value = "当前排产数量")
-    @Transient
-    private BigDecimal scheduledQty;
-
-
-    /**
-     * 物料名称.
-     */
-    @Transient
-    @ApiModelProperty(name="materialName" ,value="物料名称")
-    private String materialName;
-
-    /**
-     * 物料编码.
-     */
-    @Transient
-    @ApiModelProperty(name="materialCode" ,value="物料编码")
-    private String materialCode;
-
-    /**
-     * 版本
-     */
-    @Transient
-    @ApiModelProperty(name="materialVersion" ,value="版本")
-    private String materialVersion;
-
-    /**
-     * 物料描述
-     */
-    @Transient
-    @ApiModelProperty(name="materialDesc" ,value="物料描述")
-    private String materialDesc;
 
     /**
      * 线别名称
@@ -78,10 +21,31 @@ public class MesPmDailyPlanDto extends MesPmDailyPlan implements Serializable {
     private String proName;
 
     /**
-     * 工单编码
+     * 组织
      */
-    @ApiModelProperty(name="workOrderCode",value = "工单编码")
-    @Column(name = "work_order_code")
-    private String workOrderCode;
+    @Transient
+    @ApiModelProperty(name="organizationName",value = "组织")
+    private String organizationName;
+
+    /**
+     * 创建人
+     */
+    @Transient
+    @ApiModelProperty(name="createUserName",value = "创建人")
+    private String createUserName;
+
+    /**
+     * 修改人
+     */
+    @Transient
+    @ApiModelProperty(name="modifiedUserName",value = "修改人")
+    private String modifiedUserName;
+
+    /**
+     * 生产日计划明细
+     */
+
+    @Transient
+    List<MesPmDailyPlanDetDto> mesPmDailyPlanDetDtos;
 
 }

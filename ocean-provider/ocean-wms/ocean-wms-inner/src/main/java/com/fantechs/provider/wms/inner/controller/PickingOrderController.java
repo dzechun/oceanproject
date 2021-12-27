@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.inner.controller;
 
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
+import com.fantechs.common.base.general.dto.wms.inner.*;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -38,9 +39,15 @@ public class PickingOrderController {
         return ControllerUtil.returnCRUD(pickingOrderService.autoDistribution(ids));
     }
 
+    @ApiOperation("关闭单据")
+    @PostMapping("/closeDocuments")
+    public ResponseEntity closeDocuments(@ApiParam(value = "对象ID",required = true) @RequestParam @NotBlank(message="id不能为空") String id){
+        return ControllerUtil.returnCRUD(pickingOrderService.closeDocuments(id));
+    }
+
     @ApiOperation("手动分配")
     @PostMapping("/handDistribution")
-    public ResponseEntity handDistribution(@RequestBody List<WmsInnerJobOrderDet> list){
+    public ResponseEntity handDistribution(@RequestBody List<WmsInnerJobOrderDetDto> list){
         return ControllerUtil.returnCRUD(pickingOrderService.handDistribution(list));
     }
 
@@ -72,26 +79,22 @@ public class PickingOrderController {
         return ControllerUtil.returnDataSuccess(list, StringUtils.isEmpty(list)?0:1);
     }
 
-    @PostMapping("/retrographyStatus")
-    public ResponseEntity retrographyStatus(@RequestBody WmsInnerJobOrderDet wmsInnerJobOrderDet){
-        return ControllerUtil.returnCRUD(pickingOrderService.retrographyStatus(wmsInnerJobOrderDet));
+    @ApiOperation("拣货条码扫描")
+    @PostMapping("/scan")
+    public ResponseEntity<WmsInnerInventoryDetDto> scan(@ApiParam(value = "库位ID",required = true) @RequestParam @NotBlank(message="id不能为空") Long storageId,@ApiParam(value = "库位ID",required = true) @RequestParam @NotBlank(message="物料ID") Long materialId,@ApiParam(value = "条码",required = true) @RequestParam @NotBlank(message="条码不能为空") String barcode){
+        return ControllerUtil.returnDataSuccess(pickingOrderService.scan(storageId,materialId,barcode),1);
     }
 
-    @ApiOperation("调拨出库单快捷发运")
-    @PostMapping("/autoOutOrder")
-    public ResponseEntity autoOutOrder(@RequestParam Long outDeliveryOrderId,@RequestParam Byte orderTypeId){
-        return ControllerUtil.returnCRUD(pickingOrderService.autoOutOrder(outDeliveryOrderId,orderTypeId));
+    @ApiOperation("pda提交")
+    @PostMapping("/pdaSubmit")
+    public ResponseEntity pdaSubmit(@RequestBody WmsInnerPdaJobOrderDet wmsInnerPdaJobOrderDet){
+        return ControllerUtil.returnCRUD(pickingOrderService.pdaSubmit(wmsInnerPdaJobOrderDet));
     }
 
-    @PostMapping("/sealOrder")
-    @ApiOperation("封单")
-    public ResponseEntity sealOrder(@RequestBody(required = false) List<Long> outDeliveryOrderIds,@RequestParam(required = false) Byte type){
-        return ControllerUtil.returnCRUD(pickingOrderService.sealOrder(outDeliveryOrderIds,type));
+    @ApiOperation("pda保存")
+    @PostMapping("/pdaSave")
+    public ResponseEntity<List<WmsInnerJobOrderDetDto>> pdaSave(@RequestBody List<WmsInnerPdaInventoryDetDto> list){
+        return ControllerUtil.returnDataSuccess(pickingOrderService.pdaSave(list),list.size());
     }
 
-    @GetMapping("/AutoSealOrder")
-    @ApiOperation("封单")
-    public ResponseEntity AutoSealOrder(@RequestParam(required = false) Byte type){
-        return ControllerUtil.returnCRUD(pickingOrderService.sealOrder(null,type));
-    }
 }
