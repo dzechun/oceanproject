@@ -96,25 +96,18 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     public Boolean pdaCartonWork(PdaCartonWorkDto dto) throws Exception {
         // 获取登录用户
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(dto.getBarCode())) {
-            throw new BizErrorException(ErrorCodeEnum.PDA40012026);
-        }
-        // 1、检查条码、工单状态、排程
-        BarcodeUtils.checkSN(CheckProductionDto.builder()
-                .barCode(dto.getBarCode())
-                .stationId(dto.getStationId())
-                .processId(dto.getProcessId())
-                .checkOrNot(dto.getCheckOrNot())
-                .packType(dto.getPackType())
-                .proLineId(dto.getProLineId())
-                .build());
-
+        //条码生产订单条码表
         List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtos = mesSfcWorkOrderBarcodeService
                 .findList(SearchMesSfcWorkOrderBarcode.builder()
-                        .barcode(dto.getBarCode())
-                        .build());
-        // 条码信息
+                .barcode(dto.getBarCode())
+                .build());
+        if(StringUtils.isEmpty(mesSfcWorkOrderBarcodeDtos)){
+            throw new BizErrorException(ErrorCodeEnum.PDA40012013);
+        }
         MesSfcWorkOrderBarcodeDto orderBarcodeDto = mesSfcWorkOrderBarcodeDtos.get(0);
+        if(StringUtils.isNotEmpty(orderBarcodeDto.getBarcodeStatus() )&& orderBarcodeDto.getBarcodeStatus()==(byte)2){
+            throw new BizErrorException(ErrorCodeEnum.PDA40012013);
+        }
         // 2、校验条码是否关联包箱
         Map<String, Object> map = new HashMap<>();
         map.put("workOrderBarcodeId", orderBarcodeDto.getWorkOrderBarcodeId());
@@ -122,10 +115,39 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         if (productCartonDetDtos != null && productCartonDetDtos.size() > 0) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012013);
         }
-
-        // 条码对应工单
+        //条码对应工单
         MesPmWorkOrder mesPmWorkOrder = pmFeignApi.workOrderDetail(orderBarcodeDto.getWorkOrderId()).getData();
+        //产线
+        BaseProLine proLine = baseFeignApi.selectProLinesDetail(mesPmWorkOrder.getProLineId()).getData();
+        //工艺路线跟工序集合
+        List<BaseRouteProcess>  baseProcessList= baseFeignApi.findConfigureRout(mesPmWorkOrder .getRouteId()).getData();
+        // 条码对应过站记录信息
+        MesSfcBarcodeProcess mesSfcBarcodeProcess = mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
+                .barcode(dto.getBarCode())
+                .nextProcessId(dto.getProcessId())
+                .build());
 
+        boolean b= false;
+        for(BaseRouteProcess baseRouteProcess:baseProcessList){
+            if(mesSfcBarcodeProcess.getProcessId().equals(baseRouteProcess.getProcessId())
+            &&baseRouteProcess.getNextProcessId().equals(dto.getProcessId())
+            &&baseRouteProcess.getIsPass()==1){
+                b= true;
+                break;
+            }
+        }
+        if(!b){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+        }
+        //工序
+        BaseProcess  baseProcess = baseFeignApi.processDetail(dto.getProcessId()).getData();
+        //工位
+        BaseStation baseStation = baseFeignApi.findStationDetail(dto.getStationId()).getData();
+
+        if(StringUtils.isEmpty(proLine,baseProcess,baseStation,mesSfcWorkOrderBarcodeDtos,mesPmWorkOrder)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+
+        }
         // 3、获取工位工序的包箱
         map.clear();
         map.put("stationId", dto.getStationId());
@@ -147,12 +169,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 throw new BizErrorException(ErrorCodeEnum.PDA40012019, mesPmWorkOrder.getMaterialId(), mesPmWorkOrderById.getMaterialId());
             }
         }
-
-        // 条码对应过站记录信息
-        MesSfcBarcodeProcess mesSfcBarcodeProcess = mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
-                .barcode(dto.getBarCode())
-                .nextProcessId(dto.getProcessId())
-                .build());
 
         // 5、是否要扫附件码
         if(dto.getAnnex() && StringUtils.isEmpty(dto.getBarAnnexCode())){
@@ -198,9 +214,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 throw new BizErrorException(ErrorCodeEnum.PDA40012020);
             }
 
-            BaseProLine proLine = baseFeignApi.selectProLinesDetail(dto.getProLineId()).getData();
-            BaseProcess baseProcess = baseFeignApi.processDetail(dto.getProcessId()).getData();
-            BaseStation baseStation = baseFeignApi.findStationDetail(dto.getStationId()).getData();
 
             // 查找该附件码是否存在系统中
             List<MesSfcWorkOrderBarcodeDto> sfcWorkOrderAnnexBarcodeDtos = mesSfcWorkOrderBarcodeService
