@@ -15,6 +15,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.mes.sfc.service.MesSfcBarcodeOperationService;
 import com.fantechs.provider.mes.sfc.service.MesSfcPalletWorkService;
+import com.fantechs.provider.mes.sfc.service.ScanBarcodeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -37,9 +38,7 @@ import java.util.Map;
 public class ScanBarcodeController {
 
     @Resource
-    MesSfcBarcodeOperationService mesSfcBarcodeOperationService;
-    @Resource
-    MesSfcPalletWorkService mesSfcPalletWorkService;
+    ScanBarcodeService scanBarcodeService;
     @Resource
     BaseFeignApi baseFeignApi;
 
@@ -47,35 +46,7 @@ public class ScanBarcodeController {
     @PostMapping("/doScan")
     public ResponseEntity doScan(@ApiParam(value = "条码", required = true) @RequestBody ScanBarcodeDto scanBarcodeDto) throws Exception {
 
-        if ("1".equals(scanBarcodeDto.getType())){
-            // 包箱
-            PdaCartonWorkDto dto = new PdaCartonWorkDto();
-            dto.setBarCode(scanBarcodeDto.getBarCode());
-            dto.setStationId(scanBarcodeDto.getStationId());
-            dto.setProcessId(scanBarcodeDto.getProcessId());
-            dto.setProLineId(scanBarcodeDto.getProLineId());
-            dto.setAnnex(false);
-            dto.setCheckOrNot(false);
-            dto.setPrint(false);
-            dto.setPackType("1");
-            mesSfcBarcodeOperationService.pdaCartonWork(dto);
-        }else if ("2".equals(scanBarcodeDto.getType())){
-            // 栈板
-            RequestPalletWorkScanDto dto = new RequestPalletWorkScanDto();
-            dto.setStationId(scanBarcodeDto.getStationId());
-            dto.setProcessId(scanBarcodeDto.getProcessId());
-            dto.setProLineId(scanBarcodeDto.getProLineId());
-            dto.setBarcode(scanBarcodeDto.getBarCode());
-            dto.setCheckdaliyOrder((byte) 0);
-            dto.setPrintBarcode((byte) 0);
-            dto.setPalletType((byte) 2);
-            mesSfcPalletWorkService.palletWorkScanBarcode(dto);
-        }else if ("3".equals(scanBarcodeDto.getType())){
-            // 出库
-
-        }else {
-            return ControllerUtil.returnFail(ErrorCodeEnum.GL9999404);
-        }
+        scanBarcodeService.doScan(scanBarcodeDto);
 
         return ControllerUtil.returnSuccess();
     }

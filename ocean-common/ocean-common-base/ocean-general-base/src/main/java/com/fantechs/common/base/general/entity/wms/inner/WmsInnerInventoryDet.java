@@ -262,4 +262,14 @@ public class WmsInnerInventoryDet extends ValidGroup implements Serializable {
     private String option5;
 
     private static final long serialVersionUID = 1L;
+
+    // 20211224 bgkun
+
+    @ApiModelProperty(name = "salesBarcode",value = "销售条码")
+    @Column(name = "sales_barcode")
+    private String salesBarcode;
+
+    @ApiModelProperty(name = "customerBarcode",value = "型号条码")
+    @Column(name = "customer_barcode")
+    private String customerBarcode;
 }

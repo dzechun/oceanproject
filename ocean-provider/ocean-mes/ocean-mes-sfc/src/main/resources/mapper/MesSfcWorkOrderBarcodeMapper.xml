@@ -35,6 +35,8 @@
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
         <result column="label_category_name" jdbcType="VARCHAR" property="labelCategoryName"/>
         <result column="same_package_code" jdbcType="VARCHAR" property="samePackageCode" />
+        <result column="cutsomer_barcode" jdbcType="VARCHAR" property="cutsomerBarcode" />
+        <result column="sales_barcode" jdbcType="VARCHAR" property="salesBarcode" />
     </resultMap>
     <resultMap id="BaseRuleMap" type="com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto">
     </resultMap>
@@ -284,12 +286,16 @@ order by mswob.create_time desc
     <select id="findListByPalletDet" resultMap="BaseResultDtoMap" parameterType="map">
         SELECT <include refid="BaseColumnList"/>,
         bm.material_code,
-        msbp.same_package_code
+        msbp.same_package_code,
+        mskpr.part_barcode AS 'cutsomer_barcode',
+        mskpr2.part_barcode AS 'sales_barcode'
         FROM mes_sfc_work_order_barcode mswob
         LEFT JOIN mes_sfc_product_pallet_det msppd ON msppd.work_order_barcode_id = mswob.work_order_barcode_id
         LEFT JOIN mes_pm_work_order mpwo ON mswob.work_order_id = mpwo.work_order_id
         LEFT JOIN base_material bm ON mpwo.material_id = bm.material_id
         LEFT JOIN mes_sfc_barcode_process msbp ON mswob.work_order_barcode_id = msbp.work_order_barcode_id
+        LEFT JOIN mes_sfc_key_part_relevance mskpr ON mswob.work_order_barcode_id = mskpr.work_order_barcode_id AND mskpr.material_id IS NOT NULL
+        LEFT JOIN mes_sfc_key_part_relevance mskpr2 ON mswob.work_order_barcode_id = mskpr2.work_order_barcode_id AND mskpr2.label_category_id IS NOT NULL
         <where>
             <if test="orgId != null">
                 and mswob.org_id = #{orgId}
@@ -303,12 +309,16 @@ order by mswob.create_time desc
     <select id="findListByCartonDet" resultMap="BaseResultDtoMap" parameterType="map">
         SELECT <include refid="BaseColumnList"/>,
         bm.material_code,
-        msbp.same_package_code
+        msbp.same_package_code,
+        mskpr.part_barcode AS 'cutsomer_barcode',
+        mskpr2.part_barcode AS 'sales_barcode'
         FROM mes_sfc_work_order_barcode mswob
         LEFT JOIN mes_sfc_product_carton_det mspcd ON mspcd.work_order_barcode_id = mswob.work_order_barcode_id
         LEFT JOIN mes_pm_work_order mpwo ON mswob.work_order_id = mpwo.work_order_id
         LEFT JOIN base_material bm ON mpwo.material_id = bm.material_id
         LEFT JOIN mes_sfc_barcode_process msbp ON mswob.work_order_barcode_id = msbp.work_order_barcode_id
+        LEFT JOIN mes_sfc_key_part_relevance mskpr ON mswob.work_order_barcode_id = mskpr.work_order_barcode_id AND mskpr.material_id IS NOT NULL
+        LEFT JOIN mes_sfc_key_part_relevance mskpr2 ON mswob.work_order_barcode_id = mskpr2.work_order_barcode_id AND mskpr2.label_category_id IS NOT NULL
         <where>
             <if test="orgId != null">
                 and mswob.org_id = #{orgId}

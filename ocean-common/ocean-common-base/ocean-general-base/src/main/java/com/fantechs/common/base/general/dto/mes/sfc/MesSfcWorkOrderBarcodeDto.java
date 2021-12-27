@@ -56,4 +56,12 @@ public class MesSfcWorkOrderBarcodeDto extends MesSfcWorkOrderBarcode implements
     @Transient
     @ApiModelProperty(name = "samePackageCode",value = "PO号")
     private String samePackageCode;
+
+    @Transient
+    @ApiModelProperty(name = "salesBarcode",value = "销售条码")
+    private String salesBarcode;
+
+    @Transient
+    @ApiModelProperty(name = "cutsomerBarcode",value = "客户条码")
+    private String cutsomerBarcode;
 }

@@ -428,7 +428,7 @@ public class BarcodeUtils {
                                 MesSfcWorkOrderBarcodeDto barcodeDto = barcodeDtos.stream().filter(item -> item.getBarcode().equals(keyPartRelevanceDto.getPartBarcode())).findFirst().get();
                                 MesSfcWorkOrderBarcode barcode = new MesSfcWorkOrderBarcode();
                                 barcode.setWorkOrderBarcodeId(barcodeDto.getWorkOrderBarcodeId());
-                                barcode.setBarcodeStatus((byte) 3);
+                                barcode.setBarcodeStatus((byte) 1);
                                 barcodes.add(barcode);
                             }
                         }
@@ -490,7 +490,7 @@ public class BarcodeUtils {
                             MesSfcWorkOrderBarcodeDto barcodeDto = barcodeDtos.stream().filter(item -> item.getBarcode().equals(keyPartRelevanceDto.getPartBarcode())).findFirst().get();
                             MesSfcWorkOrderBarcode barcode = new MesSfcWorkOrderBarcode();
                             barcode.setWorkOrderBarcodeId(barcodeDto.getWorkOrderBarcodeId());
-                            barcode.setBarcodeStatus((byte) 3);
+                            barcode.setBarcodeStatus((byte) 2);
                             barcodes.add(barcode);
                         }
                     }
