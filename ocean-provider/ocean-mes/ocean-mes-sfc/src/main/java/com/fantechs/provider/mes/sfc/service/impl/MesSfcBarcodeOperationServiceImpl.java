@@ -99,28 +99,33 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         //条码生产订单条码表
         List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtos = mesSfcWorkOrderBarcodeService
                 .findList(SearchMesSfcWorkOrderBarcode.builder()
-                .barcode(dto.getBarCode())
-                .build());
-        if(StringUtils.isEmpty(mesSfcWorkOrderBarcodeDtos)){
-            throw new BizErrorException(ErrorCodeEnum.PDA40012013);
+                        .barcode(dto.getBarCode())
+                        .build());
+        if (mesSfcWorkOrderBarcodeDtos.isEmpty()) {
+            throw new BizErrorException(ErrorCodeEnum.PDA40012000);
         }
+        if (mesSfcWorkOrderBarcodeDtos.size() > 1) {
+            throw new BizErrorException(ErrorCodeEnum.PDA40012001);
+        }
+        /*
+         * 流转卡状态(0-待投产 1-投产中 2-已完成 3-待打印)
+         */
         MesSfcWorkOrderBarcodeDto orderBarcodeDto = mesSfcWorkOrderBarcodeDtos.get(0);
-        if(StringUtils.isNotEmpty(orderBarcodeDto.getBarcodeStatus() )&& orderBarcodeDto.getBarcodeStatus()==(byte)2){
-            throw new BizErrorException(ErrorCodeEnum.PDA40012013);
-        }
-        // 2、校验条码是否关联包箱
-        Map<String, Object> map = new HashMap<>();
-        map.put("workOrderBarcodeId", orderBarcodeDto.getWorkOrderBarcodeId());
-        List<MesSfcProductCartonDetDto> productCartonDetDtos = mesSfcProductCartonDetService.findList(map);
-        if (productCartonDetDtos != null && productCartonDetDtos.size() > 0) {
-            throw new BizErrorException(ErrorCodeEnum.PDA40012013);
+        if (StringUtils.isNotEmpty(orderBarcodeDto.getBarcodeStatus()) && (orderBarcodeDto.getBarcodeStatus() == 2 || orderBarcodeDto.getBarcodeStatus() == 3)) {
+            throw new BizErrorException(ErrorCodeEnum.PDA40012004, orderBarcodeDto.getBarcodeStatus() == 2 ? "已完成" : "待打印");
         }
         //条码对应工单
         MesPmWorkOrder mesPmWorkOrder = pmFeignApi.workOrderDetail(orderBarcodeDto.getWorkOrderId()).getData();
-        //产线
-        BaseProLine proLine = baseFeignApi.selectProLinesDetail(mesPmWorkOrder.getProLineId()).getData();
-        //工艺路线跟工序集合
-        List<BaseRouteProcess>  baseProcessList= baseFeignApi.findConfigureRout(mesPmWorkOrder .getRouteId()).getData();
+        if (4 == mesPmWorkOrder.getWorkOrderStatus() || 5 == mesPmWorkOrder.getWorkOrderStatus()) {
+            throw new BizErrorException(ErrorCodeEnum.PDA40012006);
+        }
+        if (mesPmWorkOrder.getProductionQty().compareTo(mesPmWorkOrder.getWorkOrderQty()) == 1) {
+            throw new BizErrorException(ErrorCodeEnum.PDA40012007, mesPmWorkOrder.getWorkOrderCode());
+        }
+        if (!mesPmWorkOrder.getProLineId().equals(dto.getProLineId())){
+            throw new BizErrorException(ErrorCodeEnum.PDA40012007.getCode(), "作业配置的产线与工单上的产线不符，不可操作");
+        }
+
         // 条码对应过站记录信息
         MesSfcBarcodeProcess mesSfcBarcodeProcess = mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
                 .barcode(dto.getBarCode())
@@ -128,17 +133,29 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 .build());
 
         boolean b= false;
+        //工艺路线跟工序集合
+        List<BaseRouteProcess>  baseProcessList= baseFeignApi.findConfigureRout(mesPmWorkOrder .getRouteId()).getData();
         for(BaseRouteProcess baseRouteProcess:baseProcessList){
             if(mesSfcBarcodeProcess.getProcessId().equals(baseRouteProcess.getProcessId())
-            &&baseRouteProcess.getNextProcessId().equals(dto.getProcessId())
-            &&baseRouteProcess.getIsPass()==1){
+                    &&baseRouteProcess.getNextProcessId().equals(dto.getProcessId())
+                    &&baseRouteProcess.getIsPass()==1){
                 b= true;
                 break;
             }
         }
         if(!b){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            throw new BizErrorException(ErrorCodeEnum.PDA40012009.getCode(), "工艺路线无此过站工序");
         }
+
+        // 2、校验条码是否关联包箱
+        Map<String, Object> map = new HashMap<>();
+        map.put("workOrderBarcodeId", orderBarcodeDto.getWorkOrderBarcodeId());
+        List<MesSfcProductCartonDetDto> productCartonDetDtos = mesSfcProductCartonDetService.findList(map);
+        if (productCartonDetDtos != null && productCartonDetDtos.size() > 0) {
+            throw new BizErrorException(ErrorCodeEnum.PDA40012013);
+        }
+        //产线
+        BaseProLine proLine = baseFeignApi.selectProLinesDetail(mesPmWorkOrder.getProLineId()).getData();
         //工序
         BaseProcess  baseProcess = baseFeignApi.processDetail(dto.getProcessId()).getData();
         //工位

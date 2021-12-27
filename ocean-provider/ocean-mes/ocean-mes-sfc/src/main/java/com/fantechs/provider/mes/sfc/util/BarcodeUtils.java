@@ -602,7 +602,6 @@ public class BarcodeUtils {
         }
         /*
         * 流转卡状态(0-待投产 1-投产中 2-已完成 3-待打印)
-        *
         */
         MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto = mesSfcWorkOrderBarcodeDtos.get(0);
         if (mesSfcWorkOrderBarcodeDto.getBarcodeStatus() == 2 || mesSfcWorkOrderBarcodeDto.getBarcodeStatus() == 3) {
