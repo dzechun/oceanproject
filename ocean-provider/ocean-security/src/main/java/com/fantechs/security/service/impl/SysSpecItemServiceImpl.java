@@ -1,7 +1,6 @@
 package com.fantechs.security.service.impl;
 
 
-import cn.hutool.core.util.ObjectUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.security.SysMenuInListDTO;
 import com.fantechs.common.base.entity.security.SysSpecItem;
@@ -9,7 +8,6 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.history.SysHtSpecItem;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.JsonUtils;
@@ -17,7 +15,6 @@ import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.security.mapper.SysHtSpecItemMapper;
 import com.fantechs.security.mapper.SysSpecItemMapper;
-import com.fantechs.security.service.SysMenuInfoService;
 import com.fantechs.security.service.SysSpecItemService;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
@@ -42,8 +39,6 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
     private RedisUtil redisUtil;
     @Resource
     private SysHtSpecItemMapper sysHtSpecItemMapper;
-    @Resource
-    private SysMenuInfoService sysMenuInfoService;
 
     @Override
     public List<SysSpecItem> findList(SearchSysSpecItem searchSysSpecItem) {
@@ -52,7 +47,7 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
             List<SysSpecItem>  specItemList1 = JsonUtils.jsonToList(specItemList.toString(),SysSpecItem.class);
             List<Long> menuIds = new ArrayList<>();
             if (StringUtils.isNotEmpty(searchSysSpecItem.getMenuId())) {
-                Object menuList = redisUtil.get(MENU_REDIS_KEY);
+                /*Object menuList = redisUtil.get(MENU_REDIS_KEY);
                 if(ObjectUtil.isNull(menuList)){
                     if (!redisUtil.hasKey(MENU_REDIS_KEY)) {
                         menuList = sysMenuInfoService.findMenuList(ControllerUtil.dynamicCondition(
@@ -65,26 +60,21 @@ public class SysSpecItemServiceImpl extends BaseService<SysSpecItem> implements 
                 List<SysMenuInListDTO> menuInListDTOS = JsonUtils.jsonToList(menuList.toString(), SysMenuInListDTO.class);
                 SysMenuInListDTO dg = this.findNodes(menuInListDTOS, searchSysSpecItem.getMenuId());
                 menuIds.add(dg.getSysMenuInfoDto().getMenuId());
-                this.disassemblyTree(dg,menuIds);
+                this.disassemblyTree(dg,menuIds);*/
+                menuIds = searchSysSpecItem.getMenuIds();
             }
 
             for (int i = 0; i < specItemList1.size(); i++) {
                 if (StringUtils.isNotEmpty(menuIds) && menuIds.size()>0 && !menuIds.contains(specItemList1.get(i).getMenuId())){
                     specItemList1.remove(i);
                     i--;
-                }
-
-                if (StringUtils.isNotEmpty(searchSysSpecItem.getSpecCode()) && !specItemList1.get(i).getSpecCode().contains(searchSysSpecItem.getSpecCode())) {
+                }else if (StringUtils.isNotEmpty(searchSysSpecItem.getSpecCode()) && !specItemList1.get(i).getSpecCode().contains(searchSysSpecItem.getSpecCode())) {
                     specItemList1.remove(i);
                     i--;
-                }
-
-                if (StringUtils.isNotEmpty(searchSysSpecItem.getSpecName()) && !specItemList1.get(i).getSpecName().contains(searchSysSpecItem.getSpecName())) {
+                }else if (StringUtils.isNotEmpty(searchSysSpecItem.getSpecName()) && !specItemList1.get(i).getSpecName().contains(searchSysSpecItem.getSpecName())) {
                     specItemList1.remove(i);
                     i--;
-                }
-
-                if (StringUtils.isNotEmpty(searchSysSpecItem.getPara()) && !specItemList1.get(i).getPara().contains(searchSysSpecItem.getPara())) {
+                }else if (StringUtils.isNotEmpty(searchSysSpecItem.getPara()) && !specItemList1.get(i).getPara().contains(searchSysSpecItem.getPara())) {
                     specItemList1.remove(i);
                     i--;
                 }

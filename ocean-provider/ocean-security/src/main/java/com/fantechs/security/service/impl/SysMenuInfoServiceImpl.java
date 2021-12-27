@@ -1,5 +1,6 @@
 package com.fantechs.security.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.security.SysMenuInListDTO;
 import com.fantechs.common.base.dto.security.SysMenuInfoDto;
@@ -12,6 +13,8 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.JsonUtils;
+import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.security.mapper.SysAuthRoleMapper;
 import com.fantechs.security.mapper.SysHtMenuInfoMapper;
@@ -24,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,6 +44,10 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
     private SysAuthRoleMapper sysAuthRoleMapper;
     @Autowired
     private SysRoleMapper sysRoleMapper;
+    // 菜单缓存redis的key
+    private static String MENU_REDIS_KEY = "MENU_REDIS_KEY";
+    @Resource
+    private RedisUtil redisUtil;
 
     @Override
     public List<SysMenuInfoDto> findAll(Map<String, Object> map, List<String> rolesId) {
@@ -106,6 +114,63 @@ public class SysMenuInfoServiceImpl extends BaseService<SysMenuInfo> implements 
             }
         }
         return tSysMenuinfos;
+    }
+
+    @Override
+    public List<Long> getMenu(Long menuId){
+        List<Long> menuIds = new ArrayList<>();
+        if (StringUtils.isNotEmpty(menuId)) {
+            Object menuList = redisUtil.get(MENU_REDIS_KEY);
+            List<SysMenuInListDTO> list = null;
+            if(ObjectUtil.isNull(menuList)){
+                if (!redisUtil.hasKey(MENU_REDIS_KEY)) {
+                    list = this.findMenuList(ControllerUtil.dynamicCondition(
+                            "parentId", "0",
+                            "menuType", 2 + ""
+                    ), null);
+                    redisUtil.set(MENU_REDIS_KEY, JsonUtils.objectToJson(list));
+                }
+            }
+            if (StringUtils.isEmpty(list)) {
+                list = JsonUtils.jsonToList(menuList.toString(), SysMenuInListDTO.class);
+            }
+            SysMenuInListDTO dg = this.findNodes(list, menuId);
+            if (StringUtils.isNotEmpty(dg)) {
+                menuIds.add(dg.getSysMenuInfoDto().getMenuId());
+                this.disassemblyTree(dg,menuIds);
+            }
+        }
+        return menuIds;
+    }
+
+    public SysMenuInListDTO findNodes(List<SysMenuInListDTO> menuList, Long menuId){
+        if (StringUtils.isEmpty(menuList)) {
+            return null;
+        }
+        for (SysMenuInListDTO sysMenuInListDTO : menuList) {
+            if (sysMenuInListDTO.getSysMenuInfoDto().getMenuId().equals(menuId)) {
+                return sysMenuInListDTO;
+            }else {
+                SysMenuInListDTO nodes = this.findNodes(sysMenuInListDTO.getSysMenuinList(), menuId);
+                if (StringUtils.isNotEmpty(nodes)) {
+                    return nodes;
+                }else {
+                    this.findNodes(sysMenuInListDTO.getSysMenuinList(), menuId);
+                }
+            }
+        }
+        return null;
+    }
+
+
+    public void disassemblyTree(SysMenuInListDTO sysMenuInListDTO,List<Long> sysMenuinList){
+        List<SysMenuInListDTO> sysMenuinList1 = sysMenuInListDTO.getSysMenuinList();
+        if (StringUtils.isNotEmpty(sysMenuinList1)) {
+            for (SysMenuInListDTO menuInListDTO : sysMenuinList1) {
+                disassemblyTree(menuInListDTO,sysMenuinList);
+                sysMenuinList.add(menuInListDTO.getSysMenuInfoDto().getMenuId());
+            }
+        }
     }
 
     @Override

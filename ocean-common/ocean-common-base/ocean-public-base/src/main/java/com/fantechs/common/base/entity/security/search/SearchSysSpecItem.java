@@ -7,6 +7,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class SearchSysSpecItem  extends BaseQuery implements Serializable {
@@ -65,6 +66,12 @@ public class SearchSysSpecItem  extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="menuId" ,value="菜单ID")
     private Long menuId;
+
+    /**
+     * 菜单ID集合
+     */
+    @ApiModelProperty(name="menuIds" ,value="菜单ID集合")
+    private List<Long> menuIds;
 
     /**
      * 是否使用缓存数据(0不使用、1使用)
