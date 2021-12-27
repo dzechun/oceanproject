@@ -54,7 +54,15 @@
         </where>
     </select>
     <select id="findBarcodeList" resultMap="barcode_column_list">
-        SELECT mswob.barcode, mswob.barcode_status AS barcodeStatus FROM mes_sfc_work_order_barcode mswob
+        SELECT
+        mswob.barcode,
+        mswob.barcode_status AS barcodeStatus,
+        mskpr.part_barcode AS cutsomerBarcode,
+        mskpr2.part_barcode AS salesBarcode
+        FROM
+        mes_sfc_work_order_barcode mswob
+        LEFT JOIN mes_sfc_key_part_relevance mskpr ON mswob.work_order_barcode_id = mskpr.work_order_barcode_id AND mskpr.material_id IS NOT NULL
+        LEFT JOIN mes_sfc_key_part_relevance mskpr2 ON mswob.work_order_barcode_id = mskpr2.work_order_barcode_id AND mskpr2.label_category_id IS NOT NULL
         <where>
             <if test="workOrderId!=null and workOrderId!=''">
                 AND mswob.work_order_id = #{workOrderId}
