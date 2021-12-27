@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -21,6 +22,18 @@ public class WmsInnerPdaInventoryDetDto  implements Serializable {
      */
     @ApiModelProperty(name="inventoryDetId",value = "库存明细ID")
     private Long inventoryDetId;
+
+    /**
+     * 作业单ID
+     */
+    @ApiModelProperty(name="jobOrderId",value = "作业单ID")
+    private Long jobOrderId;
+
+    /**
+     * 仓库
+     */
+    @ApiModelProperty(name="warehouseId",value = "仓库")
+    private Long warehouseId;
 
     /**
      * 库位ID

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerSplitAndCombineLogMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerSplitAndCombineLog">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="split_and_combine_log_id" jdbcType="BIGINT" property="splitAndCombineLogId" />
+    <result column="operator_type" jdbcType="TINYINT" property="operatorType" />
+    <result column="data_type" jdbcType="TINYINT" property="dataType" />
+    <result column="material_barcode_id" jdbcType="BIGINT" property="materialBarcodeId" />
+    <result column="create_type" jdbcType="TINYINT" property="createType" />
+    <result column="print_order_source_ip" jdbcType="VARCHAR" property="printOrderSourceIp" />
+    <result column="printer_name" jdbcType="VARCHAR" property="printerName" />
+    <result column="print_order_type_code" jdbcType="VARCHAR" property="printOrderTypeCode" />
+    <result column="print_order_code" jdbcType="VARCHAR" property="printOrderCode" />
+    <result column="print_order_id" jdbcType="BIGINT" property="printOrderId" />
+    <result column="print_order_det_id" jdbcType="BIGINT" property="printOrderDetId" />
+    <result column="barcode" jdbcType="VARCHAR" property="barcode" />
+    <result column="color_box_code" jdbcType="VARCHAR" property="colorBoxCode" />
+    <result column="carton_code" jdbcType="VARCHAR" property="cartonCode" />
+    <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
+    <result column="if_sys_barcode" jdbcType="TINYINT" property="ifSysBarcode" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+    <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
+    <result column="material_qty" jdbcType="DECIMAL" property="materialQty" />
+    <result column="production_time" jdbcType="TIMESTAMP" property="productionTime" />
+    <result column="inspection_status" jdbcType="TINYINT" property="inspectionStatus" />
+    <result column="barcode_status" jdbcType="TINYINT" property="barcodeStatus" />
+    <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId" />
+    <result column="label_id" jdbcType="BIGINT" property="labelId" />
+    <result column="barcode_type" jdbcType="TINYINT" property="barcodeType" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    wisacl.split_and_combine_log_id,
+    wisacl.operator_type,
+    wisacl.data_type,
+    wisacl.material_barcode_id,
+    wisacl.create_type,
+    wisacl.print_order_source_ip,
+    wisacl.printer_name,
+    wisacl.print_order_type_code,
+    wisacl.print_order_code,
+    wisacl.print_order_id,
+    wisacl.print_order_det_id,
+    wisacl.barcode,
+    wisacl.color_box_code,
+    wisacl.carton_code,
+    wisacl.pallet_code,
+    wisacl.if_sys_barcode,
+    wisacl.material_id,
+    wisacl.supplier_id,
+    wisacl.batch_code,
+    wisacl.material_qty,
+    wisacl.production_time,
+    wisacl.inspection_status,
+    wisacl.barcode_status,
+    wisacl.barcode_rule_id,
+    wisacl.label_id,
+    wisacl.barcode_type,
+    wisacl.remark,
+    wisacl.org_id,
+    wisacl.create_user_id,
+    wisacl.create_time,
+    wisacl.modified_user_id,
+    wisacl.modified_time
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMap" parameterType="map">
+    SELECT <include refid="Base_Column_List"/>
+    FROM wms_inner_split_and_combine_log wisacl
+    LEFT JOIN sys_user su  ON wisacl.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON wisacl.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON wisacl.org_id = bo.organization_id
+    <where>
+      <if test="orgId!=null">
+        and wisacl.org_id = #{orgId}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(wisacl.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+    order by wisacl.create_time desc
+  </select>
+</mapper>

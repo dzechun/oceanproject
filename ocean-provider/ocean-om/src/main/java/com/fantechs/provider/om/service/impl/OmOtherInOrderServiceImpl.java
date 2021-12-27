@@ -17,8 +17,13 @@ import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInPlanReceivingOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
-import com.fantechs.common.base.general.entity.om.*;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
+import com.fantechs.common.base.general.entity.om.OmHtOtherInOrder;
+import com.fantechs.common.base.general.entity.om.OmHtOtherInOrderDet;
+import com.fantechs.common.base.general.entity.om.OmOtherInOrder;
+import com.fantechs.common.base.general.entity.om.OmOtherInOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInPlanReceivingOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
@@ -126,14 +131,14 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             String unitName = omSalesReturnOrderDetMapper.findUnitName(omOtherInOrderDet.getMaterialId());
 
             //获取发货库位
-            Map<String, Object> map = new HashMap<>();
-            map.put("orgId", sysUser.getOrganizationId());
-            map.put("warehouseId", omOtherInOrderDet.getWarehouseId());
-            map.put("storageType", 2);
-            Long storageId = omTransferOrderMapper.findStorage(map);
-            if (StringUtils.isEmpty(storageId)) {
+            SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+            searchBaseStorage.setWarehouseId(omOtherInOrderDet.getWarehouseId());
+            searchBaseStorage.setStorageType((byte)2);
+            List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+            if (StringUtils.isEmpty(baseStorages)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未获取到该仓库的发货库位");
             }
+            Long storageId = baseStorages.get(0).getStorageId();
 
             SrmInAsnOrderDetDto srmInAsnOrderDetDto = new SrmInAsnOrderDetDto();
             srmInAsnOrderDetDto.setSourceOrderId(omOtherInOrderDet.getOtherInOrderId());
