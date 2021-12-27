@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class WmsInnerJobOrderDto extends WmsInnerJobOrder implements Serializable {
@@ -85,4 +86,7 @@ public class WmsInnerJobOrderDto extends WmsInnerJobOrder implements Serializabl
     @ApiModelProperty(name="distributionQty",value = "分配数量")
     @Excel(name = "分配数量", height = 20, width = 30,orderNum="")
     private BigDecimal distributionQty;
+
+    List<WmsInnerMaterialBarcodeReOrderDto> wmsInnerMaterialBarcodeReOrderDtos;
+
 }

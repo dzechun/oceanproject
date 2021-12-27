@@ -102,9 +102,6 @@
         <if test="materialBarcodeId!=null and materialBarcodeId!=''">
             and wimb.material_barcode_id = #{materialBarcodeId}
         </if>
-        <if test="barcode!=null and barcode!=''">
-            and wimb.barcode like CONCAT('%',#{barcode},'%')
-        </if>
         <if test="printOrderTypeCode!=null and printOrderTypeCode!=''">
             and wimb.print_order_type_code = #{printOrderTypeCode}
         </if>
@@ -117,15 +114,31 @@
         <if test="supplierName!=null and supplierName!=''">
             and bs.supplier_name like CONCAT('%',#{supplierName},'%')
         </if>
-        <if test="colorBoxCode!=null and colorBoxCode!=''">
+        <if test="barcode!=null and barcode!=''and codeQueryMark != 1">
+            and wimb.barcode like CONCAT('%',#{barcode},'%')
+        </if>
+        <if test="colorBoxCode!=null and colorBoxCode!='' and codeQueryMark != 1">
             and wimb.color_box_code like CONCAT('%',#{colorBoxCode},'%')
         </if>
-        <if test="cartonCode!=null and cartonCode!=''">
+        <if test="cartonCode!=null and cartonCode!=''and codeQueryMark != 1">
             and wimb.carton_code like CONCAT('%',#{cartonCode},'%')
         </if>
-        <if test="palletCode!=null and palletCode!=''">
+        <if test="palletCode!=null and palletCode!=''and codeQueryMark != 1">
             and wimb.pallet_code like CONCAT('%',#{palletCode},'%')
         </if>
+        <if test="barcode!=null and barcode!=''and codeQueryMark == 1">
+            and wimb.barcode  = #{barcode}
+        </if>
+        <if test="colorBoxCode!=null and colorBoxCode!='' and codeQueryMark  == 1">
+            and wimb.color_box_code  = #{colorBoxCode}
+        </if>
+        <if test="cartonCode!=null and cartonCode!=''and codeQueryMark  == 1">
+            and wimb.carton_code  = #{cartonCode}
+        </if>
+        <if test="palletCode!=null and palletCode!=''and codeQueryMark  == 1">
+            and wimb.pallet_code  = #{palletCode}
+        </if>
+
         <if test="materialCode!=null and materialCode!=''">
             and bm.material_code like CONCAT('%',#{materialCode},'%')
         </if>

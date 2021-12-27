@@ -124,5 +124,11 @@ public class SearchWmsInnerMaterialBarcode extends BaseQuery implements Serializ
     @ApiModelProperty(name="barcode",value = "未知条码")
     private String code;
 
+    /**
+     * 编码查询标记(设为1做等值查询)
+     */
+    @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
+    private Integer codeQueryMark;
+
     private static final long serialVersionUID = 1L;
 }

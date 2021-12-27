@@ -1,12 +1,10 @@
 package com.fantechs.common.base.general.dto.srm;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReOrderDto;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrder;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.Transient;
 import java.io.Serializable;
@@ -20,7 +18,6 @@ public class SrmInAsnOrderDto extends SrmInAsnOrder implements Serializable {
     @Transient
     @ApiModelProperty(name="materialOwnerName",value = "货主名称")
     private String materialOwnerName;
-
 
     /**
      * 仓库
@@ -75,6 +72,7 @@ public class SrmInAsnOrderDto extends SrmInAsnOrder implements Serializable {
     private String fileUrl;
 
 
-    //   private List<SrmInAsnOrderDetBarcode> srmInAsnOrderDetBarcodes;
+
+    private  List<WmsInnerMaterialBarcodeReOrderDto> wmsInnerMaterialBarcodeReOrderDtos;
 
 }
