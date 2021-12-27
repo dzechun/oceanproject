@@ -3,7 +3,6 @@ package com.fantechs.provider.wms.inner.service.impl;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.support.BaseService;
@@ -121,18 +120,38 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
         return null;
     }
 
-
+    /**
+     * 查询对应条码的库存(箱码只查询到箱码，栈板码只查询到栈板码，不查询下一级)
+     * @param codes
+     * @return
+     */
     @Override
-    public List<WmsInnerInventoryDto> findListByBarCode(List<String> codes) {
-        //查询出所有sn码
+    public List<WmsInnerInventoryDetDto> findListByBarCode(List<String> codes) {
         List<WmsInnerMaterialBarcodeDto> list = wmsInnerMaterialBarcodeService.findListByCode(codes);
-        List<String> barCodes = new ArrayList<>();
-        for(WmsInnerMaterialBarcodeDto dto : list){
-            if(StringUtils.isNotEmpty(dto.getBarcode()))
-            barCodes.add(dto.getBarcode());
+        List<Long> barCodes = new ArrayList<>();
+        if(StringUtils.isNotEmpty(list)){
+            for(String code : codes){
+                for(WmsInnerMaterialBarcodeDto dto : list) {
+                    if (code.equals(dto.getBarcode())) {
+                        barCodes.add(dto.getMaterialBarcodeId());
+                    }else if(code.equals(dto.getColorBoxCode())){
+                        //彩盒码,箱码为空
+                        if(StringUtils.isEmpty(dto.getBarcode()))
+                            barCodes.add(dto.getMaterialBarcodeId());
+                    }else if(code.equals(dto.getCartonCode())){
+                        //箱码,箱码为空
+                        if(StringUtils.isEmpty(dto.getBarcode()) ||  StringUtils.isEmpty(dto.getColorBoxCode()))
+                            barCodes.add(dto.getMaterialBarcodeId());
+                    }else if(code.equals(dto.getPalletCode())){
+                        //栈板码,箱码为空
+                        if(StringUtils.isEmpty(dto.getBarcode()) ||  StringUtils.isEmpty(dto.getColorBoxCode()) || StringUtils.isEmpty(dto.getCartonCode()))
+                            barCodes.add(dto.getMaterialBarcodeId());
+                    }
+                }
+            }
         }
         Map map = new HashMap();
-        map.put("codes",barCodes);
+        map.put("materialBarcodeIdList",barCodes);
         return wmsInnerInventoryDetMapper.findList(map);
     }
 }

@@ -153,6 +153,12 @@
             <if test="orgId!=null and orgId!=''">
                 and wiid.org_id = #{orgId}
             </if>
+            <if test="materialBarcodeIdList != null and materialBarcodeIdList.size() > 0">
+                and wimb.material_barcode_id
+                <foreach collection="materialBarcodeIdList" open="in (" close=")" item="item" separator="," index="index">
+                    #{item}
+                </foreach>
+            </if>
         </where>
         order by wiid.create_time desc
     </select>
