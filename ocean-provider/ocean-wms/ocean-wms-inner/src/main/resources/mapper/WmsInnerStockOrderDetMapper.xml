@@ -86,10 +86,21 @@ wivd.option2,
 wivd.option3
   </sql>
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
-    SELECT <include refid="Base_Column_List"/>,wiv.stock_order_code,bw.warehouse_name,bis.inventory_status_name,bs.storage_code,bs.storage_name,bs.storage_desc,
-    bm.material_code,bm.material_name,
+    SELECT <include refid="Base_Column_List"/>,
+    wiv.stock_order_code,
+    bw.warehouse_name,
+    bis.inventory_status_name,
+    bs.storage_code,
+    bs.storage_name,
+    bs.storage_desc,
+    bm.material_code,
+    bm.material_name,
     bm.material_desc,
-    s.user_name as work_name,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,bss.supplier_name
+    s.user_name as work_name,
+    su.user_name AS create_user_name,
+    sus.user_name AS modified_user_name,
+    bo.organization_name,
+    bss.supplier_name
     FROM wms_inner_stock_order_det wivd
     LEFT JOIN wms_inner_stock_order wiv on wivd.stock_order_id = wiv.stock_order_id
     LEFT JOIN base_warehouse bw ON wiv.warehouse_id = bw.warehouse_id

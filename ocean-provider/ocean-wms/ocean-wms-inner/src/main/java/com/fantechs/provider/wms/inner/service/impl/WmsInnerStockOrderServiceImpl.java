@@ -89,23 +89,13 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             if(record.getStockType()==(byte)1&&StringUtils.isEmpty(record)){
                 throw new BizErrorException("库位不能未空");
             }
-            List<WmsInnerStockOrderDet> wmsInventoryVerificationDets = this.findInvGoods(record.getStockType(),record.getStockOrderId(), record.getStorageList(),record.getWarehouseId());
+            List<WmsInnerStockOrderDet> wmsInventoryVerificationDets = this.findInvGoods(record.getStockType(),record.getStockOrderId(), record.getStorageList(),record.getWarehouseId(),sysUser);
             int res = wmsInventoryVerificationDetMapper.insertList(wmsInventoryVerificationDets);
             if(res<0){
                 throw new BizErrorException("新增盘点单失败");
             }
         }else if(record.getStockType()==(byte)2){
-            //货品
-//            for (WmsInnerStockOrderDet inventoryVerificationDet : record.getInventoryVerificationDets()) {
-//                inventoryVerificationDet.setStockOrderId(record.getStockOrderId());
-//                inventoryVerificationDet.setCreateUserId(sysUser.getUserId());
-//                inventoryVerificationDet.setCreateTime(new Date());
-//                inventoryVerificationDet.setModifiedUserId(sysUser.getUserId());
-//                inventoryVerificationDet.setModifiedTime(new Date());
-//                inventoryVerificationDet.setOrganizationId(sysUser.getOrganizationId());
-//            }
-//            int res = wmsInventoryVerificationDetMapper.insertList(record.getInventoryVerificationDets());
-            List<WmsInnerStockOrderDet> list = this.MaterialfindInvGoofs(record.getStockOrderId(),record.getMaterialList(),record.getWarehouseId());
+            List<WmsInnerStockOrderDet> list = this.MaterialfindInvGoofs(record.getStockOrderId(),record.getMaterialList(),record.getWarehouseId(),sysUser);
             int res = wmsInventoryVerificationDetMapper.insertList(list);
             if(res<0){
                 throw new BizErrorException("新增盘点单失败");
@@ -118,6 +108,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(WmsInnerStockOrder entity) {
         SysUser sysUser = currentUser();
+        //type类型：(1-修改 2-盘点登记)
         if(entity.getType()==(byte)2 && (entity.getOrderStatus()==1 || entity.getOrderStatus()>3)){
             throw new BizErrorException(entity.getOrderStatus()==1?"单据未激活，无法登记":"无法登记");
         }
@@ -139,10 +130,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 inventoryVerificationDet.setModifiedUserId(sysUser.getUserId());
                 inventoryVerificationDet.setModifiedTime(new Date());
                 inventoryVerificationDet.setOrganizationId(sysUser.getOrganizationId());
-                if(entity.getType()==(byte) 2){
-                    inventoryVerificationDet.setStockUserId(sysUser.getUserId());
-                    inventoryVerificationDet.setIfRegister((byte)1);
-                }
+
+                inventoryVerificationDet.setStockUserId(sysUser.getUserId());
+                inventoryVerificationDet.setIfRegister((byte)1);
+
                 if(StringUtils.isEmpty(inventoryVerificationDet.getStockQty())){
                     inventoryVerificationDet.setStockQty(BigDecimal.ZERO);
                 }
@@ -160,30 +151,21 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         }else if(entity.getType()==(byte) 1){
             //库位盘点/全盘
             if(entity.getStockType()==(byte)1 || entity.getStockType()==(byte)3){
-                if(entity.getStockType()==(byte)1&& (StringUtils.isNotEmpty(entity.getMaxStorageCount()) && entity.getMaxStorageCount()<entity.getStorageList().size())){
+                if(entity.getStockType()==(byte)1 && (StringUtils.isNotEmpty(entity.getMaxStorageCount()) && entity.getMaxStorageCount()<entity.getStorageList().size())){
                     throw new BizErrorException("所选库位数不能大于最大库位数");
                 }
                 //盘点类型：库位盘
                 //查询库位下的所以库存货品
-                if(entity.getStockType()==(byte)1&&StringUtils.isEmpty(entity)){
+                if(entity.getStockType()==(byte)1 && StringUtils.isEmpty(entity)){
                     throw new BizErrorException("库位不能未空");
                 }
-                List<WmsInnerStockOrderDet> wmsInventoryVerificationDets = this.findInvGoods(entity.getStockType(),entity.getStockOrderId(), entity.getStorageList(),entity.getWarehouseId());
+                List<WmsInnerStockOrderDet> wmsInventoryVerificationDets = this.findInvGoods(entity.getStockType(),entity.getStockOrderId(), entity.getStorageList(),entity.getWarehouseId(),sysUser);
                 int res = wmsInventoryVerificationDetMapper.insertList(wmsInventoryVerificationDets);
                 if(res<0){
                     throw new BizErrorException("新增盘点单失败");
                 }
             }else if(entity.getStockType()==(byte)2){
-                //货品
-//                for (WmsInnerStockOrderDet inventoryVerificationDet : entity.getInventoryVerificationDets()) {
-//                    inventoryVerificationDet.setStockOrderId(entity.getStockOrderId());
-//                    inventoryVerificationDet.setCreateUserId(sysUser.getUserId());
-//                    inventoryVerificationDet.setCreateTime(new Date());
-//                    inventoryVerificationDet.setModifiedUserId(sysUser.getUserId());
-//                    inventoryVerificationDet.setModifiedTime(new Date());
-//                    inventoryVerificationDet.setOrganizationId(sysUser.getOrganizationId());
-//                }
-                List<WmsInnerStockOrderDet> list = this.MaterialfindInvGoofs(entity.getStockOrderId(),entity.getMaterialList(),entity.getWarehouseId());
+                List<WmsInnerStockOrderDet> list = this.MaterialfindInvGoofs(entity.getStockOrderId(),entity.getMaterialList(),entity.getWarehouseId(),sysUser);
                 int res = wmsInventoryVerificationDetMapper.insertList(list);
                 if(res<0){
                     throw new BizErrorException("新增盘点单失败");
@@ -200,8 +182,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
      * @param materialList
      * @return
      */
-    private List<WmsInnerStockOrderDet> MaterialfindInvGoofs(Long id,List<Long> materialList,Long warehouseId){
-        SysUser sysUser = currentUser();
+    private List<WmsInnerStockOrderDet> MaterialfindInvGoofs(Long id,List<Long> materialList,Long warehouseId,SysUser sysUser){
         List<WmsInnerStockOrderDet> list = new ArrayList<>();
         for (Long materialId : materialList) {
             //获取库位名称
@@ -214,19 +195,6 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             //获取货品库存
             List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(example);
             wmsInnerInventories = this.filtration(wmsInnerInventories);
-//            if(wmsInnerInventories.size()<1){
-//                WmsInnerStockOrderDet wmsInventoryVerificationDet = new WmsInnerStockOrderDet();
-//                wmsInventoryVerificationDet.setStockOrderId(id);
-//                wmsInventoryVerificationDet.setMaterialId(materialId);
-//                wmsInventoryVerificationDet.setIfRegister((byte)2);
-//                wmsInventoryVerificationDet.setOriginalQty(BigDecimal.ZERO);
-//                wmsInventoryVerificationDet.setCreateTime(new Date());
-//                wmsInventoryVerificationDet.setCreateUserId(sysUser.getUserId());
-//                wmsInventoryVerificationDet.setModifiedTime(new Date());
-//                wmsInventoryVerificationDet.setModifiedUserId(sysUser.getUserId());
-//                wmsInventoryVerificationDet.setOrganizationId(sysUser.getOrganizationId());
-//                list.add(wmsInventoryVerificationDet);
-//            }
             for (WmsInnerInventory wmsInnerInventory : wmsInnerInventories) {
                 WmsInnerStockOrderDet wmsInventoryVerificationDet = new WmsInnerStockOrderDet();
                 wmsInventoryVerificationDet.setStockOrderId(id);
@@ -260,6 +228,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
     }
 
     private List<WmsInnerInventory> filtration(List<WmsInnerInventory> wmsInnerInventories){
+        //只返回存货库位的库存信息
         List<WmsInnerInventory> list = new ArrayList<>();
         Map<Long,Byte> map = new HashMap<>();
         for (WmsInnerInventory wmsInnerInventory : wmsInnerInventories) {
@@ -290,8 +259,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
      * @param storageList
      * @return
      */
-    private List<WmsInnerStockOrderDet> findInvGoods(Byte type, Long id, List<Long> storageList,Long warehouseId){
-        SysUser sysUser = currentUser();
+    private List<WmsInnerStockOrderDet> findInvGoods(Byte type, Long id, List<Long> storageList,Long warehouseId,SysUser sysUser){
         List<WmsInnerStockOrderDet> list = new ArrayList<>();
         //查询库位下所有库存货品
         //库位盘点
@@ -300,6 +268,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 //获取库位名称
                 Example example = new Example(WmsInnerInventory.class);
                 //盘点锁 0 否 1 是
+                //jobStatus 作业状态(1正常 2待出)
+                //lockStatus 锁定状态(0-否 1-是)
+                //stockLock 盘点锁(0-否 1-是)
                 example.createCriteria().andEqualTo("warehouseId",warehouseId).andEqualTo("storageId",storageId).andEqualTo("stockLock",0)
                         .andGreaterThan("packingQty",0).andEqualTo("jobStatus",1).andEqualTo("orgId",sysUser.getOrganizationId())
                         .andEqualTo("qcLock", 0)
@@ -376,7 +347,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
     }
 
     /**
-     * 盘点激活
+     * 盘点激活 作废
      * @param ids
      * @return
      */
@@ -394,9 +365,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             example.createCriteria().andEqualTo("stockOrderId",wmsInventoryVerification.getStockOrderId());
             List<WmsInnerStockOrderDet> list = wmsInventoryVerificationDetMapper.selectByExample(example);
             //库位盘点将盘点单的所有库位下库存更改上锁状态及基础信息库位上锁 货品盘点将
+            //btnType 按钮类型 1-激活 2作废
             if(btnType ==1){
                 if(wmsInventoryVerification.getOrderStatus()>1){
-                    throw new BizErrorException("重复操作");
+                    throw new BizErrorException("盘点单已激活 请勿重复操作");
                 }
                 //打开
                 num += this.unlockOrLock((byte) 2,list,wmsInventoryVerification);
@@ -415,7 +387,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
     }
 
     /**
-     * 盘点确认
+     * Web端盘点确认
      * @param ids
      * @return
      */
@@ -489,30 +461,19 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             }
             //解锁及复盘库存
             num+=this.unlockOrLock((byte)1,wmsInventoryVerificationDets,wmsInventoryVerification);
+            //单据状态(1-打开 2-待作业 3-作业中 4-待处理 5-完成 6-作废)
             if(wmsInventoryVerification.getProjectType()==2){
-                wmsInventoryVerification.setOrderStatus((byte)5);
+                // 复盘单确认后 单据状态为 4-待处理
+                //wmsInventoryVerification.setOrderStatus((byte)5);
+                wmsInventoryVerification.setOrderStatus((byte)4);
             }else {
                 //更改盘点状态（已完成）
-                wmsInventoryVerification.setOrderStatus((byte)6);
+                //wmsInventoryVerification.setOrderStatus((byte)6);
+                wmsInventoryVerification.setOrderStatus((byte)5);
             }
             wmsInventoryVerification.setModifiedTime(new Date());
             wmsInventoryVerification.setModifiedUserId(sysUser.getUserId());
             num +=wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInventoryVerification);
-
-            //返写盘点数据（五环） 复盘确认时才回写
-            //获取程序配置项
-            if(wmsInventoryVerification.getProjectType()==(byte)2 && StringUtils.isNotEmpty(id)) {
-                SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
-                searchSysSpecItemFiveRing.setSpecCode("FiveRing");
-                List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
-                if (itemListFiveRing.size() < 1) {
-                    throw new BizErrorException("配置项 FiveRing 获取失败");
-                }
-                SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-                if ("1".equals(sysSpecItem.getParaValue())) {
-                    engFeignApi.reportStockOrder(wmsInventoryVerification);
-                }
-            }
 
         }
         return num;
@@ -534,37 +495,26 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             if (StringUtils.isEmpty(wmsInventoryVerification)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
-            if(wmsInventoryVerification.getOrderStatus()==(byte)6){
+            //单据状态(1-打开 2-待作业 3-作业中 4-待处理 5-完成 6-作废)
+            if(wmsInventoryVerification.getOrderStatus()==(byte)5){
                 throw new BizErrorException("盘点已完成");
             }
             if(wmsInventoryVerification.getProjectType()==1){
-                throw new BizErrorException("盘点无差异");
+                throw new BizErrorException("只能对复盘单进行差异处理");
             }
-            if(wmsInventoryVerification.getOrderStatus()!=5){
-                throw new BizErrorException("盘点单未完成,无法差异处理");
+            if(wmsInventoryVerification.getOrderStatus()!=4){
+                throw new BizErrorException("复盘单未确认完成,无法差异处理");
             }
             Example example = new Example(WmsInnerStockOrderDet.class);
             example.createCriteria().andEqualTo("stockOrderId", wmsInventoryVerification.getStockOrderId());
             List<WmsInnerStockOrderDet> list = wmsInventoryVerificationDetMapper.selectByExample(example);
-            List<WmsInnerStockOrderDet> wmsInventoryVerificationDets = new ArrayList<>();
-
+            
             //差异处理盘盈盘亏计算
             num+=this.unlockOrLock((byte) 3,list,wmsInventoryVerification);
 
-            wmsInventoryVerification.setOrderStatus((byte)6);
+            wmsInventoryVerification.setOrderStatus((byte)5);
             num+=wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInventoryVerification);
 
-            //返写盘点数据（五环）
-//            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
-//            searchSysSpecItemFiveRing.setSpecCode("FiveRing");
-//            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
-//            if (itemListFiveRing.size() < 1) {
-//                throw new BizErrorException("配置项 FiveRing 获取失败");
-//            }
-//            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-//            if ("1".equals(sysSpecItem.getParaValue())) {
-//                engFeignApi.reportStockOrder(wmsInventoryVerification);
-//            }
         }
         return num;
     }
@@ -640,6 +590,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
     }
 
     /**
+     * 盘点激活或作废操作
      * 库存上锁或解锁 1解锁 2上锁 3复盘 4-PDA复盘
      * @param list
      * @return
@@ -691,6 +642,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                             wmsInnerInventoryMapper.deleteByPrimaryKey(wmsInnerInventory);
                         }
                     }else {
+                        //激活 锁定库存
                         wmsInnerInventory.setStockLock(lockType==(byte) 2?(byte)1:0);
                         wmsInnerInventory.setRelevanceOrderCode(wmsInventoryVerification.getStockOrderCode());
                         num+=wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
