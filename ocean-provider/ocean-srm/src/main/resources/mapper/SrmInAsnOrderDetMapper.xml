@@ -124,8 +124,20 @@
             <if test="asnOrderDetId !=null and asnOrderDetId!=''">
                 and wiaod.asn_order_det_id = #{asnOrderDetId}
             </if>
-            <if test="materialCode !=null and materialCode !=''">
-                and bm.material_code like CONCAT('%',#{materialCode},'%')
+            <if test="asnCode != null and asnCode!=''">
+                and wiao.asn_code like CONCAT('%', #{asnCode}, '%')
+            </if>
+            <if test="materialCode != null and materialCode!=''">
+                and bm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="materialName != null and materialName!=''">
+                and bm.material_name like CONCAT('%', #{materialName}, '%')
+            </if>
+            <if test="materialDesc != null and materialDesc!=''">
+                and bm.material_desc like CONCAT('%', #{materialDesc}, '%')
+            </if>
+            <if test="materialVersion != null and materialVersion!=''">
+                and bm.material_version like CONCAT('%', #{materialVersion}, '%')
             </if>
             <if test="sourceOrderId !=null and sourceOrderId!=''">
                 and wiaod.source_order_id = #{sourceOrderId}

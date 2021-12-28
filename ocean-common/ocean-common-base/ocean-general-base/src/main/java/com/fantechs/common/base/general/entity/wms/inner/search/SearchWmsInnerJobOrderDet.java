@@ -29,4 +29,19 @@ public class SearchWmsInnerJobOrderDet extends BaseQuery implements Serializable
     @ApiModelProperty(name="ifFiltrate",value = "是否筛选（0，否  1，是）")
     private byte ifFiltrate;
 
+    @ApiModelProperty(name="materialName",value = "物料名称")
+    private String materialName;
+
+    @ApiModelProperty(name="materialCode",value = "物料编码")
+    private String materialCode;
+
+    @ApiModelProperty(name="materialDesc",value = "物料描述")
+    private String materialDesc;
+
+    @ApiModelProperty(name="materialVersion",value = "物料版本")
+    private String materialVersion;
+
+    @ApiModelProperty(name="jobOrderCode",value = "上架单单号")
+    private String jobOrderCode;
+
 }

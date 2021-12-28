@@ -117,6 +117,21 @@
             <if test="jobOrderDetId !=null and jobOrderDetId !=''">
                 and wipod.job_order_det_id = #{jobOrderDetId}
             </if>
+            <if test="jobOrderCode != null and jobOrderCode!=''">
+                and wijo.job_order_code like CONCAT('%', #{jobOrderCode}, '%')
+            </if>
+            <if test="materialCode != null and materialCode!=''">
+                and bm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="materialName != null and materialName!=''">
+                and bm.material_name like CONCAT('%', #{materialName}, '%')
+            </if>
+            <if test="materialDesc != null and materialDesc!=''">
+                and bm.material_desc like CONCAT('%', #{materialDesc}, '%')
+            </if>
+            <if test="materialVersion != null and materialVersion!=''">
+                and bm.material_version like CONCAT('%', #{materialVersion}, '%')
+            </if>
             <if test="lineStatusList !=null and lineStatusList.size()!=0">
                 and wipod.line_status in
                 <foreach item="lineStatus" collection="lineStatusList" open="(" separator="," close=")">

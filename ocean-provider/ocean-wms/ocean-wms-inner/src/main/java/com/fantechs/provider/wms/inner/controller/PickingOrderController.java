@@ -81,7 +81,7 @@ public class PickingOrderController {
 
     @ApiOperation("拣货条码扫描")
     @PostMapping("/scan")
-    public ResponseEntity<WmsInnerInventoryDetDto> scan(@ApiParam(value = "库位ID",required = true) @RequestParam @NotBlank(message="id不能为空") Long storageId,@ApiParam(value = "库位ID",required = true) @RequestParam @NotBlank(message="物料ID") Long materialId,@ApiParam(value = "条码",required = true) @RequestParam @NotBlank(message="条码不能为空") String barcode){
+    public ResponseEntity<WmsInnerInventoryDetDto> scan(@ApiParam(value = "库位ID",required = true) @RequestParam Long storageId,@ApiParam(value = "库位ID",required = true) @RequestParam Long materialId,@ApiParam(value = "条码",required = true) @RequestParam @NotBlank(message="条码不能为空") String barcode){
         return ControllerUtil.returnDataSuccess(pickingOrderService.scan(storageId,materialId,barcode),1);
     }
 

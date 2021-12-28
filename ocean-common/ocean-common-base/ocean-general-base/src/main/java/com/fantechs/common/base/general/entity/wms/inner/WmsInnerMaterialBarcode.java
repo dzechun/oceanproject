@@ -230,8 +230,8 @@ public class WmsInnerMaterialBarcode extends ValidGroup implements Serializable 
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
 
@@ -246,8 +246,8 @@ public class WmsInnerMaterialBarcode extends ValidGroup implements Serializable 
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
 
