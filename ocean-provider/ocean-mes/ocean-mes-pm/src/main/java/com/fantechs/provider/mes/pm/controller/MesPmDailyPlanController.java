@@ -46,11 +46,11 @@ public class MesPmDailyPlanController {
         return ControllerUtil.returnCRUD(mesPmDailyPlanService.save(mesPmDailyPlan));
     }
 
-    @ApiOperation(value = "批量新增",notes = "批量新增")
-    @PostMapping("/batchAdd")
-    public ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<MesPmDailyPlan> list){
-        return ControllerUtil.returnCRUD(mesPmDailyPlanService.batchSave(list));
-    }
+//    @ApiOperation(value = "批量新增",notes = "批量新增")
+//    @PostMapping("/batchAdd")
+//    public ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<MesPmDailyPlan> list){
+//        return ControllerUtil.returnCRUD(mesPmDailyPlanService.batchSave(list));
+//    }
 
     @ApiOperation("删除")
     @PostMapping("/delete")
@@ -98,12 +98,12 @@ public class MesPmDailyPlanController {
         }
     }
 
-    @ApiOperation("未来三日列表列表")
-    @PostMapping("/findDaysList")
-    public ResponseEntity<List<MesPmDailyPlanDto>> findDaysList(@ApiParam(value = "查询对象")@RequestBody SearchMesPmDailyPlan searchMesPmDailyPlan) throws ParseException {
-        Page<Object> page = PageHelper.startPage(searchMesPmDailyPlan.getStartPage(),searchMesPmDailyPlan.getPageSize());
-        List<MesPmDailyPlanDto> list = mesPmDailyPlanService.findDaysList(searchMesPmDailyPlan);
-        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
-    }
+//    @ApiOperation("未来三日列表列表")
+//    @PostMapping("/findDaysList")
+//    public ResponseEntity<List<MesPmDailyPlanDto>> findDaysList(@ApiParam(value = "查询对象")@RequestBody SearchMesPmDailyPlan searchMesPmDailyPlan) throws ParseException {
+//        Page<Object> page = PageHelper.startPage(searchMesPmDailyPlan.getStartPage(),searchMesPmDailyPlan.getPageSize());
+//        List<MesPmDailyPlanDto> list = mesPmDailyPlanService.findDaysList(searchMesPmDailyPlan);
+//        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+//    }
 
 }
