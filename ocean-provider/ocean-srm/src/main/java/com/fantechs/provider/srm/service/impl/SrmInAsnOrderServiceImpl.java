@@ -86,7 +86,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
     public int save(SrmInAsnOrderDto srmInAsnOrderDto) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
-        srmInAsnOrderDto.setAsnCode(CodeUtils.getId("SRM-DPO"));
+        srmInAsnOrderDto.setAsnCode(CodeUtils.getId("SRM-ASN"));
 
        // 默认收货通知单
         if(StringUtils.isEmpty(srmInAsnOrderDto.getOrderTypeId())) {
@@ -318,7 +318,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
     public SrmInAsnOrderDto detail(Long id) {
         SrmInAsnOrderDto dto = new SrmInAsnOrderDto();
         Map map = new HashMap();
-        map.put("id",id);
+        map.put("asnOrderId",id);
         List<SrmInAsnOrderDto> list = srmInAsnOrderMapper.findList(map);
         if(StringUtils.isNotEmpty(list)){
             dto = list.get(0);
@@ -328,7 +328,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
             }
             SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
             searchWmsInnerMaterialBarcodeReOrder.setOrderDetIdList(ids);
-            searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode("SRM-ASM");
+            searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode("SRM-ASN");
             List<WmsInnerMaterialBarcodeReOrderDto> wmsInnerMaterialBarcodeReOrderDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder).getData();
             dto.setWmsInnerMaterialBarcodeReOrderDtos(wmsInnerMaterialBarcodeReOrderDtos);
         }
