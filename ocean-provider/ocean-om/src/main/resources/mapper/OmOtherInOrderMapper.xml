@@ -47,7 +47,7 @@
         oio.order_status,
         oio.status,
         oio.order_date,
-        oio.complete_date,
+        oio.plan_complete_time,
         oio.remark,
         oio.org_id,
         oio.create_user_id,
