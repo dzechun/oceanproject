@@ -86,7 +86,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
     public List<WmsInnerJobOrderDto> pdaFindList(Map<String, Object> map) {
         SysUser sysUser = currentUser();
         map.put("orgId", sysUser.getOrganizationId());
-        map.put("jobOrderType", (byte) 2);
+        map.put("jobOrderType", (byte) 3);
         return wmsInnerJobOrderService.findShiftList(map);
     }
 

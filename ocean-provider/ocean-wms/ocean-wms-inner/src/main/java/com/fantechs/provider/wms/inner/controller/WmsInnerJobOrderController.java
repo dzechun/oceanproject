@@ -7,7 +7,6 @@ import com.fantechs.common.base.general.dto.wms.inner.SaveHaveInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
-import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerStockOrderImport;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
@@ -18,9 +17,9 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.inner.service.WmsInnerJobOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -150,8 +149,9 @@ public class WmsInnerJobOrderController {
 
     @ApiOperation("获取详情")
     @PostMapping("/detail")
-    public ResponseEntity<WmsInnerJobOrder> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
-        WmsInnerJobOrder wmsInPutawayOrder = wmsInPutawayOrderService.selectByKey(id);
+    public ResponseEntity<WmsInnerJobOrder> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id,
+                                                   @ApiParam(value = "sourceSysOrderTypeCode",required = true)@RequestParam  @NotNull(message="id不能为空") String sourceSysOrderTypeCode) {
+        WmsInnerJobOrder wmsInPutawayOrder = wmsInPutawayOrderService.detail(id,sourceSysOrderTypeCode);
         return  ControllerUtil.returnDataSuccess(wmsInPutawayOrder,StringUtils.isEmpty(wmsInPutawayOrder)?0:1);
     }
 
