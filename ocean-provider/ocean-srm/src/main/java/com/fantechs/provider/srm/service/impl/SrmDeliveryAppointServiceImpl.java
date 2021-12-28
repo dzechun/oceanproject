@@ -84,8 +84,8 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         SearchSrmCarportTimeQuantum searchSrmCarportTimeQuantum = new SearchSrmCarportTimeQuantum();
-        searchSrmCarportTimeQuantum.setStartTime(srmDeliveryAppointDto.getAppointStartTime());
-        searchSrmCarportTimeQuantum.setEndTime(srmDeliveryAppointDto.getAppointEndTime());
+      /*  searchSrmCarportTimeQuantum.setCarportStartTime(srmDeliveryAppointDto.getAppointStartTime());
+        searchSrmCarportTimeQuantum.setCarportEndTime(srmDeliveryAppointDto.getAppointEndTime());*/
         searchSrmCarportTimeQuantum.setWarehouseId(srmDeliveryAppointDto.getDeliveryWarehouseId());
         List<SrmCarportTimeQuantumDto> srmCarportTimeQuantumDtos = srmCarportTimeQuantumMapper.findList(ControllerUtil.dynamicConditionByEntity(searchSrmCarportTimeQuantum));
 
@@ -110,7 +110,19 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         criteria.andEqualTo("appointStartTime",srmDeliveryAppointDto.getAppointStartTime());
         criteria.andEqualTo("appointEndTime",srmDeliveryAppointDto.getAppointEndTime());
         Integer num = srmDeliveryAppointMapper.selectCountByExample(example);
-        Integer size = srmCarportTimeQuantumDtos.get(0).getCarportCount();
+
+        SrmCarportTimeQuantumDto srmCarportTimeQuantumDto = null;
+        for(SrmCarportTimeQuantumDto dto :srmCarportTimeQuantumDtos){
+            Date startTime = dto.getStartTime();
+            Date endTime = dto.getEndTime();
+            String str1 =  DateUtils.getDateString(startTime,"HH:mm:ss");
+            String str2 =  DateUtils.getDateString(srmDeliveryAppointDto.getAppointStartTime(),"HH:mm:ss");
+            if(str1.equals(str2))
+                srmCarportTimeQuantumDto = dto;
+        }
+        if(StringUtils.isEmpty(srmCarportTimeQuantumDto))
+            throw  new  BizErrorException("未查询到对应时间段的仓库信息");
+        Integer size = srmCarportTimeQuantumDto.getCarportCount();
         if(num >= size )
             throw new BizErrorException("该时间段预约已满");
 

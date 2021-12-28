@@ -69,7 +69,7 @@ public class SrmInAsnOrderController {
     @ApiOperation("获取详情")
     @PostMapping("/detail")
     public ResponseEntity<SrmInAsnOrder> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
-        SrmInAsnOrder  srmInAsnOrder = srmInAsnOrderService.selectByKey(id);
+        SrmInAsnOrder  srmInAsnOrder = srmInAsnOrderService.detail(id);
         return  ControllerUtil.returnDataSuccess(srmInAsnOrder,StringUtils.isEmpty(srmInAsnOrder)?0:1);
     }
 

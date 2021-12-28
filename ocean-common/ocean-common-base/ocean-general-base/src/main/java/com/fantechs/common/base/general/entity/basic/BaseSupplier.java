@@ -1,6 +1,7 @@
 package com.fantechs.common.base.general.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.general.dto.basic.BaseAddressDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
@@ -167,7 +168,9 @@ public class BaseSupplier extends ValidGroup implements Serializable {
      * 创建时间
      */
     @Column(name = "create_time")
-    @ApiModelProperty("创建时间")
+    @ApiModelProperty(name="createTime" ,value="创建时间")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="7",exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
@@ -188,8 +191,10 @@ public class BaseSupplier extends ValidGroup implements Serializable {
     /**
      * 修改时间
      */
+    @ApiModelProperty(name="modifiedTime" ,value="修改时间")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
-    @ApiModelProperty("修改时间")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="9",exportFormat = "yyyy-MM-dd HH:mm:ss")
     private Date modifiedTime;
 
     /**

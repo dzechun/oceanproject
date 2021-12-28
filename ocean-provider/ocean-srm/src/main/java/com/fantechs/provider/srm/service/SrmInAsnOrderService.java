@@ -23,4 +23,5 @@ public interface SrmInAsnOrderService extends IService<SrmInAsnOrder> {
 
     int send(List<SrmInAsnOrderDto> srmInAsnOrderDtos);
 
+    SrmInAsnOrderDto detail(Long id);
 }
