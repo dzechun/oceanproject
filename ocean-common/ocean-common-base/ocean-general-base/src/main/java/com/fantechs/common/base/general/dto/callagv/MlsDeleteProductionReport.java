@@ -11,6 +11,9 @@ public class MlsDeleteProductionReport {
     @ApiModelProperty(name = "isUnbound", value = "是否全部解绑 0-否 1-是")
     private Integer isUnbound;
 
+    @ApiModelProperty(name = "warehouseCode", value = "仓库编码")
+    private String warehouseCode;
+
     @ApiModelProperty(name = "containerCode", value = "容器编码")
     private String containerCode;
 

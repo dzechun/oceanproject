@@ -8,10 +8,10 @@ spring:
   application:
     name: @pom.artifactId@
 SCM:
-  url: http://192.168.18.108:8882/api
+  url: http://192.168.18.121:8882/api
   pkGroup: 0001A110000000000AT4
   pkOrg: 0001A110000000002UV1
-  factoryCode: 010101
+  factoryCode: '010101'
   appKey: C1634524667476
   secret: e9887cb6a79d4a2daf391fdeeb56ef83
 

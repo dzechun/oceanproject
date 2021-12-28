@@ -97,9 +97,10 @@ public class CallAgvVehicleReBarcodeController {
             @ApiParam(value = "周转工具（货架）ID", required = true) @RequestParam Long vehicleId,
             @ApiParam(value = "库区ID（type：1-当前库区 2-目的库区 3-目的库区）", required = true) @RequestParam Long warehouseAreaId,
             @ApiParam(value = "目标库位配送点ID") @RequestParam(required = false, defaultValue = "0") Long storageTaskPointId,
-            @ApiParam(value = "AGV配送类型(1-备料完成配送 2-叫料配送 3-空货架返回)", required = true) @RequestParam Integer type) throws Exception {
+            @ApiParam(value = "AGV配送类型(1-备料完成配送 2-叫料配送 3-空货架返回)", required = true) @RequestParam Integer type,
+            @ApiParam(value = "是否判断电梯等待任务") @RequestParam(required = false, defaultValue = "true") Boolean isSchedulingTask) throws Exception {
 
-        return ControllerUtil.returnDataSuccess(callAgvVehicleReBarcodeService.callAgvDistribution(vehicleId, warehouseAreaId, storageTaskPointId, type), 1);
+        return ControllerUtil.returnDataSuccess(callAgvVehicleReBarcodeService.callAgvDistribution(vehicleId, warehouseAreaId, storageTaskPointId, type, isSchedulingTask), 1);
     }
 
     @ApiOperation("AGV配送对外接口")
@@ -111,7 +112,7 @@ public class CallAgvVehicleReBarcodeController {
 
     @ApiOperation("备料物料解绑")
     @PostMapping("/vehicleBarcodeUnbound")
-    public ResponseEntity vehicleBarcodeUnbound(@ApiParam(value = "解绑物料对象列表", required = true) @RequestBody RequestBarcodeUnboundDTO requestBarcodeUnboundDTO) {
+    public ResponseEntity vehicleBarcodeUnbound(@ApiParam(value = "解绑物料对象列表", required = true) @RequestBody RequestBarcodeUnboundDTO requestBarcodeUnboundDTO) throws Exception {
 
         return ControllerUtil.returnCRUD(callAgvVehicleReBarcodeService.vehicleBarcodeUnbound(requestBarcodeUnboundDTO));
     }
@@ -185,5 +186,19 @@ public class CallAgvVehicleReBarcodeController {
             log.error(e.getMessage());
             throw new BizErrorException(e);
         }
+    }
+
+    @ApiOperation("无货架扫码入库")
+    @PostMapping("barcodeInWarehouseArea")
+    public ResponseEntity BarcodeInWarehouseArea(@ApiParam(value = "请求对象", required = true) @RequestBody BarcodeWarehouseAreaDto barcodeWarehouseAreaDto) throws Exception {
+
+        return ControllerUtil.returnCRUD(callAgvVehicleReBarcodeService.barcodeInWarehouseArea(barcodeWarehouseAreaDto));
+    }
+
+    @ApiOperation("无货架扫码出库")
+    @PostMapping("barcodeOutWarehouseArea")
+    public ResponseEntity BarcodeOutWarehouseArea(@ApiParam(value = "请求对象", required = true) @RequestBody List<Long> warehouseAreaReBarcodeIdList) throws Exception {
+
+        return ControllerUtil.returnCRUD(callAgvVehicleReBarcodeService.barcodeOutWarehouseArea(warehouseAreaReBarcodeIdList));
     }
 }

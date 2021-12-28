@@ -39,7 +39,8 @@
     tv.vehicle_code as vehicleCode, tv.vehicle_name as vehicleName,
     bstp.task_point_code as taskPointCode, bstp.task_point_name as taskPointName, bstp.xyz_code as xyzCode,
     bs.storage_code as storageCode, bs.storage_name as storageName,
-    cab.barcode, cab.product_model as productModel, cab.batch_code as batchCode, cab.qty, cab.material_factory as materialFactory
+    cab.barcode, cab.batch, cab.product_model as productModel, cab.erp_product_model as erpProductModel, cab.batch_code as batchCode,
+    cab.qty, cab.material_code as materialCode, cab.material_factory as materialFactory, cab.barcode_status as barcodeStatus
     from call_agv_vehicle_re_barcode cavrb
     left join call_agv_barcode cab on cavrb.barcode_id = cab.barcode_id
     left join tem_vehicle tv on cavrb.vehicle_id = tv.vehicle_id
@@ -80,13 +81,14 @@
     </where>
     <if test="groupByVehicle == 1">
       group by cavrb.vehicle_id
+      order by cavrb.create_time
     </if>
   </select>
 
   <select id="callAgvStorageMaterialList" resultMap="CallAgvStorageMaterialDto" parameterType="com.fantechs.common.base.general.entity.callagv.search.SearchCallAgvStorageMaterial">
     select bw.warehouse_name as warehouseName, bwa.warehouse_area_name as warehouseAreaName,
     bs.storage_code as storageCode, bs.storage_type as storageType,
-    tv.vehicle_code as vehicleCode, cab.barcode, cab.product_model as productModel, cab.batch, cab.batch_code as batchCode,
+    tv.vehicle_code as vehicleCode, cab.barcode, cab.product_model as productModel, cab.erp_product_model as erpProductModel, cab.batch, cab.batch_code as batchCode,
     <if test="summary == 1">
       sum(cab.qty) as
     </if>
