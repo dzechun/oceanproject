@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.ews.mapper.EwsWarningPushConfigMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.ews.EwsWarningPushConfig">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="warning_push_config_id" jdbcType="BIGINT" property="warningPushConfigId" />
+    <result column="warning_event_config_id" jdbcType="BIGINT" property="warningEventConfigId" />
+    <result column="personnel_level" jdbcType="VARCHAR" property="personnelLevel" />
+    <result column="notification_method" jdbcType="VARCHAR" property="notificationMethod" />
+    <result column="handle_time" jdbcType="INTEGER" property="handleTime" />
+    <result column="handle_time_unit" jdbcType="VARCHAR" property="handleTimeUnit" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <collection property="ewsWarningPushConfigReWuiDtos" ofType="com.fantechs.common.base.general.dto.ews.EwsWarningPushConfigReWuiDto"
+                column="{warningPushConfigId=warning_push_config_id}" select="com.fantechs.provider.ews.mapper.EwsWarningPushConfigReWuiMapper.findList">
+    </collection>
+  </resultMap>
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.ews.EwsWarningPushConfigDto">
+    <result column="warning_event_name" jdbcType="VARCHAR" property="warningEventName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+  </resultMap>
+  <sql id="base_column_list">
+    ewpc.warning_push_config_id,
+    ewpc.warning_event_config_id,
+    ewpc.personnel_level,
+ewpc.notification_method,
+ewpc.handle_time,
+ewpc.handle_time_unit,
+ewpc.status,
+ewpc.remark,
+ewpc.org_id,
+ewpc.create_user_id,
+ewpc.create_time,
+ewpc.modified_user_id,
+ewpc.modified_time,
+ewpc.is_delete
+  </sql>
+  <select id="findList" resultMap="BaseResultMapDto">
+    select <include refid="base_column_list"/>,ewec.warning_event_name,su.user_name AS create_user_name,sus.user_name AS modified_user_name,bo.organization_name
+    FROM ews_warning_push_config ewpc
+    LEFT JOIN ews_warning_event_config ewec on ewpc.warning_event_config_id = ewec.warning_event_config_id
+    LEFT JOIN sys_user su ON ewpc.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON ewpc.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON ewpc.org_id = bo.organization_id
+    <where>
+        <if test="warningEventConfigId!=null and warningEventConfigId!=''">
+          and ewpc.warning_event_config_id = #{warningEventConfigId}
+        </if>
+        <if test="warningEventName!=null and warningEventName!=''">
+          and ewec.warning_event_name like CONCAT('%',#{warningEventName},'%')
+        </if>
+    </where>
+    order by ewpc.create_time desc
+  </select>
+</mapper>

@@ -3,23 +3,17 @@ package com.fantechs.provider.wms.out.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanStockListDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDto;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderBom;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutPlanStockListOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutPlanStockListOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutPlanStockListOrder;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderBomMapper;
-import com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutPlanStockListOrderDetMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutPlanStockListOrderMapper;
 import com.fantechs.provider.wms.out.service.WmsOutPlanDeliveryOrderService;
@@ -29,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -44,10 +37,6 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
     private WmsOutPlanStockListOrderMapper wmsOutPlanStockListOrderMapper;
     @Resource
     private WmsOutPlanStockListOrderDetMapper wmsOutPlanStockListOrderDetMapper;
-    @Resource
-    private MesPmWorkOrderMapper mesPmWorkOrderMapper;
-    @Resource
-    private MesPmWorkOrderBomMapper mesPmWorkOrderBomMapper;
     @Resource
     private WmsOutPlanDeliveryOrderService wmsOutPlanDeliveryOrderService;
 
@@ -106,40 +95,40 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
                 if(wmsOutPlanStockListOrderDto.getSourceBigType()==((byte) 2)) {
                     if(StringUtils.isNotEmpty(listOrderDetDto.getWorkOrderId())){
                         //选择工单判断
-                        MesPmWorkOrder mesPmWorkOrder = mesPmWorkOrderMapper.selectByPrimaryKey(listOrderDetDto.getWorkOrderId());
-                        if (StringUtils.isEmpty(mesPmWorkOrder)) {
-                            throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(), "找不到相应的工单信息");
-                        }
-
-                        Example exampleDet = new Example(MesPmWorkOrderBom.class);
-                        Example.Criteria criteriaDet = exampleDet.createCriteria();
-                        criteriaDet.andEqualTo("workOrderId", mesPmWorkOrder.getWorkOrderId());
-                        criteriaDet.andEqualTo("partMaterialId",listOrderDetDto.getMaterialId());
-                        List<MesPmWorkOrderBom> workOrderBoms=mesPmWorkOrderBomMapper.selectByExample(exampleDet);
-                        if(workOrderBoms.size()<=0){
-                            throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"工单BOM找不到此物料的信息 工单-->"+mesPmWorkOrder.getWorkOrderCode()+" 物料编码-->"+listOrderDetDto.getMaterialCode());
-                        }
+//                        MesPmWorkOrder mesPmWorkOrder = mesPmWorkOrderMapper.selectByPrimaryKey(listOrderDetDto.getWorkOrderId());
+//                        if (StringUtils.isEmpty(mesPmWorkOrder)) {
+//                            throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(), "找不到相应的工单信息");
+//                        }
+//
+//                        Example exampleDet = new Example(MesPmWorkOrderBom.class);
+//                        Example.Criteria criteriaDet = exampleDet.createCriteria();
+//                        criteriaDet.andEqualTo("workOrderId", mesPmWorkOrder.getWorkOrderId());
+//                        criteriaDet.andEqualTo("partMaterialId",listOrderDetDto.getMaterialId());
+//                        List<MesPmWorkOrderBom> workOrderBoms=mesPmWorkOrderBomMapper.selectByExample(exampleDet);
+//                        if(workOrderBoms.size()<=0){
+//                            throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"工单BOM找不到此物料的信息 工单-->"+mesPmWorkOrder.getWorkOrderCode()+" 物料编码-->"+listOrderDetDto.getMaterialCode());
+//                        }
 
                         //工单物料已下发总数量
-                        BigDecimal totalQty = new BigDecimal(0);
-                        Example exampleOrderDet = new Example(WmsOutPlanStockListOrderDet.class);
-                        Example.Criteria criteriaOrderDet = exampleOrderDet.createCriteria();
-                        criteriaOrderDet.andEqualTo("workOrderId", mesPmWorkOrder.getWorkOrderId());
-                        criteriaOrderDet.andEqualTo("materialId",listOrderDetDto.getMaterialId());
-                        List<WmsOutPlanStockListOrderDet> listOrderDets=wmsOutPlanStockListOrderDetMapper.selectByExample(exampleOrderDet);
-                        if(listOrderDets.size()>0){
-                            for (WmsOutPlanStockListOrderDet item : listOrderDets) {
-                                totalQty=totalQty.add(item.getOrderQty());
-                            }
-                        }
-
-                        MesPmWorkOrderBom orderBom=workOrderBoms.get(0);
-                        BigDecimal usageQty=orderBom.getUsageQty();//工单BOM物料用量
-                        BigDecimal nowQty = listOrderDetDto.getOrderQty();//本次下发数量
-
-                        if ((nowQty.add(totalQty)).compareTo(usageQty) == 1) {
-                            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "下发数量总数不能大于工单物料使用数量");
-                        }
+//                        BigDecimal totalQty = new BigDecimal(0);
+//                        Example exampleOrderDet = new Example(WmsOutPlanStockListOrderDet.class);
+//                        Example.Criteria criteriaOrderDet = exampleOrderDet.createCriteria();
+//                        criteriaOrderDet.andEqualTo("workOrderId", mesPmWorkOrder.getWorkOrderId());
+//                        criteriaOrderDet.andEqualTo("materialId",listOrderDetDto.getMaterialId());
+//                        List<WmsOutPlanStockListOrderDet> listOrderDets=wmsOutPlanStockListOrderDetMapper.selectByExample(exampleOrderDet);
+//                        if(listOrderDets.size()>0){
+//                            for (WmsOutPlanStockListOrderDet item : listOrderDets) {
+//                                totalQty=totalQty.add(item.getOrderQty());
+//                            }
+//                        }
+//
+//                        MesPmWorkOrderBom orderBom=workOrderBoms.get(0);
+//                        BigDecimal usageQty=orderBom.getUsageQty();//工单BOM物料用量
+//                        BigDecimal nowQty = listOrderDetDto.getOrderQty();//本次下发数量
+//
+//                        if ((nowQty.add(totalQty)).compareTo(usageQty) == 1) {
+//                            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "下发数量总数不能大于工单物料使用数量");
+//                        }
 
                     }
 

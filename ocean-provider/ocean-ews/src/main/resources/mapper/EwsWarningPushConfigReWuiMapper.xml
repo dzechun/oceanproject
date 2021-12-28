@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.ews.mapper.EwsWarningPushConfigReWuiMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.ews.EwsWarningPushConfigReWui">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="warning_push_config_re_wui_id" jdbcType="BIGINT" property="warningPushConfigReWuiId" />
+    <result column="warning_push_config_id" jdbcType="BIGINT" property="warningPushConfigId" />
+    <result column="warning_user_info_id" jdbcType="BIGINT" property="warningUserInfoId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.ews.EwsWarningPushConfigReWuiDto">
+    <result column="user_code" jdbcType="VARCHAR" property="userCode"/>
+    <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
+    <result column="wechat" jdbcType="VARCHAR" property="wechat" />
+    <result column="ding_talk" jdbcType="VARCHAR" property="dingTalk" />
+    <result column="mobile_phone" jdbcType="VARCHAR" property="mobilePhone" />
+    <result column="e_mail_address" jdbcType="VARCHAR" property="eMailAddress" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+  </resultMap>
+  <sql id="base_column_list">
+    ewpcrw.warning_push_config_re_wui_id,
+    ewpcrw.warning_push_config_id,
+ewpcrw.warning_user_info_id,
+ewpcrw.status,
+ewpcrw.remark,
+ewpcrw.org_id,
+ewpcrw.create_user_id,
+ewpcrw.create_time,
+ewpcrw.modified_user_id,
+ewpcrw.modified_time,
+ewpcrw.is_delete
+  </sql>
+  <select id="findList" resultMap="BaseResultMapDto">
+    select <include refid="base_column_list"/>,u.user_code,u.nick_name,wui.wechat,wui.ding_talk,wui.mobile_phone,wui.e_mail_address,su.user_name AS create_user_name,sus.user_name AS modified_user_name,bo.organization_name
+    FROM ews_warning_push_config_re_wui ewpcrw
+    LEFT JOIN ews_warning_user_info wui ON ewpcrw.warning_user_info_id = wui.warning_user_info_id
+    LEFT JOIN sys_user u on wui.user_id = u.user_id
+    LEFT JOIN sys_user su ON ewpcrw.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON ewpcrw.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON ewpcrw.org_id = bo.organization_id
+    <where>
+      <if test="warningPushConfigId!=null and warningPushConfigId!=''">
+        and ewpcrw.warning_push_config_id =#{warningPushConfigId}
+      </if>
+    </where>
+  </select>
+</mapper>
