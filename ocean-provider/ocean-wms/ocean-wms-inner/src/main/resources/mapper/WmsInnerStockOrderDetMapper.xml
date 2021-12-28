@@ -6,34 +6,35 @@
       WARNING - @mbg.generated
     -->
     <id column="stock_order_det_id" jdbcType="BIGINT" property="stockOrderDetId" />
+    <result column="core_source_order_code" jdbcType="VARCHAR" property="coreSourceOrderCode" />
+    <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode" />
+    <result column="core_source_id" jdbcType="BIGINT" property="coreSourceId" />
+    <result column="source_id" jdbcType="BIGINT" property="sourceId" />
     <result column="stock_order_id" jdbcType="BIGINT" property="stockOrderId" />
     <result column="source_det_id" jdbcType="BIGINT" property="sourceDetId" />
     <result column="storage_id" jdbcType="BIGINT" property="storageId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName"/>
+    <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId" />
     <result column="original_qty" jdbcType="DECIMAL" property="originalQty" />
     <result column="stock_qty" jdbcType="DECIMAL" property="stockQty" />
     <result column="variance_qty" jdbcType="DECIMAL" property="varianceQty" />
-    <result column="last_time_variance_qty" jdbcType="DECIMAL" property="lastTimeVarianceQty"/>
+    <result column="last_time_variance_qty" jdbcType="DECIMAL" property="lastTimeVarianceQty" />
     <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
-    <result column="stock_user_id" jdbcType="VARCHAR" property="stockUserId" />
+    <result column="production_time" jdbcType="TIMESTAMP" property="productionTime" />
+    <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
+    <result column="worker_id" jdbcType="BIGINT" property="workerId" />
+    <result column="stock_user_id" jdbcType="BIGINT" property="stockUserId" />
     <result column="if_register" jdbcType="TINYINT" property="ifRegister" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="org_id" jdbcType="BIGINT" property="organizationId" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="barcode" jdbcType="VARCHAR" property="barcode"/>
-    <result column="pallet_code" jdbcType="VARCHAR" property="palletCode"/>
-    <result column="inventory_status_id" jdbcType="BIGINT" property="inventoryStatusId"/>
-    <result column="purchase_req_order_code" jdbcType="VARCHAR" property="purchaseReqOrderCode"/>
-    <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
-    <result column="device_code" jdbcType="VARCHAR" property="deviceCode"/>
-    <result column="location_num" jdbcType="VARCHAR" property="locationNum"/>
-    <result column="dominant_term_code" jdbcType="VARCHAR" property="dominantTermCode"/>
-    <result column="material_purpose" jdbcType="VARCHAR" property="materialPurpose"/>
-    <result column="supplier_id" jdbcType="VARCHAR" property="supplierId"/>
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDetDto">
     <result column="work_name" jdbcType="VARCHAR" property="workName"/>
@@ -52,38 +53,35 @@
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
   </resultMap>
   <sql id="Base_Column_List">
-wivd.stock_order_det_id,
-wivd.stock_order_id,
-wivd.source_det_id,
-wivd.storage_id,
-wivd.material_id,
-wivd.packing_unit_name,
-wivd.original_qty,
-wivd.stock_qty,
-wivd.variance_qty,
-wivd.last_time_variance_qty,
-wivd.batch_code,
-wivd.stock_user_id,
-wivd.if_register,
-wivd.remark,
-wivd.org_id,
-wivd.create_user_id,
-wivd.create_time,
-wivd.modified_user_id,
-wivd.modified_time,
-wivd.barcode,
-wivd.pallet_code,
-wivd.inventory_status_id,
-wivd.purchase_req_order_code,
-wivd.contract_code,
-wivd.location_num,
-wivd.dominant_term_code,
-wivd.device_code,
-wivd.material_purpose,
-wivd.supplier_id,
-wivd.option1,
-wivd.option2,
-wivd.option3
+    wivd.stock_order_det_id,
+    wivd.core_source_order_code,
+    wivd.source_order_code,
+    wivd.core_source_id,
+    wivd.source_id,
+    wivd.stock_order_id,
+    wivd.source_det_id,
+    wivd.storage_id,
+    wivd.material_id,
+    wivd.inventory_status_id,
+    wivd.original_qty,
+    wivd.stock_qty,
+    wivd.variance_qty,
+    wivd.last_time_variance_qty,
+    wivd.batch_code,
+    wivd.production_time,
+    wivd.supplier_id,
+    wivd.worker_id,
+    wivd.stock_user_id,
+    wivd.if_register,
+    wivd.remark,
+    wivd.org_id,
+    wivd.create_user_id,
+    wivd.create_time,
+    wivd.modified_user_id,
+    wivd.modified_time,
+    wivd.option1,
+    wivd.option2,
+    wivd.option3
   </sql>
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     SELECT <include refid="Base_Column_List"/>,

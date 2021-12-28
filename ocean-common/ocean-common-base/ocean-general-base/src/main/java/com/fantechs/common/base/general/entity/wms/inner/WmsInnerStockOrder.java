@@ -11,7 +11,7 @@ import javax.persistence.*;
 import lombok.Data;
 
 /**
- * 东鹏库存盘点
+ * 库存盘点
  * wms_inventory_verification
  * @author mr.lei
  * @date 2021-05-27 18:14:29
@@ -28,19 +28,44 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
     private Long stockOrderId;
 
     /**
-     * 盘点单号
+     * 核心系统单据类型编码
      */
-    @ApiModelProperty(name="stockOrderCode",value = "盘点单号")
-    @Excel(name = "盘点单号", height = 20, width = 30,orderNum="1")
-    @Column(name = "stock_order_code")
-    private String stockOrderCode;
+    @ApiModelProperty(name="coreSourceSysOrderTypeCode",value = "核心系统单据类型编码")
+    @Excel(name = "核心系统单据类型编码", height = 20, width = 30,orderNum="")
+    @Column(name = "core_source_sys_order_type_code")
+    private String coreSourceSysOrderTypeCode;
 
     /**
-     * 货主
+     * 来源系统单据类型编码
      */
-    @ApiModelProperty(name = "materialOwnerId",value = "货主")
-    @Column(name = "material_owner_id")
-    private Long materialOwnerId;
+    @ApiModelProperty(name="sourceSysOrderTypeCode",value = "来源系统单据类型编码")
+    @Excel(name = "来源系统单据类型编码", height = 20, width = 30,orderNum="")
+    @Column(name = "source_sys_order_type_code")
+    private String sourceSysOrderTypeCode;
+
+    /**
+     * 系统单据类型编码
+     */
+    @ApiModelProperty(name="sysOrderTypeCode",value = "系统单据类型编码")
+    @Excel(name = "系统单据类型编码", height = 20, width = 30,orderNum="")
+    @Column(name = "sys_order_type_code")
+    private String sysOrderTypeCode;
+
+    /**
+     * 来源大类(1-系统下推 2-自建 3-第三方系统)
+     */
+    @ApiModelProperty(name="sourceBigType",value = "来源大类(1-系统下推 2-自建 3-第三方系统)")
+    @Excel(name = "来源大类(1-系统下推 2-自建 3-第三方系统)", height = 20, width = 30,orderNum="")
+    @Column(name = "source_big_type")
+    private Byte sourceBigType;
+
+    /**
+     * 盘点单号--
+     */
+    @ApiModelProperty(name="planStockOrderCode",value = "盘点单号")
+    @Excel(name = "盘点单号", height = 20, width = 30,orderNum="1")
+    @Column(name = "plan_stock_order_code")
+    private String planStockOrderCode;
 
     /**
      * 相关单号
@@ -51,17 +76,17 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
     private String relatedOrderCode;
 
     /**
-     * 盘点类型：1-库位 2-货品 3-全盘
+     * 盘点类型(1-物料 2-库位 3-全盘)--
      */
-    @ApiModelProperty(name="stockType",value = "盘点类型：1-库位 2-货品 3-全盘")
-    @Excel(name = "盘点类型", height = 20, width = 30,orderNum="4",replace = {"库位_1","货品_2","全盘_3"})
+    @ApiModelProperty(name="stockType",value = "盘点类型(1-物料 2-库位 3-全盘)")
+    @Excel(name = "盘点类型", height = 20, width = 30,orderNum="4",replace = {"盘点类型(1-物料 2-库位 3-全盘)"})
     @Column(name = "stock_type")
     private Byte stockType;
 
     /**
-     * 1-盘点 2-复盘
+     * 盘点或复盘(1-盘点 2-复盘)
      */
-    @ApiModelProperty(name="projectType",value = "1-盘点 2-复盘")
+    @ApiModelProperty(name="projectType",value = "盘点或复盘(1-盘点 2-复盘)")
     @Excel(name = "作业类型", height = 20, width = 30,orderNum="5",replace = {"盘点_1","复盘_2"})
     @Column(name = "project_type")
     private Byte projectType;
@@ -74,28 +99,33 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
     private Long warehouseId;
 
     /**
-     * 1-打开 2-待作业 3-作业中 4-作废 5完成
+     * 单据状态(1-打开 2-待作业 3-作业中 4-待处理 5-完成 6-作废)
      */
-    @ApiModelProperty(name="orderStatus",value = "1-打开 2-待作业 3-作业中 4-作废 5完成")
-    @Excel(name = "状态", height = 20, width = 30,orderNum="7",replace = {"打开_1"," 待作业_2"," 作业中_3"," 作废_4","待处理_5","完成_6"})
+    @ApiModelProperty(name="orderStatus",value = "单据状态(1-打开 2-待作业 3-作业中 4-待处理 5-完成 6-作废)")
+    @Excel(name = "单据状态(1-打开 2-待作业 3-作业中 4-待处理 5-完成 6-作废)", height = 20, width = 30,orderNum="")
     @Column(name = "order_status")
     private Byte orderStatus;
 
     /**
-     * 盘点方式 1-PDA盘点 2-纸质盘点
+     * 盘点方式(1-PDA盘点 2-纸质盘点)
      */
-    @ApiModelProperty(name="stockMode",value = "盘点方式 1-PDA盘点 2-纸质盘点")
-    @Excel(name = "盘点方式", height = 20, width = 30,orderNum="8",replace = {"PDA盘点_1","纸质盘点_2"})
-    @Column(name = "`stock_mode`")
+    @ApiModelProperty(name="stockMode",value = "盘点方式(1-PDA盘点 2-纸质盘点)")
+    @Excel(name = "盘点方式(1-PDA盘点 2-纸质盘点)", height = 20, width = 30,orderNum="")
+    @Column(name = "stock_mode")
     private Byte stockMode;
 
     /**
-     * 盲盘 1-是 2-否
+     * 是否盲盘(0-否 1-是)
      */
-    @ApiModelProperty(name="blind",value = "盲盘 1-是 2-否")
-    @Excel(name = "盲盘", height = 20, width = 30,orderNum="9",replace = {"是_1","否_2"})
-    private String ifBlindStock;
+    @ApiModelProperty(name="ifBlindStock",value = "是否盲盘(0-否 1-是)")
+    @Column(name = "if_blind_stock")
+    private Byte ifBlindStock;
 
+    /**
+     * 最大库位数
+     */
+    @ApiModelProperty(name="maxStorageCount",value = "最大库位数")
+    @Excel(name = "最大库位数", height = 20, width = 30,orderNum="")
     @Column(name = "max_storage_count")
     private Integer maxStorageCount;
 
@@ -147,7 +177,7 @@ public class WmsInnerStockOrder extends ValidGroup implements Serializable {
 
     @Transient
     @ApiModelProperty(name = "inventoryVerificationDets",value = "盘点类型：货品/全盘明细")
-    private List<WmsInnerStockOrderDet> inventoryVerificationDets;
+    private List<WmsInnerStockOrderDet> wmsInnerStockOrderDets;
 
     @Transient
     @ApiModelProperty(name = "storageList",value = "储位id")
