@@ -64,7 +64,6 @@
     bo.organization_name
     FROM wms_out_plan_stock_list_order wopslo
     LEFT JOIN base_warehouse bw ON wopslo.warehouse_id = bw.warehouse_id
-    LEFT JOIN base_storage bs ON wopslo.storage_id = bs.storage_id
     LEFT JOIN sys_user su ON wopslo.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON wopslo.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON wopslo.org_id = bo.organization_id
