@@ -179,4 +179,11 @@ public class WmsInnerInventoryDetDto extends WmsInnerInventoryDet implements Ser
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date expiredTime;
+
+    /**
+     * 包装规格数量
+     */
+    @ApiModelProperty(name="packageSpecificationQuantity",value = "包装规格数量")
+    @Transient
+    private BigDecimal packageSpecificationQuantity;
 }

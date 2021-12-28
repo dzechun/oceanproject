@@ -40,6 +40,7 @@
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="package_specification_quantity" jdbcType="DECIMAL" property="packageSpecificationQuantity"/>
     </resultMap>
     <sql id="Base_Column_List">
         wiid.inventory_det_id,
@@ -75,7 +76,7 @@
         bs.storage_code,bs.warehouse_id,bw.warehouse_name,bo.organization_name,bis.inventory_status_name,
         wimb.barcode as barcode,wimb.color_box_code as colorBoxCode,wimb.carton_code as cartonCode,wimb.pallet_code as palletCode,
         wimb.batch_code as batchCode,wimb.material_qty as materialQty,wimb.material_id as materialId,bm.material_code as material_code,
-        bm.material_name as material_name,
+        bm.material_name as material_name,bps.package_specification_quantity,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name
         from wms_inner_inventory_det wiid
         LEFT JOIN base_inventory_status bis ON bis.inventory_status_id = wiid.inventory_status_id
@@ -83,6 +84,8 @@
         LEFT JOIN base_warehouse bw ON bs.warehouse_id = bw.warehouse_id
         LEFT JOIN wms_inner_material_barcode wimb ON wiid.material_barcode_id = wimb.material_barcode_id
         LEFT JOIN base_material bm ON wimb.material_id = bm.material_id
+        LEFT JOIN base_material_tab bmt ON bm.material_id = bmt.material_id
+        LEFT JOIN base_package_specification bps ON bmt.package_specification_id = bps.package_specification_id
         LEFT JOIN sys_user su ON wiid.create_user_id = su.user_id
         LEFT JOIN sys_user sus ON wiid.modified_user_id = sus.user_id
         LEFT JOIN base_organization bo ON wiid.org_id = bo.organization_id

@@ -24,10 +24,9 @@ public class PDAWmsInnerCartonSplitAndCombineServiceImpl implements PDAWmsInnerC
     @Resource
     private WmsInnerInventoryDetMapper wmsInnerInventoryDetMapper;
 
-
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int checkCartonCode(String cartonCode,Integer type) {
+    public WmsInnerInventoryDetDto checkCartonCode(String cartonCode,Integer type) {
         Map<String,Object> map = new HashMap<>();
         map.put("cartonCode",cartonCode);
         List<WmsInnerInventoryDetDto> inventoryDetDtoList = wmsInnerInventoryDetMapper.findList(map);
@@ -35,7 +34,7 @@ public class PDAWmsInnerCartonSplitAndCombineServiceImpl implements PDAWmsInnerC
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"找不到该箱码信息");
         }
 
-        return 1;
+        return inventoryDetDtoList.get(0);
     }
 
 }
