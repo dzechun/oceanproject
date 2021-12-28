@@ -1,7 +1,6 @@
 package com.fantechs.common.base.general.entity.srm;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
@@ -245,6 +244,13 @@ public class SrmInAsnOrderDet extends ValidGroup implements Serializable {
     @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30)
     @Column(name = "is_delete")
     private Byte isDelete;
+
+    /**
+     * ASN单号
+     */
+    @ApiModelProperty(name="asnCode",value = "ASN单号")
+    @Excel(name = "ASN单号", height = 20, width = 30,orderNum="1")
+    private String asnCode;
 
     private static final long serialVersionUID = 1L;
 }

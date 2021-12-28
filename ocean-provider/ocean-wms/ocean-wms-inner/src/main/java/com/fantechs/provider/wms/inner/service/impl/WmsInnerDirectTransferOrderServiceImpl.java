@@ -52,7 +52,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
     public WmsInnerDirectTransferOrderDto detail(Long id) {
         WmsInnerDirectTransferOrderDto dto = new WmsInnerDirectTransferOrderDto();
         Map map = new HashMap();
-        map.put("id",id);
+        map.put("directTransferOrderId",id);
         List<WmsInnerDirectTransferOrderDto> list = wmsInnerDirectTransferOrderMapper.findList(map);
         if(StringUtils.isNotEmpty(list)){
             dto = list.get(0);
@@ -76,7 +76,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(pdaWmsInnerDirectTransferOrderDtos)) throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"提交参数不能为空");
         List<WmsInnerMaterialBarcodeReOrder> list = new ArrayList<>();
-        List<WmsInnerInventoryDet> inventoryDetList = new ArrayList<>();
+    //    List<WmsInnerInventoryDet> inventoryDetList = new ArrayList<>();
         int i = 0;
         for(PDAWmsInnerDirectTransferOrderDto dto : pdaWmsInnerDirectTransferOrderDtos){
             if(StringUtils.isEmpty(dto.getPdaWmsInnerDirectTransferOrderDetDtos(),dto.getMaterialId(),dto.getInStorageId(),dto.getOutStorageId(),dto.getWorkerUserId()))
@@ -117,6 +117,8 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到移出库位");
                 }
                 WmsInnerInventory wmsInnerInventory = wmsInnerInventorys.get(0);
+
+
                 if(StringUtils.isEmpty(wmsInnerInventory.getPackingQty()) || wmsInnerInventory.getPackingQty().compareTo(BigDecimal.ZERO)<=0)
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"移出库位物料数量不存在或小于等于0");
 
@@ -131,7 +133,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                 }
                 WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDets.get(0);
                 wmsInnerInventoryDet.setStorageId(dto.getInStorageId());
-                inventoryDetList.add(wmsInnerInventoryDet);
+                wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
 
                 //保存明细表
                 WmsInnerDirectTransferOrderDet orderDet = new WmsInnerDirectTransferOrderDet();
@@ -178,15 +180,15 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                 }
                 WmsInnerInventory inWmsInnerInventory = wmsInnerInventorys.get(0);
                 inWmsInnerInventory.setInventoryTotalQty(inWmsInnerInventory.getPackingQty().add(wmsInnerMaterialBarcodes.get(0).getMaterialQty()));
-                wmsInnerInventoryMapper.updateByPrimaryKeySelective(inWmsInnerInventory);
+                i = wmsInnerInventoryMapper.updateByPrimaryKeySelective(inWmsInnerInventory);
             }
         }
         if(StringUtils.isNotEmpty(list)){
             wmsInnerMaterialBarcodeReOrderMapper.insertList(list);
         }
-        if(StringUtils.isNotEmpty(inventoryDetList)){
+/*        if(StringUtils.isNotEmpty(inventoryDetList)){
             i = wmsInnerInventoryDetMapper.insertList(inventoryDetList);
-        }
+        }*/
         return i;
     }
 
