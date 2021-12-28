@@ -87,9 +87,9 @@
     <select id="findList" resultMap="BaseResultMapDto">
         select * from (
         SELECT<include refid="BaseColumnList"/>,
-        bso.storage_code AS out_storage_name,
+        bso.storage_name AS out_storage_name,
         bso.storage_code AS out_storage_code,
-        bsi.storage_code AS in_storage_name,
+        bsi.storage_name AS in_storage_name,
         bsi.storage_code AS in_storage_code,
         bm.material_code,
         bm.material_name,
