@@ -170,14 +170,10 @@
         order by wiid.create_time desc
     </select>
 
-    <update id="upddateStroage" parameterType="com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet">
+    <update id="updateStroage" parameterType="list">
         <foreach collection="inventoryDetList" item="item" index="index" separator=";">
             update wms_inner_inventory_det wiid
-            <set>
-                <if test="item.storageId != null">
-                    wiid.storageId = #{item.storageId}
-                </if>
-            </set>
+            set wiid.storage_id = #{item.storageId}
             where wiid.inventory_det_id = #{item.inventoryDetId}
         </foreach>
     </update>

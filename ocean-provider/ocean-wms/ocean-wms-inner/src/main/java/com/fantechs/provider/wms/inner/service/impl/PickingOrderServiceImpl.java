@@ -129,12 +129,13 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         }else {
             barcodeId = barcodeList.get(0).getMaterialBarcodeId();
         }
-
+        List barcodeIds = new ArrayList();
+        barcodeIds.add(barcodeId);
         Map<String,Object> map = new HashMap<>();
         map.put("orgId",sysUser.getOrganizationId());
         map.put("storageId",storageId);
         map.put("materialId",materialId);
-        map.put("materialBarcodeId",barcodeId);
+        map.put("materialBarcodeIdList",barcodeIds);
         map.put("barcodeStatus",3);
         List<WmsInnerInventoryDetDto> list = wmsInnerInventoryDetMapper.findList(map);
         if (StringUtils.isEmpty(list)) {
@@ -153,6 +154,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public List<WmsInnerJobOrderDetDto> pdaSave(List<WmsInnerPdaInventoryDetDto> list) {
         SysUser sysUser = currentUser();
         List<WmsInnerJobOrderDetDto> jobOrderDetList = new ArrayList<>();
@@ -290,7 +292,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 }
             }
             if (StringUtils.isNotEmpty(wmsInnerInventoryDetList)) {
-                wmsInnerInventoryDetMapper.upddateStroage(wmsInnerInventoryDetList);
+                wmsInnerInventoryDetMapper.updateStroage(wmsInnerInventoryDetList);
             }
 
 
@@ -303,7 +305,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         Map<String,Object> barcodeMap = new HashMap<>();
         if (barcodeType == 1) {
             barcodeMap.put("barcodeType",1);
-            barcodeMap.put("colorBoxCode",barcode);
+            barcodeMap.put("barcode",barcode);
             return wmsInnerMaterialBarcodeMapper.findList(barcodeMap);
         }else if (barcodeType == 2) {
             barcodeMap.put("barcodeType",2);
@@ -323,6 +325,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int pdaSubmit(WmsInnerPdaJobOrderDet wmsInnerPdaJobOrderDet) {
         SysUser sysUser = currentUser();
 
@@ -331,6 +334,9 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderDetMapper.selectOneByExample(jobDetExample);
         wmsInnerJobOrderDet.setLineStatus((byte) 3);
         jobDetExample.clear();
+
+        wmsInnerPdaJobOrderDet.setInStorageId(wmsInnerJobOrderDet.getInStorageId());
+        wmsInnerPdaJobOrderDet.setOutStorageId(wmsInnerJobOrderDet.getOutStorageId());
 
         Example jobExample = new Example(WmsInnerJobOrder.class);
         jobExample.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrderDet.getJobOrderId());
@@ -358,9 +364,10 @@ public class PickingOrderServiceImpl implements PickingOrderService {
 
 
             wmsInnerJobOrderDet.setDistributionQty(wmsInnerJobOrderDet.getDistributionQty().subtract(wmsInnerPdaJobOrderDet.getActualQty()));
-            wmsInnerJobOrderDet.setPlanQty(wmsInnerJobOrderDet.getDistributionQty().subtract(wmsInnerPdaJobOrderDet.getActualQty()));
+            wmsInnerJobOrderDet.setPlanQty(wmsInnerJobOrderDet.getPlanQty().subtract(wmsInnerPdaJobOrderDet.getActualQty()));
             wmsInnerJobOrderDet.setModifiedUserId(sysUser.getUserId());
             wmsInnerJobOrderDet.setModifiedTime(new Date());
+            wmsInnerJobOrderDet.setLineStatus((byte) 2);
             wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInnerJobOrderDet);
 
             log(wmsInnerPdaJobOrderDet,wmsInnerJobOrder,wmsInnerJobOrderDet,2);
@@ -416,12 +423,12 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     }
                     WmsInnerInventoryDet wmsInnerInventoryDet = new WmsInnerInventoryDet();
                     wmsInnerInventoryDet.setInventoryDetId(wmsInnerInventoryDetList.get(0).getInventoryDetId());
-                    wmsInnerInventoryDet.setStorageId(wmsInnerPdaJobOrderDet.getInStorageId());
+                    wmsInnerInventoryDet.setStorageId(wmsInnerJobOrderDet.getInStorageId());
                     inventoryDetList.add(wmsInnerInventoryDet);
                 }
 
             }
-            wmsInnerInventoryDetMapper.upddateStroage(inventoryDetList);
+            wmsInnerInventoryDetMapper.updateStroage(inventoryDetList);
             if (StringUtils.isNotEmpty(barcodeReOrderList)) {
                 wmsInnerMaterialBarcodeReOrderMapper.insertList(barcodeReOrderList);
             }
@@ -433,9 +440,9 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         List<WmsInnerJobOrderDet> wmsInnerJobOrderDetList = wmsInnerJobOrderDetMapper.selectByExample(jobDetExample);
 
         if (StringUtils.isEmpty(wmsInnerJobOrderDetList)) {
-            wmsInnerJobOrder.setOrderStatus((byte) 3);
+            wmsInnerJobOrder.setOrderStatus((byte) 5);
         }else {
-            wmsInnerJobOrder.setOrderStatus((byte) 2);
+            wmsInnerJobOrder.setOrderStatus((byte) 4);
         }
 
         return wmsInnerJobOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);

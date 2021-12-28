@@ -269,6 +269,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                 wmsInnerMaterialBarCode.setModifiedTime(new Date());
                 wmsInnerMaterialBarCode.setModifiedUserId(sysUser.getUserId());
                 wmsInnerMaterialBarCode.setCreateType((byte) 3);
+                wmsInnerMaterialBarCode.setBarcodeType((byte) 1);
                 wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(wmsInnerMaterialBarCode);
 
                 //添加履历
