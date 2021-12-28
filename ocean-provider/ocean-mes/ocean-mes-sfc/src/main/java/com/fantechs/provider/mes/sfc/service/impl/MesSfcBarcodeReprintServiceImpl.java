@@ -6,10 +6,13 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductCartonDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintCarCodeDto;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcCartonPalletReprint;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcCartonPalletReprintMapper;
+import com.fantechs.provider.mes.sfc.service.MesSfcBarcodeProcessService;
 import com.fantechs.provider.mes.sfc.service.MesSfcBarcodeReprintService;
 import com.fantechs.provider.mes.sfc.service.MesSfcProductCartonService;
 import com.fantechs.provider.mes.sfc.service.MesSfcProductPalletService;
@@ -28,6 +31,8 @@ public class MesSfcBarcodeReprintServiceImpl implements MesSfcBarcodeReprintServ
     MesSfcProductCartonService mesSfcProductCartonService;
     @Resource
     MesSfcProductPalletService mesSfcProductPalletService;
+    @Resource
+    MesSfcBarcodeProcessService mesSfcBarcodeProcessService;
 
     @Override
     public List<String> findCode(String keyword, String barocdeType) {
@@ -64,6 +69,7 @@ public class MesSfcBarcodeReprintServiceImpl implements MesSfcBarcodeReprintServ
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        String packingQty = "";
         Long sourceBarcodeId = null;
         Long workOrderId = null;
         Map<String, Object> map = new HashMap<>();
@@ -77,6 +83,12 @@ public class MesSfcBarcodeReprintServiceImpl implements MesSfcBarcodeReprintServ
             MesSfcProductCartonDto sfcProductCartonDto = productCartonDtoList.get(0);
             sourceBarcodeId = sfcProductCartonDto.getProductCartonId();
             workOrderId = sfcProductCartonDto.getWorkOrderId();
+
+            List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findBarcode(SearchMesSfcBarcodeProcess.builder()
+                    .cartonCode(barCode)
+                    .build());
+            packingQty = mesSfcBarcodeProcessList.size() >= sfcProductCartonDto.getNowPackageSpecQty().intValue() ?
+                            mesSfcBarcodeProcessList.size()+"" : mesSfcBarcodeProcessList.size()+"尾";
         }else if(barocdeType == 2){
             map.put("palletCode", barCode);
             List<MesSfcProductPalletDto> productPalletDtoList = mesSfcProductPalletService.findList(map);
@@ -94,6 +106,7 @@ public class MesSfcBarcodeReprintServiceImpl implements MesSfcBarcodeReprintServ
                 .labelTypeCode("09")
                 .workOrderId(workOrderId)
                 .printName(printName != null ? printName : "测试")
+                .packingQty(packingQty)
                 .build());
 
         // 生成补打记录
