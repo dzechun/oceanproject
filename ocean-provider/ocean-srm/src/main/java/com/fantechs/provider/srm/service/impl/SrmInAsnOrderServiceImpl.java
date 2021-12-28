@@ -318,7 +318,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
     public SrmInAsnOrderDto detail(Long id) {
         SrmInAsnOrderDto dto = new SrmInAsnOrderDto();
         Map map = new HashMap();
-        map.put("id",id);
+        map.put("asnOrderId",id);
         List<SrmInAsnOrderDto> list = srmInAsnOrderMapper.findList(map);
         if(StringUtils.isNotEmpty(list)){
             dto = list.get(0);
