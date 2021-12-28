@@ -6,8 +6,11 @@
       WARNING - @mbg.generated
     -->
     <id column="stock_order_id" jdbcType="BIGINT" property="stockOrderId" />
-    <result column="stock_order_code" jdbcType="VARCHAR" property="stockOrderCode" />
-    <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId"/>
+    <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="coreSourceSysOrderTypeCode" />
+    <result column="source_sys_order_type_code" jdbcType="VARCHAR" property="sourceSysOrderTypeCode" />
+    <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode" />
+    <result column="source_big_type" jdbcType="TINYINT" property="sourceBigType" />
+    <result column="plan_stock_order_code" jdbcType="VARCHAR" property="planStockOrderCode" />
     <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode" />
     <result column="stock_type" jdbcType="TINYINT" property="stockType" />
     <result column="project_type" jdbcType="TINYINT" property="projectType" />
@@ -24,7 +27,6 @@
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
   </resultMap>
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDto">
-    <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
@@ -32,61 +34,80 @@
   </resultMap>
   <sql id="Base_Column_List">
     wiv.stock_order_id,
-    wiv.stock_order_code,
-wiv.material_owner_id,
-wiv.related_order_code,
-wiv.stock_type,
-wiv.project_type,
-wiv.warehouse_id,
-wiv.order_status,
-wiv.stock_mode,
-wiv.if_blind_stock,
-wiv.max_storage_count,
-wiv.remark,
-wiv.org_id,
-wiv.create_user_id,
-wiv.create_time,
-wiv.modified_user_id,
-wiv.modified_time
+    wiv.core_source_sys_order_type_code,
+    wiv.source_sys_order_type_code,
+    wiv.sys_order_type_code,
+    wiv.source_big_type,
+    wiv.plan_stock_order_code,
+    wiv.related_order_code,
+    wiv.stock_type,
+    wiv.project_type,
+    wiv.warehouse_id,
+    wiv.order_status,
+    wiv.stock_mode,
+    wiv.if_blind_stock,
+    wiv.max_storage_count,
+    wiv.remark,
+    wiv.org_id,
+    wiv.create_user_id,
+    wiv.create_time,
+    wiv.modified_user_id,
+    wiv.modified_time
   </sql>
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     SELECT <include refid="Base_Column_List"/>,
-    bmo.material_owner_name,
     bw.warehouse_name,
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,
     bo.organization_name
     FROM wms_inner_stock_order wiv
-    LEFT JOIN base_material_owner bmo ON wiv.material_owner_id=bmo.material_owner_id
     LEFT JOIN base_warehouse bw ON wiv.warehouse_id = bw.warehouse_id
     LEFT JOIN sys_user su  ON wiv.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON wiv.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON wiv.org_id = bo.organization_id
     <where>
-        <if test="materialOwnerName!=null and materialOwnerName!=''">
-          and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')
-        </if>
-        <if test="orgId!=null and orgId!=''">
-          and wiv.org_id = #{orgId}
-        </if>
-      <if test="stockOrderCode !=null and stockOrderCode!=''">
-        and wiv.stock_order_code like CONCAT('%',#{stockOrderCode},'%')
+      <if test="stockOrderId!=null and stockOrderId!=''">
+        and wiv.stock_order_id = #{stockOrderId}
       </if>
-    <if test="warehouseName!=null and warehouseName!=''">
-      and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
-    </if>
-    <if test="relatedOrderCode!=null and relatedOrderCode!=''">
-      and wiv.related_order_code like CONCAT('%',#{relatedOrderCode},'%')
-    </if>
-    <if test="stockType !=null and stockType!=''">
-      and wiv.stock_type = #{stockType}
-    </if>
-    <if test="projectType!=null and projectType!=''">
-      and wiv.project_type = #{projectType}
-    </if>
-    <if test="orderStatus!=null and orderStatus!=''">
-      and wiv.order_status = #{orderStatus}
-    </if>
+      <if test="coreSourceSysOrderTypeCode!=null and coreSourceSysOrderTypeCode!=''">
+        and wiv.core_source_sys_order_type_code = #{coreSourceSysOrderTypeCode}
+      </if>
+      <if test="sourceSysOrderTypeCode!=null and sourceSysOrderTypeCode!=''">
+        and wiv.source_sys_order_type_code = #{sourceSysOrderTypeCode}
+      </if>
+      <if test="sysOrderTypeCode!=null and sysOrderTypeCode!=''">
+        and wiv.sys_order_type_code = #{sysOrderTypeCode}
+      </if>
+      <if test="sourceBigType!=null and sourceBigType!=''">
+        and wiv.source_big_type = #{source_big_type}
+      </if>
+      <if test="planStockOrderCode !=null and planStockOrderCode!=''">
+        and wiv.plan_stock_order_code like CONCAT('%',#{planStockOrderCode},'%')
+      </if>
+      <if test="relatedOrderCode!=null and relatedOrderCode!=''">
+        and wiv.related_order_code like CONCAT('%',#{relatedOrderCode},'%')
+      </if>
+      <if test="stockType !=null and stockType!=''">
+        and wiv.stock_type = #{stockType}
+      </if>
+      <if test="projectType!=null and projectType!=''">
+        and wiv.project_type = #{projectType}
+      </if>
+      <if test="warehouseId!=null and warehouseId!=''">
+        and wiv.warehouse_id = #{warehouseId}
+      </if>
+      <if test="stockMode!=null and stockMode!=''">
+        and wiv.stock_mode = #{stockMode}
+      </if>
+      <if test="orderStatus!=null and orderStatus!=''">
+        and wiv.order_status = #{orderStatus}
+      </if>
+      <if test="orgId!=null and orgId!=''">
+        and wiv.org_id = #{orgId}
+      </if>
+      <if test="warehouseName!=null and warehouseName!=''">
+        and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
+      </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(wiv.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
@@ -97,8 +118,9 @@ wiv.modified_time
       and wiv.order_status in (2,3) and wiv.stock_mode = 1
     </if>
     </where>
-order by wiv.create_time desc
+    order by wiv.create_time desc
   </select>
+
   <select id="findStorageName" resultType="java.lang.String">
     select storage_name From base_storage where storage_id = #{storageId}
   </select>

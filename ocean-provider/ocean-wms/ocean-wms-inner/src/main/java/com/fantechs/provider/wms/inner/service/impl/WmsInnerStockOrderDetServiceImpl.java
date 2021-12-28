@@ -71,7 +71,7 @@ public class WmsInnerStockOrderDetServiceImpl extends BaseService<WmsInnerStockO
             wmsInnerStockOrderDet.setCreateTime(new Date());
             wmsInnerStockOrderDet.setModifiedUserId(sysUser.getUserId());
             wmsInnerStockOrderDet.setModifiedTime(new Date());
-            wmsInnerStockOrderDet.setOrganizationId(sysUser.getOrganizationId());
+            wmsInnerStockOrderDet.setOrgId(sysUser.getOrganizationId());
             wmsInnerStockOrderDet.setStockUserId(sysUser.getUserId());
             wmsInnerStockOrderDet.setIfRegister((byte)1);
             wmsInnerStockOrderDet.setOriginalQty(BigDecimal.ZERO);
@@ -175,11 +175,11 @@ public class WmsInnerStockOrderDetServiceImpl extends BaseService<WmsInnerStockO
                     .andEqualTo("batchCode",wmsInnerStockOrderDet.getBatchCode())
                     .andEqualTo("stockLock",1)
                     .andEqualTo("orgId",sysUser.getOrganizationId())
-                    .andEqualTo("jobStatus",1).andEqualTo("packingQty",wmsInnerStockOrderDet.getOriginalQty()).andEqualTo("relevanceOrderCode",wmsInnerStockOrder.getStockOrderCode());
+                    .andEqualTo("jobStatus",1).andEqualTo("packingQty",wmsInnerStockOrderDet.getOriginalQty()).andEqualTo("relevanceOrderCode",wmsInnerStockOrder.getPlanStockOrderCode());
             List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(example);
             for (WmsInnerInventory wmsInnerInventory : wmsInnerInventories) {
                 wmsInnerInventory.setStockLock((byte)0);
-                wmsInnerInventory.setRelevanceOrderCode(wmsInnerStockOrder.getStockOrderCode());
+                wmsInnerInventory.setRelevanceOrderCode(wmsInnerStockOrder.getPlanStockOrderCode());
                 wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
             }
         }

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.inner.mapper.WmsInnerStockOrderDetBarcodeMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrderDetBarcode">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="stock_order_det_barcode_id" jdbcType="BIGINT" property="stockOrderDetBarcodeId" />
+    <result column="stock_order_det_id" jdbcType="BIGINT" property="stockOrderDetId" />
+    <result column="material_barcode_id" jdbcType="BIGINT" property="materialBarcodeId" />
+    <result column="scan_status" jdbcType="TINYINT" property="scanStatus" />
+    <result column="stock_result" jdbcType="TINYINT" property="stockResult" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDetBarcodeDto">
+    <result column="barcode" jdbcType="VARCHAR" property="barcode"/>
+    <result column="color_box_code" jdbcType="VARCHAR" property="colorBoxCode"/>
+    <result column="carton_code" jdbcType="VARCHAR" property="cartonCode"/>
+    <result column="pallet_ode" jdbcType="VARCHAR" property="palletCode"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="material_qty" jdbcType="VARCHAR" property="materialQty"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    wivdb.stock_order_det_barcode_id,
+    wivdb.stock_order_det_id,
+    wivdb.material_barcode_id,
+    wivdb.scan_status,
+    wivdb.stock_result,
+    wivdb.status,
+    wivdb.remark,
+    wivdb.org_id,
+    wivdb.create_user_id,
+    wivdb.create_time,
+    wivdb.modified_user_id,
+    wivdb.modified_time,
+    wivdb.option1,
+    wivdb.option2,
+    wivdb.option3
+  </sql>
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    SELECT <include refid="Base_Column_List"/>,
+    wimb.barcode,
+    wimb.color_box_code,
+    wimb.carton_code,
+    wimb.pallet_ode,
+    wimb.material_qty,
+    bm.material_code,
+    bm.material_name,
+    bm.material_desc,
+    su.user_name AS create_user_name,
+    sus.user_name AS modified_user_name,
+    bo.organization_name
+    FROM wms_inner_stock_order_det_barcode wivdb
+    LEFT JOIN wms_inner_stock_order_det wivd ON wivdb.stock_order_det_id=wivd.stock_order_det_id
+    LEFT JOIN wms_inner_stock_order wiv on wivd.stock_order_id = wiv.stock_order_id
+    LEFT JOIN wms_inner_material_barcode wimb ON wivdb.material_barcode_id = wimb.material_barcode_id
+    LEFT JOIN base_material bm ON wimb.material_id = bm.material_id
+    LEFT JOIN sys_user su  ON wivd.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON wivd.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON wivd.org_id = bo.organization_id
+    <where>
+      <if test="stockOrderDetBarcodeId !=null and stockOrderDetBarcodeId!=''">
+        and wivdb.stock_order_det_barcode_id = #{stockOrderDetBarcodeId}
+      </if>
+      <if test="stockOrderId !=null and stockOrderId!=''">
+        and wiv.stock_order_id = #{stockOrderId}
+      </if>
+      <if test="stockOrderDetId !=null and stockOrderDetId!=''">
+        and wivdb.stock_order_det_id = #{stockOrderDetId}
+      </if>
+      <if test="materialCode!=null and materialCode!=''">
+        and bm.material_code like CONCAT('%',#{materialCode},'%')
+      </if>
+      <if test="materialName!=null and materialName!=''">
+        and bm.material_name like CONCAT('%',#{materialName},'%')
+      </if>
+
+    </where>
+  </select>
+</mapper>
