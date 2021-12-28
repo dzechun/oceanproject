@@ -39,6 +39,7 @@
         <result column="link_man_phone" jdbcType="VARCHAR" property="linkManPhone"/>
         <result column="fax_number" jdbcType="VARCHAR" property="faxNumber"/>
         <result column="address" jdbcType="VARCHAR" property="address"/>
+        <result column="e_mail_address" jdbcType="VARCHAR" property="emailAddress"/>
         <result column="total_order_qty" jdbcType="DECIMAL" property="totalOrderQty"/>
         <result column="total_actual_qty" jdbcType="DECIMAL" property="totalActualQty"/>
         <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
