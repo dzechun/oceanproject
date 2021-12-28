@@ -110,6 +110,17 @@ public class WmsInnerInventoryDetDto extends WmsInnerInventoryDet implements Ser
     @Transient
     private String samePackageCode;
 
+    /**
+     * 条码类型（1、SN 2、彩盒码 3、箱码 4、栈板码）
+     */
+    @ApiModelProperty(name="barcodeType",value = "条码类型（1、SN 2、彩盒码 3、箱码 4、栈板码）")
+    private Byte barcodeType;
+
+    /**
+     * 总物料数量
+     */
+    @ApiModelProperty(name="materialTotalQty",value = "总物料数量")
+    private BigDecimal materialTotalQty;
 
     /**
      * 条码（SN码）
@@ -147,9 +158,9 @@ public class WmsInnerInventoryDetDto extends WmsInnerInventoryDet implements Ser
     private String batchCode;
 
     /**
-     * 物料数量
+     * 数量
      */
-    @ApiModelProperty(name="materialQty",value = "物料数量")
+    @ApiModelProperty(name="materialQty",value = "数量")
     @Excel(name = "数量", height = 20, width = 30,orderNum = "10")
     private BigDecimal materialQty;
 

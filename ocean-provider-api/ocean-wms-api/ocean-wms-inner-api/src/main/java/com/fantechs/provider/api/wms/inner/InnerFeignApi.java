@@ -124,4 +124,8 @@ public interface InnerFeignApi {
     @ApiOperation("修改")
     @PostMapping("/wmsInnerMaterialBarcodeReOrder/update")
     ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WmsInnerMaterialBarcodeReOrder.update.class) WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder);
+
+    @ApiOperation("列表(不分页)")
+    @PostMapping("/wmsInnerMaterialBarcodeReOrder/findAll")
+    ResponseEntity<List<WmsInnerMaterialBarcodeReOrderDto>> findAll(@ApiParam(value = "查询对象") @RequestBody SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder);
 }

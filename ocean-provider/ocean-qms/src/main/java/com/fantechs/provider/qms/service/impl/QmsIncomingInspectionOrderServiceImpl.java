@@ -395,7 +395,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
             SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
             searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode(baseOrderFlow.getSourceOrderTypeCode());
             searchWmsInnerMaterialBarcodeReOrder.setOrderDetId(qmsIncomingInspectionOrderDto.getSourceId());
-            List<WmsInnerMaterialBarcodeReOrderDto> materialBarcodeReOrderDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder).getData();
+            List<WmsInnerMaterialBarcodeReOrderDto> materialBarcodeReOrderDtos = innerFeignApi.findAll(searchWmsInnerMaterialBarcodeReOrder).getData();
             if (StringUtils.isNotEmpty(materialBarcodeReOrderDtos)) {
                 //条码写入当前单据
                 List<WmsInnerMaterialBarcodeReOrder> barcodeReOrderList = new LinkedList<>();
@@ -547,7 +547,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
                 searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode(qmsIncomingInspectionOrder.getSysOrderTypeCode());
                 searchWmsInnerMaterialBarcodeReOrder.setOrderId(qmsIncomingInspectionOrder.getIncomingInspectionOrderId());
-                List<WmsInnerMaterialBarcodeReOrderDto> materialBarcodeReOrderDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder).getData();
+                List<WmsInnerMaterialBarcodeReOrderDto> materialBarcodeReOrderDtos = innerFeignApi.findAll(searchWmsInnerMaterialBarcodeReOrder).getData();
                 if(StringUtils.isEmpty(materialBarcodeReOrderDtos)){
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未找到当前单据对应的条码");
                 }

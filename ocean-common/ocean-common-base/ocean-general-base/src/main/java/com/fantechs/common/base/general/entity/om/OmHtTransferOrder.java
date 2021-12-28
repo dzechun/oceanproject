@@ -117,10 +117,10 @@ public class OmHtTransferOrder extends ValidGroup implements Serializable {
     private BigDecimal totalGrossWeight;
 
     /**
-     * 订单状态(1-打开 2-已下发 3-完成)
+     * 订单状态(1-打开、2-已下发、3-下发中、4-完成)
      */
-    @ApiModelProperty(name="orderStatus",value = "订单状态(1-打开 2-已下发 3-完成)")
-    @Excel(name = "订单状态(1-打开 2-已下发 3-完成)", height = 20, width = 30,orderNum="10")
+    @ApiModelProperty(name="orderStatus",value = "订单状态(1-打开、2-已下发、3-下发中、4-完成)")
+    @Excel(name = "订单状态(1-打开、2-已下发、3-下发中、4-完成)", height = 20, width = 30,orderNum="10")
     @Column(name = "order_status")
     private Byte orderStatus;
 

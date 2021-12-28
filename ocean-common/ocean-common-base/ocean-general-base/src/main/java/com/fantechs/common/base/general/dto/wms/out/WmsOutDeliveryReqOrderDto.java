@@ -1,6 +1,7 @@
 package com.fantechs.common.base.general.dto.wms.out;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import cn.afterturn.easypoi.excel.annotation.ExcelCollection;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryReqOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -49,6 +50,6 @@ public class WmsOutDeliveryReqOrderDto extends WmsOutDeliveryReqOrder implements
      */
     @Transient
     @ApiModelProperty(name = "wmsOutDeliveryReqOrderDetDtos",value = "出货通知单明细")
-    @Excel(name = "出货通知单明细", height = 20, width = 30,orderNum="10")
+    @ExcelCollection(name = "出货通知单明细",orderNum="10")
     private List<WmsOutDeliveryReqOrderDetDto> wmsOutDeliveryReqOrderDetDtos = new ArrayList<>();
 }
