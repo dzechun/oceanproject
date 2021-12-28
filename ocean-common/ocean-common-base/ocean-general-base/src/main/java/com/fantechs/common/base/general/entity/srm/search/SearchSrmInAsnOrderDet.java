@@ -30,6 +30,18 @@ public class SearchSrmInAsnOrderDet extends BaseQuery implements Serializable {
     @ApiModelProperty(name="materialCode",value = "物料编码")
     private String materialCode;
 
+    @ApiModelProperty(name="materialName",value = "物料名称")
+    private String materialName;
+
+    @ApiModelProperty(name="materialDesc",value = "物料描述")
+    private String materialDesc;
+
+    @ApiModelProperty(name="materialVersion",value = "物料版本")
+    private String materialVersion;
+
+    @ApiModelProperty(name="asnCode",value = "ANS单单号")
+    private String asnCode;
+
     /**
      * ANS单ID集合
      */
