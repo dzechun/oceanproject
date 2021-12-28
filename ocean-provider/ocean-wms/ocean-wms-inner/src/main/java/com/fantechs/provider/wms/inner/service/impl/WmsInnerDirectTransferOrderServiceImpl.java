@@ -94,7 +94,6 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
             wmsInnerDirectTransferOrderMapper.insertUseGeneratedKeys(order);
             for(PDAWmsInnerDirectTransferOrderDetDto det : dto.getPdaWmsInnerDirectTransferOrderDetDtos()){
 
-
                 //查询条码
                 Example example2 = new Example(WmsInnerMaterialBarcode.class);
                 Example.Criteria criteria2 = example2.createCriteria();
@@ -134,7 +133,6 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                 wmsInnerInventoryDet.setStorageId(dto.getInStorageId());
                 inventoryDetList.add(wmsInnerInventoryDet);
 
-
                 //保存明细表
                 WmsInnerDirectTransferOrderDet orderDet = new WmsInnerDirectTransferOrderDet();
                 orderDet.setDirectTransferOrderId(order.getDirectTransferOrderId());
@@ -165,9 +163,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                 wmsInnerMaterialBarcodeReOrder.setModifiedTime(new Date());
                 list.add(wmsInnerMaterialBarcodeReOrder);
 
-
                 //库存更新
-
                 wmsInnerInventory.setInventoryTotalQty(wmsInnerInventory.getPackingQty().subtract(wmsInnerMaterialBarcodes.get(0).getMaterialQty()));
                 wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
 
@@ -183,9 +179,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                 WmsInnerInventory inWmsInnerInventory = wmsInnerInventorys.get(0);
                 inWmsInnerInventory.setInventoryTotalQty(inWmsInnerInventory.getPackingQty().add(wmsInnerMaterialBarcodes.get(0).getMaterialQty()));
                 wmsInnerInventoryMapper.updateByPrimaryKeySelective(inWmsInnerInventory);
-
             }
-
         }
         if(StringUtils.isNotEmpty(list)){
             wmsInnerMaterialBarcodeReOrderMapper.insertList(list);
@@ -193,8 +187,6 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
         if(StringUtils.isNotEmpty(inventoryDetList)){
             i = wmsInnerInventoryDetMapper.insertList(inventoryDetList);
         }
-
-
         return i;
     }
 
