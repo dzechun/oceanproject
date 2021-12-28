@@ -7,6 +7,7 @@ import com.fantechs.common.base.general.dto.basic.BaseOrderTypeDto;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDetDto;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDto;
 import com.fantechs.common.base.general.dto.srm.SrmInHtAsnOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseFile;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
 import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
@@ -18,12 +19,14 @@ import com.fantechs.common.base.general.entity.srm.SrmDeliveryAppoint;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrder;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDet;
 import com.fantechs.common.base.general.entity.srm.history.SrmInHtAsnOrder;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcodeReOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.srm.mapper.*;
 import com.fantechs.provider.srm.service.SrmAppointDeliveryReAsnService;
 import com.fantechs.provider.srm.service.SrmInAsnOrderService;
@@ -57,6 +60,8 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
     private SrmDeliveryAppointMapper srmDeliveryAppointMapper;
     @Resource
     private SrmAppointDeliveryReAsnService srmAppointDeliveryReAsnService;
+    @Resource
+    private InnerFeignApi innerFeignApi;
 
     @Override
     public List<SrmInAsnOrderDto> findList(Map<String, Object> map) {
@@ -81,13 +86,9 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
     public int save(SrmInAsnOrderDto srmInAsnOrderDto) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
-        srmInAsnOrderDto.setAsnCode(CodeUtils.getId("ASN-"));
-        Example example = new Example(SrmInAsnOrder.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("asnCode",srmInAsnOrderDto.getAsnCode());
-        List<SrmInAsnOrder> srmInAsnOrders = srmInAsnOrderMapper.selectByExample(example);
-        if(StringUtils.isNotEmpty(srmInAsnOrders)) throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"ASN单号已存在，请勿重复添加");
-        //默认收货通知单
+        srmInAsnOrderDto.setAsnCode(CodeUtils.getId("SRM-DPO"));
+
+       // 默认收货通知单
         if(StringUtils.isEmpty(srmInAsnOrderDto.getOrderTypeId())) {
             SearchBaseOrderType searchBaseOrderType = new SearchBaseOrderType();
             searchBaseOrderType.setOrderTypeCode("YSHTZD");
@@ -253,23 +254,6 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
             if (StringUtils.isNotEmpty(list)) srmInAsnOrderDetMapper.insertList(list);
             if (StringUtils.isNotEmpty(htList)) srmInHtAsnOrderDetMapper.insertList(htList);
         }
-       /* Example example2 = new Example(SrmInAsnOrderDetBarcode.class);
-        Example.Criteria criteria2 = example2.createCriteria();
-        criteria2.andEqualTo("asnOrderId",srmInAsnOrderDto.getAsnOrderId());
-        srmInAsnOrderDetBarcodeMapper.deleteByExample(example2);
-        //保存条码表
-        List<SrmInAsnOrderDetBarcode> barcodeList = new ArrayList<>();
-        for(SrmInAsnOrderDetBarcode srmInAsnOrderDetBarcode : srmInAsnOrderDto.getSrmInAsnOrderDetBarcodes()){
-            srmInAsnOrderDetBarcode.setAsnOrderId(srmInAsnOrderDto.getAsnOrderId());
-            srmInAsnOrderDetBarcode.setCreateUserId(user.getUserId());
-            srmInAsnOrderDetBarcode.setCreateTime(new Date());
-            srmInAsnOrderDetBarcode.setModifiedUserId(user.getUserId());
-            srmInAsnOrderDetBarcode.setModifiedTime(new Date());
-            srmInAsnOrderDetBarcode.setStatus(StringUtils.isEmpty(srmInAsnOrderDetBarcode.getStatus())?1: srmInAsnOrderDetBarcode.getStatus());
-            srmInAsnOrderDetBarcode.setOrgId(user.getOrganizationId());
-            barcodeList.add(srmInAsnOrderDetBarcode);
-        }
-        if(StringUtils.isNotEmpty(barcodeList)) srmInAsnOrderDetBarcodeMapper.insertList(barcodeList);*/
 
         return i;
     }
@@ -328,6 +312,27 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
             }
         }
         return 1;
+    }
+
+    @Override
+    public SrmInAsnOrderDto detail(Long id) {
+        SrmInAsnOrderDto dto = new SrmInAsnOrderDto();
+        Map map = new HashMap();
+        map.put("id",id);
+        List<SrmInAsnOrderDto> list = srmInAsnOrderMapper.findList(map);
+        if(StringUtils.isNotEmpty(list)){
+            dto = list.get(0);
+            List<Long>  ids = new ArrayList<>();
+            for( SrmInAsnOrderDetDto det : dto.getSrmInAsnOrderDetDtos()){
+                ids.add(det.getAsnOrderDetId());
+            }
+            SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
+            searchWmsInnerMaterialBarcodeReOrder.setOrderDetIdList(ids);
+            searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode("SRM-ASM");
+            List<WmsInnerMaterialBarcodeReOrderDto> wmsInnerMaterialBarcodeReOrderDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder).getData();
+            dto.setWmsInnerMaterialBarcodeReOrderDtos(wmsInnerMaterialBarcodeReOrderDtos);
+        }
+        return dto;
     }
 
     @Override

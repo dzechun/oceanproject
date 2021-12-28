@@ -46,6 +46,10 @@
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="file_url" jdbcType="BIGINT" property="fileUrl"/>
+        <collection property="srmInAsnOrderDetDtos" ofType="com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDetDto"
+                    column="{asnOrderId=asn_order_id}"
+                    select="com.fantechs.provider.srm.mapper.SrmInAsnOrderDetMapper.findList">
+        </collection>
     </resultMap>
 
     <sql id="BaseColumn">

@@ -69,13 +69,15 @@
         <if test="carportId!=null and carportId!=''">
             and sctq.carport_id = #{carportId}
         </if>
-        <if test="carportId!=null and carportId!=''">
-            and sctq.carport_id = #{carportId}
-        </if>
         <if test="warehouseId!=null and warehouseId!=''">
             and sc.warehouse_id = #{warehouseId}
         </if>
-
+        <if test="carportStartTime!=null and carportStartTime!=''">
+            and date_format(sctq.start_time, 'HH:mm:ss') between #{carportStartTime} and #{carportStartTime}
+        </if>
+        <if test="carportEndTime!=null and carportEndTime!=''">
+            and date_format(sctq.end_time, 'HH:mm:ss') between #{carportEndTime} and #{carportEndTime}
+        </if>
     </where>
     order by sctq.create_time desc
   </select>
