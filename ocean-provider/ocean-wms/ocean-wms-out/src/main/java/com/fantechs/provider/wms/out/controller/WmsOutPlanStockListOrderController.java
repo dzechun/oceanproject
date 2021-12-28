@@ -32,7 +32,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/12/22.
  */
 @RestController
-@Api(tags = "wmsOutPlanStockListOrder控制器")
+@Api(tags = "备料计划控制器")
 @RequestMapping("/wmsOutPlanStockListOrder")
 @Validated
 public class WmsOutPlanStockListOrderController {

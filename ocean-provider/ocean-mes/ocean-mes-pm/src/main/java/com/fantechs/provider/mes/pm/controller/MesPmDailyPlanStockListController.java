@@ -26,7 +26,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/12/21.
  */
 @RestController
-@Api(tags = "mesPmDailyPlanStockList控制器")
+@Api(tags = "日计划物料明细控制器")
 @RequestMapping("/mesPmDailyPlanStockList")
 @Validated
 public class MesPmDailyPlanStockListController {
