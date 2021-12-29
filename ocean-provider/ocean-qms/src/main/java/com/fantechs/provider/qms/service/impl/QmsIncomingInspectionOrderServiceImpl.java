@@ -575,6 +575,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
         int i = 0;
         SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode = new SearchWmsInnerMaterialBarcode();
         searchWmsInnerMaterialBarcode.setMaterialBarcodeIdList(idList);
+        searchWmsInnerMaterialBarcode.setPageSize(9999);
         List<WmsInnerMaterialBarcodeDto> barcodeDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcode).getData();
         if(StringUtils.isEmpty(barcodeDtos)){
             throw new BizErrorException("未找到条码");

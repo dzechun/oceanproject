@@ -146,6 +146,7 @@ public class QmsBadnessManageServiceImpl extends BaseService<QmsBadnessManage> i
         //修改挑选使用的条码的状态
         SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode = new SearchWmsInnerMaterialBarcode();
         searchWmsInnerMaterialBarcode.setMaterialBarcodeIdList(idList);
+        searchWmsInnerMaterialBarcode.setPageSize(9999);
         List<WmsInnerMaterialBarcodeDto> barcodeDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcode).getData();
         for (WmsInnerMaterialBarcodeDto barcodeDto : barcodeDtos){
             barcodeDto.setInspectionStatus((byte)2);

@@ -17,8 +17,6 @@ import java.util.Map;
 public interface WmsInnerMaterialBarcodeMapper extends MyMapper<WmsInnerMaterialBarcode> {
     List<WmsInnerMaterialBarcodeDto> findList(Map<String,Object> map);
 
-    int batchUpdate(List<WmsInnerMaterialBarcodeDto> list);
-
     PrintModel findPrintModel(@Param("id")Long id,@Param("labelCode")String labelCode);
 
     LabelRuteDto findRule(@Param("code")String code, @Param("materialId")Long materialId , @Param("orgId")Long orgId);
