@@ -1,5 +1,7 @@
 package com.fantechs.provider.wms.inner.service;
 
+import com.fantechs.common.base.general.dto.wms.inner.AddInnerStockDetDto;
+import com.fantechs.common.base.general.dto.wms.inner.CommitInnerStockBarcodeDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrderDet;
@@ -41,14 +43,26 @@ public interface WmsInnerStockOrderService extends IService<WmsInnerStockOrder> 
      * PDA盘点确认
      * @return
      */
-    int PdaAscertained(String ids);
+    int pdaConfirm(String ids);
 
     /**
      * PDA扫条码返回数量
      * @param barcode
      * @return
      */
-    Map<String,Object> scanBarcode(String barcode);
+    Map<String,Object> scanBarcode(Long stockOrderDetId,String barcode);
 
-    int PdaCommit(WmsInnerStockOrderDet wmsInnerStockOrderDet);
+    /**
+     * PDA扫条码提交
+     * @param
+     * @return
+     */
+    int pdaCommit(WmsInnerStockOrderDet wmsInnerStockOrderDet,List<CommitInnerStockBarcodeDto> barcodeList);
+
+    /**
+     * PDA盘点增补
+     * @param
+     * @return
+     */
+    int addInnerStockDet(List<AddInnerStockDetDto> addDetList);
 }

@@ -8,6 +8,7 @@ import lombok.Data;
 
 import javax.persistence.Column;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @Author mr.lei

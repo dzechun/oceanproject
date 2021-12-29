@@ -8,6 +8,7 @@
     <id column="stock_order_det_barcode_id" jdbcType="BIGINT" property="stockOrderDetBarcodeId" />
     <result column="stock_order_det_id" jdbcType="BIGINT" property="stockOrderDetId" />
     <result column="material_barcode_id" jdbcType="BIGINT" property="materialBarcodeId" />
+    <result column="source_det_id" jdbcType="BIGINT" property="sourceDetId" />
     <result column="scan_status" jdbcType="TINYINT" property="scanStatus" />
     <result column="stock_result" jdbcType="TINYINT" property="stockResult" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -39,6 +40,7 @@
     wivdb.stock_order_det_barcode_id,
     wivdb.stock_order_det_id,
     wivdb.material_barcode_id,
+    wivdb.source_det_id,
     wivdb.scan_status,
     wivdb.stock_result,
     wivdb.status,
@@ -88,6 +90,18 @@
       </if>
       <if test="materialName!=null and materialName!=''">
         and bm.material_name like CONCAT('%',#{materialName},'%')
+      </if>
+      <if test="barcode !=null and barcode!=''">
+        and wimb.barcode = #{barcode}
+      </if>
+      <if test="colorBoxCode !=null and colorBoxCode!=''">
+        and wimb.color_box_code = #{colorBoxCode}
+      </if>
+      <if test="cartonCode !=null and cartonCode!=''">
+        and wimb.carton_code = #{cartonCode}
+      </if>
+      <if test="palletCode !=null and palletCode!=''">
+        and wimb.pallet_ode = #{palletCode}
       </if>
 
     </where>

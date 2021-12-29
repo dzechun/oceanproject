@@ -15,8 +15,13 @@ public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializabl
 
     @ApiModelProperty("库位id")
     private Long storageId;
+
+    @ApiModelProperty("物料id")
+    private Long materialId;
+
     @ApiModelProperty("相关单号")
     private String relevanceOrderCode;
+
     @ApiModelProperty("是否是不相等 -- 0、相等 1、不相等")
     private Integer notEqualMark;
 
