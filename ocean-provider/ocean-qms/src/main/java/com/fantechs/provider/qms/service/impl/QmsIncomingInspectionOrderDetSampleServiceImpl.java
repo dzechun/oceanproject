@@ -305,9 +305,11 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
         }
 
         //履历
-        QmsHtIncomingInspectionOrder qmsHtIncomingInspectionOrder = new QmsHtIncomingInspectionOrder();
-        BeanUtils.copyProperties(qmsIncomingInspectionOrder, qmsHtIncomingInspectionOrder);
-        qmsHtIncomingInspectionOrderMapper.insertSelective(qmsHtIncomingInspectionOrder);
+        if(StringUtils.isNotEmpty(qmsIncomingInspectionOrder)) {
+            QmsHtIncomingInspectionOrder qmsHtIncomingInspectionOrder = new QmsHtIncomingInspectionOrder();
+            BeanUtils.copyProperties(qmsIncomingInspectionOrder, qmsHtIncomingInspectionOrder);
+            qmsHtIncomingInspectionOrderMapper.insertSelective(qmsHtIncomingInspectionOrder);
+        }
 
         return i;
     }

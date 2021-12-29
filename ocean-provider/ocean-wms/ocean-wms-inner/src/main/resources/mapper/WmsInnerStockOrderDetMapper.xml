@@ -49,7 +49,7 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
-    <result column="stock_order_code" jdbcType="VARCHAR" property="stockOrderCode" />
+    <result column="plan_stock_order_code" jdbcType="VARCHAR" property="planStockOrderCode" />
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
   </resultMap>
   <sql id="Base_Column_List">
@@ -85,7 +85,7 @@
   </sql>
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     SELECT <include refid="Base_Column_List"/>,
-    wiv.stock_order_code,
+    wiv.plan_stock_order_code,
     bw.warehouse_name,
     bis.inventory_status_name,
     bs.storage_code,
@@ -126,6 +126,9 @@
         <if test="storageCode!=null and storageCode!=''">
           and bs.storage_code = #{storageCode}
         </if>
+      <if test="ifRegister!=null and ifRegister!=''">
+        and wivd.if_register = #{ifRegister}
+      </if>
       <if test="stockIds !=null and stockIds.size()!=0">
         and wivd.stock_order_id in
         <foreach item="stockId" collection="stockIds" open="(" separator="," close=")">
@@ -134,10 +137,10 @@
       </if>
     </where>
     <if test="isRecords!=null and isRecords!='' and isRecords=='true'">
-    <if test="stockType==1">
+    <if test="stockType==2">
       Group BY wivd.storage_id
     </if>
-    <if test="stockType==2">
+    <if test="stockType==1">
       Group BY wivd.material_id
     </if>
     </if>

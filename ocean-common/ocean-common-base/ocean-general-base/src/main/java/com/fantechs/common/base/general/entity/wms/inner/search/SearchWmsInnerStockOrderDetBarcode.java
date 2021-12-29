@@ -41,6 +41,30 @@ public class SearchWmsInnerStockOrderDetBarcode extends BaseQuery implements Ser
     private Long materialBarcodeId;
 
     /**
+     * 条码SN
+     */
+    @ApiModelProperty(name="barcode",value = "条码SN")
+    private String barcode;
+
+    /**
+     * 彩盒码
+     */
+    @ApiModelProperty(name="colorBoxCode",value = "彩盒码")
+    private String colorBoxCode;
+
+    /**
+     * 箱号
+     */
+    @ApiModelProperty(name="cartonCode",value = "箱号")
+    private String cartonCode;
+
+    /**
+     * 栈板
+     */
+    @ApiModelProperty(name="palletCode",value = "栈板")
+    private String palletCode;
+
+    /**
      * 扫描状态(1-未扫描 2-已保存 3-已提交)
      */
     @ApiModelProperty(name="scanStatus",value = "扫描状态(1-未扫描 2-已保存 3-已提交)")
@@ -56,7 +80,6 @@ public class SearchWmsInnerStockOrderDetBarcode extends BaseQuery implements Ser
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="")
     private String remark;
 
 }

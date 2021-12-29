@@ -42,8 +42,8 @@ public class MesPmDailyPlanController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated MesPmDailyPlan mesPmDailyPlan) {
-        return ControllerUtil.returnCRUD(mesPmDailyPlanService.save(mesPmDailyPlan));
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated MesPmDailyPlanDto mesPmDailyPlanDto) {
+        return ControllerUtil.returnCRUD(mesPmDailyPlanService.save(mesPmDailyPlanDto));
     }
 
 //    @ApiOperation(value = "批量新增",notes = "批量新增")

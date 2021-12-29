@@ -91,7 +91,7 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
     }
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
+    @Transactional(rollbackFor = Exception.class)
     public int save(MesPmDailyPlanDto mesPmDailyPlanDto) {
         SysUser user = currentUser();
         int num = 1;
@@ -138,10 +138,12 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
                     nowQty=mesPmDailyPlanDet.getFinishedQty();//本次排产数量
 
                 if(nowQty.compareTo(new BigDecimal(0))!=1){
-                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"排产数量必须大于0");
+                    //ErrorCodeEnum.GL99990100.getCode(),
+                    throw new BizErrorException("排产数量必须大于0");
                 }
                 if((nowQty.add(scheduleQty)).compareTo(workOrderQty)==1){
-                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"排产数量不能大于工单数量");
+                    //ErrorCodeEnum.GL99990100.getCode(),
+                    throw new BizErrorException("排产数量不能大于工单数量");
                 }
 
                 //新增明细

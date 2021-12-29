@@ -1,9 +1,11 @@
 package com.fantechs.common.base.general.entity.wms.inner.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.List;
 
@@ -48,10 +50,17 @@ public class SearchWmsInnerStockOrderDet extends BaseQuery implements Serializab
     private String isRecords;
 
     /**
-     * 计划类型
+     * 是否已登记(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifRegister",value = "是否已登记(0-否 1-是)")
+    private Byte ifRegister;
+
+    /**
+     * 计划类型 盘点类型(1-物料 2-库位 3-全盘)
      */
     @ApiModelProperty("计划类型")
     private Byte stockType;
 
+    @ApiModelProperty("库位集合")
     private List<Long> stockIds;
 }

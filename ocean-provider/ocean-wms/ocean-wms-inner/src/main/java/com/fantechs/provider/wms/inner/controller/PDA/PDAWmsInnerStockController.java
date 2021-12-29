@@ -1,8 +1,6 @@
 package com.fantechs.provider.wms.inner.controller.PDA;
 
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDto;
+import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
@@ -51,7 +49,7 @@ public class PDAWmsInnerStockController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-    @ApiOperation("查看盘点明细")
+    @ApiOperation("PDA查看盘点明细")
     @PostMapping("/findDetList")
     public ResponseEntity<List<WmsInnerStockOrderDetDto>> findDetList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerStockOrderDet searchWmsInventoryVerificationDet){
         Page<Object> page = PageHelper.startPage(searchWmsInventoryVerificationDet.getStartPage(),searchWmsInventoryVerificationDet.getPageSize());
@@ -59,21 +57,27 @@ public class PDAWmsInnerStockController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
-    @ApiOperation("扫码条码")
+    @ApiOperation("PDA扫描条码")
     @PostMapping("/scanBarcode")
-    public ResponseEntity<Map<String,Object>> scanBarcode(@ApiParam(value = "条码")@RequestParam String barcode){
-        return ControllerUtil.returnDataSuccess(wmsInnerStockOrderService.scanBarcode(barcode),1);
+    public ResponseEntity<Map<String,Object>> scanBarcode(@ApiParam(value = "盘点明细ID")@RequestParam Long stockOrderDetId,@ApiParam(value = "条码")@RequestParam String barcode){
+        return ControllerUtil.returnDataSuccess(wmsInnerStockOrderService.scanBarcode(stockOrderDetId,barcode),1);
+    }
+
+    @ApiOperation("PDA盘点增补")
+    @PostMapping("/addInnerStockDet")
+    public ResponseEntity addInnerStockDet(@RequestBody(required = true) List<AddInnerStockDetDto> addDetList){
+        return ControllerUtil.returnCRUD(wmsInnerStockOrderService.addInnerStockDet(addDetList));
     }
 
     @ApiOperation("PDA盘点提交")
-    @PostMapping("/PdaCommit")
-    public ResponseEntity PdaCommit(@RequestBody(required = true) WmsInnerStockOrderDet wmsInnerStockOrderDets){
-        return ControllerUtil.returnCRUD(wmsInnerStockOrderService.PdaCommit(wmsInnerStockOrderDets));
+    @PostMapping("/pdaCommit")
+    public ResponseEntity pdaCommit(@RequestBody(required = true) WmsInnerStockOrderDet wmsInnerStockOrderDet,@RequestBody(required = true) List<CommitInnerStockBarcodeDto> barcodeList){
+        return ControllerUtil.returnCRUD(wmsInnerStockOrderService.pdaCommit(wmsInnerStockOrderDet,barcodeList));
     }
 
     @ApiOperation("PDA盘点确认")
-    @PostMapping("/PdaAscertained")
-    public ResponseEntity PdaAscertained(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids){
-        return ControllerUtil.returnCRUD(wmsInnerStockOrderService.PdaAscertained(ids));
+    @PostMapping("/pdaConfirm")
+    public ResponseEntity pdaConfirm(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids){
+        return ControllerUtil.returnCRUD(wmsInnerStockOrderService.pdaConfirm(ids));
     }
 }
