@@ -66,7 +66,7 @@
   <select id="findList" parameterType="com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmDailyPlan"
           resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"></include>,
-    bpl.pro_name AS proName,
+    bpl.pro_name,
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,
     bo.organization_name AS organization_Name

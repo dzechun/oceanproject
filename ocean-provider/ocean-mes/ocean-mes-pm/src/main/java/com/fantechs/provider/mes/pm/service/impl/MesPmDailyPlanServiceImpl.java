@@ -135,15 +135,13 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
                     workOrderQty=mesPmWorkOrder.getWorkOrderQty();//工单数量
 
                 if(StringUtils.isNotEmpty(mesPmDailyPlanDet.getScheduleQty()))
-                    nowQty=mesPmDailyPlanDet.getFinishedQty();//本次排产数量
+                    nowQty=mesPmDailyPlanDet.getScheduleQty();//本次排产数量
 
                 if(nowQty.compareTo(new BigDecimal(0))!=1){
-                    //ErrorCodeEnum.GL99990100.getCode(),
-                    throw new BizErrorException("排产数量必须大于0");
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"排产数量必须大于0");
                 }
                 if((nowQty.add(scheduleQty)).compareTo(workOrderQty)==1){
-                    //ErrorCodeEnum.GL99990100.getCode(),
-                    throw new BizErrorException("排产数量不能大于工单数量");
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"排产数量不能大于工单数量");
                 }
 
                 //新增明细
