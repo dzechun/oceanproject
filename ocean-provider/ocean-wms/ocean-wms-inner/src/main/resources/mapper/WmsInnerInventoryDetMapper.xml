@@ -138,6 +138,9 @@
             <if test="storageCode!=null and storageCode!=''">
                 and bs.storage_code = #{storageCode}
             </if>
+            <if test="materialId!=null and materialId!=''">
+                and bm.material_id = #{materialId}
+            </if>
             <if test="materialCode!=null and materialCode!=''">
                 and bm.material_code like CONCAT('%',#{materialCode},'%')
             </if>

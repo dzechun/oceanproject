@@ -44,6 +44,14 @@ public class WmsInnerStockOrderDetBarcode extends ValidGroup implements Serializ
     private Long materialBarcodeId;
 
     /**
+     * 相关明细ID
+     */
+    @ApiModelProperty(name="sourceDetId",value = "相关明细ID")
+    @Excel(name = "相关明细ID", height = 20, width = 30,orderNum="")
+    @Column(name = "source_det_id")
+    private Long sourceDetId;
+
+    /**
      * 扫描状态(1-未扫描 2-已保存 3-已提交)
      */
     @ApiModelProperty(name="scanStatus",value = "扫描状态(1-未扫描 2-已保存 3-已提交)")
