@@ -182,7 +182,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                 List<WmsInnerInventory> inWmsInnerInventorys = wmsInnerInventoryMapper.selectByExample(example3);
                 if(StringUtils.isEmpty(inWmsInnerInventorys)){
                    // throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到移出库位");
-                    BeanUtils.copyProperties(wmsInnerInventory,inWmsInnerInventorys);
+                    BeanUtils.copyProperties(wmsInnerInventory,inWmsInnerInventory,new String[] {"inventoryId"});
                     inWmsInnerInventory.setStorageId(dto.getInStorageId());
                     inWmsInnerInventory.setJobStatus((byte)1);
                     inWmsInnerInventory.setLockStatus((byte)0);
@@ -193,7 +193,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                     inWmsInnerInventory.setCreateTime(new Date());
                     inWmsInnerInventory.setModifiedUserId(user.getUserId());
                     inWmsInnerInventory.setModifiedTime(new Date());
-                    inWmsInnerInventory.setPackingQty(inWmsInnerInventory.getPackingQty().add(wmsInnerMaterialBarcodes.get(0).getMaterialQty()));
+                    inWmsInnerInventory.setPackingQty(wmsInnerMaterialBarcodes.get(0).getMaterialQty());
                     i = wmsInnerInventoryMapper.insertSelective(inWmsInnerInventory);
                 }else{
                     inWmsInnerInventory = wmsInnerInventorys.get(0);

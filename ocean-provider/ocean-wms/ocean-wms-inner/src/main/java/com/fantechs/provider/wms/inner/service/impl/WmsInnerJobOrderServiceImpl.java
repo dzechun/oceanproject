@@ -1000,7 +1000,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     @LcnTransaction
-    public int singleReceivingByBarcode(WmsInnerJobOrderDet wmsInPutawayOrderDet,String ids) {
+    public int singleReceivingByBarcode(WmsInnerJobOrderDet wmsInPutawayOrderDet,String ids,Byte orderType) {
         SysUser sysUser = currentUser();
         int num = 0;
 
@@ -1022,7 +1022,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         String[] arrId = ids.split(",");
         for (String item : arrId) {
             SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
-            sBarcodeReOrder.setOrderTypeCode("IN-IWK");
+            if(orderType == 1) {
+                sBarcodeReOrder.setOrderTypeCode("IN-IWK");
+            }else if(orderType == 3){
+                sBarcodeReOrder.setOrderTypeCode("INNER-SSO");
+            }
             sBarcodeReOrder.setMaterialBarcodeId(Long.parseLong(item));
             List<WmsInnerMaterialBarcodeReOrderDto> barcodeReOrderDtoList= wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
             if(barcodeReOrderDtoList.size()>0) {
