@@ -5,11 +5,14 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.*;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.wms.inner.mapper.*;
 import com.fantechs.provider.wms.inner.service.WmsInnerDirectTransferOrderService;
 import org.springframework.beans.BeanUtils;
@@ -40,7 +43,8 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
     private WmsInnerMaterialBarcodeReOrderMapper wmsInnerMaterialBarcodeReOrderMapper;
     @Resource
     private WmsInnerMaterialBarcodeMapper wmsInnerMaterialBarcodeMapper;
-
+    @Resource
+    private BaseFeignApi baseFeignApi;
 
     @Override
     public List<WmsInnerDirectTransferOrderDto> findList(Map<String, Object> map) {
@@ -175,15 +179,20 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
 
                 WmsInnerInventory inWmsInnerInventory = new WmsInnerInventory();
                 Example example3 = new Example(WmsInnerInventory.class);
-                Example.Criteria criteria3 = example1.createCriteria();
+                Example.Criteria criteria3 = example3.createCriteria();
                 criteria3.andEqualTo("storageId", dto.getInStorageId())
                         .andEqualTo("batchCode", wmsInnerMaterialBarcodes.get(0).getBatchCode())
                         .andEqualTo("materialId", dto.getMaterialId());
                 List<WmsInnerInventory> inWmsInnerInventorys = wmsInnerInventoryMapper.selectByExample(example3);
                 if(StringUtils.isEmpty(inWmsInnerInventorys)){
-                   // throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到移出库位");
-                    BeanUtils.copyProperties(wmsInnerInventory,inWmsInnerInventorys);
+                    BeanUtils.copyProperties(wmsInnerInventory,inWmsInnerInventory,new String[] {"inventoryId"});
                     inWmsInnerInventory.setStorageId(dto.getInStorageId());
+                    SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                    searchBaseStorage.setStorageId(dto.getInStorageId());
+                    List<BaseStorage> baseStorage = baseFeignApi.findList(searchBaseStorage).getData();
+                    if(StringUtils.isEmpty(baseStorage))
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到移出库位");
+                    inWmsInnerInventory.setWarehouseId(baseStorage.get(0).getWarehouseId());
                     inWmsInnerInventory.setJobStatus((byte)1);
                     inWmsInnerInventory.setLockStatus((byte)0);
                     inWmsInnerInventory.setStockLock((byte)0);
@@ -193,7 +202,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                     inWmsInnerInventory.setCreateTime(new Date());
                     inWmsInnerInventory.setModifiedUserId(user.getUserId());
                     inWmsInnerInventory.setModifiedTime(new Date());
-                    inWmsInnerInventory.setPackingQty(inWmsInnerInventory.getPackingQty().add(wmsInnerMaterialBarcodes.get(0).getMaterialQty()));
+                    inWmsInnerInventory.setPackingQty(wmsInnerMaterialBarcodes.get(0).getMaterialQty());
                     i = wmsInnerInventoryMapper.insertSelective(inWmsInnerInventory);
                 }else{
                     inWmsInnerInventory = wmsInnerInventorys.get(0);

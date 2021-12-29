@@ -221,6 +221,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         searchWmsInnerJobOrderDet.setJobOrderDetId(wmsInnerJobOrderDetNew.getJobOrderDetId());
                         WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = wmsInnerJobOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
                         //分配库存
+
                         //num += this.updateInventory(wmsInnerJobOrderDto, wmsInnerJobOrderDetDto);
                         num+= WmsInnerInventoryUtil.distributionInventory(wmsInnerJobOrderDto, wmsInnerJobOrderDetDto,wmsInnerJobOrderDetDto.getDistributionQty(),sysUser,(byte) 1);
 
@@ -999,7 +1000,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     @LcnTransaction
-    public int singleReceivingByBarcode(WmsInnerJobOrderDet wmsInPutawayOrderDet,String ids) {
+    public int singleReceivingByBarcode(WmsInnerJobOrderDet wmsInPutawayOrderDet,String ids,Byte orderType) {
         SysUser sysUser = currentUser();
         int num = 0;
 
@@ -1021,7 +1022,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         String[] arrId = ids.split(",");
         for (String item : arrId) {
             SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
-            sBarcodeReOrder.setOrderTypeCode("IN-IWK");
+            if(orderType == 1) {
+                sBarcodeReOrder.setOrderTypeCode("IN-IWK");
+            }else if(orderType == 3){
+                sBarcodeReOrder.setOrderTypeCode("INNER-SSO");
+            }
             sBarcodeReOrder.setMaterialBarcodeId(Long.parseLong(item));
             List<WmsInnerMaterialBarcodeReOrderDto> barcodeReOrderDtoList= wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
             if(barcodeReOrderDtoList.size()>0) {
@@ -2338,7 +2343,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     @Transactional(rollbackFor = RuntimeException.class)
     public WmsInnerJobOrderDet saveHaveInnerJobOrder(List<SaveHaveInnerJobOrderDto> list) {
         SysUser sysUser = currentUser();
-
+        if(StringUtils.isEmpty(list)){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"提交参数不能为空");
+        }
         Map<String,List<SaveHaveInnerJobOrderDto>> collet=list.parallelStream().collect(Collectors.groupingBy(SaveHaveInnerJobOrderDto::getIfSysBarcode));
         if(collet.size()>1){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"系统条码和非系统条码不能一起提交");
