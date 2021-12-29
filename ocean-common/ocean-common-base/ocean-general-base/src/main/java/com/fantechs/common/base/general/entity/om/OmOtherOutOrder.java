@@ -1,6 +1,7 @@
 package com.fantechs.common.base.general.entity.om;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import cn.afterturn.easypoi.excel.annotation.ExcelCollection;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.general.dto.om.OmOtherOutOrderDetDto;
 import com.fantechs.common.base.support.ValidGroup;
@@ -243,9 +244,9 @@ public class OmOtherOutOrder extends ValidGroup implements Serializable {
      * 邮件地址
      */
     @Transient
-    @ApiModelProperty(name="eMailAddress",value = "邮件地址")
+    @ApiModelProperty(name="emailAddress",value = "邮件地址")
     @Excel(name = "邮件地址", height = 20, width = 30,orderNum="13")
-    private String eMailAddress;
+    private String emailAddress;
 
     /**
      * 地址
@@ -260,7 +261,7 @@ public class OmOtherOutOrder extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="omOtherOutOrderDets",value = "其他出库订单明细")
-    //@Excel(name = "其他出库订单明细", height = 20, width = 30,orderNum="20")
+    @ExcelCollection(name = "其他出库订单明细",orderNum="20")
     private List<OmOtherOutOrderDetDto> omOtherOutOrderDets = new ArrayList<>();
 
     private static final long serialVersionUID = 1L;

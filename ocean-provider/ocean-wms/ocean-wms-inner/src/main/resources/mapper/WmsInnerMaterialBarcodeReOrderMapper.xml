@@ -123,8 +123,18 @@
         <if test="palletCode!=null and palletCode!='' and codeQueryMark != 1">
             and wimb.pallet_code like CONCAT('%',#{palletCode},'%')
         </if>
-
-
+        <if test="productionTimeStart!= null and productionTimeStart!= '' and productionTimeEnd!= null and productionTimeEnd!= ''">
+            and date_format(wimb.production_time, '%Y-%m-%d') BETWEEN #{productionTimeStart} AND #{productionTimeEnd}
+        </if>
+        <if test="materialCode!=null and materialCode!=''">
+            and bm.material_code like CONCAT('%',#{materialCode},'%')
+        </if>
+        <if test="materialName!=null and materialName!=''">
+            and bm.material_name like CONCAT('%',#{materialName},'%')
+        </if>
+        <if test="batchCode!=null and batchCode!=''">
+            and wimb.batch_code like CONCAT('%',#{batchCode},'%')
+        </if>
     </where>
     order by wimbro.create_time desc
   </select>

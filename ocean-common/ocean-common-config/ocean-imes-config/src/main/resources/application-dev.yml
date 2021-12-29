@@ -28,7 +28,8 @@ spring:
       poolPreparedStatements: true
       maxPoolPreparedStatementPerConnectionSize: 20
       #  filters: stat,wall,logback
-      filters: stat,wall,slf4j
+      filters: stat
+      ## ,wall,slf4j
       connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
       time-between-log-stats-millis: 300000
       #WebStatFilter配置

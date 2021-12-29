@@ -52,18 +52,17 @@ public class WmsInnerInventoryUtil {
     public static int distributionInventory(WmsInnerJobOrder wmsInnerJobOrder, WmsInnerJobOrderDet wmsInnerJobOrderDet,BigDecimal finalQty,SysUser sysUser,byte addOrSubtract) {
         int num=0;
         // 上架 增加分配库存 库位是收货库位
-        if(wmsInnerJobOrder.getJobOrderType()==((byte) 1)){
+    //    if(wmsInnerJobOrder.getJobOrderType()==((byte) 1)){
             Example example = new Example(WmsInnerInventory.class);
             Example.Criteria criteria1 = example.createCriteria();
-            criteria1.andEqualTo("relevanceOrderCode", wmsInnerJobOrder.getJobOrderCode())
-                    .andEqualTo("materialId", wmsInnerJobOrderDet.getMaterialId())
+            criteria1.andEqualTo("materialId", wmsInnerJobOrderDet.getMaterialId())
                     .andEqualTo("warehouseId", wmsInnerJobOrder.getWarehouseId())
                     .andEqualTo("storageId", wmsInnerJobOrderDet.getOutStorageId())
                     .andEqualTo("inventoryStatusId", wmsInnerJobOrderDet.getInventoryStatusId());
             if (!StringUtils.isEmpty(wmsInnerJobOrderDet.getBatchCode())) {
                 criteria1.andEqualTo("batchCode", wmsInnerJobOrderDet.getBatchCode());
             }
-            criteria1.andEqualTo("jobOrderDetId", wmsInnerJobOrderDet.getJobOrderDetId());
+        //    criteria1.andEqualTo("jobOrderDetId", wmsInnerJobOrderDet.getJobOrderDetId());
             criteria1.andEqualTo("jobStatus", (byte) 2);
             criteria1.andEqualTo("orgId", sysUser.getOrganizationId());
             WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryUtil.wmsInnerInventoryMapper.selectOneByExample(example);
@@ -112,7 +111,7 @@ public class WmsInnerInventoryUtil {
                     return wmsInnerInventoryUtil.wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventorys);
                 }
             }
-        }
+   //     }
 
         return num;
     }

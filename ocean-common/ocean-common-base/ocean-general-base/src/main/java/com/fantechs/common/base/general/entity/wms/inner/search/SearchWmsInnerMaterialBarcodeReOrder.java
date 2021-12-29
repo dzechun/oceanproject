@@ -15,6 +15,18 @@ import java.util.List;
 public class SearchWmsInnerMaterialBarcodeReOrder extends BaseQuery implements Serializable {
 
     /**
+     * 物料编码
+     */
+    @ApiModelProperty(name="materialCode",value = "物料编码")
+    private String materialCode;
+
+    /**
+     * 物料名称
+     */
+    @ApiModelProperty(name="materialName",value = "物料名称")
+    private String materialName;
+
+    /**
      * 条码
      */
     @ApiModelProperty(name="barcode",value = "条码")
@@ -133,6 +145,24 @@ public class SearchWmsInnerMaterialBarcodeReOrder extends BaseQuery implements S
      */
     @ApiModelProperty(name="orderDetIdList",value = "单据明细ID集合")
     private List<Long> orderDetIdList;
+
+    /**
+     * 批号
+     */
+    @ApiModelProperty(name="batchCode",value = "批号")
+    private String batchCode;
+
+    /**
+     * 生产时间开始
+     */
+    @ApiModelProperty(name="productionTimeStart",value = "生产时间")
+    private String productionTimeStart;
+
+    /**
+     * 生产时间结束
+     */
+    @ApiModelProperty(name="productionTimeEnd",value = "生产时间结束")
+    private String productionTimeEnd;
 
 
     private static final long serialVersionUID = 1L;

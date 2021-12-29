@@ -19,7 +19,7 @@
         <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="order_date" jdbcType="TIMESTAMP" property="orderDate"/>
-        <result column="complete_date" jdbcType="TIMESTAMP" property="completeDate"/>
+        <result column="plan_complete_time" jdbcType="TIMESTAMP" property="planCompleteTime"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="org_id" jdbcType="BIGINT" property="orgId"/>
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
@@ -32,7 +32,6 @@
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
     </resultMap>
     <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.om.OmOtherInOrderDto">
-        <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
@@ -51,7 +50,7 @@
         oio.order_status,
         oio.status,
         oio.order_date,
-        oio.complete_date,
+        oio.plan_complete_time,
         oio.remark,
         oio.org_id,
         oio.create_user_id,

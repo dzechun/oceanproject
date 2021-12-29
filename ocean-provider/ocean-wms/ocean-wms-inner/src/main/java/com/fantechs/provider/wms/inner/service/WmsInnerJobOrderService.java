@@ -74,7 +74,7 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
      * @param ids 条码ID 多个条码用逗号隔开
      * @return
      */
-    int singleReceivingByBarcode(WmsInnerJobOrderDet wmsInnerJobOrderDet,String ids);
+    int singleReceivingByBarcode(WmsInnerJobOrderDet wmsInnerJobOrderDet,String ids,Byte orderType);
 
     Map<String,Object> checkBarcode(String barCode,Long jobOrderDetId);
 

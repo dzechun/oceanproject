@@ -92,19 +92,21 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchUpdate(List<WmsInnerMaterialBarcodeDto> list) {
+        int i = 0;
         //添加履历
         List<WmsInnerHtMaterialBarcode> htList = new ArrayList<>();
         for (WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto : list) {
+            i += wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(wmsInnerMaterialBarcodeDto);
+
             WmsInnerHtMaterialBarcode wmsInnerHtMaterialBarcode = new WmsInnerHtMaterialBarcode();
             BeanUtil.copyProperties(wmsInnerMaterialBarcodeDto,wmsInnerHtMaterialBarcode);
             htList.add(wmsInnerHtMaterialBarcode);
-
         }
         if (StringUtils.isNotEmpty(htList)) {
             wmsInnerHtMaterialBarcodeMapper.insertList(htList);
         }
 
-        return wmsInnerMaterialBarcodeMapper.batchUpdate(list);
+        return i;
     }
 
     @Override
@@ -269,6 +271,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                 wmsInnerMaterialBarCode.setModifiedTime(new Date());
                 wmsInnerMaterialBarCode.setModifiedUserId(sysUser.getUserId());
                 wmsInnerMaterialBarCode.setCreateType((byte) 3);
+                wmsInnerMaterialBarCode.setBarcodeType((byte) 1);
                 wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(wmsInnerMaterialBarCode);
 
                 //添加履历
@@ -285,11 +288,12 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                 wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(wmsInnerMaterialBarCode.getMaterialBarcodeId());
                 wmsInnerMaterialBarcodeReOrderList.add(wmsInnerMaterialBarcodeReOrder);
             }
-            wmsInnerMaterialBarcodeReOrderService.batchAdd(wmsInnerMaterialBarcodeReOrderList);
+
         }
         if (StringUtils.isNotEmpty(htList)) {
             wmsInnerHtMaterialBarcodeMapper.insertList(htList);
         }
+        wmsInnerMaterialBarcodeReOrderService.batchAdd(wmsInnerMaterialBarcodeReOrderList);
         return materialBarcodeList;
     }
 

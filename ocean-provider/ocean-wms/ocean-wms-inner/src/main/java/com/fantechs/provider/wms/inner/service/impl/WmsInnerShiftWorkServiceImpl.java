@@ -110,6 +110,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         Long materialId = 0L;
         BigDecimal materialQty = BigDecimal.ZERO;
         List<WmsInnerInventoryDetDto> inventoryDetDtos = wmsInnerInventoryDetService.findList(map);
+
         if (inventoryDetDtos == null || inventoryDetDtos.size() <= 0) {
             SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
             searchBaseMaterial.setMaterialCode(dto.getBarcode());
