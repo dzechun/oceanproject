@@ -86,7 +86,7 @@
             <if test="orderStatus!=null and orderStatus!=''">
                 and widto.order_status = #{orderStatus}
             </if>
-            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+            <if test="startTime!= null and endTime!= null">
                 and date_format(widto.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
         </where>

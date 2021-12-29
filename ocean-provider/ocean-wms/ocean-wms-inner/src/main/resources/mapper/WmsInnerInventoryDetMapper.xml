@@ -114,16 +114,16 @@
             <if test="materialId!=null and materialId!=''">
                 and bm.material_id != #{materialId}
             </if>
-            <if test="productionStartDate!= null and productionStartDate!= '' and productionEndDate!= null and productionEndDate!= ''">
+            <if test="productionStartDate!= null and productionEndDate!= null">
                 and date_format(wiid.production_date, '%Y-%m-%d') BETWEEN #{productionStartDate} AND #{productionEndDate}
             </if>
-            <if test="expiredStartDate!= null and expiredStartDate!= '' and expiredEndDate!= null and expiredEndDate!= ''">
+            <if test="expiredStartDate!= null and expiredEndDate!= null ">
                 and date_format(wiid.expired_date, '%Y-%m-%d') BETWEEN #{expiredStartDate} AND #{expiredEndDate}
             </if>
-            <if test="receivingStartDate!= null and receivingStartDate!= '' and receivingEndDate!= null and receivingEndDate!= ''">
+            <if test="receivingStartDate!= null  and receivingEndDate!= null">
                 and date_format(wiid.receiving_date, '%Y-%m-%d') BETWEEN #{receivingStartDate} AND #{receivingEndDate}
             </if>
-            <if test="deliverStartDate!= null and deliverStartDate!= '' and deliverEndDate!= null and deliverEndDate!= ''">
+            <if test="deliverStartDate!= null and deliverEndDate!= null ">
                 and date_format(wiid.deliver_date, '%Y-%m-%d') BETWEEN #{deliverStartDate} AND #{deliverEndDate}
             </if>
             <if test="inventoryStatusId!=null and inventoryStatusId!=''">
