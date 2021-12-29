@@ -36,7 +36,7 @@
         <collection property="wmsInnerDirectTransferOrderDetDtos"
                     ofType="com.fantechs.common.base.general.dto.wms.inner.WmsInnerDirectTransferOrderDetDto"
                     column="{directTransferOrderId=direct_transfer_order_id}"
-                    select="com.fantechs.provider.wms.inner.mapper..WmsInnerDirectTransferOrderDetMapper.findList">
+                    select="com.fantechs.provider.wms.inner.mapper.WmsInnerDirectTransferOrderDetMapper.findList">
         </collection>
     </resultMap>
 
