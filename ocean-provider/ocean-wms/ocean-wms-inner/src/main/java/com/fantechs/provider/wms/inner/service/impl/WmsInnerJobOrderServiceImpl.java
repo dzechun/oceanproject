@@ -368,8 +368,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 criteria.andEqualTo("materialId", wmsInnerJobOrderDetDto.getMaterialId())
                         .andEqualTo("warehouseId", wmsInnerJobOrderDto.getWarehouseId())
                         .andEqualTo("storageId", wmsInnerJobOrderDetDto.getOutStorageId())
-                        .andEqualTo("jobOrderDetId", wmsInPutawayOrderDet.getJobOrderDetId())
-                        .andEqualTo("relevanceOrderCode", wmsInnerJobOrder.getJobOrderCode())
+                 //       .andEqualTo("jobOrderDetId", wmsInPutawayOrderDet.getJobOrderDetId())
+                 //       .andEqualTo("relevanceOrderCode", wmsInnerJobOrder.getJobOrderCode())   //库存会进行合并，因此相关单号可能变化
                         .andEqualTo("jobStatus", (byte) 2)
                         .andEqualTo("stockLock", 0)
                         .andEqualTo("lockStatus", 0)
@@ -391,8 +391,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 criteria1.andEqualTo("materialId", wmsInnerJobOrderDetDto.getMaterialId())
                         .andEqualTo("warehouseId", wmsInnerJobOrderDto.getWarehouseId())
                         .andEqualTo("storageId", wmsInnerJobOrderDetDto.getOutStorageId())
-                        .andEqualTo("relevanceOrderCode", wmsInnerJobOrder.getJobOrderCode())
-                        .andEqualTo("jobOrderDetId", id)
+        //                .andEqualTo("relevanceOrderCode", wmsInnerJobOrder.getJobOrderCode())
+        //                .andEqualTo("jobOrderDetId", id)
                         .andEqualTo("jobStatus", (byte) 2)
                         .andEqualTo("stockLock", 0)
                         .andEqualTo("lockStatus", 0)
@@ -1772,7 +1772,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到出库位的物料条码，物料为："+wmsInPutawayOrderDet.getMaterialId());
                 }
 
-                /*
+
                  // 生成库存，扣减原库存 移位作业
                 WmsInnerInventory innerInventory = wmsInnerInventoryService.selectByKey(wmsInPutawayOrderDet.getSourceId());
                 if (innerInventory.getPackingQty().compareTo(wmsInPutawayOrderDet.getPlanQty()) < 0) {
@@ -1791,7 +1791,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 wmsInnerInventoryService.save(newInnerInventory);
                 // 变更减少原库存
                 innerInventory.setPackingQty(innerInventory.getPackingQty().subtract(wmsInPutawayOrderDet.getPlanQty()));
-                wmsInnerInventoryService.update(innerInventory);*/
+                wmsInnerInventoryService.update(innerInventory);
             }
         }
         //批量新增到条码关系表
