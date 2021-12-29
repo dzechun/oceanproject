@@ -522,6 +522,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
             int mustInspectioncount = 0;//必检项目数
             int haveInspectioncount = 0;//已检验项目数
             int mustAndHaveInspectioncount = 0;//必检且已检验项目数
+            int badnessCategoryIsNull = 0;//项目不合格且未设置不良类别数
             for (QmsIncomingInspectionOrderDet qmsIncomingInspectionOrderDet : list) {
                 if (qmsIncomingInspectionOrderDet.getIfMustInspection() == 1) {
                     mustInspectioncount++;
@@ -536,6 +537,11 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 if (qmsIncomingInspectionOrderDet.getInspectionResult() != null &&
                         qmsIncomingInspectionOrderDet.getInspectionResult() == (byte) 0) {
                     inspectionResult = 0;
+                }
+                if(qmsIncomingInspectionOrderDet.getInspectionResult() != null &&
+                        qmsIncomingInspectionOrderDet.getInspectionResult() == (byte) 0&&
+                        qmsIncomingInspectionOrderDet.getBadnessCategoryId() == null){
+                    badnessCategoryIsNull++;
                 }
             }
 
@@ -557,7 +563,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
             /*if(haveInspectioncount > 0){
                 qmsIncomingInspectionOrder.setInspectionStatus((byte)2);
             }*/
-            if(mustInspectioncount == mustAndHaveInspectioncount){
+            if(mustInspectioncount == mustAndHaveInspectioncount && badnessCategoryIsNull == 0){
                 qmsIncomingInspectionOrder.setInspectionStatus((byte)3);
             }
             qmsIncomingInspectionOrderMapper.updateByPrimaryKeySelective(qmsIncomingInspectionOrder);
