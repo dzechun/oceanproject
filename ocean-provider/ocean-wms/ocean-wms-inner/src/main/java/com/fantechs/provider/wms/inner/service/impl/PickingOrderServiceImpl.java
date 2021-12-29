@@ -763,7 +763,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(inventorExample);
                 inventorExample.clear();
                 if(StringUtils.isEmpty(wmsInnerInventories)) {
-                    throw new BizErrorException("没有库存分配失败！");
+                    continue;
                 }
 
                 BigDecimal playQty = wms.getPlanQty();
@@ -794,7 +794,6 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                             if(wmsInnerInventory.getPackingQty().compareTo(playQty)>-1){
                                 WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
                                 BeanUtil.copyProperties(wms,wmsInnerJobOrderDet);
-                                wmsInnerJobOrderDet.setJobOrderDetId(null);
                                 wmsInnerJobOrderDet.setPlanQty(playQty);
                                 wmsInnerJobOrderDet.setDistributionQty(playQty);
                                 wmsInnerJobOrderDet.setLineStatus((byte) 2);

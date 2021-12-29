@@ -111,6 +111,9 @@
             <if test="storageId!=null and storageId!='' and notEqualMark==1">
                 and wiid.storage_id != #{storageId}
             </if>
+            <if test="materialId!=null and materialId!=''">
+                and bm.material_id != #{materialId}
+            </if>
             <if test="productionStartDate!= null and productionStartDate!= '' and productionEndDate!= null and productionEndDate!= ''">
                 and date_format(wiid.production_date, '%Y-%m-%d') BETWEEN #{productionStartDate} AND #{productionEndDate}
             </if>
