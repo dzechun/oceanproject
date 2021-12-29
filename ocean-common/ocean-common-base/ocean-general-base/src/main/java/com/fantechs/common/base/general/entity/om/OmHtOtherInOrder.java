@@ -1,14 +1,20 @@
 package com.fantechs.common.base.general.entity.om;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.*;
-import lombok.Data;
+
+;
+;
 
 /**
  * 其他入库订单履历表
@@ -134,10 +140,10 @@ public class OmHtOtherInOrder extends ValidGroup implements Serializable {
     /**
      * 要求完成日期
      */
-    @ApiModelProperty(name="completeDate",value = "要求完成日期")
+    @ApiModelProperty(name="planCompleteTime",value = "要求完成日期")
     @Excel(name = "要求完成日期", height = 20, width = 30,orderNum="")
-    @Column(name = "complete_date")
-    private Date completeDate;
+    @Column(name = "plan_complete_time")
+    private Date planCompleteTime;
 
     /**
      * 备注

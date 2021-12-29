@@ -1,10 +1,13 @@
 package com.fantechs.common.base.general.entity.wms.inner.search;
 
 import com.fantechs.common.base.dto.BaseQuery;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @Author mr.lei
@@ -62,4 +65,71 @@ public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializabl
 
     @ApiModelProperty("栈板码")
     private String palletCode;
+
+    /**
+     * 生产日期开始时间
+     */
+    @ApiModelProperty(name="endTime" ,value="生产日期开始时间(YYYY-MM-DD)")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date productionStartDate;
+
+    /**
+     * 生产日期结束时间
+     */
+    @ApiModelProperty(name="endTime" ,value="生产日期结束时间(YYYY-MM-DD)")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date productionEndDate;
+
+    /**
+     * 过期日期开始时间
+     */
+    @ApiModelProperty(name="endTime" ,value="过期日期开始时间(YYYY-MM-DD)")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date expiredStartDate;
+
+    /**
+     * 过期日期结束时间
+     */
+    @ApiModelProperty(name="endTime" ,value="过期日期结束时间(YYYY-MM-DD)")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date expiredEndDate;
+
+
+    /**
+     * 入库日期开始时间
+     */
+    @ApiModelProperty(name="receivingStartDate" ,value="入库日期开始时间(YYYY-MM-DD)")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date receivingStartDate;
+
+    /**
+     * 入库日期结束时间
+     */
+    @ApiModelProperty(name="receivingEndDate" ,value="入库日期结束时间(YYYY-MM-DD)")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date receivingEndDate;
+
+    /**
+     * 出库日期开始时间
+     */
+    @ApiModelProperty(name="deliverStartDate" ,value="出库日期开始时间(YYYY-MM-DD)")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date deliverStartDate;
+
+    /**
+     * 出库日期结束时间
+     */
+    @ApiModelProperty(name="deliverEndDate" ,value="出库日期结束时间(YYYY-MM-DD)")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date deliverEndDate;
+
+
 }

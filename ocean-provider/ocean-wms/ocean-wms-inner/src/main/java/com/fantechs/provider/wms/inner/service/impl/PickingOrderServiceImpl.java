@@ -1338,7 +1338,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             }
             criteria.andEqualTo("jobStatus",(byte)1);
             criteria.andEqualTo("storageId",wmsInnerJobOrderDetDto.getOutStorageId()).andEqualTo("warehouseId",wmsInnerJobOrder.getWarehouseId()).andGreaterThan("packingQty",0).andEqualTo("orgId",wmsInnerJobOrderDetDto.getOrgId());
-            criteria.andEqualTo("stockLock",0).andEqualTo("qcLock",0).andEqualTo("lockStatus",0);
+            criteria.andEqualTo("stockLock",0).andEqualTo("lockStatus",0);
             if(StringUtils.isNotEmpty(wmsInnerJobOrderDetDto.getInventoryStatusId())){
                 criteria.andEqualTo("inventoryStatusId",wmsInnerJobOrderDetDto.getInventoryStatusId());
             }

@@ -197,7 +197,7 @@ public class SearchWmsInnerInventory extends BaseQuery implements Serializable {
     /**
      * 生产日期开始时间
      */
-    @ApiModelProperty(name="endTime" ,value="生产日期开始时间(YYYY-MM-DD)")
+    @ApiModelProperty(name="productionStartDate" ,value="生产日期开始时间(YYYY-MM-DD)")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date productionStartDate;
@@ -205,7 +205,7 @@ public class SearchWmsInnerInventory extends BaseQuery implements Serializable {
     /**
      * 生产日期结束时间
      */
-    @ApiModelProperty(name="endTime" ,value="生产日期结束时间(YYYY-MM-DD)")
+    @ApiModelProperty(name="productionEndDate" ,value="生产日期结束时间(YYYY-MM-DD)")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date productionEndDate;
@@ -213,7 +213,7 @@ public class SearchWmsInnerInventory extends BaseQuery implements Serializable {
     /**
      * 过期日期开始时间
      */
-    @ApiModelProperty(name="endTime" ,value="过期日期开始时间(YYYY-MM-DD)")
+    @ApiModelProperty(name="expiredStartDate" ,value="过期日期开始时间(YYYY-MM-DD)")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date expiredStartDate;
@@ -221,7 +221,7 @@ public class SearchWmsInnerInventory extends BaseQuery implements Serializable {
     /**
      * 过期日期结束时间
      */
-    @ApiModelProperty(name="endTime" ,value="过期日期结束时间(YYYY-MM-DD)")
+    @ApiModelProperty(name="expiredEndDate" ,value="过期日期结束时间(YYYY-MM-DD)")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date expiredEndDate;

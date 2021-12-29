@@ -1,5 +1,6 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -11,6 +12,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.inner.mapper.*;
 import com.fantechs.provider.wms.inner.service.WmsInnerDirectTransferOrderService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -51,7 +53,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
     public WmsInnerDirectTransferOrderDto detail(Long id) {
         WmsInnerDirectTransferOrderDto dto = new WmsInnerDirectTransferOrderDto();
         Map map = new HashMap();
-        map.put("id",id);
+        map.put("directTransferOrderId",id);
         List<WmsInnerDirectTransferOrderDto> list = wmsInnerDirectTransferOrderMapper.findList(map);
         if(StringUtils.isNotEmpty(list)){
             dto = list.get(0);
@@ -70,15 +72,19 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int save(List<PDAWmsInnerDirectTransferOrderDto> pdaWmsInnerDirectTransferOrderDtos) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(pdaWmsInnerDirectTransferOrderDtos)) throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"提交参数不能为空");
         List<WmsInnerMaterialBarcodeReOrder> list = new ArrayList<>();
-        List<WmsInnerInventoryDet> inventoryDetList = new ArrayList<>();
+    //    List<WmsInnerInventoryDet> inventoryDetList = new ArrayList<>();
         int i = 0;
         for(PDAWmsInnerDirectTransferOrderDto dto : pdaWmsInnerDirectTransferOrderDtos){
-            if(StringUtils.isEmpty(dto.getPdaWmsInnerDirectTransferOrderDetDtos(),dto.getMaterialId(),dto.getInStorageId(),dto.getOutStorageId(),dto.getWorkerUserId()))
-                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"相关参数不能为空");
+            if(StringUtils.isEmpty(dto.getPdaWmsInnerDirectTransferOrderDetDtos(),dto.getMaterialId(),dto.getInStorageId(),dto.getOutStorageId()))
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"物料、移入库位、移出库位不能为空");
+            if(dto.getInStorageId().equals(dto.getOutStorageId())){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"移入库位不能与移出库位相同");
+            }
             WmsInnerDirectTransferOrder order = new WmsInnerDirectTransferOrder();
             order.setDirectTransferOrderCode(CodeUtils.getId("INNER-DTO"));
             order.setWorkerUserId(dto.getWorkerUserId());
@@ -98,24 +104,40 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                 criteria2.andEqualTo("materialId", dto.getMaterialId());
                 criteria2.andEqualTo("materialBarcodeId", det.getMaterialBarcodeId());
                 List<WmsInnerMaterialBarcode> wmsInnerMaterialBarcodes = wmsInnerMaterialBarcodeMapper.selectByExample(example2);
-                if(StringUtils.isNotEmpty(wmsInnerMaterialBarcodes)){
+                if(StringUtils.isEmpty(wmsInnerMaterialBarcodes)){
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到对应的物料条码，条码为："+det.getBarcode());
                 }
+
+                //查询库存
+                Example example1 = new Example(WmsInnerInventory.class);
+                Example.Criteria criteria1 = example1.createCriteria();
+                criteria1.andEqualTo("storageId", dto.getOutStorageId())
+                        .andEqualTo("materialId", dto.getMaterialId());
+                if(StringUtils.isNotEmpty(wmsInnerMaterialBarcodes.get(0).getBatchCode())) {
+                    criteria1.andEqualTo("batchCode", wmsInnerMaterialBarcodes.get(0).getBatchCode());
+                }
+                List<WmsInnerInventory> wmsInnerInventorys = wmsInnerInventoryMapper.selectByExample(example1);
+                if(StringUtils.isEmpty(wmsInnerInventorys)){
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到移出库位");
+                }
+                WmsInnerInventory wmsInnerInventory = wmsInnerInventorys.get(0);
+
+
+                if(StringUtils.isEmpty(wmsInnerInventory.getPackingQty()) || wmsInnerInventory.getPackingQty().compareTo(BigDecimal.ZERO)<=0)
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"移出库位物料数量不存在或小于等于0");
 
                 //查询库位条码,变更数量
                 Example example = new Example(WmsInnerInventoryDet.class);
                 Example.Criteria criteria = example.createCriteria();
-                criteria.andEqualTo("outStorageId", dto.getOutStorageId());
+                criteria.andEqualTo("storageId", dto.getOutStorageId());
                 criteria.andEqualTo("materialBarcodeId", det.getMaterialBarcodeId());
-                criteria.andEqualTo("materialId", dto.getMaterialId());
                 List<WmsInnerInventoryDet> wmsInnerInventoryDets = wmsInnerInventoryDetMapper.selectByExample(example);
                 if(StringUtils.isEmpty(wmsInnerInventoryDets)){
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到已出库位的物料条码，条码为："+det.getBarcode());
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到移出库位的物料条码，条码为："+det.getBarcode());
                 }
                 WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDets.get(0);
                 wmsInnerInventoryDet.setStorageId(dto.getInStorageId());
-                inventoryDetList.add(wmsInnerInventoryDet);
-
+                wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
 
                 //保存明细表
                 WmsInnerDirectTransferOrderDet orderDet = new WmsInnerDirectTransferOrderDet();
@@ -147,22 +169,11 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                 wmsInnerMaterialBarcodeReOrder.setModifiedTime(new Date());
                 list.add(wmsInnerMaterialBarcodeReOrder);
 
-
-                //更新库存,默认一个箱码或者栈板码下只有一个一种物料类型
-                //更换到jobOrder表后,子表存在批次号,可考虑移到循环外
-                Example example1 = new Example(WmsInnerInventory.class);
-                Example.Criteria criteria1 = example1.createCriteria();
-                criteria1.andEqualTo("storageId", dto.getOutStorageId())
-                        .andEqualTo("batchCode", wmsInnerMaterialBarcodes.get(0).getBatchCode())
-                        .andEqualTo("materialId", dto.getMaterialId());
-                List<WmsInnerInventory> wmsInnerInventorys = wmsInnerInventoryMapper.selectByExample(example1);
-                if(StringUtils.isEmpty(wmsInnerInventorys)){
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到移出库位");
-                }
-                WmsInnerInventory wmsInnerInventory = wmsInnerInventorys.get(0);
-                wmsInnerInventory.setInventoryTotalQty(wmsInnerInventory.getInventoryTotalQty().subtract(new BigDecimal(1)));
+                //库存更新
+                wmsInnerInventory.setInventoryTotalQty(wmsInnerInventory.getPackingQty().subtract(wmsInnerMaterialBarcodes.get(0).getMaterialQty()));
                 wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
 
+                WmsInnerInventory inWmsInnerInventory = new WmsInnerInventory();
                 Example example3 = new Example(WmsInnerInventory.class);
                 Example.Criteria criteria3 = example1.createCriteria();
                 criteria3.andEqualTo("storageId", dto.getInStorageId())
@@ -170,22 +181,30 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                         .andEqualTo("materialId", dto.getMaterialId());
                 List<WmsInnerInventory> inWmsInnerInventorys = wmsInnerInventoryMapper.selectByExample(example3);
                 if(StringUtils.isEmpty(inWmsInnerInventorys)){
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到移出库位");
+                   // throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到移出库位");
+                    BeanUtils.copyProperties(wmsInnerInventory,inWmsInnerInventorys);
+                    inWmsInnerInventory.setStorageId(dto.getInStorageId());
+                    inWmsInnerInventory.setJobStatus((byte)1);
+                    inWmsInnerInventory.setLockStatus((byte)0);
+                    inWmsInnerInventory.setStockLock((byte)0);
+                    inWmsInnerInventory.setStatus((byte)1);
+                    inWmsInnerInventory.setOrgId(user.getOrganizationId());
+                    inWmsInnerInventory.setCreateUserId(user.getUserId());
+                    inWmsInnerInventory.setCreateTime(new Date());
+                    inWmsInnerInventory.setModifiedUserId(user.getUserId());
+                    inWmsInnerInventory.setModifiedTime(new Date());
+                    inWmsInnerInventory.setPackingQty(inWmsInnerInventory.getPackingQty().add(wmsInnerMaterialBarcodes.get(0).getMaterialQty()));
+                    i = wmsInnerInventoryMapper.insertSelective(inWmsInnerInventory);
+                }else{
+                    inWmsInnerInventory = wmsInnerInventorys.get(0);
+                    inWmsInnerInventory.setPackingQty(inWmsInnerInventory.getPackingQty().add(wmsInnerMaterialBarcodes.get(0).getMaterialQty()));
+                    i = wmsInnerInventoryMapper.updateByPrimaryKeySelective(inWmsInnerInventory);
                 }
-                WmsInnerInventory inWmsInnerInventory = wmsInnerInventorys.get(0);
-                inWmsInnerInventory.setInventoryTotalQty(inWmsInnerInventory.getInventoryTotalQty().add(new BigDecimal(1)));
-                wmsInnerInventoryMapper.updateByPrimaryKeySelective(inWmsInnerInventory);
-
             }
-
         }
         if(StringUtils.isNotEmpty(list)){
             wmsInnerMaterialBarcodeReOrderMapper.insertList(list);
         }
-        if(StringUtils.isNotEmpty(inventoryDetList)){
-            wmsInnerInventoryDetMapper.insertList(inventoryDetList);
-        }
-
 
         return i;
     }

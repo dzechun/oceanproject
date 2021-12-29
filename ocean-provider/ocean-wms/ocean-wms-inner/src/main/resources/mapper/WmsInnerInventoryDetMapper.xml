@@ -111,6 +111,18 @@
             <if test="storageId!=null and storageId!='' and notEqualMark==1">
                 and wiid.storage_id != #{storageId}
             </if>
+            <if test="productionStartDate!= null and productionStartDate!= '' and productionEndDate!= null and productionEndDate!= ''">
+                and date_format(wiid.production_date, '%Y-%m-%d') BETWEEN #{productionStartDate} AND #{productionEndDate}
+            </if>
+            <if test="expiredStartDate!= null and expiredStartDate!= '' and expiredEndDate!= null and expiredEndDate!= ''">
+                and date_format(wiid.expired_date, '%Y-%m-%d') BETWEEN #{expiredStartDate} AND #{expiredEndDate}
+            </if>
+            <if test="receivingStartDate!= null and receivingStartDate!= '' and receivingEndDate!= null and receivingEndDate!= ''">
+                and date_format(wiid.receiving_date, '%Y-%m-%d') BETWEEN #{receivingStartDate} AND #{receivingEndDate}
+            </if>
+            <if test="deliverStartDate!= null and deliverStartDate!= '' and deliverEndDate!= null and deliverEndDate!= ''">
+                and date_format(wiid.deliver_date, '%Y-%m-%d') BETWEEN #{deliverStartDate} AND #{deliverEndDate}
+            </if>
             <if test="inventoryStatusId!=null and inventoryStatusId!=''">
                 and wiid.inventory_status_id = #{inventoryStatusId}
             </if>
@@ -156,6 +168,10 @@
             <if test="orgId!=null and orgId!=''">
                 and wiid.org_id = #{orgId}
             </if>
+            <if test="materialBarcodeId!=null and materialBarcodeId!=''">
+                and wiid.material_barcode_id = #{materialBarcodeId}
+            </if>
+
             <if test="materialBarcodeIdList != null and materialBarcodeIdList.size() > 0">
                 and wimb.material_barcode_id
                 <foreach collection="materialBarcodeIdList" open="in (" close=")" item="item" separator="," index="index">
