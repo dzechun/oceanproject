@@ -288,11 +288,12 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                 wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(wmsInnerMaterialBarCode.getMaterialBarcodeId());
                 wmsInnerMaterialBarcodeReOrderList.add(wmsInnerMaterialBarcodeReOrder);
             }
-            wmsInnerMaterialBarcodeReOrderService.batchAdd(wmsInnerMaterialBarcodeReOrderList);
+
         }
         if (StringUtils.isNotEmpty(htList)) {
             wmsInnerHtMaterialBarcodeMapper.insertList(htList);
         }
+        wmsInnerMaterialBarcodeReOrderService.batchAdd(wmsInnerMaterialBarcodeReOrderList);
         return materialBarcodeList;
     }
 
