@@ -25,4 +25,6 @@ public interface BaseStorageMapper extends MyMapper<BaseStorage> {
     List<StorageRuleDto> EmptyStorage(Map<String ,Object> map);
     List<StorageRuleDto> MixedWithStorage(Map<String ,Object> map);
     List<StorageRuleDto> LastStorage(Map<String ,Object> map);
+
+    List<BaseStorage> findStockDetStorageList(Map<String, Object> map);
 }

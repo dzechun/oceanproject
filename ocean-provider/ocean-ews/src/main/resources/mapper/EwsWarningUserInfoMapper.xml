@@ -54,7 +54,7 @@ ewui.is_delete
       and u.user_code like CONCAT('%',#{userCode},'%')
     </if>
     <if test="nickName!=null and nickName!=''">
-      and u,nick_name like CONCAT('%',#{nickName},'%')
+      and u.nick_name like CONCAT('%',#{nickName},'%')
     </if>
     </where>
     order by ewui.create_time desc

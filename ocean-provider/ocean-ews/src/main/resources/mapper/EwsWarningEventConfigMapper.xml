@@ -68,11 +68,17 @@ ewec.option3
           and ewec.warning_event_config_id = #{warningEventConfigId}
         </if>
         <if test="warningEventIdCode!=null and warningEventIdCode!=''">
-          and ewec.warning_event_id_code like CONCAR('%',#{warningEventIdCode},'%')
+          and ewec.warning_event_id_code like CONCAT('%',#{warningEventIdCode},'%')
         </if>
         <if test="warningEventName!=null and warningEventName!=''">
           and ewec.warning_event_name like CONCAT('%',#{warningEventName},'%')
         </if>
+      <if test="warningEventDesc!=null and warningEventDesc!=''">
+        and ewec.warning_event_desc like CONCAT('%',#{warningEventDesc},'%')
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(ewec.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
     </where>
     order by ewec.create_time desc
   </select>

@@ -1,5 +1,6 @@
 package com.fantechs.provider.ews.controller;
 
+import com.fantechs.common.base.general.dto.ews.EwsHtWarningPushConfigDto;
 import com.fantechs.common.base.general.dto.ews.EwsWarningPushConfigDto;
 import com.fantechs.common.base.general.entity.ews.EwsWarningPushConfig;
 import com.fantechs.common.base.general.entity.ews.search.SearchEwsWarningPushConfig;
@@ -63,6 +64,14 @@ public class EwsWarningPushConfigController {
     public ResponseEntity<List<EwsWarningPushConfigDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchEwsWarningPushConfig searchEwsWarningPushConfig) {
         Page<Object> page = PageHelper.startPage(searchEwsWarningPushConfig.getStartPage(),searchEwsWarningPushConfig.getPageSize());
         List<EwsWarningPushConfigDto> list = ewsWarningPushConfigService.findList(ControllerUtil.dynamicConditionByEntity(searchEwsWarningPushConfig));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<EwsHtWarningPushConfigDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchEwsWarningPushConfig searchEwsWarningPushConfig) {
+        Page<Object> page = PageHelper.startPage(searchEwsWarningPushConfig.getStartPage(),searchEwsWarningPushConfig.getPageSize());
+        List<EwsHtWarningPushConfigDto> list = ewsWarningPushConfigService.findHtList(ControllerUtil.dynamicConditionByEntity(searchEwsWarningPushConfig));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 }

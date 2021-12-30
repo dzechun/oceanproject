@@ -134,6 +134,9 @@
             <if test="lockStatus!=null and lockStatus != ''">
                 and wii.lock_status = #{lockStatus}
             </if>
+            <if test="stockLock!=null and stockLock != ''">
+                and wii.stock_lock = #{stockLock}
+            </if>
             <if test="jobStatus!=null and jobStatus != ''">
                 and wii.job_status = #{jobStatus}
             </if>
@@ -163,6 +166,9 @@
             </if>
             <if test="materialName!=null and materialName != ''">
                 and bm.material_name like CONCAT("%",#{materialName},"%")
+            </if>
+            <if test="packingUnitName!=null and packingUnitName != ''">
+                and wii.packing_unit_name = #{packingUnitName}
             </if>
             <if test="relevanceOrderCode!=null and relevanceOrderCode != ''">
                 and wii.relevance_order_code like CONCAT("%",#{relevanceOrderCode},"%")
@@ -195,13 +201,13 @@
                 and wii.status=#{status}
             </if>
             <if test="startTime!= null and endTime!= null ">
-                and date_format(wii.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+                and date_format(wii.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND  date_format(#{endTime}, '%Y-%m-%d')
             </if>
             <if test="productionStartDate!= null and productionEndDate!= null ">
-                and date_format(wii.production_date, '%Y-%m-%d') BETWEEN #{productionStartDate} AND #{productionEndDate}
+                and date_format(wii.production_date, '%Y-%m-%d') BETWEEN date_format(#{productionStartDate}, '%Y-%m-%d') AND  date_format(#{productionEndDate}, '%Y-%m-%d')
             </if>
             <if test="expiredStartDate!= null and expiredEndDate!= null ">
-                and date_format(wii.expired_date, '%Y-%m-%d') BETWEEN #{expiredStartDate} AND #{expiredEndDate}
+                and date_format(wii.expired_date, '%Y-%m-%d') BETWEEN date_format(#{expiredStartDate}, '%Y-%m-%d') AND  date_format(#{expiredEndDate}, '%Y-%m-%d')
             </if>
             <if test="warehouseId!=null and warehouseId!=''">
                 and wii.warehouse_id = #{warehouseId}

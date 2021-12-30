@@ -125,6 +125,19 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
     }
 
     @Override
+    public List<BaseMaterialDto> findStockDetMaterialList(Map<String, Object> map){
+        if(StringUtils.isEmpty(map.get("organizationId"))) {
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
+            map.put("organizationId", user.getOrganizationId());
+        }
+
+        List<BaseMaterialDto> smtMaterialDtos = baseMaterialMapper.findStockDetMaterialList(map);
+
+        return smtMaterialDtos;
+    }
+
+    @Override
     public List<BaseMaterialDto> findAll(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("organizationId"))) {
             SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();

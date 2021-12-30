@@ -15,4 +15,6 @@ public interface BaseMaterialMapper extends MyMapper<BaseMaterial> {
 
     //根据编码进行批量更新
     int batchUpdateByCode(List<BaseMaterial> baseMaterials);
+
+    List<BaseMaterialDto> findStockDetMaterialList(Map<String, Object> map);
 }

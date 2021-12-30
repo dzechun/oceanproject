@@ -119,6 +119,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                 wmsInReceivingOrderDet.setCreateTime(new Date());
                 wmsInReceivingOrderDet.setModifiedTime(new Date());
                 wmsInReceivingOrderDet.setModifiedUserId(sysUser.getUserId());
+                wmsInReceivingOrderDet.setIfAllIssued((byte)0);
                 wmsInReceivingOrderDet.setOrgId(sysUser.getOrganizationId());
 
                 if(StringUtils.isNotEmpty(record.getIsPdaCreate()) && record.getIsPdaCreate()==1){

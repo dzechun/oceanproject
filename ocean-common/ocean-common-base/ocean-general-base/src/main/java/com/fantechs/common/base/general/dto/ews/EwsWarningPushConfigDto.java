@@ -16,6 +16,12 @@ import java.io.Serializable;
 public class EwsWarningPushConfigDto extends EwsWarningPushConfig implements Serializable {
 
     /**
+     * 预警事件ID编码
+     */
+    @ApiModelProperty(name="warningEventIdCode",value = "预警事件ID编码")
+    private String warningEventIdCode;
+
+    /**
      * 事件名称
      */
     @ApiModelProperty(name = "warningEventName",value = "事件名称")

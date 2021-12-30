@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.ews.mapper.EwsHtWarningUserInfoMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.ews.EwsHtWarningUserInfo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="ht_warning_user_info_id" jdbcType="BIGINT" property="htWarningUserInfoId" />
+    <result column="warning_user_info_id" jdbcType="BIGINT" property="warningUserInfoId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="wechat" jdbcType="VARCHAR" property="wechat" />
+    <result column="ding_talk" jdbcType="VARCHAR" property="dingTalk" />
+    <result column="mobile_phone" jdbcType="VARCHAR" property="mobilePhone" />
+    <result column="e_mail_address" jdbcType="VARCHAR" property="eMailAddress" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+  <resultMap id="BaseResultMapto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.ews.EwsHtWarningUserInfoDto">
+    <result column="user_code" jdbcType="VARCHAR" property="userCode"/>
+    <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+  </resultMap>
+  <sql id="base_column_list">
+ewui.ht_warning_user_info_id,
+    ewui.warning_user_info_id,
+    ewui.user_id,
+    ewui.wechat,
+    ewui.ding_talk,
+    ewui.mobile_phone,
+    ewui.e_mail_address,
+    ewui.remark,
+ewui.org_id,
+ewui.create_user_id,
+ewui.create_time,
+ewui.modified_user_id,
+ewui.modified_time,
+ewui.is_delete
+  </sql>
+  <select id="findList" resultMap="BaseResultMapto">
+    select <include refid="base_column_list"/>,u.user_code,u.nick_name,su.user_name AS create_user_name,sus.user_name AS modified_user_name,bo.organization_name
+    FROM ews_ht_warning_user_info ewui
+    LEFT JOIN sys_user u on ewui.user_id = u.user_id
+    LEFT JOIN sys_user su ON ewui.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON ewui.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON ewui.org_id = bo.organization_id
+    <where>
+      <if test="userCode!=null and userCode!=''">
+        and u.user_code like CONCAT('%',#{userCode},'%')
+      </if>
+      <if test="nickName!=null and nickName!=''">
+        and u.nick_name like CONCAT('%',#{nickName},'%')
+      </if>
+    </where>
+    order by ewui.create_time desc
+  </select>
+</mapper>
