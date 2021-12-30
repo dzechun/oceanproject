@@ -1,6 +1,11 @@
 package com.fantechs.provider.ews.config;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fantechs.common.base.general.entity.ews.EwsWarningEventExecuteLog;
+import com.fantechs.common.base.general.entity.ews.EwsWarningEventExecutePushLog;
+import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.ews.mapper.EwsWarningEventExecuteLogMapper;
+import com.fantechs.provider.ews.mapper.EwsWarningEventExecutePushLogMapper;
 import com.fantechs.provider.ews.service.QuartzManagerService;
 import lombok.SneakyThrows;
 import org.quartz.DisallowConcurrentExecution;
@@ -17,6 +22,7 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +38,10 @@ import java.util.Set;
 public class QuartzDoInterface extends QuartzJobBean {
     @Resource
     private QuartzManagerService quartzManager;
+    @Resource
+    private EwsWarningEventExecuteLogMapper ewsWarningEventExecuteLogMapper;
+    @Resource
+    private EwsWarningEventExecutePushLogMapper ewsWarningEventExecutePushLogMapper;
     private static Logger log= LoggerFactory.getLogger(QuartzDoInterface.class);
     private Map<String,Object> map=new HashMap<>();
     private String url;
@@ -78,6 +88,28 @@ public class QuartzDoInterface extends QuartzJobBean {
             e2.setUnscheduleAllTriggers(true);
         }
         log.info("执行结果："+exchange);
+        //解析执行结果
+        if(StringUtils.isNotEmpty(exchange) && StringUtils.isNotEmpty(exchange.getBody())){
+            Map<String,Object> map = JSONObject.parseObject(exchange.getBody());
+            if(map.containsKey("data") && StringUtils.isEmpty(map.get("data"))){
+                Map<String,Object> data = JSONObject.parseObject(map.get("data").toString());
+                if(StringUtils.isNotEmpty(data.get("schedule"),data.get("warningEventConfigId")) && Integer.parseInt(data.get("schedule").toString())==1){
+                    EwsWarningEventExecuteLog ewsWarningEventExecuteLog = new EwsWarningEventExecuteLog();
+                    ewsWarningEventExecuteLog.setWarningEventConfigId(Long.parseLong(data.get("warningEventConfigId").toString()));
+                    ewsWarningEventExecuteLog.setExecuteParameter(data.containsKey("message")?(StringUtils.isNotEmpty(data.get("message"))?data.get("message").toString():null):null);
+                    ewsWarningEventExecuteLog.setHandleResult((byte)1);
+                    ewsWarningEventExecuteLog.setCreateTime(new Date());
+                    ewsWarningEventExecuteLog.setModifiedTime(new Date());
+                    ewsWarningEventExecuteLogMapper.insertUseGeneratedKeys(ewsWarningEventExecuteLog);
+                    EwsWarningEventExecutePushLog ewsWarningEventExecutePushLog = new EwsWarningEventExecutePushLog();
+                    ewsWarningEventExecutePushLog.setWarningEventExecuteLogId(ewsWarningEventExecuteLog.getWarningEventExecuteLogId());
+                    ewsWarningEventExecutePushLog.setMessagePushResult((byte)1);
+                    ewsWarningEventExecutePushLog.setPersonnelLevel((byte)1);
+                    ewsWarningEventExecutePushLog.setCreateTime(new Date());
+                    ewsWarningEventExecutePushLogMapper.insertSelective(ewsWarningEventExecutePushLog);
+                }
+            }
+        }
         /*log.info("执行结果："+exchange!=null?exchange.getBody():"执行错误");*/
     }
 }

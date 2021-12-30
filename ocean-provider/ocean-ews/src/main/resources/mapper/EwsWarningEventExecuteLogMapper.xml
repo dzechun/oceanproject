@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.ews.mapper.EwsWarningEventExecuteLogMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.ews.EwsWarningEventExecuteLog">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="warning_event_execute_log_id" jdbcType="BIGINT" property="warningEventExecuteLogId" />
+    <result column="warning_event_config_id" jdbcType="BIGINT" property="warningEventConfigId" />
+    <result column="execute_result" jdbcType="TINYINT" property="executeResult" />
+    <result column="handle_result" jdbcType="TINYINT" property="handleResult" />
+    <result column="execute_time" jdbcType="TIMESTAMP" property="executeTime" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <result column="execute_parameter" jdbcType="LONGVARCHAR" property="executeParameter" />
+    <result column="execute_result_message" jdbcType="LONGVARCHAR" property="executeResultMessage" />
+  </resultMap>
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.ews.EwsWarningEventExecuteLogDto">
+    <result column="warning_event_name" jdbcType="VARCHAR" property="warningEventName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+  </resultMap>
+  <sql id="base_column_list">
+    eweel.warning_event_execute_log_id,
+    eweel.warning_event_config_id,
+eweel.execute_result,
+eweel.handle_result,
+eweel.execute_time,
+eweel.remark,
+eweel.status,
+eweel.org_id,
+eweel.create_user_id,
+eweel.create_time,
+eweel.modified_user_id,
+eweel.modified_time,
+eweel.is_delete,
+eweel.option1,
+eweel.option2,
+eweel.option3,
+eweel.execute_parameter,
+eweel.execute_result_message
+  </sql>
+  <select id="findList" resultMap="BaseResultMapDto">
+    select <include refid="base_column_list"/>,ewec.warning_event_name,su.user_name AS create_user_name,sus.user_name AS modified_user_name,bo.organization_name
+    FROM ews_warning_event_execute_log eweel
+    LEFT JOIN ews_warning_event_config ewec on eweel.warning_event_config_id = ewec.warning_event_config_id
+    LEFT JOIN sys_user su ON eweel.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON eweel.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON eweel.org_id = bo.organization_id
+<where>
+  <if test="warningEventExecuteLogId!=null and warningEventExecuteLogId!=''">
+    and eweel.warning_event_execute_log_id = #{warningEventExecuteLogId}
+  </if>
+  <if test="warningEventConfigId!=null and warningEventConfigId!=''">
+    and eweel.warning_event_config_id = #{warningEventConfigId}
+  </if>
+  <if test="orgId!=null and orgId!=''">
+    and eweel.org_id = #{orgId}
+  </if>
+</where>
+  </select>
+
+  <select id="findUntreatedLog" resultType="com.fantechs.common.base.general.dto.ews.UntreatedLogDto">
+    SELECT
+      eweep.warning_event_execute_push_log_id as 'warningEventExecutePushLogId',
+            eweep.message_push_result as 'messagePushResult',
+            eweep.personnel_level 'personnelLevel',
+            eweep.handle_time 'handleTime',
+            ewpc.handle_time as 'aging',
+            ewee.execute_time as 'executeTime',
+            ewee.execute_parameter as 'executeParameter',
+            ewpc.notification_method as 'notificationMethod',
+            CASE ewpc.handle_time_unit
+              WHEN '0' THEN
+                TIMESTAMPDIFF(DAY,ewee.execute_time,DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%S'))
+              WHEN '1' THEN
+                TIMESTAMPDIFF(HOUR,ewee.execute_time,DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%S'))
+              WHEN '2' THEN
+                TIMESTAMPDIFF(MINUTE,ewee.execute_time,DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%S'))
+              END 'untreatedTime',
+            eweep.warning_event_execute_log_id as 'warningEventExecuteLogId',
+            ewpc.warning_push_config_id 'warningPushConfigId',
+            ewee.warning_event_config_id 'warningEventConfigId'
+    FROM ews_warning_event_execute_push_log eweep
+           LEFT JOIN ews_warning_event_execute_log ewee ON eweep.warning_event_execute_log_id = ewee.warning_event_execute_log_id
+           LEFT JOIN ews_warning_push_config ewpc ON ewee.warning_event_config_id = ewpc.warning_event_config_id AND ewpc.personnel_level = eweep.personnel_level
+           LEFT JOIN ews_warning_push_config_re_wui ewpcr ON ewpcr.warning_push_config_id = ewpc.warning_push_config_id
+    WHERE ewee.handle_result = 0
+  </select>
+  <select id="findLogUreport" resultType="com.fantechs.common.base.general.dto.ews.LogUreportDto">
+    SELECT
+    eweep.warning_event_execute_push_log_id as 'warningEventExecutePushLogId',
+    ewec.warning_event_id_code as 'warningEventIdCode',
+    ewec.warning_event_name as 'warningEventName',
+    ewec.warning_event_desc as 'warningEventDesc',
+    ewec.calling_method as 'callingMethod',
+    ewpc.notification_method as 'notificationMethod',
+    eweel.execute_time as 'executeTime',
+    eweel.modified_time as 'modifiedTime',
+    eweel.execute_result as 'executeResult',
+    eweep.message_push_result as 'messagePushResult',
+    eweel.handle_result as 'handleResult',
+    eweep.handle_time as 'handleTime',
+    eweep.personnel_level as'personnelLevel',
+    eweel.execute_parameter as 'executeParameter',
+    ewpc.warning_push_config_id as 'warningPushConfigId'
+    FROM ews_warning_event_execute_push_log eweep
+    LEFT JOIN ews_warning_event_execute_log eweel ON eweep.warning_event_execute_log_id = eweel.warning_event_execute_log_id
+    LEFT JOIN ews_warning_event_config ewec ON eweel.warning_event_config_id = ewec.warning_event_config_id
+    LEFT JOIN ews_warning_push_config ewpc ON ewec.warning_event_config_id = ewpc.warning_event_config_id AND ewpc.personnel_level = eweep.personnel_level
+    <where>
+      <if test="warningEventIdCode!=null and warningEventIdCode!=''">
+        and ewec.warning_event_id_code like CONCAT('%',#{warningEventIdCode},'%')
+      </if>
+     <if test="warningEventName!=null and warningEventName!=''">
+       and ewec.warning_event_name like CONCAT('%',#{warningEventName},'%')
+     </if>
+    <if test="notificationMethod!=null and notificationMethod!=''">
+      and ewpc.notification_method = #{notificationMethod}
+    </if>
+    <if test="executeResult!=null and executeResult!=''">
+      and eweel.execute_result = #{executeResult}
+    </if>
+    <if test="messagePushResult!=null and messagePushResult!=''">
+      and eweep.message_push_result = #{messagePushResult}
+    </if>
+    <if test="handleResult!=null and handleResult!=''">
+      and eweel.handle_result = #{handleResult}
+    </if>
+    <if test="personnelLevel!=null and personnelLevel!=''">
+      eweep.personnel_level = #{personnelLevel}
+    </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(eweep.handle_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+    </where>
+  </select>
+</mapper>

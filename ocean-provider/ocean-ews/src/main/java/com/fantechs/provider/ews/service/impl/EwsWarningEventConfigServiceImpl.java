@@ -8,6 +8,7 @@ import com.fantechs.common.base.general.entity.basic.search.QuartzSearch;
 import com.fantechs.common.base.general.entity.ews.EwsWarningEventConfig;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -48,6 +49,7 @@ public class EwsWarningEventConfigServiceImpl extends BaseService<EwsWarningEven
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EwsWarningEventConfig record) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        record.setWarningEventIdCode(CodeUtils.getId("SD-"));
         record.setCreateTime(new Date());
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());

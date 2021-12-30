@@ -3,13 +3,18 @@ package com.fantechs.provider.ews.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.ews.EwsHtWarningPushConfigDto;
 import com.fantechs.common.base.general.dto.ews.EwsWarningPushConfigDto;
 import com.fantechs.common.base.general.dto.ews.EwsWarningPushConfigReWuiDto;
+import com.fantechs.common.base.general.entity.ews.EwsHtWarningPushConfig;
+import com.fantechs.common.base.general.entity.ews.EwsHtWarningPushConfigReWui;
 import com.fantechs.common.base.general.entity.ews.EwsWarningPushConfig;
 import com.fantechs.common.base.general.entity.ews.EwsWarningPushConfigReWui;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.ews.mapper.EwsHtWarningPushConfigMapper;
+import com.fantechs.provider.ews.mapper.EwsHtWarningPushConfigReWuiMapper;
 import com.fantechs.provider.ews.mapper.EwsWarningPushConfigMapper;
 import com.fantechs.provider.ews.mapper.EwsWarningPushConfigReWuiMapper;
 import com.fantechs.provider.ews.service.EwsWarningPushConfigService;
@@ -35,12 +40,23 @@ public class EwsWarningPushConfigServiceImpl extends BaseService<EwsWarningPushC
     private EwsWarningPushConfigMapper ewsWarningPushConfigMapper;
     @Resource
     private EwsWarningPushConfigReWuiMapper ewsWarningPushConfigReWuiMapper;
+    @Resource
+    private EwsHtWarningPushConfigMapper ewsHtWarningPushConfigMapper;
+    @Resource
+    private EwsHtWarningPushConfigReWuiMapper ewsHtWarningPushConfigReWuiMapper;
 
     @Override
     public List<EwsWarningPushConfigDto> findList(Map<String, Object> map) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",sysUser.getOrganizationId());
         return ewsWarningPushConfigMapper.findList(map);
+    }
+
+    @Override
+    public List<EwsHtWarningPushConfigDto> findHtList(Map<String, Object> map) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId",sysUser.getOrganizationId());
+        return ewsHtWarningPushConfigMapper.findList(map);
     }
 
     @Override
@@ -63,7 +79,13 @@ public class EwsWarningPushConfigServiceImpl extends BaseService<EwsWarningPushC
         record.setModifiedUserId(sysUser.getUserId());
         record.setOrgId(sysUser.getOrganizationId());
         int num = ewsWarningPushConfigMapper.insertUseGeneratedKeys(record);
+
+        EwsHtWarningPushConfig ewsHtWarningPushConfig = new EwsHtWarningPushConfig();
+        BeanUtils.copyProperties(record,ewsHtWarningPushConfig);
+        ewsHtWarningPushConfigMapper.insertSelective(ewsHtWarningPushConfig);
+
         List<EwsWarningPushConfigReWui> list = new ArrayList<>();
+        List<EwsHtWarningPushConfigReWui> ewsHtWarningPushConfigReWuis = new ArrayList<>();
         for (EwsWarningPushConfigReWuiDto ewsWarningPushConfigReWuiDto : record.getEwsWarningPushConfigReWuiDtos()) {
             EwsWarningPushConfigReWui ewsWarningPushConfigReWui = new EwsWarningPushConfigReWui();
             BeanUtils.copyProperties(ewsWarningPushConfigReWuiDto,ewsWarningPushConfigReWui);
@@ -73,9 +95,15 @@ public class EwsWarningPushConfigServiceImpl extends BaseService<EwsWarningPushC
             ewsWarningPushConfigReWui.setModifiedUserId(sysUser.getUserId());
             ewsWarningPushConfigReWui.setModifiedTime(new Date());
             ewsWarningPushConfigReWui.setOrgId(sysUser.getOrganizationId());
+            list.add(ewsWarningPushConfigReWui);
+
+            EwsHtWarningPushConfigReWui ewsHtWarningPushConfigReWui = new EwsHtWarningPushConfigReWui();
+            BeanUtils.copyProperties(ewsWarningPushConfigReWui,ewsHtWarningPushConfigReWui);
+            ewsHtWarningPushConfigReWuis.add(ewsHtWarningPushConfigReWui);
         }
         if(list.size()>0){
             ewsWarningPushConfigReWuiMapper.insertList(list);
+            ewsHtWarningPushConfigReWuiMapper.insertList(ewsHtWarningPushConfigReWuis);
         }
         return num;
     }
@@ -97,12 +125,17 @@ public class EwsWarningPushConfigServiceImpl extends BaseService<EwsWarningPushC
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(sysUser.getUserId());
 
+        EwsHtWarningPushConfig ewsHtWarningPushConfig = new EwsHtWarningPushConfig();
+        BeanUtils.copyProperties(entity,ewsHtWarningPushConfig);
+        ewsHtWarningPushConfigMapper.insertSelective(ewsHtWarningPushConfig);
+
         //删除原有数据
         example = new Example(EwsWarningPushConfigReWui.class);
         example.createCriteria().andEqualTo("warningPushConfigId",entity.getWarningPushConfigId());
         ewsWarningPushConfigReWuiMapper.deleteByExample(example);
 
         List<EwsWarningPushConfigReWui> list = new ArrayList<>();
+        List<EwsHtWarningPushConfigReWui> ewsHtWarningPushConfigReWuis = new ArrayList<>();
         for (EwsWarningPushConfigReWuiDto ewsWarningPushConfigReWuiDto : entity.getEwsWarningPushConfigReWuiDtos()) {
             EwsWarningPushConfigReWui ewsWarningPushConfigReWui = new EwsWarningPushConfigReWui();
             BeanUtils.copyProperties(ewsWarningPushConfigReWuiDto,ewsWarningPushConfigReWui);
@@ -112,9 +145,15 @@ public class EwsWarningPushConfigServiceImpl extends BaseService<EwsWarningPushC
             ewsWarningPushConfigReWui.setModifiedUserId(sysUser.getUserId());
             ewsWarningPushConfigReWui.setModifiedTime(new Date());
             ewsWarningPushConfigReWui.setOrgId(sysUser.getOrganizationId());
+            list.add(ewsWarningPushConfigReWui);
+
+            EwsHtWarningPushConfigReWui ewsHtWarningPushConfigReWui = new EwsHtWarningPushConfigReWui();
+            BeanUtils.copyProperties(ewsWarningPushConfigReWui,ewsHtWarningPushConfigReWui);
+            ewsHtWarningPushConfigReWuis.add(ewsHtWarningPushConfigReWui);
         }
         if(list.size()>0){
             ewsWarningPushConfigReWuiMapper.insertList(list);
+            ewsHtWarningPushConfigReWuiMapper.insertList(ewsHtWarningPushConfigReWuis);
         }
         return super.update(entity);
     }

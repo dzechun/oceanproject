@@ -4,7 +4,6 @@ import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 
 /**
@@ -31,7 +30,6 @@ public class EwsWarningUserInfoImport implements Serializable {
      */
     @ApiModelProperty(name="dingTalk",value = "钉钉")
     @Excel(name = "钉钉", height = 20, width = 30)
-    @Column(name = "ding_talk")
     private String dingTalk;
 
     /**
@@ -39,7 +37,6 @@ public class EwsWarningUserInfoImport implements Serializable {
      */
     @ApiModelProperty(name="mobilePhone",value = "手机号")
     @Excel(name = "手机号", height = 20, width = 30)
-    @Column(name = "mobile_phone")
     private String mobilePhone;
 
     /**
@@ -47,8 +44,7 @@ public class EwsWarningUserInfoImport implements Serializable {
      */
     @ApiModelProperty(name="eMailAddress",value = "邮箱地址")
     @Excel(name = "邮箱地址", height = 20, width = 30)
-    @Column(name = "e_mail_address")
-    private String eMailAddress;
+    private String mailAddress;
 
     /**
      * 备注

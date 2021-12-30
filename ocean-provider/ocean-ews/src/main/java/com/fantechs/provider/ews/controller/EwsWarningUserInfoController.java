@@ -2,6 +2,7 @@ package com.fantechs.provider.ews.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.ews.EwsHtWarningUserInfoDto;
 import com.fantechs.common.base.general.dto.ews.EwsWarningUserInfoDto;
 import com.fantechs.common.base.general.dto.ews.imports.EwsWarningUserInfoImport;
 import com.fantechs.common.base.general.entity.ews.EwsWarningUserInfo;
@@ -72,6 +73,14 @@ public class EwsWarningUserInfoController {
     public ResponseEntity<List<EwsWarningUserInfoDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchEwsWarningUserInfo searchEwsWarningUserInfo) {
         Page<Object> page = PageHelper.startPage(searchEwsWarningUserInfo.getStartPage(),searchEwsWarningUserInfo.getPageSize());
         List<EwsWarningUserInfoDto> list = ewsWarningUserInfoService.findList(ControllerUtil.dynamicConditionByEntity(searchEwsWarningUserInfo));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("列表")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<EwsHtWarningUserInfoDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchEwsWarningUserInfo searchEwsWarningUserInfo) {
+        Page<Object> page = PageHelper.startPage(searchEwsWarningUserInfo.getStartPage(),searchEwsWarningUserInfo.getPageSize());
+        List<EwsHtWarningUserInfoDto> list = ewsWarningUserInfoService.findHtList(ControllerUtil.dynamicConditionByEntity(searchEwsWarningUserInfo));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

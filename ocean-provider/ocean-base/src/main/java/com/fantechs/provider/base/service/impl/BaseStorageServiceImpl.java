@@ -405,4 +405,14 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
         }
         return 1;
     }
+
+    @Override
+    public List<BaseStorage> findStockDetStorageList(Map<String, Object> map) {
+        if(StringUtils.isEmpty(map.get("orgId"))){
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            map.put("orgId", user.getOrganizationId());
+        }
+
+        return baseStorageMapper.findStockDetStorageList(map);
+    }
 }

@@ -108,6 +108,9 @@ wirod.option3
         <if test="materialVersion != null and materialVersion!=''">
           and bm.material_version like CONCAT('%', #{materialVersion}, '%')
         </if>
+        <if test="receivingOrderCode!=null and receivingOrderCode!=''">
+          and wiro.receiving_order_code like CONCAT('%',#{receivingOrderCode},'%')
+        </if>
     </where>
     GROUP BY wirod.receiving_order_det_id
     ) d

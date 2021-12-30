@@ -1,14 +1,11 @@
 package com.fantechs.service.impl;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.*;
 import org.mybatis.generator.internal.util.StringUtility;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.List;
@@ -98,8 +95,8 @@ public class MyBatisPlugin extends PluginAdapter {
                     field.addJavaDocLine("@ApiModelProperty(name=\""+field.getName()+"\",value = \"" + remarks + "\")");
                     if(remarks.indexOf("时间")>0){
                         field.addJavaDocLine("@Excel(name = \""+remarks+"\", height = 20, width = 30,orderNum=\"\",exportFormat =\"yyyy-MM-dd HH:mm:ss\") ");
-                        field.addJavaDocLine("@@JsonFormat(pattern = \"yyyy-MM-dd\", timezone = \"GMT+8\")");
-                        field.addJavaDocLine("@DateTimeFormat(pattern = \"yyyy-MM-dd\")");
+                        field.addJavaDocLine("@JsonFormat(pattern = \"yyyy-MM-dd\", timezone = \"GMT+8\")");
+                        field.addJavaDocLine("DateTimeFormat(pattern = \"yyyy-MM-dd\")");
                     }else{
                         field.addJavaDocLine("@Excel(name = \""+remarks+"\", height = 20, width = 30,orderNum=\"\") ");
                     }

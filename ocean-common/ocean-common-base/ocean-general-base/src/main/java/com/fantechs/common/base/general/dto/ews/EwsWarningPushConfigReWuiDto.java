@@ -33,7 +33,6 @@ public class EwsWarningPushConfigReWuiDto extends EwsWarningPushConfigReWui impl
      */
     @ApiModelProperty(name="dingTalk",value = "钉钉")
     @Excel(name = "钉钉", height = 20, width = 30,orderNum="")
-    @Column(name = "ding_talk")
     private String dingTalk;
 
     /**
@@ -41,7 +40,6 @@ public class EwsWarningPushConfigReWuiDto extends EwsWarningPushConfigReWui impl
      */
     @ApiModelProperty(name="mobilePhone",value = "手机号")
     @Excel(name = "手机号", height = 20, width = 30,orderNum="")
-    @Column(name = "mobile_phone")
     private String mobilePhone;
 
     /**
@@ -49,7 +47,6 @@ public class EwsWarningPushConfigReWuiDto extends EwsWarningPushConfigReWui impl
      */
     @ApiModelProperty(name="eMailAddress",value = "邮箱地址")
     @Excel(name = "邮箱地址", height = 20, width = 30,orderNum="")
-    @Column(name = "e_mail_address")
     private String eMailAddress;
 
     /**
