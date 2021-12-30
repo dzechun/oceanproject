@@ -21,6 +21,7 @@
                type="com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDetDto">
         <result column="barcode_rule_category_id" jdbcType="BIGINT" property="barcodeRuleCategoryId"/>
         <result column="barcode_rule_category_name" jdbcType="VARCHAR" property="barcodeRuleCategoryName"/>
+        <result column="barcode_rule_category_code" jdbcType="VARCHAR" property="barcodeRruleCategoryCode"/>
         <result column="barcode_rule" jdbcType="VARCHAR" property="barcodeRule"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
@@ -31,12 +32,12 @@
             resultMap="BaseResultMapDto">
         select
         sbrsd.barcode_rule_set_det_id,sbrsd.barcode_rule_set_id,sbrsd.barcode_rule_id,sbr.barcode_rule,sbr.barcode_rule_category_id,
-        ssi.spec_name as barcode_rule_category_name,sbrsd.create_user_id, u.user_name as
+        blc.label_category_name as barcode_rule_category_name,blc.label_category_code as barcode_rule_category_code,sbrsd.create_user_id, u.user_name as
         create_user_name,sbrsd.create_time,sbrsd.modified_user_id,
         s.user_name as modified_user_name,sbrsd.modified_time,sbrsd.is_delete, sbrsd.org_id, sbrsd.remark, bo.organization_name
         from base_barcode_rule_set_det sbrsd
         left join base_barcode_rule sbr on sbrsd.barcode_rule_id=sbr.barcode_rule_id
-        left join sys_spec_item ssi on sbr.barcode_rule_category_id=ssi.spec_id
+        left join base_label_category blc on sbr.barcode_rule_category_id=blc.label_category_id
         left join sys_user u on sbrsd.create_user_id=u.user_id
         left join sys_user s on sbrsd.modified_user_id=s.user_id
         LEFT JOIN base_organization bo ON sbrsd.org_id = bo.organization_id

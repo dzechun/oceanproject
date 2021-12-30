@@ -31,6 +31,7 @@
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
                type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto">
         <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
+        <result column="storage_type" jdbcType="TINYINT" property="storageType"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="warehouse_id" jdbcType="VARCHAR" property="warehouseId"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
@@ -73,9 +74,9 @@
     </sql>
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         select<include refid="Base_Column_List"/>,
-        bs.storage_code,bs.warehouse_id,bw.warehouse_name,bo.organization_name,bis.inventory_status_name,
+        bs.storage_code,bs.storage_type,bs.warehouse_id,bw.warehouse_name,bo.organization_name,bis.inventory_status_name,
         wimb.barcode as barcode,wimb.color_box_code as colorBoxCode,wimb.carton_code as cartonCode,wimb.pallet_code as palletCode,
-        wimb.batch_code as batchCode,wimb.material_qty as materialQty,wimb.material_id as materialId,bm.material_code as material_code,
+        wimb.batch_code as batchCode,wimb.production_time as productionTime,wimb.material_qty as materialQty,wimb.material_id as materialId,wimb.barcode_type as barcodeType,bm.material_code as material_code,
         bm.material_name as material_name,bps.package_specification_quantity,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name
         from wms_inner_inventory_det wiid
@@ -111,7 +112,7 @@
             <if test="storageId!=null and storageId!='' and notEqualMark==1">
                 and wiid.storage_id != #{storageId}
             </if>
-            <if test="materialId!=null and materialId!=''">
+            <if test="materialId!=null and materialId!='' and notEqualMark==1">
                 and bm.material_id != #{materialId}
             </if>
             <if test="productionStartDate!= null and productionEndDate!= null">
