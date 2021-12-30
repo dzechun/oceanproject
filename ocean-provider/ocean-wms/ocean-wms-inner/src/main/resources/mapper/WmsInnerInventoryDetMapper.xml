@@ -75,7 +75,7 @@
         select<include refid="Base_Column_List"/>,
         bs.storage_code,bs.warehouse_id,bw.warehouse_name,bo.organization_name,bis.inventory_status_name,
         wimb.barcode as barcode,wimb.color_box_code as colorBoxCode,wimb.carton_code as cartonCode,wimb.pallet_code as palletCode,
-        wimb.batch_code as batchCode,wimb.material_qty as materialQty,wimb.material_id as materialId,bm.material_code as material_code,
+        wimb.batch_code as batchCode,wimb.production_time as productionTime,wimb.material_qty as materialQty,wimb.material_id as materialId,bm.material_code as material_code,
         bm.material_name as material_name,bps.package_specification_quantity,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name
         from wms_inner_inventory_det wiid
@@ -110,9 +110,6 @@
             </if>
             <if test="storageId!=null and storageId!='' and notEqualMark==1">
                 and wiid.storage_id != #{storageId}
-            </if>
-            <if test="materialId!=null and materialId!=''">
-                and bm.material_id != #{materialId}
             </if>
             <if test="productionStartDate!= null and productionEndDate!= null">
                 and date_format(wiid.production_date, '%Y-%m-%d') BETWEEN #{productionStartDate} AND #{productionEndDate}
