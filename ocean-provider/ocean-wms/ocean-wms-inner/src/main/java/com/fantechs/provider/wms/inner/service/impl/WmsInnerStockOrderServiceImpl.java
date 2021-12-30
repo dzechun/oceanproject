@@ -607,7 +607,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
 
                 }
             }
-            else {
+            else if(barcodeType==(byte)4){
                 //栈板码
                 searchOrderDetBarcode.setStockOrderDetId(stockOrderDetId);
                 searchOrderDetBarcode.setPalletCode(barcode);
@@ -624,6 +624,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     }
 
                 }
+            }
+            else {
+
             }
         }
 
@@ -651,6 +654,8 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         List<WmsInnerMaterialBarcodeReOrder> materialBarcodeReOrderList=new ArrayList<>();
         //条码库存集合
         List<WmsInnerInventoryDet> wmsInnerInventoryDets =new ArrayList<>();
+        //盘点条码集合
+        List<WmsInnerStockOrderDetBarcode> orderDetBarcodeList =new ArrayList<>();
 
         //物料ID
         Long materialId=wmsInnerStockOrderDet.getMaterialId();
@@ -773,6 +778,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 wmsInnerMaterialBarcode.setCreateTime(new Date());
                 wmsInnerMaterialBarcode.setCreateUserId(sysUser.getUserId());
 
+                //新增到来料条码表
                 num += wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(wmsInnerMaterialBarcode);
                 //设置来料条码ID
                 Long materialBarcodeId=wmsInnerMaterialBarcode.getMaterialBarcodeId();
@@ -783,13 +789,13 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 wmsInnerMaterialBarcodeReOrder.setOrderId(wmsInnerStockOrder.getStockOrderId());
                 //来料条码ID
                 wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(materialBarcodeId);
-
                 wmsInnerMaterialBarcodeReOrder.setScanStatus((byte)3);
                 wmsInnerMaterialBarcodeReOrder.setOrgId(sysUser.getOrganizationId());
                 wmsInnerMaterialBarcodeReOrder.setCreateTime(new Date());
                 wmsInnerMaterialBarcodeReOrder.setCreateUserId(sysUser.getUserId());
                 materialBarcodeReOrderList.add(wmsInnerMaterialBarcodeReOrder);
 
+                //库存明细条码
                 WmsInnerInventoryDet inventoryDet=new WmsInnerInventoryDet();
                 inventoryDet.setStorageId(storageId);
                 inventoryDet.setMaterialBarcodeId(materialBarcodeId);
@@ -802,6 +808,17 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 inventoryDet.setCreateTime(new Date());
                 wmsInnerInventoryDets.add(inventoryDet);
 
+                //盘点条码明细
+                WmsInnerStockOrderDetBarcode detBarcode=new WmsInnerStockOrderDetBarcode();
+                detBarcode.setStockOrderDetBarcodeId(null);
+                detBarcode.setStockOrderDetId(stockOrderDetId);
+                detBarcode.setMaterialBarcodeId(materialBarcodeId);
+                detBarcode.setStockResult((byte)2);
+                detBarcode.setScanStatus((byte)3);
+                detBarcode.setCreateUserId(sysUser.getUserId());
+                detBarcode.setCreateTime(new Date());
+                orderDetBarcodeList.add(detBarcode);
+
             }
         }
         //非系统条码增加到关系表
@@ -811,6 +828,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         //增加条码库存明细
         if(wmsInnerInventoryDets.size()>0){
             num+=WmsInnerInventoryUtil.updateInventoryDet(wmsInnerInventoryDets);
+        }
+        //增加盘点条码明细
+        if(orderDetBarcodeList.size()>0){
+            num+=wmsInnerStockOrderDetBarcodeMapper.insertList(orderDetBarcodeList);
         }
 
         return num;
