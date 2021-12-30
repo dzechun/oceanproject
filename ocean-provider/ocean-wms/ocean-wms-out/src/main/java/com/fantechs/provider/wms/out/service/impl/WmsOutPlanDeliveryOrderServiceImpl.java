@@ -356,6 +356,7 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
                 //新增父级数据
                 BeanUtils.copyProperties(wmsOutPlanDeliveryOrderImports1.get(0), wmsOutPlanDeliveryOrder);
                 wmsOutPlanDeliveryOrder.setPlanDeliveryOrderCode(CodeUtils.getId("OUT-PDO"));
+                wmsOutPlanDeliveryOrder.setOrderStatus((byte)1);
                 wmsOutPlanDeliveryOrder.setCreateTime(new Date());
                 wmsOutPlanDeliveryOrder.setCreateUserId(user.getUserId());
                 wmsOutPlanDeliveryOrder.setModifiedUserId(user.getUserId());
