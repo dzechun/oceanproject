@@ -16,10 +16,22 @@ public class CommitInnerStockBarcodeDto implements Serializable {
     private String barcode;
 
     /**
-     * 条码类型(1-SN码 2-彩盒号 3-箱号 4-栈板号)
+     * 条码类型(1-SN码 2-彩盒号 3-箱号 4-栈板号 5-非系统条码)
      */
-    @ApiModelProperty(name="barcodeType",value = "条码类型(1-SN码 2-彩盒号 3-箱号 4-栈板号)")
+    @ApiModelProperty(name="barcodeType",value = "条码类型(1-SN码 2-彩盒号 3-箱号 4-栈板号 5-非系统条码)")
     private Byte barcodeType;
+
+    /**
+     * 批号
+     */
+    @ApiModelProperty(name="batchCode",value = "批号")
+    private String batchCode;
+
+    /**
+     * 生产日期
+     */
+    @ApiModelProperty(name="productionTime",value = "生产日期")
+    private String productionTime;
 
     /**
      * 条码物料数量

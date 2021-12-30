@@ -58,6 +58,12 @@ public class SearchBaseMaterial extends BaseQuery implements Serializable {
     private Long workOrderId;
 
     /**
+     * 来源ID
+     */
+    @ApiModelProperty(name = "sourceId",value = "来源ID")
+    private Long sourceId;
+
+    /**
      * 编码查询标记(设为1做等值查询)
      */
     @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")

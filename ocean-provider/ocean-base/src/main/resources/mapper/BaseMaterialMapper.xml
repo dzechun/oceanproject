@@ -133,6 +133,9 @@
         LEFT JOIN base_material_tab bt on sm.material_id = bt.material_id
         LEFT JOIN base_material_category bmc on bmc.material_category_id = bt.material_category_id
         <where>
+            <if test="sourceId!=null and sourceId!=''">
+                and det.stock_order_id=#{sourceId}
+            </if>
             <if test="materialProperty!=null">
                 and bt.material_property=#{materialProperty}
             </if>

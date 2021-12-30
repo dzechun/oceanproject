@@ -90,6 +90,12 @@ public class SearchBaseStorage extends BaseQuery implements Serializable {
     private Long workingAreaId;
 
     /**
+     * 来源ID
+     */
+    @ApiModelProperty(name = "sourceId",value = "来源ID")
+    private Long sourceId;
+
+    /**
      * 工作区编码
      */
     @ApiModelProperty(name = "workingAreaCode",value = "工作区编码")

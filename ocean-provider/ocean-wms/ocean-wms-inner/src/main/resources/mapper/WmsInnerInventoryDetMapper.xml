@@ -192,10 +192,10 @@
             update wms_inner_inventory_det wiid
             <set>
                 <if test="item.storageId != null">
-                    wiid.storage_id = #{item.storageId}
+                    wiid.storage_id = #{item.storageId},
                 </if>
                 <if test="item.barcodeStatus != null">
-                    wiid.barcode_status = #{item.barcodeStatus}
+                    wiid.barcode_status = #{item.barcodeStatus},
                 </if>
             </set>
             where wiid.inventory_det_id = #{item.inventoryDetId}
