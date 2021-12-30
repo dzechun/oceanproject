@@ -160,7 +160,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
 
                 //保存条码关系表
                 WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
-                wmsInnerMaterialBarcodeReOrder.setOrderTypeCode(order.getSysOrderTypeCode());
+                wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("INNER-DTO");
                 wmsInnerMaterialBarcodeReOrder.setOrderCode(order.getDirectTransferOrderCode());
                 wmsInnerMaterialBarcodeReOrder.setOrderId(order.getDirectTransferOrderId());
                 wmsInnerMaterialBarcodeReOrder.setOrderDetId(orderDet.getDirectTransferOrderDetId());
@@ -174,7 +174,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                 list.add(wmsInnerMaterialBarcodeReOrder);
 
                 //库存更新
-                wmsInnerInventory.setInventoryTotalQty(wmsInnerInventory.getPackingQty().subtract(wmsInnerMaterialBarcodes.get(0).getMaterialQty()));
+                wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(wmsInnerMaterialBarcodes.get(0).getMaterialQty()));
                 wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
 
                 WmsInnerInventory inWmsInnerInventory = new WmsInnerInventory();
@@ -205,7 +205,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                     inWmsInnerInventory.setPackingQty(wmsInnerMaterialBarcodes.get(0).getMaterialQty());
                     i = wmsInnerInventoryMapper.insertSelective(inWmsInnerInventory);
                 }else{
-                    inWmsInnerInventory = wmsInnerInventorys.get(0);
+                    inWmsInnerInventory = inWmsInnerInventorys.get(0);
                     inWmsInnerInventory.setPackingQty(inWmsInnerInventory.getPackingQty().add(wmsInnerMaterialBarcodes.get(0).getMaterialQty()));
                     i = wmsInnerInventoryMapper.updateByPrimaryKeySelective(inWmsInnerInventory);
                 }

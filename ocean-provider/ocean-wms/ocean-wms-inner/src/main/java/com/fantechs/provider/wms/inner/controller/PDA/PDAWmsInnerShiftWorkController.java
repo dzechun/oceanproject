@@ -46,13 +46,6 @@ public class PDAWmsInnerShiftWorkController {
         return ControllerUtil.returnDataSuccess(innerJobOrderDetDtos != null && innerJobOrderDetDtos.size() > 0 ? innerJobOrderDetDtos : new ArrayList<>(), (int) page.getTotal());
     }
 
-    @ApiOperation("PDA库内移位拣货校验")
-    @PostMapping("/checkShiftWorkBarcode")
-    public ResponseEntity<CheckShiftWorkBarcodeRecordDto> checkShiftWorkBarcode(@ApiParam(value = "扫码校验DTO", required = true) @RequestBody CheckShiftWorkBarcodeDto dto) {
-        CheckShiftWorkBarcodeRecordDto recordDto = wmsInnerShiftWorkService.checkShiftWorkBarcode(dto);
-        return ControllerUtil.returnDataSuccess(recordDto, 1);
-    }
-
     @ApiOperation("PDA库内移位拣货确认")
     @PostMapping("/saveShiftWorkDetBarcode")
     public ResponseEntity<String> saveShiftWorkDetBarcode(@ApiParam(value = "拣货确认实体", required = true) @RequestBody SaveShiftWorkDetDto dto) {

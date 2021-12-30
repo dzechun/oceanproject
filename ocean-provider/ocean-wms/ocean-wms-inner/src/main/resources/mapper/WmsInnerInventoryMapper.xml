@@ -194,13 +194,13 @@
             <if test="status!=null">
                 and wii.status=#{status}
             </if>
-            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+            <if test="startTime!= null and endTime!= null ">
                 and date_format(wii.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
-            <if test="productionStartDate!= null and productionStartDate!= '' and productionEndDate!= null and productionEndDate!= ''">
+            <if test="productionStartDate!= null and productionEndDate!= null ">
                 and date_format(wii.production_date, '%Y-%m-%d') BETWEEN #{productionStartDate} AND #{productionEndDate}
             </if>
-            <if test="expiredStartDate!= null and expiredStartDate!= '' and expiredEndDate!= null and expiredEndDate!= ''">
+            <if test="expiredStartDate!= null and expiredEndDate!= null ">
                 and date_format(wii.expired_date, '%Y-%m-%d') BETWEEN #{expiredStartDate} AND #{expiredEndDate}
             </if>
             <if test="warehouseId!=null and warehouseId!=''">

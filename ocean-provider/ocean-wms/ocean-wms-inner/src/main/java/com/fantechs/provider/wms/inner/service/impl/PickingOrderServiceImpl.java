@@ -773,52 +773,57 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     if(playQty.compareTo(BigDecimal.ZERO)==1){
                         BigDecimal qty = new BigDecimal(0);
 
-                        if(wmsInnerInventory.getPackingQty().compareTo(playQty)>-1 && wms.getPlanQty().compareTo(playQty)==0){
+                        if(wmsInnerInventory.getPackingQty().compareTo(playQty)>-1){
                             num+=wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(WmsInnerJobOrderDet.builder()
                                     .jobOrderDetId(wms.getJobOrderDetId())
                                     .outStorageId(wmsInnerInventory.getStorageId())
-                                    .distributionQty(wms.getPlanQty())
+                                    .distributionQty(playQty)
                                     .modifiedUserId(sysUser.getUserId())
                                     .modifiedTime(new Date())
                                     //.orderStatus((byte)3)
                                     .lineStatus((byte)2)
                                     .build());
-                            playQty = playQty.subtract(wms.getPlanQty());
-                            wms.setDistributionQty(wms.getPlanQty());
-                            wms.setOutStorageId(wmsInnerInventory.getStorageId());
-                            qty = wms.getPlanQty();
+                            qty = playQty;
+                            playQty = playQty.subtract(playQty);
                             jobDetId = wms.getJobOrderDetId();
                             //分配库存
 //                            num += this.DistributionInventory(wmsInnerJobOrder, wms,2,wmsInnerInventory);
                         }else{
-                            if(wmsInnerInventory.getPackingQty().compareTo(playQty)>-1){
-                                WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
-                                BeanUtil.copyProperties(wms,wmsInnerJobOrderDet);
-                                wmsInnerJobOrderDet.setPlanQty(playQty);
-                                wmsInnerJobOrderDet.setDistributionQty(playQty);
-                                wmsInnerJobOrderDet.setLineStatus((byte) 2);
-                                wmsInnerJobOrderDet.setOutStorageId(wmsInnerInventory.getStorageId());
-                                num+=wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
-                                playQty = BigDecimal.ZERO;
-                                qty = playQty;
-                                jobDetId = wmsInnerJobOrderDet.getJobOrderDetId();
+//                            if(wmsInnerInventory.getPackingQty().compareTo(playQty)>-1){
+//                                WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+//                                BeanUtil.copyProperties(wms,wmsInnerJobOrderDet);
+//                                wmsInnerJobOrderDet.setPlanQty(playQty);
+//                                wmsInnerJobOrderDet.setDistributionQty(playQty);
+//                                wmsInnerJobOrderDet.setLineStatus((byte) 2);
+//                                wmsInnerJobOrderDet.setOutStorageId(wmsInnerInventory.getStorageId());
+//                                num+=wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
+//                                playQty = BigDecimal.ZERO;
+//                                qty = playQty;
+//                                jobDetId = wmsInnerJobOrderDet.getJobOrderDetId();
+//                                //分配库存
+////                                num += this.DistributionInventory(wmsInnerJobOrder, wmsInnerJobOrderDet,2,wmsInnerInventory);
+//                            }else {
+                            WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                            BeanUtil.copyProperties(wms,wmsInnerJobOrderDet);
+                            wmsInnerJobOrderDet.setJobOrderDetId(null);
+                            wmsInnerJobOrderDet.setPlanQty(wmsInnerInventory.getPackingQty());
+                            wmsInnerJobOrderDet.setDistributionQty(wmsInnerInventory.getPackingQty());
+                            wmsInnerJobOrderDet.setOutStorageId(wmsInnerInventory.getStorageId());
+                            wmsInnerJobOrderDet.setLineStatus((byte) 2);
+                            num+=wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
+                            playQty = playQty.subtract(wmsInnerInventory.getPackingQty());
+                            qty = wmsInnerInventory.getPackingQty();
+                            jobDetId = wmsInnerJobOrderDet.getJobOrderDetId();
                                 //分配库存
 //                                num += this.DistributionInventory(wmsInnerJobOrder, wmsInnerJobOrderDet,2,wmsInnerInventory);
-                            }else {
-                                WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
-                                BeanUtil.copyProperties(wms,wmsInnerJobOrderDet);
-                                wmsInnerJobOrderDet.setJobOrderDetId(null);
-                                wmsInnerJobOrderDet.setPlanQty(wmsInnerInventory.getPackingQty());
-                                wmsInnerJobOrderDet.setDistributionQty(wmsInnerInventory.getPackingQty());
-                                wmsInnerJobOrderDet.setOutStorageId(wmsInnerInventory.getStorageId());
-                                wmsInnerJobOrderDet.setLineStatus((byte) 2);
-                                num+=wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
-                                playQty = playQty.subtract(wmsInnerInventory.getPackingQty());
-                                qty = wmsInnerInventory.getPackingQty();
-                                jobDetId = wmsInnerJobOrderDet.getJobOrderDetId();
-                                //分配库存
-//                                num += this.DistributionInventory(wmsInnerJobOrder, wmsInnerJobOrderDet,2,wmsInnerInventory);
-                            }
+//                            }
+
+                            wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(WmsInnerJobOrderDet.builder()
+                                    .jobOrderDetId(wms.getJobOrderDetId())
+                                    .planQty(playQty)
+                                    .modifiedUserId(sysUser.getUserId())
+                                    .modifiedTime(new Date())
+                                    .build());
 
                         }
 
@@ -833,12 +838,6 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                         newWmsInnerInventory.setJobOrderDetId(jobDetId);
                         wmsInnerInventoryMapper.insertUseGeneratedKeys(newWmsInnerInventory);
 
-                        wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(WmsInnerJobOrderDet.builder()
-                                .jobOrderDetId(wms.getJobOrderDetId())
-                                .planQty(playQty)
-                                .modifiedUserId(sysUser.getUserId())
-                                .modifiedTime(new Date())
-                                .build());
                     }
 
                 }
@@ -1061,7 +1060,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     inventoryExample.createCriteria().andEqualTo("storageId",wmsInnerJobOrderDet.getOutStorageId())
                             .andEqualTo("materialId",wmsInnerJobOrderDet.getMaterialId()).andEqualTo("jobStatus",1);
                     List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(inventoryExample);
-
+                    inventoryExample.clear();
                     if(StringUtils.isNotEmpty(wmsInnerInventories)){
                         WmsInnerInventory wmsInnerInventory = wmsInnerInventories.get(0);
                         wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().add(wmsInnerJobOrderDet.getDistributionQty()));

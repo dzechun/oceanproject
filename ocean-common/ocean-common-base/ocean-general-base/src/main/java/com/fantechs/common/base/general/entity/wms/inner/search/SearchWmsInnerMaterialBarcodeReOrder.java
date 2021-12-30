@@ -1,11 +1,11 @@
 package com.fantechs.common.base.general.entity.wms.inner.search;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -153,9 +153,17 @@ public class SearchWmsInnerMaterialBarcodeReOrder extends BaseQuery implements S
     private String batchCode;
 
     /**
+     * 生产日期
+     */
+    @ApiModelProperty(name="productionDate",value = "生产日期")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date productionDate;
+
+    /**
      * 生产时间开始
      */
-    @ApiModelProperty(name="productionTimeStart",value = "生产时间")
+    @ApiModelProperty(name="productionTimeStart",value = "生产开始时间")
     private String productionTimeStart;
 
     /**

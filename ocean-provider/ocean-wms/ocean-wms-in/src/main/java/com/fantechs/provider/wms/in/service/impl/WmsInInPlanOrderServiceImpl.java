@@ -404,7 +404,10 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
         if("IN-IWK".equals(baseOrderFlow.getNextOrderTypeCode())){
             //生成上架作业单
             List<WmsInnerJobOrderDet> detList = new LinkedList<>();
+            List<WmsInInPlanOrderDet> list = new ArrayList<>();
             for(WmsInInPlanOrderDet wmsInInPlanOrderDet : wmsInInPlanOrderDets){
+                if(wmsInInPlanOrders.get(0).getOrderStatus() !=1 || wmsInInPlanOrderDet.getLineStatus() !=1)
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"只有单据状态为待作业的单据才能下推");
                 int lineNumber = 1;
                 WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
                 wmsInnerJobOrderDet.setCoreSourceOrderCode(wmsInInPlanOrderDet.getCoreSourceOrderCode());
@@ -415,6 +418,8 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
                 wmsInnerJobOrderDet.setPlanQty(wmsInInPlanOrderDet.getPlanQty());
                 wmsInnerJobOrderDet.setLineStatus((byte)1);
                 detList.add(wmsInnerJobOrderDet);
+                wmsInInPlanOrderDet.setLineStatus((byte)2);
+                list.add(wmsInInPlanOrderDet);
             }
 
             WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
@@ -436,6 +441,14 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
             }else {
                 i++;
             }
+            //更新详情表状态
+            if(StringUtils.isNotEmpty(list)){
+                for(WmsInInPlanOrderDet det : list){
+                    wmsInInPlanOrderDetMapper.updateByPrimaryKeySelective(det);
+                }
+            }
+            wmsInInPlanOrders.get(0).setOrderStatus((byte)2);
+            wmsInInPlanOrderMapper.updateByPrimaryKeySelective(wmsInInPlanOrders.get(0));
         }else {
             throw new BizErrorException("单据流配置错误");
         }
