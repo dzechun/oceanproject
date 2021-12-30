@@ -112,7 +112,7 @@
             <if test="storageId!=null and storageId!='' and notEqualMark==1">
                 and wiid.storage_id != #{storageId}
             </if>
-            <if test="materialId!=null and materialId!=''">
+            <if test="materialId!=null and materialId!='' and notEqualMark==1">
                 and bm.material_id != #{materialId}
             </if>
             <if test="productionStartDate!= null and productionEndDate!= null">
