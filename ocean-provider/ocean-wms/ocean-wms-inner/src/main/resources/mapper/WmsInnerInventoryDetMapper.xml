@@ -104,6 +104,9 @@
             <if test="cartonCode!=null and cartonCode!=''">
                 and wimb.carton_code = #{cartonCode}
             </if>
+            <if test="palletCode!=null and palletCode!=''">
+                and wimb.pallet_code = #{palletCode}
+            </if>
             <if test="storageId!=null and storageId!='' and notEqualMark!=1">
                 and wiid.storage_id = #{storageId}
             </if>
