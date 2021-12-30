@@ -89,6 +89,9 @@
             <if test="startTime!= null and endTime!= null">
                 and date_format(widto.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
+            <if test="remark != null and remark!=''">
+                and widto.remark like CONCAT('%', #{remark}, '%')
+            </if>
         </where>
         order by widto.create_time desc
     </select>
