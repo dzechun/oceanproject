@@ -226,5 +226,13 @@ public class SearchWmsInnerInventory extends BaseQuery implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date expiredEndDate;
 
+
+    /**
+     * 包装单位名称
+     */
+    @ApiModelProperty(name="packingUnitName",value = "包装单位名称")
+    private String packingUnitName;
+
+
     private static final long serialVersionUID = 1L;
 }
