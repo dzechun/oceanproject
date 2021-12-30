@@ -34,6 +34,8 @@
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
         <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
         <result column="volume" jdbcType="DECIMAL" property="volume"/>
         <result column="net_weight" jdbcType="DECIMAL" property="netWeight"/>
@@ -69,6 +71,7 @@
     <select id="findList" resultMap="BaseResultMapDto">
         SELECT<include refid="Base_Column_List"/>,
         oso.sales_order_code,bw.warehouse_name,bm.material_code,bm.material_name,bmb.main_unit,bmb.volume,bmb.net_weight,bmb.gross_weight,
+        bm.material_desc,bm.material_version,
         su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name
         FROM om_sales_return_order_det osrod
         LEFT JOIN om_sales_order oso ON oso.sales_order_id = osrod.sales_order_id

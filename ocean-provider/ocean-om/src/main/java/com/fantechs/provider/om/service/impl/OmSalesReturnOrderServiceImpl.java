@@ -134,6 +134,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
         record.setOrgId(sysUser.getOrganizationId());
         int num = omSalesReturnOrderMapper.insertUseGeneratedKeys(record);
         for (OmSalesReturnOrderDet omSalesReturnOrderDet : record.getOmSalesReturnOrderDets()) {
+            omSalesReturnOrderDet.setTotalIssueQty(BigDecimal.ZERO);
             omSalesReturnOrderDet.setSalesReturnOrderId(record.getSalesReturnOrderId());
             omSalesReturnOrderDet.setCreateTime(new Date());
             omSalesReturnOrderDet.setCreateUserId(sysUser.getUserId());
@@ -289,6 +290,8 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
             if (order.getIfAllIssued() != null && order.getIfAllIssued() == (byte) 1) {
                 throw new BizErrorException("订单已下推，无法再次下推");
             }
+            if(StringUtils.isEmpty(order.getTotalIssueQty()))
+                order.setTotalIssueQty(BigDecimal.ZERO);
             if (order.getOrderQty().compareTo(order.getTotalIssueQty().add(order.getQty())) == -1) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "累计下发数量大于包装总数");
             }
@@ -328,7 +331,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
         Set<String> codes = detMap.keySet();
         for (String code : codes) {
             String[] split = code.split("_");
-            String nextOrderTypeCode = split[1];//下游单据类型
+            String nextOrderTypeCode = split[0];//下游单据类型
 
             if ("IN-SPO".equals(nextOrderTypeCode)) {
                 //生成收货计划
@@ -611,11 +614,15 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
         //返写下推数据
         if(StringUtils.isNotEmpty(list)) {
             for (OmSalesReturnOrderDet omSalesReturnOrderDet : list) {
+                omSalesReturnOrderDet.setModifiedTime(new Date());
+                omSalesReturnOrderDet.setModifiedUserId(user.getOrganizationId());
                 omSalesReturnOrderDetMapper.updateByPrimaryKeySelective(omSalesReturnOrderDet);
             }
         }
         if (StringUtils.isNotEmpty(orderList)) {
             for (OmSalesReturnOrder omSalesReturnOrder : orderList) {
+                omSalesReturnOrder.setModifiedTime(new Date());
+                omSalesReturnOrder.setModifiedUserId(user.getOrganizationId());
                 omSalesReturnOrderMapper.updateByPrimaryKeySelective(omSalesReturnOrder);
             }
         }

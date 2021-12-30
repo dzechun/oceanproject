@@ -36,6 +36,20 @@ public class OmOtherInOrderDetDto extends OmOtherInOrderDet implements Serializa
     private String materialName;
 
     /**
+     * 物料描述
+     */
+    @Transient
+    @ApiModelProperty(name = "materialDesc",value = "物料描述")
+    private String materialDesc;
+
+    /**
+     * 物料版本
+     */
+    @Transient
+    @ApiModelProperty(name = "materialVersion",value = "物料版本")
+    private String materialVersion;
+    
+    /**
      * 包装单位
      */
     @Transient
