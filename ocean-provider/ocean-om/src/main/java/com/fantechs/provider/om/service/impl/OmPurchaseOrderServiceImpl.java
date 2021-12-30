@@ -134,6 +134,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
         for (OmPurchaseOrderDet omPurchaseOrderDet : omPurchaseOrder.getOmPurchaseOrderDetList()) {
             omPurchaseOrderDet.setPurchaseOrderId(omPurchaseOrder.getPurchaseOrderId());
+            omPurchaseOrderDet.setTotalIssueQty(BigDecimal.ZERO);
             omPurchaseOrderDet.setStatus((byte) 1);
             omPurchaseOrderDet.setOrgId(user.getOrganizationId());
             omPurchaseOrderDet.setCreateUserId(user.getUserId());
@@ -236,6 +237,8 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
             if (order.getIfAllIssued() != null && order.getIfAllIssued() == (byte) 1) {
                 throw new BizErrorException("订单已下推，无法再次下推");
             }
+            if(StringUtils.isEmpty(order.getTotalIssueQty()))
+                order.setTotalIssueQty(BigDecimal.ZERO);
             if (order.getOrderQty().compareTo(order.getTotalIssueQty().add(order.getQty())) == -1) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "累计下发数量大于包装总数");
             }
@@ -277,7 +280,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
         Set<String> codes = detMap.keySet();
         for (String code : codes) {
             String[] split = code.split("_");
-            String nextOrderTypeCode = split[1];//下游单据类型
+            String nextOrderTypeCode = split[0];//下游单据类型
 
             if ("IN-SPO".equals(nextOrderTypeCode)) {
                 //生成收货计划
@@ -548,6 +551,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                         omPurchaseOrderDet.setIfAllIssued((byte) 0);
                         omPurchaseOrderDet.setMaterialStatus((byte) 2);
                     }
+                    list.add(omPurchaseOrderDet);
                     set.add(order.getWarehouseId());
                 }
                 if (set.size() > 1)
@@ -583,6 +587,8 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
             //返写下推数据
             if (StringUtils.isNotEmpty(list)) {
                 for (OmPurchaseOrderDet omPurchaseOrderDet : list) {
+                    omPurchaseOrderDet.setModifiedTime(new Date());
+                    omPurchaseOrderDet.setModifiedUserId(user.getOrganizationId());
                     omPurchaseOrderDetMapper.updateByPrimaryKeySelective(omPurchaseOrderDet);
                 }
             }

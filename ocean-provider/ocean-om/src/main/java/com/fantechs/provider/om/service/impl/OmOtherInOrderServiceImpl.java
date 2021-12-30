@@ -233,6 +233,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         record.setOrderStatus((byte) 1);
         int num = omOtherInOrderMapper.insertUseGeneratedKeys(record);
         for (OmOtherInOrderDet omOtherInOrderDet : record.getOmOtherInOrderDets()) {
+            omOtherInOrderDet.setTotalIssueQty(BigDecimal.ZERO);
             omOtherInOrderDet.setOtherInOrderId(record.getOtherInOrderId());
             omOtherInOrderDet.setCreateTime(new Date());
             omOtherInOrderDet.setCreateUserId(sysUser.getUserId());
@@ -368,6 +369,8 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             if (order.getIfAllIssued() != null && order.getIfAllIssued() == (byte) 1) {
                 throw new BizErrorException("订单已下推，无法再次下推");
             }
+            if(StringUtils.isEmpty(order.getTotalIssueQty()))
+                order.setTotalIssueQty(BigDecimal.ZERO);
             if (order.getOrderQty().compareTo(order.getTotalIssueQty().add(order.getQty())) == -1) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "累计下发数量大于包装总数");
             }
@@ -406,7 +409,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         Set<String> codes = detMap.keySet();
         for (String code : codes) {
             String[] split = code.split("_");
-            String nextOrderTypeCode = split[1];//下游单据类型
+            String nextOrderTypeCode = split[0];//下游单据类型
 
             if ("IN-SPO".equals(nextOrderTypeCode)) {
                 //生成收货计划
@@ -688,11 +691,15 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         //返写下推数据
         if (StringUtils.isNotEmpty(list)) {
             for (OmOtherInOrderDet omOtherInOrderDet : list) {
+                omOtherInOrderDet.setModifiedTime(new Date());
+                omOtherInOrderDet.setModifiedUserId(user.getOrganizationId());
                 omOtherInOrderDetMapper.updateByPrimaryKeySelective(omOtherInOrderDet);
             }
         }
         if (StringUtils.isNotEmpty(orderList)) {
             for (OmOtherInOrder omOtherInOrder : orderList) {
+                omOtherInOrder.setModifiedTime(new Date());
+                omOtherInOrder.setModifiedUserId(user.getOrganizationId());
                 omOtherInOrderMapper.updateByPrimaryKeySelective(omOtherInOrder);
             }
         }

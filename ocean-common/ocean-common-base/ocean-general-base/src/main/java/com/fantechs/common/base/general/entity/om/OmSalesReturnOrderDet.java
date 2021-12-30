@@ -119,7 +119,8 @@ public class OmSalesReturnOrderDet extends ValidGroup implements Serializable {
      * 生产日期
      */
     @ApiModelProperty(name="productionDate",value = "生产日期")
-    @Excel(name = "生产日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "生产日期", height = 20, width = 30,orderNum="")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "production_date")
     private Date productionDate;
 
@@ -127,7 +128,8 @@ public class OmSalesReturnOrderDet extends ValidGroup implements Serializable {
      * 过期日期
      */
     @ApiModelProperty(name="expiredDate",value = "过期日期")
-    @Excel(name = "过期日期", height = 20, width = 30,orderNum="") 
+    @Excel(name = "过期日期", height = 20, width = 30,orderNum="")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "expired_date")
     private Date expiredDate;
 

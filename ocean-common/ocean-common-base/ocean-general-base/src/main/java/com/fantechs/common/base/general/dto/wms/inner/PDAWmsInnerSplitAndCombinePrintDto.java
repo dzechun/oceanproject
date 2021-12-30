@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -20,6 +21,12 @@ public class PDAWmsInnerSplitAndCombinePrintDto implements Serializable {
      */
     @ApiModelProperty(name="storageId",value = "库位id")
     private Long storageId;
+
+    /**
+     * 包装规格数量
+     */
+    @ApiModelProperty(name="packageSpecificationQuantity",value = "包装规格数量")
+    private BigDecimal packageSpecificationQuantity;
 
     /**
      * 物料id

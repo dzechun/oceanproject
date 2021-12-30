@@ -33,6 +33,8 @@
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
         <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
         <result column="volume" jdbcType="DECIMAL" property="volume"/>
         <result column="net_weight" jdbcType="DECIMAL" property="netWeight"/>
@@ -66,7 +68,8 @@
   </sql>
     <select id="findList" resultMap="BaseResultMapDto">
         SELECT<include refid="Base_Column_List"/>,
-        bw.warehouse_name,bm.material_code,bm.material_name,bmb.main_unit,bmb.volume,bmb.net_weight,bmb.gross_weight,
+        bw.warehouse_name,bm.material_code,bm.material_name,bm.material_desc,bm.material_version,bmb.main_unit,
+        bmb.volume,bmb.net_weight,bmb.gross_weight,
         su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name
         FROM om_other_in_order_det oiod
         LEFT JOIN base_warehouse bw ON bw.warehouse_id = oiod.warehouse_id

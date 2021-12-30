@@ -195,6 +195,7 @@ public class WmsOutDeliveryReqOrderServiceImpl extends BaseService<WmsOutDeliver
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         record.setDeliveryReqOrderCode(CodeUtils.getId("OUT-DRO"));
+        record.setOrderStatus((byte)1);
         record.setOrgId(user.getOrganizationId());
         record.setCreateTime(new DateTime());
         record.setCreateUserId(user.getUserId());
