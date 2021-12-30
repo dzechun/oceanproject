@@ -46,6 +46,12 @@ public class SaveShiftWorkDetDto implements Serializable {
     @ApiModelProperty(name="materialQty",value = "移位数量")
     private BigDecimal materialQty;
 
+    /**
+     * 是否pda创建移位单
+     */
+    @ApiModelProperty(name="isPda",value = "是否pda创建移位单")
+    private Boolean isPda;
+
     List<PDAWmsInnerDirectTransferOrderDetDto> pdaWmsInnerDirectTransferOrderDetDtos;
 
 }
