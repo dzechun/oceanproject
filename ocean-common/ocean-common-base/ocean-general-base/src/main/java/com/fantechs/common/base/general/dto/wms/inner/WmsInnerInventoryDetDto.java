@@ -186,4 +186,10 @@ public class WmsInnerInventoryDetDto extends WmsInnerInventoryDet implements Ser
     @ApiModelProperty(name="packageSpecificationQuantity",value = "包装规格数量")
     @Transient
     private BigDecimal packageSpecificationQuantity;
+
+    /**
+     * 库位类型（1-存货 2-收货 3-发货）
+     */
+    @ApiModelProperty(name="storageType",value = "库位类型（1-存货 2-收货 3-发货）")
+    private Byte storageType;
 }
