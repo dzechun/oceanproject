@@ -1,21 +1,19 @@
 package com.fantechs.common.base.general.dto.ews;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.ews.EwsWarningPushConfigReWui;
+import com.fantechs.common.base.general.entity.ews.EwsHtWarningPushConfigReWui;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 
 /**
  * @Author mr.lei
- * @Date 2021/12/27
+ * @Date 2021/12/30
  */
 @Data
-public class EwsWarningPushConfigReWuiDto extends EwsWarningPushConfigReWui implements Serializable {
-
+public class EwsHtWarningPushConfigReWuiDto extends EwsHtWarningPushConfigReWui implements Serializable {
     @ApiModelProperty(name = "userCode",value = "用户工号")
     private String userCode;
 

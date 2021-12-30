@@ -1,7 +1,7 @@
 package com.fantechs.common.base.general.dto.ews;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.ews.EwsWarningPushConfig;
+import com.fantechs.common.base.general.entity.ews.EwsWarningEventExecutePushLog;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -10,22 +10,10 @@ import java.io.Serializable;
 
 /**
  * @Author mr.lei
- * @Date 2021/12/27
+ * @Date 2021/12/28
  */
 @Data
-public class EwsWarningPushConfigDto extends EwsWarningPushConfig implements Serializable {
-
-    /**
-     * 预警事件ID编码
-     */
-    @ApiModelProperty(name="warningEventIdCode",value = "预警事件ID编码")
-    private String warningEventIdCode;
-
-    /**
-     * 事件名称
-     */
-    @ApiModelProperty(name = "warningEventName",value = "事件名称")
-    private String warningEventName;
+public class EwsWarningEventExecutePushLogDto extends EwsWarningEventExecutePushLog implements Serializable {
     /**
      * 创建用户名称
      */

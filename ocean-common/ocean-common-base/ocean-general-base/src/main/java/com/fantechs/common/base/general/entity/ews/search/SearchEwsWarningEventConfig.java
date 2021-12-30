@@ -16,4 +16,6 @@ public class SearchEwsWarningEventConfig extends BaseQuery implements Serializab
     private String warningEventIdCode;
 
     private String warningEventName;
+
+    private String warningEventDesc;
 }
