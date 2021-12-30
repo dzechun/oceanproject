@@ -161,6 +161,83 @@
         order by ss.create_time desc
     </select>
 
+    <select id="findStockDetStorageList" parameterType="map"
+            resultMap="BaseResultMap">
+        select <include refid="Base_Cloumn_List"></include>,
+        sw.warehouse_name, sw.warehouse_code,sw.warehouse_category,bwa.working_area_code,
+        u.user_name as createUserName, s.user_name as modifiedUserName,
+        swa.warehouse_area_code, swa.warehouse_area_name,
+        bo.organization_name
+        from wms_inner_stock_order_det det
+        left join base_storage ss on det.storage_id=ss.storage_id
+        left join base_working_area bwa on ss.working_area_id=bwa.working_area_id
+        left join base_warehouse_area swa on bwa.warehouse_area_id=swa.warehouse_area_id
+        left join base_warehouse sw on swa.warehouse_id=sw.warehouse_id
+        left join sys_user u on ss.create_user_id=u.user_id
+        left join sys_user s on ss.modified_user_id=s.user_id
+        LEFT JOIN base_organization bo ON ss.org_id = bo.organization_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(ss.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="storageId!=null and storageId!=''">
+                and ss.storage_id = #{storageId}
+            </if>
+            <if test="storageType!=null">
+                and ss.storage_type = #{storageType}
+            </if>
+            <if test="materialStoreType!=null">
+                and ss.material_store_type = #{materialStoreType}
+            </if>
+            <if test="storageCode!=null and storageCode!='' and codeQueryMark==1">
+                and ss.storage_code = #{storageCode}
+            </if>
+            <if test="storageCode!=null and storageCode!='' and codeQueryMark != 1">
+                and ss.storage_code like CONCAT('%', #{storageCode}, '%')
+            </if>
+            <if test="storageName!=null and storageName!=''">
+                and ss.storage_name like CONCAT('%', #{storageName}, '%')
+            </if>
+            <if test="storageDesc!=null and storageDesc!=''">
+                and ss.storage_desc like CONCAT('%', #{storageDesc}, '%')
+            </if>
+            <if test="warehouseId!=null and warehouseId!=''">
+                and ss.warehouse_id=#{warehouseId}
+            </if>
+            <if test="warehouseName!=null and warehouseName!=''">
+                and sw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
+            </if>
+            <if test="warehouseCode!=null and warehouseCode!=''">
+                and sw.warehouse_code = #{warehouseCode}
+            </if>
+            <if test="warehouseAreaId!=null and warehouseAreaId!=''">
+                and ss.warehouse_area_id=#{warehouseAreaId}
+            </if>
+            <if test="warehouseAreaName!=null and warehouseAreaName!=''">
+                and swa.warehouse_area_name like CONCAT('%', #{warehouseAreaName}, '%')
+            </if>
+            <if test="status!=null">
+                and ss.status=#{status}
+            </if>
+            <if test="workingAreaId!=null">
+                and ss.working_area_id=#{workingAreaId}
+            </if>
+            <if test="workingAreaCode!=null and workingAreaCode!=''">
+                and bwa.working_area_code like CONCAT('%', #{workingAreaCode}, '%')
+            </if>
+            <if test="minSurplusCanPutSalver!=null and minSurplusCanPutSalver!=''">
+                and ss.surplus_can_put_salver>#{minSurplusCanPutSalver}
+            </if>
+            <if test="option1!=null and option1!=''">
+                and ss.option1=#{option1}
+            </if>
+            <if test="orgId!=null">
+                and ss.org_id=#{orgId}
+            </if>
+        </where>
+        group by ss.storage_id
+    </select>
+
     <update id="batchUpdate" parameterType="java.util.List">
         <foreach collection="list" item="item" index="index" open="" close="" separator=";">
             update base_storage

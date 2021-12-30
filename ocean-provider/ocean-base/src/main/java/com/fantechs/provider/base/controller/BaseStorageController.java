@@ -101,6 +101,14 @@ public class BaseStorageController {
         return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
     }
 
+    @ApiOperation("查询盘点库位信息列表")
+    @PostMapping("/findStockDetStorageList")
+    public ResponseEntity<List<BaseStorage>> findStockDetStorageList(@ApiParam(value = "查询对象") @RequestBody SearchBaseStorage searchBaseStorage) {
+        Page<Object> page = PageHelper.startPage(searchBaseStorage.getStartPage(), searchBaseStorage.getPageSize());
+        List<BaseStorage> list = baseStorageService.findStockDetStorageList(ControllerUtil.dynamicConditionByEntity(searchBaseStorage));
+        return ControllerUtil.returnDataSuccess(list, (int) page.getTotal());
+    }
+
     @ApiOperation("根据条件查询信息历史列表")
     @PostMapping("/findHtList")
     public ResponseEntity<List<BaseHtStorage>> findHtList(@ApiParam(value = "查询对象") @RequestBody SearchBaseStorage searchBaseStorage) {
