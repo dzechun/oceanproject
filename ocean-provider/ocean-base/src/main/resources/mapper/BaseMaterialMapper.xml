@@ -119,6 +119,71 @@
         order by sm.create_time desc
     </select>
 
+    <select id="findStockDetMaterialList" parameterType="map"
+            resultMap="BaseResultMapDto">
+        select<include refid="Base_Column_List"/>,
+        su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+        bo.organization_name
+        from wms_inner_stock_order_det det
+        left join base_material sm det.material_id=sm.material_id
+        left join sys_user su on sm.create_user_id=su.user_id
+        left join sys_user sus on sm.modified_user_id=sus.user_id
+        LEFT JOIN base_barcode_rule_set sbrs on sm.barcode_rule_set_id = sbrs.barcode_rule_set_id
+        LEFT JOIN base_organization bo ON sm.org_id = bo.organization_id
+        LEFT JOIN base_material_tab bt on sm.material_id = bt.material_id
+        LEFT JOIN base_material_category bmc on bmc.material_category_id = bt.material_category_id
+        <where>
+            <if test="materialProperty!=null">
+                and bt.material_property=#{materialProperty}
+            </if>
+            <if test="propertyQueryMark!=null and propertyQueryMark == 1">
+                and bt.material_property in(0,1)
+            </if>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(sm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="materialId!=null and materialId!=''">
+                and sm.material_id =#{materialId}
+            </if>
+            <if test="materialCode!=null and materialCode!='' and codeQueryMark==1">
+                and sm.material_code =#{materialCode}
+            </if>
+            <if test="materialCode!=null and materialCode!='' and codeQueryMark!=1">
+                and sm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="materialName!=null and materialName!=''">
+                and sm.material_name like CONCAT('%', #{materialName}, '%')
+            </if>
+            <if test="materialDesc!=null and materialDesc!=''">
+                and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
+            </if>
+            <if test="productBomId!=null and productBomId!=''">
+                and sm.material_id!=(select material_id from base_product_bom where
+                product_bom_id=#{productBomId})
+            </if>
+            <if test="workOrderId!=null and workOrderId!=''">
+                and sm.material_id!=(select material_id from base_work_order where
+                work_order_id=#{workOrderId})
+            </if>
+            <if test="status!=null">
+                and sm.status=#{status}
+            </if>
+            <if test="organizationId!=null">
+                and sm.org_id=#{organizationId}
+            </if>
+            <if test="materialCategoryId!=null and materialCategoryId!=''">
+                and bt.material_category_id = #{materialCategoryId}
+            </if>
+            <if test="ifUseSpecMaterialCategory !=null and ifUseSpecMaterialCategory==1">
+                and bmc.material_category_code in
+                <foreach item="materialCategoryCode" collection="materialCategoryCodes" open="(" separator="," close=")">
+                    #{materialCategoryCode}
+                </foreach>
+            </if>
+        </where>
+        group by sm.material_id
+    </select>
+
     <update id="batchUpdateByCode" parameterType="java.util.List">
         <foreach collection="list" item="item" index="index" open="" close="" separator=";">
             update base_material

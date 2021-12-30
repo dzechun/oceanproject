@@ -30,6 +30,14 @@ public class WmsInInPlanOrderDto extends WmsInInPlanOrder implements Serializabl
     private String storageName;
 
     /**
+     * 库位编码
+     */
+    @Transient
+    @ApiModelProperty(name="storageCode",value = "库位编码")
+    @Excel(name = "库位编码", height = 20, width = 30,orderNum="3")
+    private String storageCode;
+
+    /**
      * 计划总数量
      */
     @ApiModelProperty(name="planQty",value = "计划总数量")

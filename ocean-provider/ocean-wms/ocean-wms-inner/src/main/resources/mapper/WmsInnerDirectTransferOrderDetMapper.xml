@@ -72,6 +72,7 @@
     SELECT<include refid="BaseColumnList"/>,
     bm.material_name as materialName,bm.material_code as materialCode,bm.material_desc as materialDesc,bm.material_version as materialVersion,
     ibs.storage_name as inStorageName,obs.storage_name as outStorageName,ibw.warehouse_name as inWarehouseName,obw.warehouse_name as outWarehouseName,
+    ibs.storage_code as inStorageCode,obs.storage_code as outStorageCode,
     u.user_name AS create_user_name,
     s.user_name AS modified_user_name,
     bo.organization_name
@@ -90,6 +91,9 @@
       </if>
       <if test="directTransferOrderId!=null and directTransferOrderId!=''">
         and widtod.direct_transfer_order_id = #{directTransferOrderId}
+      </if>
+      <if test="remark != null and remark!=''">
+         and widtod.remark like CONCAT('%', #{remark}, '%')
       </if>
     </where>
     order by widtod.create_time desc

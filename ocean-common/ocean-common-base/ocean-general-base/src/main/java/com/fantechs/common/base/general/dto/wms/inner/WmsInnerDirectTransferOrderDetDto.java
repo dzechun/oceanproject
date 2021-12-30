@@ -39,14 +39,14 @@ public class WmsInnerDirectTransferOrderDetDto extends WmsInnerDirectTransferOrd
     /**
      * 调出仓库
      */
-    @ApiModelProperty(name = "inWarehouseName",value = "调出仓库")
+    @ApiModelProperty(name = "outWarehouseName",value = "调出仓库")
     private String outWarehouseName;
 
     /**
-     * 调出库位
+     * 调出库位名称
      */
     @Transient
-    @ApiModelProperty(name = "inStorageName",value = "调出库位")
+    @ApiModelProperty(name = "outStorageName",value = "调出库位名称")
     private String outStorageName;
 
     /**
@@ -56,12 +56,27 @@ public class WmsInnerDirectTransferOrderDetDto extends WmsInnerDirectTransferOrd
     private String inWarehouseName;
 
     /**
-     * 调入库位
+     * 调入库位名称
      */
     @Transient
-    @ApiModelProperty(name = "inStorageName",value = "调出库位")
+    @ApiModelProperty(name = "inStorageName",value = "调出库位名称")
     private String inStorageName;
 
+
+
+    /**
+     * 调出库位编码
+     */
+    @Transient
+    @ApiModelProperty(name = "outStorageCode",value = "调出库位编码")
+    private String outStorageCode;
+
+    /**
+     * 调入库位编码
+     */
+    @Transient
+    @ApiModelProperty(name = "inStorageCode",value = "调入库位编码")
+    private String inStorageCode;
 
     /**
      * 组织名称

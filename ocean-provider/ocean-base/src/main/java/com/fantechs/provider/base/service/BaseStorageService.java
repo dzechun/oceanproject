@@ -46,4 +46,6 @@ public interface BaseStorageService extends IService<BaseStorage> {
     int saveByApi(BaseStorage baseStorage);
 
     int printStorageCode(List<PrintBaseStorageCode> printBaseStorageCodes);
+
+    List<BaseStorage> findStockDetStorageList(Map<String, Object> map);
 }

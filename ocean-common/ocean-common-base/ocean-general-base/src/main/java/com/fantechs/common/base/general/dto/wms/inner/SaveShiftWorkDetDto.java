@@ -23,10 +23,16 @@ public class SaveShiftWorkDetDto implements Serializable {
     private Long jobOrderDetId;
 
     /**
-     * 仓库ID
+     * 移入库位ID
      */
-    @ApiModelProperty(name="warehouseId",value = "仓库ID")
-    private Long warehouseId;
+    @ApiModelProperty(name="inStorageId",value = "移入库位ID")
+    private Long inStorageId;
+
+    /**
+     * 移出库位ID
+     */
+    @ApiModelProperty(name="outStorageId",value = "移出库位ID")
+    private Long outStorageId;
 
     /**
      * 物料ID
@@ -35,26 +41,11 @@ public class SaveShiftWorkDetDto implements Serializable {
     private Long materialId;
 
     /**
-     * 库位ID
-     */
-    @ApiModelProperty(name="storageId",value = "库位ID")
-    private Long storageId;
-
-    /**
-     * 是否pda创建移位单
-     */
-    @ApiModelProperty(name="isPda",value = "是否pda创建移位单")
-    private Boolean isPda;
-
-    /**
      * 移位数量
      */
     @ApiModelProperty(name="materialQty",value = "移位数量")
     private BigDecimal materialQty;
 
-    /**
-     * 条码集合
-     */
-    @ApiModelProperty(name="barcodes",value = "条码集合")
-    private List<String> barcodes;
+    List<PDAWmsInnerDirectTransferOrderDetDto> pdaWmsInnerDirectTransferOrderDetDtos;
+
 }

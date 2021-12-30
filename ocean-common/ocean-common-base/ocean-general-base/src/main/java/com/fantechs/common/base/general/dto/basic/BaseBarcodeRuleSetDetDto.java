@@ -27,6 +27,13 @@ public class BaseBarcodeRuleSetDetDto extends BaseBarcodeRuleSetDet implements S
     private String barcodeRuleCategoryName;
 
     /**
+     * 条码规则类别编码
+     */
+    @Transient
+    @ApiModelProperty(name = "barcodeRruleCategoryCode",value = "条码规则类别编码")
+    private String barcodeRruleCategoryCode;
+
+    /**
      * 条码规则
      */
     @Transient

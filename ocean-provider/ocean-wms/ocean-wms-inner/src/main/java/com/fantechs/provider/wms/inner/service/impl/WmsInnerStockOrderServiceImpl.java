@@ -165,7 +165,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 }
                 //盘点类型：库位盘
                 //查询库位下的所以库存货品
-                if(entity.getStockType()==(byte)1 && StringUtils.isEmpty(entity)){
+                if(entity.getStockType()==(byte)2 && StringUtils.isEmpty(entity)){
                     throw new BizErrorException("库位不能未空");
                 }
                 List<WmsInnerStockOrderDet> wmsInventoryVerificationDets = this.findInvGoods(entity.getStockType(),entity.getStockOrderId(), entity.getStorageList(),entity.getWarehouseId(),sysUser);
@@ -173,7 +173,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 if(res<0){
                     throw new BizErrorException("新增盘点单失败");
                 }
-            }else if(entity.getStockType()==(byte)2){
+            }else if(entity.getStockType()==(byte)1){
                 List<WmsInnerStockOrderDet> list = this.MaterialfindInvGoofs(entity.getStockOrderId(),entity.getMaterialList(),entity.getWarehouseId(),sysUser);
                 int res = wmsInventoryVerificationDetMapper.insertList(list);
                 if(res<0){
@@ -707,8 +707,8 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
      * @return
      */
     @Override
-    public Map<String,Object> scanBarcode(Long stockOrderDetId,String barcode) {
-        Map<String,Object> map = new HashMap<>();
+    public BarcodeResultDto scanBarcode(Long stockOrderDetId,String barcode) {
+        BarcodeResultDto barcodeResultDto=new BarcodeResultDto();
         if(StringUtils.isEmpty(barcode)){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码不能为空");
         }
@@ -723,9 +723,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             if(detBarcodeDtos.get(0).getScanStatus()==(byte)3){
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
             }
-            map.put("barcodeType","1");
-            map.put("qty",detBarcodeDtos.get(0).getMaterialQty());
-            map.put("stockOrderDetBarcodeId",detBarcodeDtos.get(0).getStockOrderDetBarcodeId());
+            barcodeResultDto.setBarcodeType((byte)1);
+            barcodeResultDto.setMaterialQty(detBarcodeDtos.get(0).getMaterialQty());
+            barcodeResultDto.setBarcode(barcode);
         }
         else {
             searchOrderDetBarcode.setBarcode(null);
@@ -736,9 +736,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 if(barcodeListOne.get(0).getScanStatus()==(byte)3){
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
                 }
-                map.put("barcodeType","2");
-                map.put("qty",detBarcodeDtos.get(0).getMaterialQty());
-                map.put("stockOrderDetBarcodeId",barcodeListOne.get(0).getStockOrderDetBarcodeId());
+                barcodeResultDto.setBarcodeType((byte)2);
+                barcodeResultDto.setMaterialQty(detBarcodeDtos.get(0).getMaterialQty());
+                barcodeResultDto.setBarcode(barcode);
             }
             else {
                 searchOrderDetBarcode.setBarcode(null);
@@ -752,9 +752,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     }
                     List<WmsInnerStockOrderDetBarcodeDto> barcodeList = detBarcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
                     BigDecimal totalQty=barcodeList.stream().map(WmsInnerStockOrderDetBarcodeDto::getMaterialQty).reduce(BigDecimal.ZERO,BigDecimal::add);
-                    map.put("barcodeType","3");
-                    map.put("qty",totalQty);
-                    map.put("stockOrderDetBarcodeId",barcodeListOne.get(0).getStockOrderDetBarcodeId());
+                    barcodeResultDto.setBarcodeType((byte)3);
+                    barcodeResultDto.setMaterialQty(totalQty);
+                    barcodeResultDto.setBarcode(barcode);
                 }
                 else {
                     searchOrderDetBarcode.setBarcode(null);
@@ -769,19 +769,19 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                         }
                         List<WmsInnerStockOrderDetBarcodeDto> barcodeList = detBarcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
                         BigDecimal totalQty=barcodeList.stream().map(WmsInnerStockOrderDetBarcodeDto::getMaterialQty).reduce(BigDecimal.ZERO,BigDecimal::add);
-                        map.put("barcodeType","4");
-                        map.put("qty",totalQty);
-                        map.put("stockOrderDetBarcodeId",barcodeListOne.get(0).getStockOrderDetBarcodeId());
+                        barcodeResultDto.setBarcodeType((byte)4);
+                        barcodeResultDto.setMaterialQty(totalQty);
+                        barcodeResultDto.setBarcode(barcode);
                     }
                 }
             }
         }
 
-        if(map.size()<=0){
-            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"在盘点明细条码表中无此条码信息-->"+barcode);
+        if(StringUtils.isEmpty(barcodeResultDto.getBarcodeType())){
+            barcodeResultDto.setBarcodeType((byte)5);
         }
 
-        return map;
+        return barcodeResultDto;
     }
 
     /**

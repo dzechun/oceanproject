@@ -34,6 +34,7 @@
                type="com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDto">
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="storage_name" jdbcType="VARCHAR" property="storageName"/>
+        <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
         <result column="total_plan_qty" jdbcType="DECIMAL" property="totalPlanQty"/>
         <result column="total_putaway_qty" jdbcType="DECIMAL" property="totalPutawayQty"/>
         <result column="make_order_user_name" jdbcType="VARCHAR" property="makeOrderUserName"/>
@@ -73,7 +74,7 @@
 
     <select id="findList" resultMap="BaseResultMapDto">
         SELECT<include refid="BaseColumnList"/>,
-        bw.warehouse_name AS warehouse_name,bs.storage_name AS storage_name,
+        bw.warehouse_name AS warehouse_name,bs.storage_name AS storage_name,bs.storage_code AS storage_code,
         ( SELECT SUM(plan_qty) FROM wms_in_in_plan_order_det wiipod WHERE wiipod.in_plan_order_id = wiipo.in_plan_order_id ) AS total_plan_qty,
         ( SELECT SUM(putaway_qty) FROM wms_in_in_plan_order_det wiipods WHERE wiipods.in_plan_order_id = wiipo.in_plan_order_id ) AS total_putaway_qty,
         su.user_name AS make_order_user_name,

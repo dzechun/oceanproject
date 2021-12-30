@@ -59,6 +59,14 @@ public class BaseMaterialController {
         return ControllerUtil.returnDataSuccess(smtMaterials,(int)page.getTotal());
     }
 
+    @ApiOperation("查询盘点明细物料信息列表")
+    @PostMapping("/findStockDetMaterialList")
+    public ResponseEntity<List<BaseMaterialDto>> findStockDetMaterialList(@ApiParam(value = "查询对象")@RequestBody SearchBaseMaterial searchBaseMaterial){
+        Page<Object> page = PageHelper.startPage(searchBaseMaterial.getStartPage(), searchBaseMaterial.getPageSize());
+        List<BaseMaterialDto> smtMaterials = baseMaterialService.findStockDetMaterialList(ControllerUtil.dynamicConditionByEntity(searchBaseMaterial));
+        return ControllerUtil.returnDataSuccess(smtMaterials,(int)page.getTotal());
+    }
+
     @ApiOperation("根据条件查询物料信息列表")
     @PostMapping("/getAll")
     public ResponseEntity<List<BaseMaterialDto>> getAll(){

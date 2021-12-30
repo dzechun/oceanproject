@@ -95,8 +95,6 @@
         <if test="scanStatus!=null and scanStatus!=''">
             and wimbro.scan_status = #{scanStatus}
         </if>
-
-
         <if test="barcode!=null and barcode!='' and codeQueryMark == 1">
             and wimb.barcode = #{barcode}
         </if>
@@ -109,8 +107,6 @@
         <if test="palletCode!=null and palletCode!='' and codeQueryMark == 1">
             and wimb.pallet_code = #{palletCode}
         </if>
-
-
         <if test="barcode!=null and barcode!='' and codeQueryMark != 1">
             and wimb.barcode like CONCAT('%',#{barcode},'%')
         </if>
@@ -123,8 +119,11 @@
         <if test="palletCode!=null and palletCode!='' and codeQueryMark != 1">
             and wimb.pallet_code like CONCAT('%',#{palletCode},'%')
         </if>
-        <if test="productionTimeStart!= null and productionTimeStart!= '' and productionTimeEnd!= null and productionTimeEnd!= ''">
-            and date_format(wimb.production_time, '%Y-%m-%d') BETWEEN #{productionTimeStart} AND #{productionTimeEnd}
+        <if test="productionTimeStart!= null and productionTimeEnd!= null">
+            and date_format(wimb.production_time, '%Y-%m-%d') BETWEEN date_format(#{productionTimeStart}, '%Y-%m-%d') AND  date_format(#{productionTimeEnd}, '%Y-%m-%d')
+        </if>
+        <if test="productionDate!= null and productionDate!= null">
+            and date_format(wimb.production_time, '%Y-%m-%d') BETWEEN date_format(#{productionDate}, '%Y-%m-%d') AND  date_format(#{productionDate}, '%Y-%m-%d')
         </if>
         <if test="materialCode!=null and materialCode!=''">
             and bm.material_code like CONCAT('%',#{materialCode},'%')

@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.inner.service;
 
 import com.fantechs.common.base.general.dto.wms.inner.AddInnerStockDetDto;
+import com.fantechs.common.base.general.dto.wms.inner.BarcodeResultDto;
 import com.fantechs.common.base.general.dto.wms.inner.CommitInnerStockBarcodeDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrder;
@@ -50,7 +51,7 @@ public interface WmsInnerStockOrderService extends IService<WmsInnerStockOrder> 
      * @param barcode
      * @return
      */
-    Map<String,Object> scanBarcode(Long stockOrderDetId,String barcode);
+    BarcodeResultDto scanBarcode(Long stockOrderDetId, String barcode);
 
     /**
      * PDA扫条码提交
