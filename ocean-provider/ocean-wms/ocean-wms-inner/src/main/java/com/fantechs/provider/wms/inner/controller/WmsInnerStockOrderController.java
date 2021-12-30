@@ -2,6 +2,7 @@ package com.fantechs.provider.wms.inner.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.wms.inner.BarcodeResultDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerStockOrderImport;
@@ -72,6 +73,12 @@ public class WmsInnerStockOrderController {
         Page<Object> page = PageHelper.startPage(searchWmsInventoryVerification.getStartPage(),searchWmsInventoryVerification.getPageSize());
         List<WmsInnerStockOrderDto> list = wmsInventoryVerificationService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInventoryVerification));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("扫描条码")
+    @PostMapping("/scanBarcode")
+    public ResponseEntity<BarcodeResultDto> scanBarcode(@ApiParam(value = "盘点明细ID")@RequestParam Long stockOrderDetId, @ApiParam(value = "条码")@RequestParam String barcode){
+        return ControllerUtil.returnDataSuccess(wmsInventoryVerificationService.scanBarcode(stockOrderDetId,barcode),1);
     }
 
     @PostMapping(value = "/export")

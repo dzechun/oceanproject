@@ -22,9 +22,11 @@ import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.wms.inner.mapper.*;
 import com.fantechs.provider.wms.inner.service.WmsInnerInventoryDetService;
+import com.fantechs.provider.wms.inner.service.WmsInnerMaterialBarcodeReOrderService;
 import com.fantechs.provider.wms.inner.service.WmsInnerStockOrderDetBarcodeService;
 import com.fantechs.provider.wms.inner.service.WmsInnerStockOrderService;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
+import com.fantechs.provider.wms.inner.util.WmsInnerInventoryUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,6 +65,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
     private WmsInnerStockOrderDetBarcodeMapper wmsInnerStockOrderDetBarcodeMapper;
     @Resource
     private WmsInnerStockOrderDetBarcodeService wmsInnerStockOrderDetBarcodeService;
+    @Resource
+    private WmsInnerMaterialBarcodeMapper wmsInnerMaterialBarcodeMapper;
+    @Resource
+    private WmsInnerMaterialBarcodeReOrderService wmsInnerMaterialBarcodeReOrderService;
 
     @Override
     public List<WmsInnerStockOrderDto> findList(Map<String, Object> map) {
@@ -619,6 +625,192 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
 
                 }
             }
+        }
+
+        return num;
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int webCommit(Long stockOrderDetId,List<CommitInnerStockBarcodeDto> barcodeList){
+        if(barcodeList.size()<=0){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未提交任何条码");
+        }
+        WmsInnerStockOrderDet wmsInnerStockOrderDet=wmsInventoryVerificationDetMapper.selectByPrimaryKey(stockOrderDetId);
+        if(StringUtils.isEmpty(wmsInnerStockOrderDet)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"未找到相应明细ID的盘点明细信息 ID-->"+stockOrderDetId.toString());
+        }
+
+        WmsInnerStockOrder wmsInnerStockOrder=wmsInventoryVerificationMapper.selectByPrimaryKey(wmsInnerStockOrderDet.getStockOrderId());
+        if(StringUtils.isEmpty(wmsInnerStockOrder)){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未找到相应的盘点单信息");
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        //条码关系集合
+        List<WmsInnerMaterialBarcodeReOrder> materialBarcodeReOrderList=new ArrayList<>();
+        //条码库存集合
+        List<WmsInnerInventoryDet> wmsInnerInventoryDets =new ArrayList<>();
+
+        //物料ID
+        Long materialId=wmsInnerStockOrderDet.getMaterialId();
+        //供应商ID
+        Long supplierId=wmsInnerStockOrderDet.getSupplierId();
+        //库位ID
+        Long storageId=wmsInnerStockOrderDet.getStorageId();
+
+        //总数量
+        BigDecimal totalQty=barcodeList.stream().map(CommitInnerStockBarcodeDto::getMaterialQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+
+        List<WmsInnerStockOrderDetBarcodeDto> detBarcodeDtos=new ArrayList<>();
+        SysUser sysUser = currentUser();
+        int num = 0;
+        //更新明细为登记状态
+        wmsInnerStockOrderDet.setStockQty(totalQty);
+        wmsInnerStockOrderDet.setIfRegister((byte)1);
+        wmsInnerStockOrderDet.setStockUserId(sysUser.getUserId());
+        wmsInnerStockOrderDet.setModifiedTime(new Date());
+        wmsInnerStockOrderDet.setModifiedUserId(sysUser.getUserId());
+        num += wmsInventoryVerificationDetMapper.updateByPrimaryKeySelective(wmsInnerStockOrderDet);
+
+        SearchWmsInnerStockOrderDetBarcode searchOrderDetBarcode=new SearchWmsInnerStockOrderDetBarcode();
+        //更新盘点条码状态为已提交
+        for (CommitInnerStockBarcodeDto item : barcodeList) {
+            byte barcodeType=item.getBarcodeType();
+            String barcode=item.getBarcode();
+            if(barcodeType==(byte)1){
+                //SN
+                searchOrderDetBarcode.setStockOrderDetId(stockOrderDetId);
+                searchOrderDetBarcode.setBarcode(barcode);
+                detBarcodeDtos=wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
+                if(detBarcodeDtos.size()>0){
+                    WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
+                    orderDetBarcode.setStockOrderDetBarcodeId(detBarcodeDtos.get(0).getStockOrderDetBarcodeId());
+                    orderDetBarcode.setScanStatus((byte)3);
+                    orderDetBarcode.setScanStatus((byte)3);
+                    orderDetBarcode.setModifiedUserId(sysUser.getUserId());
+                    orderDetBarcode.setModifiedTime(new Date());
+                    num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);
+                }
+            }
+            else if(barcodeType==(byte)2){
+                //彩盒
+                searchOrderDetBarcode.setStockOrderDetId(stockOrderDetId);
+                searchOrderDetBarcode.setColorBoxCode(barcode);
+                detBarcodeDtos=wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
+                if(detBarcodeDtos.size()>0){
+                    for (WmsInnerStockOrderDetBarcodeDto detBarcodeDto : detBarcodeDtos) {
+                        WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
+                        orderDetBarcode.setStockOrderDetBarcodeId(detBarcodeDto.getStockOrderDetBarcodeId());
+                        orderDetBarcode.setScanStatus((byte)3);
+                        orderDetBarcode.setScanStatus((byte)3);
+                        orderDetBarcode.setModifiedUserId(sysUser.getUserId());
+                        orderDetBarcode.setModifiedTime(new Date());
+                        num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);
+                    }
+
+                }
+
+            }
+            else if(barcodeType==(byte)3){
+                //箱码
+                searchOrderDetBarcode.setStockOrderDetId(stockOrderDetId);
+                searchOrderDetBarcode.setCartonCode(barcode);
+                detBarcodeDtos=wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
+                if(detBarcodeDtos.size()>0){
+                    for (WmsInnerStockOrderDetBarcodeDto detBarcodeDto : detBarcodeDtos) {
+                        WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
+                        orderDetBarcode.setStockOrderDetBarcodeId(detBarcodeDto.getStockOrderDetBarcodeId());
+                        orderDetBarcode.setScanStatus((byte)3);
+                        orderDetBarcode.setScanStatus((byte)3);
+                        orderDetBarcode.setModifiedUserId(sysUser.getUserId());
+                        orderDetBarcode.setModifiedTime(new Date());
+                        num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);
+                    }
+
+                }
+            }
+            else if(barcodeType==(byte)4) {
+                //栈板码
+                searchOrderDetBarcode.setStockOrderDetId(stockOrderDetId);
+                searchOrderDetBarcode.setPalletCode(barcode);
+                detBarcodeDtos=wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
+                if(detBarcodeDtos.size()>0){
+                    for (WmsInnerStockOrderDetBarcodeDto detBarcodeDto : detBarcodeDtos) {
+                        WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
+                        orderDetBarcode.setStockOrderDetBarcodeId(detBarcodeDto.getStockOrderDetBarcodeId());
+                        orderDetBarcode.setScanStatus((byte)3);
+                        orderDetBarcode.setScanStatus((byte)3);
+                        orderDetBarcode.setModifiedUserId(sysUser.getUserId());
+                        orderDetBarcode.setModifiedTime(new Date());
+                        num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);
+                    }
+
+                }
+            }
+            else {
+                //非系统条码新增到条码表
+                WmsInnerMaterialBarcode wmsInnerMaterialBarcode = new WmsInnerMaterialBarcode();
+                wmsInnerMaterialBarcode.setMaterialId(materialId);
+                wmsInnerMaterialBarcode.setBarcode(item.getBarcode());
+                wmsInnerMaterialBarcode.setBatchCode(item.getBatchCode());
+                wmsInnerMaterialBarcode.setMaterialQty(item.getMaterialQty());
+                wmsInnerMaterialBarcode.setIfSysBarcode((byte) 0);
+                Date productionTime=null;
+                try {
+                    productionTime=sdf.parse(item.getProductionTime());
+                }catch (Exception ex){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"参数生产日期转换为时间类型异常");
+                }
+
+                wmsInnerMaterialBarcode.setProductionTime(productionTime);
+
+                //产生类型(1-供应商条码 2-自己打印 3-生产条码)
+                wmsInnerMaterialBarcode.setCreateType((byte) 1);
+                //条码状态(1-已生成 2-已打印 3-已收货 4-已质检 5-已上架 6-已出库)
+                wmsInnerMaterialBarcode.setBarcodeStatus((byte) 5);
+                wmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
+                wmsInnerMaterialBarcode.setCreateTime(new Date());
+                wmsInnerMaterialBarcode.setCreateUserId(sysUser.getUserId());
+
+                num += wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(wmsInnerMaterialBarcode);
+                //设置来料条码ID
+                Long materialBarcodeId=wmsInnerMaterialBarcode.getMaterialBarcodeId();
+                //条码关系
+                WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder=new WmsInnerMaterialBarcodeReOrder();
+                wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("INNER-TSO");//类型 盘点
+                wmsInnerMaterialBarcodeReOrder.setOrderCode(wmsInnerStockOrder.getPlanStockOrderCode());
+                wmsInnerMaterialBarcodeReOrder.setOrderId(wmsInnerStockOrder.getStockOrderId());
+                //来料条码ID
+                wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(materialBarcodeId);
+
+                wmsInnerMaterialBarcodeReOrder.setScanStatus((byte)3);
+                wmsInnerMaterialBarcodeReOrder.setOrgId(sysUser.getOrganizationId());
+                wmsInnerMaterialBarcodeReOrder.setCreateTime(new Date());
+                wmsInnerMaterialBarcodeReOrder.setCreateUserId(sysUser.getUserId());
+                materialBarcodeReOrderList.add(wmsInnerMaterialBarcodeReOrder);
+
+                WmsInnerInventoryDet inventoryDet=new WmsInnerInventoryDet();
+                inventoryDet.setStorageId(storageId);
+                inventoryDet.setMaterialBarcodeId(materialBarcodeId);
+                inventoryDet.setReceivingDate(new Date());//入库日期
+                inventoryDet.setAsnCode(wmsInnerStockOrder.getPlanStockOrderCode());//盘点单号
+                inventoryDet.setIfStockLock((byte)0);
+                inventoryDet.setInventoryStatusId(wmsInnerStockOrderDet.getInventoryStatusId());
+                inventoryDet.setBarcodeStatus((byte)3);//在库
+                inventoryDet.setCreateUserId(sysUser.getUserId());
+                inventoryDet.setCreateTime(new Date());
+                wmsInnerInventoryDets.add(inventoryDet);
+
+            }
+        }
+        //非系统条码增加到关系表
+        if(materialBarcodeReOrderList.size()>0){
+            num+=wmsInnerMaterialBarcodeReOrderService.batchAdd(materialBarcodeReOrderList);
+        }
+        //增加条码库存明细
+        if(wmsInnerInventoryDets.size()>0){
+            num+=WmsInnerInventoryUtil.updateInventoryDet(wmsInnerInventoryDets);
         }
 
         return num;
