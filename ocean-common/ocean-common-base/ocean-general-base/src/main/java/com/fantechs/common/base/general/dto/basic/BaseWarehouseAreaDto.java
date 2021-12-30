@@ -32,6 +32,13 @@ public class BaseWarehouseAreaDto extends BaseWarehouseArea implements Serializa
     private String modifiedUserName;
 
     /**
+     * 仓库编码
+     */
+    @Transient
+    @ApiModelProperty(name="warehouseCode" ,value="仓库编码")
+    private String warehouseCode;
+
+    /**
      * 仓库名称
      */
     @Transient

@@ -7,5 +7,5 @@ public interface RcsCallBackService {
 
     String agvCallback(AgvCallBackDTO agvCallBackDTO) throws Exception;
 
-    int warnCallbackDTO(WarnCallbackDTO warnCallbackDTO) throws Exception;
+    int warnCallback(WarnCallbackDTO warnCallbackDTO) throws Exception;
 }

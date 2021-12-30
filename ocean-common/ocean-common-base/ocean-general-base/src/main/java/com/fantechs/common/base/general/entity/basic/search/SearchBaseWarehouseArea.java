@@ -14,6 +14,12 @@ public class SearchBaseWarehouseArea extends BaseQuery implements Serializable {
     private static final long serialVersionUID = -750262365792251512L;
 
     /**
+     * 仓库区域ID
+     */
+    @ApiModelProperty(name="warehouseAreaId" ,value="仓库区域ID")
+    private Long warehouseAreaId;
+
+    /**
      * 仓库区域编码
      */
     @ApiModelProperty(name="warehouseAreaCode" ,value="仓库区域编码")

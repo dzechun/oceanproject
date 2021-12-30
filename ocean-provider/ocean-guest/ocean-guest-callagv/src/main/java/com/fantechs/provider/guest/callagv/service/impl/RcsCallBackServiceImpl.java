@@ -86,6 +86,7 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
 //            throw new BizErrorException("没有找到对应的AGV编号：" + agvCallBackDTO.getRobotCode());
 //        }
 
+        // RCS通知货架转移
         if (Integer.valueOf(agvCallBackDTO.getMethod()) > 4) {
             SearchBaseStorageTaskPoint searchBaseStorageTaskPoint = new SearchBaseStorageTaskPoint();
             searchBaseStorageTaskPoint.setXyzCode(agvCallBackDTO.getCurrentPositionCode());
@@ -128,6 +129,7 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
                 temVehicle.setStorageTaskPointId(baseStorageTaskPoint.getStorageTaskPointId());
             }
             temVehicle.setRemark(agvCallBackDTO.getTaskCode());
+            temVehicle.setModifiedUserId(user.getUserId());
             temVehicle.setModifiedTime(new Date());
             temVehicleFeignApi.update(temVehicle);
 
@@ -177,12 +179,118 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
                     callAgvAgvTask.setModifiedTime(new Date());
                     callAgvAgvTaskMapper.updateByPrimaryKeySelective(callAgvAgvTask);
                 }
+
+                // 货架转移，通知SCM
+                Example example = new Example(CallAgvVehicleReBarcode.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("vehicleId", temVehicle.getVehicleId()).andEqualTo("orgId", user.getOrganizationId());
+                List<CallAgvVehicleReBarcode> callAgvVehicleReBarcodeList = callAgvVehicleReBarcodeMapper.selectByExample(example);
+                if (!callAgvVehicleReBarcodeList.isEmpty()) {
+                    Map<String, String> jsonMap = new HashMap<>();
+                    jsonMap.put("inStrogeteCode", baseStorageTaskPoint.getStorageCode());
+                    jsonMap.put("containerCode", temVehicle.getVehicleCode());
+                    log.info("货架转移参数：" + JSONObject.toJSONString(jsonMap));
+                    Map<String, Object> paramMap = callAgvVehicleReBarcodeService.scmParam(jsonMap, "mls.save.production.transfer");
+                    log.info("货架转移，回传数据到SCM : " + JsonUtils.objectToJson(paramMap));
+                    try {
+                        String result = RestTemplateUtil.postForString(url, paramMap);
+                        log.info("货架转移，回传数据到SCM结果 : " + JSONObject.parseObject(result));
+                    } catch (Exception e) {
+
+                    }
+                }
+
+                // 判断货架转移的终点是否有进行中的任务，存在就将该货架再次进行转移
+                try {
+                    SearchCallAgvAgvTask searchCallAgvAgvTask2 = new SearchCallAgvAgvTask();
+                    searchCallAgvAgvTask2.setEndStorageTaskPointId(baseStorageTaskPoint.getStorageTaskPointId());
+                    searchCallAgvAgvTask2.setTaskStatus(2);
+                    List<CallAgvAgvTaskDto> callAgvAgvTaskDtos = callAgvAgvTaskMapper.findList(ControllerUtil.dynamicConditionByEntity(searchCallAgvAgvTask2));
+                    if (StringUtils.isNotEmpty(callAgvAgvTaskDtos)) {
+                        List<String> positionCodeList = new LinkedList<>();
+                        positionCodeList.add(baseStorageTaskPoint.getXyzCode());
+
+                        SearchBaseStorageTaskPoint searchBaseStorageTaskPoint2 = new SearchBaseStorageTaskPoint();
+                        searchBaseStorageTaskPoint2.setWarehouseAreaId(baseStorageTaskPoint.getWarehouseAreaId());
+                        searchBaseStorageTaskPoint2.setTaskPointType((byte) 2);
+                        searchBaseStorageTaskPoint2.setStorageTaskPointStatus((byte) 1);
+                        searchBaseStorageTaskPoint2.setIfOrderByUsePriority(1);
+                        List<BaseStorageTaskPoint> baseStorageTaskPoints = baseFeignApi.findBaseStorageTaskPointList(searchBaseStorageTaskPoint2).getData();
+                        if (StringUtils.isEmpty(baseStorageTaskPoints)) {
+                            callAgvAgvTask.setRemark("货架占用终点和任务：" + callAgvAgvTaskDtos.get(0).getTaskCode() + "，没有空闲配送点可供再次转移");
+                            callAgvAgvTaskMapper.updateByPrimaryKeySelective(callAgvAgvTask);
+                            return "0";
+                        }
+                        positionCodeList.add(baseStorageTaskPoints.get(0).getXyzCode());
+
+                        String taskCode = callAgvVehicleReBarcodeService.genAgvSchedulingTask(temVehicle.getAgvTaskTemplate(), positionCodeList, temVehicle.getVehicleCode());
+
+                        temVehicle.setStorageTaskPointId(0l);
+                        temVehicle.setModifiedUserId(user.getUserId());
+                        temVehicleFeignApi.update(temVehicle);
+
+                        BaseStorageTaskPoint baseStorageTaskPointEnd = baseStorageTaskPoints.get(0);
+                        baseStorageTaskPointEnd.setStorageTaskPointStatus((byte) 2);
+                        baseStorageTaskPointEnd.setModifiedUserId(user.getUserId());
+                        baseStorageTaskPointEnd.setModifiedTime(new Date());
+                        baseStorageTaskPointEnd.setRemark("锁定配送目的点，等待货架：" + temVehicle.getVehicleCode() + "配送");
+                        baseFeignApi.updateBaseStorageTaskPoint(baseStorageTaskPointEnd);
+
+                        log.info("==========启动agv执行货架 : " + temVehicle.getVehicleCode() + "再次进行转移作业任务==============\r\n");
+
+                        temVehicle.setStorageTaskPointId(baseStorageTaskPointEnd.getStorageTaskPointId());
+                        redisUtil.set("2-" + taskCode, JSONObject.toJSONString(temVehicle));
+                        log.info("=========记录当前货架 : " + temVehicle.getVehicleCode() + "再次进行转移作业任务载具对应的目的配送点 : key : " + "2-" + taskCode + " value : " + JSONObject.toJSONString(temVehicle) + "\r\n");
+
+                        // 记录AGV任务
+                        CallAgvAgvTask callAgvAgvTaskNew = new CallAgvAgvTask();
+                        callAgvAgvTaskNew.setTaskCode(taskCode);
+                        callAgvAgvTaskNew.setVehicleId(temVehicle.getVehicleId());
+                        callAgvAgvTaskNew.setTaskStatus((byte) 2);
+                        callAgvAgvTaskNew.setStartStorageTaskPointId(baseStorageTaskPoint.getStorageTaskPointId());
+                        callAgvAgvTaskNew.setEndStorageTaskPointId(baseStorageTaskPointEnd.getStorageTaskPointId());
+                        callAgvAgvTaskNew.setOperateType((byte) 4);
+                        callAgvAgvTaskNew.setStatus((byte) 1);
+                        callAgvAgvTaskNew.setOrgId(user.getOrganizationId());
+                        callAgvAgvTaskNew.setCreateUserId(user.getUserId());
+                        callAgvAgvTaskNew.setCreateTime(new Date());
+                        callAgvAgvTaskNew.setIsDelete((byte) 1);
+                        callAgvAgvTaskMapper.insertUseGeneratedKeys(callAgvAgvTaskNew);
+
+                        List<CallAgvAgvTaskBarcode> callAgvAgvTaskBarcodeList = new LinkedList<>();
+                        for (CallAgvVehicleReBarcode callAgvVehicleReBarcode : callAgvVehicleReBarcodeList) {
+                            CallAgvAgvTaskBarcode callAgvAgvTaskBarcode = new CallAgvAgvTaskBarcode();
+                            callAgvAgvTaskBarcode.setAgvTaskId(callAgvAgvTask.getAgvTaskId());
+                            callAgvAgvTaskBarcode.setBarcodeId(callAgvVehicleReBarcode.getBarcodeId());
+                            callAgvAgvTaskBarcode.setStatus((byte) 1);
+                            callAgvAgvTaskBarcode.setOrgId(user.getOrganizationId());
+                            callAgvAgvTaskBarcode.setCreateTime(new Date());
+                            callAgvAgvTaskBarcode.setCreateUserId(user.getUserId());
+                            callAgvAgvTaskBarcodeList.add(callAgvAgvTaskBarcode);
+                        }
+
+                        // 货架转移，通知SCM
+                        if (!callAgvAgvTaskBarcodeList.isEmpty()) {
+                            callAgvAgvTaskBarcodeMapper.insertList(callAgvAgvTaskBarcodeList);
+                            Map<String, String> jsonMap = new HashMap<>();
+                            jsonMap.put("inStrogeteCode", baseStorageTaskPointEnd.getStorageCode());
+                            jsonMap.put("containerCode", temVehicle.getVehicleCode());
+                            log.info("货架再次转移参数：" + JSONObject.toJSONString(jsonMap));
+                            Map<String, Object> map = callAgvVehicleReBarcodeService.scmParam(jsonMap, "mls.save.production.transfer");
+                            redisUtil.set("scm-" + taskCode, JSONObject.toJSONString(map));
+                            log.info("=========记录当前货架 : " + temVehicle.getVehicleCode() + "再次转移作业对应的出库单 : key : " + "scm-" + taskCode + " value : " + JSONObject.toJSONString(map) + "\r\n");
+                        }
+                    }
+                } catch (Exception e) {
+
+                }
             }
         }
 
         if (StringUtils.isNotEmpty(redisUtil.get(agvCallBackDTO.getMethod() + "-" + agvCallBackDTO.getTaskCode()))) {
             if ("2".equals(agvCallBackDTO.getMethod())) {
                 TemVehicle temVehicle = BeanUtils.convertJson(redisUtil.get(agvCallBackDTO.getMethod() + "-" + agvCallBackDTO.getTaskCode()).toString(), new TypeToken<TemVehicle>(){}.getType());
+                temVehicle.setModifiedUserId(user.getUserId());
                 temVehicle.setModifiedTime(new Date());
                 temVehicleFeignApi.update(temVehicle);
 
@@ -276,6 +384,7 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
                         callAgvAgvTask.setCreateUserId(user.getUserId());
                         callAgvAgvTask.setCreateTime(new Date());
                         callAgvAgvTask.setIsDelete((byte) 1);
+                        callAgvAgvTask.setRemark("货架外层转移到内层");
                         callAgvAgvTaskMapper.insertUseGeneratedKeys(callAgvAgvTask);
                         Example example = new Example(CallAgvVehicleReBarcode.class);
                         Example.Criteria criteria = example.createCriteria();
@@ -292,10 +401,10 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
                             callAgvAgvTaskBarcode.setCreateUserId(user.getUserId());
                             callAgvAgvTaskBarcodeList.add(callAgvAgvTaskBarcode);
                         }
-                        callAgvAgvTaskBarcodeMapper.insertList(callAgvAgvTaskBarcodeList);
 
                         // 外层库位转移到内层，通知SCM
                         if (!callAgvAgvTaskBarcodeList.isEmpty()) {
+                            callAgvAgvTaskBarcodeMapper.insertList(callAgvAgvTaskBarcodeList);
                             Map<String, String> jsonMap = new HashMap<>();
                             jsonMap.put("inStrogeteCode", baseStorageTaskPointEnd.getStorageCode());
                             jsonMap.put("containerCode", temVehicle.getVehicleCode());
@@ -323,127 +432,134 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
     @Override
     @Transactional
     @LcnTransaction
-    public int warnCallbackDTO(WarnCallbackDTO warnCallbackDTO) throws Exception {
+    public int warnCallback(WarnCallbackDTO warnCallbackDTO) throws Exception {
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
-        WarnCallbackData data = warnCallbackDTO.getData();
-        if ("无有效路径(路径上存在货架或障碍区阻挡)".equals(data.getWarnContent())) {
-            Example example = new Example(CallAgvAgvTask.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("taskCode", data.getTaskCode());
-            CallAgvAgvTask callAgvAgvTask = callAgvAgvTaskMapper.selectOneByExample(example);
-
-            BaseStorageTaskPoint baseStorageTaskPoint = null;
-            if (StringUtils.isNotEmpty(redisUtil.get("3-" + data.getTaskCode()))) {
-                baseStorageTaskPoint = baseFeignApi.baseStorageTaskPointDetail(callAgvAgvTask.getStartStorageTaskPointId()).getData();
-            } else if (StringUtils.isNotEmpty(redisUtil.get("2-" + data.getTaskCode()))) {
-                baseStorageTaskPoint = baseFeignApi.baseStorageTaskPointDetail(callAgvAgvTask.getEndStorageTaskPointId()).getData();
+        List<WarnCallbackData> dataList = warnCallbackDTO.getData();
+        List<String> taskCodes = new ArrayList<>();
+        for (WarnCallbackData data : dataList) {
+            if (taskCodes.contains(data.getTaskCode())) {
+                continue;
             }
-            if (StringUtils.isNotEmpty(baseStorageTaskPoint)) {
-                List<String> positionCodeList = new LinkedList<>();
-                SearchBaseStorageTaskPoint searchBaseStorageTaskPoint = new SearchBaseStorageTaskPoint();
-                searchBaseStorageTaskPoint.setHierarchicalCategory(baseStorageTaskPoint.getHierarchicalCategory());
-                searchBaseStorageTaskPoint.setIfOrderByUsePriority(1);
-                List<BaseStorageTaskPoint> baseStorageTaskPointList = baseFeignApi.findBaseStorageTaskPointList(searchBaseStorageTaskPoint).getData();
-                if (baseStorageTaskPointList.size() > 1 && !baseStorageTaskPointList.get(1).getStorageTaskPointId().equals(baseStorageTaskPoint.getStorageTaskPointId())) {
-                    BaseStorageTaskPoint baseStorageTaskPointStart = baseStorageTaskPointList.get(1);
-                    if (StringUtils.isNotEmpty(baseStorageTaskPointStart.getVehicleId())) {
-                        callAgvAgvTask.setOption1("挡路配送点 + " + baseStorageTaskPointStart.getTaskPointName() + "没有找到绑定的货架");
-                        callAgvAgvTaskMapper.updateByPrimaryKeySelective(callAgvAgvTask);
-                        return 0;
-                    }
-                    TemVehicle temVehicle = temVehicleFeignApi.detail(baseStorageTaskPointStart.getVehicleId()).getData();
-                    SearchCallAgvAgvTask searchCallAgvAgvTask = new SearchCallAgvAgvTask();
-                    searchCallAgvAgvTask.setVehicleId(temVehicle.getVehicleId());
-                    searchCallAgvAgvTask.setTaskStatusList(Arrays.asList(1,2));
-                    List<CallAgvAgvTaskDto> callAgvAgvTaskDtoList = callAgvAgvTaskMapper.findList(ControllerUtil.dynamicConditionByEntity(searchCallAgvAgvTask));
-                    if (!callAgvAgvTaskDtoList.isEmpty()) {
-                        throw new BizErrorException("当前货架存在未完成任务，无法进行货架转移");
-                    }
+            taskCodes.add(data.getTaskCode());
+            if ("无有效路径(路径上存在货架或障碍区阻挡)，被货架阻挡".contains(data.getWarnContent())) {
+                Example example = new Example(CallAgvAgvTask.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("taskCode", data.getTaskCode());
+                CallAgvAgvTask callAgvAgvTask = callAgvAgvTaskMapper.selectOneByExample(example);
 
-                    positionCodeList.add(baseStorageTaskPointStart.getXyzCode());
-                    SearchBaseStorageTaskPoint searchBaseStorageTaskPoint2 = new SearchBaseStorageTaskPoint();
-                    searchBaseStorageTaskPoint2.setWarehouseAreaId(baseStorageTaskPointStart.getWarehouseAreaId());
-                    searchBaseStorageTaskPoint2.setTaskPointType((byte) 2);
-                    searchBaseStorageTaskPoint2.setStorageTaskPointStatus((byte) 1);
-                    searchBaseStorageTaskPoint2.setIfOrderByUsePriority(1);
-                    List<BaseStorageTaskPoint> baseStorageTaskPoints = baseFeignApi.findBaseStorageTaskPointList(searchBaseStorageTaskPoint2).getData();
-                    if (StringUtils.isEmpty(baseStorageTaskPoints)) {
-                        callAgvAgvTask.setOption1("没有空闲的库位将挡路货架转移");
-                        callAgvAgvTaskMapper.updateByPrimaryKeySelective(callAgvAgvTask);
-                        return 0;
-                    }
-                    positionCodeList.add(baseStorageTaskPoints.get(0).getXyzCode());
-                    BaseStorageTaskPoint baseStorageTaskPointEnd = baseStorageTaskPoints.get(0);
+                BaseStorageTaskPoint baseStorageTaskPoint = null;
+                if (StringUtils.isNotEmpty(redisUtil.get("3-" + data.getTaskCode()))) {
+                    baseStorageTaskPoint = baseFeignApi.baseStorageTaskPointDetail(callAgvAgvTask.getStartStorageTaskPointId()).getData();
+                } else if (StringUtils.isNotEmpty(redisUtil.get("2-" + data.getTaskCode()))) {
+                    baseStorageTaskPoint = baseFeignApi.baseStorageTaskPointDetail(callAgvAgvTask.getEndStorageTaskPointId()).getData();
+                }
+                if (StringUtils.isNotEmpty(baseStorageTaskPoint) && StringUtils.isNotEmpty(baseStorageTaskPoint.getHierarchicalCategory())) {
+                    List<String> positionCodeList = new LinkedList<>();
+                    SearchBaseStorageTaskPoint searchBaseStorageTaskPoint = new SearchBaseStorageTaskPoint();
+                    searchBaseStorageTaskPoint.setHierarchicalCategory(baseStorageTaskPoint.getHierarchicalCategory());
+                    searchBaseStorageTaskPoint.setIfOrderByUsePriority(1);
+                    List<BaseStorageTaskPoint> baseStorageTaskPointList = baseFeignApi.findBaseStorageTaskPointList(searchBaseStorageTaskPoint).getData();
+                    if (baseStorageTaskPointList.size() > 1 && !baseStorageTaskPointList.get(1).getStorageTaskPointId().equals(baseStorageTaskPoint.getStorageTaskPointId())) {
+                        BaseStorageTaskPoint baseStorageTaskPointStart = baseStorageTaskPointList.get(1);
+                        if (StringUtils.isNotEmpty(baseStorageTaskPointStart.getVehicleId())) {
+                            callAgvAgvTask.setOption1("挡路配送点 + " + baseStorageTaskPointStart.getTaskPointName() + "没有找到绑定的货架");
+                            callAgvAgvTaskMapper.updateByPrimaryKeySelective(callAgvAgvTask);
+                            return 0;
+                        }
+                        TemVehicle temVehicle = temVehicleFeignApi.detail(baseStorageTaskPointStart.getVehicleId()).getData();
+                        SearchCallAgvAgvTask searchCallAgvAgvTask = new SearchCallAgvAgvTask();
+                        searchCallAgvAgvTask.setVehicleId(temVehicle.getVehicleId());
+                        searchCallAgvAgvTask.setTaskStatusList(Arrays.asList(2));
+                        List<CallAgvAgvTaskDto> callAgvAgvTaskDtoList = callAgvAgvTaskMapper.findList(ControllerUtil.dynamicConditionByEntity(searchCallAgvAgvTask));
+                        if (!callAgvAgvTaskDtoList.isEmpty()) {
+                            throw new BizErrorException("当前货架存在未完成任务，无法进行货架转移");
+                        }
 
-                    // 启动AGV进行货架转移
-                    log.info("==========启动AGV进行货架 : " + temVehicle.getVehicleCode() + "转移任务==============\r\n");
-                    String taskCode = callAgvVehicleReBarcodeService.genAgvSchedulingTask(temVehicle.getAgvTaskTemplate(), positionCodeList, temVehicle.getVehicleCode());
+                        positionCodeList.add(baseStorageTaskPointStart.getXyzCode());
+                        SearchBaseStorageTaskPoint searchBaseStorageTaskPoint2 = new SearchBaseStorageTaskPoint();
+                        searchBaseStorageTaskPoint2.setWarehouseAreaId(baseStorageTaskPointStart.getWarehouseAreaId());
+                        searchBaseStorageTaskPoint2.setTaskPointType((byte) 2);
+                        searchBaseStorageTaskPoint2.setStorageTaskPointStatus((byte) 1);
+                        searchBaseStorageTaskPoint2.setIfOrderByUsePriority(1);
+                        List<BaseStorageTaskPoint> baseStorageTaskPoints = baseFeignApi.findBaseStorageTaskPointList(searchBaseStorageTaskPoint2).getData();
+                        if (StringUtils.isEmpty(baseStorageTaskPoints)) {
+                            callAgvAgvTask.setOption1("没有空闲的库位将挡路货架转移");
+                            callAgvAgvTaskMapper.updateByPrimaryKeySelective(callAgvAgvTask);
+                            return 0;
+                        }
+                        positionCodeList.add(baseStorageTaskPoints.get(0).getXyzCode());
 
-                    temVehicle.setStorageTaskPointId(0l);
-                    temVehicle.setModifiedUserId(user.getUserId());
-                    temVehicle.setModifiedTime(new Date());
-                    temVehicle.setRemark(taskCode);
-                    temVehicleFeignApi.update(temVehicle);
+                        // 启动AGV进行货架转移
+                        log.info("==========启动AGV进行货架 : " + temVehicle.getVehicleCode() + "转移任务==============\r\n");
+                        String taskCode = callAgvVehicleReBarcodeService.genAgvSchedulingTask(temVehicle.getAgvTaskTemplate(), positionCodeList, temVehicle.getVehicleCode());
 
-                    baseStorageTaskPointEnd.setStorageTaskPointStatus((byte) 2);
-                    baseStorageTaskPointEnd.setModifiedUserId(user.getUserId());
-                    baseStorageTaskPointEnd.setModifiedTime(new Date());
-                    baseStorageTaskPointEnd.setRemark("锁定配送目的点，等待货架：" + temVehicle.getVehicleCode() + "配送");
-                    baseFeignApi.updateBaseStorageTaskPoint(baseStorageTaskPointEnd);
+                        temVehicle.setStorageTaskPointId(0l);
+                        temVehicle.setModifiedUserId(user.getUserId());
+                        temVehicle.setModifiedTime(new Date());
+                        temVehicle.setRemark(taskCode);
+                        temVehicleFeignApi.update(temVehicle);
 
-                    baseStorageTaskPoint.setStorageTaskPointStatus((byte) 1);
-                    baseStorageTaskPoint.setModifiedUserId(user.getUserId());
-                    redisUtil.set("3-" + taskCode, JSONObject.toJSONString(baseStorageTaskPoint));
-                    log.info("=========记录当前货架 : " + temVehicle.getVehicleCode() + "转移任务作业对应的起始配送点 : key : " + "3-" + taskCode + " value : " + JSONObject.toJSONString(baseStorageTaskPoint) + "\r\n");
+                        BaseStorageTaskPoint baseStorageTaskPointEnd = baseStorageTaskPoints.get(0);
+                        baseStorageTaskPointEnd.setStorageTaskPointStatus((byte) 2);
+                        baseStorageTaskPointEnd.setModifiedUserId(user.getUserId());
+                        baseStorageTaskPointEnd.setModifiedTime(new Date());
+                        baseStorageTaskPointEnd.setRemark("锁定配送目的点，等待货架：" + temVehicle.getVehicleCode() + "配送");
+                        baseFeignApi.updateBaseStorageTaskPoint(baseStorageTaskPointEnd);
 
-                    temVehicle.setStorageTaskPointId(baseStorageTaskPointEnd.getStorageTaskPointId());
-                    redisUtil.set("2-" + taskCode, JSONObject.toJSONString(temVehicle));
-                    log.info("=========记录当前货架 : " + temVehicle.getVehicleCode() + "转移任务作业对应的目的配送点 : key : " + "2-" + taskCode + " value : " + JSONObject.toJSONString(temVehicle) + "\r\n");
+                        baseStorageTaskPointStart.setStorageTaskPointStatus((byte) 1);
+                        baseStorageTaskPointStart.setModifiedUserId(user.getUserId());
+                        redisUtil.set("3-" + taskCode, JSONObject.toJSONString(baseStorageTaskPointStart));
+                        log.info("=========记录当前货架 : " + temVehicle.getVehicleCode() + "转移任务作业对应的起始配送点 : key : " + "3-" + taskCode + " value : " + JSONObject.toJSONString(baseStorageTaskPointStart) + "\r\n");
 
-                    // 记录AGV任务
-                    CallAgvAgvTask callAgvAgvTaskNew = new CallAgvAgvTask();
-                    callAgvAgvTaskNew.setTaskCode(taskCode);
-                    callAgvAgvTaskNew.setVehicleId(temVehicle.getVehicleId());
-                    callAgvAgvTaskNew.setTaskStatus((byte) 2);
-                    callAgvAgvTaskNew.setStartStorageTaskPointId(baseStorageTaskPoint.getStorageTaskPointId());
-                    callAgvAgvTaskNew.setEndStorageTaskPointId(baseStorageTaskPointEnd.getStorageTaskPointId());
-                    callAgvAgvTaskNew.setOperateType((byte) 4);
-                    callAgvAgvTaskNew.setStatus((byte) 1);
-                    callAgvAgvTaskNew.setOrgId(user.getOrganizationId());
-                    callAgvAgvTaskNew.setCreateUserId(user.getUserId());
-                    callAgvAgvTaskNew.setCreateTime(new Date());
-                    callAgvAgvTaskNew.setIsDelete((byte) 1);
-                    callAgvAgvTaskMapper.insertUseGeneratedKeys(callAgvAgvTaskNew);
+                        temVehicle.setStorageTaskPointId(baseStorageTaskPointEnd.getStorageTaskPointId());
+                        redisUtil.set("2-" + taskCode, JSONObject.toJSONString(temVehicle));
+                        log.info("=========记录当前货架 : " + temVehicle.getVehicleCode() + "转移任务作业对应的目的配送点 : key : " + "2-" + taskCode + " value : " + JSONObject.toJSONString(temVehicle) + "\r\n");
 
-                    Example example2 = new Example(CallAgvVehicleReBarcode.class);
-                    Example.Criteria criteria2 = example2.createCriteria();
-                    criteria2.andEqualTo("vehicleId", temVehicle.getVehicleId()).andEqualTo("orgId", user.getOrganizationId());
-                    List<CallAgvVehicleReBarcode> callAgvVehicleReBarcodeList = callAgvVehicleReBarcodeMapper.selectByExample(example2);
+                        // 记录AGV任务
+                        CallAgvAgvTask callAgvAgvTaskNew = new CallAgvAgvTask();
+                        callAgvAgvTaskNew.setTaskCode(taskCode);
+                        callAgvAgvTaskNew.setVehicleId(temVehicle.getVehicleId());
+                        callAgvAgvTaskNew.setTaskStatus((byte) 2);
+                        callAgvAgvTaskNew.setStartStorageTaskPointId(baseStorageTaskPointStart.getStorageTaskPointId());
+                        callAgvAgvTaskNew.setEndStorageTaskPointId(baseStorageTaskPointEnd.getStorageTaskPointId());
+                        callAgvAgvTaskNew.setOperateType((byte) 4);
+                        callAgvAgvTaskNew.setStatus((byte) 1);
+                        callAgvAgvTaskNew.setOrgId(user.getOrganizationId());
+                        callAgvAgvTaskNew.setCreateUserId(user.getUserId());
+                        callAgvAgvTaskNew.setCreateTime(new Date());
+                        callAgvAgvTaskNew.setIsDelete((byte) 1);
+                        callAgvAgvTaskMapper.insertUseGeneratedKeys(callAgvAgvTaskNew);
 
-                    List<CallAgvAgvTaskBarcode> callAgvAgvTaskBarcodeList = new LinkedList<>();
-                    for (CallAgvVehicleReBarcode callAgvVehicleReBarcode : callAgvVehicleReBarcodeList) {
-                        CallAgvAgvTaskBarcode callAgvAgvTaskBarcode = new CallAgvAgvTaskBarcode();
-                        callAgvAgvTaskBarcode.setAgvTaskId(callAgvAgvTask.getAgvTaskId());
-                        callAgvAgvTaskBarcode.setBarcodeId(callAgvVehicleReBarcode.getBarcodeId());
-                        callAgvAgvTaskBarcode.setStatus((byte) 1);
-                        callAgvAgvTaskBarcode.setOrgId(user.getOrganizationId());
-                        callAgvAgvTaskBarcode.setCreateTime(new Date());
-                        callAgvAgvTaskBarcode.setCreateUserId(user.getUserId());
-                        callAgvAgvTaskBarcodeList.add(callAgvAgvTaskBarcode);
-                    }
-                    callAgvAgvTaskBarcodeMapper.insertList(callAgvAgvTaskBarcodeList);
+                        Example example2 = new Example(CallAgvVehicleReBarcode.class);
+                        Example.Criteria criteria2 = example2.createCriteria();
+                        criteria2.andEqualTo("vehicleId", temVehicle.getVehicleId()).andEqualTo("orgId", user.getOrganizationId());
+                        List<CallAgvVehicleReBarcode> callAgvVehicleReBarcodeList = callAgvVehicleReBarcodeMapper.selectByExample(example2);
 
-                    // 货架转移，通知SCM
-                    if (!callAgvAgvTaskBarcodeList.isEmpty()) {
-                        Map<String, String> jsonMap = new HashMap<>();
-                        jsonMap.put("inStrogeteCode", baseStorageTaskPointEnd.getStorageCode());
-                        jsonMap.put("containerCode", temVehicle.getVehicleCode());
-                        log.info("货架转移参数：" + JSONObject.toJSONString(jsonMap));
-                        Map<String, Object> map = callAgvVehicleReBarcodeService.scmParam(jsonMap, "mls.save.production.transfer");
-                        redisUtil.set("scm-" + taskCode, JSONObject.toJSONString(map));
-                        log.info("=========记录当前货架 : " + temVehicle.getVehicleCode() + "进行库位内层转移作业对应的出库单 : key : " + "scm-" + taskCode + " value : " + JSONObject.toJSONString(map) + "\r\n");
+                        List<CallAgvAgvTaskBarcode> callAgvAgvTaskBarcodeList = new LinkedList<>();
+                        for (CallAgvVehicleReBarcode callAgvVehicleReBarcode : callAgvVehicleReBarcodeList) {
+                            CallAgvAgvTaskBarcode callAgvAgvTaskBarcode = new CallAgvAgvTaskBarcode();
+                            callAgvAgvTaskBarcode.setAgvTaskId(callAgvAgvTask.getAgvTaskId());
+                            callAgvAgvTaskBarcode.setBarcodeId(callAgvVehicleReBarcode.getBarcodeId());
+                            callAgvAgvTaskBarcode.setStatus((byte) 1);
+                            callAgvAgvTaskBarcode.setOrgId(user.getOrganizationId());
+                            callAgvAgvTaskBarcode.setCreateTime(new Date());
+                            callAgvAgvTaskBarcode.setCreateUserId(user.getUserId());
+                            callAgvAgvTaskBarcodeList.add(callAgvAgvTaskBarcode);
+                        }
+
+                        // 货架转移，通知SCM
+                        if (!callAgvAgvTaskBarcodeList.isEmpty()) {
+                            callAgvAgvTaskBarcodeMapper.insertList(callAgvAgvTaskBarcodeList);
+                            Map<String, String> jsonMap = new HashMap<>();
+                            jsonMap.put("inStrogeteCode", baseStorageTaskPointEnd.getStorageCode());
+                            jsonMap.put("containerCode", temVehicle.getVehicleCode());
+                            log.info("货架转移参数：" + JSONObject.toJSONString(jsonMap));
+                            Map<String, Object> map = callAgvVehicleReBarcodeService.scmParam(jsonMap, "mls.save.production.transfer");
+                            redisUtil.set("scm-" + taskCode, JSONObject.toJSONString(map));
+                            log.info("=========记录当前货架 : " + temVehicle.getVehicleCode() + "进行库位内层转移作业对应的出库单 : key : " + "scm-" + taskCode + " value : " + JSONObject.toJSONString(map) + "\r\n");
+                        }
                     }
                 }
             }

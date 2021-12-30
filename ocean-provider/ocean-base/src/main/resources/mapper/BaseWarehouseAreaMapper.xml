@@ -28,6 +28,7 @@
                type="com.fantechs.common.base.general.dto.basic.BaseWarehouseAreaDto">
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
         <result column="warehouse_category" jdbcType="BIGINT" property="warehouseCategory"/>
@@ -60,7 +61,7 @@
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         select  <include refid="Base_Column_List"></include>,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-        sw.warehouse_name, sw.warehouse_category,
+        sw.warehouse_code as warehouseCode, sw.warehouse_name, sw.warehouse_category,
         bo.organization_name
         FROM fantech_imes_v2.base_warehouse_area swa
         LEFT JOIN ocean_v2.sys_user su ON swa.create_user_id = su.user_id
@@ -68,6 +69,9 @@
         LEfT JOIN fantech_imes_v2.base_warehouse sw ON swa.warehouse_id= sw.warehouse_id
         LEFT JOIN fantech_imes_v2.base_organization bo ON swa.org_id = bo.organization_id
         <where>
+            <if test="warehouseAreaId != null and warehouseAreaId != ''">
+                and swa.warehouse_area_id = #{warehouseAreaId}
+            </if>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(swa.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>

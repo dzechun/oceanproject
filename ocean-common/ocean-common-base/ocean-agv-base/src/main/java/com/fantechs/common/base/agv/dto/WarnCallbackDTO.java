@@ -3,6 +3,8 @@ package com.fantechs.common.base.agv.dto;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class WarnCallbackDTO {
 
@@ -19,5 +21,5 @@ public class WarnCallbackDTO {
     private String tokenCode;
 
     @ApiModelProperty(value = "告警内容", example = "告警内容")
-    private WarnCallbackData data;
+    private List<WarnCallbackData> data;
 }

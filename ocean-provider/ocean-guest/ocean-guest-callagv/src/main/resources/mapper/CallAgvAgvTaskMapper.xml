@@ -104,6 +104,9 @@
       <if test="startTaskPointName != null and startTaskPointName != ''">
         and sstp.task_point_name like CONCAT('%', #{startTaskPointName}, '%')
       </if>
+      <if test="endStorageTaskPointId != null">
+        and caat.end_storage_task_point_id = #{endStorageTaskPointId}
+      </if>
       <if test="endTaskPointName != null and endTaskPointName != ''">
         and estp.task_point_name like CONCAT('%', #{endTaskPointName}, '%')
       </if>

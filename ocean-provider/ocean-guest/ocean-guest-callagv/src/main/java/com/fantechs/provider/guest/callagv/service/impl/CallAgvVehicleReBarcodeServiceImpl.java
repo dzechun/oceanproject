@@ -857,10 +857,15 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
     }
 
     @Override
+    @Transactional
+    @LcnTransaction
     public int barcodeInWarehouseArea(BarcodeWarehouseAreaDto barcodeWarehouseAreaDto) throws Exception {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         List<CallAgvWarehouseAreaReBarcode> callAgvWarehouseAreaReBarcodeList = new LinkedList<>();
         List<CallAgvWarehouseAreaBarcodeLog> callAgvWarehouseAreaBarcodeLogList = new LinkedList<>();
+        List<GoodsDetail> goodsDetails = new LinkedList<>();
+        String warehouseCode = "";
+        String warehouseaAreaCode = "";
         for (Long barcodeId : barcodeWarehouseAreaDto.getBarcodeIdList()) {
             CallAgvBarcode callAgvBarcode = callAgvBarcodeMapper.selectByPrimaryKey(barcodeId);
             if (callAgvBarcode.getBarcodeStatus() == 2 && callAgvBarcode.getBarcodeStatus() == 3) {
@@ -888,17 +893,59 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
             callAgvWarehouseAreaBarcodeLog.setCreateUserId(user.getUserId());
             callAgvWarehouseAreaBarcodeLog.setIsDelete((byte) 1);
             callAgvWarehouseAreaBarcodeLogList.add(callAgvWarehouseAreaBarcodeLog);
+
+            callAgvBarcode.setBarcodeStatus((byte) 3);
+            callAgvBarcode.setModifiedUserId(user.getUserId());
+            callAgvBarcode.setModifiedTime(new Date());
+            callAgvBarcodeMapper.updateByPrimaryKeySelective(callAgvBarcode);
+
+            GoodsDetail goodsDetail = new GoodsDetail();
+            goodsDetail.setBatchNumber(callAgvBarcode.getBatch());
+            goodsDetail.setBarCode(callAgvBarcode.getBarcode());
+            goodsDetail.setActualQuantity(callAgvBarcode.getQty().doubleValue());
+            goodsDetail.setMaterialCodes(callAgvBarcode.getMaterialCode());
+            goodsDetails.add(goodsDetail);
+
+            if (StringUtils.isEmpty(warehouseaAreaCode, warehouseCode)) {
+                SearchBaseWarehouseArea searchBaseWarehouseArea = new SearchBaseWarehouseArea();
+                searchBaseWarehouseArea.setWarehouseAreaId(callAgvWarehouseAreaReBarcode.getWarehouseAreaId());
+                List<BaseWarehouseAreaDto> baseWarehouseAreaDtoList = baseFeignApi.findWarehouseAreaList(searchBaseWarehouseArea).getData();
+                warehouseaAreaCode = baseWarehouseAreaDtoList.get(0).getWarehouseAreaCode();
+                warehouseCode = baseWarehouseAreaDtoList.get(0).getWarehouseCode();
+            }
         }
         callAgvWarehouseAreaReBarcodeMapper.insertList(callAgvWarehouseAreaReBarcodeList);
         callAgvWarehouseAreaBarcodeLogMapper.insertList(callAgvWarehouseAreaBarcodeLogList);
+        // 扫码入库，回传数据到SCM
+        Map<String, String> jsonMap = new HashMap<>();
+        jsonMap.put("warehouseCode", warehouseCode);
+        jsonMap.put("warehouseaAreaCode", warehouseaAreaCode);
+        jsonMap.put("pkGroup", pkGroup);
+        jsonMap.put("pkOrg", pkOrg);
+        jsonMap.put("factoryCode", factoryCode);
+        jsonMap.put("goodsDetails", JSONObject.toJSONString(goodsDetails));
+        log.info("扫码入库参数：" + JSONObject.toJSONString(jsonMap));
+        Map<String, Object> paramMap = scmParam(jsonMap, "mls.scanCode.in.warehouse");
+        log.info("扫码入库，回传数据到SCM : " + JsonUtils.objectToJson(paramMap));
+        String result = RestTemplateUtil.postForString(url, paramMap);
+        JSONObject jsonObject = JSONObject.parseObject(result);
+        log.info("扫码入库，回传数据到SCM : " + jsonObject);
+        if (!"0".equals(jsonObject.get("code"))) {
+            throw new BizErrorException("扫码入库失败：" + jsonObject.get("msg"));
+        }
 
         return 1;
     }
 
     @Override
+    @Transactional
+    @LcnTransaction
     public int barcodeOutWarehouseArea(List<Long> warehouseAreaReBarcodeIdList) throws Exception {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         List<CallAgvWarehouseAreaBarcodeLog> callAgvWarehouseAreaBarcodeLogList = new LinkedList<>();
+        List<GoodsDetail> goodsDetails = new LinkedList<>();
+        String warehouseCode = "";
+        String warehouseaAreaCode = "";
         for (Long warehouseAreaReBarcodeId : warehouseAreaReBarcodeIdList) {
             CallAgvWarehouseAreaReBarcode callAgvWarehouseAreaReBarcode = callAgvWarehouseAreaReBarcodeMapper.selectByPrimaryKey(warehouseAreaReBarcodeId);
             CallAgvWarehouseAreaBarcodeLog callAgvWarehouseAreaBarcodeLog = new CallAgvWarehouseAreaBarcodeLog();
@@ -913,7 +960,46 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
             callAgvWarehouseAreaBarcodeLog.setCreateUserId(user.getUserId());
             callAgvWarehouseAreaBarcodeLog.setIsDelete((byte) 1);
             callAgvWarehouseAreaBarcodeLogList.add(callAgvWarehouseAreaBarcodeLog);
+
+            CallAgvBarcode callAgvBarcode = callAgvBarcodeMapper.selectByPrimaryKey(callAgvWarehouseAreaReBarcode.getBarcodeId());
+            callAgvBarcode.setBarcodeStatus((byte) 3);
+            callAgvBarcode.setModifiedUserId(user.getUserId());
+            callAgvBarcode.setModifiedTime(new Date());
+            callAgvBarcodeMapper.updateByPrimaryKeySelective(callAgvBarcode);
+
+            GoodsDetail goodsDetail = new GoodsDetail();
+            goodsDetail.setBatchNumber(callAgvBarcode.getBatch());
+            goodsDetail.setBarCode(callAgvBarcode.getBarcode());
+            goodsDetail.setActualQuantity(callAgvBarcode.getQty().doubleValue());
+            goodsDetail.setMaterialCodes(callAgvBarcode.getMaterialCode());
+            goodsDetails.add(goodsDetail);
+
+            if (StringUtils.isEmpty(warehouseaAreaCode, warehouseCode)) {
+                SearchBaseWarehouseArea searchBaseWarehouseArea = new SearchBaseWarehouseArea();
+                searchBaseWarehouseArea.setWarehouseAreaId(callAgvWarehouseAreaReBarcode.getWarehouseAreaId());
+                List<BaseWarehouseAreaDto> baseWarehouseAreaDtoList = baseFeignApi.findWarehouseAreaList(searchBaseWarehouseArea).getData();
+                warehouseaAreaCode = baseWarehouseAreaDtoList.get(0).getWarehouseAreaCode();
+                warehouseCode = baseWarehouseAreaDtoList.get(0).getWarehouseCode();
+            }
         }
+        // 扫码出库，回传数据到SCM
+        Map<String, String> jsonMap = new HashMap<>();
+        jsonMap.put("warehouseCode", warehouseCode);
+        jsonMap.put("warehouseaAreaCode", warehouseaAreaCode);
+        jsonMap.put("pkGroup", pkGroup);
+        jsonMap.put("pkOrg", pkOrg);
+        jsonMap.put("factoryCode", factoryCode);
+        jsonMap.put("goodsDetails", JSONObject.toJSONString(goodsDetails));
+        log.info("扫码出库参数：" + JSONObject.toJSONString(jsonMap));
+        Map<String, Object> paramMap = scmParam(jsonMap, "mls.scanCode.out.warehouse");
+        log.info("扫码出库，回传数据到SCM : " + JsonUtils.objectToJson(paramMap));
+        String result = RestTemplateUtil.postForString(url, paramMap);
+        JSONObject jsonObject = JSONObject.parseObject(result);
+        log.info("扫码出库，回传数据到SCM : " + jsonObject);
+        if (!"0".equals(jsonObject.get("code"))) {
+            throw new BizErrorException("扫码出库失败：" + jsonObject.get("msg"));
+        }
+
         callAgvWarehouseAreaBarcodeLogMapper.insertList(callAgvWarehouseAreaBarcodeLogList);
         callAgvWarehouseAreaReBarcodeMapper.deleteByIds(org.apache.commons.lang3.StringUtils.join(warehouseAreaReBarcodeIdList, ","));
 

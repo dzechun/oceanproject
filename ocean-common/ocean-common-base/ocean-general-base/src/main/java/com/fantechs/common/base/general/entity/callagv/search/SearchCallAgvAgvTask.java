@@ -19,6 +19,9 @@ public class SearchCallAgvAgvTask extends BaseQuery implements Serializable {
     @ApiModelProperty(name="startTaskPointName",value = "起始配送点")
     private String startTaskPointName;
 
+    @ApiModelProperty(name="endStorageTaskPointId",value = "目标配送点ID")
+    private Long endStorageTaskPointId;
+
     @ApiModelProperty(name="endTaskPointName",value = "目标配送点")
     private String endTaskPointName;
 
