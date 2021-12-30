@@ -35,10 +35,10 @@ public class PDAWmsInnerSplitAndCombinePrintDto implements Serializable {
     private List<Long> materialBarcodeIdList;
 
     /**
-     * 包箱/栈板详细信息
+     * 包箱/栈板码
      */
-    @ApiModelProperty(name="cartonPalletInfoDtos",value = "包箱/栈板详细信息")
-    private List<PDAWmsInnerSplitAndCombineCartonPalletInfoDto> cartonPalletInfoDtos;
+    @ApiModelProperty(name="cartonPalletCodes",value = "包箱/栈板码")
+    private List<String> cartonPalletCodes;
 
 
 
