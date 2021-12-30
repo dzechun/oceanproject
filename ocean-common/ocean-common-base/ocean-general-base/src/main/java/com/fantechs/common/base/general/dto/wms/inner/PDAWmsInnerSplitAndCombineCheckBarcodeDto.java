@@ -34,10 +34,10 @@ public class PDAWmsInnerSplitAndCombineCheckBarcodeDto implements Serializable {
     private String barcode;
 
     /**
-     * 包箱/栈板下级条码
+     * 包箱/栈板码
      */
-    @ApiModelProperty(name="nextLevelInventoryDetDtos",value = "包箱/栈板下级条码")
-    private List<WmsInnerInventoryDetDto> nextLevelInventoryDetDtos;
+    @ApiModelProperty(name="cartonPalletCode",value = "包箱/栈板码")
+    private String cartonPalletCode;
 
 
 }
