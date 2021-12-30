@@ -76,7 +76,8 @@
         select<include refid="Base_Column_List"/>,
         bs.storage_code,bs.storage_type,bs.warehouse_id,bw.warehouse_name,bo.organization_name,bis.inventory_status_name,
         wimb.barcode as barcode,wimb.color_box_code as colorBoxCode,wimb.carton_code as cartonCode,wimb.pallet_code as palletCode,
-        wimb.batch_code as batchCode,wimb.production_time as productionTime,wimb.material_qty as materialQty,wimb.material_id as materialId,wimb.barcode_type as barcodeType,bm.material_code as material_code,
+        wimb.batch_code as batchCode,wimb.production_time as productionTime,wimb.material_qty as materialQty,wimb.material_id as materialId,
+        wimb.barcode_type as barcodeType,bm.material_code as material_code,
         bm.material_name as material_name,bps.package_specification_quantity,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name
         from wms_inner_inventory_det wiid
@@ -103,23 +104,20 @@
             <if test="cartonCode!=null and cartonCode!=''">
                 and wimb.carton_code = #{cartonCode}
             </if>
-            <if test="storageCode!=null and storageCode!=''">
-                and wimb.pallet_code = #{palletCode}
-            </if>
             <if test="storageId!=null and storageId!='' and notEqualMark!=1">
                 and wiid.storage_id = #{storageId}
             </if>
-            <if test="storageId!=null and storageId!='' and notEqualMark==1">
-                and wiid.storage_id != #{storageId}
+            <if test="batchCode!=null and batchCode!=''">
+                and wimb.batch_code = #{batchCode}
             </if>
             <if test="materialId!=null and materialId!='' and notEqualMark==1">
                 and bm.material_id != #{materialId}
             </if>
             <if test="productionStartDate!= null and productionEndDate!= null">
-                and date_format(wiid.production_date, '%Y-%m-%d') BETWEEN #{productionStartDate} AND #{productionEndDate}
+                and date_format(wimb.production_time, '%Y-%m-%d') BETWEEN #{productionStartDate} AND #{productionEndDate}
             </if>
             <if test="expiredStartDate!= null and expiredEndDate!= null ">
-                and date_format(wiid.expired_date, '%Y-%m-%d') BETWEEN #{expiredStartDate} AND #{expiredEndDate}
+                and date_format(wimb.expired_time, '%Y-%m-%d') BETWEEN #{expiredStartDate} AND #{expiredEndDate}
             </if>
             <if test="receivingStartDate!= null  and receivingEndDate!= null">
                 and date_format(wiid.receiving_date, '%Y-%m-%d') BETWEEN #{receivingStartDate} AND #{receivingEndDate}
@@ -143,7 +141,7 @@
                 and bm.material_id = #{materialId}
             </if>
             <if test="materialCode!=null and materialCode!=''">
-                and bm.material_code like CONCAT('%',#{materialCode},'%')
+                and bm.material_code = #{materialCode}
             </if>
             <if test="materialName!=null and materialName!=''">
                 and bm.material_name like CONCAT('%',#{materialName},'%')

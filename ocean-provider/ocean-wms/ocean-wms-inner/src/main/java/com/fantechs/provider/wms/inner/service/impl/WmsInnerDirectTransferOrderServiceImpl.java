@@ -50,10 +50,6 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
     public List<WmsInnerDirectTransferOrderDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",user.getOrganizationId());
-        Date endTime = (Date)map.get("endTime");
-        Calendar calendar = new GregorianCalendar();
-        //calendar.set(endTime);
-        calendar.add(calendar.DATE,1);
         return wmsInnerDirectTransferOrderMapper.findList(map);
     }
 
