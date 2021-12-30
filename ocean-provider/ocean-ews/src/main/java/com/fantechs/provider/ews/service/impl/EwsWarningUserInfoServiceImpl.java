@@ -5,19 +5,23 @@ import com.fantechs.common.base.entity.security.SysImportAndExportLog;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.ews.EwsHtWarningUserInfoDto;
 import com.fantechs.common.base.general.dto.ews.EwsWarningUserInfoDto;
 import com.fantechs.common.base.general.dto.ews.imports.EwsWarningUserInfoImport;
+import com.fantechs.common.base.general.entity.ews.EwsHtWarningUserInfo;
 import com.fantechs.common.base.general.entity.ews.EwsWarningUserInfo;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.ews.mapper.EwsHtWarningUserInfoMapper;
 import com.fantechs.provider.ews.mapper.EwsWarningUserInfoMapper;
 import com.fantechs.provider.ews.service.EwsWarningUserInfoService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -33,6 +37,8 @@ public class EwsWarningUserInfoServiceImpl extends BaseService<EwsWarningUserInf
     private EwsWarningUserInfoMapper ewsWarningUserInfoMapper;
     @Resource
     private SecurityFeignApi securityFeignApi;
+    @Resource
+    private EwsHtWarningUserInfoMapper ewsHtWarningUserInfoMapper;
 
     @Override
     public List<EwsWarningUserInfoDto> findList(Map<String, Object> map) {
@@ -70,8 +76,19 @@ public class EwsWarningUserInfoServiceImpl extends BaseService<EwsWarningUserInf
                 fail.add(i++);
                 break;
             }
+            Example example = new Example(EwsWarningUserInfo.class);
+            example.createCriteria().andEqualTo("userId",responseEntity.getData().get(0).getUserId());
+            int count = ewsWarningUserInfoMapper.selectCountByExample(example);
+            if(count>0){
+                map.put(ewsWarningUserInfoImport.getUserCode(),"员工信息已存在");
+                failMap.add(map);
+                fail.add(i++);
+                break;
+            }
             EwsWarningUserInfo ewsWarningUserInfo = new EwsWarningUserInfo();
             BeanUtils.copyProperties(ewsWarningUserInfoImport,ewsWarningUserInfo);
+            ewsWarningUserInfo.setEMailAddress(ewsWarningUserInfoImport.getMailAddress());
+            ewsWarningUserInfo.setUserId(responseEntity.getData().get(0).getUserId());
             ewsWarningUserInfo.setCreateUserId(sysUser.getUserId());
             ewsWarningUserInfo.setCreateTime(new Date());
             ewsWarningUserInfo.setModifiedUserId(sysUser.getUserId());
@@ -95,18 +112,36 @@ public class EwsWarningUserInfoServiceImpl extends BaseService<EwsWarningUserInf
     }
 
     @Override
+    public List<EwsHtWarningUserInfoDto> findHtList(Map<String, Object> map) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId",sysUser.getOrganizationId());
+        return ewsHtWarningUserInfoMapper.findList(map);
+    }
+
+    @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(EwsWarningUserInfo record) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(record.getUserId())){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"预警人员不能为空");
         }
+        Example example = new Example(EwsWarningUserInfo.class);
+        example.createCriteria().andEqualTo("userId",record.getUserId());
+        int count = ewsWarningUserInfoMapper.selectCountByExample(example);
+        if(count>0){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"员工信息已存在");
+        }
         record.setCreateUserId(sysUser.getUserId());
         record.setCreateTime(new Date());
         record.setModifiedUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
         record.setOrgId(sysUser.getOrganizationId());
-        return super.save(record);
+        int num = ewsWarningUserInfoMapper.insertUseGeneratedKeys(record);
+
+        EwsHtWarningUserInfo ewsHtWarningUserInfo = new EwsHtWarningUserInfoDto();
+        BeanUtils.copyProperties(record,ewsHtWarningUserInfo);
+        ewsHtWarningUserInfoMapper.insertSelective(ewsHtWarningUserInfo);
+        return num;
     }
 
     @Override
@@ -116,8 +151,19 @@ public class EwsWarningUserInfoServiceImpl extends BaseService<EwsWarningUserInf
         if(StringUtils.isEmpty(entity.getUserId())){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"预警人员不能为空");
         }
+        Example example = new Example(EwsWarningUserInfo.class);
+        example.createCriteria().andEqualTo("userId",entity.getUserId()).andNotEqualTo("warningUserInfoId",entity.getWarningUserInfoId());
+        int count = ewsWarningUserInfoMapper.selectCountByExample(example);
+        if(count>0){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"员工信息已存在");
+        }
         entity.setModifiedUserId(sysUser.getUserId());
         entity.setModifiedTime(new Date());
+
+        EwsHtWarningUserInfo ewsHtWarningUserInfo = new EwsHtWarningUserInfoDto();
+        BeanUtils.copyProperties(entity,ewsHtWarningUserInfo);
+        ewsHtWarningUserInfoMapper.insertSelective(ewsHtWarningUserInfo);
+
         return super.update(entity);
     }
 

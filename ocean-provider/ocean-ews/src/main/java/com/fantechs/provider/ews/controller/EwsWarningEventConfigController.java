@@ -67,20 +67,20 @@ public class EwsWarningEventConfigController {
     }
 
     @ApiOperation("执行状态开始")
-    @PostMapping("/start")
-    public ResponseEntity start(@ApiParam(value = "对象，Id必传",required = true)@RequestParam Long id) {
-        return ControllerUtil.returnCRUD(ewsWarningEventConfigService.start(id));
+    @GetMapping("/start")
+    public ResponseEntity start(@ApiParam(value = "对象，Id必传",required = true)@RequestParam Long Id) {
+        return ControllerUtil.returnCRUD(ewsWarningEventConfigService.start(Id));
     }
 
     @ApiOperation("执行状态关闭")
-    @PostMapping("/stop")
-    public ResponseEntity stop(@ApiParam(value = "对象，Id必传",required = true)@RequestParam Long id) {
-        return ControllerUtil.returnCRUD(ewsWarningEventConfigService.stop(id));
+    @GetMapping("/stop")
+    public ResponseEntity stop(@ApiParam(value = "对象，Id必传",required = true)@RequestParam Long Id) {
+        return ControllerUtil.returnCRUD(ewsWarningEventConfigService.stop(Id));
     }
 
     @ApiOperation("立即执行")
-    @PostMapping("/immediately")
-    public ResponseEntity immediately(@ApiParam(value = "对象，Id必传",required = true)@RequestParam Long id) {
-        return ControllerUtil.returnCRUD(ewsWarningEventConfigService.immediately(id));
+    @GetMapping("/immediately")
+    public ResponseEntity immediately(@ApiParam(value = "对象，Id必传",required = true)@RequestParam Long Id) {
+        return ControllerUtil.returnCRUD(ewsWarningEventConfigService.immediately(Id));
     }
 }

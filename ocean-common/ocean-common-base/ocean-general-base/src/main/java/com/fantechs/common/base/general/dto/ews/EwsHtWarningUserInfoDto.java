@@ -1,7 +1,7 @@
 package com.fantechs.common.base.general.dto.ews;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.ews.EwsWarningPushConfig;
+import com.fantechs.common.base.general.entity.ews.EwsHtWarningUserInfo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -10,28 +10,24 @@ import java.io.Serializable;
 
 /**
  * @Author mr.lei
- * @Date 2021/12/27
+ * @Date 2021/12/30
  */
 @Data
-public class EwsWarningPushConfigDto extends EwsWarningPushConfig implements Serializable {
+public class EwsHtWarningUserInfoDto extends EwsHtWarningUserInfo implements Serializable {
+    @ApiModelProperty(name = "userCode",value = "用户工号")
+    @Excel(name = "用户工号", height = 20, width = 30,orderNum="1")
+    private String userCode;
 
-    /**
-     * 预警事件ID编码
-     */
-    @ApiModelProperty(name="warningEventIdCode",value = "预警事件ID编码")
-    private String warningEventIdCode;
+    @ApiModelProperty(name = "nickName",value = "用户名称")
+    @Excel(name = "用户名称", height = 20, width = 30,orderNum="2")
+    private String nickName;
 
-    /**
-     * 事件名称
-     */
-    @ApiModelProperty(name = "warningEventName",value = "事件名称")
-    private String warningEventName;
     /**
      * 创建用户名称
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="9")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="8")
     private String createUserName;
 
     /**
@@ -39,7 +35,7 @@ public class EwsWarningPushConfigDto extends EwsWarningPushConfig implements Ser
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="11")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="10")
     private String modifiedUserName;
 
     /**
