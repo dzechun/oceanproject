@@ -160,13 +160,22 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
 
         SearchBaseProductBom searchBaseProductBom = new SearchBaseProductBom();
         searchBaseProductBom.setMaterialId(partMaterialId);
-        BaseProductBomDto baseProductBomDto = baseFeignApi.findNextLevelProductBomDet(searchBaseProductBom).getData();
-        if(StringUtils.isEmpty(baseProductBomDto)){
+        List<BaseProductBomDto> productBomDtos = baseFeignApi.findProductBomList(searchBaseProductBom).getData();
+        if(StringUtils.isEmpty(productBomDtos)){
             throw new BizErrorException("找不到该半成品");
         }
-        List<BaseProductBomDetDto> baseProductBomDetDtos = baseProductBomDto.getBaseProductBomDetDtos();
+        BaseProductBomDto baseProductBomDto = productBomDtos.get(0);
+
+        SearchBaseProductBom searchBaseProductBom1 = new SearchBaseProductBom();
+        searchBaseProductBom1.setProductBomId(baseProductBomDto.getProductBomId());
+        BaseProductBomDto productBomDto = baseFeignApi.findNextLevelProductBomDet(searchBaseProductBom1).getData();
+        if(StringUtils.isEmpty(productBomDto)){
+            throw new BizErrorException("找不到该半成品");
+        }
+
+        List<BaseProductBomDetDto> baseProductBomDetDtos = productBomDto.getBaseProductBomDetDtos();
         if(StringUtils.isEmpty(baseProductBomDetDtos)){
-            throw new BizErrorException("找不到该半成品Bom");
+            throw new BizErrorException("该半成品无Bom列表");
         }
 
         return baseProductBomDetDtos;

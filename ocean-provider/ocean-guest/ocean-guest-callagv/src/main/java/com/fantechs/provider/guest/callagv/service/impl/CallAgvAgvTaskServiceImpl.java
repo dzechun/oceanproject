@@ -1,17 +1,19 @@
 package com.fantechs.provider.guest.callagv.service.impl;
 
+import com.fantechs.common.base.agv.dto.AgvCallBackDTO;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.callagv.CallAgvAgvTaskDto;
-import com.fantechs.common.base.general.dto.callagv.CallAgvVehicleReBarcodeDto;
 import com.fantechs.common.base.general.entity.callagv.CallAgvAgvTask;
 import com.fantechs.common.base.general.entity.callagv.CallAgvAgvTaskBarcode;
+import com.fantechs.common.base.general.entity.tem.TemVehicle;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.tem.TemVehicleFeignApi;
 import com.fantechs.provider.guest.callagv.mapper.CallAgvAgvTaskMapper;
-import com.fantechs.provider.guest.callagv.mapper.CallAgvVehicleReBarcodeMapper;
 import com.fantechs.provider.guest.callagv.service.CallAgvAgvTaskService;
+import com.fantechs.provider.guest.callagv.service.RcsCallBackService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,33 @@ public class CallAgvAgvTaskServiceImpl extends BaseService<CallAgvAgvTask> imple
 
     @Resource
     private CallAgvAgvTaskMapper callAgvAgvTaskMapper;
+
+    @Resource
+    private RcsCallBackService rcsCallBackService;
+
+    @Resource
+    private TemVehicleFeignApi temVehicleFeignApi;
+
+    @Override
+    public int update(CallAgvAgvTask callAgvAgvTask) {
+        // 手动结束任务，模拟RCS发送完整信号
+        if (callAgvAgvTask.getTaskStatus() == 3 || callAgvAgvTask.getTaskStatus() == 5) {
+            TemVehicle temVehicle = temVehicleFeignApi.detail(callAgvAgvTask.getVehicleId()).getData();
+            try {
+                AgvCallBackDTO agvCallBackDTO = new AgvCallBackDTO();
+                agvCallBackDTO.setTaskCode(callAgvAgvTask.getTaskCode());
+                agvCallBackDTO.setPodCode(temVehicle.getVehicleCode());
+                agvCallBackDTO.setMethod("4");
+                rcsCallBackService.agvCallback(agvCallBackDTO);
+                agvCallBackDTO.setMethod("2");
+                rcsCallBackService.agvCallback(agvCallBackDTO);
+            } catch (Exception e) {
+
+            }
+        }
+
+        return callAgvAgvTaskMapper.updateByPrimaryKeySelective(callAgvAgvTask);
+    }
 
     @Override
     public List<CallAgvAgvTaskDto> findList(Map<String, Object> map) {

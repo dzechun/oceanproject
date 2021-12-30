@@ -31,14 +31,23 @@ public class CallAgvVehicleReBarcodeDto extends CallAgvVehicleReBarcode implemen
     @ApiModelProperty(name="storageName" ,value="库位名称")
     private String storageName;
 
+    @ApiModelProperty(name="batch",value = "批次")
+    private String batch;
+
     @ApiModelProperty(name="barcode",value = "条码")
     private String barcode;
 
     @ApiModelProperty(name="productModel",value = "型号")
     private String productModel;
 
+    @ApiModelProperty(name="erpProductModel",value = "erp物料型号")
+    private String erpProductModel;
+
     @ApiModelProperty(name="batchCode",value = "批号")
     private String batchCode;
+
+    @ApiModelProperty(name="materialCode",value = "物料编码")
+    private String materialCode;
 
     @ApiModelProperty(name="qty",value = "数量")
     private BigDecimal qty;

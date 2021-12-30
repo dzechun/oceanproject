@@ -37,15 +37,19 @@ public class CallAgvStorageMaterialDto {
     @Excel(name = "物料型号", height = 20, width = 30,orderNum="7")
     private String productModel;
 
+    @ApiModelProperty(name="erpProductModel",value = "erp物料型号")
+    @Excel(name = "erp物料型号", height = 20, width = 30,orderNum="8")
+    private String erpProductModel;
+
     @ApiModelProperty(name="qty",value = "数量")
-    @Excel(name = "数量", height = 20, width = 30,orderNum="8")
+    @Excel(name = "数量", height = 20, width = 30,orderNum="9")
     private BigDecimal qty;
 
     @ApiModelProperty(name="batch",value = "批次")
-    @Excel(name = "批次", height = 20, width = 30,orderNum="9")
+    @Excel(name = "批次", height = 20, width = 30,orderNum="10")
     private String batch;
 
     @ApiModelProperty(name="batchCode",value = "批号")
-    @Excel(name = "批号", height = 20, width = 30,orderNum="10")
+    @Excel(name = "批号", height = 20, width = 30,orderNum="11")
     private String batchCode;
 }

@@ -36,6 +36,7 @@
     select <include refid="Base_Column_List"></include>
     from ncc_bd_material nbm
     <where>
+      nbm.CODE is not null
       <if test="materialtype != null and materialtype != ''">
         and nbm.MATERIALTYPE like CONCAT('%', #{materialtype}, '%')
       </if>

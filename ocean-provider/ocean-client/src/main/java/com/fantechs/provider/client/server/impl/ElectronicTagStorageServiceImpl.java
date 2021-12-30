@@ -655,7 +655,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
                 fanoutSender(1007, null, listE);
                 log.info("===========发送消息给客户端控制另一个英文标签亮灯完成===============");
             }
-            updateJobOrderSeq(ptlJobOrderDetDtoList.get(0).getWarehouseAreaId(), ptlJobOrderDto.getJobOrderCode());
+            updateJobOrderSeq(ptlJobOrderDto.getWarehouseAreaId(), ptlJobOrderDto.getJobOrderCode());
             for (String key : map.keySet()) {
                 redisUtil.set(key, map.get(key));
                 log.info("修改电子标签：" + key + "当前对应拣货任务明细ID为：" + map.get(key));
@@ -1500,15 +1500,17 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
         searchPtlJobOrder.setWarehouseAreaId(warehouseAreaId);
         searchPtlJobOrder.setType(1);
         List<PtlJobOrderDto> ptlJobOrderDtoList = electronicTagFeignApi.findPtlJobOrderList(searchPtlJobOrder).getData();
-        int seq = Integer.parseInt(redisUtil.get(deleteJobOrderCode).toString());
-        for (PtlJobOrderDto ptlJobOrderDto : ptlJobOrderDtoList) {
-            if (Integer.parseInt(redisUtil.get(ptlJobOrderDto.getJobOrderCode()).toString()) > seq) {
-                redisUtil.set(ptlJobOrderDto.getJobOrderCode(), Integer.parseInt(redisUtil.get(ptlJobOrderDto.getJobOrderCode()).toString()) - 1);
-                log.info("修改任务单：" + ptlJobOrderDto.getJobOrderCode() + " 作业顺序为：" + Integer.parseInt(redisUtil.get(ptlJobOrderDto.getJobOrderCode()).toString()));
+        if (StringUtils.isNotEmpty(redisUtil.get(deleteJobOrderCode))) {
+            int seq = Integer.parseInt(redisUtil.get(deleteJobOrderCode).toString());
+            for (PtlJobOrderDto ptlJobOrderDto : ptlJobOrderDtoList) {
+                if (Integer.parseInt(redisUtil.get(ptlJobOrderDto.getJobOrderCode()).toString()) > seq) {
+                    redisUtil.set(ptlJobOrderDto.getJobOrderCode(), Integer.parseInt(redisUtil.get(ptlJobOrderDto.getJobOrderCode()).toString()) - 1);
+                    log.info("修改任务单：" + ptlJobOrderDto.getJobOrderCode() + " 作业顺序为：" + Integer.parseInt(redisUtil.get(ptlJobOrderDto.getJobOrderCode()).toString()));
+                }
             }
+            redisUtil.del(deleteJobOrderCode);
+            log.info("删除拣货任务单：" + deleteJobOrderCode + "亮灯排序：" + seq);
         }
-        redisUtil.del(deleteJobOrderCode);
-        log.info("删除拣货任务单：" + deleteJobOrderCode + "亮灯排序：" + seq);
     }
 
     /**
