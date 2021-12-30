@@ -60,8 +60,8 @@ public class MesPmDailyPlanController {
 
     @ApiOperation("修改")
     @PostMapping("/update")
-    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=MesPmDailyPlan.update.class) MesPmDailyPlan mesPmDailyPlan) {
-        return ControllerUtil.returnCRUD(mesPmDailyPlanService.update(mesPmDailyPlan));
+    public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=MesPmDailyPlan.update.class) MesPmDailyPlanDto mesPmDailyPlanDto) {
+        return ControllerUtil.returnCRUD(mesPmDailyPlanService.update(mesPmDailyPlanDto));
     }
 
     @ApiOperation("获取详情")
