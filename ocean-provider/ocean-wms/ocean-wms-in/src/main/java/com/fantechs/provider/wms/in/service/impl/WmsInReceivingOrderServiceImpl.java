@@ -571,6 +571,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                     wmsInInPlanOrderDetDto.setBatchCode(wmsInReceivingOrderDet.getBatchCode());
                     wmsInInPlanOrderDetDto.setPlanQty(wmsInReceivingOrderDet.getActualQty());
                     wmsInInPlanOrderDetDto.setLineNumber(wmsInReceivingOrderDet.getLineNumber());
+                    wmsInInPlanOrderDetDto.setLineStatus((byte)1);
                     wmsInInPlanOrderDetDto.setPutawayQty(BigDecimal.ZERO);
                     wmsInInPlanOrderDetDtos.add(wmsInInPlanOrderDetDto);
                 }

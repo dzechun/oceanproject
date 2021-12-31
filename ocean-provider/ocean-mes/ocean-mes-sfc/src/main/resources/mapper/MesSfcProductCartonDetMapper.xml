@@ -37,8 +37,10 @@
   </sql>
 
   <select id="findList" resultMap="BaseResultDtoMap" parameterType="map">
-    select <include refid="BaseColumnList"/>
+    select <include refid="BaseColumnList"/>,
+    wob.barcode
     FROM mes_sfc_product_carton_det mspcd
+    LEFT JOIN mes_sfc_work_order_barcode wob ON mspcd.work_order_barcode_id = wob.work_order_barcode_id
     <where>
       <if test="productCartonId != null">
         and mspcd.product_carton_id = #{productCartonId}
