@@ -22,10 +22,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
-import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
-import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
-import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
-import com.fantechs.provider.wms.inner.mapper.WmsInnerMaterialBarcodeMapper;
+import com.fantechs.provider.wms.inner.mapper.*;
 import com.fantechs.provider.wms.inner.service.*;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
 import org.springframework.stereotype.Service;
@@ -83,6 +80,9 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
 
     @Resource
     private WmsInnerMaterialBarcodeMapper wmsInnerMaterialBarcodeMapper;
+    @Resource
+    private WmsInnerMaterialBarcodeReOrderMapper wmsInnerMaterialBarcodeReOrderMapper;
+
 
     @Override
     public List<WmsInnerJobOrderDto> pdaFindList(Map<String, Object> map) {
@@ -153,7 +153,6 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         }
         map.put("lockStatus", (byte) 0);
         map.put("stockLock", (byte) 0);
-        map.put("qcLock", (byte) 0);
         List<WmsInnerInventoryDto> innerInventoryDtos = wmsInnerInventoryService.findList(map);
         if (innerInventoryDtos == null || innerInventoryDtos.size() <= 0) {
             throw new BizErrorException(ErrorCodeEnum.PDA5001009);
@@ -218,7 +217,6 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             map.put("jobStatus", (byte) 1);
             map.put("lockStatus", (byte) 0);
             map.put("stockLock", (byte) 0);
-            map.put("qcLock", (byte) 0);
             List<WmsInnerInventoryDto> innerInventoryDtos = wmsInnerInventoryService.findList(map);
             if (innerInventoryDtos == null || innerInventoryDtos.size() <= 0) {
                 throw new BizErrorException(ErrorCodeEnum.PDA5001009);
@@ -229,7 +227,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             List<WmsInnerInventoryDto> dtos = new ArrayList<>();
             if (specItems.size() > 0 && !innerInventoryDtos.isEmpty() && innerInventoryDtos.size() > 0){
                 for (WmsInnerInventoryDto inventoryDto : innerInventoryDtos){
-                    if (inventoryDto.getInventoryStatusName().equals(specItems.get(0).getParaValue())){
+                    if (StringUtils.isNotEmpty(inventoryDto.getInventoryStatusName()) && inventoryDto.getInventoryStatusName().equals(specItems.get(0).getParaValue())){
                         dtos.add(inventoryDto);
                     }
                 }
@@ -301,17 +299,37 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerHtJobOrderDetService.save(innerHtJobOrderDet);
             jobOrderDet = wmsInnerJobOrderDet;
             // 新增待出库存信息
-            WmsInnerInventory newInnerInventory = new WmsInnerInventory();
-            BeanUtil.copyProperties(innerInventoryDto, newInnerInventory);
-            newInnerInventory.setPackingQty(dto.getMaterialQty());
-            newInnerInventory.setParentInventoryId(innerInventoryDto.getInventoryId());
-            newInnerInventory.setRelevanceOrderCode(innerJobOrder.getJobOrderCode());
-            newInnerInventory.setJobStatus((byte) 2);
-            newInnerInventory.setJobOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
-            newInnerInventory.setOrgId(user.getOrganizationId());
-            newInnerInventory.setCreateTime(new Date());
-            newInnerInventory.setCreateUserId(user.getUserId());
-            wmsInnerInventoryService.save(newInnerInventory);
+
+            Example example = new Example(WmsInnerInventory.class);
+            example.createCriteria()
+                    .andEqualTo("warehouseId", innerInventoryDto.getWarehouseId())
+                    .andEqualTo("storageId", innerInventoryDto.getStorageId())
+                    .andEqualTo("materialId", innerInventoryDto.getMaterialId())
+                    .andEqualTo("lockStatus", innerInventoryDto.getLockStatus())
+                    .andEqualTo("stockLock", innerInventoryDto.getStockLock())
+                    .andEqualTo("packingUnitName", innerInventoryDto.getPackingUnitName())
+                    .andEqualTo("batchCode", innerInventoryDto.getBatchCode());
+            List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(example);
+            WmsInnerInventory newInnerInventory;
+            if(StringUtils.isEmpty(wmsInnerInventories)) {
+                newInnerInventory = new WmsInnerInventory();
+                BeanUtil.copyProperties(innerInventoryDto, newInnerInventory);
+                newInnerInventory.setPackingQty(dto.getMaterialQty());
+                newInnerInventory.setParentInventoryId(innerInventoryDto.getInventoryId());
+                newInnerInventory.setRelevanceOrderCode(innerJobOrder.getJobOrderCode());
+                newInnerInventory.setJobStatus((byte) 2);
+                newInnerInventory.setJobOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
+                newInnerInventory.setOrgId(user.getOrganizationId());
+                newInnerInventory.setCreateTime(new Date());
+                newInnerInventory.setCreateUserId(user.getUserId());
+                wmsInnerInventoryService.save(newInnerInventory);
+            }else{
+                newInnerInventory = wmsInnerInventories.get(0);
+                newInnerInventory.setPackingQty(newInnerInventory.getPackingQty().add(dto.getMaterialQty()));
+                newInnerInventory.setModifiedUserId(user.getUserId());
+                newInnerInventory.setModifiedTime(new Date());
+                wmsInnerInventoryService.update(newInnerInventory);
+            }
             // 变更减少原库存
             innerInventoryDto.setPackingQty(innerInventoryDto.getPackingQty().subtract(dto.getMaterialQty()));
             wmsInnerInventoryService.update(innerInventoryDto);
@@ -321,7 +339,6 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         if (!dto.getPdaWmsInnerDirectTransferOrderDetDtos().isEmpty()) {
             List<WmsInnerJobOrderDetBarcode> jobOrderDetBarcodeList = new ArrayList<>();
             List<WmsInnerHtJobOrderDetBarcode> htJobOrderDetBarcodes = new ArrayList<>();
-
 
             for (PDAWmsInnerDirectTransferOrderDetDto barcode : dto.getPdaWmsInnerDirectTransferOrderDetDtos()) {
 
@@ -409,19 +426,19 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         criteria.andEqualTo("materialId", oldDto.getMaterialId())
 //                .andEqualTo("warehouseId", oldDto.getWarehouseId())
                 .andEqualTo("storageId", oldDto.getOutStorageId())
-                .andEqualTo("jobOrderDetId", oldDto.getJobOrderDetId())
+//                .andEqualTo("jobOrderDetId", oldDto.getJobOrderDetId())
                 .andEqualTo("jobStatus", (byte) 2)
                 .andEqualTo("stockLock", 0)
-                .andEqualTo("qcLock", 0)
                 .andEqualTo("lockStatus", 0);
         WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
+        if(StringUtils.isEmpty(wmsInnerInventory))
+            throw new BizErrorException("未查询到移出库位");
         example.clear();
         Example.Criteria criteria1 = example.createCriteria().andEqualTo("materialId", oldDto.getMaterialId())
 //                .andEqualTo("warehouseId", oldDto.getWarehouseId())
                 .andEqualTo("storageId", baseStorage.getStorageId())
                 .andEqualTo("jobStatus", (byte) 1)
                 .andEqualTo("stockLock", 0)
-                .andEqualTo("qcLock", 0)
                 .andEqualTo("lockStatus", 0)
                 .andGreaterThan("packingQty", 0);
         if (StringUtils.isNotEmpty(wmsInnerInventory)){
@@ -430,10 +447,13 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         WmsInnerInventory wmsInnerInventory_old = wmsInnerInventoryMapper.selectOneByExample(example);
         //获取初期数量
         WmsInnerInventory innerInventory = wmsInnerInventoryMapper.selectByPrimaryKey(wmsInnerInventory.getParentInventoryId());
-        if(StringUtils.isEmpty(innerInventory.getPackingQty())){
-            innerInventory.setPackingQty(BigDecimal.ZERO);
+        BigDecimal initQty = BigDecimal.ZERO;
+        if(StringUtils.isNotEmpty(innerInventory)) {
+            if (StringUtils.isEmpty(innerInventory.getPackingQty())) {
+                innerInventory.setPackingQty(BigDecimal.ZERO);
+            }
+            initQty = innerInventory.getPackingQty().add(wmsInnerInventory.getPackingQty());
         }
-        BigDecimal initQty = innerInventory.getPackingQty().add(wmsInnerInventory.getPackingQty());
         oldDto.setInStorageId(baseStorage.getStorageId());
         if (StringUtils.isEmpty(wmsInnerInventory_old)) {
             if (StringUtils.isEmpty(wmsInnerInventory)) {
@@ -461,15 +481,14 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             //wmsInnerInventoryService.delete(wmsInnerInventory);
         }
 
-        //更新库存明细
-        Example example1 = new Example(WmsInnerJobOrderDetBarcode.class);
+        //更新库存明细  待测试
+/*        Example example1 = new Example(WmsInnerMaterialBarcodeReOrderDto.class);
         example1.createCriteria().andEqualTo("jobOrderDetId", dto.getJobOrderDetId());
-        List<WmsInnerJobOrderDetBarcode> orderDetBarcodeList = wmsInnerJobOrderDetBarcodeService.selectByExample(example1);
-        if (!orderDetBarcodeList.isEmpty()) {
-            for (WmsInnerJobOrderDetBarcode jobOrderDetBarcode : orderDetBarcodeList) {
+        List<WmsInnerMaterialBarcodeReOrder> wmsInnerMaterialBarcodeReOrders = wmsInnerMaterialBarcodeReOrderMapper.selectByExample(example1);
+        if (!wmsInnerMaterialBarcodeReOrders.isEmpty()) {
+            for (WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder : wmsInnerMaterialBarcodeReOrders) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("storageId", wmsInnerJobOrderDet.getOutStorageId());
-//                map.put("barcode", jobOrderDetBarcode.getBarcode());
                 List<WmsInnerInventoryDetDto> inventoryDetDtos = wmsInnerInventoryDetService.findList(map);
                 if (inventoryDetDtos.isEmpty()) {
                     throw new BizErrorException(ErrorCodeEnum.PDA5001004);
@@ -478,7 +497,18 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 inventoryDetDto.setStorageId(dto.getStorageId());
                 wmsInnerInventoryDetService.update(inventoryDetDto);
             }
+        }*/
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("storageId", wmsInnerJobOrderDet.getOutStorageId());
+        List<WmsInnerInventoryDetDto> inventoryDetDtos = wmsInnerInventoryDetService.findList(map);
+        if (inventoryDetDtos.isEmpty()) {
+            throw new BizErrorException(ErrorCodeEnum.PDA5001004);
         }
+
+        WmsInnerInventoryDetDto inventoryDetDto = inventoryDetDtos.get(0);
+        inventoryDetDto.setStorageId(dto.getStorageId());
+        wmsInnerInventoryDetService.update(inventoryDetDto);
 
         // 变更移位单
         wms = new WmsInnerJobOrderDet();
@@ -520,27 +550,6 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             }
         }
         num += wmsInnerJobOrderMapper.updateByPrimaryKeySelective(ws);
-
-        if(oCount == count){
-            //回传接口（五环）
-            //获取程序配置项
-            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
-            searchSysSpecItemFiveRing.setSpecCode("FiveRing");
-            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
-            if(itemListFiveRing.size()<1){
-                throw new BizErrorException("配置项 FiveRing 获取失败");
-            }
-            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-            if("1".equals(sysSpecItem.getParaValue())) {
-                //返写移位接口（五环）
-                if(wmsInnerJobOrderDto.getJobOrderType()==2){
-                    ws.setOption1(baseStorage.getOption1());//baseStorage
-                    engFeignApi.reportInnerJobOrder(ws);
-                }
-            }
-            //回传结束
-        }
-
         return num;
     }
 
