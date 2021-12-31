@@ -93,6 +93,7 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
         record.setModifiedUserId(sysUser.getUserId());
         record.setOrderStatus((byte)1);
         record.setOrgId(sysUser.getOrganizationId());
+        record.setSysOrderTypeCode("IN-SPO");
         if(StringUtils.isEmpty(record.getSourceBigType())){
             record.setSourceBigType((byte)2);
         }
@@ -354,6 +355,7 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
                     wmsInReceivingOrderDet.setModifiedTime(new Date());
                     wmsInReceivingOrderDet.setModifiedUserId(sysUser.getUserId());
                     wmsInReceivingOrderDet.setOrgId(sysUser.getOrganizationId());
+                    wmsInReceivingOrderDet.setIfAllIssued((byte)0);
 
                     //查找是否有条码
                     SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
@@ -464,6 +466,7 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
                 wmsInnerJobOrder.setModifiedTime(new Date());
                 wmsInnerJobOrder.setStatus((byte)1);
                 wmsInnerJobOrder.setOrgId(sysUser.getOrganizationId());
+                wmsInnerJobOrder.setSourceBigType((byte)1);
                 wmsInnerJobOrder.setWmsInPutawayOrderDets(detList);
 
                 ResponseEntity rs = innerFeignApi.add(wmsInnerJobOrder);

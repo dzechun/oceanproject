@@ -102,6 +102,7 @@ public class DingService {
         httpPost.setEntity(entity);
         // 响应模型
         CloseableHttpResponse response = null;
+        String message = "";
         try {
             // 由客户端执行(发送)Post请求
             response = httpClient.execute(httpPost);
@@ -110,7 +111,8 @@ public class DingService {
             System.out.println("响应状态为:" + response.getStatusLine());
             if (responseEntity != null) {
                 System.out.println("响应内容长度为:" + responseEntity.getContentLength());
-                System.out.println("响应内容为:" + EntityUtils.toString(responseEntity));
+                message = EntityUtils.toString(responseEntity);
+                System.out.println("响应内容为:" + message);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -127,6 +129,6 @@ public class DingService {
                 e.printStackTrace();
             }
         }
-        return response.getEntity().toString();
+        return message;
     }
 }

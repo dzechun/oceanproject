@@ -7,8 +7,9 @@
     -->
     <id column="in_and_out_rule_det_id" jdbcType="BIGINT" property="inAndOutRuleDetId" />
     <result column="in_and_out_rule_id" jdbcType="BIGINT" property="inAndOutRuleId" />
-    <result column="in_and_out_rule_type_id" jdbcType="BIGINT" property="inAndOutRuleTypeId" />
     <result column="priority" jdbcType="INTEGER" property="priority" />
+    <result column="in_and_out_rule_type" jdbcType="TINYINT" property="inAndOutRuleType" />
+    <result column="stored_procedure_name" jdbcType="VARCHAR" property="storedProcedureName" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
@@ -20,55 +21,46 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
-
+    <result column="in_parameters" jdbcType="LONGVARCHAR" property="inParameters" />
+    <result column="out_parameters" jdbcType="LONGVARCHAR" property="outParameters" />
+  </resultMap>
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BaseInAndOutRuleDetDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-    <result column="in_and_out_rule_type_name" jdbcType="VARCHAR" property="inAndOutRuleTypeName"/>
   </resultMap>
-
-  <sql id="Base_Column_List">
+  <sql id="base_column_list">
     biaord.in_and_out_rule_det_id,
     biaord.in_and_out_rule_id,
-    biaord.in_and_out_rule_type_id,
-    biaord.priority,
-    biaord.`status`,
-    biaord.remark,
-    biaord.org_id,
-    biaord.create_user_id,
-    biaord.create_time,
-    biaord.modified_user_id,
-    biaord.modified_time,
-    biaord.is_delete,
-    biaord.option1,
-    biaord.option2,
-    biaord.option3
+biaord.priority,
+biaord.in_and_out_rule_type,
+biaord.stored_procedure_name,
+biaord.status,
+biaord.remark,
+biaord.org_id,
+biaord.create_user_id,
+biaord.create_time,
+biaord.modified_user_id,
+biaord.modified_time,
+biaord.is_delete,
+biaord.option1,
+biaord.option2,
+biaord.option3,
+biaord.in_parameters,
+biaord.out_parameters
   </sql>
-
-  <select id="findList" resultMap="BaseResultMap">
-    SELECT<include refid="Base_Column_List"/>,
-    biaort.in_and_out_rule_type_name,
-    su.user_name as create_user_name,
-    sus.user_name as modified_user_name,
-    bo.organization_name FROM base_in_and_out_rule_det biaord
-    LEFT JOIN base_in_and_out_rule_type biaort ON biaord.in_and_out_rule_type_id= biaort.in_and_out_rule_type_id
+  <select id="findList" resultMap="BaseResultMapDto">
+    select <include refid="base_column_list"/>,su.user_name AS create_user_name,
+    sus.user_name AS modified_user_name,
+    bo.organization_name
+    FROM base_in_and_out_rule_det biaord
     LEFT JOIN sys_user su ON biaord.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON biaord.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON biaord.org_id = bo.organization_id
-    <where>
-      <if test="inAndOutRuleId!=null">
-        and biaord.in_and_out_rule_id = #{inAndOutRuleId}
-      </if>
-      <if test="status!=null">
-        and biaord.status = #{status}
-      </if>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(biaord.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>
-      <if test="orgId!=null">
-        and biaord.org_id=#{orgId}
-      </if>
-    </where>
-    order by biaord.create_time desc
+<where>
+  <if test="inAndOutRuleId!=null and inAndOutRuleId!=''">
+    and biaord.in_and_out_rule_id = #{inAndOutRuleId}
+  </if>
+</where>
   </select>
 </mapper>

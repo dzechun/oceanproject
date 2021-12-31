@@ -6,7 +6,6 @@
       WARNING - @mbg.generated
     -->
     <id column="in_and_out_rule_id" jdbcType="BIGINT" property="inAndOutRuleId" />
-    <result column="in_and_out_rule_name" jdbcType="VARCHAR" property="inAndOutRuleName" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="category" jdbcType="TINYINT" property="category" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -20,64 +19,62 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
-
+    <collection property="baseInAndOutRuleDetDtos" ofType="com.fantechs.common.base.general.dto.basic.BaseInAndOutRuleDetDto"
+                column="{inAndOutRuleId=in_and_out_rule_id}" select="com.fantechs.provider.base.mapper.BaseInAndOutRuleDetMapper.findList">
+    </collection>
+  </resultMap>
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BaseInAndOutRuleDto">
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
   </resultMap>
-
-  <sql id="Base_Column_List">
+  <sql id="base_column_list">
     biaor.in_and_out_rule_id,
-    biaor.in_and_out_rule_name,
     biaor.warehouse_id,
-    biaor.category,
-    biaor.`status`,
-    biaor.remark,
-    biaor.org_id,
-    biaor.create_user_id,
-    biaor.create_time,
-    biaor.modified_user_id,
-    biaor.modified_time,
-    biaor.is_delete,
-    biaor.option1,
-    biaor.option2,
-    biaor.option3
+biaor.category,
+biaor.status,
+biaor.remark,
+biaor.org_id,
+biaor.create_user_id,
+biaor.create_time,
+biaor.modified_user_id,
+biaor.modified_time,
+biaor.is_delete,
+biaor.option1,
+biaor.option2,
+biaor.option3
   </sql>
-
-  <select id="findList" resultMap="BaseResultMap">
-    SELECT<include refid="Base_Column_List"/>,
-     bw.warehouse_name,
-     su.user_name as create_user_name,
-     sus.user_name as modified_user_name,
-     bo.organization_name FROM base_in_and_out_rule biaor
-    LEFT JOIN base_warehouse bw ON biaor.warehouse_id= bw.warehouse_id
+  <select id="findList" resultMap="BaseResultMapDto">
+    select <include refid="base_column_list"/>,bw.warehouse_code,bw.warehouse_name,su.user_name AS create_user_name,
+    sus.user_name AS modified_user_name,
+    bo.organization_name
+    FROM base_in_and_out_rule biaor
+    LEFT JOIN base_warehouse bw on biaor.warehouse_id = bw.warehouse_id
     LEFT JOIN sys_user su ON biaor.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON biaor.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON biaor.org_id = bo.organization_id
     <where>
+      <if test="warehouseId!=null and warehouseId!=''">
+        and biaor.warehouse_id = #{warehouseId}
+      </if>
       <if test="warehouseName!=null and warehouseName!=''">
-        and bw.warehouse_name LIKE CONCAT('%',#{warehouseName},'%')
+        and bw.warehouse_name = #{warehouseName}
       </if>
-      <if test="inAndOutRuleName!=null and inAndOutRuleName!=''">
-        and biaor.in_and_out_rule_name LIKE CONCAT('%',#{inAndOutRuleName},'%')
-      </if>
-      <if test="createUserName!=null and createUserName!=''">
-        and su.user_name LIKE CONCAT('%',#{createUserName},'%')
-      </if>
-      <if test="category!=null">
-        and biaor.category = #{category}
-      </if>
-      <if test="status!=null">
-        and biaor.status = #{status}
-      </if>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(biaor.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>
-      <if test="orgId!=null">
-        and biaor.org_id=#{orgId}
+        <if test="category!=null and category!=''">
+          and biaor.category = #{category}
+        </if>
+      <if test="orgId!=null and orgId!=''">
+        and biaor.org_id = #{orgId}
       </if>
     </where>
     order by biaor.create_time desc
+  </select>
+  <select id="findInOutParamMode" resultType="com.fantechs.common.base.general.dto.basic.InOutParamsDto">
+    SELECT parameter_mode,parameter_name FROM information_schema.PARAMETERS WHERE specific_name=#{specificName}
+  </select>
+  <select id="findView" resultType="java.lang.String">
+    SELECT TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_SCHEMA= 'fantech_imes_v2_1'
   </select>
 </mapper>

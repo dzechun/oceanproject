@@ -1,43 +1,47 @@
 package com.fantechs.provider.base.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseHtInAndOutRuleDto;
+import com.fantechs.common.base.general.dto.basic.BaseInAndOutRuleDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseInAndOutRuleImport;
 import com.fantechs.common.base.general.entity.basic.BaseInAndOutRule;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtInAndOutRule;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInAndOutRule;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.base.service.BaseHtInAndOutRuleService;
 import com.fantechs.provider.base.service.BaseInAndOutRuleService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
- * Created by leifengzhi on 2021/05/14.
+ * Created by mr.lei on 2021/12/30.
  */
 @RestController
-@Api(tags = "出入库规则控制器")
+@Api(tags = "出入库规则")
 @RequestMapping("/baseInAndOutRule")
 @Validated
+@Slf4j
 public class BaseInAndOutRuleController {
 
     @Resource
     private BaseInAndOutRuleService baseInAndOutRuleService;
-    @Resource
-    private BaseHtInAndOutRuleService baseHtInAndOutRuleService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -66,17 +70,24 @@ public class BaseInAndOutRuleController {
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<BaseInAndOutRule>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseInAndOutRule searchBaseInAndOutRule) {
+    public ResponseEntity<List<BaseInAndOutRuleDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseInAndOutRule searchBaseInAndOutRule) {
         Page<Object> page = PageHelper.startPage(searchBaseInAndOutRule.getStartPage(),searchBaseInAndOutRule.getPageSize());
-        List<BaseInAndOutRule> list = baseInAndOutRuleService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseInAndOutRule));
+        List<BaseInAndOutRuleDto> list = baseInAndOutRuleService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseInAndOutRule));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("列表(不分页)")
+    @PostMapping("/findAll")
+    public ResponseEntity<List<BaseInAndOutRuleDto>> findAll(@ApiParam(value = "查询对象") @RequestBody SearchBaseInAndOutRule searchBaseInAndOutRule) {
+        List<BaseInAndOutRuleDto> list = baseInAndOutRuleService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseInAndOutRule));
+        return ControllerUtil.returnDataSuccess(list, list.size());
     }
 
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<BaseHtInAndOutRule>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseInAndOutRule searchBaseInAndOutRule) {
+    public ResponseEntity<List<BaseHtInAndOutRuleDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchBaseInAndOutRule searchBaseInAndOutRule) {
         Page<Object> page = PageHelper.startPage(searchBaseInAndOutRule.getStartPage(),searchBaseInAndOutRule.getPageSize());
-        List<BaseHtInAndOutRule> list = baseHtInAndOutRuleService.findHtList(ControllerUtil.dynamicConditionByEntity(searchBaseInAndOutRule));
+        List<BaseHtInAndOutRuleDto> list = baseInAndOutRuleService.findHtList(ControllerUtil.dynamicConditionByEntity(searchBaseInAndOutRule));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -84,12 +95,34 @@ public class BaseInAndOutRuleController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseInAndOutRule searchBaseInAndOutRule){
-    List<BaseInAndOutRule> list = baseInAndOutRuleService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseInAndOutRule));
+    List<BaseInAndOutRuleDto> list = baseInAndOutRuleService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseInAndOutRule));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "出入库规则信息", BaseInAndOutRule.class, "出入库规则信息.xls", response);
+        EasyPoiUtils.exportExcel(list, "出入库规则维护", "出入库规则维护", BaseInAndOutRuleDto.class, "出入库规则维护.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
+    }
+
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入",notes = "从excel导入")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true) @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<BaseInAndOutRuleImport> baseAddressImports = EasyPoiUtils.importExcel(file, 0, 1, BaseInAndOutRuleImport.class);
+            Map<String, Object> resultMap = baseInAndOutRuleService.importExcel(baseAddressImports);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
+        }
+    }
+
+    @ApiOperation("查询规则视图")
+    @PostMapping("/findView")
+    public ResponseEntity<List<String>> findView() {
+        List<String> list = baseInAndOutRuleService.findView();
+        return ControllerUtil.returnDataSuccess(list, list.size());
     }
 }

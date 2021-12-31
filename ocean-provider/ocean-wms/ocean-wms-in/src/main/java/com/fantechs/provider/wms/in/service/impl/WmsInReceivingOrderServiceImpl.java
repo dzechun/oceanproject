@@ -94,6 +94,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
         record.setModifiedTime(new Date());
         record.setModifiedUserId(sysUser.getUserId());
         record.setOrgId(sysUser.getOrganizationId());
+        record.setSysOrderTypeCode("IN-SWK");
         if(StringUtils.isEmpty(record.getSourceBigType())){
             record.setSourceBigType((byte)2);
         }
@@ -309,6 +310,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                 wmsInReceivingOrderDet.setLineNumber(i+"");
                 wmsInReceivingOrderDet.setCreateUserId(sysUser.getUserId());
                 wmsInReceivingOrderDet.setCreateTime(new Date());
+                wmsInReceivingOrderDet.setIfAllIssued((byte)0);
                 wmsInReceivingOrderDet.setOrgId(sysUser.getOrganizationId());
             }
         }
@@ -550,6 +552,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                 wmsInnerJobOrder.setStatus((byte)1);
                 wmsInnerJobOrder.setOrgId(sysUser.getOrganizationId());
                 wmsInnerJobOrder.setWmsInPutawayOrderDets(detList);
+                wmsInnerJobOrder.setSourceBigType((byte)1);
 
                 ResponseEntity rs = innerFeignApi.add(wmsInnerJobOrder);
                 if(rs.getCode() != 0){
