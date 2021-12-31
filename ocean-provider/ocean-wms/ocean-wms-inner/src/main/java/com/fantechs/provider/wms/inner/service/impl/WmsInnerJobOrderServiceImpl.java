@@ -2456,12 +2456,13 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 wmsInnerMaterialBarcode.setMaterialQty(item.getMaterialQty());
                 wmsInnerMaterialBarcode.setIfSysBarcode((byte) 0);
                 Date productionTime=null;
-                try {
-                    productionTime=sdf.parse(item.getProductionTime());
-                }catch (Exception ex){
-                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"参数生产日期转换为时间类型异常");
+                if(StringUtils.isNotEmpty(item.getProductionTime())) {
+                    try {
+                        productionTime = sdf.parse(item.getProductionTime());
+                    } catch (Exception ex) {
+                        throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "参数生产日期转换为时间类型异常");
+                    }
                 }
-
                 wmsInnerMaterialBarcode.setProductionTime(productionTime);
 
                 //产生类型(1-供应商条码 2-自己打印 3-生产条码)
@@ -2746,10 +2747,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 wmsInnerMaterialBarcode.setMaterialQty(saveInnerJobOrderDto.getMaterialQty());
                 wmsInnerMaterialBarcode.setIfSysBarcode((byte)0);
                 Date productionTime=null;
-                try {
-                    productionTime=sdf.parse(saveInnerJobOrderDto.getProductionTime());
-                }catch (Exception ex){
-                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"参数生产日期转换为时间类型异常");
+                if(StringUtils.isNotEmpty(saveInnerJobOrderDto.getProductionTime())) {
+                    try {
+                        productionTime = sdf.parse(saveInnerJobOrderDto.getProductionTime());
+                    } catch (Exception ex) {
+                        throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "参数生产日期转换为时间类型异常");
+                    }
                 }
                 wmsInnerMaterialBarcode.setProductionTime(productionTime);
 

@@ -19,9 +19,9 @@ public class WmsInnerStockOrderDetDto extends WmsInnerStockOrderDet implements S
     /**
      * 盘点单号
      */
-    @ApiModelProperty(name="stockOrderCode",value = "盘点单号")
+    @ApiModelProperty(name="planStockOrderCode",value = "盘点单号")
     @Excel(name = "盘点计划单号", height = 20, width = 30,orderNum="1")
-    private String stockOrderCode;
+    private String planStockOrderCode;
 
     /**
      * 仓库名称
