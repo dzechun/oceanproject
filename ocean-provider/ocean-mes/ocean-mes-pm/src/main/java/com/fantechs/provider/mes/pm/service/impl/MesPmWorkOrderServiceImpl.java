@@ -360,12 +360,15 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
         List<MesPmWorkOrder> list = new ArrayList<>();
         String coreSourceSysOrderTypeCode = mesPmWorkOrders.get(0).getCoreSourceSysOrderTypeCode();
 
+
         int i = 0;
         HashSet<Long> set = new HashSet();
         for (MesPmWorkOrder order : mesPmWorkOrders) {
             if (order.getIfAllIssued() != null && order.getIfAllIssued() == (byte) 1) {
                 throw new BizErrorException("订单已下推，无法再次下推");
             }
+            if(StringUtils.isEmpty(order.getWarehouseId()))
+                throw new BizErrorException("请先选择仓库后再进行下推");
             if(StringUtils.isEmpty(order.getTotalIssueQty()))
                 order.setTotalIssueQty(BigDecimal.ZERO);
             if(order.getOutputQty().compareTo(order.getTotalIssueQty().add(order.getQty())) == -1 )

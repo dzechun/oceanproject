@@ -104,10 +104,11 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
                     wmsInnerInventoryMapper.delete(wmsInnerInventory);
                 } else {
                     wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(quantity));
-                    wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
+                //    wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
+                    this.update(wmsInnerInventory);
                 }
                 baseWmsInnerInventorie.setPackingQty(baseWmsInnerInventorie.getPackingQty().add(quantity));
-                wmsInnerInventoryMapper.updateByPrimaryKeySelective(baseWmsInnerInventorie);
+                this.update(baseWmsInnerInventorie);
             }else{
                 if (quantity.compareTo(wmsInnerInventory.getPackingQty()) == 0){
                     wmsInnerInventory.setLockStatus((byte) 0);
@@ -121,19 +122,10 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
                     this.save(baseWmsInnerInventorie);
                     wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(quantity));
                 }
-                wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
-
+                this.update(wmsInnerInventory);
             }
 
 
-
-
-            this.update(wmsInnerInventory);
-            example.clear();
-            example.createCriteria().andEqualTo("inventoryId",wmsInnerInventory.getParentInventoryId());
-            wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
-            wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().add(quantity));
-            //wmsInnerInventory.setInventoryTotalQty(wmsInnerInventory.getInventoryTotalQty().add(quantity.multiply(wmsInnerInventory.getPackageSpecificationQuantity())));
             this.update(wmsInnerInventory);
         } else {
             throw new BizErrorException("当前库存未进行锁定");
