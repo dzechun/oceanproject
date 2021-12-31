@@ -49,9 +49,6 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
     @Transactional(rollbackFor = RuntimeException.class)
     public int lock(Long id, BigDecimal quantity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
 
         Example example = new Example(WmsInnerInventory.class);
         example.createCriteria().andEqualTo("inventoryId",id);
@@ -61,14 +58,12 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
                 WmsInnerInventory innerInventory = new WmsInnerInventory();
                 BeanUtils.copyProperties(wmsInnerInventory, innerInventory);
                 innerInventory.setPackingQty(quantity);
-                //innerInventory.setInventoryTotalQty(quantity.multiply(wmsInnerInventory.getPackageSpecificationQuantity()));
                 innerInventory.setParentInventoryId(id);
                 innerInventory.setInventoryId(null);
                 innerInventory.setLockStatus((byte) 1);
                 this.save(innerInventory);
 
                 wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(quantity));
-                //wmsInnerInventory.setInventoryTotalQty(wmsInnerInventory.getInventoryTotalQty().subtract(innerInventory.getInventoryTotalQty()));
                 this.update(wmsInnerInventory);
             }else {
                 throw new BizErrorException("库存数量不足");
@@ -83,31 +78,56 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
     @Transactional(rollbackFor = RuntimeException.class)
     public int unlock(Long id, BigDecimal quantity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
+
         Example example = new Example(WmsInnerInventory.class);
         example.createCriteria().andEqualTo("inventoryId",id);
         WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
         if (StringUtils.isNotEmpty(wmsInnerInventory) && wmsInnerInventory.getLockStatus() == 1) {
             if (quantity.compareTo(wmsInnerInventory.getPackingQty()) == 1){
                 throw new BizErrorException("数量超出锁定的数量");
-            } else if (quantity.compareTo(wmsInnerInventory.getPackingQty()) == 0){
-                wmsInnerInventory.setLockStatus((byte) 0);
-                wmsInnerInventory.setPackingQty(new BigDecimal(0));
-                //wmsInnerInventory.setInventoryTotalQty(new BigDecimal(0));
-            } else {
-                WmsInnerInventory innerInventory = new WmsInnerInventory();
-                BeanUtils.copyProperties(wmsInnerInventory,innerInventory);
-                innerInventory.setPackingQty(quantity);
-                //innerInventory.setInventoryTotalQty(quantity.multiply(wmsInnerInventory.getPackageSpecificationQuantity()));
-                innerInventory.setParentInventoryId(id);
-                innerInventory.setInventoryId(null);
-                innerInventory.setLockStatus((byte) 0);
-                this.save(innerInventory);
-                wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(quantity));
-                //wmsInnerInventory.setInventoryTotalQty(wmsInnerInventory.getInventoryTotalQty().subtract(innerInventory.getInventoryTotalQty()));
             }
+
+            Example example1 = new Example(WmsInnerInventory.class);
+            example1.createCriteria()
+                    .andEqualTo("warehouseId", wmsInnerInventory.getWarehouseId())
+                    .andEqualTo("storageId", wmsInnerInventory.getStorageId())
+                    .andEqualTo("materialId", wmsInnerInventory.getMaterialId())
+                    .andEqualTo("lockStatus", 0)
+                    .andEqualTo("stockLock", 0)
+                    .andEqualTo("packingUnitName", wmsInnerInventory.getPackingUnitName())
+                    .andEqualTo("batchCode", wmsInnerInventory.getBatchCode());
+            List<WmsInnerInventory> baseWmsInnerInventories = wmsInnerInventoryMapper.selectByExample(example1);
+            WmsInnerInventory baseWmsInnerInventorie;
+            if(StringUtils.isNotEmpty(baseWmsInnerInventories)){
+                baseWmsInnerInventorie =  baseWmsInnerInventories.get(0);
+                if (quantity.compareTo(wmsInnerInventory.getPackingQty()) == 0){
+                    wmsInnerInventoryMapper.delete(wmsInnerInventory);
+                } else {
+                    wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(quantity));
+                    wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
+                }
+                baseWmsInnerInventorie.setPackingQty(baseWmsInnerInventorie.getPackingQty().add(quantity));
+                wmsInnerInventoryMapper.updateByPrimaryKeySelective(baseWmsInnerInventorie);
+            }else{
+                if (quantity.compareTo(wmsInnerInventory.getPackingQty()) == 0){
+                    wmsInnerInventory.setLockStatus((byte) 0);
+                    wmsInnerInventory.setPackingQty(BigDecimal.ZERO);
+                } else {
+                    baseWmsInnerInventorie = new WmsInnerInventory();
+                    BeanUtils.copyProperties(wmsInnerInventory,baseWmsInnerInventorie,new String[]{"inventoryId"});
+                    baseWmsInnerInventorie.setPackingQty(quantity);
+                    baseWmsInnerInventorie.setParentInventoryId(id);
+                    baseWmsInnerInventorie.setLockStatus((byte) 0);
+                    this.save(baseWmsInnerInventorie);
+                    wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(quantity));
+                }
+                wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
+
+            }
+
+
+
+
             this.update(wmsInnerInventory);
             example.clear();
             example.createCriteria().andEqualTo("inventoryId",wmsInnerInventory.getParentInventoryId());
@@ -225,8 +245,8 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
                 .andEqualTo("warehouseId", record.getWarehouseId())
                 .andEqualTo("storageId", record.getStorageId())
                 .andEqualTo("materialId", record.getMaterialId())
-                /*.andEqualTo("lockStatus", record.getLockStatus())
-                .andEqualTo("stockLock", record.getStockLock())*/
+                .andEqualTo("lockStatus", record.getLockStatus())
+                .andEqualTo("stockLock", record.getStockLock())
                 .andEqualTo("packingUnitName", record.getPackingUnitName())
                 .andEqualTo("batchCode", record.getBatchCode());
         List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(example);

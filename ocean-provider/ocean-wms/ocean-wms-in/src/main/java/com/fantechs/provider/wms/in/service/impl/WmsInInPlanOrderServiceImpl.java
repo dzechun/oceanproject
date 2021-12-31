@@ -9,6 +9,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.imports.WmsInInPlanOrderImport;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReOrderDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrderDet;
@@ -18,6 +19,8 @@ import com.fantechs.common.base.general.entity.wms.in.WmsInInPlanOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInInPlanOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcodeReOrder;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcodeReOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -117,13 +120,13 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
         wmsInHtInPlanOrderMapper.insertSelective(wmsInHtInPlanOrder);
 
         if(StringUtils.isNotEmpty(wmsInInPlanOrderDto.getWmsInInPlanOrderDetDtos())) {
-            List<WmsInInPlanOrderDetDto> list = new ArrayList<>();
+            List<WmsInnerMaterialBarcodeReOrder> list = new ArrayList<>();
             List<WmsInHtInPlanOrderDet> htList = new ArrayList<>();
             for (WmsInInPlanOrderDetDto wmsInInPlanOrderDetDto : wmsInInPlanOrderDto.getWmsInInPlanOrderDetDtos()) {
 
                 if(StringUtils.isEmpty(wmsInInPlanOrderDetDto.getPlanQty()) || wmsInInPlanOrderDetDto.getPlanQty().compareTo(BigDecimal.ZERO) == -1)
                     throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"计划数量需大于0");
-
+                wmsInInPlanOrderDetDto.setLineStatus((byte)1);
                 wmsInInPlanOrderDetDto.setCreateUserId(user.getUserId());
                 wmsInInPlanOrderDetDto.setCreateTime(new Date());
                 wmsInInPlanOrderDetDto.setModifiedUserId(user.getUserId());
@@ -132,14 +135,38 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
                 wmsInInPlanOrderDetDto.setOrgId(user.getOrganizationId());
                 wmsInInPlanOrderDetDto.setInPlanOrderId(wmsInInPlanOrderDto.getInPlanOrderId());
                 wmsInInPlanOrderDetDto.setPutawayQty(BigDecimal.ZERO);
-                list.add(wmsInInPlanOrderDetDto);
+                wmsInInPlanOrderDetMapper.insertUseGeneratedKeys(wmsInInPlanOrderDetDto);
                 WmsInHtInPlanOrderDet wmsInHtInPlanOrderDet = new WmsInHtInPlanOrderDet();
                 BeanUtils.copyProperties(wmsInInPlanOrderDetDto, wmsInHtInPlanOrderDet);
                 htList.add(wmsInHtInPlanOrderDet);
+
+                if(StringUtils.isNotEmpty(wmsInInPlanOrderDto.getSourceSysOrderTypeCode())){
+                    SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
+                    searchWmsInnerMaterialBarcodeReOrder.setOrderId(wmsInInPlanOrderDetDto.getSourceId());
+                    searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode(wmsInInPlanOrderDetDto.getSourceOrderCode());
+                    List<WmsInnerMaterialBarcodeReOrderDto> data = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder).getData();
+                    if(StringUtils.isNotEmpty(data)){
+                        for(WmsInnerMaterialBarcodeReOrderDto dto : data) {
+                            WmsInnerMaterialBarcodeReOrder reOrder = new WmsInnerMaterialBarcodeReOrder();
+                            BeanUtils.copyProperties(dto,reOrder, new String[]{"materialBarcodeReOrderId","orderTypeCode","orderId"});
+                            reOrder.setOrderTypeCode(wmsInInPlanOrderDto.getSysOrderTypeCode());
+                            reOrder.setOrderId(wmsInInPlanOrderDetDto.getInPlanOrderDetId());
+                            list.add(reOrder);
+                        }
+                    }
+
+                }
             }
-            if (StringUtils.isNotEmpty(list)) wmsInInPlanOrderDetMapper.insertList(list);
-            if (StringUtils.isNotEmpty(htList)) wmsInHtInPlanOrderDetMapper.insertList(htList);
+            if (StringUtils.isNotEmpty(list))
+                innerFeignApi.batchAdd(list);
+            if (StringUtils.isNotEmpty(htList))
+                wmsInHtInPlanOrderDetMapper.insertList(htList);
         }
+
+
+
+
+
 
         return i;
     }
@@ -279,7 +306,6 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
                 fail.add(s);
                 continue;
             }
-
 
             WmsInInPlanOrder wmsInInPlanOrder = new WmsInInPlanOrder();
             wmsInInPlanOrder.setCreateUserId(user.getUserId());
@@ -425,6 +451,8 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
             WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
             wmsInnerJobOrder.setSourceSysOrderTypeCode(wmsInInPlanOrders.get(0).getSourceSysOrderTypeCode());
             wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(wmsInInPlanOrders.get(0).getCoreSourceSysOrderTypeCode());
+            wmsInnerJobOrder.setWarehouseId(wmsInInPlanOrders.get(0).getWarehouseId());
+            wmsInnerJobOrder.setSourceBigType((byte)1);
             wmsInnerJobOrder.setJobOrderType((byte)1);
             wmsInnerJobOrder.setOrderStatus((byte)1);
             wmsInnerJobOrder.setCreateUserId(user.getUserId());

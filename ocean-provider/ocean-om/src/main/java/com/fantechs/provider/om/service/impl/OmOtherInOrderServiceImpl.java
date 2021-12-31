@@ -667,6 +667,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
                 wmsInnerJobOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                wmsInnerJobOrder.setSourceBigType((byte)1);
                 wmsInnerJobOrder.setJobOrderType((byte) 1);
                 wmsInnerJobOrder.setOrderStatus((byte) 1);
                 wmsInnerJobOrder.setWarehouseId(omOtherInOrderDets.get(0).getWarehouseId());

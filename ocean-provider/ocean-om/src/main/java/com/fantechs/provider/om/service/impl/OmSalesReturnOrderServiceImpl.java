@@ -590,6 +590,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
                 wmsInnerJobOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                wmsInnerJobOrder.setSourceBigType((byte)1);
                 wmsInnerJobOrder.setJobOrderType((byte) 1);
                 wmsInnerJobOrder.setWarehouseId(omSalesReturnOrderDets.get(0).getWarehouseId());
                 wmsInnerJobOrder.setOrderStatus((byte) 1);
