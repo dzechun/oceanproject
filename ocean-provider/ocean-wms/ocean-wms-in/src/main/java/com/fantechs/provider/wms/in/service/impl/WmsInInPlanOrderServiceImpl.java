@@ -431,6 +431,7 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
             wmsInnerJobOrder.setCreateTime(new Date());
             wmsInnerJobOrder.setModifiedUserId(user.getUserId());
             wmsInnerJobOrder.setModifiedTime(new Date());
+            wmsInnerJobOrder.setWarehouseId(wmsInInPlanOrders.get(0).getWarehouseId());
             wmsInnerJobOrder.setStatus((byte)1);
             wmsInnerJobOrder.setOrgId(user.getOrganizationId());
             wmsInnerJobOrder.setWmsInPutawayOrderDets(detList);
