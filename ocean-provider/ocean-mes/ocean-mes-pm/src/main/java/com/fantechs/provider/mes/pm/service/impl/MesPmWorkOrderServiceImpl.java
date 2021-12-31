@@ -53,6 +53,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 
@@ -97,7 +98,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                 throw new BizErrorException(ErrorCodeEnum.OPT20012001);
             }
         }
-
+        mesPmWorkOrderDto.setTotalIssueQty(BigDecimal.ZERO);
         mesPmWorkOrderDto.setWorkOrderStatus((byte) 1);
         mesPmWorkOrderDto.setCreateUserId(currentUser.getUserId());
         mesPmWorkOrderDto.setCreateTime(new Date());
@@ -365,6 +366,8 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
             if (order.getIfAllIssued() != null && order.getIfAllIssued() == (byte) 1) {
                 throw new BizErrorException("订单已下推，无法再次下推");
             }
+            if(StringUtils.isEmpty(order.getTotalIssueQty()))
+                order.setTotalIssueQty(BigDecimal.ZERO);
             if(order.getOutputQty().compareTo(order.getTotalIssueQty().add(order.getQty())) == -1 )
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "累计下发数量大于包装总数");
             set.add(order.getWarehouseId());
@@ -401,7 +404,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
         Set<String> codes = detMap.keySet();
         for (String code : codes) {
             String[] split = code.split("_");
-            String nextOrderTypeCode = split[1];//下游单据类型
+            String nextOrderTypeCode = split[0];//下游单据类型
             if ("IN-SPO".equals(nextOrderTypeCode)) {
                 //生成收货计划
                 List<WmsInPlanReceivingOrderDetDto> detList = new LinkedList<>();
@@ -637,6 +640,8 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
         //返写下推数据
         if(StringUtils.isNotEmpty(list)) {
             for (MesPmWorkOrder mesPmWorkOrder : list) {
+                mesPmWorkOrder.setModifiedTime(new Date());
+                mesPmWorkOrder.setModifiedUserId(user.getUserId());
                 mesPmWorkOrderMapper.updateByPrimaryKeySelective(mesPmWorkOrder);
             }
         }

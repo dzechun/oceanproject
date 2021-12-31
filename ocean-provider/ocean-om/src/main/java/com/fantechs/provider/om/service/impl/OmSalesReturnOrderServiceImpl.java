@@ -615,14 +615,14 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
         if(StringUtils.isNotEmpty(list)) {
             for (OmSalesReturnOrderDet omSalesReturnOrderDet : list) {
                 omSalesReturnOrderDet.setModifiedTime(new Date());
-                omSalesReturnOrderDet.setModifiedUserId(user.getOrganizationId());
+                omSalesReturnOrderDet.setModifiedUserId(user.getUserId());
                 omSalesReturnOrderDetMapper.updateByPrimaryKeySelective(omSalesReturnOrderDet);
             }
         }
         if (StringUtils.isNotEmpty(orderList)) {
             for (OmSalesReturnOrder omSalesReturnOrder : orderList) {
                 omSalesReturnOrder.setModifiedTime(new Date());
-                omSalesReturnOrder.setModifiedUserId(user.getOrganizationId());
+                omSalesReturnOrder.setModifiedUserId(user.getUserId());
                 omSalesReturnOrderMapper.updateByPrimaryKeySelective(omSalesReturnOrder);
             }
         }

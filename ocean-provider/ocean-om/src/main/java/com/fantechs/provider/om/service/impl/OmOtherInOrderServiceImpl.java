@@ -692,14 +692,14 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         if (StringUtils.isNotEmpty(list)) {
             for (OmOtherInOrderDet omOtherInOrderDet : list) {
                 omOtherInOrderDet.setModifiedTime(new Date());
-                omOtherInOrderDet.setModifiedUserId(user.getOrganizationId());
+                omOtherInOrderDet.setModifiedUserId(user.getUserId());
                 omOtherInOrderDetMapper.updateByPrimaryKeySelective(omOtherInOrderDet);
             }
         }
         if (StringUtils.isNotEmpty(orderList)) {
             for (OmOtherInOrder omOtherInOrder : orderList) {
                 omOtherInOrder.setModifiedTime(new Date());
-                omOtherInOrder.setModifiedUserId(user.getOrganizationId());
+                omOtherInOrder.setModifiedUserId(user.getUserId());
                 omOtherInOrderMapper.updateByPrimaryKeySelective(omOtherInOrder);
             }
         }

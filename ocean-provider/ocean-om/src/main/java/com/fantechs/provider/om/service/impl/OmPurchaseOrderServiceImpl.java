@@ -588,7 +588,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
             if (StringUtils.isNotEmpty(list)) {
                 for (OmPurchaseOrderDet omPurchaseOrderDet : list) {
                     omPurchaseOrderDet.setModifiedTime(new Date());
-                    omPurchaseOrderDet.setModifiedUserId(user.getOrganizationId());
+                    omPurchaseOrderDet.setModifiedUserId(user.getUserId());
                     omPurchaseOrderDetMapper.updateByPrimaryKeySelective(omPurchaseOrderDet);
                 }
             }
