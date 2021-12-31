@@ -263,6 +263,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 }
 
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+                wmsInnerJobOrder.setSourceBigType((byte)1);
                 wmsInnerJobOrder.setSourceSysOrderTypeCode(sysOrderTypeCode);
                 wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInnerJobOrder.setWarehouseId(orders.get(0).getWarehouseId());
@@ -382,18 +383,9 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
     public int insertMaterialBarcode(QmsIncomingInspectionOrderDto qmsIncomingInspectionOrderDto){
         int i = 0;
         if(StringUtils.isNotEmpty(qmsIncomingInspectionOrderDto.getSourceId())) {
-            //查当前单据的单据流
-            SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
-            searchBaseOrderFlow.setBusinessType((byte) 1);
-            searchBaseOrderFlow.setOrderNode((byte) 4);
-            BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
-            if (StringUtils.isEmpty(baseOrderFlow)) {
-                throw new BizErrorException("未找到当前单据配置的单据流");
-            }
-
             //上游单据所有条码
             SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
-            searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode(baseOrderFlow.getSourceOrderTypeCode());
+            searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode(qmsIncomingInspectionOrderDto.getSourceSysOrderTypeCode());
             searchWmsInnerMaterialBarcodeReOrder.setOrderDetId(qmsIncomingInspectionOrderDto.getSourceId());
             List<WmsInnerMaterialBarcodeReOrderDto> materialBarcodeReOrderDtos = innerFeignApi.findAll(searchWmsInnerMaterialBarcodeReOrder).getData();
             if (StringUtils.isNotEmpty(materialBarcodeReOrderDtos)) {

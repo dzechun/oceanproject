@@ -99,11 +99,12 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
             lineNumber++;
             wmsInnerJobOrderDet.setMaterialId(omTransferOrderDetDto.getMaterialId());
             wmsInnerJobOrderDet.setBatchCode(omTransferOrderDetDto.getBatchCode());
-            wmsInnerJobOrderDet.setPlanQty(omTransferOrderDetDto.getOrderQty());
+            wmsInnerJobOrderDet.setPlanQty(omTransferOrderDetDto.getIssueQty());
             wmsInnerJobOrderDet.setLineStatus((byte) 1);
             wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
         }
         WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+        wmsInnerJobOrder.setSourceBigType((byte)1);
         wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("INNER-TO");
         wmsInnerJobOrder.setSourceSysOrderTypeCode("INNER-TO");
         wmsInnerJobOrder.setWarehouseId(outWarehouseId);
