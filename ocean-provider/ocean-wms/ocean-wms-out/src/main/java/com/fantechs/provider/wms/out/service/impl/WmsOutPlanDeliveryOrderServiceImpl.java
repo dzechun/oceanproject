@@ -109,6 +109,7 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
             wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
         }
         WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+        wmsInnerJobOrder.setSourceBigType((byte) 1);
         //wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("OUT-PRO");
         wmsInnerJobOrder.setSourceSysOrderTypeCode("OUT-PDO");
         wmsInnerJobOrder.setWarehouseId(warehouseId);

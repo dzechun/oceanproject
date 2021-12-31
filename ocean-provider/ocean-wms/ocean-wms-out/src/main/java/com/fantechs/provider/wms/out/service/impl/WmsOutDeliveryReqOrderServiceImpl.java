@@ -145,6 +145,7 @@ public class WmsOutDeliveryReqOrderServiceImpl extends BaseService<WmsOutDeliver
                     wmsOutPlanDeliveryOrderDetDtos.add(wmsOutPlanDeliveryOrderDetDto);
                 }
                 WmsOutPlanDeliveryOrderDto wmsOutPlanDeliveryOrderDto = new WmsOutPlanDeliveryOrderDto();
+                wmsOutPlanDeliveryOrderDto.setSourceBigType((byte) 1);
                 //wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("OUT-PRO");
                 wmsOutPlanDeliveryOrderDto.setSourceSysOrderTypeCode("OUT-DRO");
                 wmsOutPlanDeliveryOrderDto.setSourceBigType((byte)1);
@@ -170,6 +171,7 @@ public class WmsOutDeliveryReqOrderServiceImpl extends BaseService<WmsOutDeliver
                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
                 }
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+                wmsInnerJobOrder.setSourceBigType((byte) 1);
                 //wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("OUT-PRO");
                 wmsInnerJobOrder.setSourceSysOrderTypeCode("OUT-DRO");
                 wmsInnerJobOrder.setWarehouseId(warehouseId);

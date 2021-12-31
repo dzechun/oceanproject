@@ -141,7 +141,7 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
                     wmsOutDeliveryReqOrderDetDto.setCoreSourceId(omPurchaseReturnOrderDetDto.getCoreSourceId());
                     wmsOutDeliveryReqOrderDetDto.setSourceId(omPurchaseReturnOrderDetDto.getPurchaseReturnOrderDetId());
                     wmsOutDeliveryReqOrderDetDto.setMaterialId(omPurchaseReturnOrderDetDto.getMaterialId());
-                    wmsOutDeliveryReqOrderDetDto.setOrderQty(omPurchaseReturnOrderDetDto.getOrderQty());
+                    wmsOutDeliveryReqOrderDetDto.setOrderQty(omPurchaseReturnOrderDetDto.getIssueQty());
                     wmsOutDeliveryReqOrderDetDto.setLineStatus((byte) 1);
                     wmsOutDeliveryReqOrderDetDtos.add(wmsOutDeliveryReqOrderDetDto);
                 }
@@ -167,7 +167,7 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
                     wmsOutPlanDeliveryOrderDetDto.setCoreSourceId(omPurchaseReturnOrderDetDto.getCoreSourceId());
                     wmsOutPlanDeliveryOrderDetDto.setSourceId(omPurchaseReturnOrderDetDto.getPurchaseReturnOrderDetId());
                     wmsOutPlanDeliveryOrderDetDto.setMaterialId(omPurchaseReturnOrderDetDto.getMaterialId());
-                    wmsOutPlanDeliveryOrderDetDto.setOrderQty(omPurchaseReturnOrderDetDto.getOrderQty());
+                    wmsOutPlanDeliveryOrderDetDto.setOrderQty(omPurchaseReturnOrderDetDto.getIssueQty());
                     wmsOutPlanDeliveryOrderDetDto.setLineStatus((byte) 1);
                     wmsOutPlanDeliveryOrderDetDtos.add(wmsOutPlanDeliveryOrderDetDto);
                 }
@@ -197,11 +197,12 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
                     lineNumber++;
                     wmsInnerJobOrderDet.setMaterialId(omPurchaseReturnOrderDetDto.getMaterialId());
                     wmsInnerJobOrderDet.setBatchCode(omPurchaseReturnOrderDetDto.getBatchCode());
-                    wmsInnerJobOrderDet.setPlanQty(omPurchaseReturnOrderDetDto.getOrderQty());
+                    wmsInnerJobOrderDet.setPlanQty(omPurchaseReturnOrderDetDto.getIssueQty());
                     wmsInnerJobOrderDet.setLineStatus((byte) 1);
                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
                 }
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+                wmsInnerJobOrder.setSourceBigType((byte)1);
                 wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("OUT-PRO");
                 wmsInnerJobOrder.setSourceSysOrderTypeCode("OUT-PRO");
                 wmsInnerJobOrder.setWarehouseId(purchaseReturnOrderDetDtos.get(0).getWarehouseId());
