@@ -103,6 +103,9 @@
       <if test="hierarchicalCategory != null and hierarchicalCategory != ''">
         and bstp.hierarchical_category = #{hierarchicalCategory}
       </if>
+      <if test="notHierarchicalCategory != null and notHierarchicalCategory != ''">
+        and bstp.hierarchical_category <![CDATA[ != ]]> #{notHierarchicalCategory}
+      </if>
       <if test="taskPointCode!=null and taskPointCode!=''">
         and bstp.task_point_code like CONCAT('%', #{taskPointCode}, '%')
       </if>

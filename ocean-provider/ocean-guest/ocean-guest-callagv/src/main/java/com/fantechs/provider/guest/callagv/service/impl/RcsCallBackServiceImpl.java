@@ -88,6 +88,44 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
 
         // RCS通知货架转移
         if (Integer.valueOf(agvCallBackDTO.getMethod()) > 4) {
+            if (Integer.valueOf(agvCallBackDTO.getMethod()) == 7) {
+                SearchTemVehicle searchTemVehicle = new SearchTemVehicle();
+                searchTemVehicle.setVehicleCode(agvCallBackDTO.getPodCode());
+                List<TemVehicleDto> temVehicleDtoList = temVehicleFeignApi.findList(searchTemVehicle).getData();
+                // 记录AGV货架转移任务
+                CallAgvAgvTask callAgvAgvTask = new CallAgvAgvTask();
+                callAgvAgvTask.setTaskCode(agvCallBackDTO.getTaskCode());
+                callAgvAgvTask.setVehicleId(temVehicleDtoList.get(0).getVehicleId());
+                callAgvAgvTask.setTaskStatus((byte) 2);
+                callAgvAgvTask.setOperateType((byte) 4);
+                callAgvAgvTask.setStatus((byte) 1);
+                callAgvAgvTask.setOrgId(user.getOrganizationId());
+                callAgvAgvTask.setIsDelete((byte) 1);
+                callAgvAgvTask.setCreateUserId(user.getUserId());
+                callAgvAgvTask.setCreateTime(new Date());
+                callAgvAgvTaskMapper.insertUseGeneratedKeys(callAgvAgvTask);
+
+                Example example = new Example(CallAgvVehicleReBarcode.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("vehicleId", temVehicleDtoList.get(0).getVehicleId()).andEqualTo("orgId", user.getOrganizationId());
+                List<CallAgvVehicleReBarcode> callAgvVehicleReBarcodeList = callAgvVehicleReBarcodeMapper.selectByExample(example);
+
+                if (!callAgvVehicleReBarcodeList.isEmpty()) {
+                    List<CallAgvAgvTaskBarcode> callAgvAgvTaskBarcodeList = new LinkedList<>();
+                    for (CallAgvVehicleReBarcode callAgvVehicleReBarcode : callAgvVehicleReBarcodeList) {
+                        CallAgvAgvTaskBarcode callAgvAgvTaskBarcode = new CallAgvAgvTaskBarcode();
+                        callAgvAgvTaskBarcode.setAgvTaskId(callAgvAgvTask.getAgvTaskId());
+                        callAgvAgvTaskBarcode.setBarcodeId(callAgvVehicleReBarcode.getBarcodeId());
+                        callAgvAgvTaskBarcode.setStatus((byte) 1);
+                        callAgvAgvTaskBarcode.setOrgId(user.getOrganizationId());
+                        callAgvAgvTaskBarcode.setCreateTime(new Date());
+                        callAgvAgvTaskBarcodeList.add(callAgvAgvTaskBarcode);
+                    }
+                    callAgvAgvTaskBarcodeMapper.insertList(callAgvAgvTaskBarcodeList);
+                }
+
+                return "0";
+            }
             SearchBaseStorageTaskPoint searchBaseStorageTaskPoint = new SearchBaseStorageTaskPoint();
             searchBaseStorageTaskPoint.setXyzCode(agvCallBackDTO.getCurrentPositionCode());
             List<BaseStorageTaskPoint> baseStorageTaskPointList = baseFeignApi.findBaseStorageTaskPointList(searchBaseStorageTaskPoint).getData();
@@ -133,52 +171,24 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
             temVehicle.setModifiedTime(new Date());
             temVehicleFeignApi.update(temVehicle);
 
-            // 记录AGV货架转移任务
+            // 更新AGV货架转移任务
+            SearchCallAgvAgvTask searchCallAgvAgvTask = new SearchCallAgvAgvTask();
+            searchCallAgvAgvTask.setTaskCode(agvCallBackDTO.getTaskCode());
+            List<CallAgvAgvTaskDto> callAgvAgvTaskDtoList = callAgvAgvTaskMapper.findList(ControllerUtil.dynamicConditionByEntity(searchCallAgvAgvTask));
             CallAgvAgvTask callAgvAgvTask = new CallAgvAgvTask();
-            callAgvAgvTask.setTaskCode(agvCallBackDTO.getTaskCode());
-            callAgvAgvTask.setVehicleId(temVehicle.getVehicleId());
-            if ("5".equals(agvCallBackDTO.getMethod())) {
-                callAgvAgvTask.setStartStorageTaskPointId(baseStorageTaskPoint.getStorageTaskPointId());
-            } else if ("6".equals(agvCallBackDTO.getMethod())) {
-                callAgvAgvTask.setEndStorageTaskPointId(baseStorageTaskPoint.getStorageTaskPointId());
-            }
-            callAgvAgvTask.setOperateType((byte) 4);
-            callAgvAgvTask.setStatus((byte) 1);
-            callAgvAgvTask.setOrgId(baseStorageTaskPoint.getOrgId());
-            callAgvAgvTask.setIsDelete((byte) 1);
-            if ("5".equals(agvCallBackDTO.getMethod())) {
-                callAgvAgvTask.setTaskStatus((byte) 2);
-                callAgvAgvTask.setCreateTime(new Date());
-                callAgvAgvTaskMapper.insertUseGeneratedKeys(callAgvAgvTask);
-
-                Example example = new Example(CallAgvVehicleReBarcode.class);
-                Example.Criteria criteria = example.createCriteria();
-                criteria.andEqualTo("vehicleId", temVehicle.getVehicleId()).andEqualTo("orgId", temVehicle.getOrgId());
-                List<CallAgvVehicleReBarcode> callAgvVehicleReBarcodeList = callAgvVehicleReBarcodeMapper.selectByExample(example);
-
-                if (!callAgvVehicleReBarcodeList.isEmpty()) {
-                    List<CallAgvAgvTaskBarcode> callAgvAgvTaskBarcodeList = new LinkedList<>();
-                    for (CallAgvVehicleReBarcode callAgvVehicleReBarcode : callAgvVehicleReBarcodeList) {
-                        CallAgvAgvTaskBarcode callAgvAgvTaskBarcode = new CallAgvAgvTaskBarcode();
-                        callAgvAgvTaskBarcode.setAgvTaskId(callAgvAgvTask.getAgvTaskId());
-                        callAgvAgvTaskBarcode.setBarcodeId(callAgvVehicleReBarcode.getBarcodeId());
-                        callAgvAgvTaskBarcode.setStatus((byte) 1);
-                        callAgvAgvTaskBarcode.setOrgId(baseStorageTaskPoint.getOrgId());
-                        callAgvAgvTaskBarcode.setCreateTime(new Date());
-                        callAgvAgvTaskBarcodeList.add(callAgvAgvTaskBarcode);
-                    }
-                    callAgvAgvTaskBarcodeMapper.insertList(callAgvAgvTaskBarcodeList);
-                }
-            } else if ("6".equals(agvCallBackDTO.getMethod())) {
-                SearchCallAgvAgvTask searchCallAgvAgvTask = new SearchCallAgvAgvTask();
-                searchCallAgvAgvTask.setTaskCode(agvCallBackDTO.getTaskCode());
-                List<CallAgvAgvTaskDto> callAgvAgvTaskDtoList = callAgvAgvTaskMapper.findList(ControllerUtil.dynamicConditionByEntity(searchCallAgvAgvTask));
-                if (!callAgvAgvTaskDtoList.isEmpty()) {
-                    callAgvAgvTask.setAgvTaskId(callAgvAgvTaskDtoList.get(0).getAgvTaskId());
+            if (!callAgvAgvTaskDtoList.isEmpty()) {
+                BeanUtils.autoFillEqFields(callAgvAgvTaskDtoList.get(0), callAgvAgvTask);
+                if ("5".equals(agvCallBackDTO.getMethod())) {
+                    callAgvAgvTask.setStartStorageTaskPointId(baseStorageTaskPoint.getStorageTaskPointId());
+                } else if ("6".equals(agvCallBackDTO.getMethod())) {
+                    callAgvAgvTask.setEndStorageTaskPointId(baseStorageTaskPoint.getStorageTaskPointId());
                     callAgvAgvTask.setTaskStatus((byte) 3);
-                    callAgvAgvTask.setModifiedTime(new Date());
-                    callAgvAgvTaskMapper.updateByPrimaryKeySelective(callAgvAgvTask);
                 }
+                callAgvAgvTask.setModifiedUserId(user.getUserId());
+                callAgvAgvTask.setModifiedTime(new Date());
+                callAgvAgvTaskMapper.updateByPrimaryKeySelective(callAgvAgvTask);
+            }
+            if ("6".equals(agvCallBackDTO.getMethod())) {
 
                 // 货架转移，通知SCM
                 Example example = new Example(CallAgvVehicleReBarcode.class);
@@ -215,6 +225,7 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
                         searchBaseStorageTaskPoint2.setTaskPointType((byte) 2);
                         searchBaseStorageTaskPoint2.setStorageTaskPointStatus((byte) 1);
                         searchBaseStorageTaskPoint2.setIfOrderByUsePriority(1);
+                        searchBaseStorageTaskPoint2.setNotHierarchicalCategory(baseStorageTaskPoint.getHierarchicalCategory());
                         List<BaseStorageTaskPoint> baseStorageTaskPoints = baseFeignApi.findBaseStorageTaskPointList(searchBaseStorageTaskPoint2).getData();
                         if (StringUtils.isEmpty(baseStorageTaskPoints)) {
                             callAgvAgvTask.setRemark("货架占用终点和任务：" + callAgvAgvTaskDtos.get(0).getTaskCode() + "，没有空闲配送点可供再次转移");
