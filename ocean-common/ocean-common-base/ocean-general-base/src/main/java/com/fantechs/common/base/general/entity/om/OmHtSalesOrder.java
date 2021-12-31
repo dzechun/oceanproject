@@ -233,8 +233,8 @@ public class OmHtSalesOrder extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd", orderNum = "19")
-    @JSONField(format ="yyyy-MM-dd")
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss", orderNum = "19")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
 
@@ -250,8 +250,8 @@ public class OmHtSalesOrder extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd", orderNum = "21")
-    @JSONField(format = "yyyy-MM-dd")
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss", orderNum = "21")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
 

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -155,7 +156,8 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="orderDate",value = "订单日期")
     @Excel(name = "订单日期", height = 20, width = 30, orderNum = "11")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JSONField(format ="yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "order_date")
     private Date orderDate;
 
@@ -172,7 +174,8 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="makeOrderDate",value = "制单日期")
     @Excel(name = "制单日期", height = 20, width = 30, orderNum = "13")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JSONField(format ="yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "make_order_date")
     private Date makeOrderDate;
 
@@ -189,7 +192,8 @@ public class OmSalesOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="auditDate",value = "审核日期")
     @Excel(name = "审核日期", height = 20, width = 30, orderNum = "15")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JSONField(format ="yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "audit_date")
     private Date auditDate;
 
