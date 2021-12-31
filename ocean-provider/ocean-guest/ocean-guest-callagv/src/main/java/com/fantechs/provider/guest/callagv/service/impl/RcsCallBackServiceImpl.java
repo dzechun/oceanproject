@@ -103,7 +103,16 @@ public class RcsCallBackServiceImpl implements RcsCallBackService {
                 callAgvAgvTask.setIsDelete((byte) 1);
                 callAgvAgvTask.setCreateUserId(user.getUserId());
                 callAgvAgvTask.setCreateTime(new Date());
-                callAgvAgvTaskMapper.insertUseGeneratedKeys(callAgvAgvTask);
+
+                SearchCallAgvAgvTask searchCallAgvAgvTask = new SearchCallAgvAgvTask();
+                searchCallAgvAgvTask.setTaskCode(agvCallBackDTO.getTaskCode());
+                List<CallAgvAgvTaskDto> callAgvAgvTaskDtoList = callAgvAgvTaskMapper.findList(ControllerUtil.dynamicConditionByEntity(searchCallAgvAgvTask));
+                if (callAgvAgvTaskDtoList.isEmpty()) {
+                    callAgvAgvTaskMapper.insertUseGeneratedKeys(callAgvAgvTask);
+                } else {
+                    callAgvAgvTask.setAgvTaskId(callAgvAgvTaskDtoList.get(0).getAgvTaskId());
+                    callAgvAgvTaskMapper.updateByPrimaryKeySelective(callAgvAgvTask);
+                }
 
                 Example example = new Example(CallAgvVehicleReBarcode.class);
                 Example.Criteria criteria = example.createCriteria();
