@@ -115,7 +115,7 @@ public class BaseInAndOutRule extends ValidGroup implements Serializable {
 
     private String option3;
 
-    private List<BaseInAndOutRuleDetDto> baseInAndOutRuleDetDtos;
+    private List<BaseInAndOutRuleDetDto> baseInAndOutRuleDets;
 
     private static final long serialVersionUID = 1L;
 }
