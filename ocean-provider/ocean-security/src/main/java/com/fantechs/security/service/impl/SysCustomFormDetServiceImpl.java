@@ -89,7 +89,9 @@ public class SysCustomFormDetServiceImpl  extends BaseService<SysCustomFormDet> 
         //全组织新增
         List<SysCustomFormDet> formDetList = new LinkedList<>();
         formDetList.add(sysCustomFormDet);
-        List<BaseOrganizationDto> organizationDtos = baseFeignApi.findOrganizationList(new SearchBaseOrganization()).getData();
+        SearchBaseOrganization baseOrganization = new SearchBaseOrganization();
+        baseOrganization.setPageSize(99999);
+        List<BaseOrganizationDto> organizationDtos = baseFeignApi.findOrganizationList(baseOrganization).getData();
         if(!organizationDtos.isEmpty()){
             for (BaseOrganizationDto org : organizationDtos){
                 if(!org.getOrganizationId().equals(sysCustomFormDet.getOrgId())){
@@ -147,7 +149,9 @@ public class SysCustomFormDetServiceImpl  extends BaseService<SysCustomFormDet> 
         BeanUtil.copyProperties(sysCustomFormDet,formDetDto);
         detList.add(formDetDto);
 
-        List<BaseOrganizationDto> organizationDtos = baseFeignApi.findOrganizationList(new SearchBaseOrganization()).getData();
+        SearchBaseOrganization baseOrganization = new SearchBaseOrganization();
+        baseOrganization.setPageSize(99999);
+        List<BaseOrganizationDto> organizationDtos = baseFeignApi.findOrganizationList(baseOrganization).getData();
         if(!organizationDtos.isEmpty()) {
             for (BaseOrganizationDto org : organizationDtos) {
                 if (!org.getOrganizationId().equals(sysCustomFormDet.getOrgId())) {
