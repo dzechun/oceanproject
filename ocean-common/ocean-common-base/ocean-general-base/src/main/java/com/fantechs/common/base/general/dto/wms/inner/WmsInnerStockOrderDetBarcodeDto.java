@@ -2,13 +2,16 @@ package com.fantechs.common.base.general.dto.wms.inner;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrderDetBarcode;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @Author mr.lei
@@ -79,6 +82,26 @@ public class WmsInnerStockOrderDetBarcodeDto extends WmsInnerStockOrderDetBarcod
     @ApiModelProperty(name="materialQty",value = "物料数量")
     @Excel(name = "物料数量", height = 20, width = 30)
     private BigDecimal materialQty;
+
+    /**
+     * 生产日期
+     */
+    @ApiModelProperty(name="productionTime",value = "生产日期")
+    @Excel(name = "生产日期", height = 20, width = 30,exportFormat ="yyyy-MM-dd")
+    private Date productionTime;
+
+    /**
+     * 批号
+     */
+    @ApiModelProperty(name="batchCode",value = "批号")
+    @Excel(name = "批号", height = 20, width = 30)
+    private String batchCode;
+
+    /**
+     * 条码类型(1-SN码 2-彩盒号 3-箱号 4-栈板号 5-非系统条码)
+     */
+    @ApiModelProperty(name="barcodeType",value = "条码类型(1-SN码 2-彩盒号 3-箱号 4-栈板号 5-非系统条码)")
+    private Byte barcodeType;
 
     /**
      * 组织名称

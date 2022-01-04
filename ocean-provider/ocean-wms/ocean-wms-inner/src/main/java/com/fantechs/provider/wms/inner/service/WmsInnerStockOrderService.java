@@ -1,9 +1,6 @@
 package com.fantechs.provider.wms.inner.service;
 
-import com.fantechs.common.base.general.dto.wms.inner.AddInnerStockDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.BarcodeResultDto;
-import com.fantechs.common.base.general.dto.wms.inner.CommitInnerStockBarcodeDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDto;
+import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrderDet;
 import com.fantechs.common.base.support.IService;
@@ -54,6 +51,13 @@ public interface WmsInnerStockOrderService extends IService<WmsInnerStockOrder> 
     BarcodeResultDto scanBarcode(Long stockOrderDetId, String barcode);
 
     /**
+     * Web扫条码返回条码信息
+     * @param barcode
+     * @return
+     */
+    WmsInnerStockOrderDetBarcodeDto webScanBarcode(Long stockOrderDetId, String barcode);
+
+    /**
      * PDA扫条码提交
      * @param
      * @return
@@ -65,7 +69,7 @@ public interface WmsInnerStockOrderService extends IService<WmsInnerStockOrder> 
      * @param
      * @return
      */
-    int webCommit(Long stockOrderDetId,List<CommitInnerStockBarcodeDto> barcodeList);
+    int webCommit(Byte commitType, Long stockOrderDetId,List<CommitInnerStockBarcodeDto> barcodeList);
 
     /**
      * 自动适配

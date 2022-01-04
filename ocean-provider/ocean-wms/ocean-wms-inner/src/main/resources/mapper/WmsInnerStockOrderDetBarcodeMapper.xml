@@ -28,6 +28,9 @@
     <result column="color_box_code" jdbcType="VARCHAR" property="colorBoxCode"/>
     <result column="carton_code" jdbcType="VARCHAR" property="cartonCode"/>
     <result column="pallet_code" jdbcType="VARCHAR" property="palletCode"/>
+    <result column="production_time" jdbcType="VARCHAR" property="productionTime"/>
+    <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
+
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
@@ -61,6 +64,8 @@
     wimb.carton_code,
     wimb.pallet_code,
     wimb.material_qty,
+    wimb.production_time,
+    wimb.batch_code,
     bm.material_code,
     bm.material_name,
     bm.material_desc,

@@ -2,10 +2,7 @@ package com.fantechs.provider.wms.inner.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.wms.inner.BarcodeResultDto;
-import com.fantechs.common.base.general.dto.wms.inner.CommitInnerStockBarcodeDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDto;
+import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerStockOrderImport;
 import com.fantechs.common.base.general.dto.wms.out.imports.WmsOutDeliveryOrderImport;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrder;
@@ -76,16 +73,24 @@ public class WmsInnerStockOrderController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+//    @ApiOperation("扫描条码")
+//    @PostMapping("/scanBarcode")
+//    public ResponseEntity<BarcodeResultDto> scanBarcode(@ApiParam(value = "条码")@RequestParam String barcode,@ApiParam(value = "盘点明细ID")@RequestParam Long stockOrderDetId){
+//        return ControllerUtil.returnDataSuccess(wmsInventoryVerificationService.scanBarcode(stockOrderDetId,barcode),1);
+//    }
+
     @ApiOperation("扫描条码")
-    @PostMapping("/scanBarcode")
-    public ResponseEntity<BarcodeResultDto> scanBarcode(@ApiParam(value = "条码")@RequestParam String barcode,@ApiParam(value = "盘点明细ID")@RequestParam Long stockOrderDetId){
-        return ControllerUtil.returnDataSuccess(wmsInventoryVerificationService.scanBarcode(stockOrderDetId,barcode),1);
+    @PostMapping("/webScanBarcode")
+    public ResponseEntity<WmsInnerStockOrderDetBarcodeDto> webScanBarcode(@ApiParam(value = "条码")@RequestParam String barcode, @ApiParam(value = "盘点明细ID")@RequestParam Long stockOrderDetId){
+        return ControllerUtil.returnDataSuccess(wmsInventoryVerificationService.webScanBarcode(stockOrderDetId,barcode),1);
     }
 
     @ApiOperation("盘点扫码提交")
     @PostMapping("/webCommit")
-    public ResponseEntity webCommit(@RequestParam(required = true) Long stockOrderDetId,@RequestBody(required = true) List<CommitInnerStockBarcodeDto> barcodeList){
-        return ControllerUtil.returnCRUD(wmsInventoryVerificationService.webCommit(stockOrderDetId,barcodeList));
+    public ResponseEntity webCommit(@ApiParam(value = "提交类型")@RequestParam(required = true) Byte commitType,
+                                    @ApiParam(value = "盘点明细ID")@RequestParam(required = true) Long stockOrderDetId,
+                                    @ApiParam(value = "条码集合") @RequestBody List<CommitInnerStockBarcodeDto> barcodeList){
+        return ControllerUtil.returnCRUD(wmsInventoryVerificationService.webCommit(commitType,stockOrderDetId,barcodeList));
     }
 
     @ApiOperation("自动适配")
