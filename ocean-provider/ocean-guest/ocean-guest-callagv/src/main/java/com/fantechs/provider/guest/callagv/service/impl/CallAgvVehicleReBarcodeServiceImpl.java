@@ -917,13 +917,13 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
         callAgvWarehouseAreaReBarcodeMapper.insertList(callAgvWarehouseAreaReBarcodeList);
         callAgvWarehouseAreaBarcodeLogMapper.insertList(callAgvWarehouseAreaBarcodeLogList);
         // 扫码入库，回传数据到SCM
-        Map<String, String> jsonMap = new HashMap<>();
+        Map<String, Object> jsonMap = new HashMap<>();
         jsonMap.put("warehouseCode", warehouseCode);
         jsonMap.put("warehouseaAreaCode", warehouseaAreaCode);
         jsonMap.put("pkGroup", pkGroup);
         jsonMap.put("pkOrg", pkOrg);
         jsonMap.put("factoryCode", factoryCode);
-        jsonMap.put("goodsDetails", JSONObject.toJSONString(goodsDetails));
+        jsonMap.put("goodsDetails", goodsDetails);
         log.info("扫码入库参数：" + JSONObject.toJSONString(jsonMap));
         Map<String, Object> paramMap = scmParam(jsonMap, "mls.scanCode.in.warehouse");
         log.info("扫码入库，回传数据到SCM : " + JsonUtils.objectToJson(paramMap));
@@ -983,13 +983,13 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
             }
         }
         // 扫码出库，回传数据到SCM
-        Map<String, String> jsonMap = new HashMap<>();
+        Map<String, Object> jsonMap = new HashMap<>();
         jsonMap.put("warehouseCode", warehouseCode);
         jsonMap.put("warehouseaAreaCode", warehouseaAreaCode);
         jsonMap.put("pkGroup", pkGroup);
         jsonMap.put("pkOrg", pkOrg);
         jsonMap.put("factoryCode", factoryCode);
-        jsonMap.put("goodsDetails", JSONObject.toJSONString(goodsDetails));
+        jsonMap.put("goodsDetails", goodsDetails);
         log.info("扫码出库参数：" + JSONObject.toJSONString(jsonMap));
         Map<String, Object> paramMap = scmParam(jsonMap, "mls.scanCode.out.warehouse");
         log.info("扫码出库，回传数据到SCM : " + JsonUtils.objectToJson(paramMap));
