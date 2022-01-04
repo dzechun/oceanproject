@@ -12,8 +12,6 @@ import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 
-;
-;
 
 /**
  * 预警人员信息表
@@ -66,7 +64,6 @@ public class EwsWarningUserInfo extends ValidGroup implements Serializable {
      * 邮箱地址
      */
     @ApiModelProperty(name="eMailAddress",value = "邮箱地址")
-    @Excel(name = "邮箱地址", height = 20, width = 30,orderNum="6")
     @Column(name = "e_mail_address")
     private String eMailAddress;
 

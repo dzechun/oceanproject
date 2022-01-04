@@ -14,9 +14,11 @@ import com.fantechs.common.base.general.dto.wms.in.imports.WmsInReceivingOrderIm
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.general.entity.wms.in.*;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
@@ -526,6 +528,15 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
             case "IN-IWK":
                 //上架作业
                 //生成上架作业单
+                //获取默认收货库位
+                SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                searchBaseStorage.setWarehouseId(wmsInReceivingOrder.getWarehouseId());
+                searchBaseStorage.setStorageType((byte)2);
+                List<BaseStorage> storageList = baseFeignApi.findList(searchBaseStorage).getData();
+                if(storageList.size()<1){
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"未维护仓库收货库位");
+                }
+
                 List<WmsInnerJobOrderDet> detList = new LinkedList<>();
                 int lineNumber = 1;
                 for (WmsInReceivingOrderDet wmsInReceivingOrderDet : wmsInReceivingOrderDets) {
@@ -537,6 +548,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                     wmsInnerJobOrderDet.setMaterialId(wmsInReceivingOrderDet.getMaterialId());
                     wmsInnerJobOrderDet.setPlanQty(wmsInReceivingOrderDet.getPlanQty());
                     wmsInnerJobOrderDet.setLineStatus((byte)1);
+                    wmsInnerJobOrderDet.setOutStorageId(storageList.get(0).getStorageId());
                     detList.add(wmsInnerJobOrderDet);
                     lineNumber++;
                 }
@@ -561,8 +573,17 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                 break;
             case "IN-IPO":
                 //入库计划
+                //获取默认收货库位
+                SearchBaseStorage searchBaseStorage1 = new SearchBaseStorage();
+                searchBaseStorage1.setWarehouseId(wmsInReceivingOrder.getWarehouseId());
+                searchBaseStorage1.setStorageType((byte)2);
+                List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage1).getData();
+                if(baseStorages.size()<1){
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"未维护仓库收货库位");
+                }
                 List<WmsInInPlanOrderDetDto> wmsInInPlanOrderDetDtos = new LinkedList<>();
                 for (WmsInReceivingOrderDet wmsInReceivingOrderDet : wmsInReceivingOrderDets) {
+
                     WmsInInPlanOrderDetDto wmsInInPlanOrderDetDto = new WmsInInPlanOrderDetDto();
                     wmsInInPlanOrderDetDto.setCoreSourceOrderCode(wmsInReceivingOrderDet.getCoreSourceOrderCode());
                     wmsInInPlanOrderDetDto.setSourceOrderCode(wmsInReceivingOrder.getReceivingOrderCode());
@@ -581,6 +602,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                 wmsInInPlanOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInInPlanOrder.setOrderStatus((byte)1);
                 wmsInInPlanOrder.setMakeOrderUserId(sysUser.getUserId());
+                wmsInInPlanOrder.setStorageId(baseStorages.get(0).getStorageId());
                 wmsInInPlanOrder.setWmsInInPlanOrderDetDtos(wmsInInPlanOrderDetDtos);
                 wmsInInPlanOrderService.save(wmsInInPlanOrder);
                 break;
