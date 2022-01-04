@@ -9,20 +9,16 @@ import com.fantechs.common.base.general.dto.basic.BaseInAndOutRuleDetDto;
 import com.fantechs.common.base.general.dto.basic.BaseInAndOutRuleDto;
 import com.fantechs.common.base.general.dto.basic.InOutParamsDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseInAndOutRuleImport;
-import com.fantechs.common.base.general.entity.basic.BaseInAndOutRule;
-import com.fantechs.common.base.general.entity.basic.BaseInAndOutRuleDet;
-import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
+import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
-import com.fantechs.provider.base.mapper.BaseHtInAndOutRuleMapper;
-import com.fantechs.provider.base.mapper.BaseInAndOutRuleDetMapper;
-import com.fantechs.provider.base.mapper.BaseInAndOutRuleMapper;
-import com.fantechs.provider.base.mapper.BaseWarehouseMapper;
+import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseInAndOutRuleService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -48,6 +44,8 @@ public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> i
     private BaseWarehouseMapper baseWarehouseMapper;
     @Resource
     private BaseHtInAndOutRuleMapper baseHtInAndOutRuleMapper;
+    @Resource
+    private BaseHtInAndOutRuleDetMapper baseHtInAndOutRuleDetMapper;
 
     @Override
     public List<BaseInAndOutRuleDto> findList(Map<String, Object> map) {
@@ -63,20 +61,36 @@ public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> i
         if(StringUtils.isEmpty(record.getWarehouseId())){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"请选择仓库");
         }
+
+        //查询是否存在相同记录
+        Example example = new Example(BaseInAndOutRule.class);
+        example.createCriteria().andEqualTo("warehouseId",record.getWarehouseId()).andEqualTo("category",record.getCategory());
+        List<BaseInAndOutRule> list = baseInAndOutRuleMapper.selectByExample(example);
+        if(list.size()>0){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"仓库已经存在规则");
+        }
+
         record.setCreateTime(new Date());
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
         record.setModifiedUserId(sysUser.getUserId());
         record.setOrgId(sysUser.getOrganizationId());
         int num = baseInAndOutRuleMapper.insertUseGeneratedKeys(record);
+
+        BaseHtInAndOutRule baseHtInAndOutRule = new BaseHtInAndOutRule();
+        BeanUtils.copyProperties(record,baseHtInAndOutRule);
+        baseHtInAndOutRuleMapper.insertSelective(baseHtInAndOutRule);
+
         List<BaseInAndOutRuleDet> baseInAndOutRuleDets = new ArrayList<>();
-        for (BaseInAndOutRuleDetDto baseInAndOutRuleDetDto : record.getBaseInAndOutRuleDetDtos()) {
+        List<BaseHtInAndOutRuleDet> baseHtInAndOutRuleDets = new ArrayList<>();
+        for (BaseInAndOutRuleDetDto baseInAndOutRuleDetDto : record.getBaseInAndOutRuleDets()) {
             if(StringUtils.isEmpty(baseInAndOutRuleDetDto.getStoredProcedureName())){
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"请选择规则");
             }
             if(StringUtils.isEmpty(baseInAndOutRuleDetDto.getPriority())){
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"请输入优先级");
             }
+
             //查询出入参数
             List<InOutParamsDto> inOutParamsDtos = baseInAndOutRuleMapper.findInOutParamMode(baseInAndOutRuleDetDto.getStoredProcedureName());
             if(inOutParamsDtos.size()>0){
@@ -107,9 +121,14 @@ public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> i
             baseInAndOutRuleDetDto.setModifiedUserId(sysUser.getUserId());
             baseInAndOutRuleDetDto.setOrgId(sysUser.getOrganizationId());
             baseInAndOutRuleDets.add(baseInAndOutRuleDetDto);
+
+            BaseHtInAndOutRuleDet baseHtInAndOutRuleDet = new BaseHtInAndOutRuleDet();
+            BeanUtils.copyProperties(baseInAndOutRuleDetDto,baseHtInAndOutRuleDet);
+            baseHtInAndOutRuleDets.add(baseHtInAndOutRuleDet);
         }
         if(baseInAndOutRuleDets.size()>0){
             baseInAndOutRuleDetMapper.insertList(baseInAndOutRuleDets);
+            baseHtInAndOutRuleDetMapper.insertList(baseHtInAndOutRuleDets);
         }
         return num;
     }
@@ -121,15 +140,29 @@ public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> i
         if(StringUtils.isEmpty(entity.getWarehouseId())){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"请选择仓库");
         }
+
+        //查询是否存在相同记录
+        Example example = new Example(BaseInAndOutRule.class);
+        example.createCriteria().andEqualTo("warehouseId",entity.getWarehouseId()).andEqualTo("category",entity.getCategory()).andNotEqualTo("inAndOutRuleId",entity.getInAndOutRuleId());
+        List<BaseInAndOutRule> list = baseInAndOutRuleMapper.selectByExample(example);
+        if(list.size()>0){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"仓库已经存在规则");
+        }
+
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(sysUser.getUserId());
 
-        Example example = new Example(BaseInAndOutRuleDet.class);
+        example = new Example(BaseInAndOutRuleDet.class);
         example.createCriteria().andEqualTo("inAndOutRuleId",entity.getInAndOutRuleId());
         baseInAndOutRuleDetMapper.deleteByExample(example);
 
+        BaseHtInAndOutRule baseHtInAndOutRule = new BaseHtInAndOutRule();
+        BeanUtils.copyProperties(entity,baseHtInAndOutRule);
+        baseHtInAndOutRuleMapper.insertSelective(baseHtInAndOutRule);
+
         List<BaseInAndOutRuleDet> baseInAndOutRuleDets = new ArrayList<>();
-        for (BaseInAndOutRuleDetDto baseInAndOutRuleDetDto : entity.getBaseInAndOutRuleDetDtos()) {
+        List<BaseHtInAndOutRuleDet> baseHtInAndOutRuleDets = new ArrayList<>();
+        for (BaseInAndOutRuleDetDto baseInAndOutRuleDetDto : entity.getBaseInAndOutRuleDets()) {
             if(StringUtils.isEmpty(baseInAndOutRuleDetDto.getStoredProcedureName())){
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"请选择规则");
             }
@@ -166,9 +199,14 @@ public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> i
             baseInAndOutRuleDetDto.setModifiedUserId(sysUser.getUserId());
             baseInAndOutRuleDetDto.setOrgId(sysUser.getOrganizationId());
             baseInAndOutRuleDets.add(baseInAndOutRuleDetDto);
+
+            BaseHtInAndOutRuleDet baseHtInAndOutRuleDet = new BaseHtInAndOutRuleDet();
+            BeanUtils.copyProperties(baseInAndOutRuleDetDto,baseHtInAndOutRuleDet);
+            baseHtInAndOutRuleDets.add(baseHtInAndOutRuleDet);
         }
         if(baseInAndOutRuleDets.size()>0){
             baseInAndOutRuleDetMapper.insertList(baseInAndOutRuleDets);
+            baseHtInAndOutRuleDetMapper.insertList(baseHtInAndOutRuleDets);
         }
 
         return super.update(entity);
