@@ -71,6 +71,12 @@
             <if test="signatureCode!=null and signatureCode!=''">
                 and ss.signature_code like CONCAT('%', #{signatureCode}, '%')
             </if>
+            <if test="fixedSignature!=null and fixedSignature!=''">
+                and ss.fixed_signature like CONCAT('%', #{fixedSignature}, '%')
+            </if>
+            <if test="modelSignature!=null and modelSignature!=''">
+                and ss.model_signature like CONCAT('%', #{modelSignature}, '%')
+            </if>
             <if test="status!=null">
                 and ss.status=#{status}
             </if>

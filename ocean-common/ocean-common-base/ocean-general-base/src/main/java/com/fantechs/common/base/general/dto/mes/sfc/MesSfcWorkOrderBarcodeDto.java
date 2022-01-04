@@ -64,4 +64,8 @@ public class MesSfcWorkOrderBarcodeDto extends MesSfcWorkOrderBarcode implements
     @Transient
     @ApiModelProperty(name = "cutsomerBarcode",value = "客户条码")
     private String cutsomerBarcode;
+
+    @Transient
+    @ApiModelProperty(name = "reprintCount",value = "补打次数")
+    private String reprintCount;
 }

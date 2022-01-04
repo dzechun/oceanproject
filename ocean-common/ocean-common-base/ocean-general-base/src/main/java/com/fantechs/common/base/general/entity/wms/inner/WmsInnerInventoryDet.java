@@ -269,7 +269,7 @@ public class WmsInnerInventoryDet extends ValidGroup implements Serializable {
     @Column(name = "sales_barcode")
     private String salesBarcode;
 
-    @ApiModelProperty(name = "customerBarcode",value = "型号条码")
+    @ApiModelProperty(name = "customerBarcode",value = "客户条码")
     @Column(name = "customer_barcode")
     private String customerBarcode;
 }

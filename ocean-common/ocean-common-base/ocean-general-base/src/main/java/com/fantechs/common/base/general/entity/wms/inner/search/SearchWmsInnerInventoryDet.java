@@ -5,6 +5,7 @@ import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -75,5 +76,13 @@ public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializabl
     private String option3;
     private String option4;
     private String option5;
+
+    // 20220104 bgkun
+
+    @ApiModelProperty(name = "salesBarcode",value = "销售条码")
+    private String salesBarcode;
+
+    @ApiModelProperty(name = "customerBarcode",value = "客户条码")
+    private String customerBarcode;
 
 }

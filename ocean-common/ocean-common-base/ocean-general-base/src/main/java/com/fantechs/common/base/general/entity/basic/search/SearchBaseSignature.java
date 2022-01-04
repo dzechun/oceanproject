@@ -4,6 +4,7 @@ import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.List;
 
@@ -34,4 +35,12 @@ public class SearchBaseSignature extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="materialIds" ,value="物料ID集合")
     private List<Long> materialIds;
+
+    // 20220104 bgkun
+
+    @ApiModelProperty(name="fixedSignature" ,value="固定特征码")
+    private String fixedSignature;
+
+    @ApiModelProperty(name="modelSignature" ,value="型号特征码")
+    private String modelSignature;
 }
