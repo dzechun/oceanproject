@@ -71,9 +71,10 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
     public int pushDown(List<OmTransferOrderDetDto> omTransferOrderDetDtos) {
         int i;
         Long outWarehouseId = omTransferOrderDetDtos.get(0).getOutWarehouseId();
+        Long inWarehouseId = omTransferOrderDetDtos.get(0).getInWarehouseId();
         for (OmTransferOrderDetDto omTransferOrderDetDto : omTransferOrderDetDtos){
-            if(!outWarehouseId.equals(omTransferOrderDetDto.getOutWarehouseId())){
-                throw new BizErrorException("调出仓库需一致");
+            if(!outWarehouseId.equals(omTransferOrderDetDto.getOutWarehouseId())||!inWarehouseId.equals(omTransferOrderDetDto.getInWarehouseId())){
+                throw new BizErrorException("调出(调入)仓库需一致");
             }
             BigDecimal totalIssueQty = omTransferOrderDetDto.getTotalIssueQty() == null ? BigDecimal.ZERO : omTransferOrderDetDto.getTotalIssueQty();
             BigDecimal add = totalIssueQty.add(omTransferOrderDetDto.getIssueQty());

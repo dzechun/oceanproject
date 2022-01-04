@@ -11,7 +11,6 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReO
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrderDetSample;
-import com.fantechs.common.base.general.entity.qms.history.QmsHtIncomingInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtIncomingInspectionOrderDetSample;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcodeReOrder;
 import com.fantechs.common.base.support.BaseService;
@@ -21,7 +20,6 @@ import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.qms.mapper.*;
 import com.fantechs.provider.qms.service.QmsIncomingInspectionOrderDetSampleService;
 import com.fantechs.provider.qms.service.QmsIncomingInspectionOrderService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -300,15 +298,16 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
                 QmsIncomingInspectionOrderDet qmsIncomingInspectionOrderDet = qmsIncomingInspectionOrderDetMapper.selectByPrimaryKey(pdaIncomingSampleSubmitDto.getIncomingInspectionOrderDetId());
                 qmsIncomingInspectionOrderDet.setBadnessCategoryId(pdaIncomingSampleSubmitDto.getBadnessCategoryId());
                 i += qmsIncomingInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsIncomingInspectionOrderDet);
+                if(qmsIncomingInspectionOrder == null) {
+                    qmsIncomingInspectionOrder = qmsIncomingInspectionOrderMapper.selectByPrimaryKey(qmsIncomingInspectionOrderDet.getIncomingInspectionOrderId());
+                }
             }
-
-        }
-
-        //履历
-        if(StringUtils.isNotEmpty(qmsIncomingInspectionOrder)) {
-            QmsHtIncomingInspectionOrder qmsHtIncomingInspectionOrder = new QmsHtIncomingInspectionOrder();
-            BeanUtils.copyProperties(qmsIncomingInspectionOrder, qmsHtIncomingInspectionOrder);
-            qmsHtIncomingInspectionOrderMapper.insertSelective(qmsHtIncomingInspectionOrder);
+            //返写检验单结果
+            Example example = new Example(QmsIncomingInspectionOrderDet.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("incomingInspectionOrderId",qmsIncomingInspectionOrder.getIncomingInspectionOrderId());
+            List<QmsIncomingInspectionOrderDet> qmsIncomingInspectionOrderDets = qmsIncomingInspectionOrderDetMapper.selectByExample(example);
+            qmsIncomingInspectionOrderService.checkInspectionResult(qmsIncomingInspectionOrderDets);
         }
 
         return i;
