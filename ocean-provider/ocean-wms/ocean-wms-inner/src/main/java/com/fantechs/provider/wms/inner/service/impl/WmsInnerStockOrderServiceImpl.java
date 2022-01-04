@@ -1134,7 +1134,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 num+=wmsInnerStockOrderDetBarcodeMapper.deleteByExample(example);
             }
         }
-        num+=wmsInnerStockOrderDetBarcodeMapper.insertList(stockOrderDetBarcodeList);
+        if(stockOrderDetBarcodeList.size()>0) {
+            num += wmsInnerStockOrderDetBarcodeMapper.insertList(stockOrderDetBarcodeList);
+        }
         return num;
     }
 

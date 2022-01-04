@@ -1814,11 +1814,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         record.setModifiedUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
         record.setOrgId(sysUser.getOrganizationId());
-        if (record.getOrderStatus() != (byte) 1) {
-            throw new BizErrorException("移位单已分配，不可变更修改");
+        if (record.getOrderStatus() != (byte) 1 ) {
+            throw new BizErrorException("作业单已分配，不可变更修改");
         }
 
-        if (record.getJobOrderType() == (byte) 2) {
+//        if (record.getJobOrderType() == (byte) 2) {
             Example example = new Example(WmsInnerJobOrderDet.class);
             example.createCriteria().andEqualTo("jobOrderId",record.getJobOrderId());
             wmsInnerJobOrderDetMapper.deleteByExample(example);
@@ -1902,7 +1902,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 //                wmsInnerInventoryService.update(innerInventory);
             }
             wmsInnerJobOrderDetMapper.insertList(record.getWmsInPutawayOrderDets());
-        }
+//        }
         int i = wmsInnerJobOrderMapper.updateByPrimaryKey(record);
         return i;
     }
@@ -2506,14 +2506,35 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 //系统条码更新条码状态
                 //条码类别处理
                 SearchWmsInnerMaterialBarcode sWmsBarcode=new SearchWmsInnerMaterialBarcode();
-                if(item.getBarcodeType()==((byte)2)){
-                    sWmsBarcode.setColorBoxCode(item.getBatchCode());
+                if(StringUtils.isEmpty(item.getBarcodeType())){
+                    //判断条码类型
+                    BarcodeResultDto barcodeResultDto=InBarcodeUtil.scanBarcode(item.getBarcode());
+                    if(StringUtils.isEmpty(barcodeResultDto)){
+                        throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码无效");
+                    }
+                    if (barcodeResultDto.getBarcodeType() == ((byte) 1)) {
+                        sWmsBarcode.setBarcode(item.getBarcode());
+                    }
+                    else if (barcodeResultDto.getBarcodeType() == ((byte) 2)) {
+                        sWmsBarcode.setColorBoxCode(item.getBarcode());
+                    } else if (barcodeResultDto.getBarcodeType() == ((byte) 3)) {
+                        sWmsBarcode.setCartonCode(item.getBarcode());
+                    } else if (barcodeResultDto.getBarcodeType() == ((byte) 4)) {
+                        sWmsBarcode.setPalletCode(item.getBarcode());
+                    }
+
                 }
-                else if(item.getBarcodeType()==((byte)3)){
-                    sWmsBarcode.setCartonCode(item.getBatchCode());
-                }
-                else if(item.getBarcodeType()==((byte)4)){
-                    sWmsBarcode.setPalletCode(item.getBatchCode());
+                else {
+                    if (item.getBarcodeType() == ((byte) 1)) {
+                        sWmsBarcode.setBarcode(item.getBarcode());
+                    }
+                    else if (item.getBarcodeType() == ((byte) 2)) {
+                        sWmsBarcode.setColorBoxCode(item.getBarcode());
+                    } else if (item.getBarcodeType() == ((byte) 3)) {
+                        sWmsBarcode.setCartonCode(item.getBarcode());
+                    } else if (item.getBarcodeType() == ((byte) 4)) {
+                        sWmsBarcode.setPalletCode(item.getBarcode());
+                    }
                 }
                 List<WmsInnerMaterialBarcodeDto> materialDtoList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(sWmsBarcode));
                 for (WmsInnerMaterialBarcodeDto materialBarcodeDto : materialDtoList) {

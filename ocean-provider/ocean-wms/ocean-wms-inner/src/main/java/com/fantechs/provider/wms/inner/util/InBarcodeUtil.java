@@ -1,13 +1,20 @@
 package com.fantechs.provider.wms.inner.util;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDetDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPalletDet;
+import com.fantechs.common.base.general.dto.wms.inner.BarcodeResultDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDetBarcodeDto;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderReMspp;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStockOrderDetBarcode;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -16,6 +23,7 @@ import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderReMsppMapper;
+import com.fantechs.provider.wms.inner.service.WmsInnerMaterialBarcodeService;
 import com.google.common.base.Joiner;
 import org.springframework.stereotype.Component;
 import tk.mybatis.mapper.entity.Example;
@@ -23,6 +31,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +52,8 @@ public class InBarcodeUtil {
     private WmsInnerJobOrderReMsppMapper wmsInnerJobOrderReMsppMapper;
     @Resource
     private InFeignApi inFeignApi;
+    @Resource
+    private WmsInnerMaterialBarcodeService wmsInnerMaterialBarcodeService;
 
     private static InBarcodeUtil inBarcodeUtil;
 
@@ -55,6 +66,7 @@ public class InBarcodeUtil {
         inBarcodeUtil.wmsInnerJobOrderMapper = wmsInnerJobOrderMapper;
         inBarcodeUtil.wmsInnerJobOrderReMsppMapper = wmsInnerJobOrderReMsppMapper;
         inBarcodeUtil.inFeignApi = inFeignApi;
+        inBarcodeUtil.wmsInnerMaterialBarcodeService=wmsInnerMaterialBarcodeService;
     }
 
     /**
@@ -144,5 +156,86 @@ public class InBarcodeUtil {
         }
         String barCode = Joiner.on(",").join(barCodeList);
         return barCode;
+    }
+
+    /**
+     * 扫描条码返回条码类型 最少包装单位数量
+     * @param barcode
+     * @return BarcodeResultDto 条码信息
+     */
+    public static BarcodeResultDto scanBarcode(String barcode) {
+        BarcodeResultDto barcodeResultDto=new BarcodeResultDto();
+        if(StringUtils.isEmpty(barcode)){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码不能为空");
+        }
+
+        //条码判断
+        List<WmsInnerMaterialBarcodeDto> barcodeDtos=new ArrayList<>();
+        SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode=new SearchWmsInnerMaterialBarcode();
+        searchWmsInnerMaterialBarcode.setBarcode(barcode);
+        barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
+        if(barcodeDtos.size()>0){
+            if(barcodeDtos.get(0).getBarcodeStatus()>=(byte)5){
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
+            }
+            barcodeResultDto.setBarcodeType((byte)1);
+            barcodeResultDto.setMaterialQty(barcodeDtos.get(0).getMaterialQty());
+            barcodeResultDto.setBarcode(barcode);
+        }
+        else {
+            searchWmsInnerMaterialBarcode.setBarcode(null);
+            searchWmsInnerMaterialBarcode.setColorBoxCode(barcode);
+            barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
+            if(barcodeDtos.size()>0){
+                List<WmsInnerMaterialBarcodeDto> barcodeListOne = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
+                if(barcodeListOne.get(0).getBarcodeStatus()>=(byte)5){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
+                }
+                barcodeResultDto.setBarcodeType((byte)2);
+                barcodeResultDto.setMaterialQty(barcodeDtos.get(0).getMaterialQty());
+                barcodeResultDto.setBarcode(barcode);
+            }
+            else {
+                searchWmsInnerMaterialBarcode.setBarcode(null);
+                searchWmsInnerMaterialBarcode.setColorBoxCode(null);
+                searchWmsInnerMaterialBarcode.setCartonCode(barcode);
+                barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
+                if(barcodeDtos.size()>0){
+                    List<WmsInnerMaterialBarcodeDto> barcodeListOne = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
+                    if(barcodeListOne.get(0).getBarcodeStatus()>=(byte)5){
+                        throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
+                    }
+                    List<WmsInnerMaterialBarcodeDto> barcodeList = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
+                    BigDecimal totalQty=barcodeList.stream().map(WmsInnerMaterialBarcodeDto::getMaterialQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+                    barcodeResultDto.setBarcodeType((byte)3);
+                    barcodeResultDto.setMaterialQty(totalQty);
+                    barcodeResultDto.setBarcode(barcode);
+                }
+                else {
+                    searchWmsInnerMaterialBarcode.setBarcode(null);
+                    searchWmsInnerMaterialBarcode.setColorBoxCode(null);
+                    searchWmsInnerMaterialBarcode.setCartonCode(null);
+                    searchWmsInnerMaterialBarcode.setPalletCode(barcode);
+                    barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
+                    if(barcodeDtos.size()>0){
+                        List<WmsInnerMaterialBarcodeDto> barcodeListOne = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
+                        if(barcodeListOne.get(0).getBarcodeStatus()>=(byte)5){
+                            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
+                        }
+                        List<WmsInnerMaterialBarcodeDto> barcodeList = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
+                        BigDecimal totalQty=barcodeList.stream().map(WmsInnerMaterialBarcodeDto::getMaterialQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+                        barcodeResultDto.setBarcodeType((byte)4);
+                        barcodeResultDto.setMaterialQty(totalQty);
+                        barcodeResultDto.setBarcode(barcode);
+                    }
+                }
+            }
+        }
+
+        if(StringUtils.isEmpty(barcodeResultDto.getBarcodeType())){
+            barcodeResultDto.setBarcodeType((byte)5);
+        }
+
+        return barcodeResultDto;
     }
 }
