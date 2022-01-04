@@ -78,7 +78,7 @@ public class WmsInnerStockOrderController {
 
     @ApiOperation("扫描条码")
     @PostMapping("/scanBarcode")
-    public ResponseEntity<BarcodeResultDto> scanBarcode(@ApiParam(value = "盘点明细ID")@RequestParam Long stockOrderDetId, @ApiParam(value = "条码")@RequestParam String barcode){
+    public ResponseEntity<BarcodeResultDto> scanBarcode(@ApiParam(value = "条码")@RequestParam String barcode,@ApiParam(value = "盘点明细ID")@RequestParam Long stockOrderDetId){
         return ControllerUtil.returnDataSuccess(wmsInventoryVerificationService.scanBarcode(stockOrderDetId,barcode),1);
     }
 

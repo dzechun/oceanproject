@@ -101,7 +101,7 @@
         and wimb.carton_code = #{cartonCode}
       </if>
       <if test="palletCode !=null and palletCode!=''">
-        and wimb.pallet_ode = #{palletCode}
+        and wimb.pallet_code = #{palletCode}
       </if>
 
     </where>
