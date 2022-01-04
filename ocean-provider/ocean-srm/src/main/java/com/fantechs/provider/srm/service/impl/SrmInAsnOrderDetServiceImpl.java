@@ -229,15 +229,19 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
             if (StringUtils.isNotEmpty(wmsInPlanReceivingOrderDetList)) {
                 wmsInPlanReceivingOrder.setInPlanReceivingOrderDets(wmsInPlanReceivingOrderDetList);
                 inFeignApi.add(wmsInPlanReceivingOrder);
-            }else if (StringUtils.isNotEmpty(qmsIncomingInspectionOrderList)) {
+            }
+            if (StringUtils.isNotEmpty(qmsIncomingInspectionOrderList)) {
                 qmsFeignApi.batchAdd(qmsIncomingInspectionOrderList);
-            }else if (StringUtils.isNotEmpty(wmsInnerJobOrderDetList)) {
+            }
+            if (StringUtils.isNotEmpty(wmsInnerJobOrderDetList)) {
                 wmsInnerJobOrder.setWmsInPutawayOrderDets(wmsInnerJobOrderDetList);
                 innerFeignApi.add(wmsInnerJobOrder);
-            }else if (StringUtils.isNotEmpty(wmsInInPlanOrderDetList)) {
+            }
+            if (StringUtils.isNotEmpty(wmsInInPlanOrderDetList)) {
                 wmsInInPlanOrder.setWmsInInPlanOrderDetDtos(wmsInInPlanOrderDetList);
                 inFeignApi.add(wmsInInPlanOrder);
-            }else if (StringUtils.isNotEmpty(wmsInReceivingOrderDetList)) {
+            }
+            if (StringUtils.isNotEmpty(wmsInReceivingOrderDetList)) {
                 wmsInReceivingOrder.setWmsInReceivingOrderDets(wmsInReceivingOrderDetList);
                 inFeignApi.add(wmsInReceivingOrder);
             }
