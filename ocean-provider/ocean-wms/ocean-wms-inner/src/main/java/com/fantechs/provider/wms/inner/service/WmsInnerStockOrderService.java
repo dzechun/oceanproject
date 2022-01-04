@@ -67,6 +67,13 @@ public interface WmsInnerStockOrderService extends IService<WmsInnerStockOrder> 
      */
     int webCommit(Long stockOrderDetId,List<CommitInnerStockBarcodeDto> barcodeList);
 
+    /**
+     * 自动适配
+     * @param
+     * @return
+     */
+    int autoAdapter(Long stockOrderId);
+
 
     /**
      * PDA盘点增补

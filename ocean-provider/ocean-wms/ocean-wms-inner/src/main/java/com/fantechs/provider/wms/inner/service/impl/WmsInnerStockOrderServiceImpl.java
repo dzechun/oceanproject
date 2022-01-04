@@ -477,6 +477,16 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
     }
 
     /**
+     * 自动适配
+     * @param
+     * @return
+     */
+    @Override
+    public int autoAdapter(Long stockOrderId) {
+        return 1;
+    }
+
+    /**
      * 差异处理
      * @param ids
      * @return

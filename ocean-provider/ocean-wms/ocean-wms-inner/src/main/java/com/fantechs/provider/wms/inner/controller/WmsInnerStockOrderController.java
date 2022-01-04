@@ -84,8 +84,14 @@ public class WmsInnerStockOrderController {
 
     @ApiOperation("盘点扫码提交")
     @PostMapping("/webCommit")
-    public ResponseEntity webCommit(@RequestBody(required = true) Long stockOrderDetId,@RequestBody(required = true) List<CommitInnerStockBarcodeDto> barcodeList){
+    public ResponseEntity webCommit(@RequestParam(required = true) Long stockOrderDetId,@RequestBody(required = true) List<CommitInnerStockBarcodeDto> barcodeList){
         return ControllerUtil.returnCRUD(wmsInventoryVerificationService.webCommit(stockOrderDetId,barcodeList));
+    }
+
+    @ApiOperation("自动适配")
+    @PostMapping("/autoAdapter")
+    public ResponseEntity autoAdapter(@RequestParam(required = true) Long stockOrderId){
+        return ControllerUtil.returnCRUD(wmsInventoryVerificationService.autoAdapter(stockOrderId));
     }
 
     @PostMapping(value = "/export")
