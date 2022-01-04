@@ -158,6 +158,9 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
             if(order.getMrbResult() != null && order.getMrbResult() == (byte)3){
                 throw new BizErrorException("检验单号为"+order.getIncomingInspectionOrderCode()+"的来料检验单MRB评审结果为退供应商，无法下推");
             }
+            if(StringUtils.isEmpty(order.getWarehouseId())){
+                throw new BizErrorException("单据仓库不能为空");
+            }
         }
 
         //查当前单据类型的所有单据流

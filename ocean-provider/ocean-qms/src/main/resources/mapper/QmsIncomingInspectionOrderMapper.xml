@@ -6,7 +6,9 @@
       WARNING - @mbg.generated
     -->
     <id column="incoming_inspection_order_id" jdbcType="BIGINT" property="incomingInspectionOrderId" />
+    <result column="core_source_id" jdbcType="BIGINT" property="coreSourceId" />
     <result column="source_id" jdbcType="BIGINT" property="sourceId" />
+    <result column="source_big_type" jdbcType="TINYINT" property="sourceBigType" />
     <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode" />
     <result column="core_source_order_code" jdbcType="VARCHAR" property="coreSourceOrderCode" />
     <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="coreSourceSysOrderTypeCode" />
@@ -60,6 +62,8 @@
   <sql id="Base_Column_List">
     qiio.incoming_inspection_order_id,
     qiio.source_id,
+    qiio.core_source_id,
+    qiio.source_big_type,
     qiio.source_order_code,
     qiio.core_source_order_code,
     qiio.core_source_sys_order_type_code,

@@ -132,4 +132,11 @@ public class OmTransferOrderDetDto extends OmTransferOrderDet implements Seriali
     @ApiModelProperty(name="outWarehouseId",value = "调出仓库ID")
     @Transient
     private Long outWarehouseId;
+
+    /**
+     * 调入仓库ID
+     */
+    @ApiModelProperty(name="inWarehouseId",value = "调入仓库ID")
+    @Transient
+    private Long inWarehouseId;
 }
