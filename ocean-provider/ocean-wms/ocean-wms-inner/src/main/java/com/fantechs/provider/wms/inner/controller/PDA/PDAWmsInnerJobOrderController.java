@@ -104,6 +104,12 @@ public class PDAWmsInnerJobOrderController {
         return ControllerUtil.returnCRUD(wmsInnerJobOrderService.updateInnerJobOrderFinish(jobOrderId));
     }
 
+    @ApiOperation(" PDA删除已扫描条码")
+    @PostMapping("/updateBarcodeStatus")
+    public ResponseEntity updateBarcodeStatus(@ApiParam(value = "来料条码ID",required = true) Long materialBarcodeId){
+        return ControllerUtil.returnCRUD(wmsInnerJobOrderService.updateBarcodeStatus(materialBarcodeId));
+    }
+
     /*@ApiOperation("条码校验")
     @PostMapping("/checkBarcode")
     public ResponseEntity<Map<String,Object>> checkBarcode(@RequestBody Map<String ,Object> map){

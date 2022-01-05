@@ -305,6 +305,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
         //查当前单据的下游单据
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
         searchBaseOrderFlow.setOrderTypeCode("IN-OIO");
+        searchBaseOrderFlow.setStatus((byte)1);
         List<BaseOrderFlowDto> baseOrderFlowDtos = baseFeignApi.findAll(searchBaseOrderFlow).getData();
         if (StringUtils.isEmpty(baseOrderFlowDtos)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未找到当前单据配置的下游单据");
