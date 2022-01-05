@@ -304,7 +304,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
 
         //查当前单据的下游单据
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
-        searchBaseOrderFlow.setOrderTypeCode("IN-OIO");
+        searchBaseOrderFlow.setOrderTypeCode("IN-SRO");
         searchBaseOrderFlow.setStatus((byte)1);
         List<BaseOrderFlowDto> baseOrderFlowDtos = baseFeignApi.findAll(searchBaseOrderFlow).getData();
         if (StringUtils.isEmpty(baseOrderFlowDtos)) {

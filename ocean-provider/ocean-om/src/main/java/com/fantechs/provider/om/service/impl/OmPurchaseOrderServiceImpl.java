@@ -10,7 +10,9 @@ import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDto;
 import com.fantechs.common.base.general.dto.qms.QmsIncomingInspectionOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.*;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.om.OmHtPurchaseOrder;
 import com.fantechs.common.base.general.entity.om.OmHtPurchaseOrderDet;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrder;
@@ -239,8 +241,10 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
             }
             if(StringUtils.isEmpty(order.getTotalIssueQty()))
                 order.setTotalIssueQty(BigDecimal.ZERO);
-            if (order.getOrderQty().compareTo(order.getTotalIssueQty().add(order.getQty())) == -1) {
-                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "累计下发数量大于包装总数");
+            if(StringUtils.isEmpty(order.getPurchaseReturnQty()))
+                order.setPurchaseReturnQty(BigDecimal.ZERO);
+            if (order.getOrderQty().compareTo(order.getTotalIssueQty().add(order.getQty()).add(order.getPurchaseReturnQty())) == -1) {
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "累计下发数量与采购退货数量之和大于包装总数");
             }
         }
         
@@ -507,6 +511,13 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                 Iterator<Long> iterator = set.iterator();
                 while (iterator.hasNext()) {
                     wmsInInPlanOrder.setWarehouseId(iterator.next());
+                    //查询默认收货库位
+                    SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                    searchBaseStorage.setWarehouseId(iterator.next());
+                    searchBaseStorage.setStorageType((byte)2);
+                    List<BaseStorage> data = baseFeignApi.findList(searchBaseStorage).getData();
+                    if(StringUtils.isNotEmpty(data))
+                        wmsInInPlanOrder.setStorageId(data.get(0).getStorageId());
                 }
                 wmsInInPlanOrder.setCreateUserId(user.getUserId());
                 wmsInInPlanOrder.setCreateTime(new Date());
@@ -515,6 +526,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                 wmsInInPlanOrder.setStatus((byte) 1);
                 wmsInInPlanOrder.setOrgId(user.getOrganizationId());
                 wmsInInPlanOrder.setWmsInInPlanOrderDetDtos(detList);
+
 
                 ResponseEntity responseEntity = inFeignApi.add(wmsInInPlanOrder);
                 if (responseEntity.getCode() != 0) {
@@ -535,6 +547,12 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                     OmPurchaseOrderDto order = omPurchaseOrderDto.get(0);
                     coreSourceSysOrderTypeCode = order.getSysOrderTypeCode();
 
+                    //查询默认收货库位
+                    SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                    searchBaseStorage.setWarehouseId(order.getWarehouseId());
+                    searchBaseStorage.setStorageType((byte)2);
+                    List<BaseStorage> data = baseFeignApi.findList(searchBaseStorage).getData();
+
                     WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
                     wmsInnerJobOrderDet.setCoreSourceOrderCode(order.getPurchaseOrderCode());
                     wmsInnerJobOrderDet.setSourceOrderCode(order.getPurchaseOrderCode());
@@ -543,6 +561,9 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                     wmsInnerJobOrderDet.setMaterialId(omPurchaseOrderDet.getMaterialId());
                     wmsInnerJobOrderDet.setPlanQty(omPurchaseOrderDet.getQty());
                     wmsInnerJobOrderDet.setLineStatus((byte) 1);
+                    if(StringUtils.isNotEmpty(data))
+                        wmsInnerJobOrderDet.setOutStorageId(data.get(0).getStorageId());
+
                     detList.add(wmsInnerJobOrderDet);
                     omPurchaseOrderDet.setTotalIssueQty(omPurchaseOrderDet.getTotalIssueQty().add(omPurchaseOrderDet.getQty()));
                     if (omPurchaseOrderDet.getTotalIssueQty().compareTo(omPurchaseOrderDet.getOrderQty()) == 0) {

@@ -3359,6 +3359,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      */
     @Override
     public List<WmsInnerJobOrderExport> findExportList(Map<String, Object> map) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId",currentUser.getOrganizationId());
         return wmsInnerJobOrderMapper.findExportList(map);
     }
 

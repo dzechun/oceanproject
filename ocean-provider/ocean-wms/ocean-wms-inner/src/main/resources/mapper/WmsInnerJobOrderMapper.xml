@@ -209,10 +209,7 @@
             wimb.material_qty as materialQty
         FROM wms_inner_job_order wijo
         left join wms_inner_job_order_det wijod on wijod.job_order_id = wijo.job_order_id
-        left join wms_inner_material_barcode_re_order wimbro on wijo.job_order_id = wimbro.order_id
-        <if test="orderTypeCode != null and orderTypeCode != ''" >
-            and wimbro.order_type_code = #{orderTypeCode}
-        </if>
+        left join wms_inner_material_barcode_re_order wimbro on wijo.job_order_id = wimbro.order_id and wimbro.order_type_code = #{orderTypeCode}
         left join wms_inner_material_barcode wimb on wimb.material_barcode_id = wimbro.material_barcode_id
         left join base_warehouse bw on bw.warehouse_id = wijo.warehouse_id
         left join sys_user wsu on wsu.user_id = wijo.worker_id

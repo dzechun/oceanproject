@@ -98,7 +98,7 @@
                 and ouo.customer_order_code like CONCAT('%',#{customerOrderCode},'%')
             </if>
             <if test="orderDate != null and orderDate != ''">
-                and date_format(ouo.order_date, '%Y-%m-%d') = #{orderDate}
+                and date_format(ouo.order_date, '%Y-%m-%d %H:%i') = date_format(#{orderDate}, '%Y-%m-%d %H:%i')
             </if>
             <if test="orgId!=null and orgId!=''">
                 and ouo.org_id = #{orgId}

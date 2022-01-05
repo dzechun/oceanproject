@@ -140,9 +140,6 @@
             and status= 1
             and org_id=#{orgId}
         </if>
-        <if test="status!=null">
-            and status=#{status}
-        </if>
         ORDER BY order_flow_dimension DESC LIMIT 1
     </select>
 </mapper>
