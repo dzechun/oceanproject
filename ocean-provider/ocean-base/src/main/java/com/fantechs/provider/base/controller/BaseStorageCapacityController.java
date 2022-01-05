@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.dto.basic.imports.BaseStorageCapacityImp
 import com.fantechs.common.base.general.entity.basic.BaseStorageCapacity;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtStorageCapacity;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageCapacity;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
@@ -129,5 +130,12 @@ public class BaseStorageCapacityController {
             log.error(e.getMessage());
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
+    }
+
+    @ApiOperation("统计库存按物料分组")
+    @PostMapping("/wmsList")
+    public ResponseEntity<List<WmsInnerInventory>> wmsList(@RequestBody Map<String, Object> map){
+        List<WmsInnerInventory> innerInventories = baseStorageCapacityService.wmsList(map);
+        return ControllerUtil.returnDataSuccess(innerInventories, innerInventories.size());
     }
 }

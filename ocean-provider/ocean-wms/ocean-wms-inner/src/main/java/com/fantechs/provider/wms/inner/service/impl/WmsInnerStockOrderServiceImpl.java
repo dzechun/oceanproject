@@ -621,6 +621,8 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         Example example = new Example(WmsInnerInventoryDet.class);
 
         example.createCriteria().andEqualTo("barcode",barcode);
+        example.or().andEqualTo("salesBarcode", barcode);
+        example.or().andEqualTo("customerBarcode", barcode);
         List<WmsInnerInventoryDet> list = wmsInnerInventoryDetMapper.selectByExample(example);
         if(list.size()<1){
             //获取产品物料信息

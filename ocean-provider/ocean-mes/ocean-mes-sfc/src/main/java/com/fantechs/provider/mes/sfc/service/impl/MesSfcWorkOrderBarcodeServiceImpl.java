@@ -40,6 +40,7 @@ import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcBarcodeProcessMapper;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
 //import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeReprintService;
+import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeReprintService;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import com.fantechs.provider.mes.sfc.util.RabbitProducer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -80,8 +81,8 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     private SecurityFeignApi securityFeignApi;
     @Resource
     private OMFeignApi omFeignApi;
-//    @Resource
-//    private MesSfcWorkOrderBarcodeReprintService mesSfcWorkOrderBarcodeReprintService;
+    @Resource
+    private MesSfcWorkOrderBarcodeReprintService mesSfcWorkOrderBarcodeReprintService;
 
     @Override
     public List<MesSfcWorkOrderBarcodeDto> findList(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode) {
@@ -102,7 +103,6 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     @Transactional(rollbackFor = RuntimeException.class)
     public int print(String ids,Byte printType,String printName,String userCode,String password) {
         if(printType==2){
-            //获取配置项
             //获取程序配置项
             SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
             searchSysSpecItem.setSpecCode("ReprintCode");
@@ -178,11 +178,20 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 mesSfcWorkOrderBarcode.setPrintTime(new Date());
                 this.update(mesSfcWorkOrderBarcode);
             }else if (printType==2){
-//                MesSfcWorkOrderBarcodeReprint reprint = new MesSfcWorkOrderBarcodeReprint();
-//                reprint.setWorkOrderBarcodeId(mesSfcWorkOrderBarcode.getWorkOrderBarcodeId());
-//                reprint.setBarcodeCode(mesSfcWorkOrderBarcode.getBarcode());
-//                reprint.setBarcodeType(mesSfcWorkOrderBarcode.getBarcodeType());
-//                mesSfcWorkOrderBarcodeReprintService.save(reprint);
+                SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+                MesSfcWorkOrderBarcodeReprint reprint = new MesSfcWorkOrderBarcodeReprint();
+                reprint.setWorkOrderBarcodeId(mesSfcWorkOrderBarcode.getWorkOrderBarcodeId());
+                reprint.setBarcodeCode(mesSfcWorkOrderBarcode.getBarcode());
+                reprint.setBarcodeType(mesSfcWorkOrderBarcode.getBarcodeType());
+                reprint.setCreateTime(new Date());
+                reprint.setCreateUserId(sysUser.getUserId());
+                reprint.setModifiedTime(new Date());
+                reprint.setModifiedUserId(sysUser.getUserId());
+                reprint.setReprintTime(new Date());
+                reprint.setReprintUserId(sysUser.getUserId());
+                reprint.setOrgId(sysUser.getOrganizationId());
+                reprint.setIsDelete((byte) 1);
+                mesSfcWorkOrderBarcodeReprintService.save(reprint);
             }
             printModel.setQrCode(mesSfcWorkOrderBarcode.getBarcode());
 

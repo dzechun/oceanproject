@@ -4,6 +4,7 @@ import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.wms.inner.InStorageMaterialDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -132,6 +133,11 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
             return wmsInnerInventoryDet.get(0);
         }
         return null;
+    }
+
+    @Override
+    public List<InStorageMaterialDto> findInventoryDetByStorage(Map<String, Object> map) {
+        return wmsInnerInventoryDetMapper.findInventoryDetByStorage(map);
     }
 
 }

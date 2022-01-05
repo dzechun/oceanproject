@@ -4,19 +4,26 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class BatchSiftWorkDto implements Serializable {
 
     /**
-     * 库位编码
+     * 入库库位ID
      */
-    @ApiModelProperty(name="storageCode",value = "库位编码")
-    private String storageCode;
+    @ApiModelProperty(name="inStorageId",value = "入库库位ID")
+    private Long inStorageId;
 
     /**
-     * 物料编码
+     * 物料集合
      */
-    @ApiModelProperty(value = "materialCode",example = "物料编码")
-    private String materialCode;
+    @ApiModelProperty(value = "list",example = "物料集合")
+    private List<InStorageMaterialDto> list;
+
+    /**
+     * 出库库位ID
+     */
+    @ApiModelProperty(name="outStorageId",value = "出库库位ID")
+    private Long outStorageId;
 }

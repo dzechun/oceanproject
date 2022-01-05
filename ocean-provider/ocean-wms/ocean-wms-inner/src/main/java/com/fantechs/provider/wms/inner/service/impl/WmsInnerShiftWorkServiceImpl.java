@@ -11,12 +11,13 @@ import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialOwner;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorker;
+import com.fantechs.common.base.general.entity.basic.BaseStorageCapacity;
+import com.fantechs.common.base.general.entity.basic.search.*;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -34,6 +35,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -84,7 +86,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
 
     @Override
     public List<WmsInnerJobOrderDto> pdaFindList(Map<String, Object> map) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId", sysUser.getOrganizationId());
         map.put("jobOrderType", (byte) 2);
         return wmsInnerJobOrderService.findShiftList(map);
@@ -104,12 +106,27 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         if (StringUtils.isEmpty(dto.getStorageId())) {
             throw new BizErrorException(ErrorCodeEnum.PDA5001003);
         }
+
         Map<String, Object> map = new HashMap<>();
         map.put("storageId", dto.getStorageId());
         map.put("barcode", dto.getBarcode());
+        // 万宝项目-判断是三星客户条码还是厂内码
+        if (dto.getBarcode().length() != 23){
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("wanbaoCheckBarcode");
+            List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if ("1".equals(specItems.get(0).getParaValue())){
+                if (dto.getBarcode().contains("391-")){
+                    map.put("salesBarcode", dto.getBarcode());
+                }else {
+                    map.put("customerBarcode", dto.getBarcode());
+                }
+            }
+        }
+
+        List<WmsInnerInventoryDetDto> inventoryDetDtos = wmsInnerInventoryDetService.findList(map);
         Long materialId = 0L;
         BigDecimal materialQty = BigDecimal.ZERO;
-        List<WmsInnerInventoryDetDto> inventoryDetDtos = wmsInnerInventoryDetService.findList(map);
         if (inventoryDetDtos == null || inventoryDetDtos.size() <= 0) {
             SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
             searchBaseMaterial.setMaterialCode(dto.getBarcode());
@@ -179,7 +196,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public String saveShiftWorkDetBarcode(SaveShiftWorkDetDto dto) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if (dto.getBarcodes() == null && dto.getBarcodes().size() <= 0) {
             throw new BizErrorException(ErrorCodeEnum.PDA5001006);
         }
@@ -361,7 +378,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int saveJobOrder(SaveShiftJobOrderDto dto) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
 
         WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderDetMapper.selectByPrimaryKey(dto.getJobOrderDetId());
         wmsInnerJobOrderDet.setActualQty(wmsInnerJobOrderDet.getDistributionQty());
@@ -553,17 +570,315 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         return num;
     }
 
+    @Override
+    public StorageDto scanStorage(ScanStorageDto dto) {
+        if (StringUtils.isEmpty(dto.getStorageCode())){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "移出移入库位为空，不允许操作");
+        }
+
+        SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+        searchBaseStorage.setStorageCode(dto.getStorageCode());
+        List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+        if (baseStorages.isEmpty()){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), dto.getStorageCode() + "此库位编码不存在，不允许操作");
+        }
+        StorageDto storageDto = new StorageDto();
+        storageDto.setStorageId(baseStorages.get(0).getStorageId());
+        storageDto.setStorageCode(baseStorages.get(0).getStorageCode());
+        storageDto.setType(dto.getType());
+
+        if ("1".equals(dto.getType())){
+            // 移出库位，返回物料相关信息
+            Map<String, Object> map = new HashMap<>();
+            map.put("storageCode", dto.getStorageCode());
+            // 扫条码，返回条码相关物料。没有指定条码，返回库位下所有物料
+            if (StringUtils.isNotEmpty(dto.getBarcode())){
+                Example example = new Example(WmsInnerInventoryDet.class);
+                example.createCriteria().orEqualTo("barcode", dto.getBarcode())
+                        .orEqualTo("salesBarcode", dto.getBarcode())
+                        .orEqualTo("customerBarcode", dto.getBarcode());
+                List<WmsInnerInventoryDet> inventoryDets = wmsInnerInventoryDetService.selectByExample(example);
+                if (inventoryDets.isEmpty()){
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), dto.getBarcode() + "此条码在库存中不存在");
+                }
+                map.put("materialId", inventoryDets.get(0).getMaterialId());
+            }
+            List<InStorageMaterialDto> inStorageMaterialDtos = wmsInnerInventoryDetService.findInventoryDetByStorage(map);
+            storageDto.setList(inStorageMaterialDtos);
+        }
+        return storageDto;
+    }
+
+    @Override
+    @Transactional
+    public int batchShiftWork(BatchSiftWorkDto dto) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(dto.getOutStorageId(), dto.getInStorageId())){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "移出移入库位为空，不允许操作");
+        }
+
+        SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+        searchBaseStorage.setStorageId(dto.getInStorageId());
+        List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+        if (baseStorages.isEmpty()){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此库位编码不存在，不允许操作");
+        }
+        // 移入库位
+        BaseStorage baseStorage = baseStorages.get(0);
+
+        // 计算库容容量能否存放
+        BigDecimal decimal = new BigDecimal(100);
+        BigDecimal count = BigDecimal.ZERO;
+        for (InStorageMaterialDto storageMaterialDto : dto.getList()){
+            BigDecimal calculate = calculate(baseStorage, storageMaterialDto.getMaterialId());
+            if (calculate.compareTo(decimal) == 1){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "移入库位" + baseStorage.getStorageCode() + "的库容容量不足以存放此次移位");
+            }
+            count.add(calculate);
+        }
+        if (count.compareTo(decimal) == 1){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "移入库位" + baseStorage.getStorageCode() + "的库容容量不足以存放此次移位");
+        }
+
+        // 生成移位单
+        WmsInnerJobOrder innerJobOrder = new WmsInnerJobOrder();
+        SearchBaseMaterialOwner searchBaseMaterialOwner = new SearchBaseMaterialOwner();
+        searchBaseMaterialOwner.setAsc((byte) 1);
+        List<BaseMaterialOwnerDto> ownerDtos = baseFeignApi.findList(searchBaseMaterialOwner).getData();
+        if (!ownerDtos.isEmpty()) {
+            innerJobOrder.setMaterialOwnerId(ownerDtos.get(0).getMaterialOwnerId());
+        }
+        innerJobOrder.setWarehouseId(baseStorage.getWarehouseId());
+        innerJobOrder.setJobOrderCode(CodeUtils.getId("SHIFT-"));
+        innerJobOrder.setJobOrderType((byte) 2);
+        innerJobOrder.setPlanQty(dto.getList().stream().map(InStorageMaterialDto::getQty).reduce(BigDecimal.ZERO, BigDecimal::add));
+        innerJobOrder.setOrderStatus((byte) 5);
+        innerJobOrder.setStatus((byte) 1);
+        innerJobOrder.setOrgId(user.getOrganizationId());
+        innerJobOrder.setCreateTime(new Date());
+        innerJobOrder.setCreateUserId(user.getUserId());
+        innerJobOrder.setIsDelete((byte) 1);
+        wmsInnerJobOrderMapper.insertUseGeneratedKeys(innerJobOrder);
+        WmsInnerHtJobOrder wmsInnerHtJobOrder = new WmsInnerHtJobOrder();
+        BeanUtil.copyProperties(innerJobOrder, wmsInnerHtJobOrder);
+        wmsInnerHtJobOrderService.save(wmsInnerHtJobOrder);
+
+        // 生成移位单明细
+        for (InStorageMaterialDto storageMaterialDto : dto.getList()){
+            // 查询库存信息，同一库位跟同物料有且只有一条数据
+            Map<String, Object> map = new HashMap<>();
+            map.put("materialId", storageMaterialDto.getMaterialId());
+            map.put("storageId", dto.getOutStorageId());
+            map.put("jobStatus", (byte) 1);
+            map.put("lockStatus", (byte) 0);
+            map.put("stockLock", (byte) 0);
+            map.put("qcLock", (byte) 0);
+            List<WmsInnerInventoryDto> innerInventoryDtos = wmsInnerInventoryService.findList(map);
+            if (innerInventoryDtos == null || innerInventoryDtos.size() <= 0) {
+                throw new BizErrorException(ErrorCodeEnum.PDA5001009);
+            }
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("inventory_status_value");
+            List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            List<WmsInnerInventoryDto> dtos = new ArrayList<>();
+            if (specItems.size() > 0 && !innerInventoryDtos.isEmpty() && innerInventoryDtos.size() > 0){
+                for (WmsInnerInventoryDto inventoryDto : innerInventoryDtos){
+                    if (inventoryDto.getInventoryStatusName().equals(specItems.get(0).getParaValue())){
+                        dtos.add(inventoryDto);
+                    }
+                }
+                if (dtos.size() <= 0){
+                    throw new BizErrorException(ErrorCodeEnum.PDA5001012.getCode(), "暂无库存或存库状态为待捡，不可操作");
+                }
+            }else {
+                dtos = innerInventoryDtos;
+            }
+            WmsInnerInventoryDto innerInventoryDto = dtos.get(0);
+
+            WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+            wmsInnerJobOrderDet.setJobOrderId(innerJobOrder.getJobOrderId());
+            wmsInnerJobOrderDet.setSourceDetId(innerInventoryDto.getInventoryId());
+            wmsInnerJobOrderDet.setMaterialOwnerId(innerJobOrder.getMaterialOwnerId());
+            wmsInnerJobOrderDet.setWarehouseId(baseStorage.getWarehouseId());
+            wmsInnerJobOrderDet.setOutStorageId(dto.getOutStorageId());
+            wmsInnerJobOrderDet.setMaterialId(storageMaterialDto.getMaterialId());
+            wmsInnerJobOrderDet.setPackingUnitName(innerInventoryDto.getPackingUnitName());
+            wmsInnerJobOrderDet.setPlanQty(storageMaterialDto.getQty());
+            wmsInnerJobOrderDet.setDistributionQty(storageMaterialDto.getQty());
+            wmsInnerJobOrderDet.setActualQty(storageMaterialDto.getQty());
+            wmsInnerJobOrderDet.setPalletCode(innerInventoryDto.getPalletCode());
+            wmsInnerJobOrderDet.setReceivingDate(innerInventoryDto.getReceivingDate());
+            wmsInnerJobOrderDet.setProductionDate(innerInventoryDto.getProductionDate());
+            wmsInnerJobOrderDet.setInventoryStatusId(innerInventoryDto.getInventoryStatusId());
+            wmsInnerJobOrderDet.setExpiredDate(innerInventoryDto.getExpiredDate());
+            wmsInnerJobOrderDet.setWorkStartTime(new Date());
+            wmsInnerJobOrderDet.setWorkEndTime(new Date());
+            wmsInnerJobOrderDet.setBatchCode(innerInventoryDto.getBatchCode());
+            wmsInnerJobOrderDet.setStatus((byte) 1);
+            wmsInnerJobOrderDet.setRemark(innerInventoryDto.getRemark());
+            wmsInnerJobOrderDet.setOrgId(user.getOrganizationId());
+            wmsInnerJobOrderDet.setCreateTime(new Date());
+            wmsInnerJobOrderDet.setCreateUserId(user.getUserId());
+            wmsInnerJobOrderDet.setIsDelete((byte) 1);
+            wmsInnerJobOrderDet.setOrderStatus((byte) 4);
+            wmsInnerJobOrderDet.setShiftStorageStatus((byte) 3);
+            wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
+            WmsInnerHtJobOrderDet innerHtJobOrderDet = new WmsInnerHtJobOrderDet();
+            BeanUtil.copyProperties(wmsInnerJobOrderDet, innerHtJobOrderDet);
+            wmsInnerHtJobOrderDetService.save(innerHtJobOrderDet);
+        }
+
+        // 查找移出库位下库存明细
+        Map<String, Object> map = new HashMap<>();
+        map.put("storageId", dto.getOutStorageId());
+        map.put("materialIds", dto.getList().stream().map(InStorageMaterialDto::getMaterialId).collect(Collectors.toList()));
+        List<WmsInnerInventoryDetDto> inventoryDetDtos = wmsInnerInventoryDetService.findList(map);
+        if (inventoryDetDtos.isEmpty()){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此库位下没有库存，不允许操作");
+        }
+        List<WmsInnerJobOrderDetBarcode> jobOrderDetBarcodeList = new ArrayList<>();
+        List<WmsInnerHtJobOrderDetBarcode> htJobOrderDetBarcodes = new ArrayList<>();
+        for (WmsInnerInventoryDetDto inventoryDetDto : inventoryDetDtos) {
+            // 创建条码移位单明细关系
+            WmsInnerJobOrderDetBarcode wmsInnerJobOrderDetBarcode = new WmsInnerJobOrderDetBarcode();
+            wmsInnerJobOrderDetBarcode.setBarcode(inventoryDetDto.getBarcode());
+//            wmsInnerJobOrderDetBarcode.setJobOrderDetId(inventoryDetDto.getJobOrderDetId());
+            wmsInnerJobOrderDetBarcode.setStatus((byte) 1);
+            wmsInnerJobOrderDetBarcode.setOrgId(user.getOrganizationId());
+            wmsInnerJobOrderDetBarcode.setCreateTime(new Date());
+            wmsInnerJobOrderDetBarcode.setCreateUserId(user.getUserId());
+            wmsInnerJobOrderDetBarcode.setIsDelete((byte) 1);
+            jobOrderDetBarcodeList.add(wmsInnerJobOrderDetBarcode);
+            WmsInnerHtJobOrderDetBarcode innerHtJobOrderDetBarcode = new WmsInnerHtJobOrderDetBarcode();
+            BeanUtil.copyProperties(wmsInnerJobOrderDetBarcode, innerHtJobOrderDetBarcode);
+            htJobOrderDetBarcodes.add(innerHtJobOrderDetBarcode);
+        }
+        if (jobOrderDetBarcodeList.size() > 0) {
+            wmsInnerJobOrderDetBarcodeService.batchSave(jobOrderDetBarcodeList);
+        }
+        if (htJobOrderDetBarcodes.size() > 0) {
+            wmsInnerHtJobOrderDetBarcodeService.batchSave(htJobOrderDetBarcodes);
+        }
+        // 修改库存
+
+        // 修改库存明细
+
+        // 增加库存日志
+        return 0;
+    }
+
 
     /**
-     * 获取当前登录用户
-     *
+     * 库容比例计算
      * @return
      */
-    private SysUser currentUser() {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+    private BigDecimal calculate(BaseStorage baseStorage, Long materialId){
+
+        //获取物料编码并截取前八位数
+        BaseMaterial baseMaterialList = baseFeignApi.materialDetail(materialId).getData();
+        if(baseMaterialList.getMaterialCode().length()<8){
+            throw new BizErrorException("物料编码错误，长度小于规定8位，无法匹配库容");
         }
-        return user;
+        String strMaterialCode = baseMaterialList.getMaterialCode().substring(0,8);
+        SearchBaseStorageCapacity searchBaseStorageCapacity = new SearchBaseStorageCapacity();
+        searchBaseStorageCapacity.setPageSize(99999);
+        searchBaseStorageCapacity.setMaterialCodePrefix(strMaterialCode);
+        List<BaseStorageCapacity> baseStorageCapacities = baseFeignApi.findList(searchBaseStorageCapacity).getData();
+
+        //查询库位下的所以货品及数量
+        List<WmsInnerInventory> wmsInnerInventories = baseFeignApi.wmsList(ControllerUtil.dynamicCondition("storageId", baseStorage.getStorageId())).getData();
+        //
+        //已知货品A在A仓库可以放10个货品B在A仓库可以放20个 现A仓库有货品A 5个 货品B 4个 求货品A跟货品B还可以在仓库A各存放多少个
+        //B货品可存放量 = 5/10*20=10 20-10=10    A货品可存放量 = 4/20*10=2
+        //可存放数量
+        BigDecimal totalQty = BigDecimal.ZERO;
+        if(baseStorageCapacities.size()>0) {
+            if (StringUtils.isNotEmpty(baseStorage.getMaterialStoreType())) {
+
+                BigDecimal TypeCapacity = BigDecimal.ZERO;
+                byte type = 0;
+                switch (baseStorage.getMaterialStoreType()){
+                    case 1:
+                        if (StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeACapacity())) {
+                            throw new BizErrorException("未维护A类容量");
+                        }
+                        TypeCapacity = baseStorageCapacities.get(0).getTypeACapacity();
+                        type = 1;
+                        break;
+                    case 2:
+                        if (StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeBCapacity())) {
+                            throw new BizErrorException("未维护B类容量");
+                        }
+                        TypeCapacity = baseStorageCapacities.get(0).getTypeBCapacity();
+                        type = 2;
+                        break;
+                    case 3:
+                        if (StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeCCapacity())) {
+                            throw new BizErrorException("未维护C类容量");
+                        }
+                        TypeCapacity = baseStorageCapacities.get(0).getTypeCCapacity();
+                        type = 3;
+                        break;
+                    case 4:
+                        if (StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeDCapacity())) {
+                            throw new BizErrorException("未维护D类容量");
+                        }
+                        TypeCapacity = baseStorageCapacities.get(0).getTypeDCapacity();
+                        type = 4;
+                        break;
+                }
+
+                if(wmsInnerInventories.size()>0){
+                    BigDecimal qty = baseStorageCapacities.get(0).getTypeACapacity();
+                    for (WmsInnerInventory wmsInnerInventory : wmsInnerInventories) {
+                        if(!Objects.equals(wmsInnerInventory.getMaterialId(), materialId)){
+
+                            //获取物料编码并截取前八位数
+                            BaseMaterial baseMaterial = baseFeignApi.materialDetail(wmsInnerInventory.getMaterialId()).getData();
+                            if(baseMaterialList.getMaterialCode().length()<8){
+                                throw new BizErrorException("物料编码错误，长度小于规定8位，无法匹配库容");
+                            }
+                            String substring = baseMaterial.getMaterialCode().substring(0,8);
+
+                            //转换数量
+                            //查询该货品库容
+                            SearchBaseStorageCapacity baseStorageCapacity = new SearchBaseStorageCapacity();
+                            baseStorageCapacity.setPageSize(99999);
+                            baseStorageCapacity.setMaterialCodePrefix(substring);
+                            List<BaseStorageCapacity> shiftStorageCapacity = baseFeignApi.findList(baseStorageCapacity).getData();
+                            if(shiftStorageCapacity.isEmpty()){
+                                break;
+                            }
+                            BigDecimal shiftCapacity = BigDecimal.ZERO;
+                            if(StringUtils.isNotEmpty(shiftStorageCapacity)) {
+                                if (type == 1) {
+                                    shiftCapacity = shiftStorageCapacity.get(0).getTypeACapacity();
+                                } else if (type == 2) {
+                                    shiftCapacity = shiftStorageCapacity.get(0).getTypeBCapacity();
+                                } else if (type == 3) {
+                                    shiftCapacity = shiftStorageCapacity.get(0).getTypeCCapacity();
+                                } else if (type == 4) {
+                                    shiftCapacity = shiftStorageCapacity.get(0).getTypeDCapacity();
+                                }
+                            }
+                            //库存数/转换货品库容*货品库容
+                            BigDecimal a = wmsInnerInventory.getPackingQty().divide(shiftCapacity,2).multiply(TypeCapacity);
+                            //四舍五入取整数
+                            a = a.setScale(0, RoundingMode.HALF_UP);
+                            qty = qty.subtract(a);
+                        }else {
+                            qty = qty.subtract(wmsInnerInventory.getPackingQty());
+                        }
+                    }
+                    if(qty.compareTo(BigDecimal.ZERO)==1){
+                        totalQty = qty;
+                    }
+                }else {
+                    totalQty = baseStorageCapacities.get(0).getTypeACapacity();
+                }
+            }
+        }
+
+        return totalQty;
     }
 }

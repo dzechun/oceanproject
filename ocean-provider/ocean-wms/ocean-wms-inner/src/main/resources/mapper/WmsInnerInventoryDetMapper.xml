@@ -51,6 +51,10 @@
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     </resultMap>
+
+    <resultMap id="InStorageMaterialDto" type="com.fantechs.common.base.general.dto.wms.inner.InStorageMaterialDto">
+    </resultMap>
+
     <sql id="Base_Column_List">
         wiid.inventory_det_id,
         wiid.storage_id,
@@ -125,6 +129,11 @@
             <if test="materialId!=null and materialId!=''">
                 and wiid.material_id = #{materialId}
             </if>
+            <if test="materialIds !=null and materialIds !=''">
+                <foreach collection="materialIds" open="and wiid.material_id in (" separator="," close=")" item="value">
+                    #{value}
+                </foreach>
+            </if>
             <if test="barcode!=null and barcode!=''">
                 and wiid.barcode = #{barcode}
             </if>
@@ -196,5 +205,25 @@
             </if>
         </where>
         order by wiid.create_time desc
+    </select>
+
+    <select id="findInventoryDetByStorage" resultMap="InStorageMaterialDto" parameterType="map">
+        SELECT
+            COUNT( wiid.material_qty ) AS qty,
+            wiid.material_id AS materialId,
+            bm.material_code AS materialCode,
+            bm.material_name AS materialName
+        FROM
+            wms_inner_inventory_det wiid
+            LEFT JOIN base_material bm ON wiid.material_id = bm.material_id
+            LEFT JOIN base_storage bs ON wiid.storage_id = bs.storage_id
+        <where>
+            bs.storage_code like CONCAT('%',#{storageCode},'%')
+            <if test="materialId!=null and materialId!=''">
+                AND wiid.material_id = #{materialId}
+            </if>
+        </where>
+        GROUP BY
+            wiid.material_id;
     </select>
 </mapper>

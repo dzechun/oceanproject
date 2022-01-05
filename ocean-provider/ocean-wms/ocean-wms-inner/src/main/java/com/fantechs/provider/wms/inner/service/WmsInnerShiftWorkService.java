@@ -45,4 +45,18 @@ public interface WmsInnerShiftWorkService {
      * @return
      */
     int saveJobOrder(SaveShiftJobOrderDto dto);
+
+    /**
+     * PDA批量移位-扫库位码
+     * @param dto
+     * @return
+     */
+    StorageDto scanStorage(ScanStorageDto dto);
+
+    /**
+     * 批量移位作业
+     * @param dto
+     * @return
+     */
+    int batchShiftWork(BatchSiftWorkDto dto);
 }

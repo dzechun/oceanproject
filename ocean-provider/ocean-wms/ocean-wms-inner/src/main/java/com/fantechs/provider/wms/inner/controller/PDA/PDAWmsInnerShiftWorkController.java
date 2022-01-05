@@ -65,4 +65,16 @@ public class PDAWmsInnerShiftWorkController {
     public ResponseEntity saveJobOrder(@ApiParam(value = "上架确认实体", required = true) @RequestBody SaveShiftJobOrderDto dto) {
         return ControllerUtil.returnCRUD(wmsInnerShiftWorkService.saveJobOrder(dto));
     }
+
+    @ApiOperation("PDA批量移位-扫库位码")
+    @PostMapping("/scanStorage")
+    public ResponseEntity<StorageDto> scanStorage(@ApiParam(value = "批量移位实体", required = true) @RequestBody ScanStorageDto dto){
+        return ControllerUtil.returnDataSuccess(wmsInnerShiftWorkService.scanStorage(dto), 1);
+    }
+
+    @ApiOperation("PDA批量移位")
+    @PostMapping("/batchShiftWork")
+    public ResponseEntity batchShiftWork(@ApiParam(value = "批量移位实体", required = true) @RequestBody BatchSiftWorkDto dto){
+        return ControllerUtil.returnCRUD(wmsInnerShiftWorkService.batchShiftWork(dto));
+    }
 }

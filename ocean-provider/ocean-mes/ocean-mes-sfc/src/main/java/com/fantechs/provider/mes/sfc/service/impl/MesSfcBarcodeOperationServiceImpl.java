@@ -94,10 +94,27 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
     public Boolean pdaCartonWork(PdaCartonWorkDto dto) throws Exception {
-        long start = System.currentTimeMillis();
-        log.info("==================== 包箱作业开始时间：" + start);
         // 获取登录用户
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
+        if (dto.getBarCode().length() != 23){
+            // 万宝项目-判断是三星客户条码还是厂内码
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("wanbaoCheckBarcode");
+            List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if ("1".equals(specItems.get(0).getParaValue())){
+                Example example = new Example(MesSfcBarcodeProcess.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andLike("customerBarcode", dto.getBarCode());
+                List<MesSfcBarcodeProcess> mesSfcBarcodeProcesses = mesSfcBarcodeProcessService.selectByExample(example);
+                if (mesSfcBarcodeProcesses.isEmpty()){
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码BarcodeUtils：" + dto.getBarCode() + "在系统中不存在");
+                }
+                MesSfcBarcodeProcess barcodeProcess = mesSfcBarcodeProcesses.get(0);
+                dto.setBarCode(barcodeProcess.getBarcode());
+            }
+        }
+
         //条码生产订单条码表
         List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtos = mesSfcWorkOrderBarcodeService
                 .findList(SearchMesSfcWorkOrderBarcode.builder()
@@ -149,21 +166,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             throw new BizErrorException(ErrorCodeEnum.PDA40012002, orderBarcodeDto.getBarcode());
         }
 
-//        boolean b= false;
-//        //工艺路线跟工序集合
-//        List<BaseRouteProcess>  baseProcessList= baseFeignApi.findConfigureRout(mesPmWorkOrder .getRouteId()).getData();
-//        for(BaseRouteProcess baseRouteProcess:baseProcessList){
-//            if(mesSfcBarcodeProcess.getProcessId().equals(baseRouteProcess.getProcessId())
-//                    &&baseRouteProcess.getNextProcessId().equals(dto.getProcessId())
-//                    &&baseRouteProcess.getIsPass()==1){
-//                b= true;
-//                break;
-//            }
-//        }
-//        if(!b){
-//            throw new BizErrorException(ErrorCodeEnum.PDA40012009.getCode(), "工艺路线无此过站工序");
-//        }
-
         // 2、校验条码是否关联包箱
         Map<String, Object> map = new HashMap<>();
         map.put("workOrderBarcodeId", orderBarcodeDto.getWorkOrderBarcodeId());
@@ -203,8 +205,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 throw new BizErrorException(ErrorCodeEnum.PDA40012019, mesPmWorkOrder.getMaterialId(), mesPmWorkOrderById.getMaterialId());
             }
         }
-        long checkF = System.currentTimeMillis();
-        log.info("==================== 包箱作业校验完成，花费时间：" + (checkF - start));
         // 5、是否要扫附件码
         if(dto.getAnnex() && StringUtils.isEmpty(dto.getBarAnnexCode())){
             return false;
@@ -485,8 +485,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findBarcode(SearchMesSfcBarcodeProcess.builder()
                 .cartonCode(sfcProductCarton.getCartonCode())
                 .build());
-        long workF = System.currentTimeMillis();
-        log.info("==================== 包箱作业过站完成，花费时间：" + (workF - checkF));
         if (mesSfcBarcodeProcessList.size() >= sfcProductCarton.getNowPackageSpecQty().intValue()) {
             // 包箱已满，关箱
             sfcProductCarton.setCloseStatus((byte) 1);
@@ -513,9 +511,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             if (mesPmWorkOrder.getOutputProcessId().equals(dto.getProcessId())){
                 this.beforeCartonAutoAsnOrder(cartonIds, user.getOrganizationId(), null);
             }
-
-            long closeF = System.currentTimeMillis();
-            log.info("==================== 包箱作业关箱完成，花费时间：" + (closeF - workF));
 
             //雷赛包箱数据是否同步到WMS开始
             SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
@@ -552,8 +547,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     leisaiWmsCarton.setLeisaiWmsCartonDetList(dets);
                     leisaiFeignApi.syncCartonData(leisaiWmsCarton);
 
-                    long upF = System.currentTimeMillis();
-                    log.info("==================== 包箱作业上传雷赛完成，花费时间：" + (upF - closeF));
                 }
             }
 

@@ -37,6 +37,7 @@
         <result column="same_package_code" jdbcType="VARCHAR" property="samePackageCode" />
         <result column="cutsomer_barcode" jdbcType="VARCHAR" property="cutsomerBarcode" />
         <result column="sales_barcode" jdbcType="VARCHAR" property="salesBarcode" />
+        <result column="reprint_count" jdbcType="VARCHAR" property="reprintCount" />
     </resultMap>
     <resultMap id="BaseRuleMap" type="com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto">
     </resultMap>
@@ -69,6 +70,7 @@
             parameterType="com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode">
         select<include refid="BaseColumnList"/>,su.user_name as create_user_name,sus.user_name as
         modified_user_name,bo.organization_name,blc.label_category_name,msbp.same_package_code,
+        COUNT(mswobr.work_order_barcode_reprint_id) AS reprint_count,
         CASE mswob.option1
         WHEN 5 THEN
         sod.material_id
@@ -97,6 +99,7 @@
         left join base_material bms on sod.material_id = bms.material_id
         left join base_label_category blc on mswob.label_category_id = blc.label_category_id
         LEFT JOIN mes_sfc_barcode_process msbp ON mswob.work_order_barcode_id = msbp.work_order_barcode_id
+        LEFT JOIN mes_sfc_work_order_barcode_reprint mswobr ON mswob.work_order_barcode_id = mswobr.work_order_barcode_id
         <where>
             <if test="workOrderId != null">
                 and mswob.work_order_id = #{workOrderId}
@@ -133,7 +136,8 @@
                 </choose>
             </if>
         </where>
-order by mswob.create_time desc
+        GROUP BY mswob.work_order_barcode_id
+        order by mswob.create_time desc
     </select>
     <select id="findMaxCode" resultType="java.lang.String">
         select barcode

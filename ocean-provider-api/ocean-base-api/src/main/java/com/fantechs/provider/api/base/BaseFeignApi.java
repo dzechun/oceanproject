@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionItem;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -576,6 +577,9 @@ public interface BaseFeignApi {
     @PostMapping("/baseStorageCapacity/findList")
     ResponseEntity<List<BaseStorageCapacity>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseStorageCapacity searchBaseStorageCapacity);
 
+    @ApiOperation("统计库存按物料分组")
+    @PostMapping("/baseStorageCapacity/wmsList")
+    ResponseEntity<List<WmsInnerInventory>> wmsList(@RequestBody Map<String, Object> map);
 
     @ApiOperation("列表")
     @PostMapping("/baseProductProcessReM/findList")
