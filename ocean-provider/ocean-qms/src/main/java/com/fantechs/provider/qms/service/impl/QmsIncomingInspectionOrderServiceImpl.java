@@ -158,12 +158,15 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
             if(order.getMrbResult() != null && order.getMrbResult() == (byte)3){
                 throw new BizErrorException("检验单号为"+order.getIncomingInspectionOrderCode()+"的来料检验单MRB评审结果为退供应商，无法下推");
             }
+            if(StringUtils.isEmpty(order.getWarehouseId())){
+                throw new BizErrorException("单据仓库不能为空");
+            }
         }
 
         //查当前单据类型的所有单据流
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
         searchBaseOrderFlow.setOrderTypeCode("QMS-MIIO");
-        List<BaseOrderFlowDto> baseOrderFlowDtos = baseFeignApi.findList(searchBaseOrderFlow).getData();
+        List<BaseOrderFlowDto> baseOrderFlowDtos = baseFeignApi.findAll(searchBaseOrderFlow).getData();
         if (StringUtils.isEmpty(baseOrderFlowDtos)) {
             throw new BizErrorException("未找到当前单据配置的单据流");
         }

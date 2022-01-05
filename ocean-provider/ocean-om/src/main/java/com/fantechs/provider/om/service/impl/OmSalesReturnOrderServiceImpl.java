@@ -305,7 +305,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
         //查当前单据的下游单据
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
         searchBaseOrderFlow.setOrderTypeCode("IN-OIO");
-        List<BaseOrderFlowDto> baseOrderFlowDtos = baseFeignApi.findList(searchBaseOrderFlow).getData();
+        List<BaseOrderFlowDto> baseOrderFlowDtos = baseFeignApi.findAll(searchBaseOrderFlow).getData();
         if (StringUtils.isEmpty(baseOrderFlowDtos)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未找到当前单据配置的下游单据");
         }
@@ -590,6 +590,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
                 wmsInnerJobOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                wmsInnerJobOrder.setSourceBigType((byte)1);
                 wmsInnerJobOrder.setJobOrderType((byte) 1);
                 wmsInnerJobOrder.setWarehouseId(omSalesReturnOrderDets.get(0).getWarehouseId());
                 wmsInnerJobOrder.setOrderStatus((byte) 1);
@@ -615,14 +616,14 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
         if(StringUtils.isNotEmpty(list)) {
             for (OmSalesReturnOrderDet omSalesReturnOrderDet : list) {
                 omSalesReturnOrderDet.setModifiedTime(new Date());
-                omSalesReturnOrderDet.setModifiedUserId(user.getOrganizationId());
+                omSalesReturnOrderDet.setModifiedUserId(user.getUserId());
                 omSalesReturnOrderDetMapper.updateByPrimaryKeySelective(omSalesReturnOrderDet);
             }
         }
         if (StringUtils.isNotEmpty(orderList)) {
             for (OmSalesReturnOrder omSalesReturnOrder : orderList) {
                 omSalesReturnOrder.setModifiedTime(new Date());
-                omSalesReturnOrder.setModifiedUserId(user.getOrganizationId());
+                omSalesReturnOrder.setModifiedUserId(user.getUserId());
                 omSalesReturnOrderMapper.updateByPrimaryKeySelective(omSalesReturnOrder);
             }
         }

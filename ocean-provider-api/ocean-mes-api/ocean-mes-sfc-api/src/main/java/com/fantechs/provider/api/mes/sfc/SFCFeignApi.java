@@ -72,10 +72,6 @@ public interface SFCFeignApi {
     @PostMapping("/mesSfcProductCartonDet/findList")
     ResponseEntity<List<MesSfcProductCartonDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchMesSfcProductCartonDet searchMesSfcProductCartonDet);
 
-    @ApiOperation("产品包箱明细修改")
-    @PostMapping("/mesSfcProductCartonDet/update")
-    ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=MesSfcProductCartonDet.update.class) MesSfcProductCartonDet mesSfcProductCartonDet);
-
     @ApiOperation("修改栈板状态为已转移")
     @PostMapping("/mesSfcPalletWork/updateMoveStatus")
     ResponseEntity<List<MesSfcProductCartonDto>> updateMoveStatus(@ApiParam(value = "产品栈板ID", required = true) @RequestParam Long productPalletId);
@@ -83,10 +79,6 @@ public interface SFCFeignApi {
     @ApiOperation("工单条码查询栈板")
     @PostMapping("/mesSfcProductPalletDet/findList")
     ResponseEntity<List<MesSfcProductPalletDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchMesSfcProductPalletDet searchMesSfcProductPalletDet);
-
-    @ApiOperation("栈板明细修改")
-    @PostMapping("/mesSfcProductPalletDet/update")
-    ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=MesSfcProductPalletDet.update.class) MesSfcProductPalletDet mesSfcProductPalletDet);
 
     @ApiOperation("获取栈板详情")
     @PostMapping("/mesSfcProductPallet/detail")

@@ -383,7 +383,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         //查当前单据的下游单据
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
         searchBaseOrderFlow.setOrderTypeCode("IN-OIO");
-        List<BaseOrderFlowDto> baseOrderFlowDtos = baseFeignApi.findList(searchBaseOrderFlow).getData();
+        List<BaseOrderFlowDto> baseOrderFlowDtos = baseFeignApi.findAll(searchBaseOrderFlow).getData();
         if (StringUtils.isEmpty(baseOrderFlowDtos)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未找到当前单据配置的下游单据");
         }
@@ -667,6 +667,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
                 wmsInnerJobOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                wmsInnerJobOrder.setSourceBigType((byte)1);
                 wmsInnerJobOrder.setJobOrderType((byte) 1);
                 wmsInnerJobOrder.setOrderStatus((byte) 1);
                 wmsInnerJobOrder.setWarehouseId(omOtherInOrderDets.get(0).getWarehouseId());
@@ -692,14 +693,14 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         if (StringUtils.isNotEmpty(list)) {
             for (OmOtherInOrderDet omOtherInOrderDet : list) {
                 omOtherInOrderDet.setModifiedTime(new Date());
-                omOtherInOrderDet.setModifiedUserId(user.getOrganizationId());
+                omOtherInOrderDet.setModifiedUserId(user.getUserId());
                 omOtherInOrderDetMapper.updateByPrimaryKeySelective(omOtherInOrderDet);
             }
         }
         if (StringUtils.isNotEmpty(orderList)) {
             for (OmOtherInOrder omOtherInOrder : orderList) {
                 omOtherInOrder.setModifiedTime(new Date());
-                omOtherInOrder.setModifiedUserId(user.getOrganizationId());
+                omOtherInOrder.setModifiedUserId(user.getUserId());
                 omOtherInOrderMapper.updateByPrimaryKeySelective(omOtherInOrder);
             }
         }

@@ -175,14 +175,17 @@ public class InBarcodeUtil {
         searchWmsInnerMaterialBarcode.setBarcode(barcode);
         barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
         if(barcodeDtos.size()>0){
+            //SN码
             if(barcodeDtos.get(0).getBarcodeStatus()>=(byte)5){
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
             }
             barcodeResultDto.setBarcodeType((byte)1);
             barcodeResultDto.setMaterialQty(barcodeDtos.get(0).getMaterialQty());
             barcodeResultDto.setBarcode(barcode);
+            barcodeResultDto.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
         }
         else {
+            //彩盒
             searchWmsInnerMaterialBarcode.setBarcode(null);
             searchWmsInnerMaterialBarcode.setColorBoxCode(barcode);
             barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
@@ -194,8 +197,10 @@ public class InBarcodeUtil {
                 barcodeResultDto.setBarcodeType((byte)2);
                 barcodeResultDto.setMaterialQty(barcodeDtos.get(0).getMaterialQty());
                 barcodeResultDto.setBarcode(barcode);
+                barcodeResultDto.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
             }
             else {
+                //箱码
                 searchWmsInnerMaterialBarcode.setBarcode(null);
                 searchWmsInnerMaterialBarcode.setColorBoxCode(null);
                 searchWmsInnerMaterialBarcode.setCartonCode(barcode);
@@ -210,8 +215,10 @@ public class InBarcodeUtil {
                     barcodeResultDto.setBarcodeType((byte)3);
                     barcodeResultDto.setMaterialQty(totalQty);
                     barcodeResultDto.setBarcode(barcode);
+                    barcodeResultDto.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
                 }
                 else {
+                    //栈板
                     searchWmsInnerMaterialBarcode.setBarcode(null);
                     searchWmsInnerMaterialBarcode.setColorBoxCode(null);
                     searchWmsInnerMaterialBarcode.setCartonCode(null);
@@ -227,6 +234,7 @@ public class InBarcodeUtil {
                         barcodeResultDto.setBarcodeType((byte)4);
                         barcodeResultDto.setMaterialQty(totalQty);
                         barcodeResultDto.setBarcode(barcode);
+                        barcodeResultDto.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
                     }
                 }
             }
@@ -234,6 +242,8 @@ public class InBarcodeUtil {
 
         if(StringUtils.isEmpty(barcodeResultDto.getBarcodeType())){
             barcodeResultDto.setBarcodeType((byte)5);
+            barcodeResultDto.setBarcode("");
+            barcodeResultDto.setMaterialQty(new BigDecimal(0));
         }
 
         return barcodeResultDto;

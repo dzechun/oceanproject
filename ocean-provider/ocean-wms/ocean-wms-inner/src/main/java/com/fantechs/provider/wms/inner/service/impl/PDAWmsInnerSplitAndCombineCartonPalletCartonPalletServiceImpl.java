@@ -300,7 +300,7 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
         if(type == (byte)1||type == (byte)3) {//分包箱（栈板）
             String sourceCartonPalletCode = generatorCartonPalletCode(barcodeRule, materialId);
             String newCartonPalletCode = generatorCartonPalletCode(barcodeRule, materialId);
-            barcodes = sourceCartonPalletCode + "," + sourceCartonPalletCode;
+            barcodes = sourceCartonPalletCode + "," + newCartonPalletCode;
 
             PDAWmsInnerSplitAndCombineCartonPalletInfoDto cartonPalletInfoDto = cartonPalletInfoDtos.get(0);
             List<WmsInnerInventoryDetDto> nextLevelInventoryDetDtos = cartonPalletInfoDto.getNextLevelInventoryDetDtos();

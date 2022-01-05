@@ -69,7 +69,7 @@ public class WmsInnerJobOrderController {
 
     @ApiOperation(" 指定工作人员")
     @PostMapping("/distributionWorker")
-    public ResponseEntity distributionWorker(@ApiParam(value = "对象ID",required = true) @RequestParam @NotBlank(message="id不能为空") Long jobOrderId,@ApiParam(value = "人员ID",required = true) @RequestParam @NotBlank(message="人员ID不能为空") Long workerId){
+    public ResponseEntity distributionWorker(@ApiParam(value = "对象ID",required = true) @RequestParam Long jobOrderId,@ApiParam(value = "人员ID",required = true) @RequestParam Long workerId){
         return ControllerUtil.returnCRUD(wmsInPutawayOrderService.distributionWorker(jobOrderId,workerId));
     }
 
