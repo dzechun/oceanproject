@@ -105,6 +105,7 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
         //查当前单据类型的所有单据流
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
         searchBaseOrderFlow.setOrderTypeCode("OUT-PRO");
+        searchBaseOrderFlow.setStatus((byte)1);
         List<BaseOrderFlowDto> baseOrderFlowDtos = baseFeignApi.findAll(searchBaseOrderFlow).getData();
         if (StringUtils.isEmpty(baseOrderFlowDtos)) {
             throw new BizErrorException("未找到当前单据配置的单据流");

@@ -17,6 +17,8 @@
         <result column="production_date" jdbcType="TIMESTAMP" property="productionDate"/>
         <result column="expired_date" jdbcType="TIMESTAMP" property="expiredDate"/>
         <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
+        <result column="actual_in_qty" jdbcType="DECIMAL" property="actualInQty"/>
+        <result column="actual_out_qty" jdbcType="DECIMAL" property="actualOutQty"/>
         <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty"/>
         <result column="if_all_issued" jdbcType="TINYINT" property="ifAllIssued"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
@@ -60,6 +62,8 @@
         otod.production_date,
         otod.expired_date,
         otod.batch_code,
+        otod.actual_in_qty,
+        otod.actual_out_qty,
         otod.total_issue_qty,
         otod.if_all_issued,
         otod.status,

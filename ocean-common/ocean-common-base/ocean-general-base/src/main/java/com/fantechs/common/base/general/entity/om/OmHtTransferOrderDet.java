@@ -125,6 +125,20 @@ public class OmHtTransferOrderDet extends ValidGroup implements Serializable {
     private String batchCode;
 
     /**
+     * 实际上架数量
+     */
+    @ApiModelProperty(name="actualInQty",value = "实际上架数量")
+    @Column(name = "actual_in_qty")
+    private BigDecimal actualInQty;
+
+    /**
+     * 实际拣货数量
+     */
+    @ApiModelProperty(name="actualOutQty",value = "实际拣货数量")
+    @Column(name = "actual_out_qty")
+    private BigDecimal actualOutQty;
+
+    /**
      * 累计下发数量
      */
     @ApiModelProperty(name="totalIssueQty",value = "累计下发数量")

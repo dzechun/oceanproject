@@ -97,8 +97,8 @@
             <if test="customerOrderCode!=null and customerOrderCode!=''">
                 and ouo.customer_order_code like CONCAT('%',#{customerOrderCode},'%')
             </if>
-            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-                and date_format(ouo.order_date, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            <if test="orderDate != null and orderDate != ''">
+                and date_format(ouo.order_date, '%Y-%m-%d') = #{orderDate}
             </if>
             <if test="orgId!=null and orgId!=''">
                 and ouo.org_id = #{orgId}
