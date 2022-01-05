@@ -1710,7 +1710,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         if (record.getJobOrderType() == (byte) 1) {
             //上架单
             record.setJobOrderCode(CodeUtils.getId("IN-IWK"));
-            record.setSourceSysOrderTypeCode("IN-IWK");
+            //record.setSourceSysOrderTypeCode("IN-IWK");
+
         } else if (record.getJobOrderType() == (byte) 2) {
             //拣货单
             record.setJobOrderCode(CodeUtils.getId("OUT-IWK"));

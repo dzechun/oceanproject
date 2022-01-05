@@ -87,7 +87,7 @@ public class WmsInnerStockOrderController {
 
     @ApiOperation("盘点扫码提交")
     @PostMapping("/webCommit")
-    public ResponseEntity webCommit(@ApiParam(value = "提交类型")@RequestParam(required = true) Byte commitType,
+    public ResponseEntity webCommit(@ApiParam(value = "提交类型 1 选择条码提交 2 扫描条码提交")@RequestParam(required = true) Byte commitType,
                                     @ApiParam(value = "盘点明细ID")@RequestParam(required = true) Long stockOrderDetId,
                                     @ApiParam(value = "条码集合") @RequestBody List<CommitInnerStockBarcodeDto> barcodeList){
         return ControllerUtil.returnCRUD(wmsInventoryVerificationService.webCommit(commitType,stockOrderDetId,barcodeList));
