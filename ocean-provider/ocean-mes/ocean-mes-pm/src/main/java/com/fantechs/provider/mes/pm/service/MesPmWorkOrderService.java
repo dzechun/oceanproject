@@ -1,6 +1,7 @@
 package com.fantechs.provider.mes.pm.service;
 
 
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
@@ -33,6 +34,7 @@ public interface MesPmWorkOrderService extends IService<MesPmWorkOrder> {
 
     int updatePmWorkOrder(MesPmWorkOrder mesPmWorkOrder);
 
-    int pushDown(List<MesPmWorkOrder> mesPmWorkOrders);
+    int inPushDown(List<MesPmWorkOrder> mesPmWorkOrders);
 
+    int outPushDown(List<MesPmWorkOrderBomDto> mesPmWorkOrderBomDtos);
 }

@@ -38,10 +38,10 @@ public class SearchMesPmWorkOrderBom extends BaseQuery implements Serializable {
     private Long processId;
 
     /**
-     * 物料描述
+     * 零件描述
      */
-    @ApiModelProperty(name="materialDesc" ,value="物料描述")
-    private String materialDesc;
+    @ApiModelProperty(name="partMaterialDesc" ,value="零件描述")
+    private String partMaterialDesc;
 
     /**
      * 预留项目号(雷赛接口)

@@ -5,10 +5,8 @@ import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryReqOrderDet
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 @Data
 public class WmsOutDeliveryReqOrderDetDto extends WmsOutDeliveryReqOrderDet implements Serializable {
@@ -95,5 +93,12 @@ public class WmsOutDeliveryReqOrderDetDto extends WmsOutDeliveryReqOrderDet impl
     @ApiModelProperty(name="warehouseName",value = "仓库名称")
     @Transient
     private String warehouseName;
+
+    /**
+     * 核心系统单据类型编码
+     */
+    @ApiModelProperty(name="coreSourceSysOrderTypeCode",value = "核心系统单据类型编码")
+    @Transient
+    private String coreSourceSysOrderTypeCode;
 
 }
