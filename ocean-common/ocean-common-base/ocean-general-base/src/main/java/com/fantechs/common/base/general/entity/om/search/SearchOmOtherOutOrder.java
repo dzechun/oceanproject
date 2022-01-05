@@ -22,6 +22,12 @@ public class SearchOmOtherOutOrder extends BaseQuery implements Serializable {
     private Byte orderStatus;
 
     /**
+     * 订单日期
+     */
+    @ApiModelProperty(name="orderDate" ,value="订单日期(YYYY-MM-DD)")
+    private String orderDate;
+
+    /**
      * 要求到达日期开始时间
      */
     @ApiModelProperty(name="reqArriveDateT" ,value="要求到达日期开始时间(YYYY-MM-DD)")

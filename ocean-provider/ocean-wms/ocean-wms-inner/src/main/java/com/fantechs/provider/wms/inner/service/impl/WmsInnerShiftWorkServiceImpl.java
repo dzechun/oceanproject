@@ -384,6 +384,8 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         SysUser sysUser = currentUser();
 
         WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderDetMapper.selectByPrimaryKey(dto.getJobOrderDetId());
+        if(StringUtils.isEmpty(wmsInnerJobOrderDet.getDistributionQty()))
+            wmsInnerJobOrderDet.setDistributionQty(BigDecimal.ZERO);
         wmsInnerJobOrderDet.setActualQty(wmsInnerJobOrderDet.getDistributionQty());
         if (StringUtils.isEmpty(wmsInnerJobOrderDet.getActualQty())) {
             throw new BizErrorException("上架数量不能小于1");
