@@ -1711,6 +1711,21 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         String orderTypeCode="IN-IWK";
         if (record.getJobOrderType() == (byte) 1) {
             //上架单
+            if(StringUtils.isEmpty(record.getWarehouseId())) {
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "仓库不能为空");
+            }else{
+                SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                searchBaseStorage.setWarehouseId(record.getWarehouseId());
+                searchBaseStorage.setStorageType((byte)2);//库位类型（1-存货 2-收货 3-发货）
+                List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+                if(StringUtils.isEmpty(baseStorages))
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "未查询到该仓库的收货库位");
+
+                searchBaseStorage.setStorageType((byte)1);
+                baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+                if(StringUtils.isEmpty(baseStorages))
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "未查询到该仓库的存货库位");
+            }
             record.setJobOrderCode(CodeUtils.getId("IN-IWK"));
             //record.setSourceSysOrderTypeCode("IN-IWK");
 
