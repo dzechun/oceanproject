@@ -35,6 +35,7 @@
         <result column="option1" jdbcType="VARCHAR" property="option1"/>
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
+        <result column="purchase_return_qty" jdbcType="DECIMAL" property="purchaseReturnQty"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -84,6 +85,7 @@
     <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
         select
         <include refid="Base_Column_List"/>,
+        (select IFNULL(sum(oprod.order_qty),0) FROM om_purchase_return_order_det oprod WHERE oprod.purchase_order_det_id = opod.purchase_order_det_id) as purchase_return_qty,
         bm.material_code as materialCode, bm.material_name as materialName, bm.material_desc as materialDesc,
         bm.material_version as materialVersion, bm.material_source as materialSource,bmc.material_category_name as materialCategoryName,
         bpm.product_model_name as productModelName,opo.purchase_order_code,opo.warehouse_id,bw.warehouse_name,bw.warehouse_code,
