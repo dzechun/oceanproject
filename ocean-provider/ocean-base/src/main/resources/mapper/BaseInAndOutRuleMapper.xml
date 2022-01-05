@@ -19,7 +19,7 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
-    <collection property="baseInAndOutRuleDetDtos" ofType="com.fantechs.common.base.general.dto.basic.BaseInAndOutRuleDetDto"
+    <collection property="baseInAndOutRuleDets" ofType="com.fantechs.common.base.general.dto.basic.BaseInAndOutRuleDetDto"
                 column="{inAndOutRuleId=in_and_out_rule_id}" select="com.fantechs.provider.base.mapper.BaseInAndOutRuleDetMapper.findList">
     </collection>
   </resultMap>
@@ -60,7 +60,7 @@ biaor.option3
         and biaor.warehouse_id = #{warehouseId}
       </if>
       <if test="warehouseName!=null and warehouseName!=''">
-        and bw.warehouse_name = #{warehouseName}
+        and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
       </if>
         <if test="category!=null and category!=''">
           and biaor.category = #{category}

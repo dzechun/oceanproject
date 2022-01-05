@@ -13,9 +13,11 @@ import com.fantechs.common.base.general.dto.wms.in.imports.WmsInPlanReceivingOrd
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.general.entity.wms.in.*;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
@@ -313,130 +315,166 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
     public int pushDown(String ids) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         String[] idArry = ids.split(",");
-        List<WmsInPlanReceivingOrderDet> wmsInPlanReceivingOrderDets = new ArrayList<>();
-        for (String s : idArry) {
-            WmsInPlanReceivingOrderDet wmsInPlanReceivingOrderDet = wmsInPlanReceivingOrderDetMapper.selectByPrimaryKey(s);
-            wmsInPlanReceivingOrderDets.add(wmsInPlanReceivingOrderDet);
-        }
+        List<WmsInPlanReceivingOrderDet> wmsInPlanReceivingOrderDets = wmsInPlanReceivingOrderDetMapper.selectByIds(ids);
         if(StringUtils.isEmpty(wmsInPlanReceivingOrderDets)){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"请选择下推的物料");
         }
-        String sysOrderTypeCode =null;//当前单据类型编码
-        String coreSourceSysOrderTypeCode = null;//核心单据类型编码
-        //查当前单据的下游单据
-        SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
-        searchBaseOrderFlow.setOrderTypeCode("IN-SPO");
-        BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
-        if(StringUtils.isEmpty(baseOrderFlow)){
-            throw new BizErrorException("未找到当前单据配置的下游单据");
+        Map<String,List<WmsInPlanReceivingOrderDet>> map = new HashMap<>();
+        //赛选出是否存在按物料维度下推的单据
+        for (WmsInPlanReceivingOrderDet wmsInPlanReceivingOrderDet : wmsInPlanReceivingOrderDets) {
+            if(wmsInPlanReceivingOrderDet.getIfAllIssued()==1){
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"重复下推");
+            }
+            //查当前单据的下游单据
+            SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
+            searchBaseOrderFlow.setOrderTypeCode("IN-SPO");
+            searchBaseOrderFlow.setMaterialId(wmsInPlanReceivingOrderDet.getMaterialId());
+            BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
+            if(StringUtils.isEmpty(baseOrderFlow)){
+                throw new BizErrorException("未找到当前单据配置的下游单据");
+            }else
+            if(map.containsKey(baseOrderFlow.getNextOrderTypeCode())){
+                List<WmsInPlanReceivingOrderDet> list = map.get(baseOrderFlow.getNextOrderTypeCode());
+                list.add(wmsInPlanReceivingOrderDet);
+                map.put(baseOrderFlow.getNextOrderTypeCode(),list);
+            }else {
+                List<WmsInPlanReceivingOrderDet> list = new ArrayList<>();
+                list.add(wmsInPlanReceivingOrderDet);
+                map.put(baseOrderFlow.getNextOrderTypeCode(),list);
+            }
         }
-        WmsInPlanReceivingOrder wmsInPlanReceivingOrder = wmsInPlanReceivingOrderMapper.selectByPrimaryKey(wmsInPlanReceivingOrderDets.get(0).getPlanReceivingOrderId());
-        switch (baseOrderFlow.getNextOrderTypeCode()){
+//        //查当前单据的下游单据
+//        SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
+//        searchBaseOrderFlow.setOrderTypeCode("IN-SPO");
+//        BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
+//        if(StringUtils.isEmpty(baseOrderFlow)){
+//            throw new BizErrorException("未找到当前单据配置的下游单据");
+//        }
+        Set<String> set = map.keySet();
+        for (String s : set) {
+            List<WmsInPlanReceivingOrderDet> list = map.get(s);
+            WmsInPlanReceivingOrder wmsInPlanReceivingOrder = wmsInPlanReceivingOrderMapper.selectByPrimaryKey(list.get(0).getPlanReceivingOrderId());
+            String sysOrderTypeCode =null;//当前单据类型编码
+            String coreSourceSysOrderTypeCode = null;//核心单据类型编码
+            switch (s){
+                case "IN-SWK":
+                    //收获作业
+                    List<WmsInReceivingOrderDetDto> receivingOrderDets = new ArrayList<>();
+                    for (WmsInPlanReceivingOrderDet wmsInPlanReceivingOrderDet : list) {
+                        sysOrderTypeCode = wmsInPlanReceivingOrder.getSysOrderTypeCode();
+                        coreSourceSysOrderTypeCode = wmsInPlanReceivingOrder.getCoreSourceSysOrderTypeCode();
+                        WmsInReceivingOrderDetDto wmsInReceivingOrderDet = new WmsInReceivingOrderDetDto();
+                        wmsInReceivingOrderDet.setCoreSourceOrderCode(wmsInPlanReceivingOrderDet.getCoreSourceOrderCode());
+                        wmsInReceivingOrderDet.setSourceOrderCode(wmsInPlanReceivingOrder.getPlanReceivingOrderCode());
+                        wmsInReceivingOrderDet.setSourceId(wmsInPlanReceivingOrderDet.getPlanReceivingOrderDetId());
+                        wmsInReceivingOrderDet.setLineStatus((byte)1);
+                        wmsInReceivingOrderDet.setLineNumber(wmsInPlanReceivingOrderDet.getLineNumber());
+                        wmsInReceivingOrderDet.setPlanQty(wmsInPlanReceivingOrderDet.getPlanQty());
+                        wmsInReceivingOrderDet.setMaterialId(wmsInPlanReceivingOrderDet.getMaterialId());
+                        wmsInReceivingOrderDet.setBatchCode(wmsInReceivingOrderDet.getBatchCode());
+                        wmsInReceivingOrderDet.setProductionTime(wmsInPlanReceivingOrderDet.getProductionTime());
+                        wmsInReceivingOrderDet.setActualQty(BigDecimal.ZERO);
+                        wmsInReceivingOrderDet.setCreateTime(new Date());
+                        wmsInReceivingOrderDet.setCreateUserId(sysUser.getUserId());
+                        wmsInReceivingOrderDet.setModifiedTime(new Date());
+                        wmsInReceivingOrderDet.setModifiedUserId(sysUser.getUserId());
+                        wmsInReceivingOrderDet.setOrgId(sysUser.getOrganizationId());
+                        wmsInReceivingOrderDet.setIfAllIssued((byte)0);
 
-            case "IN-SWK":
-                //收获作业
-                List<WmsInReceivingOrderDetDto> receivingOrderDets = new ArrayList<>();
-                for (WmsInPlanReceivingOrderDet wmsInPlanReceivingOrderDet : wmsInPlanReceivingOrderDets) {
-                    sysOrderTypeCode = wmsInPlanReceivingOrder.getSysOrderTypeCode();
-                    coreSourceSysOrderTypeCode = wmsInPlanReceivingOrder.getCoreSourceSysOrderTypeCode();
-                    WmsInReceivingOrderDetDto wmsInReceivingOrderDet = new WmsInReceivingOrderDetDto();
-                    wmsInReceivingOrderDet.setCoreSourceOrderCode(wmsInPlanReceivingOrderDet.getCoreSourceOrderCode());
-                    wmsInReceivingOrderDet.setSourceOrderCode(wmsInPlanReceivingOrder.getPlanReceivingOrderCode());
-                    wmsInReceivingOrderDet.setSourceId(wmsInPlanReceivingOrderDet.getPlanReceivingOrderDetId());
-                    wmsInReceivingOrderDet.setLineStatus((byte)1);
-                    wmsInReceivingOrderDet.setLineNumber(wmsInPlanReceivingOrderDet.getLineNumber());
-                    wmsInReceivingOrderDet.setPlanQty(wmsInPlanReceivingOrderDet.getPlanQty());
-                    wmsInReceivingOrderDet.setMaterialId(wmsInPlanReceivingOrderDet.getMaterialId());
-                    wmsInReceivingOrderDet.setBatchCode(wmsInReceivingOrderDet.getBatchCode());
-                    wmsInReceivingOrderDet.setProductionTime(wmsInPlanReceivingOrderDet.getProductionTime());
-                    wmsInReceivingOrderDet.setActualQty(BigDecimal.ZERO);
-                    wmsInReceivingOrderDet.setCreateTime(new Date());
-                    wmsInReceivingOrderDet.setCreateUserId(sysUser.getUserId());
-                    wmsInReceivingOrderDet.setModifiedTime(new Date());
-                    wmsInReceivingOrderDet.setModifiedUserId(sysUser.getUserId());
-                    wmsInReceivingOrderDet.setOrgId(sysUser.getOrganizationId());
-                    wmsInReceivingOrderDet.setIfAllIssued((byte)0);
+                        //查找是否有条码
+                        SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
+                        searchWmsInnerMaterialBarcodeReOrder.setOrderId(wmsInPlanReceivingOrder.getPlanReceivingOrderId());
+                        searchWmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInPlanReceivingOrderDet.getPlanReceivingOrderDetId());
+                        searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode("IN-SPO");
+                        ResponseEntity<List<WmsInnerMaterialBarcodeReOrderDto>> listResponseEntity = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder);
+                        if(listResponseEntity.getCode()!=0){
+                            throw new BizErrorException(listResponseEntity.getCode(),listResponseEntity.getMessage());
+                        }
+                        List<WmsInReceivingOrderBarcode> barcodeList = new ArrayList<>();
+                        for (WmsInnerMaterialBarcodeReOrderDto datum : listResponseEntity.getData()) {
+                            WmsInReceivingOrderBarcode wmsInReceivingOrderBarcode = new WmsInReceivingOrderBarcode();
+                            wmsInReceivingOrderBarcode.setMaterialBarcodeReOrderId(datum.getMaterialBarcodeReOrderId());
+                            wmsInReceivingOrderBarcode.setMaterialBarcodeId(datum.getMaterialBarcodeId());
+                            barcodeList.add(wmsInReceivingOrderBarcode);
+                        }
+                        wmsInReceivingOrderDet.setWmsInReceivingOrderBarcodeList(barcodeList);
 
-                    //查找是否有条码
-                    SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
-                    searchWmsInnerMaterialBarcodeReOrder.setOrderId(wmsInPlanReceivingOrder.getPlanReceivingOrderId());
-                    searchWmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInPlanReceivingOrderDet.getPlanReceivingOrderDetId());
-                    searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode("IN-SPO");
-                    ResponseEntity<List<WmsInnerMaterialBarcodeReOrderDto>> listResponseEntity = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder);
-                    if(listResponseEntity.getCode()!=0){
-                        throw new BizErrorException(listResponseEntity.getCode(),listResponseEntity.getMessage());
+                        //更新表头为执行中
+                        wmsInPlanReceivingOrder.setOrderStatus((byte)2);
+
+                        receivingOrderDets.add(wmsInReceivingOrderDet);
                     }
-                    List<WmsInReceivingOrderBarcode> barcodeList = new ArrayList<>();
-                    for (WmsInnerMaterialBarcodeReOrderDto datum : listResponseEntity.getData()) {
-                        WmsInReceivingOrderBarcode wmsInReceivingOrderBarcode = new WmsInReceivingOrderBarcode();
-                        wmsInReceivingOrderBarcode.setMaterialBarcodeReOrderId(datum.getMaterialBarcodeReOrderId());
-                        wmsInReceivingOrderBarcode.setMaterialBarcodeId(datum.getMaterialBarcodeId());
-                        barcodeList.add(wmsInReceivingOrderBarcode);
+                    WmsInReceivingOrder wmsInReceivingOrder = new WmsInReceivingOrder();
+                    wmsInReceivingOrder.setSourceBigType((byte)1);
+                    wmsInReceivingOrder.setSourceSysOrderTypeCode(sysOrderTypeCode);
+                    wmsInReceivingOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                    wmsInReceivingOrder.setCreateUserId(sysUser.getUserId());
+                    wmsInReceivingOrder.setCreateTime(new Date());
+                    wmsInReceivingOrder.setWarehouseId(wmsInPlanReceivingOrder.getWarehouseId());
+                    wmsInReceivingOrder.setModifiedUserId(sysUser.getUserId());
+                    wmsInReceivingOrder.setModifiedTime(new Date());
+                    wmsInReceivingOrder.setStatus((byte)1);
+                    wmsInReceivingOrder.setOrgId(sysUser.getOrganizationId());
+                    wmsInReceivingOrder.setOrderStatus((byte)1);
+                    wmsInReceivingOrder.setWmsInReceivingOrderDets(receivingOrderDets);
+                    wmsInReceivingOrderService.save(wmsInReceivingOrder);
+                    break;
+                case "QMS-MIIO":
+                    //来料检验
+                    List<QmsIncomingInspectionOrderDto> qmsIncomingInspectionOrders = new ArrayList<>();
+                    for (WmsInPlanReceivingOrderDet wmsInPlanReceivingOrderDet : list) {
+
+                        //WmsInPlanReceivingOrder wmsInPlanReceivingOrder = wmsInPlanReceivingOrderMapper.selectByPrimaryKey(wmsInPlanReceivingOrderDet.getPlanReceivingOrderId());
+                        sysOrderTypeCode = wmsInPlanReceivingOrder.getSysOrderTypeCode();
+                        coreSourceSysOrderTypeCode = wmsInPlanReceivingOrder.getCoreSourceSysOrderTypeCode();
+
+                        QmsIncomingInspectionOrderDto qmsIncomingInspectionOrder = new QmsIncomingInspectionOrderDto();
+                        qmsIncomingInspectionOrder.setCoreSourceOrderCode(wmsInPlanReceivingOrderDet.getCoreSourceOrderCode());
+                        qmsIncomingInspectionOrder.setSourceOrderCode(wmsInPlanReceivingOrder.getPlanReceivingOrderCode());
+                        qmsIncomingInspectionOrder.setSourceId(wmsInPlanReceivingOrderDet.getPlanReceivingOrderDetId());
+                        qmsIncomingInspectionOrder.setWarehouseId(wmsInPlanReceivingOrder.getWarehouseId());
+                        qmsIncomingInspectionOrder.setMaterialId(wmsInPlanReceivingOrderDet.getMaterialId());
+                        qmsIncomingInspectionOrder.setOrderQty(wmsInPlanReceivingOrderDet.getPlanQty());
+                        qmsIncomingInspectionOrder.setSourceSysOrderTypeCode(sysOrderTypeCode);
+                        qmsIncomingInspectionOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                        qmsIncomingInspectionOrder.setInspectionStatus((byte)1);
+                        qmsIncomingInspectionOrders.add(qmsIncomingInspectionOrder);
                     }
-                    wmsInReceivingOrderDet.setWmsInReceivingOrderBarcodeList(barcodeList);
+                    ResponseEntity responseEntity =qmsFeignApi.batchAdd(qmsIncomingInspectionOrders);
+                    if(responseEntity.getCode()!=0){
+                        throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+                    }
+                    break;
+                case "IN-IWK":
+                    //上架作业
+                    //生成上架作业单
 
-                    //更新表头为执行中
-                    wmsInPlanReceivingOrder.setOrderStatus((byte)2);
+                    //获取默认收货库位
+                    SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                    searchBaseStorage.setWarehouseId(wmsInPlanReceivingOrder.getWarehouseId());
+                    searchBaseStorage.setStorageType((byte)2);
+                    List<BaseStorage> storageList = baseFeignApi.findList(searchBaseStorage).getData();
+                    if(storageList.size()<1){
+                        throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"未维护仓库收货库位");
+                    }
 
-                    receivingOrderDets.add(wmsInReceivingOrderDet);
-                }
-                WmsInReceivingOrder wmsInReceivingOrder = new WmsInReceivingOrder();
-                wmsInReceivingOrder.setSourceBigType((byte)1);
-                wmsInReceivingOrder.setSourceSysOrderTypeCode(sysOrderTypeCode);
-                wmsInReceivingOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
-                wmsInReceivingOrder.setCreateUserId(sysUser.getUserId());
-                wmsInReceivingOrder.setCreateTime(new Date());
-                wmsInReceivingOrder.setWarehouseId(wmsInPlanReceivingOrder.getWarehouseId());
-                wmsInReceivingOrder.setModifiedUserId(sysUser.getUserId());
-                wmsInReceivingOrder.setModifiedTime(new Date());
-                wmsInReceivingOrder.setStatus((byte)1);
-                wmsInReceivingOrder.setOrgId(sysUser.getOrganizationId());
-                wmsInReceivingOrder.setOrderStatus((byte)1);
-                wmsInReceivingOrder.setWmsInReceivingOrderDets(receivingOrderDets);
-                wmsInReceivingOrderService.save(wmsInReceivingOrder);
-                break;
-            case "QMS-MIIO":
-                //来料检验
-                List<QmsIncomingInspectionOrderDto> qmsIncomingInspectionOrders = new ArrayList<>();
-                for (WmsInPlanReceivingOrderDet wmsInPlanReceivingOrderDet : wmsInPlanReceivingOrderDets) {
+                    List<WmsInnerJobOrderDet> detList = new LinkedList<>();
+                    int lineNumber = 1;
+                    for (WmsInPlanReceivingOrderDet wmsInPlanReceivingOrderDet : list) {
+                        //WmsInPlanReceivingOrder wmsInPlanReceivingOrder = wmsInPlanReceivingOrderMapper.selectByPrimaryKey(wmsInPlanReceivingOrderDets.get(0).getPlanReceivingOrderId());
+                        sysOrderTypeCode = wmsInPlanReceivingOrder.getSysOrderTypeCode();
+                        coreSourceSysOrderTypeCode = wmsInPlanReceivingOrder.getCoreSourceSysOrderTypeCode();
+                        WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                        wmsInnerJobOrderDet.setCoreSourceOrderCode(wmsInPlanReceivingOrderDet.getCoreSourceOrderCode());
+                        wmsInnerJobOrderDet.setSourceOrderCode(wmsInPlanReceivingOrder.getPlanReceivingOrderCode());
+                        wmsInnerJobOrderDet.setSourceId(wmsInPlanReceivingOrderDet.getPlanReceivingOrderDetId());
+                        wmsInnerJobOrderDet.setLineNumber(lineNumber+"");
+                        wmsInnerJobOrderDet.setMaterialId(wmsInPlanReceivingOrderDet.getMaterialId());
+                        wmsInnerJobOrderDet.setPlanQty(wmsInPlanReceivingOrderDet.getPlanQty());
+                        wmsInnerJobOrderDet.setLineStatus((byte)1);
+                        wmsInnerJobOrderDet.setOutStorageId(storageList.get(0).getStorageId());
 
-                    //WmsInPlanReceivingOrder wmsInPlanReceivingOrder = wmsInPlanReceivingOrderMapper.selectByPrimaryKey(wmsInPlanReceivingOrderDet.getPlanReceivingOrderId());
-                    sysOrderTypeCode = wmsInPlanReceivingOrder.getSysOrderTypeCode();
-                    coreSourceSysOrderTypeCode = wmsInPlanReceivingOrder.getCoreSourceSysOrderTypeCode();
-
-                    QmsIncomingInspectionOrderDto qmsIncomingInspectionOrder = new QmsIncomingInspectionOrderDto();
-                    qmsIncomingInspectionOrder.setCoreSourceOrderCode(wmsInPlanReceivingOrderDet.getCoreSourceOrderCode());
-                    qmsIncomingInspectionOrder.setSourceOrderCode(wmsInPlanReceivingOrder.getPlanReceivingOrderCode());
-                    qmsIncomingInspectionOrder.setSourceId(wmsInPlanReceivingOrderDet.getPlanReceivingOrderDetId());
-                    qmsIncomingInspectionOrder.setMaterialId(wmsInPlanReceivingOrderDet.getMaterialId());
-                    qmsIncomingInspectionOrder.setOrderQty(wmsInPlanReceivingOrderDet.getPlanQty());
-                    qmsIncomingInspectionOrder.setInspectionStatus((byte)1);
-                    qmsIncomingInspectionOrders.add(qmsIncomingInspectionOrder);
-                }
-                ResponseEntity responseEntity =qmsFeignApi.batchAdd(qmsIncomingInspectionOrders);
-                if(responseEntity.getCode()!=0){
-                    throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
-                }
-                break;
-            case "IN-IWK":
-                //上架作业
-                //生成上架作业单
-                List<WmsInnerJobOrderDet> detList = new LinkedList<>();
-                int lineNumber = 1;
-                for (WmsInPlanReceivingOrderDet wmsInPlanReceivingOrderDet : wmsInPlanReceivingOrderDets) {
-                    //WmsInPlanReceivingOrder wmsInPlanReceivingOrder = wmsInPlanReceivingOrderMapper.selectByPrimaryKey(wmsInPlanReceivingOrderDets.get(0).getPlanReceivingOrderId());
-                    sysOrderTypeCode = wmsInPlanReceivingOrder.getSysOrderTypeCode();
-                    coreSourceSysOrderTypeCode = wmsInPlanReceivingOrder.getCoreSourceSysOrderTypeCode();
-                    WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
-                    wmsInnerJobOrderDet.setCoreSourceOrderCode(wmsInPlanReceivingOrderDet.getCoreSourceOrderCode());
-                    wmsInnerJobOrderDet.setSourceOrderCode(wmsInPlanReceivingOrder.getPlanReceivingOrderCode());
-                    wmsInnerJobOrderDet.setSourceId(wmsInPlanReceivingOrderDet.getPlanReceivingOrderDetId());
-                    wmsInnerJobOrderDet.setLineNumber(lineNumber+"");
-                    wmsInnerJobOrderDet.setMaterialId(wmsInPlanReceivingOrderDet.getMaterialId());
-                    wmsInnerJobOrderDet.setPlanQty(wmsInPlanReceivingOrderDet.getPlanQty());
-                    wmsInnerJobOrderDet.setLineStatus((byte)1);
-
-                    //查找是否有条码
+                        //查找是否有条码
 //                    SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
 //                    searchWmsInnerMaterialBarcodeReOrder.setOrderId(wmsInPlanReceivingOrder.getPlanReceivingOrderId());
 //                    searchWmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInPlanReceivingOrderDet.getPlanReceivingOrderDetId());
@@ -452,40 +490,43 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
 //                        wmsInReceivingOrderBarcode.setMaterialBarcodeId(datum.getMaterialBarcodeId());
 //                        barcodeList.add(wmsInReceivingOrderBarcode);
 //                    }
-                    detList.add(wmsInnerJobOrderDet);
-                    lineNumber++;
-                }
-                WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
-                wmsInnerJobOrder.setSourceSysOrderTypeCode(sysOrderTypeCode);
-                wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
-                wmsInnerJobOrder.setJobOrderType((byte)1);
-                wmsInnerJobOrder.setOrderStatus((byte)1);
-                wmsInnerJobOrder.setCreateUserId(sysUser.getUserId());
-                wmsInnerJobOrder.setCreateTime(new Date());
-                wmsInnerJobOrder.setModifiedUserId(sysUser.getUserId());
-                wmsInnerJobOrder.setModifiedTime(new Date());
-                wmsInnerJobOrder.setStatus((byte)1);
-                wmsInnerJobOrder.setOrgId(sysUser.getOrganizationId());
-                wmsInnerJobOrder.setSourceBigType((byte)1);
-                wmsInnerJobOrder.setWmsInPutawayOrderDets(detList);
+                        detList.add(wmsInnerJobOrderDet);
+                        lineNumber++;
+                    }
+                    WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+                    wmsInnerJobOrder.setSourceSysOrderTypeCode(sysOrderTypeCode);
+                    wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                    wmsInnerJobOrder.setJobOrderType((byte)1);
+                    wmsInnerJobOrder.setOrderStatus((byte)1);
+                    wmsInnerJobOrder.setCreateUserId(sysUser.getUserId());
+                    wmsInnerJobOrder.setCreateTime(new Date());
+                    wmsInnerJobOrder.setModifiedUserId(sysUser.getUserId());
+                    wmsInnerJobOrder.setModifiedTime(new Date());
+                    wmsInnerJobOrder.setStatus((byte)1);
+                    wmsInnerJobOrder.setOrgId(sysUser.getOrganizationId());
+                    wmsInnerJobOrder.setSourceBigType((byte)1);
+                    wmsInnerJobOrder.setWmsInPutawayOrderDets(detList);
 
-                ResponseEntity rs = innerFeignApi.add(wmsInnerJobOrder);
-                if(rs.getCode() != 0){
-                    throw new BizErrorException(rs.getCode(),rs.getMessage());
-                }
-                break;
-            default:
-                throw new BizErrorException("单据流配置错误");
+                    ResponseEntity rs = innerFeignApi.add(wmsInnerJobOrder);
+                    if(rs.getCode() != 0){
+                        throw new BizErrorException(rs.getCode(),rs.getMessage());
+                    }
+                    break;
+                default:
+                    throw new BizErrorException("单据流配置错误");
+            }
         }
         int num = 0;
-        for (WmsInPlanReceivingOrderDet wmsInPlanReceivingOrderDet : wmsInPlanReceivingOrderDets) {
-            wmsInPlanReceivingOrderDet.setIfAllIssued((byte)1);
-            wmsInPlanReceivingOrderDet.setLineStatus((byte)2);
-            num = wmsInPlanReceivingOrderDetMapper.updateByPrimaryKeySelective(wmsInPlanReceivingOrderDet);
-            WmsInPlanReceivingOrder wms = new WmsInPlanReceivingOrder();
-            wms.setPlanReceivingOrderId(wmsInPlanReceivingOrder.getPlanReceivingOrderId());
-            wms.setOrderStatus((byte)2);
-            wmsInPlanReceivingOrderMapper.updateByPrimaryKeySelective(wms);
+        if(set.size()>0){
+            for (WmsInPlanReceivingOrderDet wmsInPlanReceivingOrderDet : wmsInPlanReceivingOrderDets) {
+                wmsInPlanReceivingOrderDet.setIfAllIssued((byte)1);
+                wmsInPlanReceivingOrderDet.setLineStatus((byte)2);
+                num = wmsInPlanReceivingOrderDetMapper.updateByPrimaryKeySelective(wmsInPlanReceivingOrderDet);
+                WmsInPlanReceivingOrder wms = new WmsInPlanReceivingOrder();
+                wms.setPlanReceivingOrderId(wmsInPlanReceivingOrderDet.getPlanReceivingOrderId());
+                wms.setOrderStatus((byte)2);
+                wmsInPlanReceivingOrderMapper.updateByPrimaryKeySelective(wms);
+            }
         }
         return num;
     }

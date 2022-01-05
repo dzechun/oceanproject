@@ -1,14 +1,20 @@
 package com.fantechs.common.base.general.entity.mes.sfc;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
-import javax.persistence.*;
-import lombok.Data;
+import java.util.List;
+
+;
+;
 
 /**
  * 生产管理-产品栈板表
@@ -158,6 +164,12 @@ public class MesSfcProductPallet extends ValidGroup implements Serializable {
     @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
+
+    /**
+     * 栈板明细
+     */
+    @ApiModelProperty(name="palletDets",value = "栈板明细")
+    private List<MesSfcProductPalletDet> palletDets = new ArrayList<>();
 
     private String option1;
 

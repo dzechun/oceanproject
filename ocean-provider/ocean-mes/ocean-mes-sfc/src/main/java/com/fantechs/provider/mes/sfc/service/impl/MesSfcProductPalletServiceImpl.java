@@ -5,8 +5,11 @@ import com.fantechs.common.base.general.dto.mes.sfc.MesSfcPalletReportDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDetDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDto;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPalletDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.mes.sfc.mapper.MesSfcProductPalletDetMapper;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcProductPalletMapper;
 import com.fantechs.provider.mes.sfc.service.MesSfcProductPalletDetService;
 import com.fantechs.provider.mes.sfc.service.MesSfcProductPalletService;
@@ -28,6 +31,8 @@ public class MesSfcProductPalletServiceImpl extends BaseService<MesSfcProductPal
 
     @Resource
     private MesSfcProductPalletMapper mesSfcProductPalletMapper;
+    @Resource
+    private MesSfcProductPalletDetMapper mesSfcProductPalletDetMapper;
 
     @Resource
     MesSfcProductPalletDetService mesSfcProductPalletDetService;
@@ -35,6 +40,21 @@ public class MesSfcProductPalletServiceImpl extends BaseService<MesSfcProductPal
     @Override
     public List<MesSfcProductPalletDto> findList(Map<String, Object> map) {
         return mesSfcProductPalletMapper.findList(map);
+    }
+
+    @Override
+    public int save(MesSfcProductPallet record) {
+        int i = mesSfcProductPalletMapper.insertUseGeneratedKeys(record);
+
+        List<MesSfcProductPalletDet> palletDets = record.getPalletDets();
+        if(StringUtils.isNotEmpty(palletDets)){
+            for (MesSfcProductPalletDet mesSfcProductPalletDet : palletDets){
+                mesSfcProductPalletDet.setProductPalletId(record.getProductPalletId());
+            }
+            mesSfcProductPalletDetMapper.insertList(palletDets);
+        }
+
+        return i;
     }
 
     @Override

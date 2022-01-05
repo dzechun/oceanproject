@@ -84,7 +84,7 @@
 
         FROM wms_inner_job_order wipo
         LEFT JOIN base_warehouse bw ON wipo.warehouse_id = bw.warehouse_id
-        LEFT JOIN base_worker bwr ON wipo.worker_id = bwr.user_id
+        LEFT JOIN base_worker bwr ON wipo.worker_id = bwr.user_id AND wipo.warehouse_id=bwr.warehouse_id
         LEFT JOIN sys_user wr ON bwr.user_id = wr.user_id
         LEFT JOIN sys_user su ON wipo.create_user_id = su.user_id
         LEFT JOIN sys_user sus ON wipo.modified_user_id = sus.user_id

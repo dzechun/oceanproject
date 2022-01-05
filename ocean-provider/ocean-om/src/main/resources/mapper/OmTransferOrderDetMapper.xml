@@ -45,6 +45,7 @@
         <result column="out_warehouse_name" jdbcType="VARCHAR" property="outWarehouseName"/>
         <result column="in_warehouse_name" jdbcType="VARCHAR" property="inWarehouseName"/>
         <result column="out_warehouse_id" jdbcType="BIGINT" property="outWarehouseId"/>
+        <result column="in_warehouse_id" jdbcType="BIGINT" property="inWarehouseId"/>
     </resultMap>
     <sql id="Base_Column_List">
         otod.transfer_order_det_id,
@@ -71,7 +72,8 @@
         otod.modified_time
   </sql>
     <select id="findList" resultMap="BaseResultMapDto">
-        SELECT<include refid="Base_Column_List"/>,oto.transfer_order_code,bw.warehouse_id as out_warehouse_id,
+        SELECT<include refid="Base_Column_List"/>,oto.transfer_order_code,
+        bw.warehouse_id as out_warehouse_id,bw1.warehouse_id as in_warehouse_id,
         bw.warehouse_name as out_warehouse_name,bw1.warehouse_name as in_warehouse_name,
         bm.material_code,bm.material_name,bm.material_desc,bm.material_version,bmb.main_unit,
         IFNULL(bmb.volume,0) as volume,IFNULL(bmb.net_weight,0) as net_weight,IFNULL(bmb.gross_weight,0) as gross_weight,su.user_name as

@@ -77,7 +77,7 @@
         bs.storage_code,bs.storage_type,bs.warehouse_id,bw.warehouse_name,bo.organization_name,bis.inventory_status_name,
         wimb.barcode as barcode,wimb.color_box_code as colorBoxCode,wimb.carton_code as cartonCode,wimb.pallet_code as palletCode,
         wimb.batch_code as batchCode,wimb.production_time as productionTime,wimb.material_qty as materialQty,wimb.material_id as materialId,
-        wimb.barcode_type as barcodeType,bm.material_code as material_code,
+        wimb.barcode_type as barcodeType,bm.material_code as material_code,bss.supplier_name,
         bm.material_name as material_name,bps.package_specification_quantity,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name
         from wms_inner_inventory_det wiid
@@ -87,6 +87,7 @@
         LEFT JOIN wms_inner_material_barcode wimb ON wiid.material_barcode_id = wimb.material_barcode_id
         LEFT JOIN base_material bm ON wimb.material_id = bm.material_id
         LEFT JOIN base_material_tab bmt ON bm.material_id = bmt.material_id
+        LEFT JOIN base_supplier bss on bss.supplier_id = wimb.supplier_id
         LEFT JOIN base_package_specification bps ON bmt.package_specification_id = bps.package_specification_id
         LEFT JOIN sys_user su ON wiid.create_user_id = su.user_id
         LEFT JOIN sys_user sus ON wiid.modified_user_id = sus.user_id
@@ -94,6 +95,9 @@
         <where>
             <if test="warehouseName!=null and warehouseName!=''">
                 and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
+            </if>
+            <if test="inventoryStatusName!=null and inventoryStatusName!=''">
+                and bis.inventory_status_name = #{inventoryStatusName}
             </if>
             <if test="barcode!=null and barcode!=''">
                 and wimb.barcode = #{barcode}

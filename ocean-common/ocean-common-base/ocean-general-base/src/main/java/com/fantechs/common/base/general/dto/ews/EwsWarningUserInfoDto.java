@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.entity.ews.EwsWarningUserInfo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 
@@ -22,6 +23,13 @@ public class EwsWarningUserInfoDto extends EwsWarningUserInfo implements Seriali
     @ApiModelProperty(name = "nickName",value = "用户名称")
     @Excel(name = "用户名称", height = 20, width = 30,orderNum="2")
     private String nickName;
+
+    /**
+     * 邮箱地址
+     */
+    @ApiModelProperty(name="mailAddress",value = "邮箱地址")
+    @Excel(name = "邮箱地址", height = 20, width = 30,orderNum="6")
+    private String mailAddress;
 
     /**
      * 创建用户名称
