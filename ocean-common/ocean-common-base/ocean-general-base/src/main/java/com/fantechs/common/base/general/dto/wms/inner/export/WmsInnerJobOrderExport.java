@@ -21,7 +21,7 @@ public class WmsInnerJobOrderExport implements Serializable {
     /**
      * 来源单据类型
      */
-    @Excel(name = "来源单据类型",  height = 20, width = 30,replace = {"OUT-SO_销售订单","MES-WO_生产订单","IN-PO_采购订单","OUT-OOO_其他出库单"})
+    @Excel(name = "来源单据类型",  height = 20, width = 30,replace = {"拣货作业单_OUT-IWK","销售订单_OUT-SO","生产订单_MES-WO","采购订单_IN-PO","其他出库单_OUT-OOO"})
     private String sourceSysOrderTypeCode;
 
     /**
@@ -69,7 +69,7 @@ public class WmsInnerJobOrderExport implements Serializable {
     /**
      * 单据状态
      */
-    @Excel(name = "单据状态",  height = 20, width = 30,replace = {"1_待分配","2_分配中","3_待作业","4_作业中","5_完成"})
+    @Excel(name = "单据状态",  height = 20, width = 30,replace = {"待分配_1","分配中_2","待作业_3","作业中_4","完成_5"})
     private String orderStatus;
 
     /**
@@ -183,7 +183,7 @@ public class WmsInnerJobOrderExport implements Serializable {
     /**
      * 行状态
      */
-    @Excel(name = "行状态",  height = 20, width = 30,replace = {"1_待分配","2_待作业","3_完成"})
+    @Excel(name = "行状态",  height = 20, width = 30,replace = {"待分配_1","待作业_2","完成_3"})
     private String lineStatus;
 
     /**
@@ -213,7 +213,7 @@ public class WmsInnerJobOrderExport implements Serializable {
     /**
      * 非系统条码
      */
-    @Excel(name = "非系统条码",  height = 20, width = 30,replace = {"1_是","0_否"})
+    @Excel(name = "非系统条码",  height = 20, width = 30,replace = {"是_1","否_0"})
     private String ifSysBarcode;
 
     /**
