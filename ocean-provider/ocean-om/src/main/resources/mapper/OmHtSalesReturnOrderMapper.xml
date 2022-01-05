@@ -9,7 +9,6 @@
         <result column="sales_return_order_id" jdbcType="BIGINT" property="salesReturnOrderId"/>
         <result column="sales_return_order_code" jdbcType="VARCHAR" property="salesReturnOrderCode"/>
         <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode"/>
-        <result column="material_owner_id" jdbcType="BIGINT" property="materialOwnerId"/>
         <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty"/>
         <result column="total_receiving_qty" jdbcType="DECIMAL" property="totalReceivingQty"/>
         <result column="total_qty" jdbcType="DECIMAL" property="totalQty"/>
@@ -43,7 +42,6 @@
         osro.sales_return_order_id,
         osro.sales_return_order_code,
         osro.related_order_code,
-        osro.material_owner_id,
         osro.total_issue_qty,
         osro.total_receiving_qty,
         osro.total_qty,
@@ -84,7 +82,6 @@
         bmt on bmt.material_id = osrod.material_id where osrod.sales_return_order_id=osro.sales_return_order_id) as
         total_gross_weight
         FROM om_ht_sales_return_order osro
-        LEFT JOIN base_material_owner bmo ON bmo.material_owner_id = osro.material_owner_id
         left join sys_user su on osro.create_user_id = su.user_id
         left join sys_user sus on osro.modified_user_id = sus.user_id
         left join base_organization bo on osro.org_id = bo.organization_id

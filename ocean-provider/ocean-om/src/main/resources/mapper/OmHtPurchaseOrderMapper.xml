@@ -157,7 +157,7 @@
         and date_format(ohpo.create_time, '%Y-%m-%d') <![CDATA[ <= ]]> #{endTime}
       </if>
     </where>
-    group by ohpo.purchase_order_id
+    group by ohpo.ht_purchase_order_id
     order by ohpo.create_time desc
   </select>
 

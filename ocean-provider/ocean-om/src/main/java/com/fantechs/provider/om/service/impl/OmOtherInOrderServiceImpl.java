@@ -259,7 +259,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(user.getUserId());
         entity.setOrgId(user.getOrganizationId());
-        omOtherInOrderMapper.updateByPrimaryKeySelective(entity);
+        i = omOtherInOrderMapper.updateByPrimaryKeySelective(entity);
 
         //保存履历表
         OmHtOtherInOrder omHtOtherInOrder = new OmHtOtherInOrder();
@@ -286,9 +286,9 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         //删除更新之外的明细
         Example example1 = new Example(OmOtherInOrderDet.class);
         Example.Criteria criteria1 = example1.createCriteria();
-        criteria1.andEqualTo("purchaseOrderId", entity.getOtherInOrderId());
+        criteria1.andEqualTo("otherInOrderId", entity.getOtherInOrderId());
         if (idList.size() > 0) {
-            criteria1.andNotIn("purchaseOrderDetId", idList);
+            criteria1.andNotIn("otherInOrderDetId", idList);
         }
         omOtherInOrderDetMapper.deleteByExample(example1);
 
@@ -431,7 +431,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     wmsInPlanReceivingOrderDetDto.setLineNumber(lineNumber + "");
                     wmsInPlanReceivingOrderDetDto.setSourceId(omOtherInOrderDet.getOtherInOrderDetId());
                     wmsInPlanReceivingOrderDetDto.setMaterialId(omOtherInOrderDet.getMaterialId());
-                    wmsInPlanReceivingOrderDetDto.setPlanQty(omOtherInOrderDet.getOrderQty());
+                    wmsInPlanReceivingOrderDetDto.setPlanQty(omOtherInOrderDet.getQty());
                     wmsInPlanReceivingOrderDetDto.setLineStatus((byte) 1);
                     wmsInPlanReceivingOrderDetDto.setActualQty(omOtherInOrderDet.getReceivingQty());
                     wmsInPlanReceivingOrderDetDto.setOperatorUserId(user.getUserId());
@@ -486,7 +486,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     wmsInReceivingOrderDetDto.setLineNumber(lineNumber + "");
                     wmsInReceivingOrderDetDto.setSourceId(omOtherInOrderDet.getOtherInOrderDetId());
                     wmsInReceivingOrderDetDto.setMaterialId(omOtherInOrderDet.getMaterialId());
-                    wmsInReceivingOrderDetDto.setPlanQty(omOtherInOrderDet.getOrderQty());
+                    wmsInReceivingOrderDetDto.setPlanQty(omOtherInOrderDet.getQty());
                     wmsInReceivingOrderDetDto.setLineStatus((byte) 1);
                     wmsInReceivingOrderDetDto.setActualQty(omOtherInOrderDet.getReceivingQty());
                     wmsInReceivingOrderDetDto.setOperatorUserId(user.getUserId());
@@ -540,7 +540,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     qmsIncomingInspectionOrderDto.setSourceId(omOtherInOrderDet.getOtherInOrderDetId());
                     qmsIncomingInspectionOrderDto.setMaterialId(omOtherInOrderDet.getMaterialId());
                     qmsIncomingInspectionOrderDto.setWarehouseId(omOtherInOrderDet.getWarehouseId());
-                    qmsIncomingInspectionOrderDto.setOrderQty(omOtherInOrderDet.getOrderQty());
+                    qmsIncomingInspectionOrderDto.setOrderQty(omOtherInOrderDet.getQty());
                     qmsIncomingInspectionOrderDto.setInspectionStatus((byte) 1);
                     qmsIncomingInspectionOrderDto.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                     qmsIncomingInspectionOrderDto.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
@@ -597,7 +597,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     wmsInInPlanOrderDet.setLineNumber(lineNumber + "");
                     wmsInInPlanOrderDet.setSourceId(omOtherInOrderDet.getOtherInOrderDetId());
                     wmsInInPlanOrderDet.setMaterialId(omOtherInOrderDet.getMaterialId());
-                    wmsInInPlanOrderDet.setPlanQty(omOtherInOrderDet.getOrderQty());
+                    wmsInInPlanOrderDet.setPlanQty(omOtherInOrderDet.getQty());
                     wmsInInPlanOrderDet.setLineStatus((byte) 1);
                     detList.add(wmsInInPlanOrderDet);
                     omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().add(omOtherInOrderDet.getQty()));
@@ -645,6 +645,12 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     OmOtherInOrderDto order = omOtherInOrderDto.get(0);
                     coreSourceSysOrderTypeCode = order.getSysOrderTypeCode();
 
+                    //查询默认收货库位
+                    SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                    searchBaseStorage.setWarehouseId(omOtherInOrderDet.getWarehouseId());
+                    searchBaseStorage.setStorageType((byte)2);
+                    List<BaseStorage> data = baseFeignApi.findList(searchBaseStorage).getData();
+
                     WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
                     wmsInnerJobOrderDet.setCoreSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
                     wmsInnerJobOrderDet.setSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
@@ -653,6 +659,9 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     wmsInnerJobOrderDet.setMaterialId(omOtherInOrderDet.getMaterialId());
                     wmsInnerJobOrderDet.setPlanQty(omOtherInOrderDet.getQty());
                     wmsInnerJobOrderDet.setLineStatus((byte) 1);
+                    if(StringUtils.isNotEmpty(data))
+                        wmsInnerJobOrderDet.setOutStorageId(data.get(0).getStorageId());
+
                     detList.add(wmsInnerJobOrderDet);
                     omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().add(omOtherInOrderDet.getQty()));
                     if (omOtherInOrderDet.getTotalIssueQty().compareTo(omOtherInOrderDet.getOrderQty()) == 0) {

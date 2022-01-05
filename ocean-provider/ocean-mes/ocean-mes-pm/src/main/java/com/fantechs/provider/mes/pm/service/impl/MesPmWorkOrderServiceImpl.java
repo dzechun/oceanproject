@@ -422,7 +422,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                     wmsInPlanReceivingOrderDetDto.setLineNumber(lineNumber + "");
                     wmsInPlanReceivingOrderDetDto.setSourceId(mesPmWorkOrder.getWorkOrderId());
                     wmsInPlanReceivingOrderDetDto.setMaterialId(mesPmWorkOrder.getMaterialId());
-                    wmsInPlanReceivingOrderDetDto.setPlanQty(mesPmWorkOrder.getWorkOrderQty());  //完工数量
+                    wmsInPlanReceivingOrderDetDto.setPlanQty(mesPmWorkOrder.getQty());
                     wmsInPlanReceivingOrderDetDto.setLineStatus((byte) 1);
                     wmsInPlanReceivingOrderDetDto.setActualQty(mesPmWorkOrder.getOutputQty());
                     wmsInPlanReceivingOrderDetDto.setOperatorUserId(user.getUserId());
@@ -469,7 +469,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                     wmsInReceivingOrderDetDto.setLineNumber(lineNumber + "");
                     wmsInReceivingOrderDetDto.setSourceId(mesPmWorkOrder.getWorkOrderId());
                     wmsInReceivingOrderDetDto.setMaterialId(mesPmWorkOrder.getMaterialId());
-                    wmsInReceivingOrderDetDto.setPlanQty(mesPmWorkOrder.getWorkOrderQty());
+                    wmsInReceivingOrderDetDto.setPlanQty(mesPmWorkOrder.getQty());
                     wmsInReceivingOrderDetDto.setLineStatus((byte) 1);
                     wmsInReceivingOrderDetDto.setActualQty(mesPmWorkOrder.getOutputQty());
                     wmsInReceivingOrderDetDto.setOperatorUserId(user.getUserId());
@@ -562,7 +562,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                     wmsInInPlanOrderDet.setLineNumber(lineNumber + "");
                     wmsInInPlanOrderDet.setSourceId(mesPmWorkOrder.getWorkOrderId());
                     wmsInInPlanOrderDet.setMaterialId(mesPmWorkOrder.getMaterialId());
-                    wmsInInPlanOrderDet.setPlanQty(mesPmWorkOrder.getOutputQty());
+                    wmsInInPlanOrderDet.setPlanQty(mesPmWorkOrder.getQty());
                     wmsInInPlanOrderDet.setLineStatus((byte) 1);
                     detList.add(wmsInInPlanOrderDet);
                     mesPmWorkOrder.setTotalIssueQty(mesPmWorkOrder.getTotalIssueQty().add(mesPmWorkOrder.getQty()));

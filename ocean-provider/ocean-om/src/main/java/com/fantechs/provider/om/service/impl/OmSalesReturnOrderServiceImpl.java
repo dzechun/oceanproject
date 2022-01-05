@@ -159,7 +159,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
         }
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(user.getUserId());
-        omSalesReturnOrderMapper.updateByPrimaryKeySelective(entity);
+        i = omSalesReturnOrderMapper.updateByPrimaryKeySelective(entity);
 
         //保存履历表
         OmHtSalesReturnOrder omHtSalesReturnOrder = new OmHtSalesReturnOrder();
@@ -186,9 +186,9 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
         //删除更新之外的明细
         Example example1 = new Example(OmSalesReturnOrderDet.class);
         Example.Criteria criteria1 = example1.createCriteria();
-        criteria1.andEqualTo("purchaseOrderId", entity.getSalesReturnOrderId());
+        criteria1.andEqualTo("salesReturnOrderId", entity.getSalesReturnOrderId());
         if (idList.size() > 0) {
-            criteria1.andNotIn("purchaseOrderDetId", idList);
+            criteria1.andNotIn("salesReturnOrderDetId", idList);
         }
         omSalesReturnOrderDetMapper.deleteByExample(example1);
 
@@ -353,7 +353,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     wmsInPlanReceivingOrderDetDto.setLineNumber(lineNumber + "");
                     wmsInPlanReceivingOrderDetDto.setSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
                     wmsInPlanReceivingOrderDetDto.setMaterialId(omSalesReturnOrderDet.getMaterialId());
-                    wmsInPlanReceivingOrderDetDto.setPlanQty(omSalesReturnOrderDet.getOrderQty());
+                    wmsInPlanReceivingOrderDetDto.setPlanQty(omSalesReturnOrderDet.getQty());
                     wmsInPlanReceivingOrderDetDto.setLineStatus((byte) 1);
                     wmsInPlanReceivingOrderDetDto.setActualQty(omSalesReturnOrderDet.getReceivingQty());
                     wmsInPlanReceivingOrderDetDto.setOperatorUserId(user.getUserId());
@@ -407,7 +407,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     wmsInReceivingOrderDetDto.setLineNumber(lineNumber + "");
                     wmsInReceivingOrderDetDto.setSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
                     wmsInReceivingOrderDetDto.setMaterialId(omSalesReturnOrderDet.getMaterialId());
-                    wmsInReceivingOrderDetDto.setPlanQty(omSalesReturnOrderDet.getOrderQty());
+                    wmsInReceivingOrderDetDto.setPlanQty(omSalesReturnOrderDet.getQty());
                     wmsInReceivingOrderDetDto.setLineStatus((byte) 1);
                     wmsInReceivingOrderDetDto.setActualQty(omSalesReturnOrderDet.getReceivingQty());
                     wmsInReceivingOrderDetDto.setOperatorUserId(user.getUserId());
@@ -461,7 +461,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     qmsIncomingInspectionOrderDto.setSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
                     qmsIncomingInspectionOrderDto.setMaterialId(omSalesReturnOrderDet.getMaterialId());
                     qmsIncomingInspectionOrderDto.setWarehouseId(omSalesReturnOrderDet.getWarehouseId());
-                    qmsIncomingInspectionOrderDto.setOrderQty(omSalesReturnOrderDet.getOrderQty());
+                    qmsIncomingInspectionOrderDto.setOrderQty(omSalesReturnOrderDet.getQty());
                     qmsIncomingInspectionOrderDto.setInspectionStatus((byte) 1);
                     qmsIncomingInspectionOrderDto.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                     qmsIncomingInspectionOrderDto.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
@@ -518,7 +518,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     wmsInInPlanOrderDet.setLineNumber(lineNumber + "");
                     wmsInInPlanOrderDet.setSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
                     wmsInInPlanOrderDet.setMaterialId(omSalesReturnOrderDet.getMaterialId());
-                    wmsInInPlanOrderDet.setPlanQty(omSalesReturnOrderDet.getOrderQty());
+                    wmsInInPlanOrderDet.setPlanQty(omSalesReturnOrderDet.getQty());
                     wmsInInPlanOrderDet.setLineStatus((byte) 1);
                     detList.add(wmsInInPlanOrderDet);
                     omSalesReturnOrderDet.setTotalIssueQty(omSalesReturnOrderDet.getTotalIssueQty().add(omSalesReturnOrderDet.getQty()));

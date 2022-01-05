@@ -166,7 +166,6 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
     @Override
     public int update(OmPurchaseOrder entity) {
-
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         entity.setModifiedUserId(user.getUserId());
@@ -306,7 +305,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                     wmsInPlanReceivingOrderDetDto.setLineNumber(lineNumber + "");
                     wmsInPlanReceivingOrderDetDto.setSourceId(omPurchaseOrderDet.getPurchaseOrderDetId());
                     wmsInPlanReceivingOrderDetDto.setMaterialId(omPurchaseOrderDet.getMaterialId());
-                    wmsInPlanReceivingOrderDetDto.setPlanQty(omPurchaseOrderDet.getOrderQty());
+                    wmsInPlanReceivingOrderDetDto.setPlanQty(omPurchaseOrderDet.getQty());
                     wmsInPlanReceivingOrderDetDto.setLineStatus((byte) 1);
                     wmsInPlanReceivingOrderDetDto.setActualQty(omPurchaseOrderDet.getActualQty());
                     wmsInPlanReceivingOrderDetDto.setOperatorUserId(user.getUserId());
@@ -367,7 +366,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                     wmsInReceivingOrderDetDto.setLineNumber(lineNumber + "");
                     wmsInReceivingOrderDetDto.setSourceId(omPurchaseOrderDet.getPurchaseOrderDetId());
                     wmsInReceivingOrderDetDto.setMaterialId(omPurchaseOrderDet.getMaterialId());
-                    wmsInReceivingOrderDetDto.setPlanQty(omPurchaseOrderDet.getOrderQty());
+                    wmsInReceivingOrderDetDto.setPlanQty(omPurchaseOrderDet.getQty());
                     wmsInReceivingOrderDetDto.setLineStatus((byte) 1);
                     wmsInReceivingOrderDetDto.setActualQty(omPurchaseOrderDet.getActualQty());
                     wmsInReceivingOrderDetDto.setOperatorUserId(user.getUserId());
@@ -427,7 +426,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                     qmsIncomingInspectionOrderDto.setSourceId(omPurchaseOrderDet.getPurchaseOrderDetId());
                     qmsIncomingInspectionOrderDto.setMaterialId(omPurchaseOrderDet.getMaterialId());
                     qmsIncomingInspectionOrderDto.setWarehouseId(order.getWarehouseId());
-                    qmsIncomingInspectionOrderDto.setOrderQty(omPurchaseOrderDet.getOrderQty());
+                    qmsIncomingInspectionOrderDto.setOrderQty(omPurchaseOrderDet.getQty());
                     qmsIncomingInspectionOrderDto.setInspectionStatus((byte) 1);
                     qmsIncomingInspectionOrderDto.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                     qmsIncomingInspectionOrderDto.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
@@ -486,7 +485,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                     wmsInInPlanOrderDet.setLineNumber(lineNumber + "");
                     wmsInInPlanOrderDet.setSourceId(omPurchaseOrderDet.getPurchaseOrderDetId());
                     wmsInInPlanOrderDet.setMaterialId(omPurchaseOrderDet.getMaterialId());
-                    wmsInInPlanOrderDet.setPlanQty(omPurchaseOrderDet.getOrderQty());
+                    wmsInInPlanOrderDet.setPlanQty(omPurchaseOrderDet.getQty());
                     wmsInInPlanOrderDet.setLineStatus((byte) 1);
                     detList.add(wmsInInPlanOrderDet);
                     omPurchaseOrderDet.setTotalIssueQty(omPurchaseOrderDet.getTotalIssueQty().add(omPurchaseOrderDet.getQty()));
