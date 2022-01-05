@@ -24,4 +24,6 @@ public interface WmsInnerMaterialBarcodeMapper extends MyMapper<WmsInnerMaterial
     //获取已打印物料总数量
     Integer getTotalMaterialQty(SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode);
 
+    //获取已打印物料总数量
+    int batchUpdate(@Param("list") List<WmsInnerMaterialBarcode> list);
 }

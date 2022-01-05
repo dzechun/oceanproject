@@ -8,8 +8,11 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
+import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
@@ -22,6 +25,7 @@ import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJo
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrderReJo;
+import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrderDet;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -29,6 +33,7 @@ import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.guest.eng.EngFeignApi;
+import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.wms.inner.mapper.*;
@@ -67,6 +72,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
     private RedisUtil redisUtil;
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private OMFeignApi omFeignApi;
     @Resource
     private WmsInnerInventoryDetMapper wmsInnerInventoryDetMapper;
     @Resource
@@ -364,6 +371,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         wmsInnerPdaJobOrderDet.setInStorageId(wmsInnerJobOrderDet.getInStorageId());
         wmsInnerPdaJobOrderDet.setOutStorageId(wmsInnerJobOrderDet.getOutStorageId());
 
+
         Example jobExample = new Example(WmsInnerJobOrder.class);
         jobExample.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrderDet.getJobOrderId());
         WmsInnerJobOrder wmsInnerJobOrder = wmsInnerJobOrderMapper.selectOneByExample(jobExample);
@@ -477,6 +485,20 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         }else {
             wmsInnerJobOrder.setOrderStatus((byte) 4);
             wmsInnerJobOrder.setWorkStartTime(new Date());
+        }
+
+        //反写上游单据数量
+        if ("OUT-SO".equals(wmsInnerJobOrder.getSourceSysOrderTypeCode())) {
+            SearchOmSalesOrderDetDto searchOmSalesOrderDetDto = new SearchOmSalesOrderDetDto();
+            searchOmSalesOrderDetDto.setSalesOrderDetId(wmsInnerJobOrderDet.getSourceId());
+            List<OmSalesOrderDetDto> list = omFeignApi.findList(searchOmSalesOrderDetDto).getData();
+            if (StringUtils.isNotEmpty(list)) {
+                OmSalesOrderDetDto omSalesOrderDetDto = list.get(0);
+                omSalesOrderDetDto.setActualQty(omSalesOrderDetDto.getActualQty().add(wmsInnerPdaJobOrderDet.getActualQty()));
+                omFeignApi.update(omSalesOrderDetDto);
+            }
+        }else if ("INNER-TO".equals(wmsInnerJobOrder.getSourceSysOrderTypeCode())) {
+
         }
 
         return wmsInnerJobOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);

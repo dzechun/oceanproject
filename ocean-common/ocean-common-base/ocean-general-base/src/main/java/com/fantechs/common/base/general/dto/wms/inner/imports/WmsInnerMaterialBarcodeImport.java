@@ -62,12 +62,12 @@ public class WmsInnerMaterialBarcodeImport implements Serializable {
     @Excel(name = "栈板号", height = 20, width = 30,orderNum="6")
     private String palletCode;
 
-    /**
-     * 是否系统条码(0-否 1-是)
-     */
-    @ApiModelProperty(name="ifSysBarcode",value = "是否系统条码(0-否 1-是)")
-    @Excel(name = "是否系统条码", height = 20, width = 30,orderNum="7",replace = {"否_0","是_1"})
-    private Integer ifSysBarcode;
+//    /**
+//     * 是否系统条码(0-否 1-是)
+//     */
+//    @ApiModelProperty(name="ifSysBarcode",value = "是否系统条码(0-否 1-是)")
+//    @Excel(name = "是否系统条码", height = 20, width = 30,orderNum="7",replace = {"否_0","是_1"})
+//    private Integer ifSysBarcode;
 
     /**
      * 批号

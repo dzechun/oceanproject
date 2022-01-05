@@ -77,7 +77,7 @@
         LEFT JOIN base_organization bo ON su.organization_id = bo.organization_id
         <where>
             1=1
-            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+            <if test="startTime!= null  and endTime!= null">
                 and date_format(su.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
             <if test="userCode!=null and userCode!=''">

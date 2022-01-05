@@ -12,6 +12,7 @@ import com.fantechs.common.base.general.dto.basic.JobRuleDto;
 import com.fantechs.common.base.general.dto.basic.StorageRuleDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
 import com.fantechs.common.base.general.dto.wms.inner.*;
+import com.fantechs.common.base.general.dto.wms.inner.export.WmsInnerJobOrderExport;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
@@ -3257,6 +3258,15 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         resultMap.put("操作成功总数", success);
         resultMap.put("操作失败行", fail);
         return resultMap;
+    }
+
+    /**
+     * 导出
+     * @return
+     */
+    @Override
+    public List<WmsInnerJobOrderExport> findExportList(Map<String, Object> map) {
+        return wmsInnerJobOrderMapper.findExportList(map);
     }
 
     @Override

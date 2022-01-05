@@ -19,6 +19,12 @@ public class SearchWmsInnerJobOrder extends BaseQuery implements Serializable {
     private String jobOrderCode;
 
     /**
+     * 单据类型编码
+     */
+    @ApiModelProperty(name="orderTypeCode",value = "单据类型编码")
+    private String orderTypeCode;
+
+    /**
      * 核心系统单据类型编码
      */
     @ApiModelProperty(name="coreSourceSysOrderTypeCode",value = "核心系统单据类型编码")

@@ -206,7 +206,7 @@
 
     </select>
 
-    <select id="getTotalMaterialQty" resultType="Integer" parameterType="com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode">
+    <select id="getTotalMaterialQty" resultType="int" parameterType="com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode">
         SELECT sum(wimb.material_qty)
         FROM wms_inner_material_barcode wimb
         LEFT JOIN base_material bm on bm.material_id = wimb.material_id
@@ -226,5 +226,17 @@
             </if>
         </where>
     </select>
+
+    <update id="batchUpdate" parameterType="list">
+        <foreach collection="list" item="item" open="" close="" index="index" separator=";">
+            update wms_inner_material_barcode
+            <set>
+                <if test="item.barcodeStatus != null">
+                    barcode_status=#{item.barcodeStatus},
+                </if>
+            </set>
+            where material_barcode_id=#{item.materialBarcodeId}
+        </foreach>
+    </update>
 
 </mapper>

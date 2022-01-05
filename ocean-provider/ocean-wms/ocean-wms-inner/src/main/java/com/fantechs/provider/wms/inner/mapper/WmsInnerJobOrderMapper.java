@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.inner.mapper;
 
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
+import com.fantechs.common.base.general.dto.wms.inner.export.WmsInnerJobOrderExport;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.mybatis.MyMapper;
@@ -22,4 +23,6 @@ public interface WmsInnerJobOrderMapper extends MyMapper<WmsInnerJobOrder> {
     List<WmsInnerJobOrderDto> findShiftList(Map<String, Object> map);
 
     List<String> workBarCodeList(@Param("productPalletId")Long productPalletId);
+
+    List<WmsInnerJobOrderExport> findExportList(Map<String, Object> map);
 }

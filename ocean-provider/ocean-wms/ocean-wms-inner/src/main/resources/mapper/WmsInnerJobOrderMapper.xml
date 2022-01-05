@@ -167,4 +167,104 @@
         LEFT JOIN mes_sfc_work_order_barcode msfwo ON msfpd.work_order_barcode_id = msfwo.work_order_barcode_id
         WHERE msfpd.product_pallet_id=#{productPalletId}
     </select>
+
+    <select id="findExportList" parameterType="map" resultType="com.fantechs.common.base.general.dto.wms.inner.export.WmsInnerJobOrderExport">
+        SELECT
+            wijo.job_order_code as jobOrderCode,
+            wijo.source_sys_order_type_code as sourceSysOrderTypeCode,
+            bw.warehouse_name as warehouseName,
+            wsu.user_name as workName,
+            wijo.work_start_time as orderWorkStartTime,
+            wijo.work_endt_time as orderWorkEndtTime,
+            (SELECT IFNULL(SUM(wipod.plan_qty),0) FROM wms_inner_job_order_det wipod where wipod.job_order_id = wijo.job_order_id) as totalPlanQty,
+            (SELECT IFNULL(SUM(wipod.distribution_qty),0) FROM wms_inner_job_order_det wipod where wipod.job_order_id = wijo.job_order_id) as totalDistributionQty,
+            (SELECT IFNULL(SUM(wipod.actual_qty),0) FROM wms_inner_job_order_det wipod where wipod.job_order_id = wijo.job_order_id) as totalActualQty,
+            wijo.order_status as orderStatus,
+            wijo.remark,
+            csu.user_name as createUserName,
+            wijo.create_time as createTime,
+            msu.user_name as modifiedUserName,
+            wijo.modified_time as modifiedTime,
+            wijod.source_order_code as sourceOrderCode,
+            ibs.storage_code as inStorageCode,
+            obs.storage_code as outStorageCode,
+            bm.material_code as materialCode,
+            bm.material_name as materialName,
+            bm.material_version as materialVersion,
+            bm.material_desc as materialDesc,
+            bmt.main_unit as unit,
+            wijod.plan_qty as planQty,
+            wijod.distribution_qty as distributionQty,
+            wijod.actual_qty as actualQty,
+            wijod.work_start_time as workStartTime,
+            wijod.work_end_time as workEndTime,
+            wijod.line_status as lineStatus,
+            wimb.barcode,
+            wimb.carton_code as cartonCode,
+            wimb.color_box_code as colorBoxCode,
+            wimb.pallet_code as palletCode,
+            wimb.if_sys_barcode as ifSysBarcode,
+            wimb.batch_code as batchCode,
+            wimb.production_time as productionTime,
+            wimb.material_qty as materialQty
+        FROM wms_inner_job_order wijo
+        left join wms_inner_job_order_det wijod on wijod.job_order_id = wijo.job_order_id
+        left join wms_inner_material_barcode_re_order wimbro on wijo.job_order_id = wimbro.order_id
+        <if test="orderTypeCode != null and orderTypeCode != ''" >
+            and wimbro.order_type_code = #{orderTypeCode}
+        </if>
+        left join wms_inner_material_barcode wimb on wimb.material_barcode_id = wimbro.material_barcode_id
+        left join base_warehouse bw on bw.warehouse_id = wijo.warehouse_id
+        left join sys_user wsu on wsu.user_id = wijo.worker_id
+        left join base_material bm on bm.material_id = wijod.material_id
+        left join base_material_tab bmt on bmt.material_id = bm.material_id
+        left join base_storage ibs on ibs.storage_id = wijod.in_storage_id
+        left join base_storage obs on obs.storage_id = wijod.out_storage_id
+        left join sys_user csu on csu.user_id = wijo.create_user_id
+        left join sys_user msu on msu.user_id = wijo.modified_user_id
+        <where>
+            <if test="orgId!=null and orgId!=''">
+                and wijo.org_id = #{orgId}
+            </if>
+            <if test="jobOrderCode!=null and jobOrderCode!=''">
+                and wijo.job_order_code like CONCAT('%',#{jobOrderCode},'%')
+            </if>
+            <if test="warehouseName!=null and warehouseName!=''">
+                and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
+            </if>
+
+            <if test="coreSourceSysOrderTypeCode!=null and coreSourceSysOrderTypeCode!=''">
+                and wijo.core_source_sys_order_type_code = #{coreSourceSysOrderTypeCode}
+            </if>
+
+            <if test="sourceSysOrderTypeCode!=null and sourceSysOrderTypeCode!=''">
+                and wijo.source_sys_order_type_code = #{sourceSysOrderTypeCode}
+            </if>
+
+            <if test="sourceBigType!=null and sourceBigType!=''">
+                and wijo.source_big_type = #{sourceBigType}
+            </if>
+
+            <if test="workName!=null and workName!=''">
+                and wr.user_name =#{workName}
+            </if>
+            <if test="jobOrderType !=null and jobOrderType!= ''">
+                and wijo.job_order_type =#{jobOrderType}
+            </if>
+            <if test="jobOrderId !=null and jobOrderId !=''">
+                and wijo.job_order_id = #{jobOrderId}
+            </if>
+            <if test="orderStatus!=null and orderStatus!=''">
+                and wijo.order_status =#{orderStatus}
+            </if>
+            <if test="orderStatusList !=null and orderStatusList.size()!=0">
+                and wijo.order_status in
+                <foreach item="orderStatus" collection="orderStatusList" open="(" separator="," close=")">
+                    #{orderStatus}
+                </foreach>
+            </if>
+        </where>
+        order by wijo.create_time desc
+    </select>
+
 </mapper>

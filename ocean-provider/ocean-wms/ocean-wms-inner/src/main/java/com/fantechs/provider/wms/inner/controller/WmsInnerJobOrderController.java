@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
 import com.fantechs.common.base.general.dto.wms.inner.SaveHaveInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
+import com.fantechs.common.base.general.dto.wms.inner.export.WmsInnerJobOrderExport;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -167,11 +168,18 @@ public class WmsInnerJobOrderController {
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
-    @RequestBody(required = false) SearchWmsInnerJobOrder searchWmsInPutawayOrder){
-    List<WmsInnerJobOrderDto> list = wmsInPutawayOrderService.findList(searchWmsInPutawayOrder);
+    @RequestBody(required = false) SearchWmsInnerJobOrder searchWmsInPutawayOrder,@ApiParam(value = "类型（1，上架作业 2，拣货作业）",required = true)@RequestParam  @NotNull(message="id不能为空") Byte type){
+        String title = "上架作业单信息导出";
+        if (type == 1) {
+            searchWmsInPutawayOrder.setOrderTypeCode("IN-IWK");
+        }else {
+            searchWmsInPutawayOrder.setOrderTypeCode("OUT-IWK");
+            title = "拣货作业单信息导出";
+        }
+        List<WmsInnerJobOrderExport> list = wmsInPutawayOrderService.findExportList(ControllerUtil.dynamicConditionByEntity(searchWmsInPutawayOrder));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "WmsInPutawayOrder信息", WmsInnerJobOrderDto.class, "WmsInPutawayOrder.xls", response);
+        EasyPoiUtils.exportExcel(list, title, title, WmsInnerJobOrderExport.class, title+".xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
