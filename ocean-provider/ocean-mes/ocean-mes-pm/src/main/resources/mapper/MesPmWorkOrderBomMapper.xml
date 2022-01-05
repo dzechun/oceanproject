@@ -31,7 +31,16 @@
   <resultMap id="BaseResultMapDto" extends="BaseResultMap"
              type="com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto">
     <result column="work_order_code" jdbcType="BIGINT" property="workOrderCode"/>
+    <result column="work_order_type" jdbcType="TINYINT" property="workOrderType"/>
+    <result column="plan_start_time" jdbcType="TIMESTAMP" property="planStartTime"/>
+    <result column="pro_line_id" jdbcType="BIGINT" property="proLineId"/>
+    <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
+    <result column="scheduled_qty" jdbcType="DECIMAL" property="scheduledQty"/>
     <result column="part_material_code" jdbcType="VARCHAR" property="partMaterialCode"/>
+    <result column="part_material_name" jdbcType="VARCHAR" property="partMaterialName"/>
+    <result column="part_material_desc" jdbcType="VARCHAR" property="partMaterialDesc"/>
+    <result column="part_material_version" jdbcType="VARCHAR" property="partMaterialVersion"/>
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
     <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
@@ -47,11 +56,20 @@
     mpwob.work_order_bom_id,
     mpwob.work_order_id,
     mpwo.work_order_code,
+    mpwo.work_order_type,
+    mpwo.plan_start_time,
+    mpwo.scheduled_qty,
+    spl.pro_line_id,
+    spl.pro_name,
     mpwob.part_material_id,
     bm.material_code AS part_material_code,
-    bm.material_name AS material_name,
-    bm.material_version AS material_version,
-    bm.material_desc AS material_desc,
+    bm.material_name AS part_material_name,
+    bm.material_version AS part_material_version,
+    bm.material_desc AS part_material_desc,
+    pm.material_code,
+    pm.material_name,
+    pm.material_version,
+    pm.material_desc,
     mpwob.sub_material_id,
     bml.material_code AS sub_material_code,
     mpwob.process_id,
@@ -74,6 +92,8 @@
     FROM
     mes_pm_work_order_bom mpwob
     LEFT JOIN mes_pm_work_order mpwo ON mpwob.work_order_id = mpwo.work_order_id
+    LEFT JOIN base_material pm ON mpwo.material_id = pm.material_id
+    left join base_pro_line spl on mpwo.pro_line_id=spl.pro_line_id
     LEFT JOIN base_material bm ON mpwob.part_material_id = bm.material_id
     LEFT JOIN base_material bml ON mpwob.sub_material_id = bml.material_id
     LEFT JOIN base_process bp ON mpwob.process_id = bp.process_id
@@ -97,8 +117,8 @@
       <if test="partMaterialCode!=null and partMaterialCode!=''">
         and bm.material_code like CONCAT('%', #{partMaterialCode}, '%')
       </if>
-      <if test="materialDesc!=null and materialDesc!=''">
-        and bm.material_desc like CONCAT('%', #{materialDesc}, '%')
+      <if test="partMaterialDesc!=null and partMaterialDesc!=''">
+        and bm.material_desc like CONCAT('%', #{partMaterialDesc}, '%')
       </if>
       <if test="option1!=null and option1!=''">
         and mpwob.option1=#{option1}

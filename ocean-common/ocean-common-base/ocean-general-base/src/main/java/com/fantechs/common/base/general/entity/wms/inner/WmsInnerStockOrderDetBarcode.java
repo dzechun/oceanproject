@@ -60,10 +60,10 @@ public class WmsInnerStockOrderDetBarcode extends ValidGroup implements Serializ
     private Byte scanStatus;
 
     /**
-     * 盘点结果(1-盘点、2-已盘点、3-盘盈、4-盘亏)
+     * 盘点结果(1-待盘点、2-已盘点、3-盘盈、4-盘亏)
      */
-    @ApiModelProperty(name="stockResult",value = "盘点结果(1-盘点、2-已盘点、3-盘盈、4-盘亏)")
-    @Excel(name = "盘点结果(1-盘点、2-已盘点、3-盘盈、4-盘亏)", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="stockResult",value = "盘点结果(1-待盘点、2-已盘点、3-盘盈、4-盘亏)")
+    @Excel(name = "盘点结果(1-待盘点、2-已盘点、3-盘盈、4-盘亏)", height = 20, width = 30,orderNum="")
     @Column(name = "stock_result")
     private Byte stockResult;
 

@@ -108,6 +108,22 @@ public class MesPmWorkOrderBom extends ValidGroup implements Serializable {
 
     private String position;
 
+    /**
+     * 累计下发数量
+     */
+    @ApiModelProperty(name="totalIssueQty",value = "累计下发数量")
+    //@Excel(name = "累计下发数量", height = 20, width = 30)
+    @Column(name = "total_issue_qty")
+    private BigDecimal totalIssueQty;
+
+    /**
+     * 是否已全部下发(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifAllIssued",value = "是否已全部下发(0-否 1-是)")
+    //@Excel(name = "是否已全部下发(0-否 1-是)", height = 20, width = 30)
+    @Column(name = "if_all_issued")
+    private Byte ifAllIssued;
+
     private String remark;
 
     /**

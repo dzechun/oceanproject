@@ -12,9 +12,11 @@ import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.imports.WmsOutDeliveryReqOrderImport;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -133,6 +135,8 @@ public class WmsOutDeliveryReqOrderServiceImpl extends BaseService<WmsOutDeliver
             List<WmsOutDeliveryReqOrderDetDto> deliveryReqOrderDetDtos = map.get(code);
             if ("OUT-PDO".equals(code)) {
                 //出库计划
+                String coreSourceSysOrderTypeCode = deliveryReqOrderDetDtos.get(0).getCoreSourceSysOrderTypeCode();
+
                 List<WmsOutPlanDeliveryOrderDetDto> wmsOutPlanDeliveryOrderDetDtos = new LinkedList<>();
                 for (WmsOutDeliveryReqOrderDetDto wmsOutDeliveryReqOrderDetDto : deliveryReqOrderDetDtos) {
                     WmsOutPlanDeliveryOrderDetDto wmsOutPlanDeliveryOrderDetDto = new WmsOutPlanDeliveryOrderDetDto();
@@ -147,7 +151,7 @@ public class WmsOutDeliveryReqOrderServiceImpl extends BaseService<WmsOutDeliver
                 }
                 WmsOutPlanDeliveryOrderDto wmsOutPlanDeliveryOrderDto = new WmsOutPlanDeliveryOrderDto();
                 wmsOutPlanDeliveryOrderDto.setSourceBigType((byte) 1);
-                //wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("OUT-PRO");
+                wmsOutPlanDeliveryOrderDto.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsOutPlanDeliveryOrderDto.setSourceSysOrderTypeCode("OUT-DRO");
                 wmsOutPlanDeliveryOrderDto.setSourceBigType((byte)1);
                 wmsOutPlanDeliveryOrderDto.setWarehouseId(warehouseId);
@@ -156,6 +160,17 @@ public class WmsOutDeliveryReqOrderServiceImpl extends BaseService<WmsOutDeliver
                 i++;
             } else if ("OUT-IWK".equals(code)) {
                 //拣货作业
+                String coreSourceSysOrderTypeCode = deliveryReqOrderDetDtos.get(0).getCoreSourceSysOrderTypeCode();
+                //查询发货库位
+                SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                searchBaseStorage.setWarehouseId(warehouseId);
+                searchBaseStorage.setStorageType((byte)3);
+                List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+                if(StringUtils.isEmpty(baseStorages)){
+                    throw new BizErrorException("该仓库未找到发货库位");
+                }
+                Long inStorageId = baseStorages.get(0).getStorageId();
+
                 int lineNumber = 1;
                 List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();
                 for (WmsOutDeliveryReqOrderDetDto wmsOutDeliveryReqOrderDetDto : deliveryReqOrderDetDtos) {
@@ -169,11 +184,12 @@ public class WmsOutDeliveryReqOrderServiceImpl extends BaseService<WmsOutDeliver
                     wmsInnerJobOrderDet.setMaterialId(wmsOutDeliveryReqOrderDetDto.getMaterialId());
                     wmsInnerJobOrderDet.setPlanQty(wmsOutDeliveryReqOrderDetDto.getOrderQty());
                     wmsInnerJobOrderDet.setLineStatus((byte) 1);
+                    wmsInnerJobOrderDet.setInStorageId(inStorageId);
                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
                 }
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
                 wmsInnerJobOrder.setSourceBigType((byte) 1);
-                //wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("OUT-PRO");
+                wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInnerJobOrder.setSourceSysOrderTypeCode("OUT-DRO");
                 wmsInnerJobOrder.setWarehouseId(warehouseId);
                 wmsInnerJobOrder.setJobOrderType((byte) 2);

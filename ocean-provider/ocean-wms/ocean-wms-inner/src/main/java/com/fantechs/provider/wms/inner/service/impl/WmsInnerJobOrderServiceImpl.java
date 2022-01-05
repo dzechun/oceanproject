@@ -640,6 +640,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     inventoryDet.setBarcodeStatus((byte)3);//在库
                     inventoryDet.setCreateUserId(sysUser.getUserId());
                     inventoryDet.setCreateTime(new Date());
+                    inventoryDet.setOrgId(sysUser.getOrganizationId());
                     wmsInnerInventoryDets.add(inventoryDet);
                 }
 

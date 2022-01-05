@@ -1,17 +1,18 @@
 package com.fantechs.provider.mes.pm.controller;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.mes.pm.service.MesPmWorkOrderService;
 import com.fantechs.provider.mes.pm.service.MesPmHtWorkOrderService;
+import com.fantechs.provider.mes.pm.service.MesPmWorkOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -155,8 +156,14 @@ public class MesPmWorkOrderController {
 
 
     @ApiOperation(value = "入库下推",notes = "入库下推")
-    @PostMapping("/pushDown")
-    public ResponseEntity pushDown(@ApiParam(value = "其他入库计划ID列表，多个逗号分隔",required = true)@RequestBody  List<MesPmWorkOrder> mesPmWorkOrders) {
-        return ControllerUtil.returnCRUD(mesPmWorkOrderService.pushDown(mesPmWorkOrders));
+    @PostMapping("/inPushDown")
+    public ResponseEntity inPushDown(@ApiParam(value = "必传",required = true)@RequestBody  List<MesPmWorkOrder> mesPmWorkOrders) {
+        return ControllerUtil.returnCRUD(mesPmWorkOrderService.inPushDown(mesPmWorkOrders));
+    }
+
+    @ApiOperation(value = "出库下推",notes = "出库下推")
+    @PostMapping("/outPushDown")
+    public ResponseEntity outPushDown(@ApiParam(value = "必传",required = true)@RequestBody List<MesPmWorkOrderBomDto> mesPmWorkOrderBomDtos) {
+        return ControllerUtil.returnCRUD(mesPmWorkOrderService.outPushDown(mesPmWorkOrderBomDtos));
     }
 }
