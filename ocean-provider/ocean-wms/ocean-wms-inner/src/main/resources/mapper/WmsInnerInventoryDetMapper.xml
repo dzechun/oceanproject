@@ -127,10 +127,10 @@
                 and date_format(wimb.expired_time, '%Y-%m-%d') BETWEEN date_format(#{expiredStartDate}, '%Y-%m-%d') AND  date_format(#{expiredEndDate}, '%Y-%m-%d')
             </if>
             <if test="receivingStartDate!= null  and receivingEndDate!= null">
-                and date_format(wiid.receiving_date, '%Y-%m-%d') BETWEEN ate_format(#{receivingStartDate}, '%Y-%m-%d') AND  date_format(#{receivingEndDate}, '%Y-%m-%d')
+                and date_format(wiid.receiving_date, '%Y-%m-%d') BETWEEN date_format(#{receivingStartDate}, '%Y-%m-%d') AND  date_format(#{receivingEndDate}, '%Y-%m-%d')
             </if>
             <if test="deliverStartDate!= null and deliverEndDate!= null ">
-                and date_format(wiid.deliver_date, '%Y-%m-%d') BETWEENate_format(#{deliverStartDate}, '%Y-%m-%d') AND  date_format(#{deliverEndDate}, '%Y-%m-%d')
+                and date_format(wiid.deliver_date, '%Y-%m-%d') BETWEEN date_format(#{deliverStartDate}, '%Y-%m-%d') AND  date_format(#{deliverEndDate}, '%Y-%m-%d')
             </if>
             <if test="inventoryStatusId!=null and inventoryStatusId!=''">
                 and wiid.inventory_status_id = #{inventoryStatusId}
