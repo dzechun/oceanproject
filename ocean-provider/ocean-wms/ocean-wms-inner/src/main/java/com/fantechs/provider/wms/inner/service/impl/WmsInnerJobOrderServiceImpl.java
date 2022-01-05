@@ -2084,7 +2084,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             map.put("materialBarcodeId",resultDto.getMaterialBarcodeId());
             map.put("qty",resultDto.getMaterialQty());
 
-            if(StringUtils.isEmpty(map.get("barcodeType"))){
+            if(StringUtils.isNotEmpty(map.get("barcodeType")) && map.get("barcodeType").toString().equals("5")){
                 throw new BizErrorException(ErrorCodeEnum.PDA5001006.getCode(),"扫描的条码无效-->"+barCode);
             }
 
@@ -2182,7 +2182,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             map.put("materialBarcodeId",resultDto.getMaterialBarcodeId());
             map.put("qty",resultDto.getMaterialQty());
 
-            if(StringUtils.isEmpty(map.get("barcodeType"))){
+            if(StringUtils.isNotEmpty(map.get("barcodeType")) && map.get("barcodeType").toString().equals("5")){
                 throw new BizErrorException(ErrorCodeEnum.PDA5001006.getCode(),"扫描的条码无效-->"+barCode);
             }
 
@@ -2265,7 +2265,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             map.put("materialBarcodeId",resultDto.getMaterialBarcodeId());
             map.put("qty",resultDto.getMaterialQty());
 
-            if(StringUtils.isEmpty(map.get("barcodeType"))){
+            if(StringUtils.isNotEmpty(map.get("barcodeType")) && map.get("barcodeType").toString().equals("5")){
                 throw new BizErrorException(ErrorCodeEnum.PDA5001006.getCode(),"扫描的条码无效-->"+barCode);
             }
             //来料条码ID
