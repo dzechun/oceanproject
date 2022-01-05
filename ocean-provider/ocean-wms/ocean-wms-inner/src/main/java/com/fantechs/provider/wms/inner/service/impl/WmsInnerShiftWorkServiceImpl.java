@@ -484,13 +484,14 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         }
 
         //更新库存明细  待测试
-/*        Example example1 = new Example(WmsInnerMaterialBarcodeReOrderDto.class);
+        Example example1 = new Example(WmsInnerMaterialBarcodeReOrderDto.class);
         example1.createCriteria().andEqualTo("jobOrderDetId", dto.getJobOrderDetId());
         List<WmsInnerMaterialBarcodeReOrder> wmsInnerMaterialBarcodeReOrders = wmsInnerMaterialBarcodeReOrderMapper.selectByExample(example1);
-        if (!wmsInnerMaterialBarcodeReOrders.isEmpty()) {
+        if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeReOrders)) {
             for (WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder : wmsInnerMaterialBarcodeReOrders) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("storageId", wmsInnerJobOrderDet.getOutStorageId());
+                map.put("materialBarcodeId",wmsInnerMaterialBarcodeReOrder.getMaterialBarcodeId());
                 List<WmsInnerInventoryDetDto> inventoryDetDtos = wmsInnerInventoryDetService.findList(map);
                 if (inventoryDetDtos.isEmpty()) {
                     throw new BizErrorException(ErrorCodeEnum.PDA5001004);
@@ -499,7 +500,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 inventoryDetDto.setStorageId(dto.getStorageId());
                 wmsInnerInventoryDetService.update(inventoryDetDto);
             }
-        }*/
+        }
 
         Map<String, Object> map = new HashMap<>();
         map.put("storageId", wmsInnerJobOrderDet.getOutStorageId());
