@@ -68,10 +68,4 @@ public class SearchBaseOrderFlow extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="remark",value = "备注")
     private String remark;
-
-    /**
-     * 状态（0、无效 1、有效）
-     */
-    @ApiModelProperty(name="status",value = "状态（0、无效 1、有效）")
-    private Byte status;
 }

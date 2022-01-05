@@ -68,6 +68,9 @@ public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializabl
     @ApiModelProperty("栈板码")
     private String palletCode;
 
+    @ApiModelProperty("条码id")
+    private Long materialBarcodeId;
+
     @ApiModelProperty("物料名称")
     private String materialName;
 
@@ -145,5 +148,10 @@ public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializabl
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date deliverEndDate;
 
+    /**
+     * 库存状态
+     */
+    @ApiModelProperty(name = "inventoryStatusName",value = "库存状态")
+    private String inventoryStatusName;
 
 }

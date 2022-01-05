@@ -154,7 +154,7 @@ public class MesPmWorkOrderController {
     }
 
 
-    @ApiOperation(value = "下推",notes = "下推")
+    @ApiOperation(value = "入库下推",notes = "入库下推")
     @PostMapping("/pushDown")
     public ResponseEntity pushDown(@ApiParam(value = "其他入库计划ID列表，多个逗号分隔",required = true)@RequestBody  List<MesPmWorkOrder> mesPmWorkOrders) {
         return ControllerUtil.returnCRUD(mesPmWorkOrderService.pushDown(mesPmWorkOrders));

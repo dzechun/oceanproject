@@ -640,6 +640,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     inventoryDet.setBarcodeStatus((byte)3);//在库
                     inventoryDet.setCreateUserId(sysUser.getUserId());
                     inventoryDet.setCreateTime(new Date());
+                    inventoryDet.setOrgId(sysUser.getOrganizationId());
                     wmsInnerInventoryDets.add(inventoryDet);
                 }
 
@@ -3358,6 +3359,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      */
     @Override
     public List<WmsInnerJobOrderExport> findExportList(Map<String, Object> map) {
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId",currentUser.getOrganizationId());
         return wmsInnerJobOrderMapper.findExportList(map);
     }
 
