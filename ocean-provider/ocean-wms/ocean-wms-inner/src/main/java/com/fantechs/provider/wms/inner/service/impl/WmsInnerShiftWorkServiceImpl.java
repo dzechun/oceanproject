@@ -384,12 +384,12 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         SysUser sysUser = currentUser();
 
         WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderDetMapper.selectByPrimaryKey(dto.getJobOrderDetId());
-        if(StringUtils.isEmpty(wmsInnerJobOrderDet.getDistributionQty()))
-            wmsInnerJobOrderDet.setDistributionQty(BigDecimal.ZERO);
-        wmsInnerJobOrderDet.setActualQty(wmsInnerJobOrderDet.getDistributionQty());
-        if (StringUtils.isEmpty(wmsInnerJobOrderDet.getActualQty())) {
+        if(StringUtils.isEmpty(wmsInnerJobOrderDet))
+            throw new BizErrorException("未查询到对应的移位单明细");
+        if (StringUtils.isEmpty(wmsInnerJobOrderDet.getDistributionQty()) ||wmsInnerJobOrderDet.getDistributionQty().compareTo(BigDecimal.ZERO)<0) {
             throw new BizErrorException("上架数量不能小于1");
         }
+        wmsInnerJobOrderDet.setActualQty(wmsInnerJobOrderDet.getDistributionQty());
         BaseStorage baseStorage = baseFeignApi.detail(dto.getStorageId()).getData();
         if (baseStorage == null) {
             throw new BizErrorException(ErrorCodeEnum.PDA5001007);
