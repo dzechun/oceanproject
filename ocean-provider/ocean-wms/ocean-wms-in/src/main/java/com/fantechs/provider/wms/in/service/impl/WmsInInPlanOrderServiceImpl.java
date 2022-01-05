@@ -85,8 +85,6 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(WmsInInPlanOrderDto wmsInInPlanOrderDto){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-
-
         //预约数量校验
         if(StringUtils.isEmpty(wmsInInPlanOrderDto.getWarehouseId())) {
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "仓库编码不能为空");
@@ -415,6 +413,7 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
         //查当前单据的下游单据
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
         searchBaseOrderFlow.setOrderTypeCode("IN-IPO");
+        searchBaseOrderFlow.setStatus((byte)1);
         BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
         if(StringUtils.isEmpty(baseOrderFlow)){
             throw new BizErrorException("未找到当前单据配置的下游单据");
