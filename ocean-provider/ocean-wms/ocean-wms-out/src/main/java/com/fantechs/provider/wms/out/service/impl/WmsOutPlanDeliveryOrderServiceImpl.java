@@ -109,6 +109,7 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
             wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
         }
         WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+        wmsInnerJobOrder.setSourceBigType((byte) 1);
         //wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("OUT-PRO");
         wmsInnerJobOrder.setSourceSysOrderTypeCode("OUT-PDO");
         wmsInnerJobOrder.setWarehouseId(warehouseId);
@@ -130,6 +131,7 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         record.setPlanDeliveryOrderCode(CodeUtils.getId("OUT-PDO"));
+        record.setOrderStatus(StringUtils.isEmpty(record.getOrderStatus())?(byte)1:record.getOrderStatus());
         record.setOrgId(user.getOrganizationId());
         record.setCreateTime(new DateTime());
         record.setCreateUserId(user.getUserId());

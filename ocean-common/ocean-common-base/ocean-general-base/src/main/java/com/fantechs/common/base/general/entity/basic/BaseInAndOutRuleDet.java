@@ -1,15 +1,15 @@
 package com.fantechs.common.base.general.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -19,8 +19,8 @@ import java.util.Date;
 /**
  * 出入库规则明细
  * base_in_and_out_rule_det
- * @author admin
- * @date 2021-05-14 16:28:21
+ * @author mr.lei
+ * @date 2021-12-30 17:02:39
  */
 @Data
 @Table(name = "base_in_and_out_rule_det")
@@ -43,19 +43,27 @@ public class BaseInAndOutRuleDet extends ValidGroup implements Serializable {
     private Long inAndOutRuleId;
 
     /**
-     * 出入库规则类型ID
-     */
-    @ApiModelProperty(name="inAndOutRuleTypeId",value = "出入库规则类型ID")
-    @Excel(name = "出入库规则类型ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "in_and_out_rule_type_id")
-    private Long inAndOutRuleTypeId;
-
-    /**
      * 优先级
      */
     @ApiModelProperty(name="priority",value = "优先级")
     @Excel(name = "优先级", height = 20, width = 30,orderNum="") 
     private Integer priority;
+
+    /**
+     * 规则名称(做成字典,枚举)
+     */
+    @ApiModelProperty(name="inAndOutRuleType",value = "规则名称(做成字典,枚举)")
+    @Excel(name = "规则名称(做成字典,枚举)", height = 20, width = 30,orderNum="") 
+    @Column(name = "in_and_out_rule_type")
+    private Byte inAndOutRuleType;
+
+    /**
+     * 存储过程名称
+     */
+    @ApiModelProperty(name="storedProcedureName",value = "存储过程名称")
+    @Excel(name = "存储过程名称", height = 20, width = 30,orderNum="") 
+    @Column(name = "stored_procedure_name")
+    private String storedProcedureName;
 
     /**
      * 状态(0无效，1有效)
@@ -92,7 +100,8 @@ public class BaseInAndOutRuleDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
     @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "create_time")
     private Date createTime;
 
@@ -109,7 +118,8 @@ public class BaseInAndOutRuleDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
     @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "modified_time")
     private Date modifiedTime;
 
@@ -121,39 +131,27 @@ public class BaseInAndOutRuleDet extends ValidGroup implements Serializable {
     @Column(name = "is_delete")
     private Byte isDelete;
 
-    /**
-     * 创建用户名称
-     */
-    @Transient
-    @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    private String createUserName;
-
-    /**
-     * 修改用户名称
-     */
-    @Transient
-    @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    private String modifiedUserName;
-
-    /**
-     * 组织名称
-     */
-    @Transient
-    @ApiModelProperty(name = "organizationName",value = "组织名称")
-    private String organizationName;
-
-    /**
-     * 出入库规则类型
-     */
-    @Transient
-    @ApiModelProperty(name = "inAndOutRuleTypeName",value = "出入库规则类型")
-    private String inAndOutRuleTypeName;
-
     private String option1;
 
     private String option2;
 
     private String option3;
+
+    /**
+     * 入参
+     */
+    @ApiModelProperty(name="inParameters",value = "入参")
+    @Excel(name = "入参", height = 20, width = 30,orderNum="") 
+    @Column(name = "in_parameters")
+    private String inParameters;
+
+    /**
+     * 出参
+     */
+    @ApiModelProperty(name="outParameters",value = "出参")
+    @Excel(name = "出参", height = 20, width = 30,orderNum="") 
+    @Column(name = "out_parameters")
+    private String outParameters;
 
     private static final long serialVersionUID = 1L;
 }

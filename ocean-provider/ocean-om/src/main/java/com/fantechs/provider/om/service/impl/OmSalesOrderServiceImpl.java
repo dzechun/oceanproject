@@ -89,7 +89,7 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
         //查当前单据类型的所有单据流
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
         searchBaseOrderFlow.setOrderTypeCode("OUT-SO");
-        List<BaseOrderFlowDto> baseOrderFlowDtos = baseFeignApi.findList(searchBaseOrderFlow).getData();
+        List<BaseOrderFlowDto> baseOrderFlowDtos = baseFeignApi.findAll(searchBaseOrderFlow).getData();
         if (StringUtils.isEmpty(baseOrderFlowDtos)) {
             throw new BizErrorException("未找到当前单据配置的单据流");
         }
@@ -134,7 +134,7 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
                     wmsOutDeliveryReqOrderDetDto.setCoreSourceId(omSalesOrderDetDto.getCoreSourceId());
                     wmsOutDeliveryReqOrderDetDto.setSourceId(omSalesOrderDetDto.getSalesOrderDetId());
                     wmsOutDeliveryReqOrderDetDto.setMaterialId(omSalesOrderDetDto.getMaterialId());
-                    wmsOutDeliveryReqOrderDetDto.setOrderQty(omSalesOrderDetDto.getOrderQty());
+                    wmsOutDeliveryReqOrderDetDto.setOrderQty(omSalesOrderDetDto.getIssueQty());
                     wmsOutDeliveryReqOrderDetDto.setLineStatus((byte) 1);
                     wmsOutDeliveryReqOrderDetDtos.add(wmsOutDeliveryReqOrderDetDto);
                 }
@@ -160,7 +160,7 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
                     wmsOutPlanDeliveryOrderDetDto.setCoreSourceId(omSalesOrderDetDto.getCoreSourceId());
                     wmsOutPlanDeliveryOrderDetDto.setSourceId(omSalesOrderDetDto.getSalesOrderDetId());
                     wmsOutPlanDeliveryOrderDetDto.setMaterialId(omSalesOrderDetDto.getMaterialId());
-                    wmsOutPlanDeliveryOrderDetDto.setOrderQty(omSalesOrderDetDto.getOrderQty());
+                    wmsOutPlanDeliveryOrderDetDto.setOrderQty(omSalesOrderDetDto.getIssueQty());
                     wmsOutPlanDeliveryOrderDetDto.setLineStatus((byte) 1);
                     wmsOutPlanDeliveryOrderDetDtos.add(wmsOutPlanDeliveryOrderDetDto);
                 }
@@ -189,11 +189,12 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
                     wmsInnerJobOrderDet.setLineNumber(lineNumber + "");
                     lineNumber++;
                     wmsInnerJobOrderDet.setMaterialId(omSalesOrderDetDto.getMaterialId());
-                    wmsInnerJobOrderDet.setPlanQty(omSalesOrderDetDto.getOrderQty());
+                    wmsInnerJobOrderDet.setPlanQty(omSalesOrderDetDto.getIssueQty());
                     wmsInnerJobOrderDet.setLineStatus((byte) 1);
                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
                 }
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+                wmsInnerJobOrder.setSourceBigType((byte)1);
                 wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("OUT-SO");
                 wmsInnerJobOrder.setSourceSysOrderTypeCode("OUT-SO");
                 wmsInnerJobOrder.setWarehouseId(omSalesOrderDetDtos.get(0).getWarehouseId());

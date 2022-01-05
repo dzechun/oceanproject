@@ -1,7 +1,6 @@
 package com.fantechs.common.base.general.entity.qms;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
@@ -42,11 +41,25 @@ public class QmsIncomingInspectionOrder extends ValidGroup implements Serializab
     private Long incomingInspectionOrderId;
 
     /**
+     * 核心单据明细ID
+     */
+    @ApiModelProperty(name="coreSourceId",value = "核心单据明细ID")
+    @Column(name = "core_source_id")
+    private Long coreSourceId;
+
+    /**
      * 来源ID
      */
     @ApiModelProperty(name="sourceId",value = "来源ID")
     @Column(name = "source_id")
     private Long sourceId;
+
+    /**
+     * 来源大类(1-系统下推 2-自建 3-第三方系统)
+     */
+    @ApiModelProperty(name="sourceBigType",value = "来源大类(1-系统下推 2-自建 3-第三方系统)")
+    @Column(name = "source_big_type")
+    private Byte sourceBigType;
 
     /**
      * 来源单号

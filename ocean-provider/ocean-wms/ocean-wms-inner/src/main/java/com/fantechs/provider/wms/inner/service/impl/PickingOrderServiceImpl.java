@@ -175,6 +175,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 Example example = new Example(WmsInnerJobOrder.class);
                 example.createCriteria().andEqualTo("jobOrderId",list.get(0).getJobOrderId());
                 wmsInnerJobOrder = wmsInnerJobOrderMapper.selectOneByExample(example);
+                wmsInnerJobOrder.setWorkEndtTime(new Date());
             }else {
                 wmsInnerJobOrder.setJobOrderCode(CodeUtils.getId("PICK-"));
                 wmsInnerJobOrder.setCreateTime(new Date());
@@ -374,6 +375,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
 
             wmsInnerJobOrderDet.setLineStatus((byte) 3);
             wmsInnerJobOrderDet.setActualQty(wmsInnerPdaJobOrderDet.getActualQty());
+            wmsInnerJobOrderDet.setWorkStartTime(new Date());
+            wmsInnerJobOrderDet.setWorkEndTime(new Date());
             wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInnerJobOrderDet);
 
         }else if (wmsInnerJobOrderDet.getDistributionQty().compareTo(wmsInnerPdaJobOrderDet.getActualQty()) == 1) {
@@ -385,6 +388,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             wms.setDistributionQty(wmsInnerPdaJobOrderDet.getActualQty());
             wms.setActualQty(wmsInnerPdaJobOrderDet.getActualQty());
             wms.setLineStatus((byte)3);
+            wms.setWorkStartTime(new Date());
+            wms.setWorkEndTime(new Date());
             wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wms);
 
 
@@ -467,6 +472,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
 
         if (StringUtils.isEmpty(wmsInnerJobOrderDetList)) {
             wmsInnerJobOrder.setOrderStatus((byte) 5);
+            wmsInnerJobOrder.setWorkStartTime(StringUtils.isNotEmpty(wmsInnerJobOrder.getWorkStartTime())?wmsInnerJobOrder.getWorkStartTime():new Date());
             wmsInnerJobOrder.setWorkEndtTime(new Date());
         }else {
             wmsInnerJobOrder.setOrderStatus((byte) 4);

@@ -590,7 +590,7 @@ public interface BaseFeignApi {
     @PostMapping("/baseOrderFlow/findOrderFlow")
     ResponseEntity<BaseOrderFlow> findOrderFlow(@ApiParam(value = "查询对象")@RequestBody SearchBaseOrderFlow searchBaseOrderFlow);
 
-    @ApiOperation("查询单据流列表")
-    @PostMapping("/baseOrderFlow/findList")
-    ResponseEntity<List<BaseOrderFlowDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchBaseOrderFlow searchBaseOrderFlow);
+    @ApiOperation("单据流列表(不分页)")
+    @PostMapping("/baseOrderFlow/findAll")
+    ResponseEntity<List<BaseOrderFlowDto>> findAll(@ApiParam(value = "查询对象") @RequestBody SearchBaseOrderFlow searchBaseOrderFlow);
 }

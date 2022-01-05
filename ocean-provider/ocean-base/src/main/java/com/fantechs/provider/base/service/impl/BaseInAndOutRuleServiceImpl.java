@@ -1,26 +1,22 @@
 package com.fantechs.provider.base.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysImportAndExportLog;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
-import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerReWhDto;
-import com.fantechs.common.base.general.entity.basic.BaseInAndOutRule;
-import com.fantechs.common.base.general.entity.basic.BaseInAndOutRuleDet;
-import com.fantechs.common.base.general.entity.basic.BaseMaterialOwner;
-import com.fantechs.common.base.general.entity.basic.BaseMaterialOwnerReWh;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtInAndOutRule;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtMaterialOwner;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseInAndOutRule;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseInAndOutRuleDet;
+import com.fantechs.common.base.general.dto.basic.BaseHtInAndOutRuleDto;
+import com.fantechs.common.base.general.dto.basic.BaseInAndOutRuleDetDto;
+import com.fantechs.common.base.general.dto.basic.BaseInAndOutRuleDto;
+import com.fantechs.common.base.general.dto.basic.InOutParamsDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseInAndOutRuleImport;
+import com.fantechs.common.base.general.entity.basic.*;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.base.mapper.BaseHtInAndOutRuleDetMapper;
-import com.fantechs.provider.base.mapper.BaseHtInAndOutRuleMapper;
-import com.fantechs.provider.base.mapper.BaseInAndOutRuleDetMapper;
-import com.fantechs.provider.base.mapper.BaseInAndOutRuleMapper;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseInAndOutRuleService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -28,14 +24,12 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
- * Created by leifengzhi on 2021/05/14.
+ * Created by mr.lei on 2021/12/30.
  */
 @Service
 public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> implements BaseInAndOutRuleService {
@@ -45,170 +39,262 @@ public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> i
     @Resource
     private BaseInAndOutRuleDetMapper baseInAndOutRuleDetMapper;
     @Resource
+    private SecurityFeignApi securityFeignApi;
+    @Resource
+    private BaseWarehouseMapper baseWarehouseMapper;
+    @Resource
     private BaseHtInAndOutRuleMapper baseHtInAndOutRuleMapper;
+    @Resource
+    private BaseHtInAndOutRuleDetMapper baseHtInAndOutRuleDetMapper;
 
     @Override
-    public List<BaseInAndOutRule> findList(Map<String, Object> map) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        map.put("orgId", user.getOrganizationId());
-        List<BaseInAndOutRule> baseInAndOutRules = baseInAndOutRuleMapper.findList(map);
-        SearchBaseInAndOutRuleDet searchBaseInAndOutRuleDet = new SearchBaseInAndOutRuleDet();
-
-        for (BaseInAndOutRule baseInAndOutRule : baseInAndOutRules) {
-            searchBaseInAndOutRuleDet.setInAndOutRuleId(baseInAndOutRule.getInAndOutRuleId());
-            List<BaseInAndOutRuleDet> baseInAndOutRuleDets = baseInAndOutRuleDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseInAndOutRuleDet));
-            if (StringUtils.isNotEmpty(baseInAndOutRuleDets)){
-                baseInAndOutRule.setBaseInAndOutRuleDets(baseInAndOutRuleDets);
-            }
-        }
-
-        return baseInAndOutRules;
+    public List<BaseInAndOutRuleDto> findList(Map<String, Object> map) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId",sysUser.getOrganizationId());
+        return baseInAndOutRuleMapper.findList(map);
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int save(BaseInAndOutRule baseInAndOutRule) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int save(BaseInAndOutRule record) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(record.getWarehouseId())){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"请选择仓库");
+        }
 
+        //查询是否存在相同记录
         Example example = new Example(BaseInAndOutRule.class);
-        example.createCriteria()
-                .andEqualTo("inAndOutRuleName", baseInAndOutRule.getInAndOutRuleName())
-                .andEqualTo("orgId", user.getOrganizationId());
-        BaseInAndOutRule baseInAndOutRule1 = baseInAndOutRuleMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(baseInAndOutRule1)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        example.createCriteria().andEqualTo("warehouseId",record.getWarehouseId()).andEqualTo("category",record.getCategory());
+        List<BaseInAndOutRule> list = baseInAndOutRuleMapper.selectByExample(example);
+        if(list.size()>0){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"仓库已经存在规则");
         }
 
-        example.clear();
-        example.createCriteria()
-                .andEqualTo("orgId", user.getOrganizationId())
-                .andEqualTo("warehouseId",baseInAndOutRule.getWarehouseId())
-                .andEqualTo("category",baseInAndOutRule.getCategory());
-        BaseInAndOutRule baseInAndOutRule2 = baseInAndOutRuleMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(baseInAndOutRule2)){
-            throw new BizErrorException("该仓库已存在此类型的规则");
-        }
+        record.setCreateTime(new Date());
+        record.setCreateUserId(sysUser.getUserId());
+        record.setModifiedTime(new Date());
+        record.setModifiedUserId(sysUser.getUserId());
+        record.setOrgId(sysUser.getOrganizationId());
+        int num = baseInAndOutRuleMapper.insertUseGeneratedKeys(record);
 
-        baseInAndOutRule.setCreateUserId(user.getUserId());
-        baseInAndOutRule.setCreateTime(new Date());
-        baseInAndOutRule.setModifiedUserId(user.getUserId());
-        baseInAndOutRule.setModifiedTime(new Date());
-        baseInAndOutRule.setStatus(StringUtils.isEmpty(baseInAndOutRule.getStatus())?1:baseInAndOutRule.getStatus());
-        baseInAndOutRule.setOrgId(user.getOrganizationId());
-        int i = baseInAndOutRuleMapper.insertUseGeneratedKeys(baseInAndOutRule);
-
-        //履历
         BaseHtInAndOutRule baseHtInAndOutRule = new BaseHtInAndOutRule();
-        BeanUtils.copyProperties(baseInAndOutRule, baseHtInAndOutRule);
+        BeanUtils.copyProperties(record,baseHtInAndOutRule);
         baseHtInAndOutRuleMapper.insertSelective(baseHtInAndOutRule);
 
-        //明细
-        List<BaseInAndOutRuleDet> baseInAndOutRuleDets = baseInAndOutRule.getBaseInAndOutRuleDets();
-        if(StringUtils.isNotEmpty(baseInAndOutRuleDets)){
-            int num = 1;
-            for (BaseInAndOutRuleDet baseInAndOutRuleDet : baseInAndOutRuleDets) {
-                baseInAndOutRuleDet.setInAndOutRuleId(baseInAndOutRule.getInAndOutRuleId());
-                baseInAndOutRuleDet.setPriority(num++);//优先级自动递增
-                baseInAndOutRuleDet.setCreateUserId(user.getUserId());
-                baseInAndOutRuleDet.setCreateTime(new Date());
-                baseInAndOutRuleDet.setModifiedUserId(user.getUserId());
-                baseInAndOutRuleDet.setModifiedTime(new Date());
-                baseInAndOutRuleDet.setStatus(StringUtils.isEmpty(baseInAndOutRuleDet.getStatus())?1:baseInAndOutRuleDet.getStatus());
-                baseInAndOutRuleDet.setOrgId(user.getOrganizationId());
+        List<BaseInAndOutRuleDet> baseInAndOutRuleDets = new ArrayList<>();
+        List<BaseHtInAndOutRuleDet> baseHtInAndOutRuleDets = new ArrayList<>();
+        for (BaseInAndOutRuleDetDto baseInAndOutRuleDetDto : record.getBaseInAndOutRuleDets()) {
+            if(StringUtils.isEmpty(baseInAndOutRuleDetDto.getStoredProcedureName())){
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"请选择规则");
             }
-            baseInAndOutRuleDetMapper.insertList(baseInAndOutRuleDets);
-        }
+            if(StringUtils.isEmpty(baseInAndOutRuleDetDto.getPriority())){
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"请输入优先级");
+            }
 
-        return i;
+            //查询出入参数
+            List<InOutParamsDto> inOutParamsDtos = baseInAndOutRuleMapper.findInOutParamMode(baseInAndOutRuleDetDto.getStoredProcedureName());
+            if(inOutParamsDtos.size()>0){
+                Map<String,List<InOutParamsDto>> map = inOutParamsDtos.stream().collect(Collectors.groupingBy(InOutParamsDto::getParameterMode));
+                Set<String> set = map.keySet();
+                for (String s : set) {
+                    StringBuffer sb = new StringBuffer();
+                    List<InOutParamsDto> outParamsDtos = map.get(s);
+                    int i=0;
+                    for (InOutParamsDto outParamsDto : outParamsDtos) {
+                        sb.append(outParamsDto.getParameterName());
+                        if(i!=outParamsDtos.size()){
+                            sb.append(",");
+                        }
+                        i++;
+                    }
+                    if(s.equals("IN")){
+                        baseInAndOutRuleDetDto.setInParameters(sb.toString());
+                    }else if(s.equals("OUT")){
+                        baseInAndOutRuleDetDto.setOutParameters(sb.toString());
+                    }
+                }
+            }
+            baseInAndOutRuleDetDto.setInAndOutRuleId(record.getInAndOutRuleId());
+            baseInAndOutRuleDetDto.setCreateTime(new Date());
+            baseInAndOutRuleDetDto.setCreateUserId(sysUser.getUserId());
+            baseInAndOutRuleDetDto.setModifiedTime(new Date());
+            baseInAndOutRuleDetDto.setModifiedUserId(sysUser.getUserId());
+            baseInAndOutRuleDetDto.setOrgId(sysUser.getOrganizationId());
+            baseInAndOutRuleDets.add(baseInAndOutRuleDetDto);
+
+            BaseHtInAndOutRuleDet baseHtInAndOutRuleDet = new BaseHtInAndOutRuleDet();
+            BeanUtils.copyProperties(baseInAndOutRuleDetDto,baseHtInAndOutRuleDet);
+            baseHtInAndOutRuleDets.add(baseHtInAndOutRuleDet);
+        }
+        if(baseInAndOutRuleDets.size()>0){
+            baseInAndOutRuleDetMapper.insertList(baseInAndOutRuleDets);
+            baseHtInAndOutRuleDetMapper.insertList(baseHtInAndOutRuleDets);
+        }
+        return num;
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int update(BaseInAndOutRule baseInAndOutRule) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int update(BaseInAndOutRule entity) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(entity.getWarehouseId())){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"请选择仓库");
+        }
 
+        //查询是否存在相同记录
         Example example = new Example(BaseInAndOutRule.class);
-        example.createCriteria()
-                .andEqualTo("orgId", user.getOrganizationId())
-                .andEqualTo("inAndOutRuleName", baseInAndOutRule.getInAndOutRuleName())
-                .andNotEqualTo("inAndOutRuleId",baseInAndOutRule.getInAndOutRuleId());
-        BaseInAndOutRule baseInAndOutRule1 = baseInAndOutRuleMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(baseInAndOutRule1)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001);
+        example.createCriteria().andEqualTo("warehouseId",entity.getWarehouseId()).andEqualTo("category",entity.getCategory()).andNotEqualTo("inAndOutRuleId",entity.getInAndOutRuleId());
+        List<BaseInAndOutRule> list = baseInAndOutRuleMapper.selectByExample(example);
+        if(list.size()>0){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"仓库已经存在规则");
         }
 
-        example.clear();
-        example.createCriteria()
-                .andEqualTo("orgId", user.getOrganizationId())
-                .andEqualTo("warehouseId",baseInAndOutRule.getWarehouseId())
-                .andEqualTo("category",baseInAndOutRule.getCategory())
-                .andNotEqualTo("inAndOutRuleId",baseInAndOutRule.getInAndOutRuleId());
-        BaseInAndOutRule baseInAndOutRule2 = baseInAndOutRuleMapper.selectOneByExample(example);
-        if (StringUtils.isNotEmpty(baseInAndOutRule2)){
-            throw new BizErrorException("该仓库已存在此类型的规则");
-        }
+        entity.setModifiedTime(new Date());
+        entity.setModifiedUserId(sysUser.getUserId());
 
-        baseInAndOutRule.setModifiedUserId(user.getUserId());
-        baseInAndOutRule.setModifiedTime(new Date());
-        baseInAndOutRule.setOrgId(user.getOrganizationId());
-        int i=baseInAndOutRuleMapper.updateByPrimaryKeySelective(baseInAndOutRule);
+        example = new Example(BaseInAndOutRuleDet.class);
+        example.createCriteria().andEqualTo("inAndOutRuleId",entity.getInAndOutRuleId());
+        baseInAndOutRuleDetMapper.deleteByExample(example);
 
-        //履历
         BaseHtInAndOutRule baseHtInAndOutRule = new BaseHtInAndOutRule();
-        BeanUtils.copyProperties(baseInAndOutRule, baseHtInAndOutRule);
+        BeanUtils.copyProperties(entity,baseHtInAndOutRule);
         baseHtInAndOutRuleMapper.insertSelective(baseHtInAndOutRule);
 
-        //删除原有明细
-        Example example1 = new Example(BaseInAndOutRuleDet.class);
-        Example.Criteria criteria1 = example1.createCriteria();
-        criteria1.andEqualTo("inAndOutRuleId", baseInAndOutRule.getInAndOutRuleId());
-        baseInAndOutRuleDetMapper.deleteByExample(example1);
-
-        //新增新的明细
-        List<BaseInAndOutRuleDet> baseInAndOutRuleDets = baseInAndOutRule.getBaseInAndOutRuleDets();
-        if(StringUtils.isNotEmpty(baseInAndOutRuleDets)){
-            int num = 1;
-            for (BaseInAndOutRuleDet baseInAndOutRuleDet : baseInAndOutRuleDets) {
-                baseInAndOutRuleDet.setInAndOutRuleId(baseInAndOutRule.getInAndOutRuleId());
-                baseInAndOutRuleDet.setPriority(num++);//优先级自动递增
-                baseInAndOutRuleDet.setCreateUserId(user.getUserId());
-                baseInAndOutRuleDet.setCreateTime(new Date());
-                baseInAndOutRuleDet.setModifiedUserId(user.getUserId());
-                baseInAndOutRuleDet.setModifiedTime(new Date());
-                baseInAndOutRuleDet.setStatus(StringUtils.isEmpty(baseInAndOutRuleDet.getStatus())?1:baseInAndOutRuleDet.getStatus());
-                baseInAndOutRuleDet.setOrgId(user.getOrganizationId());
+        List<BaseInAndOutRuleDet> baseInAndOutRuleDets = new ArrayList<>();
+        List<BaseHtInAndOutRuleDet> baseHtInAndOutRuleDets = new ArrayList<>();
+        for (BaseInAndOutRuleDetDto baseInAndOutRuleDetDto : entity.getBaseInAndOutRuleDets()) {
+            if(StringUtils.isEmpty(baseInAndOutRuleDetDto.getStoredProcedureName())){
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"请选择规则");
             }
+            if(StringUtils.isEmpty(baseInAndOutRuleDetDto.getPriority())){
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"请输入优先级");
+            }
+            //查询出入参数
+            List<InOutParamsDto> inOutParamsDtos = baseInAndOutRuleMapper.findInOutParamMode(baseInAndOutRuleDetDto.getStoredProcedureName());
+            if(inOutParamsDtos.size()>0){
+                Map<String,List<InOutParamsDto>> map = inOutParamsDtos.stream().collect(Collectors.groupingBy(InOutParamsDto::getParameterMode));
+                Set<String> set = map.keySet();
+                for (String s : set) {
+                    StringBuffer sb = new StringBuffer();
+                    List<InOutParamsDto> outParamsDtos = map.get(s);
+                    int i=0;
+                    for (InOutParamsDto outParamsDto : outParamsDtos) {
+                        sb.append(outParamsDto.getParameterName());
+                        if(i!=outParamsDtos.size()){
+                            sb.append(",");
+                        }
+                        i++;
+                    }
+                    if(s.equals("IN")){
+                        baseInAndOutRuleDetDto.setInParameters(sb.toString());
+                    }else if(s.equals("OUT")){
+                        baseInAndOutRuleDetDto.setOutParameters(sb.toString());
+                    }
+                }
+            }
+            baseInAndOutRuleDetDto.setInAndOutRuleId(entity.getInAndOutRuleId());
+            baseInAndOutRuleDetDto.setCreateTime(new Date());
+            baseInAndOutRuleDetDto.setCreateUserId(sysUser.getUserId());
+            baseInAndOutRuleDetDto.setModifiedTime(new Date());
+            baseInAndOutRuleDetDto.setModifiedUserId(sysUser.getUserId());
+            baseInAndOutRuleDetDto.setOrgId(sysUser.getOrganizationId());
+            baseInAndOutRuleDets.add(baseInAndOutRuleDetDto);
+
+            BaseHtInAndOutRuleDet baseHtInAndOutRuleDet = new BaseHtInAndOutRuleDet();
+            BeanUtils.copyProperties(baseInAndOutRuleDetDto,baseHtInAndOutRuleDet);
+            baseHtInAndOutRuleDets.add(baseHtInAndOutRuleDet);
+        }
+        if(baseInAndOutRuleDets.size()>0){
             baseInAndOutRuleDetMapper.insertList(baseInAndOutRuleDets);
+            baseHtInAndOutRuleDetMapper.insertList(baseHtInAndOutRuleDets);
         }
 
-        return i;
+        return super.update(entity);
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = RuntimeException.class)
     public int batchDelete(String ids) {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-
-        List<BaseHtInAndOutRule> list = new ArrayList<>();
-        String[] idArry = ids.split(",");
-        for (String id : idArry) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        String[] arrId = ids.split(",");
+        for (String id : arrId) {
             BaseInAndOutRule baseInAndOutRule = baseInAndOutRuleMapper.selectByPrimaryKey(id);
             if(StringUtils.isEmpty(baseInAndOutRule)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
-            BaseHtInAndOutRule baseHtInAndOutRule = new BaseHtInAndOutRule();
-            BeanUtils.copyProperties(baseInAndOutRule, baseHtInAndOutRule);
-            list.add(baseHtInAndOutRule);
+            Example example = new Example(BaseInAndOutRuleDet.class);
+            example.createCriteria().andEqualTo("inAndOutRuleId",baseInAndOutRule.getInAndOutRuleId());
+            baseInAndOutRuleDetMapper.deleteByExample(example);
+        }
+        return super.batchDelete(ids);
+    }
 
-            //删除相关明细
-            Example example1 = new Example(BaseInAndOutRuleDet.class);
-            Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andEqualTo("inAndOutRuleId", baseInAndOutRule.getInAndOutRuleId());
-            baseInAndOutRuleDetMapper.deleteByExample(example1);
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<BaseInAndOutRuleImport> list) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
+        Map<String,String > map = new HashMap<>();
+        List<Map<String,String>> failMap = new ArrayList<>();  //记录操作失败行数
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        int i=0;
+        for (BaseInAndOutRuleImport baseInAndOutRuleImport : list) {
+            SearchBaseWarehouse searchBaseWarehouse = new SearchBaseWarehouse();
+            searchBaseWarehouse.setWarehouseCode(baseInAndOutRuleImport.getWarehouseCode());
+            searchBaseWarehouse.setCodeQueryMark(1);
+            List<BaseWarehouse> baseWarehouses = baseWarehouseMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseWarehouse));
+            if(baseWarehouses.size()==0){
+                map.put(baseInAndOutRuleImport.getWarehouseCode(),"仓库名称、计划入库单号不鞥呢为空");
+                failMap.add(map);
+                fail.add(i++);
+                break;
+            }
+            BaseInAndOutRule baseInAndOutRule = new BaseInAndOutRule();
+            switch (baseInAndOutRuleImport.getCategory()){
+                case "入库":
+                    baseInAndOutRule.setCategory((byte)1);
+                    break;
+                case "出库":
+                    baseInAndOutRule.setCategory((byte)2);
+                    break;
+                case "批次":
+                    baseInAndOutRule.setCategory((byte)3);
+            }
+            baseInAndOutRule.setCreateTime(new Date());
+            baseInAndOutRule.setCreateUserId(sysUser.getUserId());
+            baseInAndOutRule.setModifiedTime(new Date());
+            baseInAndOutRule.setModifiedUserId(sysUser.getUserId());
+            baseInAndOutRule.setOrgId(sysUser.getOrganizationId());
+            baseInAndOutRule.setWarehouseId(baseWarehouses.get(0).getWarehouseId());
+            baseInAndOutRuleMapper.insertSelective(baseInAndOutRule);
         }
 
-        baseHtInAndOutRuleMapper.insertList(list);
+        //添加日志
+        SysImportAndExportLog log = new SysImportAndExportLog();
+        log.setSucceedCount(list.size() - fail.size());
+        log.setFailCount(fail.size());
+        log.setFailInfo(failMap.toString());
+        log.setOperatorUserId(sysUser.getUserId());
+        log.setTotalCount(list.size());
+        log.setType((byte)1);
+        securityFeignApi.add(log);
 
-        return baseInAndOutRuleMapper.deleteByIds(ids);
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败行数",fail);
+        return resultMap;
+    }
+
+    @Override
+    public List<BaseHtInAndOutRuleDto> findHtList(Map<String, Object> map) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId",sysUser.getOrganizationId());
+        return baseHtInAndOutRuleMapper.findList(map);
+    }
+
+    @Override
+    public List<String> findView() {
+        return baseInAndOutRuleMapper.findView();
     }
 }

@@ -149,6 +149,7 @@
             </if>
         </where>
         group by wiaod.asn_order_det_id
+        order by wiao.create_time desc
         ) d
         <where>
             <if test="ifFiltrate!=null and ifFiltrate == 1">

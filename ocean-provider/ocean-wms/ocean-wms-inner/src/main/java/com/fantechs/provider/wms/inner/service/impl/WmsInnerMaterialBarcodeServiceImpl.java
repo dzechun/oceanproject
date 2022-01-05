@@ -187,22 +187,19 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
 
             SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
 
-            BaseBarcodeRuleDto baseBarCode = new BaseBarcodeRuleDto();
+            //取系统配置默认编码
+            BaseBarcodeRuleDto baseBarCode = getBaseBarCode();
 
             searchBaseMaterial.setMaterialId(wmsInnerMaterialBarcodeDto.getMaterialId());
             List<BaseMaterial> baseMaterialList = baseFeignApi.findList(searchBaseMaterial).getData();
 
 
             if (StringUtils.isEmpty(baseMaterialList) || StringUtils.isEmpty(baseMaterialList.get(0).getBarcodeRuleSetId())) {
-                //取系统配置默认编码
-                baseBarCode = getBaseBarCode();
                 searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
             }else {
                 searchBaseBarcodeRule.setBarcodeRuleSetId(baseMaterialList.get(0).getBarcodeRuleSetId());
                 List<BaseBarcodeRuleDto> baseBarcodeRuleList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule).getData();
                 if (StringUtils.isEmpty(baseBarcodeRuleList)) {
-                    //取系统配置默认编码
-                    baseBarCode = getBaseBarCode();
                     searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
                 }
                 Long barcodeRuleId = null;
@@ -214,8 +211,6 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                 }
 
                 if (StringUtils.isEmpty(barcodeRuleId)) {
-                    //取系统配置默认编码
-                    baseBarCode = getBaseBarCode();
                     searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
                 }else {
                     searchBaseBarcodeRuleSpec.setBarcodeRuleId(barcodeRuleId);
@@ -292,19 +287,19 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
 
                 materialBarcodeList.add(wmsInnerMaterialBarCode);
 
-
+                wmsInnerMaterialBarcodeReOrder.setScanStatus((byte) 1);
                 wmsInnerMaterialBarcodeReOrder.setOrderCode(wmsInnerMaterialBarcodeDto.getPrintOrderCode());
                 wmsInnerMaterialBarcodeReOrder.setOrderId(wmsInnerMaterialBarcodeDto.getPrintOrderId());
                 wmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInnerMaterialBarcodeDto.getPrintOrderDetId());
                 wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(wmsInnerMaterialBarCode.getMaterialBarcodeId());
                 wmsInnerMaterialBarcodeReOrderList.add(wmsInnerMaterialBarcodeReOrder);
             }
-
         }
+
         if (StringUtils.isNotEmpty(htList)) {
             wmsInnerHtMaterialBarcodeMapper.insertList(htList);
         }
-        wmsInnerMaterialBarcodeReOrderService.batchAdd(wmsInnerMaterialBarcodeReOrderList);
+        wmsInnerMaterialBarcodeReOrderService.batchSave(wmsInnerMaterialBarcodeReOrderList);
         return materialBarcodeList;
     }
 

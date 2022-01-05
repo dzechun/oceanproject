@@ -135,7 +135,7 @@ public class WmsInnerInventoryUtil {
             }
             criteria.andEqualTo("jobStatus", (byte) 1);
             criteria.andEqualTo("inventoryStatusId", newDto.getInventoryStatusId());
-            criteria.andEqualTo("stockLock", 0).andEqualTo("qcLock", 0).andEqualTo("lockStatus", 0);
+            criteria.andEqualTo("stockLock", 0).andEqualTo("lockStatus", 0);
             criteria.andEqualTo("orgId", sysUser.getOrganizationId());
             WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryUtil.wmsInnerInventoryMapper.selectOneByExample(example);
             BigDecimal qty = BigDecimal.ZERO;

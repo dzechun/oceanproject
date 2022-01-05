@@ -13,9 +13,11 @@ import com.fantechs.common.base.general.dto.wms.in.imports.WmsInPlanReceivingOrd
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.general.entity.wms.in.*;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
@@ -93,6 +95,7 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
         record.setModifiedUserId(sysUser.getUserId());
         record.setOrderStatus((byte)1);
         record.setOrgId(sysUser.getOrganizationId());
+        record.setSysOrderTypeCode("IN-SPO");
         if(StringUtils.isEmpty(record.getSourceBigType())){
             record.setSourceBigType((byte)2);
         }
@@ -354,6 +357,7 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
                     wmsInReceivingOrderDet.setModifiedTime(new Date());
                     wmsInReceivingOrderDet.setModifiedUserId(sysUser.getUserId());
                     wmsInReceivingOrderDet.setOrgId(sysUser.getOrganizationId());
+                    wmsInReceivingOrderDet.setIfAllIssued((byte)0);
 
                     //查找是否有条码
                     SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
@@ -419,6 +423,16 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
             case "IN-IWK":
                 //上架作业
                 //生成上架作业单
+
+                //获取默认收货库位
+                SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                searchBaseStorage.setWarehouseId(wmsInPlanReceivingOrder.getWarehouseId());
+                searchBaseStorage.setStorageType((byte)2);
+                List<BaseStorage> storageList = baseFeignApi.findList(searchBaseStorage).getData();
+                if(storageList.size()<1){
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"未维护仓库收货库位");
+                }
+
                 List<WmsInnerJobOrderDet> detList = new LinkedList<>();
                 int lineNumber = 1;
                 for (WmsInPlanReceivingOrderDet wmsInPlanReceivingOrderDet : wmsInPlanReceivingOrderDets) {
@@ -433,6 +447,7 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
                     wmsInnerJobOrderDet.setMaterialId(wmsInPlanReceivingOrderDet.getMaterialId());
                     wmsInnerJobOrderDet.setPlanQty(wmsInPlanReceivingOrderDet.getPlanQty());
                     wmsInnerJobOrderDet.setLineStatus((byte)1);
+                    wmsInnerJobOrderDet.setOutStorageId(storageList.get(0).getStorageId());
 
                     //查找是否有条码
 //                    SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
@@ -464,6 +479,7 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
                 wmsInnerJobOrder.setModifiedTime(new Date());
                 wmsInnerJobOrder.setStatus((byte)1);
                 wmsInnerJobOrder.setOrgId(sysUser.getOrganizationId());
+                wmsInnerJobOrder.setSourceBigType((byte)1);
                 wmsInnerJobOrder.setWmsInPutawayOrderDets(detList);
 
                 ResponseEntity rs = innerFeignApi.add(wmsInnerJobOrder);

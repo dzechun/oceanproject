@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.base.mapper.BaseHtInAndOutRuleMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.history.BaseHtInAndOutRule">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.BaseHtInAndOutRule">
     <!--
       WARNING - @mbg.generated
     -->
     <id column="ht_in_and_out_rule_id" jdbcType="BIGINT" property="htInAndOutRuleId" />
     <result column="in_and_out_rule_id" jdbcType="BIGINT" property="inAndOutRuleId" />
-    <result column="in_and_out_rule_name" jdbcType="VARCHAR" property="inAndOutRuleName" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="category" jdbcType="TINYINT" property="category" />
     <result column="status" jdbcType="TINYINT" property="status" />
@@ -21,65 +20,54 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
-
+  </resultMap>
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.BaseHtInAndOutRuleDto">
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
   </resultMap>
-
-  <sql id="Base_Column_List">
-    bhiaor.ht_in_and_out_rule_id,
-    bhiaor.in_and_out_rule_id,
-    bhiaor.in_and_out_rule_name,
-    bhiaor.warehouse_id,
-    bhiaor.category,
-    bhiaor.`status`,
-    bhiaor.remark,
-    bhiaor.org_id,
-    bhiaor.create_user_id,
-    bhiaor.create_time,
-    bhiaor.modified_user_id,
-    bhiaor.modified_time,
-    bhiaor.is_delete,
-    bhiaor.option1,
-    bhiaor.option2,
-    bhiaor.option3
+  <sql id="base_column_list">
+biaor.ht_in_and_out_rule_id,
+    biaor.in_and_out_rule_id,
+    biaor.warehouse_id,
+biaor.category,
+biaor.status,
+biaor.remark,
+biaor.org_id,
+biaor.create_user_id,
+biaor.create_time,
+biaor.modified_user_id,
+biaor.modified_time,
+biaor.is_delete,
+biaor.option1,
+biaor.option2,
+biaor.option3
   </sql>
-
-  <select id="findHtList" parameterType="map" resultMap="BaseResultMap">
-    SELECT<include refid="Base_Column_List"/>,
-    bw.warehouse_name,
-    su.user_name as create_user_name,
-    sus.user_name as modified_user_name,
-    bo.organization_name FROM base_ht_in_and_out_rule bhiaor
-    LEFT JOIN base_warehouse bw ON bhiaor.warehouse_id= bw.warehouse_id
-    LEFT JOIN sys_user su ON bhiaor.create_user_id = su.user_id
-    LEFT JOIN sys_user sus ON bhiaor.modified_user_id = sus.user_id
-    LEFT JOIN base_organization bo ON bhiaor.org_id = bo.organization_id
+  <select id="findList" resultMap="BaseResultMapDto">
+    select <include refid="base_column_list"/>,bw.warehouse_code,bw.warehouse_name,su.user_name AS create_user_name,
+    sus.user_name AS modified_user_name,
+    bo.organization_name
+    FROM base_ht_in_and_out_rule biaor
+    LEFT JOIN base_warehouse bw on biaor.warehouse_id = bw.warehouse_id
+    LEFT JOIN sys_user su ON biaor.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON biaor.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON biaor.org_id = bo.organization_id
     <where>
+      <if test="warehouseId!=null and warehouseId!=''">
+        and biaor.warehouse_id = #{warehouseId}
+      </if>
       <if test="warehouseName!=null and warehouseName!=''">
-        and bw.warehouse_name LIKE CONCAT('%',#{warehouseName},'%')
+        and bw.warehouse_name = #{warehouseName}
       </if>
-      <if test="inAndOutRuleName!=null and inAndOutRuleName!=''">
-        and bhiaor.in_and_out_rule_name LIKE CONCAT('%',#{inAndOutRuleName},'%')
+      <if test="category!=null and category!=''">
+        and biaor.category = #{category}
       </if>
-      <if test="createUserName!=null and createUserName!=''">
-        and su.user_name LIKE CONCAT('%',#{createUserName},'%')
-      </if>
-      <if test="category!=null">
-        and bhiaor.category = #{category}
-      </if>
-      <if test="status!=null">
-        and bhiaor.status = #{status}
-      </if>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(bhiaor.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-      </if>
-      <if test="orgId!=null">
-        and bhiaor.org_id=#{orgId}
+      <if test="orgId!=null and orgId!=''">
+        and biaor.org_id = #{orgId}
       </if>
     </where>
-    order by bhiaor.modified_time desc
+    order by biaor.create_time desc
   </select>
 </mapper>

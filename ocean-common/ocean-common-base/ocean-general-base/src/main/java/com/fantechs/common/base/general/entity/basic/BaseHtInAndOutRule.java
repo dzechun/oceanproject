@@ -1,15 +1,15 @@
-package com.fantechs.common.base.general.entity.basic.history;
+package com.fantechs.common.base.general.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -17,30 +17,22 @@ import java.util.Date;
 ;
 
 /**
- * 出入库规则明细履历表
- * base_ht_in_and_out_rule_det
- * @author admin
- * @date 2021-05-14 16:39:58
+ * 出入库规则履历表
+ * base_ht_in_and_out_rule
+ * @author mr.lei
+ * @date 2021-12-30 19:30:23
  */
 @Data
-@Table(name = "base_ht_in_and_out_rule_det")
-public class BaseHtInAndOutRuleDet extends ValidGroup implements Serializable {
+@Table(name = "base_ht_in_and_out_rule")
+public class BaseHtInAndOutRule extends ValidGroup implements Serializable {
     /**
-     * 出入库规则明细履历ID
+     * 出入库规则履历ID
      */
-    @ApiModelProperty(name="htInAndOutRuleDetId",value = "出入库规则明细履历ID")
-    @Excel(name = "出入库规则明细履历ID", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="htInAndOutRuleId",value = "出入库规则履历ID")
+    @Excel(name = "出入库规则履历ID", height = 20, width = 30,orderNum="") 
     @Id
-    @Column(name = "ht_in_and_out_rule_det_id")
-    private Long htInAndOutRuleDetId;
-
-    /**
-     * 出入库规则明细ID
-     */
-    @ApiModelProperty(name="inAndOutRuleDetId",value = "出入库规则明细ID")
-    @Excel(name = "出入库规则明细ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "in_and_out_rule_det_id")
-    private Long inAndOutRuleDetId;
+    @Column(name = "ht_in_and_out_rule_id")
+    private Long htInAndOutRuleId;
 
     /**
      * 出入库规则ID
@@ -51,19 +43,19 @@ public class BaseHtInAndOutRuleDet extends ValidGroup implements Serializable {
     private Long inAndOutRuleId;
 
     /**
-     * 出入库规则类型ID
+     * 仓库ID
      */
-    @ApiModelProperty(name="inAndOutRuleTypeId",value = "出入库规则类型ID")
-    @Excel(name = "出入库规则类型ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "in_and_out_rule_type_id")
-    private Long inAndOutRuleTypeId;
+    @ApiModelProperty(name="warehouseId",value = "仓库ID")
+    @Excel(name = "仓库ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "warehouse_id")
+    private Long warehouseId;
 
     /**
-     * 优先级
+     * 类型(1-入库 2-出库 3-批次)
      */
-    @ApiModelProperty(name="priority",value = "优先级")
-    @Excel(name = "优先级", height = 20, width = 30,orderNum="") 
-    private Integer priority;
+    @ApiModelProperty(name="category",value = "类型(1-入库 2-出库 3-批次)")
+    @Excel(name = "类型(1-入库 2-出库 3-批次)", height = 20, width = 30,orderNum="") 
+    private Byte category;
 
     /**
      * 状态(0无效，1有效)
@@ -100,7 +92,8 @@ public class BaseHtInAndOutRuleDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
     @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "create_time")
     private Date createTime;
 
@@ -117,7 +110,8 @@ public class BaseHtInAndOutRuleDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
     @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "modified_time")
     private Date modifiedTime;
 
@@ -128,34 +122,6 @@ public class BaseHtInAndOutRuleDet extends ValidGroup implements Serializable {
     @Excel(name = "逻辑删除（0、删除 1、正常）", height = 20, width = 30,orderNum="") 
     @Column(name = "is_delete")
     private Byte isDelete;
-
-    /**
-     * 创建用户名称
-     */
-    @Transient
-    @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    private String createUserName;
-
-    /**
-     * 修改用户名称
-     */
-    @Transient
-    @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    private String modifiedUserName;
-
-    /**
-     * 组织名称
-     */
-    @Transient
-    @ApiModelProperty(name = "organizationName",value = "组织名称")
-    private String organizationName;
-
-    /**
-     * 出入库规则类型
-     */
-    @Transient
-    @ApiModelProperty(name = "inAndOutRuleTypeName",value = "出入库规则类型")
-    private String inAndOutRuleTypeName;
 
     private String option1;
 

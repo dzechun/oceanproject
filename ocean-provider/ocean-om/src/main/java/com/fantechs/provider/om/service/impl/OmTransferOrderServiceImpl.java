@@ -71,9 +71,10 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
     public int pushDown(List<OmTransferOrderDetDto> omTransferOrderDetDtos) {
         int i;
         Long outWarehouseId = omTransferOrderDetDtos.get(0).getOutWarehouseId();
+        Long inWarehouseId = omTransferOrderDetDtos.get(0).getInWarehouseId();
         for (OmTransferOrderDetDto omTransferOrderDetDto : omTransferOrderDetDtos){
-            if(!outWarehouseId.equals(omTransferOrderDetDto.getOutWarehouseId())){
-                throw new BizErrorException("调出仓库需一致");
+            if(!outWarehouseId.equals(omTransferOrderDetDto.getOutWarehouseId())||!inWarehouseId.equals(omTransferOrderDetDto.getInWarehouseId())){
+                throw new BizErrorException("调出(调入)仓库需一致");
             }
             BigDecimal totalIssueQty = omTransferOrderDetDto.getTotalIssueQty() == null ? BigDecimal.ZERO : omTransferOrderDetDto.getTotalIssueQty();
             BigDecimal add = totalIssueQty.add(omTransferOrderDetDto.getIssueQty());
@@ -99,11 +100,12 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
             lineNumber++;
             wmsInnerJobOrderDet.setMaterialId(omTransferOrderDetDto.getMaterialId());
             wmsInnerJobOrderDet.setBatchCode(omTransferOrderDetDto.getBatchCode());
-            wmsInnerJobOrderDet.setPlanQty(omTransferOrderDetDto.getOrderQty());
+            wmsInnerJobOrderDet.setPlanQty(omTransferOrderDetDto.getIssueQty());
             wmsInnerJobOrderDet.setLineStatus((byte) 1);
             wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
         }
         WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+        wmsInnerJobOrder.setSourceBigType((byte)1);
         wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("INNER-TO");
         wmsInnerJobOrder.setSourceSysOrderTypeCode("INNER-TO");
         wmsInnerJobOrder.setWarehouseId(outWarehouseId);

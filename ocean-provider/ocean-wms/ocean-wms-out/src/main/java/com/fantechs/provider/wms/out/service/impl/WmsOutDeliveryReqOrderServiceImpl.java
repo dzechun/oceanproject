@@ -104,7 +104,7 @@ public class WmsOutDeliveryReqOrderServiceImpl extends BaseService<WmsOutDeliver
         //查当前单据类型的所有单据流
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
         searchBaseOrderFlow.setOrderTypeCode("OUT-DRO");
-        List<BaseOrderFlowDto> baseOrderFlowDtos = baseFeignApi.findList(searchBaseOrderFlow).getData();
+        List<BaseOrderFlowDto> baseOrderFlowDtos = baseFeignApi.findAll(searchBaseOrderFlow).getData();
         if (StringUtils.isEmpty(baseOrderFlowDtos)) {
             throw new BizErrorException("未找到当前单据配置的单据流");
         }
@@ -145,6 +145,7 @@ public class WmsOutDeliveryReqOrderServiceImpl extends BaseService<WmsOutDeliver
                     wmsOutPlanDeliveryOrderDetDtos.add(wmsOutPlanDeliveryOrderDetDto);
                 }
                 WmsOutPlanDeliveryOrderDto wmsOutPlanDeliveryOrderDto = new WmsOutPlanDeliveryOrderDto();
+                wmsOutPlanDeliveryOrderDto.setSourceBigType((byte) 1);
                 //wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("OUT-PRO");
                 wmsOutPlanDeliveryOrderDto.setSourceSysOrderTypeCode("OUT-DRO");
                 wmsOutPlanDeliveryOrderDto.setSourceBigType((byte)1);
@@ -170,6 +171,7 @@ public class WmsOutDeliveryReqOrderServiceImpl extends BaseService<WmsOutDeliver
                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
                 }
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+                wmsInnerJobOrder.setSourceBigType((byte) 1);
                 //wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("OUT-PRO");
                 wmsInnerJobOrder.setSourceSysOrderTypeCode("OUT-DRO");
                 wmsInnerJobOrder.setWarehouseId(warehouseId);

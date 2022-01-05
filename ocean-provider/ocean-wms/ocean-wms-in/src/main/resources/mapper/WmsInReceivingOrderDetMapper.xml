@@ -113,6 +113,7 @@ wirod.option3
         </if>
     </where>
     GROUP BY wirod.receiving_order_det_id
+    order by wiro.create_time desc
     ) d
     <where>
       <if test="ifFiltrate!=null and ifFiltrate == 1">

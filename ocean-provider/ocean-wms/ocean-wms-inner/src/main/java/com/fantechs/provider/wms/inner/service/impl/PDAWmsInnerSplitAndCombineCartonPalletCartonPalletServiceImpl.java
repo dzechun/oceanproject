@@ -1,11 +1,16 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDetDto;
 import com.fantechs.common.base.general.dto.basic.BaseLabelDto;
-import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
-import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
+import com.fantechs.common.base.general.dto.mes.sfc.*;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductCarton;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductCartonDet;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPallet;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPalletDet;
 import com.fantechs.common.base.general.dto.wms.inner.PDAWmsInnerSplitAndCombineCartonPalletInfoDto;
 import com.fantechs.common.base.general.dto.wms.inner.PDAWmsInnerSplitAndCombineCheckBarcodeDto;
 import com.fantechs.common.base.general.dto.wms.inner.PDAWmsInnerSplitAndCombinePrintDto;
@@ -15,13 +20,19 @@ import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.*;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductCarton;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductCartonDet;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
+import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPalletDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcode;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerSplitAndCombineLog;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerMaterialBarcodeMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerSplitAndCombineLogMapper;
@@ -52,6 +63,8 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
     private BaseFeignApi baseFeignApi;
     @Resource
     private SFCFeignApi sfcFeignApi;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
     @Resource
     private RedisUtil redisUtil;
 
@@ -166,6 +179,9 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"找不到该库位信息");
         }
         BaseStorage baseStorage = baseStorages.get(0);
+        if(baseStorage.getStorageType()!=(byte)1){
+            throw new BizErrorException("该库位非存货库位");
+        }
 
         return baseStorage;
     }
@@ -255,30 +271,6 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
         return rs.getData();
     }
 
-    public void printBarcode(String barcodes,Byte type){
-        SearchBaseLabel searchBaseLabel = new SearchBaseLabel();
-        searchBaseLabel.setLabelCategoryName(type == (byte)1 || type == (byte)2 ? "包箱条码" : "栈板条码");
-        List<BaseLabelDto> labelList = baseFeignApi.findLabelList(searchBaseLabel).getData();
-        if (StringUtils.isEmpty(labelList)) {
-            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"标签模板不存在");
-        }
-
-        List<PrintModel> printModelList = new ArrayList<>();
-        String[] split = barcodes.split(",");
-        for (String s : split){
-            PrintModel printModel = new PrintModel();
-            printModel.setSize(1);
-            printModel.setQrCode(s);
-            printModelList.add(printModel);
-        }
-        PrintDto printDto = new PrintDto();
-        printDto.setLabelName(labelList.get(0).getLabelName());
-        printDto.setLabelVersion(labelList.get(0).getLabelVersion());
-        //printDto.setPrintName(printName);
-        printDto.setPrintModelList(printModelList);
-        sfcFeignApi.print(printDto);
-    }
-
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public String print(PDAWmsInnerSplitAndCombinePrintDto pdaWmsInnerSplitAndCombinePrintDto){
@@ -305,10 +297,10 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
             barcodeRule = findBarcodeRule(materialId, (byte) 2);
         }
 
-        if(type == (byte)1) {//分包箱
-            String sourceCartonCode = generatorCartonPalletCode(barcodeRule, materialId);
-            String newCartonCode = generatorCartonPalletCode(barcodeRule, materialId);
-            barcodes = sourceCartonCode + "," + newCartonCode;
+        if(type == (byte)1||type == (byte)3) {//分包箱（栈板）
+            String sourceCartonPalletCode = generatorCartonPalletCode(barcodeRule, materialId);
+            String newCartonPalletCode = generatorCartonPalletCode(barcodeRule, materialId);
+            barcodes = sourceCartonPalletCode + "," + newCartonPalletCode;
 
             PDAWmsInnerSplitAndCombineCartonPalletInfoDto cartonPalletInfoDto = cartonPalletInfoDtos.get(0);
             List<WmsInnerInventoryDetDto> nextLevelInventoryDetDtos = cartonPalletInfoDto.getNextLevelInventoryDetDtos();
@@ -325,7 +317,7 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
                 }
             }
 
-            //修改源包箱信息
+            //修改源包箱（栈板）信息
             BigDecimal sourceMaterialQty = BigDecimal.ZERO;
             StringBuilder sourceMaterialBarcodeId = new StringBuilder();
             for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : sourceInventoryDetDtos) {
@@ -337,19 +329,27 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
             List<WmsInnerMaterialBarcode> sourceMaterialBarcodes = wmsInnerMaterialBarcodeMapper.selectByIds(sourceMaterialBarcodeIds);
             for (WmsInnerMaterialBarcode wmsInnerMaterialBarcode : sourceMaterialBarcodes) {
                 sourceMaterialQty = sourceMaterialQty.add(wmsInnerMaterialBarcode.getMaterialQty());
-                wmsInnerMaterialBarcode.setCartonCode(sourceCartonCode);
+                if(type==(byte)1){
+                    wmsInnerMaterialBarcode.setCartonCode(sourceCartonPalletCode);
+                }else if(type==(byte)3){
+                    wmsInnerMaterialBarcode.setPalletCode(sourceCartonPalletCode);
+                }
                 wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(wmsInnerMaterialBarcode);
             }
 
             cartonPalletInventoryDetDto.setStorageId(storageId);
             wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(cartonPalletInventoryDetDto);
             WmsInnerMaterialBarcode sourceMaterialBarcode = wmsInnerMaterialBarcodeMapper.selectByPrimaryKey(cartonPalletInventoryDetDto.getMaterialBarcodeId());
-            sourceMaterialBarcode.setCartonCode(sourceCartonCode);
+            if(type==(byte)1) {
+                sourceMaterialBarcode.setCartonCode(sourceCartonPalletCode);
+            }else if(type==(byte)3){
+                sourceMaterialBarcode.setPalletCode(sourceCartonPalletCode);
+            }
             sourceMaterialBarcode.setMaterialQty(sourceMaterialQty);
             wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(sourceMaterialBarcode);
 
 
-            //修改新包箱信息
+            //修改新包箱（栈板）信息
             BigDecimal newMaterialQty = BigDecimal.ZERO;
             StringBuilder newMaterialBarcodeId = new StringBuilder();
             for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : newInventoryDetDtos) {
@@ -361,14 +361,22 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
             List<WmsInnerMaterialBarcode> newMaterialBarcodes = wmsInnerMaterialBarcodeMapper.selectByIds(newMaterialBarcodeIds);
             for (WmsInnerMaterialBarcode wmsInnerMaterialBarcode : newMaterialBarcodes) {
                 newMaterialQty = newMaterialQty.add(wmsInnerMaterialBarcode.getMaterialQty());
-                wmsInnerMaterialBarcode.setCartonCode(newCartonCode);
+                if(type==(byte)1) {
+                    wmsInnerMaterialBarcode.setCartonCode(newCartonPalletCode);
+                }else if(type==(byte)3){
+                    wmsInnerMaterialBarcode.setPalletCode(newCartonPalletCode);
+                }
                 wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(wmsInnerMaterialBarcode);
             }
 
             WmsInnerMaterialBarcode newMaterialBarcode = new WmsInnerMaterialBarcode();
             BeanUtils.copyProperties(sourceMaterialBarcode, newMaterialBarcode);
             newMaterialBarcode.setMaterialBarcodeId(null);
-            newMaterialBarcode.setCartonCode(newCartonCode);
+            if(type==(byte)1) {
+                newMaterialBarcode.setCartonCode(newCartonPalletCode);
+            } else if(type==(byte)3){
+                newMaterialBarcode.setPalletCode(newCartonPalletCode);
+            }
             newMaterialBarcode.setMaterialQty(newMaterialQty);
             wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(newMaterialBarcode);
 
@@ -378,9 +386,78 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
             newCartonInventoryDetDto.setMaterialBarcodeId(newMaterialBarcode.getMaterialBarcodeId());
             newCartonInventoryDetDto.setStorageId(storageId);
             wmsInnerInventoryDetMapper.insertSelective(newCartonInventoryDetDto);
-        }else if(type == (byte)2){//合包箱
-            String newCartonCode = generatorCartonPalletCode(barcodeRule, materialId);
-            barcodes = newCartonCode;
+
+            //是否返写mes
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("IfWriteBackMES");
+            List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if(StringUtils.isNotEmpty(sysSpecItemList)&&Integer.parseInt(sysSpecItemList.get(0).getParaValue())==1){
+                if(type == (byte)1) {
+                    SearchMesSfcProductCarton searchMesSfcProductCarton = new SearchMesSfcProductCarton();
+                    searchMesSfcProductCarton.setCartonCode(cartonPalletCodes.get(0));
+                    List<MesSfcProductCartonDto> productCartonDtos = sfcFeignApi.findProductCartonList(searchMesSfcProductCarton).getData();
+                    if(StringUtils.isNotEmpty(productCartonDtos)) {
+                        MesSfcProductCartonDto mesSfcProductCartonDto = productCartonDtos.get(0);
+                        SearchMesSfcProductCartonDet searchMesSfcProductCartonDet = new SearchMesSfcProductCartonDet();
+                        searchMesSfcProductCartonDet.setProductCartonId(mesSfcProductCartonDto.getProductCartonId());
+                        List<MesSfcProductCartonDetDto> productCartonDetDtos = sfcFeignApi.findList(searchMesSfcProductCartonDet).getData();
+
+                        List<MesSfcProductCartonDet> cartonDets = new LinkedList<>();
+                        for (MesSfcProductCartonDetDto mesSfcProductCartonDetDto : productCartonDetDtos){
+                            for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : newInventoryDetDtos){
+                                if(mesSfcProductCartonDetDto.getBarcode().equals(wmsInnerInventoryDetDto.getBarcode())){
+                                    cartonDets.add(mesSfcProductCartonDetDto);
+                                }
+                            }
+                        }
+                        MesSfcProductCarton mesSfcProductCarton = new MesSfcProductCarton();
+                        BeanUtils.copyProperties(mesSfcProductCartonDto,mesSfcProductCarton);
+                        mesSfcProductCarton.setProductCartonId(null);
+                        mesSfcProductCarton.setCartonCode(newCartonPalletCode);
+                        mesSfcProductCarton.setNowPackageSpecQty(new BigDecimal(newInventoryDetDtos.size()));
+                        mesSfcProductCarton.setCartonDets(cartonDets);
+                        sfcFeignApi.add(mesSfcProductCarton);
+
+                        mesSfcProductCartonDto.setCartonCode(sourceCartonPalletCode);
+                        mesSfcProductCartonDto.setNowPackageSpecQty(new BigDecimal(sourceInventoryDetDtos.size()));
+                        sfcFeignApi.update(mesSfcProductCartonDto);
+                    }
+                }else if(type == (byte)3){
+                    SearchMesSfcProductPallet searchMesSfcProductPallet = new SearchMesSfcProductPallet();
+                    searchMesSfcProductPallet.setPalletCode(cartonPalletCodes.get(0));
+                    List<MesSfcProductPalletDto> productPalletDtos = sfcFeignApi.findProductPalletList(searchMesSfcProductPallet).getData();
+                    if(StringUtils.isNotEmpty(productPalletDtos)) {
+                        MesSfcProductPalletDto mesSfcProductPalletDto = productPalletDtos.get(0);
+                        SearchMesSfcProductPalletDet searchMesSfcProductPalletDet = new SearchMesSfcProductPalletDet();
+                        searchMesSfcProductPalletDet.setProductPalletId(mesSfcProductPalletDto.getProductPalletId());
+                        List<MesSfcProductPalletDetDto> productPalletDetDtos = sfcFeignApi.findList(searchMesSfcProductPalletDet).getData();
+
+                        List<MesSfcProductPalletDet> palletDets = new LinkedList<>();
+                        for (MesSfcProductPalletDetDto mesSfcProductPalletDetDto : productPalletDetDtos){
+                            for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : newInventoryDetDtos){
+                                if(mesSfcProductPalletDetDto.getCartonCode().equals(wmsInnerInventoryDetDto.getCartonCode())){
+                                    palletDets.add(mesSfcProductPalletDetDto);
+                                }
+                            }
+                        }
+                        MesSfcProductPallet mesSfcProductPallet = new MesSfcProductPallet();
+                        BeanUtils.copyProperties(mesSfcProductPalletDto,mesSfcProductPallet);
+                        mesSfcProductPallet.setProductPalletId(null);
+                        mesSfcProductPallet.setPalletCode(newCartonPalletCode);
+                        mesSfcProductPallet.setNowPackageSpecQty(new BigDecimal(newInventoryDetDtos.size()));
+                        mesSfcProductPallet.setPalletDets(palletDets);
+                        sfcFeignApi.add(mesSfcProductPallet);
+
+                        mesSfcProductPalletDto.setPalletCode(sourceCartonPalletCode);
+                        mesSfcProductPalletDto.setNowPackageSpecQty(new BigDecimal(sourceInventoryDetDtos.size()));
+                        sfcFeignApi.update(mesSfcProductPalletDto);
+                    }
+                }
+
+            }
+        }else if(type == (byte)2||type == (byte)4){//合包箱（栈板）
+            String newCartonPalletCode = generatorCartonPalletCode(barcodeRule, materialId);
+            barcodes = newCartonPalletCode;
 
             List<WmsInnerInventoryDetDto> nextLevelInventoryDetDtos = new LinkedList<>();
             List<Long> toDeleteInventoryDetIdList = new LinkedList<>();
@@ -406,17 +483,25 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
             List<WmsInnerMaterialBarcode> materialBarcodes = wmsInnerMaterialBarcodeMapper.selectByIds(materialBarcodeIds);
             for (WmsInnerMaterialBarcode wmsInnerMaterialBarcode : materialBarcodes) {
                 totalMaterialQty = totalMaterialQty.add(wmsInnerMaterialBarcode.getMaterialQty());
-                wmsInnerMaterialBarcode.setCartonCode(newCartonCode);
+                if(type==(byte)2) {
+                    wmsInnerMaterialBarcode.setCartonCode(newCartonPalletCode);
+                }else if(type==(byte)4) {
+                    wmsInnerMaterialBarcode.setPalletCode(newCartonPalletCode);
+                }
                 wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(wmsInnerMaterialBarcode);
             }
 
-            //新增箱码信息
+            //新增包箱（栈板）信息
             WmsInnerInventoryDetDto oldInventoryDetDto = cartonPalletInfoDtos.get(0).getCartonPalletInventoryDetDto();
             WmsInnerMaterialBarcode newMaterialBarcode = new WmsInnerMaterialBarcode();
             WmsInnerMaterialBarcode oldMaterialBarcode = wmsInnerMaterialBarcodeMapper.selectByPrimaryKey(oldInventoryDetDto.getMaterialBarcodeId());
             BeanUtils.copyProperties(oldMaterialBarcode, newMaterialBarcode);
             newMaterialBarcode.setMaterialBarcodeId(null);
-            newMaterialBarcode.setCartonCode(newCartonCode);
+            if(type==(byte)2) {
+                newMaterialBarcode.setCartonCode(newCartonPalletCode);
+            }else if(type==(byte)4) {
+                newMaterialBarcode.setPalletCode(newCartonPalletCode);
+            }
             newMaterialBarcode.setMaterialQty(totalMaterialQty);
             wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(newMaterialBarcode);
 
@@ -427,146 +512,132 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
             newInventoryDetDto.setStorageId(storageId);
             wmsInnerInventoryDetMapper.insertSelective(newInventoryDetDto);
 
-            //删除源包箱信息
+            //删除源包箱（栈板）信息
             Example inventoryDetExample = new Example(WmsInnerInventoryDet.class);
             inventoryDetExample.createCriteria().andIn("inventoryDetId",toDeleteInventoryDetIdList);
             wmsInnerInventoryDetMapper.deleteByExample(inventoryDetExample);
             Example materialBarcodeExample = new Example(WmsInnerMaterialBarcode.class);
             materialBarcodeExample.createCriteria().andIn("materialBarcodeId",toDeleteMaterialBarcodeIdList);
             wmsInnerMaterialBarcodeMapper.deleteByExample(materialBarcodeExample);
-        }else if(type == (byte)3){//分栈板
-            String sourcePalletCode = generatorCartonPalletCode(barcodeRule, materialId);
-            String newPalletCode = generatorCartonPalletCode(barcodeRule, materialId);
-            barcodes = sourcePalletCode + "," + newPalletCode;
 
-            PDAWmsInnerSplitAndCombineCartonPalletInfoDto cartonPalletInfoDto = cartonPalletInfoDtos.get(0);
-            List<WmsInnerInventoryDetDto> nextLevelInventoryDetDtos = cartonPalletInfoDto.getNextLevelInventoryDetDtos();
-            WmsInnerInventoryDetDto cartonPalletInventoryDetDto = cartonPalletInfoDto.getCartonPalletInventoryDetDto();
+            //是否返写mes
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("IfWriteBackMES");
+            List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if(StringUtils.isNotEmpty(sysSpecItemList)&&Integer.parseInt(sysSpecItemList.get(0).getParaValue())==1){
+                if(type == (byte)2) {
+                    SearchMesSfcProductCarton searchMesSfcProductCarton1 = new SearchMesSfcProductCarton();
+                    searchMesSfcProductCarton1.setCartonCode(cartonPalletCodes.get(0));
+                    List<MesSfcProductCartonDto> productCartonDtos1 = sfcFeignApi.findProductCartonList(searchMesSfcProductCarton1).getData();
+                    SearchMesSfcProductCarton searchMesSfcProductCarton2 = new SearchMesSfcProductCarton();
+                    searchMesSfcProductCarton2.setCartonCode(cartonPalletCodes.get(1));
+                    List<MesSfcProductCartonDto> productCartonDtos2 = sfcFeignApi.findProductCartonList(searchMesSfcProductCarton2).getData();
+                    if(StringUtils.isNotEmpty(productCartonDtos1,productCartonDtos2)) {
+                        SearchMesSfcProductCartonDet searchMesSfcProductCartonDet1 = new SearchMesSfcProductCartonDet();
+                        searchMesSfcProductCartonDet1.setProductCartonId(productCartonDtos1.get(0).getProductCartonId());
+                        List<MesSfcProductCartonDetDto> productCartonDetDtos1 = sfcFeignApi.findList(searchMesSfcProductCartonDet1).getData();
+                        SearchMesSfcProductCartonDet searchMesSfcProductCartonDet2 = new SearchMesSfcProductCartonDet();
+                        searchMesSfcProductCartonDet2.setProductCartonId(productCartonDtos2.get(0).getProductCartonId());
+                        List<MesSfcProductCartonDetDto> productCartonDetDtos2 = sfcFeignApi.findList(searchMesSfcProductCartonDet2).getData();
 
-            //源条码与扫描条码分组
-            List<WmsInnerInventoryDetDto> sourceInventoryDetDtos = new LinkedList<>();
-            List<WmsInnerInventoryDetDto> newInventoryDetDtos = new LinkedList<>();
-            for (WmsInnerInventoryDetDto nextLevelInventoryDetDto : nextLevelInventoryDetDtos) {
-                if (materialBarcodeIdList.contains(nextLevelInventoryDetDto.getMaterialBarcodeId())) {
-                    newInventoryDetDtos.add(nextLevelInventoryDetDto);
-                } else {
-                    sourceInventoryDetDtos.add(nextLevelInventoryDetDto);
+                        //新增
+                        List<MesSfcProductCartonDet> cartonDets = new LinkedList<>();
+                        cartonDets.addAll(productCartonDetDtos1);
+                        cartonDets.addAll(productCartonDetDtos2);
+
+                        MesSfcProductCarton mesSfcProductCarton = new MesSfcProductCarton();
+                        MesSfcProductCartonDto mesSfcProductCartonDto = productCartonDtos1.get(0);
+                        BeanUtils.copyProperties(mesSfcProductCartonDto,mesSfcProductCarton);
+                        mesSfcProductCarton.setProductCartonId(null);
+                        mesSfcProductCarton.setCartonCode(newCartonPalletCode);
+                        BigDecimal add = productCartonDtos1.get(0).getNowPackageSpecQty().add(productCartonDtos2.get(0).getNowPackageSpecQty());
+                        mesSfcProductCarton.setNowPackageSpecQty(add);
+                        mesSfcProductCarton.setCartonDets(cartonDets);
+                        sfcFeignApi.add(mesSfcProductCartonDto);
+                        //删除原包箱
+                        sfcFeignApi.deleteProductCartons(productCartonDtos1.get(0).getProductCartonId()+","+productCartonDtos2.get(0).getProductCartonId());
+                    }
+                }else if(type == (byte)4){
+                    SearchMesSfcProductPallet searchMesSfcProductPallet1 = new SearchMesSfcProductPallet();
+                    searchMesSfcProductPallet1.setPalletCode(cartonPalletCodes.get(0));
+                    List<MesSfcProductPalletDto> productPalletDtos1 = sfcFeignApi.findProductPalletList(searchMesSfcProductPallet1).getData();
+                    SearchMesSfcProductPallet searchMesSfcProductPallet2 = new SearchMesSfcProductPallet();
+                    searchMesSfcProductPallet2.setPalletCode(cartonPalletCodes.get(1));
+                    List<MesSfcProductPalletDto> productPalletDtos2 = sfcFeignApi.findProductPalletList(searchMesSfcProductPallet2).getData();
+                    if(StringUtils.isNotEmpty(productPalletDtos1,productPalletDtos2)) {
+                        SearchMesSfcProductPalletDet searchMesSfcProductPalletDet1 = new SearchMesSfcProductPalletDet();
+                        searchMesSfcProductPalletDet1.setProductPalletId(productPalletDtos1.get(0).getProductPalletId());
+                        List<MesSfcProductPalletDetDto> productPalletDetDtos1 = sfcFeignApi.findList(searchMesSfcProductPalletDet1).getData();
+                        SearchMesSfcProductPalletDet searchMesSfcProductPalletDet2 = new SearchMesSfcProductPalletDet();
+                        searchMesSfcProductPalletDet2.setProductPalletId(productPalletDtos2.get(0).getProductPalletId());
+                        List<MesSfcProductPalletDetDto> productPalletDetDtos2 = sfcFeignApi.findList(searchMesSfcProductPalletDet2).getData();
+
+                        //新增
+                        List<MesSfcProductPalletDet> palletDets = new LinkedList<>();
+                        palletDets.addAll(productPalletDetDtos1);
+                        palletDets.addAll(productPalletDetDtos2);
+
+                        MesSfcProductPallet mesSfcProductPallet = new MesSfcProductPallet();
+                        MesSfcProductPalletDto mesSfcProductPalletDto = productPalletDtos1.get(0);
+                        BeanUtils.copyProperties(mesSfcProductPalletDto,mesSfcProductPallet);
+                        mesSfcProductPallet.setProductPalletId(null);
+                        mesSfcProductPallet.setPalletCode(newCartonPalletCode);
+                        BigDecimal add = productPalletDtos1.get(0).getNowPackageSpecQty().add(productPalletDtos2.get(0).getNowPackageSpecQty());
+                        mesSfcProductPallet.setNowPackageSpecQty(add);
+                        mesSfcProductPallet.setPalletDets(palletDets);
+                        sfcFeignApi.add(mesSfcProductPallet);
+                        //删除原栈板
+                        sfcFeignApi.deleteProductCartons(productPalletDtos1.get(0).getProductPalletId()+","+productPalletDtos2.get(0).getProductPalletId());
+                    }
                 }
             }
-
-            //修改源栈板信息
-            BigDecimal sourceMaterialQty = BigDecimal.ZERO;
-            StringBuilder sourceMaterialBarcodeId = new StringBuilder();
-            for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : sourceInventoryDetDtos) {
-                sourceMaterialBarcodeId.append(wmsInnerInventoryDetDto.getMaterialBarcodeId()).append(",");
-                wmsInnerInventoryDetDto.setStorageId(storageId);
-                wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDetDto);
-            }
-            String sourceMaterialBarcodeIds = sourceMaterialBarcodeId.substring(0, sourceMaterialBarcodeId.length() - 1);
-            List<WmsInnerMaterialBarcode> sourceMaterialBarcodes = wmsInnerMaterialBarcodeMapper.selectByIds(sourceMaterialBarcodeIds);
-            for (WmsInnerMaterialBarcode wmsInnerMaterialBarcode : sourceMaterialBarcodes) {
-                sourceMaterialQty = sourceMaterialQty.add(wmsInnerMaterialBarcode.getMaterialQty());
-                wmsInnerMaterialBarcode.setPalletCode(sourcePalletCode);
-                wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(wmsInnerMaterialBarcode);
-            }
-
-            cartonPalletInventoryDetDto.setStorageId(storageId);
-            wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(cartonPalletInventoryDetDto);
-            WmsInnerMaterialBarcode sourceMaterialBarcode = wmsInnerMaterialBarcodeMapper.selectByPrimaryKey(cartonPalletInventoryDetDto.getMaterialBarcodeId());
-            sourceMaterialBarcode.setPalletCode(sourcePalletCode);
-            sourceMaterialBarcode.setMaterialQty(sourceMaterialQty);
-            wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(sourceMaterialBarcode);
-
-
-            //修改新栈板信息
-            BigDecimal newMaterialQty = BigDecimal.ZERO;
-            StringBuilder newMaterialBarcodeId = new StringBuilder();
-            for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : newInventoryDetDtos) {
-                newMaterialBarcodeId.append(wmsInnerInventoryDetDto.getMaterialBarcodeId()).append(",");
-                wmsInnerInventoryDetDto.setStorageId(storageId);
-                wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDetDto);
-            }
-            String newMaterialBarcodeIds = newMaterialBarcodeId.substring(0, newMaterialBarcodeId.length() - 1);
-            List<WmsInnerMaterialBarcode> newMaterialBarcodes = wmsInnerMaterialBarcodeMapper.selectByIds(newMaterialBarcodeIds);
-            for (WmsInnerMaterialBarcode wmsInnerMaterialBarcode : newMaterialBarcodes) {
-                newMaterialQty = newMaterialQty.add(wmsInnerMaterialBarcode.getMaterialQty());
-                wmsInnerMaterialBarcode.setPalletCode(newPalletCode);
-                wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(wmsInnerMaterialBarcode);
-            }
-
-            WmsInnerMaterialBarcode newMaterialBarcode = new WmsInnerMaterialBarcode();
-            BeanUtils.copyProperties(sourceMaterialBarcode, newMaterialBarcode);
-            newMaterialBarcode.setMaterialBarcodeId(null);
-            newMaterialBarcode.setPalletCode(newPalletCode);
-            newMaterialBarcode.setMaterialQty(newMaterialQty);
-            wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(newMaterialBarcode);
-
-            WmsInnerInventoryDetDto newCartonInventoryDetDto = new WmsInnerInventoryDetDto();
-            BeanUtils.copyProperties(cartonPalletInventoryDetDto, newCartonInventoryDetDto);
-            newCartonInventoryDetDto.setInventoryDetId(null);
-            newCartonInventoryDetDto.setMaterialBarcodeId(newMaterialBarcode.getMaterialBarcodeId());
-            newCartonInventoryDetDto.setStorageId(storageId);
-            wmsInnerInventoryDetMapper.insertSelective(newCartonInventoryDetDto);
-        }else if(type == (byte)4){//合栈板
-            String newPalletCode = generatorCartonPalletCode(barcodeRule, materialId);
-            barcodes = newPalletCode;
-
-            List<WmsInnerInventoryDetDto> nextLevelInventoryDetDtos = new LinkedList<>();
-            List<Long> toDeleteInventoryDetIdList = new LinkedList<>();
-            List<Long> toDeleteMaterialBarcodeIdList = new LinkedList<>();
-            for (PDAWmsInnerSplitAndCombineCartonPalletInfoDto cartonPalletInfoDto:cartonPalletInfoDtos){
-                List<WmsInnerInventoryDetDto> InventoryDetDtos = cartonPalletInfoDto.getNextLevelInventoryDetDtos();
-                nextLevelInventoryDetDtos.addAll(InventoryDetDtos);
-
-                WmsInnerInventoryDetDto cartonPalletInventoryDetDto = cartonPalletInfoDto.getCartonPalletInventoryDetDto();
-                toDeleteInventoryDetIdList.add(cartonPalletInventoryDetDto.getInventoryDetId());
-                toDeleteMaterialBarcodeIdList.add(cartonPalletInventoryDetDto.getMaterialBarcodeId());
-            }
-
-            //下级条码信息修改
-            BigDecimal totalMaterialQty = BigDecimal.ZERO;
-            StringBuilder materialBarcodeId = new StringBuilder();
-            for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : nextLevelInventoryDetDtos) {
-                materialBarcodeId.append(wmsInnerInventoryDetDto.getMaterialBarcodeId()).append(",");
-                wmsInnerInventoryDetDto.setStorageId(storageId);
-                wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDetDto);
-            }
-            String materialBarcodeIds = materialBarcodeId.substring(0, materialBarcodeId.length() - 1);
-            List<WmsInnerMaterialBarcode> materialBarcodes = wmsInnerMaterialBarcodeMapper.selectByIds(materialBarcodeIds);
-            for (WmsInnerMaterialBarcode wmsInnerMaterialBarcode : materialBarcodes) {
-                totalMaterialQty = totalMaterialQty.add(wmsInnerMaterialBarcode.getMaterialQty());
-                wmsInnerMaterialBarcode.setPalletCode(newPalletCode);
-                wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(wmsInnerMaterialBarcode);
-            }
-
-            //新增栈板信息
-            WmsInnerInventoryDetDto oldInventoryDetDto = cartonPalletInfoDtos.get(0).getCartonPalletInventoryDetDto();
-            WmsInnerMaterialBarcode newMaterialBarcode = new WmsInnerMaterialBarcode();
-            WmsInnerMaterialBarcode oldMaterialBarcode = wmsInnerMaterialBarcodeMapper.selectByPrimaryKey(oldInventoryDetDto.getMaterialBarcodeId());
-            BeanUtils.copyProperties(oldMaterialBarcode, newMaterialBarcode);
-            newMaterialBarcode.setMaterialBarcodeId(null);
-            newMaterialBarcode.setPalletCode(newPalletCode);
-            newMaterialBarcode.setMaterialQty(totalMaterialQty);
-            wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(newMaterialBarcode);
-
-            WmsInnerInventoryDetDto newInventoryDetDto = new WmsInnerInventoryDetDto();
-            BeanUtils.copyProperties(oldInventoryDetDto, newInventoryDetDto);
-            newInventoryDetDto.setInventoryDetId(null);
-            newInventoryDetDto.setMaterialBarcodeId(newMaterialBarcode.getMaterialBarcodeId());
-            newInventoryDetDto.setStorageId(storageId);
-            wmsInnerInventoryDetMapper.insertSelective(newInventoryDetDto);
-
-            //删除源栈板信息
-            Example inventoryDetExample = new Example(WmsInnerInventoryDet.class);
-            inventoryDetExample.createCriteria().andIn("inventoryDetId",toDeleteInventoryDetIdList);
-            wmsInnerInventoryDetMapper.deleteByExample(inventoryDetExample);
-            Example materialBarcodeExample = new Example(WmsInnerMaterialBarcode.class);
-            materialBarcodeExample.createCriteria().andIn("materialBarcodeId",toDeleteMaterialBarcodeIdList);
-            wmsInnerMaterialBarcodeMapper.deleteByExample(materialBarcodeExample);
         }
 
         //打印
-        printBarcode(barcodes,type);
+        SearchBaseLabel searchBaseLabel = new SearchBaseLabel();
+        searchBaseLabel.setLabelCategoryName(type == (byte)1 || type == (byte)2 ? "包箱条码" : "栈板条码");
+        List<BaseLabelDto> labelList = baseFeignApi.findLabelList(searchBaseLabel).getData();
+        if (StringUtils.isEmpty(labelList)) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"标签模板不存在");
+        }
+        BaseLabelDto baseLabelDto = labelList.get(0);
+
+        List<PrintModel> printModelList = new ArrayList<>();
+        String[] split = barcodes.split(",");
+        for (String s : split){
+            PrintModel printModel = new PrintModel();
+            printModel.setSize(1);
+            printModel.setQrCode(s);
+            printModelList.add(printModel);
+        }
+        PrintDto printDto = new PrintDto();
+        printDto.setLabelName(baseLabelDto.getLabelName());
+        printDto.setLabelVersion(baseLabelDto.getLabelVersion());
+        //printDto.setPrintName(printName);
+        printDto.setPrintModelList(printModelList);
+        sfcFeignApi.print(printDto);
+
+        //记录日志
+        List<WmsInnerSplitAndCombineLog> logs = new LinkedList<>();
+        for (PDAWmsInnerSplitAndCombineCartonPalletInfoDto cartonPalletInfoDto:cartonPalletInfoDtos) {
+            WmsInnerInventoryDetDto cartonPalletInventoryDetDto = cartonPalletInfoDto.getCartonPalletInventoryDetDto();
+
+            WmsInnerSplitAndCombineLog wmsInnerSplitAndCombineLog = new WmsInnerSplitAndCombineLog();
+            wmsInnerSplitAndCombineLog.setOperatorType(type);
+            wmsInnerSplitAndCombineLog.setDataType((byte)1);
+            wmsInnerSplitAndCombineLog.setDataType((byte) 2);
+            wmsInnerSplitAndCombineLog.setBarcode(cartonPalletInventoryDetDto.getBarcode());
+            wmsInnerSplitAndCombineLog.setColorBoxCode(cartonPalletInventoryDetDto.getColorBoxCode());
+            wmsInnerSplitAndCombineLog.setCartonCode(cartonPalletInventoryDetDto.getCartonCode());
+            wmsInnerSplitAndCombineLog.setPalletCode(cartonPalletInventoryDetDto.getPalletCode());
+            wmsInnerSplitAndCombineLog.setMaterialBarcodeId(cartonPalletInventoryDetDto.getMaterialBarcodeId());
+            wmsInnerSplitAndCombineLog.setMaterialId(cartonPalletInventoryDetDto.getMaterialId());
+            wmsInnerSplitAndCombineLog.setMaterialQty(cartonPalletInventoryDetDto.getMaterialQty());
+            wmsInnerSplitAndCombineLog.setBarcodeRuleId(barcodeRule.getBarcodeRuleId());
+            wmsInnerSplitAndCombineLog.setLabelId(baseLabelDto.getLabelId());
+            logs.add(wmsInnerSplitAndCombineLog);
+        }
+        wmsInnerSplitAndCombineLogMapper.insertList(logs);
 
         return barcodes;
     }

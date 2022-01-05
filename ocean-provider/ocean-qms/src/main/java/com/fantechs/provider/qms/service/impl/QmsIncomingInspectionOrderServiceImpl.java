@@ -158,12 +158,15 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
             if(order.getMrbResult() != null && order.getMrbResult() == (byte)3){
                 throw new BizErrorException("检验单号为"+order.getIncomingInspectionOrderCode()+"的来料检验单MRB评审结果为退供应商，无法下推");
             }
+            if(StringUtils.isEmpty(order.getWarehouseId())){
+                throw new BizErrorException("单据仓库不能为空");
+            }
         }
 
         //查当前单据类型的所有单据流
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
         searchBaseOrderFlow.setOrderTypeCode("QMS-MIIO");
-        List<BaseOrderFlowDto> baseOrderFlowDtos = baseFeignApi.findList(searchBaseOrderFlow).getData();
+        List<BaseOrderFlowDto> baseOrderFlowDtos = baseFeignApi.findAll(searchBaseOrderFlow).getData();
         if (StringUtils.isEmpty(baseOrderFlowDtos)) {
             throw new BizErrorException("未找到当前单据配置的单据流");
         }
@@ -263,6 +266,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 }
 
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+                wmsInnerJobOrder.setSourceBigType((byte)1);
                 wmsInnerJobOrder.setSourceSysOrderTypeCode(sysOrderTypeCode);
                 wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInnerJobOrder.setWarehouseId(orders.get(0).getWarehouseId());
@@ -382,18 +386,9 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
     public int insertMaterialBarcode(QmsIncomingInspectionOrderDto qmsIncomingInspectionOrderDto){
         int i = 0;
         if(StringUtils.isNotEmpty(qmsIncomingInspectionOrderDto.getSourceId())) {
-            //查当前单据的单据流
-            SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
-            searchBaseOrderFlow.setBusinessType((byte) 1);
-            searchBaseOrderFlow.setOrderNode((byte) 4);
-            BaseOrderFlow baseOrderFlow = baseFeignApi.findOrderFlow(searchBaseOrderFlow).getData();
-            if (StringUtils.isEmpty(baseOrderFlow)) {
-                throw new BizErrorException("未找到当前单据配置的单据流");
-            }
-
             //上游单据所有条码
             SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
-            searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode(baseOrderFlow.getSourceOrderTypeCode());
+            searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode(qmsIncomingInspectionOrderDto.getSourceSysOrderTypeCode());
             searchWmsInnerMaterialBarcodeReOrder.setOrderDetId(qmsIncomingInspectionOrderDto.getSourceId());
             List<WmsInnerMaterialBarcodeReOrderDto> materialBarcodeReOrderDtos = innerFeignApi.findAll(searchWmsInnerMaterialBarcodeReOrder).getData();
             if (StringUtils.isNotEmpty(materialBarcodeReOrderDtos)) {

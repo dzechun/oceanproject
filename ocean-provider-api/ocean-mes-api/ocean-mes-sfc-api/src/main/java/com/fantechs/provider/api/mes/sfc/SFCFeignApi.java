@@ -6,18 +6,17 @@ import com.fantechs.common.base.general.dto.mes.sfc.Search.*;
 import com.fantechs.common.base.general.dto.restapi.RestapiChkLogUserInfoApiDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiChkSNRoutingApiDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiSNDataTransferApiDto;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
-import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
+import com.fantechs.common.base.general.entity.mes.sfc.*;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -57,6 +56,22 @@ public interface SFCFeignApi {
     @PostMapping("/mesSfcProductCarton/findList")
     ResponseEntity<List<MesSfcProductCartonDto>> findProductCartonList(@RequestBody SearchMesSfcProductCarton searchMesSfcProductCarton);
 
+    @ApiOperation(value = "产品包箱新增",notes = "产品包箱新增")
+    @PostMapping("/mesSfcProductCarton/add")
+    ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated MesSfcProductCarton mesSfcProductCarton);
+
+    @ApiOperation("产品包箱修改")
+    @PostMapping("/mesSfcProductCarton/update")
+    ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=MesSfcProductCarton.update.class) MesSfcProductCarton mesSfcProductCarton);
+
+    @ApiOperation("产品包箱删除")
+    @PostMapping("/mesSfcProductCarton/delete")
+    ResponseEntity deleteProductCartons(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids);
+
+    @ApiOperation("查询产品包箱明细列表")
+    @PostMapping("/mesSfcProductCartonDet/findList")
+    ResponseEntity<List<MesSfcProductCartonDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchMesSfcProductCartonDet searchMesSfcProductCartonDet);
+
     @ApiOperation("修改栈板状态为已转移")
     @PostMapping("/mesSfcPalletWork/updateMoveStatus")
     ResponseEntity<List<MesSfcProductCartonDto>> updateMoveStatus(@ApiParam(value = "产品栈板ID", required = true) @RequestParam Long productPalletId);
@@ -68,6 +83,18 @@ public interface SFCFeignApi {
     @ApiOperation("获取栈板详情")
     @PostMapping("/mesSfcProductPallet/detail")
     ResponseEntity<MesSfcProductPallet> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id);
+
+    @ApiOperation(value = "栈板新增",notes = "栈板新增")
+    @PostMapping("/mesSfcProductPallet/add")
+    ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated MesSfcProductPallet mesSfcProductPallet);
+
+    @ApiOperation("栈板修改")
+    @PostMapping("/mesSfcProductPallet/update")
+    ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=MesSfcProductPallet.update.class) MesSfcProductPallet mesSfcProductPallet);
+
+    @ApiOperation("栈板删除")
+    @PostMapping("/mesSfcProductPallet/delete")
+    ResponseEntity deleteProductPallets(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids);
 
     @ApiOperation("产品条码过站记录列表")
     @PostMapping("/mesSfcBarcodeProcessRecord/findList")
