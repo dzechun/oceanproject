@@ -1,6 +1,7 @@
 package com.fantechs.common.base.general.dto.mes.pm;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderBom;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -23,7 +26,43 @@ public class MesPmWorkOrderBomDto extends MesPmWorkOrderBom implements Serializa
     private String workOrderCode;
 
     /**
-     * 物料编码
+     * 工单类型(0、量产 1、试产 2、返工 3、维修)
+     */
+    @Transient
+    @ApiModelProperty(name="workOrderType",value = "工单类型(0、量产 1、试产 2、返工 3、维修)")
+    private Byte workOrderType;
+
+    /**
+     * 计划开始时间
+     */
+    @Transient
+    @ApiModelProperty(name="planStartTime",value = "计划开始时间")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    private Date planStartTime;
+
+    /**
+     * 排产数量
+     */
+    @Transient
+    @ApiModelProperty(name="scheduledQty" ,value="排产数量")
+    private BigDecimal scheduledQty;
+
+    /**
+     * 产线ID
+     */
+    @Transient
+    @ApiModelProperty(name="proLineId" ,value="产线ID")
+    private Long proLineId;
+
+    /**
+     * 产线名称
+     */
+    @Transient
+    @ApiModelProperty(name="proName" ,value="产线名称")
+    private String proName;
+
+    /**
+     * 零件料号
      */
     @Transient
     @ApiModelProperty(name="partMaterialCode" ,value="零件料号")
@@ -31,26 +70,54 @@ public class MesPmWorkOrderBomDto extends MesPmWorkOrderBom implements Serializa
     private String partMaterialCode;
 
     /**
-     * 物料名称
+     * 零件料号名称
      */
     @Transient
-    @ApiModelProperty(name="materialName" ,value="物料名称")
+    @ApiModelProperty(name="partMaterialName" ,value="零件料号名称")
+    private String partMaterialName;
+
+    /**
+     * 零件料号版本
+     */
+    @Transient
+    @ApiModelProperty(name="partMaterialVersion" ,value="零件料号版本")
+    @Excel(name = "零件料号版本", height = 20, width = 30,orderNum="3")
+    private String partMaterialVersion;
+
+    /**
+     * 零件料号描述
+     */
+    @Transient
+    @ApiModelProperty(name="partMaterialDesc" ,value="零件料号描述")
+    @Excel(name = "零件料号描述", height = 20, width = 30,orderNum="4")
+    private String partMaterialDesc;
+
+    /**
+     * 产品料号
+     */
+    @Transient
+    @ApiModelProperty(name="materialCode" ,value="产品料号")
+    private String materialCode;
+
+    /**
+     * 产品料号名称
+     */
+    @Transient
+    @ApiModelProperty(name="materialName" ,value="产品料号名称")
     private String materialName;
 
     /**
-     * 版本
+     * 产品版本
      */
     @Transient
-    @ApiModelProperty(name="materialVersion" ,value="版本")
-    @Excel(name = "产品料号版本", height = 20, width = 30,orderNum="3")
+    @ApiModelProperty(name="materialVersion" ,value="产品版本")
     private String materialVersion;
 
     /**
-     * 物料描述
+     * 产品描述
      */
     @Transient
-    @ApiModelProperty(name="materialDesc" ,value="物料描述")
-    @Excel(name = "产品料号描述", height = 20, width = 30,orderNum="4")
+    @ApiModelProperty(name="materialDesc" ,value="产品描述")
     private String materialDesc;
 
     /**
@@ -90,4 +157,12 @@ public class MesPmWorkOrderBomDto extends MesPmWorkOrderBom implements Serializa
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
+
+    @Transient
+    @ApiModelProperty("下发数量")
+    private BigDecimal issueQty;
+
+    @Transient
+    @ApiModelProperty("仓库ID")
+    private Long warehouseId;
 }

@@ -540,7 +540,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                         qmsIncomingInspectionOrder.setOrderQty(wmsInReceivingOrderDet.getPlanQty());
                         qmsIncomingInspectionOrder.setInspectionStatus((byte)1);
                         qmsIncomingInspectionOrder.setSourceSysOrderTypeCode(sysOrderTypeCode);
-                        qmsIncomingInspectionOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                        qmsIncomingInspectionOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                         qmsIncomingInspectionOrders.add(qmsIncomingInspectionOrder);
                     }
                     ResponseEntity responseEntity =qmsFeignApi.batchAdd(qmsIncomingInspectionOrders);

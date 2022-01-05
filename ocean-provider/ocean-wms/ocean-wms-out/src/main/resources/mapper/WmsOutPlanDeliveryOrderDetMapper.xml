@@ -38,6 +38,7 @@
     <result column="plan_delivery_order_code" jdbcType="VARCHAR" property="planDeliveryOrderCode"/>
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+    <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="coreSourceSysOrderTypeCode"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -65,7 +66,8 @@
 
   <select id="findList" resultMap="BaseResultMapDto">
     SELECT <include refid="Base_Column_List"/>,
-    wopdo.plan_delivery_order_code,wopdo.warehouse_id,bw.warehouse_name,
+    wopdo.plan_delivery_order_code,wopdo.core_source_sys_order_type_code,
+    wopdo.warehouse_id,bw.warehouse_name,
     bm.material_code,bm.material_name,
     bm.material_desc,bm.material_version,
     su.user_name AS create_user_name,

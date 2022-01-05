@@ -86,4 +86,11 @@ public class WmsOutPlanDeliveryOrderDetDto extends WmsOutPlanDeliveryOrderDet im
     @ApiModelProperty(name="warehouseName",value = "仓库名称")
     @Transient
     private String warehouseName;
+
+    /**
+     * 核心系统单据类型编码
+     */
+    @ApiModelProperty(name="coreSourceSysOrderTypeCode",value = "核心系统单据类型编码")
+    @Transient
+    private String coreSourceSysOrderTypeCode;
 }
