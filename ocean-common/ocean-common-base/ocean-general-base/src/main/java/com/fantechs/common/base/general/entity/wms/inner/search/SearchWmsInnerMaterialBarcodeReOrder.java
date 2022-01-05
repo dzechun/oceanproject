@@ -57,6 +57,12 @@ public class SearchWmsInnerMaterialBarcodeReOrder extends BaseQuery implements S
     private String orderTypeCode;
 
     /**
+     * 单据编号
+     */
+    @ApiModelProperty(name="orderCode",value = "单据编号")
+    private String orderCode;
+
+    /**
      * 单据ID
      */
     @ApiModelProperty(name="orderId",value = "单据ID")

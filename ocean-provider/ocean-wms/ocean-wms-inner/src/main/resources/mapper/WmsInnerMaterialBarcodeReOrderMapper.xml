@@ -95,6 +95,9 @@
         <if test="scanStatus!=null and scanStatus!=''">
             and wimbro.scan_status = #{scanStatus}
         </if>
+        <if test="orderCode!=null and orderCode!=''">
+            and wimbro.order_code = #{orderCode}
+        </if>
         <if test="barcode!=null and barcode!='' and codeQueryMark == 1">
             and wimb.barcode = #{barcode}
         </if>
