@@ -1,14 +1,20 @@
 package com.fantechs.common.base.general.entity.om;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.*;
-import lombok.Data;
+
+;
+;
 
 /**
  * 调拨单明细
@@ -105,6 +111,20 @@ public class OmTransferOrderDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name="batchCode",value = "批次号")
     @Column(name = "batch_code")
     private String batchCode;
+
+    /**
+     * 实际上架数量
+     */
+    @ApiModelProperty(name="actualInQty",value = "实际上架数量")
+    @Column(name = "actual_in_qty")
+    private BigDecimal actualInQty;
+
+    /**
+     * 实际拣货数量
+     */
+    @ApiModelProperty(name="actualOutQty",value = "实际拣货数量")
+    @Column(name = "actual_out_qty")
+    private BigDecimal actualOutQty;
 
     /**
      * 累计下发数量

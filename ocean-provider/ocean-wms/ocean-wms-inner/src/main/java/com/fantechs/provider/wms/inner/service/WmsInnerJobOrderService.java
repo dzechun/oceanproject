@@ -103,6 +103,13 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
     Map<String,Object> checkBarcodeNotOrder(String ifSysBarcode,String barCode);
 
     /**
+     * PDA删除条码
+     * @param materialBarcodeId 来料条码ID
+     * @return
+     */
+    int updateBarcodeStatus(Long materialBarcodeId);
+
+    /**
      * Web端单一确认作业 扫描条码
      * @param ifSysBarcode 是否系统条码
      * @param barCode 条码
