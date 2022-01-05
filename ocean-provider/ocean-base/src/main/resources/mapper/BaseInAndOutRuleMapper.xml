@@ -60,7 +60,7 @@ biaor.option3
         and biaor.warehouse_id = #{warehouseId}
       </if>
       <if test="warehouseName!=null and warehouseName!=''">
-        and bw.warehouse_name = #{warehouseName}
+        and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
       </if>
         <if test="category!=null and category!=''">
           and biaor.category = #{category}

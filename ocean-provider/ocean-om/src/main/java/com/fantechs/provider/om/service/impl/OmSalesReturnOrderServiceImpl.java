@@ -590,6 +590,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
                 wmsInnerJobOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                wmsInnerJobOrder.setSourceBigType((byte)1);
                 wmsInnerJobOrder.setJobOrderType((byte) 1);
                 wmsInnerJobOrder.setWarehouseId(omSalesReturnOrderDets.get(0).getWarehouseId());
                 wmsInnerJobOrder.setOrderStatus((byte) 1);
@@ -615,14 +616,14 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
         if(StringUtils.isNotEmpty(list)) {
             for (OmSalesReturnOrderDet omSalesReturnOrderDet : list) {
                 omSalesReturnOrderDet.setModifiedTime(new Date());
-                omSalesReturnOrderDet.setModifiedUserId(user.getOrganizationId());
+                omSalesReturnOrderDet.setModifiedUserId(user.getUserId());
                 omSalesReturnOrderDetMapper.updateByPrimaryKeySelective(omSalesReturnOrderDet);
             }
         }
         if (StringUtils.isNotEmpty(orderList)) {
             for (OmSalesReturnOrder omSalesReturnOrder : orderList) {
                 omSalesReturnOrder.setModifiedTime(new Date());
-                omSalesReturnOrder.setModifiedUserId(user.getOrganizationId());
+                omSalesReturnOrder.setModifiedUserId(user.getUserId());
                 omSalesReturnOrderMapper.updateByPrimaryKeySelective(omSalesReturnOrder);
             }
         }

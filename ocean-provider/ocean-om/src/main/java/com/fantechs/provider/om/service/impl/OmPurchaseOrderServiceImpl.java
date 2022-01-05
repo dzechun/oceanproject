@@ -560,6 +560,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
                 wmsInnerJobOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                wmsInnerJobOrder.setSourceBigType((byte)1);
                 wmsInnerJobOrder.setJobOrderType((byte) 1);
                 wmsInnerJobOrder.setOrderStatus((byte) 1);
                 Iterator<Long> iterator = set.iterator();
@@ -588,7 +589,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
             if (StringUtils.isNotEmpty(list)) {
                 for (OmPurchaseOrderDet omPurchaseOrderDet : list) {
                     omPurchaseOrderDet.setModifiedTime(new Date());
-                    omPurchaseOrderDet.setModifiedUserId(user.getOrganizationId());
+                    omPurchaseOrderDet.setModifiedUserId(user.getUserId());
                     omPurchaseOrderDetMapper.updateByPrimaryKeySelective(omPurchaseOrderDet);
                 }
             }

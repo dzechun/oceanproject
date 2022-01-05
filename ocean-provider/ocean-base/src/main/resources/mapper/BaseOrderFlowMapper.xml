@@ -103,7 +103,6 @@
       <if test="remark != null and remark != ''">
         and bof.remark like CONCAT('%', #{remark}, '%')
       </if>
-
       <if test="status!=null">
         and bof.status=#{status}
       </if>
@@ -140,6 +139,9 @@
             and material_id = #{materialId}
             and status= 1
             and org_id=#{orgId}
+        </if>
+        <if test="status!=null">
+            and status=#{status}
         </if>
         ORDER BY order_flow_dimension DESC LIMIT 1
     </select>
