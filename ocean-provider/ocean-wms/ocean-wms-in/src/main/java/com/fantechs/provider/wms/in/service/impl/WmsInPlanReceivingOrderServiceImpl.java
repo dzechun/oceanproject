@@ -436,7 +436,7 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
                         qmsIncomingInspectionOrder.setMaterialId(wmsInPlanReceivingOrderDet.getMaterialId());
                         qmsIncomingInspectionOrder.setOrderQty(wmsInPlanReceivingOrderDet.getPlanQty());
                         qmsIncomingInspectionOrder.setSourceSysOrderTypeCode(sysOrderTypeCode);
-                        qmsIncomingInspectionOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                        qmsIncomingInspectionOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                         qmsIncomingInspectionOrder.setInspectionStatus((byte)1);
                         qmsIncomingInspectionOrders.add(qmsIncomingInspectionOrder);
                     }
