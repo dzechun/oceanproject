@@ -5,7 +5,7 @@ import com.fantechs.common.base.general.entity.om.*;
 import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrder;
 import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrderDet;
 import com.fantechs.common.base.general.entity.om.search.SearchOmSalesCodeReSpc;
-import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.general.entity.om.search.SearchOmTransferOrderDet;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -70,6 +70,14 @@ public interface OMFeignApi {
     @ApiOperation("修改单据状态")
     @PostMapping("/omTransferOrder/updateStatus")
     ResponseEntity updateStatus(@RequestBody OmTransferOrder omTransferOrder);
+
+    @ApiOperation("调拨订单明细列表")
+    @PostMapping("/omTransferOrderDet/findList")
+    ResponseEntity<List<OmTransferOrderDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmTransferOrderDet searchOmTransferOrderDet);
+
+    @ApiOperation("调拨订单明细修改")
+    @PostMapping("/omTransferOrderDet/update")
+    ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value= OmTransferOrderDet.update.class) OmTransferOrderDet omTransferOrderDet);
 
     @ApiOperation("反写销退入库订单收货数量")
     @PostMapping("/omSalesReturnOrder/writeQty")

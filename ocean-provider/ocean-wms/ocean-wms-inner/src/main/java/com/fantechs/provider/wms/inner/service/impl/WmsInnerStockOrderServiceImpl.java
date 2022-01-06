@@ -1245,12 +1245,14 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             if(lockType!=3){
                 Example example = new Example(WmsInnerInventory.class);
                 Example.Criteria criteria = example.createCriteria();
-                criteria.andEqualTo("warehouseId",wmsInventoryVerification.getWarehouseId()).andEqualTo("storageId",wmsInnerStockOrderDet.getStorageId())
+                criteria.andEqualTo("warehouseId",wmsInventoryVerification.getWarehouseId())
+                        .andEqualTo("storageId",wmsInnerStockOrderDet.getStorageId())
                         .andEqualTo("materialId",wmsInnerStockOrderDet.getMaterialId())
                         .andEqualTo("batchCode",wmsInnerStockOrderDet.getBatchCode())
                         .andEqualTo("stockLock",lockType==(byte) 2?0:1)
                         .andEqualTo("orgId",sysUser.getOrganizationId())
-                        .andEqualTo("jobStatus",1).andEqualTo("packingQty",wmsInnerStockOrderDet.getOriginalQty())
+                        .andEqualTo("jobStatus",1)
+                        .andEqualTo("packingQty",wmsInnerStockOrderDet.getOriginalQty())
                         .andEqualTo("lockStatus", 0);
                 if(lockType==(byte) 1){
                     criteria.andEqualTo("relevanceOrderCode",wmsInventoryVerification.getPlanStockOrderCode());
@@ -1261,7 +1263,8 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                         //合并库存
                         example.clear();
                         criteria = example.createCriteria();
-                        criteria.andEqualTo("warehouseId",wmsInventoryVerification.getWarehouseId()).andEqualTo("storageId",wmsInnerStockOrderDet.getStorageId())
+                        criteria.andEqualTo("warehouseId",wmsInventoryVerification.getWarehouseId())
+                                .andEqualTo("storageId",wmsInnerStockOrderDet.getStorageId())
                                 .andEqualTo("materialId",wmsInnerStockOrderDet.getMaterialId())
                                 .andEqualTo("stockLock",0)
                                 .andEqualTo("orgId",sysUser.getOrganizationId())
@@ -1281,6 +1284,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                             wmsInnerInventory1.setPackingQty(wmsInnerInventory1.getPackingQty().add(wmsInnerInventory.getPackingQty()));
                             wmsInnerInventory1.setRelevanceOrderCode(wmsInventoryVerification.getPlanStockOrderCode());
                             wmsInnerInventoryMapper.deleteByPrimaryKey(wmsInnerInventory);
+
+                            //更新合并库存
+                            wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory1);
                         }
                     }else {
                         //激活 锁定库存
