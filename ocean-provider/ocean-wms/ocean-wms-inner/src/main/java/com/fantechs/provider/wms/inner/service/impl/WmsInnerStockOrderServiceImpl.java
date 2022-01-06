@@ -370,7 +370,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 num += this.unlockOrLock((byte) 2,list,wmsInventoryVerification);
                 wmsInventoryVerification.setOrderStatus((byte)2);
                 //对应条码新增到盘点条码明细 锁定
-                num+=addStockOrderDetBarcode((byte)1,list,sysUser);
+                num+=addStockOrderDetBarcode((byte)1,(byte)1,list,sysUser);
 
             }else if(btnType ==2){
                 if(wmsInventoryVerification.getOrderStatus()>=5){
@@ -379,7 +379,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 //作废
                 num += this.unlockOrLock((byte) 1,list,wmsInventoryVerification);
                 //对应条码解锁
-                num+=addStockOrderDetBarcode((byte)2,list,sysUser);
+                num+=addStockOrderDetBarcode((byte)2,(byte)1,list,sysUser);
 
                 wmsInventoryVerification.setOrderStatus((byte)6);
             }
@@ -440,7 +440,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                             det.setMaterialId(wmsInventoryVerificationDet.getMaterialId());
                             det.setLastTimeVarianceQty(wmsInventoryVerificationDet.getVarianceQty());
                             det.setOriginalQty(wmsInventoryVerificationDet.getOriginalQty());
-                            det.setIfRegister((byte)2);
+                            det.setIfRegister((byte)0);
                             det.setCreateUserId(sysUser.getUserId());
                             det.setCreateTime(new Date());
                             det.setModifiedTime(new Date());
@@ -449,6 +449,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                         }
                     }
                     num+=wmsInventoryVerificationDetMapper.insertList(wmsInventoryVerificationDets);
+
+                    //对应条码新增到盘点条码明细 锁定
+                    num+=addStockOrderDetBarcode((byte)1,(byte)2,wmsInventoryVerificationDets,sysUser);
                 }
             }
             wmsInventoryVerificationDets.clear();
@@ -463,6 +466,12 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             }
             //解锁及复盘库存
             num+=this.unlockOrLock((byte)1,wmsInventoryVerificationDets,wmsInventoryVerification);
+
+            //解锁库存明细条码
+            if(wmsInventoryVerificationDets.size()>0){
+                num+=addStockOrderDetBarcode((byte)2,(byte)1,wmsInventoryVerificationDets,sysUser);
+            }
+
             //单据状态(1-打开 2-待作业 3-作业中 4-待处理 5-完成 6-作废)
             if(wmsInventoryVerification.getProjectType()==2){
                 // 复盘单确认后 单据状态为 4-待处理
@@ -1319,11 +1328,11 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
 
     /**
      * 盘点激活或作废操作
-     * 盘点条码明细新增或删除 1 新增 2 删除
-     * @param list
+     * @param oprationType 盘点条码明细新增或更新 1 新增 2 更新
+     * @param activeOrAgain 激活或复盘 1 激活 2 复盘
      * @return
      */
-    private int addStockOrderDetBarcode(byte oprationType, List<WmsInnerStockOrderDet> list, SysUser sysUser){
+    private int addStockOrderDetBarcode(byte oprationType, byte activeOrAgain, List<WmsInnerStockOrderDet> list, SysUser sysUser){
         int num = 0;
         List<WmsInnerStockOrderDetBarcode> stockOrderDetBarcodeList=new ArrayList<>();
         for (WmsInnerStockOrderDet wmsInnerStockOrderDet : list) {
@@ -1333,7 +1342,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 searchinventoryDet.setStorageId(wmsInnerStockOrderDet.getStorageId());
                 searchinventoryDet.setNotEqualMark(0);
                 searchinventoryDet.setMaterialId(wmsInnerStockOrderDet.getMaterialId());
-                searchinventoryDet.setIfStockLock((byte)0);//盘点锁(0-否 1-是)
+                if(StringUtils.isNotEmpty(activeOrAgain) && activeOrAgain==(byte)1)
+                    searchinventoryDet.setIfStockLock((byte)0);//盘点锁(0-否 1-是)
+                else if(StringUtils.isNotEmpty(activeOrAgain) && activeOrAgain==(byte)2)
+                    searchinventoryDet.setIfStockLock((byte)1);//盘点锁(0-否 1-是)
                 searchinventoryDet.setOrgId(wmsInnerStockOrderDet.getOrgId());
                 List<WmsInnerInventoryDetDto> inventoryDetDtoList=wmsInnerInventoryDetService.findList(ControllerUtil.dynamicConditionByEntity(searchinventoryDet));
                 for (WmsInnerInventoryDetDto item : inventoryDetDtoList) {
@@ -1341,6 +1353,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     stockOrderDetBarcode.setStockOrderDetBarcodeId(null);
                     stockOrderDetBarcode.setStockOrderDetId(wmsInnerStockOrderDet.getStockOrderDetId());
                     stockOrderDetBarcode.setMaterialBarcodeId(item.getMaterialBarcodeId());
+                    stockOrderDetBarcode.setSourceDetId(item.getInventoryDetId());
                     stockOrderDetBarcode.setScanStatus((byte)1);
                     stockOrderDetBarcode.setStockResult((byte)1);
                     stockOrderDetBarcode.setStatus((byte)1);
@@ -1359,7 +1372,6 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 }
             }
             else {
-
                 Example example = new Example(WmsInnerStockOrderDetBarcode.class);
                 Example.Criteria criteria = example.createCriteria();
                 criteria.andEqualTo("stockOrderDetId",wmsInnerStockOrderDet.getStockOrderDetId());
@@ -1373,8 +1385,14 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     inventoryDet.setModifiedTime(new Date());
                     num+=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(inventoryDet);
 
+                    //更新盘点条码明细状态为已盘点
+                    stockOrderDetBarcode.setStockResult((byte)2);
+                    stockOrderDetBarcode.setModifiedUserId(sysUser.getUserId());
+                    stockOrderDetBarcode.setModifiedTime(new Date());
+                    num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(stockOrderDetBarcode);
+
                 }
-                num+=wmsInnerStockOrderDetBarcodeMapper.deleteByExample(example);
+
             }
         }
         if(stockOrderDetBarcodeList.size()>0) {

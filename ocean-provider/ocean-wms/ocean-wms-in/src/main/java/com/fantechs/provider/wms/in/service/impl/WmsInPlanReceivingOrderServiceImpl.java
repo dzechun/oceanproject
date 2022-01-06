@@ -496,6 +496,7 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
                     WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
                     wmsInnerJobOrder.setSourceSysOrderTypeCode(sysOrderTypeCode);
                     wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                    wmsInnerJobOrder.setWarehouseId(wmsInPlanReceivingOrder.getWarehouseId());
                     wmsInnerJobOrder.setJobOrderType((byte)1);
                     wmsInnerJobOrder.setOrderStatus((byte)1);
                     wmsInnerJobOrder.setCreateUserId(sysUser.getUserId());

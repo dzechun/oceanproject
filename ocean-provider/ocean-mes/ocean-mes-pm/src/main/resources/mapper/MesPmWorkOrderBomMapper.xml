@@ -35,7 +35,7 @@
     <result column="plan_start_time" jdbcType="TIMESTAMP" property="planStartTime"/>
     <result column="pro_line_id" jdbcType="BIGINT" property="proLineId"/>
     <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
-    <result column="scheduled_qty" jdbcType="DECIMAL" property="scheduledQty"/>
+    <result column="work_order_qty" jdbcType="DECIMAL" property="workOrderQty"/>
     <result column="part_material_code" jdbcType="VARCHAR" property="partMaterialCode"/>
     <result column="part_material_name" jdbcType="VARCHAR" property="partMaterialName"/>
     <result column="part_material_desc" jdbcType="VARCHAR" property="partMaterialDesc"/>
@@ -58,7 +58,7 @@
     mpwo.work_order_code,
     mpwo.work_order_type,
     mpwo.plan_start_time,
-    mpwo.scheduled_qty,
+    mpwo.work_order_qty,
     spl.pro_line_id,
     spl.pro_name,
     mpwob.part_material_id,
