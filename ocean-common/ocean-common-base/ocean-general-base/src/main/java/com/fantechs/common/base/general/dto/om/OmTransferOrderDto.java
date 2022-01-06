@@ -5,7 +5,6 @@ import com.fantechs.common.base.general.entity.om.OmTransferOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -24,6 +23,22 @@ public class OmTransferOrderDto extends OmTransferOrder implements Serializable 
     @ApiModelProperty(name="totalQty",value = "订单总数量")
     @Excel(name = "订单总数量", height = 20, width = 30,orderNum="6")
     private BigDecimal totalQty;
+
+    /**
+     * 上架总数量
+     */
+    @Transient
+    @ApiModelProperty(name="totalActualInQty",value = "上架总数量")
+    @Excel(name = "上架总数量", height = 20, width = 30)
+    private BigDecimal totalActualInQty;
+
+    /**
+     * 出货总数量
+     */
+    @Transient
+    @ApiModelProperty(name="totalActualOutQty",value = "出货总数量")
+    @Excel(name = "出货总数量", height = 20, width = 30)
+    private BigDecimal totalActualOutQty;
 
     /**
      *调出仓库

@@ -13,10 +13,7 @@ import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
-import com.fantechs.common.base.general.entity.om.OmHtPurchaseOrder;
-import com.fantechs.common.base.general.entity.om.OmHtPurchaseOrderDet;
-import com.fantechs.common.base.general.entity.om.OmPurchaseOrder;
-import com.fantechs.common.base.general.entity.om.OmPurchaseOrderDet;
+import com.fantechs.common.base.general.entity.om.*;
 import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -32,6 +29,7 @@ import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.om.mapper.OmPurchaseOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmPurchaseOrderMapper;
+import com.fantechs.provider.om.mapper.OmPurchaseReturnOrderDetMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtPurchaseOrderDetMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtPurchaseOrderMapper;
 import com.fantechs.provider.om.service.OmPurchaseOrderService;
@@ -60,6 +58,8 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
     private OmPurchaseOrderDetMapper omPurchaseOrderDetMapper;
     @Resource
     private OmHtPurchaseOrderDetMapper omHtPurchaseOrderDetMapper;
+    @Resource
+    private OmPurchaseReturnOrderDetMapper omPurchaseReturnOrderDetMapper;
     @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
@@ -233,16 +233,27 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
         List<OmPurchaseOrderDet> list = new ArrayList<>();
         List<OmPurchaseOrder> orderList = new ArrayList<>();
 
+        Example example = new Example(OmPurchaseReturnOrderDet.class);
         int i = 0;
-        for (OmPurchaseOrderDet order : omPurchaseOrderDets) {
-            if (order.getIfAllIssued() != null && order.getIfAllIssued() == (byte) 1) {
+        for (OmPurchaseOrderDet orderDet : omPurchaseOrderDets) {
+            if (orderDet.getIfAllIssued() != null && orderDet.getIfAllIssued() == (byte) 1) {
                 throw new BizErrorException("订单已下推，无法再次下推");
             }
-            if(StringUtils.isEmpty(order.getTotalIssueQty()))
-                order.setTotalIssueQty(BigDecimal.ZERO);
-            if(StringUtils.isEmpty(order.getPurchaseReturnQty()))
-                order.setPurchaseReturnQty(BigDecimal.ZERO);
-            if (order.getOrderQty().compareTo(order.getTotalIssueQty().add(order.getQty()).add(order.getPurchaseReturnQty())) == -1) {
+
+            //查采购订单明细的退货数量
+            BigDecimal purchaseReturnQty = BigDecimal.ZERO;
+            example.clear();
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("purchaseOrderDetId",orderDet.getPurchaseOrderDetId());
+            List<OmPurchaseReturnOrderDet> omPurchaseReturnOrderDets = omPurchaseReturnOrderDetMapper.selectByExample(example);
+            if(StringUtils.isNotEmpty(omPurchaseReturnOrderDets)){
+                for (OmPurchaseReturnOrderDet omPurchaseReturnOrderDet : omPurchaseReturnOrderDets){
+                    purchaseReturnQty = purchaseReturnQty.add(omPurchaseReturnOrderDet.getOrderQty());
+                }
+            }
+            orderDet.setPurchaseReturnQty(purchaseReturnQty);
+            orderDet.setTotalIssueQty(StringUtils.isEmpty(orderDet.getTotalIssueQty()) ? BigDecimal.ZERO : orderDet.getTotalIssueQty());
+            if (orderDet.getOrderQty().compareTo(orderDet.getTotalIssueQty().add(orderDet.getQty()).add(orderDet.getPurchaseReturnQty())) == -1) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "累计下发数量与采购退货数量之和大于包装总数");
             }
         }
@@ -267,14 +278,8 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
         Map<String, List<OmPurchaseOrderDet>> detMap = new HashMap<>();
         //不同单据流分组
         for (OmPurchaseOrderDet omPurchaseOrderDet : omPurchaseOrderDets) {
-            
-            Map map = new HashMap();
-            map.put("purchaseOrderId", omPurchaseOrderDet.getPurchaseOrderId());
-            List<OmPurchaseOrderDto> omPurchaseOrderDto = omPurchaseOrderMapper.findList(map);
-            OmPurchaseOrderDto dto = omPurchaseOrderDto.get(0);
-            
             //当前单据的下游单据
-            BaseOrderFlow baseOrderFlow = OrderFlowUtil.getOrderFlow(baseOrderFlowDtos, omPurchaseOrderDet.getMaterialId(), dto.getSupplierId());
+            BaseOrderFlow baseOrderFlow = OrderFlowUtil.getOrderFlow(baseOrderFlowDtos, omPurchaseOrderDet.getMaterialId(), omPurchaseOrderDet.getSupplierId());
             String key = baseOrderFlow.getNextOrderTypeCode();
             if (detMap.get(key) == null) {
                 List<OmPurchaseOrderDet> diffOrderFlows = new LinkedList<>();
