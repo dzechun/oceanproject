@@ -10,6 +10,11 @@ import java.util.List;
 @Data
 public class SearchProLineBoard extends BaseQuery implements Serializable {
 
+    /**
+     * 设备条码
+     */
+    @ApiModelProperty(name="equipmentBarcode" ,value="设备条码")
+    private String equipmentBarcode;
 
     /**
      * 线别编码
@@ -78,6 +83,7 @@ public class SearchProLineBoard extends BaseQuery implements Serializable {
     @ApiModelProperty(name="seqNum" ,value="序号")
     private int seqNum;
 
+    private String nowDate;
 
 
 

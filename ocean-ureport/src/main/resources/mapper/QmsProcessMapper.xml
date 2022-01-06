@@ -18,21 +18,18 @@
             <if test="proLineId!=null and proLineId!=''">
                 and msbpr.pro_line_id=#{proLineId}
             </if>
-            <if test="processIdList !=null and processIdList.size()!=0">
-                and msbpr.process_id in
-                <foreach item="processId" collection="processIdList" open="(" separator="," close=")">
-                    #{processId}
-                </foreach>
-            </if>
             <if test="orgId!=null and orgId!=''">
                 and msbpr.org_id=#{orgId}
+            </if>
+            <if test="processCode != null and processCode != ''">
+                and msbpr.process_code = #{processCode}
             </if>
         </where>
         order by devote_time ASC
     </select>
 
     <select id="findNotGoodList" resultMap="BaseResultMap" parameterType="map">
-        SELECT 1 AS not_good_qty,
+        SELECT DISTINCT(msbpr.barcode),1 AS not_good_qty,
         SUBSTRING(msbpr.in_process_time,12,2) AS devote_hour
         FROM mes_sfc_barcode_process_record msbpr
         <where>
@@ -42,14 +39,11 @@
             <if test="proLineId!=null and proLineId!=''">
                 and msbpr.pro_line_id=#{proLineId}
             </if>
-            <if test="processIdList !=null and processIdList.size()!=0">
-                and msbpr.process_id in
-                <foreach item="processId" collection="processIdList" open="(" separator="," close=")">
-                    #{processId}
-                </foreach>
-            </if>
             <if test="orgId!=null and orgId!=''">
                 and msbpr.org_id=#{orgId}
+            </if>
+            <if test="sectionCode != null and sectionCode != ''">
+                and msbpr.section_code = #{sectionCode}
             </if>
             and IFNULL(msbpr.barcode_status,'')='0'
         </where>

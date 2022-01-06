@@ -105,6 +105,9 @@
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(msbpr.out_process_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
+            <if test="nowDate!=null and nowDate!=''">
+                and date_format(msbpr.devote_time, '%Y-%m-%d') = #{nowDate}
+            </if>
         </where>
     </select>
 

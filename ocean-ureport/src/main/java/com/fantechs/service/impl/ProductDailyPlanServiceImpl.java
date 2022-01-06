@@ -34,9 +34,9 @@ public class ProductDailyPlanServiceImpl implements ProductDailyPlanService {
         Calendar c= Calendar.getInstance();
         SearchProductDailyPlan searchProductDailyPlan = new SearchProductDailyPlan();
 
-        //查询前七天的批次完成率
+        //查询前十四天的批次完成率
         List<ProductionBatch> productionBatches = new ArrayList<>();
-        for (int i = 1; i <= 7; i++) {
+        for (int i = 1; i <= 14; i++) {
 
             // 设置精确到小数点后2位,可以写0不带小数位
             NumberFormat numberFormat = NumberFormat.getInstance();
