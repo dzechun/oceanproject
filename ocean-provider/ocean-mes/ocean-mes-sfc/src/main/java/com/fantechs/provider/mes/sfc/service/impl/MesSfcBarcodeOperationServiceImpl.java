@@ -528,52 +528,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             if (mesPmWorkOrder.getOutputProcessId().equals(dto.getProcessId())){
                 this.beforeCartonAutoAsnOrder(cartonIds, user.getOrganizationId(), null);
             }
-
-            long closeF = System.currentTimeMillis();
-            log.info("==================== 包箱作业关箱完成，花费时间 毫秒：" + (closeF - workF));
-
-            //雷赛包箱数据是否同步到WMS开始
-            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-            searchSysSpecItem.setSpecCode("CartonIfToLeisaiWms");
-            List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-            if(specItems.size()>0) {
-                SysSpecItem sysSpecItem = specItems.get(0);
-                if(sysSpecItem.getParaValue().equals("1")){
-                    LeisaiWmsCarton leisaiWmsCarton=new LeisaiWmsCarton();
-                    List<LeisaiWmsCartonDet> dets=new ArrayList<>();
-
-                    leisaiWmsCarton.setBOXID(sfcProductCarton.getCartonCode());
-                    leisaiWmsCarton.setSTATUS("1");
-                    leisaiWmsCarton.setCREATEBY("MES");
-                    leisaiWmsCarton.setCREATEDATE(DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
-                    leisaiWmsCarton.setCLIENT("93");
-                    leisaiWmsCarton.setPRINTCOUNT("1");
-                    leisaiWmsCarton.setPRINTBY("MES");
-                    leisaiWmsCarton.setPRINTDATE(DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
-
-                    for (MesSfcBarcodeProcess sfcBarcodeProcess : mesSfcBarcodeProcessList) {
-                        LeisaiWmsCartonDet leisaiWmsCartonDet=new LeisaiWmsCartonDet();
-                        leisaiWmsCartonDet.setBOXID(sfcProductCarton.getCartonCode());
-                        leisaiWmsCartonDet.setBARCODENO(sfcBarcodeProcess.getBarcode());
-                        leisaiWmsCartonDet.setPN(sfcBarcodeProcess.getMaterialCode());
-                        leisaiWmsCartonDet.setORDERNO(sfcBarcodeProcess.getWorkOrderCode());
-                        leisaiWmsCartonDet.setCLIENT("93");
-                        leisaiWmsCartonDet.setCREATEBY("MES");
-                        leisaiWmsCartonDet.setCREATEDATE(DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
-
-                        dets.add(leisaiWmsCartonDet);
-
-                    }
-                    leisaiWmsCarton.setLeisaiWmsCartonDetList(dets);
-                    leisaiFeignApi.syncCartonData(leisaiWmsCarton);
-
-                }
-            }
-
-            long upF = System.currentTimeMillis();
-            log.info("==================== 包箱作业上传雷赛完成，花费时间 毫秒：" + (upF - closeF));
-
-            //雷赛包箱数据是否同步到WMS结束
         }
         return true;
     }
