@@ -14,6 +14,7 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReOrderDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
+import com.fantechs.common.base.general.entity.qms.QmsBadnessManage;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrderDet;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrderDetSample;
@@ -82,6 +83,9 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
 
     @Resource
     private QmsIncomingInspectionOrderDetService qmsIncomingInspectionOrderDetService;
+
+    @Resource
+    private QmsBadnessManageMapper qmsBadnessManageMapper;
 
     @Override
     public List<QmsHtIncomingInspectionOrder> findHtList(Map<String, Object> map) {
@@ -210,6 +214,16 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 List<WmsInInPlanOrderDetDto> detList = new LinkedList<>();
                 int lineNumber = 1;
                 for (QmsIncomingInspectionOrder qmsIncomingInspectionOrder : orders) {
+                    //挑选使用的单据下推时数量用特采数量
+                    if(qmsIncomingInspectionOrder.getMrbResult()!=null&&qmsIncomingInspectionOrder.getMrbResult()==(byte)2){
+                        Example example = new Example(QmsBadnessManage.class);
+                        example.createCriteria().andEqualTo("incomingInspectionOrderId",qmsIncomingInspectionOrder.getIncomingInspectionOrderId());
+                        QmsBadnessManage qmsBadnessManage = qmsBadnessManageMapper.selectOneByExample(example);
+                        if(StringUtils.isEmpty(qmsBadnessManage)){
+                            throw new BizErrorException("来料检验单"+qmsIncomingInspectionOrder.getIncomingInspectionOrderCode()+"的MRB评审结果为挑选使用，请先进行挑选使用再下推");
+                        }
+                        qmsIncomingInspectionOrder.setOrderQty(qmsBadnessManage.getSpecialReceiveQty());
+                    }
                     WmsInInPlanOrderDetDto wmsInInPlanOrderDet = new WmsInInPlanOrderDetDto();
                     wmsInInPlanOrderDet.setCoreSourceOrderCode(qmsIncomingInspectionOrder.getCoreSourceOrderCode());
                     wmsInInPlanOrderDet.setSourceOrderCode(qmsIncomingInspectionOrder.getIncomingInspectionOrderCode());
@@ -251,6 +265,16 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 List<WmsInnerJobOrderDet> detList = new LinkedList<>();
                 int lineNumber = 1;
                 for (QmsIncomingInspectionOrder qmsIncomingInspectionOrder : orders) {
+                    //挑选使用的单据下推时数量用特采数量
+                    if(qmsIncomingInspectionOrder.getMrbResult()!=null&&qmsIncomingInspectionOrder.getMrbResult()==(byte)2){
+                        Example example = new Example(QmsBadnessManage.class);
+                        example.createCriteria().andEqualTo("incomingInspectionOrderId",qmsIncomingInspectionOrder.getIncomingInspectionOrderId());
+                        QmsBadnessManage qmsBadnessManage = qmsBadnessManageMapper.selectOneByExample(example);
+                        if(StringUtils.isEmpty(qmsBadnessManage)){
+                            throw new BizErrorException("来料检验单"+qmsIncomingInspectionOrder.getIncomingInspectionOrderCode()+"的MRB评审结果为挑选使用，请先进行挑选使用再下推");
+                        }
+                        qmsIncomingInspectionOrder.setOrderQty(qmsBadnessManage.getSpecialReceiveQty());
+                    }
                     WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
                     wmsInnerJobOrderDet.setCoreSourceOrderCode(qmsIncomingInspectionOrder.getCoreSourceOrderCode());
                     wmsInnerJobOrderDet.setSourceOrderCode(qmsIncomingInspectionOrder.getIncomingInspectionOrderCode());

@@ -8,16 +8,17 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
 import com.fantechs.common.base.general.dto.basic.BaseOrderFlowDto;
-import com.fantechs.common.base.general.dto.om.*;
+import com.fantechs.common.base.general.dto.om.OmHtSalesOrderDetDto;
+import com.fantechs.common.base.general.dto.om.OmHtSalesOrderDto;
+import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
+import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.*;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialOwner;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
-import com.fantechs.common.base.general.entity.om.OmHtSalesOrderDet;
-import com.fantechs.common.base.general.entity.om.OmSalesOrder;
-import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
+import com.fantechs.common.base.general.entity.om.*;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
@@ -179,12 +180,23 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
                 }
             } else if ("OUT-IWK".equals(nextOrderTypeCode)) {
                 //拣货作业
+
+                //查询存货库位
+                /*SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                searchBaseStorage.setWarehouseId(omSalesOrderDetDtos.get(0).getWarehouseId());
+                searchBaseStorage.setStorageType((byte)1);
+                List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+                if(StringUtils.isEmpty(baseStorages)){
+                    throw new BizErrorException("该仓库未找到存货库位");
+                }
+                Long outStorageId = baseStorages.get(0).getStorageId();*/
+
                 int lineNumber = 1;
                 List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();
                 for (OmSalesOrderDetDto omSalesOrderDetDto : omSalesOrderDetDtos) {
                     WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
                     wmsInnerJobOrderDet.setCoreSourceOrderCode(omSalesOrderDetDto.getCoreSourceOrderCode());
-                    wmsInnerJobOrderDet.setSourceOrderCode(omSalesOrderDetDto.getSourceOrderCode());
+                    wmsInnerJobOrderDet.setSourceOrderCode(omSalesOrderDetDto.getSalesOrderCode());
                     wmsInnerJobOrderDet.setCoreSourceId(omSalesOrderDetDto.getCoreSourceId());
                     wmsInnerJobOrderDet.setSourceId(omSalesOrderDetDto.getSalesOrderDetId());
                     wmsInnerJobOrderDet.setLineNumber(lineNumber + "");
@@ -192,6 +204,7 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
                     wmsInnerJobOrderDet.setMaterialId(omSalesOrderDetDto.getMaterialId());
                     wmsInnerJobOrderDet.setPlanQty(omSalesOrderDetDto.getIssueQty());
                     wmsInnerJobOrderDet.setLineStatus((byte) 1);
+                    //wmsInnerJobOrderDet.setOutStorageId(outStorageId);
                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
                 }
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
@@ -211,6 +224,21 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
                 throw new BizErrorException("单据流配置错误");
             }
         }
+
+        //修改单据状态
+        /*Byte orderStatus = (byte)3;
+        OmSalesOrder omSalesOrder = omSalesOrderMapper.selectByPrimaryKey(omSalesOrderDetDtoList.get(0).getSalesOrderId());
+        Example example = new Example(OmSalesOrderDet.class);
+        example.createCriteria().andEqualTo("salesOrderId",omSalesOrder.getSalesOrderId());
+        List<OmSalesOrderDet> omSalesOrderDets = omSalesOrderDetMapper.selectByExample(example);
+        for (OmSalesOrderDet omSalesOrderDet : omSalesOrderDets){
+            if(omSalesOrderDet.getIfAllIssued()!=(byte)1){
+                orderStatus = (byte)2;
+                break;
+            }
+        }
+        omSalesOrder.setOrderStatus(orderStatus);
+        omSalesOrderMapper.updateByPrimaryKeySelective(omSalesOrder);*/
 
         return i;
     }

@@ -16,10 +16,7 @@ import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDetDt
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
-import com.fantechs.common.base.general.entity.om.OmHtPurchaseReturnOrder;
-import com.fantechs.common.base.general.entity.om.OmHtPurchaseReturnOrderDet;
-import com.fantechs.common.base.general.entity.om.OmPurchaseReturnOrder;
-import com.fantechs.common.base.general.entity.om.OmPurchaseReturnOrderDet;
+import com.fantechs.common.base.general.entity.om.*;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -219,6 +216,21 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
                 throw new BizErrorException("单据流配置错误");
             }
         }
+
+        //修改单据状态
+        Byte orderStatus = (byte)3;
+        OmPurchaseReturnOrder omPurchaseReturnOrder = omPurchaseReturnOrderMapper.selectByPrimaryKey(omPurchaseReturnOrderDetDtos.get(0).getPurchaseReturnOrderId());
+        Example example = new Example(OmPurchaseReturnOrderDet.class);
+        example.createCriteria().andEqualTo("purchaseReturnOrderId",omPurchaseReturnOrder.getPurchaseReturnOrderId());
+        List<OmPurchaseReturnOrderDet> omPurchaseReturnOrderDets = omPurchaseReturnOrderDetMapper.selectByExample(example);
+        for (OmPurchaseReturnOrderDet omPurchaseReturnOrderDet : omPurchaseReturnOrderDets){
+            if(omPurchaseReturnOrderDet.getIfAllIssued()!=(byte)1){
+                orderStatus = (byte)2;
+                break;
+            }
+        }
+        omPurchaseReturnOrder.setOrderStatus(orderStatus);
+        omPurchaseReturnOrderMapper.updateByPrimaryKeySelective(omPurchaseReturnOrder);
 
         return i;
     }

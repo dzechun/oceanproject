@@ -395,10 +395,19 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
             }
             BigDecimal totalIssueQty = mesPmWorkOrderBomDto.getTotalIssueQty() == null ? BigDecimal.ZERO : mesPmWorkOrderBomDto.getTotalIssueQty();
             BigDecimal add = totalIssueQty.add(mesPmWorkOrderBomDto.getIssueQty());
-            if(add.compareTo(mesPmWorkOrderBomDto.getUsageQty()) == 1){
-                throw new BizErrorException("累计下发数量不能大于工单用量");
-            }else if(add.compareTo(mesPmWorkOrderBomDto.getUsageQty()) == 0){
-                mesPmWorkOrderBomDto.setIfAllIssued((byte)1);
+
+            if(ifPushDownDailyPlan){
+                if(add.compareTo(mesPmWorkOrderBomDto.getWorkOrderQty()) == 1){
+                    throw new BizErrorException("累计下发数量不能大于工单数量");
+                }else if(add.compareTo(mesPmWorkOrderBomDto.getWorkOrderQty()) == 0){
+                    mesPmWorkOrderBomDto.setIfAllIssued((byte)1);
+                }
+            }else {
+                if(add.compareTo(mesPmWorkOrderBomDto.getUsageQty()) == 1){
+                    throw new BizErrorException("累计下发数量不能大于工单用量");
+                }else if(add.compareTo(mesPmWorkOrderBomDto.getUsageQty()) == 0){
+                    mesPmWorkOrderBomDto.setIfAllIssued((byte)1);
+                }
             }
             mesPmWorkOrderBomDto.setTotalIssueQty(add);
             mesPmWorkOrderBomMapper.updateByPrimaryKeySelective(mesPmWorkOrderBomDto);
@@ -415,7 +424,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                 mesPmDailyPlanDetDto.setCoreSourceId(mesPmWorkOrderBomDto.getWorkOrderBomId());
                 mesPmDailyPlanDetDto.setSourceId(mesPmWorkOrderBomDto.getWorkOrderBomId());
                 mesPmDailyPlanDetDto.setWorkOrderId(mesPmWorkOrderBomDto.getWorkOrderId());
-                mesPmDailyPlanDetDto.setScheduleQty(mesPmWorkOrderBomDto.getScheduledQty());
+                mesPmDailyPlanDetDto.setScheduleQty(mesPmWorkOrderBomDto.getIssueQty());
                 mesPmDailyPlanDetDto.setPlanStartTime(mesPmWorkOrderBomDto.getPlanStartTime());
                 mesPmDailyPlanDetDtos.add(mesPmDailyPlanDetDto);
             }

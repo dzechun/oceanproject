@@ -275,5 +275,12 @@ public class OmPurchaseOrderDet extends ValidGroup implements Serializable {
     @ApiModelProperty(name="purchaseReturnQty",value = "采购退货数量")
     private BigDecimal purchaseReturnQty;
 
+    /**
+     * 供应商id
+     */
+    @Transient
+    @ApiModelProperty(name = "supplierId",value = "供应商id")
+    private Long supplierId;
+
     private static final long serialVersionUID = 1L;
 }

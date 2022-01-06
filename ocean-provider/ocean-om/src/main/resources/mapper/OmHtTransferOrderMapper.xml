@@ -35,6 +35,8 @@
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
                type="com.fantechs.common.base.general.dto.om.OmHtTransferOrderDto">
         <result column="total_qty" jdbcType="DECIMAL" property="totalQty"/>
+        <result column="total_actual_in_qty" jdbcType="DECIMAL" property="totalActualInQty"/>
+        <result column="total_actual_out_qty" jdbcType="DECIMAL" property="totalActualOutQty"/>
         <result column="out_warehouse_name" jdbcType="VARCHAR" property="outWarehouseName"/>
         <result column="in_warehouse_name" jdbcType="VARCHAR" property="inWarehouseName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
@@ -70,6 +72,10 @@
         SELECT<include refid="Base_Column_List"/>,
         bw.warehouse_name as 'out_warehouse_name',bw1.warehouse_name as 'in_warehouse_name',
         su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name,
+        (SELECT IFNULL(SUM(otod.actual_in_qty),0) FROM om_transfer_order_det otod where otod.transfer_order_id =
+        oto.transfer_order_id) as total_actual_in_qty,
+        (SELECT IFNULL(SUM(otod.actual_out_qty),0) FROM om_transfer_order_det otod where otod.transfer_order_id =
+        oto.transfer_order_id) as total_actual_out_qty,
         (SELECT SUM(otod.order_qty) FROM om_transfer_order_det otod where otod.transfer_order_id =
         oto.transfer_order_id) as total_qty,
         (SELECT IFNULL(SUM(bmb.volume *otod.order_qty),0) FROM om_transfer_order_det otod left join base_material_tab
