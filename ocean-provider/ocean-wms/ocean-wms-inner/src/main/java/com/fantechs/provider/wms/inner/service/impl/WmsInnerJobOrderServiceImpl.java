@@ -606,12 +606,15 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
                 sBarcodeReOrder.setOrderTypeCode("IN-IWK");
                 sBarcodeReOrder.setOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
+                sBarcodeReOrder.setScanStatus((byte)1);
                 List<WmsInnerMaterialBarcodeReOrderDto> reOrderList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
                 if(reOrderList.size()<=0){
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"上架单未找到相应的条码数据-->"+wmsInnerJobOrder.getJobOrderCode());
                 }
 
-                BigDecimal totalQty=reOrderList.stream().map(WmsInnerMaterialBarcodeReOrderDto::getQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+                List<WmsInnerMaterialBarcodeReOrderDto> barcodeList = reOrderList.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
+                BigDecimal totalQty=barcodeList.stream().map(WmsInnerMaterialBarcodeReOrderDto::getQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+
                 if(totalQty.compareTo(wmsInnerJobOrderDet.getPlanQty())!=0){
                     throw new BizErrorException(ErrorCodeEnum.OPT20012009.getCode(),"条码数量和明细计划数量不相等");
                 }

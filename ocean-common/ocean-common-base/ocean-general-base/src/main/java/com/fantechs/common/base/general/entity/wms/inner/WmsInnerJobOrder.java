@@ -99,7 +99,7 @@ public class WmsInnerJobOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name="workStartTime",value = "作业开始时间")
     @Excel(name = "作业开始时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "work_start_time")
     private Date workStartTime;
 
@@ -109,7 +109,7 @@ public class WmsInnerJobOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name="workEndtTime",value = "作业结束时间")
     @Excel(name = "作业结束时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "work_endt_time")
     private Date workEndtTime;
 
