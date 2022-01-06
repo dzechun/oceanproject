@@ -16,6 +16,13 @@ public interface MesSfcBarcodeOperationService {
     Boolean pdaCartonWork(PdaCartonWorkDto dto) throws Exception;
 
     /**
+     * 包箱作业
+     * @param dto
+     * @return
+     */
+    Boolean leisaiPdaCartonWork(PdaCartonWorkDto dto) throws Exception;
+
+    /**
      * 查找包箱数据
      * @param processId
      * @param stationId
