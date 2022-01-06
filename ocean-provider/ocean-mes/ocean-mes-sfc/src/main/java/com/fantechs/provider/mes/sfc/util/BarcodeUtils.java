@@ -1454,7 +1454,7 @@ public class BarcodeUtils {
 
                 long checkF3 = System.currentTimeMillis();
                 log.info("==================== 过站检验作业校验治具与半成品绑定关系完成，花费时间 毫秒：" + (checkF3 - checkF2));
-                
+
                 //产前关键事项是否已完成
                 baseExecuteResultDto=checkPmProKeyIssues(updateProcessDto.getWorkOrderCode(),orgId);
                 if(baseExecuteResultDto.getIsSuccess()==false)
