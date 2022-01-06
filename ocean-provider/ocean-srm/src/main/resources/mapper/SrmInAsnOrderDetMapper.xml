@@ -22,10 +22,8 @@
         <result column="pallet_code" jdbcType="VARCHAR" property="palletCode"/>
         <result column="receiving_date" jdbcType="TIMESTAMP" property="receivingDate"/>
         <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
-
         <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty"/>
         <result column="if_all_issued" jdbcType="TINYINT" property="ifAllIssued"/>
-
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="org_id" jdbcType="BIGINT" property="orgId"/>
@@ -118,9 +116,10 @@
             <if test="asnCode !=null and asnCode !=''">
                 and wiao.asn_code=#{asnCode}
             </if>
-            <if test="asnOrderIdList !=null and asnOrderIdList !=''">
-                <foreach collection="asnOrderIdList" item="item" index="index" open="and wiaod.asn_order_id in(" separator="," close=")">
-                    {item}
+            <if test="asnOrderIdList != null and asnOrderIdList.size() > 0">
+                and wiaod.asn_order_id
+                <foreach collection="asnOrderIdList" open="in (" close=")" item="item" separator="," index="index">
+                    #{item}
                 </foreach>
             </if>
             <if test="asnOrderDetId !=null and asnOrderDetId!=''">

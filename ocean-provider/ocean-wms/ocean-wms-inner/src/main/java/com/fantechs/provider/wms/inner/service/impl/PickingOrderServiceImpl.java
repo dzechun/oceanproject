@@ -9,23 +9,23 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
+import com.fantechs.common.base.general.dto.om.OmTransferOrderDetDto;
 import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
-import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
+import com.fantechs.common.base.general.entity.om.search.SearchOmTransferOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrderReJo;
-import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrderDet;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -39,6 +39,7 @@ import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.wms.inner.mapper.*;
 import com.fantechs.provider.wms.inner.service.PickingOrderService;
 import com.fantechs.provider.wms.inner.service.WmsInnerInventoryService;
+import com.fantechs.provider.wms.inner.service.WmsInnerJobOrderService;
 import com.fantechs.provider.wms.inner.util.InBarcodeUtil;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
 import org.springframework.stereotype.Service;
@@ -60,6 +61,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
 
     @Resource
     private WmsInnerJobOrderMapper wmsInnerJobOrderMapper;
+    @Resource
+    private WmsInnerJobOrderService wmsInnerJobOrderService;
     @Resource
     private WmsInnerJobOrderDetMapper wmsInnerJobOrderDetMapper;
     @Resource
@@ -490,15 +493,64 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         //反写上游单据数量
         if ("OUT-SO".equals(wmsInnerJobOrder.getSourceSysOrderTypeCode())) {
             SearchOmSalesOrderDetDto searchOmSalesOrderDetDto = new SearchOmSalesOrderDetDto();
-            searchOmSalesOrderDetDto.setSalesOrderDetId(wmsInnerJobOrderDet.getSourceId());
+            searchOmSalesOrderDetDto.setSalesOrderDetId(wmsInnerJobOrderDet.getCoreSourceId());
             List<OmSalesOrderDetDto> list = omFeignApi.findList(searchOmSalesOrderDetDto).getData();
             if (StringUtils.isNotEmpty(list)) {
                 OmSalesOrderDetDto omSalesOrderDetDto = list.get(0);
-                omSalesOrderDetDto.setActualQty(omSalesOrderDetDto.getActualQty().add(wmsInnerPdaJobOrderDet.getActualQty()));
+                BigDecimal actualQty = StringUtils.isNotEmpty(omSalesOrderDetDto.getActualQty())?omSalesOrderDetDto.getActualQty():new BigDecimal(0);
+                omSalesOrderDetDto.setActualQty(actualQty.add(wmsInnerPdaJobOrderDet.getActualQty()));
                 omFeignApi.update(omSalesOrderDetDto);
             }
         }else if ("INNER-TO".equals(wmsInnerJobOrder.getSourceSysOrderTypeCode())) {
+            SearchOmTransferOrderDet searchOmTransferOrderDet = new SearchOmTransferOrderDet();
+            searchOmTransferOrderDet.setTransferOrderDetId(wmsInnerJobOrderDet.getCoreSourceId());
+            List<OmTransferOrderDetDto> list = omFeignApi.findList(searchOmTransferOrderDet).getData();
+            if (StringUtils.isNotEmpty(list)) {
+                OmTransferOrderDetDto omTransferOrderDetDto = list.get(0);
+                BigDecimal actualQty = StringUtils.isNotEmpty(omTransferOrderDetDto.getActualInQty())?omTransferOrderDetDto.getActualInQty():new BigDecimal(0);
+                omTransferOrderDetDto.setActualInQty(actualQty.add(wmsInnerPdaJobOrderDet.getActualQty()));
+                omFeignApi.update(omTransferOrderDetDto);
+            }
 
+            if (wmsInnerJobOrder.getOrderStatus() == 5) {
+                SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                searchBaseStorage.setWarehouseId(wmsInnerJobOrder.getWarehouseId());
+                searchBaseStorage.setStorageType((byte)2);
+                List<BaseStorage> storageList = baseFeignApi.findList(searchBaseStorage).getData();
+                if(storageList.size()<1){
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"未维护仓库收货库位");
+                }
+
+                List<WmsInnerJobOrderDet> detList = new LinkedList<>();
+                int lineNumber = 1;
+                for (WmsInnerJobOrderDet innerJobOrderDet : wmsInnerJobOrderDetList) {
+                    WmsInnerJobOrderDet newWmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                    newWmsInnerJobOrderDet.setCoreSourceOrderCode(innerJobOrderDet.getCoreSourceOrderCode());
+                    newWmsInnerJobOrderDet.setSourceOrderCode(wmsInnerJobOrder.getJobOrderCode());
+                    newWmsInnerJobOrderDet.setSourceId(innerJobOrderDet.getJobOrderDetId());
+                    newWmsInnerJobOrderDet.setLineNumber(lineNumber+"");
+                    newWmsInnerJobOrderDet.setMaterialId(innerJobOrderDet.getMaterialId());
+                    newWmsInnerJobOrderDet.setPlanQty(innerJobOrderDet.getPlanQty());
+                    newWmsInnerJobOrderDet.setLineStatus((byte)1);
+                    newWmsInnerJobOrderDet.setOutStorageId(storageList.get(0).getStorageId());
+                    detList.add(newWmsInnerJobOrderDet);
+                    lineNumber++;
+                }
+                WmsInnerJobOrder innerJobOrder = new WmsInnerJobOrder();
+                innerJobOrder.setSourceSysOrderTypeCode(wmsInnerJobOrder.getSourceSysOrderTypeCode());
+                innerJobOrder.setCoreSourceSysOrderTypeCode(wmsInnerJobOrder.getCoreSourceSysOrderTypeCode());
+                innerJobOrder.setJobOrderType((byte)1);
+                innerJobOrder.setOrderStatus((byte)1);
+                innerJobOrder.setCreateUserId(sysUser.getUserId());
+                innerJobOrder.setCreateTime(new Date());
+                innerJobOrder.setModifiedUserId(sysUser.getUserId());
+                innerJobOrder.setModifiedTime(new Date());
+                innerJobOrder.setStatus((byte)1);
+                innerJobOrder.setOrgId(sysUser.getOrganizationId());
+                innerJobOrder.setWmsInPutawayOrderDets(detList);
+                innerJobOrder.setSourceBigType((byte)1);
+                wmsInnerJobOrderService.save(innerJobOrder);
+            }
         }
 
         return wmsInnerJobOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);

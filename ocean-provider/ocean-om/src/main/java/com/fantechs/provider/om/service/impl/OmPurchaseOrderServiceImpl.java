@@ -262,20 +262,27 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
         }
 
+
         //根据仓库分组，不同仓库生成多张单
         Map<String, List<OmPurchaseOrderDet>> detMap = new HashMap<>();
         //不同单据流分组
-        for (OmPurchaseOrderDet omOtherInOrderDet : omPurchaseOrderDets) {
+        for (OmPurchaseOrderDet omPurchaseOrderDet : omPurchaseOrderDets) {
+            
+            Map map = new HashMap();
+            map.put("purchaseOrderId", omPurchaseOrderDet.getPurchaseOrderId());
+            List<OmPurchaseOrderDto> omPurchaseOrderDto = omPurchaseOrderMapper.findList(map);
+            OmPurchaseOrderDto dto = omPurchaseOrderDto.get(0);
+            
             //当前单据的下游单据
-            BaseOrderFlow baseOrderFlow = OrderFlowUtil.getOrderFlow(baseOrderFlowDtos, omOtherInOrderDet.getMaterialId(), null);
+            BaseOrderFlow baseOrderFlow = OrderFlowUtil.getOrderFlow(baseOrderFlowDtos, omPurchaseOrderDet.getMaterialId(), dto.getSupplierId());
             String key = baseOrderFlow.getNextOrderTypeCode();
             if (detMap.get(key) == null) {
                 List<OmPurchaseOrderDet> diffOrderFlows = new LinkedList<>();
-                diffOrderFlows.add(omOtherInOrderDet);
+                diffOrderFlows.add(omPurchaseOrderDet);
                 detMap.put(key, diffOrderFlows);
             } else {
                 List<OmPurchaseOrderDet> diffOrderFlows = detMap.get(key);
-                diffOrderFlows.add(omOtherInOrderDet);
+                diffOrderFlows.add(omPurchaseOrderDet);
                 detMap.put(key, diffOrderFlows);
             }
         }
@@ -510,14 +517,15 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                 Iterator<Long> iterator = set.iterator();
                 while (iterator.hasNext()) {
                     wmsInInPlanOrder.setWarehouseId(iterator.next());
-                    //查询默认收货库位
-                    SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
-                    searchBaseStorage.setWarehouseId(iterator.next());
-                    searchBaseStorage.setStorageType((byte)2);
-                    List<BaseStorage> data = baseFeignApi.findList(searchBaseStorage).getData();
-                    if(StringUtils.isNotEmpty(data))
-                        wmsInInPlanOrder.setStorageId(data.get(0).getStorageId());
                 }
+                //查询默认收货库位
+                SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                searchBaseStorage.setWarehouseId(wmsInInPlanOrder.getWarehouseId());
+                searchBaseStorage.setStorageType((byte)2);
+                List<BaseStorage> data = baseFeignApi.findList(searchBaseStorage).getData();
+                if(StringUtils.isNotEmpty(data))
+                    wmsInInPlanOrder.setStorageId(data.get(0).getStorageId());
+
                 wmsInInPlanOrder.setCreateUserId(user.getUserId());
                 wmsInInPlanOrder.setCreateTime(new Date());
                 wmsInInPlanOrder.setModifiedUserId(user.getUserId());

@@ -102,6 +102,7 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
         wmsInInPlanOrderDto.setInPlanOrderCode(CodeUtils.getId("IN-IPO"));
         if(StringUtils.isEmpty(wmsInInPlanOrderDto.getMakeOrderUserId()))
             wmsInInPlanOrderDto.setMakeOrderUserId(user.getUserId());
+        wmsInInPlanOrderDto.setSysOrderTypeCode("IN-IPO");
         wmsInInPlanOrderDto.setCreateUserId(user.getUserId());
         wmsInInPlanOrderDto.setCreateTime(new Date());
         wmsInInPlanOrderDto.setModifiedUserId(user.getUserId());
@@ -140,8 +141,13 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
 
                 if(StringUtils.isNotEmpty(wmsInInPlanOrderDto.getSourceSysOrderTypeCode())){
                     SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
-                    searchWmsInnerMaterialBarcodeReOrder.setOrderId(wmsInInPlanOrderDetDto.getSourceId());
-                    searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode(wmsInInPlanOrderDetDto.getSourceOrderCode());
+                    searchWmsInnerMaterialBarcodeReOrder.setOrderCode(wmsInInPlanOrderDetDto.getSourceOrderCode());
+                    searchWmsInnerMaterialBarcodeReOrder.setInspectionStatus((byte)2);
+                    if("QMS-MIIO".equals(wmsInInPlanOrderDto.getSourceSysOrderTypeCode())){
+                        searchWmsInnerMaterialBarcodeReOrder.setOrderId(wmsInInPlanOrderDetDto.getSourceId());
+                    }else{
+                        searchWmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInInPlanOrderDetDto.getSourceId());
+                    }
                     List<WmsInnerMaterialBarcodeReOrderDto> data = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder).getData();
                     if(StringUtils.isNotEmpty(data)){
                         for(WmsInnerMaterialBarcodeReOrderDto dto : data) {
@@ -149,6 +155,10 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
                             BeanUtils.copyProperties(dto,reOrder, new String[]{"materialBarcodeReOrderId","orderTypeCode","orderId"});
                             reOrder.setOrderTypeCode(wmsInInPlanOrderDto.getSysOrderTypeCode());
                             reOrder.setOrderId(wmsInInPlanOrderDetDto.getInPlanOrderDetId());
+                            reOrder.setCreateUserId(user.getUserId());
+                            reOrder.setCreateTime(new Date());
+                            reOrder.setModifiedUserId(user.getUserId());
+                            reOrder.setModifiedTime(new Date());
                             list.add(reOrder);
                         }
                     }
@@ -157,6 +167,7 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
             }
             if (StringUtils.isNotEmpty(list))
                 innerFeignApi.batchAdd(list);
+
             if (StringUtils.isNotEmpty(htList))
                 wmsInHtInPlanOrderDetMapper.insertList(htList);
         }

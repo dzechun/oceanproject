@@ -1,7 +1,6 @@
 package com.fantechs.common.base.general.dto.om;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.fantechs.common.base.general.entity.om.OmHtTransferOrder;
+import com.fantechs.common.base.general.entity.om.OmHtTransferOrderDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -14,7 +13,7 @@ import java.math.BigDecimal;
  * @Date 2021/8/26
  */
 @Data
-public class OmHtTransferOrderDetDto extends OmHtTransferOrder implements Serializable {
+public class OmHtTransferOrderDetDto extends OmHtTransferOrderDet implements Serializable {
     /**
      * 物料编码
      */

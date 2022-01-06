@@ -45,6 +45,7 @@
     <result column="gross_weight" jdbcType="VARCHAR" property="grossWeight"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     <result column="purchase_return_order_code" jdbcType="VARCHAR" property="purchaseReturnOrderCode"/>
+    <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -79,7 +80,7 @@
     <include refid="Base_Column_List"/>,
     bm.material_code,bm.material_name,bm.material_version,bm.material_desc,
     bmb.volume,bmb.net_weight,bmb.gross_weight,
-    bw.warehouse_name,opro.purchase_return_order_code,
+    bw.warehouse_name,opro.purchase_return_order_code,opro.supplier_id,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
