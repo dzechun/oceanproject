@@ -105,8 +105,8 @@
             <if test="orderStatus!=null and orderStatus!=''">
                 and oto.order_status = #{orderStatus}
             </if>
-            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-                and date_format(oto.order_date, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            <if test="startTime != null and endTime != null">
+                and date_format(oto.order_date, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
             </if>
         </where>
         order BY oto.create_time desc
