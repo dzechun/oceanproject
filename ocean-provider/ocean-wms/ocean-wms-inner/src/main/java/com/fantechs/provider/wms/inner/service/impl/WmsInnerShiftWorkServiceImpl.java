@@ -664,9 +664,19 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         wmsInnerHtJobOrderService.save(wmsInnerHtJobOrder);
 
         // 生成移位单明细
+        // 查找移出库位下库存明细
+        Map<String, Object> map = new HashMap<>();
+        map.put("storageId", dto.getOutStorageId());
+        map.put("materialIds", dto.getList().stream().map(InStorageMaterialDto::getMaterialId).collect(Collectors.toList()));
+        List<WmsInnerInventoryDetDto> inventoryDetDtos = wmsInnerInventoryDetService.findList(map);
+        if (inventoryDetDtos.isEmpty()){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "移出库位下没有库存，不允许操作");
+        }
+        List<WmsInnerJobOrderDetBarcode> jobOrderDetBarcodeList = new ArrayList<>();
+        List<WmsInnerHtJobOrderDetBarcode> htJobOrderDetBarcodes = new ArrayList<>();
         for (InStorageMaterialDto storageMaterialDto : dto.getList()){
             // 查询库存信息，同一库位跟同物料有且只有一条数据
-            Map<String, Object> map = new HashMap<>();
+            map.clear();
             map.put("materialId", storageMaterialDto.getMaterialId());
             map.put("storageId", dto.getOutStorageId());
             map.put("jobStatus", (byte) 1);
@@ -726,32 +736,68 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             WmsInnerHtJobOrderDet innerHtJobOrderDet = new WmsInnerHtJobOrderDet();
             BeanUtil.copyProperties(wmsInnerJobOrderDet, innerHtJobOrderDet);
             wmsInnerHtJobOrderDetService.save(innerHtJobOrderDet);
-        }
 
-        // 查找移出库位下库存明细
-        Map<String, Object> map = new HashMap<>();
-        map.put("storageId", dto.getOutStorageId());
-        map.put("materialIds", dto.getList().stream().map(InStorageMaterialDto::getMaterialId).collect(Collectors.toList()));
-        List<WmsInnerInventoryDetDto> inventoryDetDtos = wmsInnerInventoryDetService.findList(map);
-        if (inventoryDetDtos.isEmpty()){
-            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此库位下没有库存，不允许操作");
-        }
-        List<WmsInnerJobOrderDetBarcode> jobOrderDetBarcodeList = new ArrayList<>();
-        List<WmsInnerHtJobOrderDetBarcode> htJobOrderDetBarcodes = new ArrayList<>();
-        for (WmsInnerInventoryDetDto inventoryDetDto : inventoryDetDtos) {
-            // 创建条码移位单明细关系
-            WmsInnerJobOrderDetBarcode wmsInnerJobOrderDetBarcode = new WmsInnerJobOrderDetBarcode();
-            wmsInnerJobOrderDetBarcode.setBarcode(inventoryDetDto.getBarcode());
-//            wmsInnerJobOrderDetBarcode.setJobOrderDetId(inventoryDetDto.getJobOrderDetId());
-            wmsInnerJobOrderDetBarcode.setStatus((byte) 1);
-            wmsInnerJobOrderDetBarcode.setOrgId(user.getOrganizationId());
-            wmsInnerJobOrderDetBarcode.setCreateTime(new Date());
-            wmsInnerJobOrderDetBarcode.setCreateUserId(user.getUserId());
-            wmsInnerJobOrderDetBarcode.setIsDelete((byte) 1);
-            jobOrderDetBarcodeList.add(wmsInnerJobOrderDetBarcode);
-            WmsInnerHtJobOrderDetBarcode innerHtJobOrderDetBarcode = new WmsInnerHtJobOrderDetBarcode();
-            BeanUtil.copyProperties(wmsInnerJobOrderDetBarcode, innerHtJobOrderDetBarcode);
-            htJobOrderDetBarcodes.add(innerHtJobOrderDetBarcode);
+            // 移位单条码关系
+            for (WmsInnerInventoryDetDto inventoryDetDto : inventoryDetDtos) {
+                // 创建条码移位单明细关系
+                if (wmsInnerJobOrderDet.getMaterialId().equals(inventoryDetDto.getMaterialId())){
+                    WmsInnerJobOrderDetBarcode wmsInnerJobOrderDetBarcode = new WmsInnerJobOrderDetBarcode();
+                    wmsInnerJobOrderDetBarcode.setBarcode(inventoryDetDto.getBarcode());
+                    wmsInnerJobOrderDetBarcode.setJobOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
+                    wmsInnerJobOrderDetBarcode.setStatus((byte) 1);
+                    wmsInnerJobOrderDetBarcode.setOrgId(user.getOrganizationId());
+                    wmsInnerJobOrderDetBarcode.setCreateTime(new Date());
+                    wmsInnerJobOrderDetBarcode.setCreateUserId(user.getUserId());
+                    wmsInnerJobOrderDetBarcode.setIsDelete((byte) 1);
+                    jobOrderDetBarcodeList.add(wmsInnerJobOrderDetBarcode);
+                    WmsInnerHtJobOrderDetBarcode innerHtJobOrderDetBarcode = new WmsInnerHtJobOrderDetBarcode();
+                    BeanUtil.copyProperties(wmsInnerJobOrderDetBarcode, innerHtJobOrderDetBarcode);
+                    htJobOrderDetBarcodes.add(innerHtJobOrderDetBarcode);
+                }
+            }
+
+            // 库存变更
+            // 原库存
+            Example example = new Example(WmsInnerInventory.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("materialId", storageMaterialDto.getMaterialId())
+                    .andEqualTo("warehouseId", baseStorage.getWarehouseId())
+                    .andEqualTo("storageId", dto.getOutStorageId())
+                    .andEqualTo("jobStatus", (byte) 1)
+                    .andEqualTo("stockLock", 0)
+                    .andEqualTo("qcLock", 0)
+                    .andEqualTo("lockStatus", 0);
+            WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
+            wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(storageMaterialDto.getQty()));
+            wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory);
+
+            // 原库存库存日志
+            SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
+            searchWmsInnerJobOrderDet.setJobOrderDetId(wmsInnerInventory.getJobOrderDetId());
+            WmsInnerJobOrderDetDto oldDto = wmsInnerJobOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
+            SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
+            searchWmsInnerJobOrder.setJobOrderId(oldDto.getJobOrderId());
+            WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder).get(0);
+            InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrderDto,oldDto,wmsInnerInventory.getPackingQty(),wmsInnerInventory.getPackingQty(),(byte)3,(byte)2);
+
+
+            Example.Criteria criteria1 = example.createCriteria().andEqualTo("materialId", storageMaterialDto.getMaterialId())
+                    .andEqualTo("warehouseId", oldDto.getWarehouseId())
+                    .andEqualTo("storageId", dto.getInStorageId())
+                    .andEqualTo("jobStatus", (byte) 1)
+                    .andEqualTo("stockLock", 0)
+                    .andEqualTo("qcLock", 0)
+                    .andEqualTo("lockStatus", 0);
+            if (StringUtils.isNotEmpty(wmsInnerInventory)){
+                criteria1.andEqualTo("inventoryStatusId", wmsInnerInventory.getInventoryStatusId());
+            }
+            WmsInnerInventory wmsInnerInventory_new = wmsInnerInventoryMapper.selectOneByExample(example);
+            if (wmsInnerInventory_new != null){
+                // 变更
+            }else {
+                // 新增
+//                wmsInnerInventory_new
+            }
         }
         if (jobOrderDetBarcodeList.size() > 0) {
             wmsInnerJobOrderDetBarcodeService.batchSave(jobOrderDetBarcodeList);
@@ -759,7 +805,6 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         if (htJobOrderDetBarcodes.size() > 0) {
             wmsInnerHtJobOrderDetBarcodeService.batchSave(htJobOrderDetBarcodes);
         }
-        // 修改库存
 
         // 修改库存明细
 
