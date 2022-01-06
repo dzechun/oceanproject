@@ -115,7 +115,7 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
         Map<String, List<OmPurchaseReturnOrderDetDto>> map = new HashMap<>();
         for (OmPurchaseReturnOrderDetDto omPurchaseReturnOrderDetDto : omPurchaseReturnOrderDetDtos) {
             //查当前单据的下游单据
-            BaseOrderFlow baseOrderFlow = OrderFlowUtil.getOrderFlow(baseOrderFlowDtos, omPurchaseReturnOrderDetDto.getMaterialId(), null);
+            BaseOrderFlow baseOrderFlow = OrderFlowUtil.getOrderFlow(baseOrderFlowDtos, omPurchaseReturnOrderDetDto.getMaterialId(), omPurchaseReturnOrderDetDto.getSupplierId());
 
             String key = baseOrderFlow.getNextOrderTypeCode();
             if (map.get(key) == null) {

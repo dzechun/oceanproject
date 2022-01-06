@@ -113,4 +113,11 @@ public class OmPurchaseReturnOrderDetDto extends OmPurchaseReturnOrderDet implem
     @ApiModelProperty(name="issueQty",value = "下发数量")
     @Transient
     private BigDecimal issueQty;
+
+    /**
+     * 供应商id
+     */
+    @ApiModelProperty(name="supplierId",value = "供应商id")
+    @Transient
+    private Long supplierId;
 }

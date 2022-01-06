@@ -12,4 +12,6 @@ import java.io.Serializable;
 @Data
 public class SearchOmTransferOrderDet extends BaseQuery implements Serializable {
     private Long transferOrderId;
+
+    private Long transferOrderDetId;
 }

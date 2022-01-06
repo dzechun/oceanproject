@@ -92,6 +92,9 @@
         left join sys_user sus on otod.modified_user_id = sus.user_id
         left join base_organization bo on otod.org_id = bo.organization_id
         <where>
+            <if test="transferOrderDetId!=null and transferOrderDetId!=''">
+                and otod.transfer_order_det_id = #{transferOrderDetId}
+            </if>
             <if test="transferOrderId!=null and transferOrderId!=''">
                 and otod.transfer_order_id = #{transferOrderId}
             </if>
