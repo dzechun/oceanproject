@@ -154,7 +154,8 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
                             WmsInnerMaterialBarcodeReOrder reOrder = new WmsInnerMaterialBarcodeReOrder();
                             BeanUtils.copyProperties(dto,reOrder, new String[]{"materialBarcodeReOrderId","orderTypeCode","orderId"});
                             reOrder.setOrderTypeCode(wmsInInPlanOrderDto.getSysOrderTypeCode());
-                            reOrder.setOrderId(wmsInInPlanOrderDetDto.getInPlanOrderDetId());
+                            reOrder.setOrderDetId(wmsInInPlanOrderDetDto.getInPlanOrderDetId());
+                            reOrder.setOrderId(wmsInInPlanOrderDto.getInPlanOrderId());
                             reOrder.setCreateUserId(user.getUserId());
                             reOrder.setCreateTime(new Date());
                             reOrder.setModifiedUserId(user.getUserId());
