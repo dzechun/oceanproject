@@ -621,10 +621,19 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         searchBaseStorage.setStorageId(dto.getInStorageId());
         List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
         if (baseStorages.isEmpty()){
-            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此库位编码不存在，不允许操作");
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "移入库位不存在，不允许操作");
         }
         // 移入库位
         BaseStorage baseStorage = baseStorages.get(0);
+
+        searchBaseStorage.setStorageId(dto.getOutStorageId());
+        List<BaseStorage> outBaseStorage = baseFeignApi.findList(searchBaseStorage).getData();
+        if (outBaseStorage.isEmpty()){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "移出库位不存在，不允许操作");
+        }
+        if (!outBaseStorage.get(0).getWarehouseId().equals(baseStorage.getWarehouseId())){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "移入库位跟移出库位必须同仓库");
+        }
 
         // 计算库容容量能否存放
         BigDecimal decimal = new BigDecimal(100);
@@ -753,6 +762,10 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                     WmsInnerHtJobOrderDetBarcode innerHtJobOrderDetBarcode = new WmsInnerHtJobOrderDetBarcode();
                     BeanUtil.copyProperties(wmsInnerJobOrderDetBarcode, innerHtJobOrderDetBarcode);
                     htJobOrderDetBarcodes.add(innerHtJobOrderDetBarcode);
+
+                    // 更新库存明细
+                    inventoryDetDto.setStorageId(dto.getInStorageId());
+                    wmsInnerInventoryDetService.update(inventoryDetDto);
                 }
             }
 
@@ -771,7 +784,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(storageMaterialDto.getQty()));
             wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory);
 
-            // 原库存库存日志
+            // 移出库存日志
             SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
             searchWmsInnerJobOrderDet.setJobOrderDetId(wmsInnerInventory.getJobOrderDetId());
             WmsInnerJobOrderDetDto oldDto = wmsInnerJobOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
@@ -793,11 +806,18 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             }
             WmsInnerInventory wmsInnerInventory_new = wmsInnerInventoryMapper.selectOneByExample(example);
             if (wmsInnerInventory_new != null){
-                // 变更
+                // 累加库存
+                wmsInnerInventory_new.setPackingQty(wmsInnerInventory_new.getPackingQty().add(storageMaterialDto.getQty()));
+                wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory_new);
             }else {
-                // 新增
-//                wmsInnerInventory_new
+                // 新增库存
+                BeanUtil.copyProperties(wmsInnerInventory, wmsInnerInventory_new);
+                wmsInnerInventory_new.setPackingQty(storageMaterialDto.getQty());
+                wmsInnerInventory_new.setStorageId(dto.getInStorageId());
+                wmsInnerInventoryService.save(wmsInnerInventory_new);
             }
+            // 移入库存日志
+            InventoryLogUtil.addLog(wmsInnerInventory,innerJobOrder,wmsInnerJobOrderDet,wmsInnerInventory.getPackingQty(),wmsInnerInventory.getPackingQty(),(byte)3,(byte)1);
         }
         if (jobOrderDetBarcodeList.size() > 0) {
             wmsInnerJobOrderDetBarcodeService.batchSave(jobOrderDetBarcodeList);
@@ -806,9 +826,6 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerHtJobOrderDetBarcodeService.batchSave(htJobOrderDetBarcodes);
         }
 
-        // 修改库存明细
-
-        // 增加库存日志
         return 0;
     }
 
