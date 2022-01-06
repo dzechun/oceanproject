@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -135,7 +136,10 @@ public class WmsInInPlanOrderController {
         }
     }
 
-
-
+    @ApiOperation("更新入库计划上架数量")
+    @PostMapping("/updatePutawayQty")
+    public ResponseEntity updatePutawayQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long inPlanOrderDetId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty) {
+        return ControllerUtil.returnCRUD(wmsInInPlanOrderService.updatePutawayQty(inPlanOrderDetId,putawayQty));
+    }
 
 }
