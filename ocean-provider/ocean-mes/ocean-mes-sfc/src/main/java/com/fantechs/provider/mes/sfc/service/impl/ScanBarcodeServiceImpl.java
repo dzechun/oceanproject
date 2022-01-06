@@ -74,7 +74,7 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
                 criteria.andEqualTo("barcode", barcodeArr[0]);
             }else {
                 // 三星客户条码情况，读头扫到的条码是少一位的，用模糊匹配
-                criteria.andLike("customerBarcode", barcodeArr[0]);
+                criteria.andLike("customerBarcode", barcodeArr[0] + "%");
             }
             List<MesSfcBarcodeProcess> mesSfcBarcodeProcesses = barcodeProcessService.selectByExample(example);
             if (mesSfcBarcodeProcesses.isEmpty()){
@@ -120,12 +120,17 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
                     throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码中客户条码与特征码不匹配，不允许操作");
                 }
                  boolean flag = false;
+                int totalNum = 0;
                 for (BaseSignature signature : signatureList){
                     // 校验附件码是否符合特征码规则
                     Pattern pattern = Pattern.compile(signature.getSignatureRegex());
                     Matcher matcher = pattern.matcher(cleanBarcodeDto.getCutsomerBarcode());
                     if (!matcher.matches()) {
                         // 该附件码不满足特征码，检查零件料号特征码
+                        totalNum ++;
+                        if (totalNum == signatureList.size()){
+                            throw new BizErrorException(ErrorCodeEnum.PDA40012028.getCode(), "该条码不符合特征码规则");
+                        }
                         continue;
                     }
                     flag = true;

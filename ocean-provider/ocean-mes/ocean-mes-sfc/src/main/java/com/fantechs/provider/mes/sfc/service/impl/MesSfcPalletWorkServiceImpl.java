@@ -95,6 +95,20 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         Long workOrderId = null;
         SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
         searchMesSfcWorkOrderBarcode.setBarcode(requestPalletWorkScanDto.getBarcode());
+        if (requestPalletWorkScanDto.getBarcode().length() != 23){
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("wanbaoCheckBarcode");
+            List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if (!specItems.isEmpty()){
+                Example example = new Example(MesSfcBarcodeProcess.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andLike("customerBarcode", requestPalletWorkScanDto.getBarcode() + "%");
+                List<MesSfcBarcodeProcess> mesSfcBarcodeProcesses = mesSfcBarcodeProcessService.selectByExample(example);
+                if (!mesSfcBarcodeProcesses.isEmpty()){
+                    searchMesSfcWorkOrderBarcode.setBarcode(mesSfcBarcodeProcesses.get(0).getBarcode());
+                }
+            }
+        }
         List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtoList = mesSfcWorkOrderBarcodeService.findList(searchMesSfcWorkOrderBarcode);
         if (mesSfcWorkOrderBarcodeDtoList.isEmpty()) {
             // 不是产品箱码和客户箱码，判断是否为箱码
