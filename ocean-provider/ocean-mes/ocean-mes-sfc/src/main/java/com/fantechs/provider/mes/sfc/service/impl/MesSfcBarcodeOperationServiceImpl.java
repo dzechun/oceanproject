@@ -102,10 +102,10 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
             searchSysSpecItem.setSpecCode("wanbaoCheckBarcode");
             List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-            if ("1".equals(specItems.get(0).getParaValue())){
+            if (!specItems.isEmpty() && "1".equals(specItems.get(0).getParaValue())){
                 Example example = new Example(MesSfcBarcodeProcess.class);
                 Example.Criteria criteria = example.createCriteria();
-                criteria.andLike("customerBarcode", dto.getBarCode());
+                criteria.andLike("customerBarcode", dto.getBarCode() + "%");
                 List<MesSfcBarcodeProcess> mesSfcBarcodeProcesses = mesSfcBarcodeProcessService.selectByExample(example);
                 if (mesSfcBarcodeProcesses.isEmpty()){
                     throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码BarcodeUtils：" + dto.getBarCode() + "在系统中不存在");
@@ -278,6 +278,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 // 查找物料特征码
                 List<BaseSignature> signatureList = baseFeignApi.findSignatureList(baseSignature).getData();
                 boolean flag = true;
+                int totalNum = 0;
                 for (BaseSignature signature : signatureList) {
                     int material_count = 0;
                     for (MesPmWorkOrderMaterialRePDto pmWorkOrderMaterialRePDto : pmWorkOrderMaterialRePDtoList) {
@@ -295,6 +296,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                         }
                         if (keyPartCount >= material_count) {
                             // 当前零件料号已满，检查下个零件料号料
+                            totalNum ++;
                             continue;
                         }
                         // 校验附件码是否符合特征码规则
@@ -302,6 +304,10 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                         Matcher matcher = pattern.matcher(dto.getBarAnnexCode());
                         if (!matcher.matches()) {
                             // 该附件码不满足特征码，检查零件料号特征码
+                            totalNum ++;
+                            if (totalNum == signatureList.size()){
+                                throw new BizErrorException(ErrorCodeEnum.PDA40012028.getCode(), "该条码不符合特征码规则");
+                            }
                             continue;
                         }
                         // 添加keyPart表关系
