@@ -42,6 +42,7 @@ import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcBarcodeProcessMapper;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
 import com.fantechs.provider.mes.sfc.service.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import tk.mybatis.mapper.entity.Example;
@@ -61,6 +62,7 @@ import java.util.stream.Collectors;
  * @date 2021/04/09 17:23
  **/
 @Component
+@Slf4j
 public class BarcodeUtils {
 
     // region 接口注入
@@ -1371,6 +1373,8 @@ public class BarcodeUtils {
         String responseTimeS="";
         try {
                 start = System.currentTimeMillis();//获取毫秒数
+                log.info("==================== 过站检验作业开始时间：" + start);
+
                 requestTimeS=DateUtil.format(new Date(), DatePattern.NORM_DATETIME_MS_PATTERN);
 
                 ResponseEntity<List<BaseOrganizationDto>> baseOrganizationDtoList = barcodeUtils.deviceInterFaceUtils.getOrId();
@@ -1395,6 +1399,9 @@ public class BarcodeUtils {
                 //获取半成品物料ID
                 Long partMaterialId=updateProcessDto.getPartMaterialId();
 
+                long checkF = System.currentTimeMillis();
+                log.info("==================== 过站检验作业校验参数完成，花费时间 毫秒：" + (checkF - start));
+
                 //检查产品条码与半成品条码关系 根据配置项工序是否验证
                 //String paraValue = getSysSpecItemValue("ProcessCheckProductHalfProductionRelation");
 
@@ -1406,6 +1413,9 @@ public class BarcodeUtils {
                     if (baseExecuteResultDto.getIsSuccess() == false)
                         throw new Exception(baseExecuteResultDto.getFailMsg());
                 }
+
+                long checkF1 = System.currentTimeMillis();
+                log.info("==================== 过站检验作业校验半成品与成品BOM关系完成，花费时间 毫秒：" + (checkF1 - checkF));
 
                 if(StringUtils.isNotEmpty(restapiChkSNRoutingApiDto.getBarcodeCode())) {
                     //检查设备与产品绑定关系
@@ -1423,6 +1433,9 @@ public class BarcodeUtils {
                     }
                 }
 
+                long checkF2 = System.currentTimeMillis();
+                log.info("==================== 过站检验作业校验设备,治具与产品绑定关系完成，花费时间 毫秒：" + (checkF2 - checkF1));
+
                 if(StringUtils.isNotEmpty(restapiChkSNRoutingApiDto.getPartBarcode())) {
                     //检查设备与半成品绑定关系
                     if(StringUtils.isNotEmpty(restapiChkSNRoutingApiDto.getEquipmentBarCode())) {
@@ -1439,10 +1452,16 @@ public class BarcodeUtils {
                     }
                 }
 
+                long checkF3 = System.currentTimeMillis();
+                log.info("==================== 过站检验作业校验治具与半成品绑定关系完成，花费时间 毫秒：" + (checkF3 - checkF2));
+
                 //产前关键事项是否已完成
                 baseExecuteResultDto=checkPmProKeyIssues(updateProcessDto.getWorkOrderCode(),orgId);
                 if(baseExecuteResultDto.getIsSuccess()==false)
                     throw new Exception(baseExecuteResultDto.getFailMsg());
+
+                long checkF4 = System.currentTimeMillis();
+                log.info("==================== 过站检验作业校验产前关键事项完成，花费时间 毫秒：" + (checkF4 - checkF3));
 
                 //标准条码流程检查
                 CheckProductionDto checkProductionDto=new CheckProductionDto();
@@ -1464,6 +1483,9 @@ public class BarcodeUtils {
                 if(!updateProcessDto.getNowProcessId().equals(updateProcessDto.getPutIntoProcessId()) && !isCheck) {
                     checkSN(checkProductionDto, updateProcessDto.getWorkOrderBarcodeId(), updateProcessDto.getRouteId());
                 }
+
+                long checkF5 = System.currentTimeMillis();
+                log.info("==================== 过站检验作业校验标准条码流程完成，花费时间 毫秒：" + (checkF5 - checkF4));
 
                 baseExecuteResultDto.setIsSuccess(true);
                 baseExecuteResultDto.setSuccessMsg(" 验证通过 ");
@@ -2604,19 +2626,19 @@ public class BarcodeUtils {
              */
 
             //检查产品条码
-            if(StringUtils.isNotEmpty(productionSn)) {
-                baseExecuteResultDto = checkBarcodeStatus(productionSn, orgId, "");
-                if (baseExecuteResultDto.getIsSuccess() == false)
-                    throw new Exception(baseExecuteResultDto.getFailMsg());
-            }
+//            if(StringUtils.isNotEmpty(productionSn)) {
+//                baseExecuteResultDto = checkBarcodeStatus(productionSn, orgId, "");
+//                if (baseExecuteResultDto.getIsSuccess() == false)
+//                    throw new Exception(baseExecuteResultDto.getFailMsg());
+//            }
 
             //检查半成品条码
-            if(StringUtils.isNotEmpty(halfProductionSn)) {
-                baseExecuteResultDto = checkBarcodeStatus(halfProductionSn, orgId, "");
-                if (baseExecuteResultDto.getIsSuccess() == false) {
-                    throw new Exception(baseExecuteResultDto.getFailMsg());
-                }
-            }
+//            if(StringUtils.isNotEmpty(halfProductionSn)) {
+//                baseExecuteResultDto = checkBarcodeStatus(halfProductionSn, orgId, "");
+//                if (baseExecuteResultDto.getIsSuccess() == false) {
+//                    throw new Exception(baseExecuteResultDto.getFailMsg());
+//                }
+//            }
 
             //展产品BOM找是否存在物料  如不存在 在工单BOM中找
             Boolean isExist=findBomExistMaterialId(materialId,partMaterialId,orgId);

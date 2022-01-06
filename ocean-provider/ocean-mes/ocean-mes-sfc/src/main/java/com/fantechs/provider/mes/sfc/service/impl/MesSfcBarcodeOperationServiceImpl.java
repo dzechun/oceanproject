@@ -95,6 +95,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     @LcnTransaction
     public Boolean pdaCartonWork(PdaCartonWorkDto dto) throws Exception {
         // 获取登录用户
+        long start = System.currentTimeMillis();
+        log.info("==================== 包箱作业开始时间：" + start);
+
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         if (dto.getBarCode().length() != 23){
@@ -205,6 +208,10 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 throw new BizErrorException(ErrorCodeEnum.PDA40012019, mesPmWorkOrder.getMaterialId(), mesPmWorkOrderById.getMaterialId());
             }
         }
+
+        long checkF = System.currentTimeMillis();
+        log.info("==================== 包箱作业校验完成，花费时间 毫秒：" + (checkF - start));
+
         // 5、是否要扫附件码
         if(dto.getAnnex() && StringUtils.isEmpty(dto.getBarAnnexCode())){
             return false;
@@ -491,6 +498,10 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findBarcode(SearchMesSfcBarcodeProcess.builder()
                 .cartonCode(sfcProductCarton.getCartonCode())
                 .build());
+
+        long workF = System.currentTimeMillis();
+        log.info("==================== 包箱作业过站完成，花费时间 毫秒：" + (workF - checkF));
+
         if (mesSfcBarcodeProcessList.size() >= sfcProductCarton.getNowPackageSpecQty().intValue()) {
             // 包箱已满，关箱
             sfcProductCarton.setCloseStatus((byte) 1);
@@ -517,6 +528,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             if (mesPmWorkOrder.getOutputProcessId().equals(dto.getProcessId())){
                 this.beforeCartonAutoAsnOrder(cartonIds, user.getOrganizationId(), null);
             }
+
+            long closeF = System.currentTimeMillis();
+            log.info("==================== 包箱作业关箱完成，花费时间 毫秒：" + (closeF - workF));
 
             //雷赛包箱数据是否同步到WMS开始
             SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
@@ -555,6 +569,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
 
                 }
             }
+
+            long upF = System.currentTimeMillis();
+            log.info("==================== 包箱作业上传雷赛完成，花费时间 毫秒：" + (upF - closeF));
 
             //雷赛包箱数据是否同步到WMS结束
         }

@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/eamEquipmentBorad")
@@ -26,8 +28,8 @@ public class EAMEquipmentBoradController {
 
     @ApiOperation("设备运行列表")
     @PostMapping("/findList")
-    public ResponseEntity<EAMEquipmentBorad> findList(@ApiParam(value = "查询对象")@RequestBody SearchProLineBoard searchProLineBoard) {
-        EAMEquipmentBorad model = eamEquipmentBoradService.findList(searchProLineBoard);
+    public ResponseEntity<List<EAMEquipmentBorad>> findList(@ApiParam(value = "查询对象")@RequestBody SearchProLineBoard searchProLineBoard) throws ParseException {
+        List<EAMEquipmentBorad> model = eamEquipmentBoradService.findList(searchProLineBoard);
         return ControllerUtil.returnDataSuccess(model,1);
     }
 

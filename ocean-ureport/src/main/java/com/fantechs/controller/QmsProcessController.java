@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author
@@ -29,23 +30,23 @@ public class QmsProcessController {
 
     @PostMapping("/findList")
     @ApiOperation("组装实时合格率")
-    public ResponseEntity<List<QmsProcessModelShow>> findList(){
-        List<QmsProcessModelShow> resultList=qmsProcessService.findList();
-        return ControllerUtil.returnDataSuccess(resultList,resultList.size());
+    public ResponseEntity<List<QmsProcessModelShow>> findList() {
+        List<QmsProcessModelShow> resultList = qmsProcessService.findList();
+        return ControllerUtil.returnDataSuccess(resultList, resultList.size());
     }
 
     @PostMapping("/findProcessRateList")
     @ApiOperation("中间部分柱状图")
-    public ResponseEntity<List<QmsProcessModelShow>> findProcessRateList(){
-        List<QmsProcessModelShow> resultList=qmsProcessService.findProcessRateList();
-        return ControllerUtil.returnDataSuccess(resultList,resultList.size());
+    public ResponseEntity<Map> findProcessRateList() {
+        Map<String,List<QmsProcessModelShow>> map = qmsProcessService.findProcessRateList();
+        return ControllerUtil.returnDataSuccess(null,map);
     }
 
     @PostMapping("/findProcessPassRateList")
     @ApiOperation("一次通过率")
-    public ResponseEntity<List<QmsProcessPassRateModel>> findProcessPassRateList(){
-        List<QmsProcessPassRateModel> resultList=qmsProcessService.findProcessPassRateList();
-        return ControllerUtil.returnDataSuccess(resultList,resultList.size());
+    public ResponseEntity<List<QmsProcessPassRateModel>> findProcessPassRateList() {
+        List<QmsProcessPassRateModel> resultList = qmsProcessService.findProcessPassRateList();
+        return ControllerUtil.returnDataSuccess(resultList, resultList.size());
     }
 
 }

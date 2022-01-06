@@ -18,7 +18,7 @@ public interface QmsProcessService {
 
     List<QmsProcessModelShow> findList();
 
-    List<QmsProcessModelShow> findProcessRateList();
+    Map<String,List<QmsProcessModelShow>> findProcessRateList();
 
     List<QmsProcessModel> findProcessQtyList(Map<String, Object> map);
 
