@@ -58,7 +58,7 @@
     bo.organization_name AS organization_Name,
     bm.material_name,
     bm.material_code,
-    wimb.material_qty as qty,wimb.production_time as production_date,wimb.create_type,
+    wimb.material_qty as qty,wimb.production_time as production_date,wimb.create_type,wimb.inspection_status,
     wimb.color_box_code,wimb.carton_code,wimb.pallet_code,wimb.batch_code,wimb.barcode
     FROM wms_inner_material_barcode_re_order wimbro
     LEFT JOIN sys_user su ON wimbro.create_user_id = su.user_id
@@ -136,6 +136,9 @@
         </if>
         <if test="batchCode!=null and batchCode!=''">
             and wimb.batch_code like CONCAT('%',#{batchCode},'%')
+        </if>
+        <if test="inspectionStatus!=null">
+            and wimb.inspection_status = #{inspectionStatus}
         </if>
     </where>
     order by wimbro.create_time desc
