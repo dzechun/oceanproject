@@ -257,7 +257,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 // 创建移位单
                 innerJobOrder.setWarehouseId(baseStorage.get(0).getWarehouseId());
                 innerJobOrder.setJobOrderCode(CodeUtils.getId("SHIFT-"));
-                innerJobOrder.setJobOrderType((byte) 2);
+                innerJobOrder.setJobOrderType((byte) 3);
                 innerJobOrder.setOrderStatus((byte) 4);
                 innerJobOrder.setStatus((byte) 1);
                 innerJobOrder.setOrgId(user.getOrganizationId());
