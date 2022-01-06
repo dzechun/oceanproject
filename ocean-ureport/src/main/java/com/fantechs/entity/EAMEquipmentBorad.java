@@ -28,6 +28,15 @@ public class EAMEquipmentBorad {
     @ApiModelProperty(name = "ngNum",value = "ng数量")
     private int ngNum;
 
+    @ApiModelProperty(name = "createDate",value = "第一次过站时间")
+    private String createDate;
+
+    @ApiModelProperty(name = "productRate",value = "生产数量百分比")
+    private String productRate;
+
+    @ApiModelProperty(name = "ngRate",value = "NG数量百分比")
+    private String ngRate;
+
 
 
 

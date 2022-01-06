@@ -163,8 +163,6 @@ public class EamEquipmentBarcodeServiceImpl extends BaseService<EamEquipmentBarc
                 }
             }
         }
-
-        
         return 1;
     }
 
