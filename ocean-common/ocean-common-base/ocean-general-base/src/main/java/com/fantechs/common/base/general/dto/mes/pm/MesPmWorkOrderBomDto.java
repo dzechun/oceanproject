@@ -41,11 +41,11 @@ public class MesPmWorkOrderBomDto extends MesPmWorkOrderBom implements Serializa
     private Date planStartTime;
 
     /**
-     * 排产数量
+     * 工单数量
      */
     @Transient
-    @ApiModelProperty(name="scheduledQty" ,value="排产数量")
-    private BigDecimal scheduledQty;
+    @ApiModelProperty(name="workOrderQty" ,value="工单数量")
+    private BigDecimal workOrderQty;
 
     /**
      * 产线ID

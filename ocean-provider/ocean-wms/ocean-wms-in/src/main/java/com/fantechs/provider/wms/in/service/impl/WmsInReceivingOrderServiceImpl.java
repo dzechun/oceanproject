@@ -579,6 +579,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                     wmsInnerJobOrder.setSourceSysOrderTypeCode(sysOrderTypeCode);
                     wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                     wmsInnerJobOrder.setJobOrderType((byte)1);
+                    wmsInnerJobOrder.setWarehouseId(wmsInReceivingOrder.getWarehouseId());
                     wmsInnerJobOrder.setOrderStatus((byte)1);
                     wmsInnerJobOrder.setCreateUserId(sysUser.getUserId());
                     wmsInnerJobOrder.setCreateTime(new Date());
@@ -591,7 +592,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
 
                     ResponseEntity rs = innerFeignApi.add(wmsInnerJobOrder);
                     if(rs.getCode() != 0){
-                        throw new BizErrorException("下推生成上架作业单失败");
+                        throw new BizErrorException(rs.getCode(),rs.getMessage());
                     }
                     break;
                 case "IN-IPO":

@@ -115,6 +115,9 @@
             <if test="workName!=null and workName!=''">
                 and wr.user_name =#{workName}
             </if>
+            <if test="workerId!=null and workerId!=''">
+                and wipo.worker_id =#{workerId}
+            </if>
             <if test="jobOrderType !=null and jobOrderType!= ''">
                 and wipo.job_order_type =#{jobOrderType}
             </if>

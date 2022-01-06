@@ -178,6 +178,12 @@ public class SearchWmsInnerMaterialBarcodeReOrder extends BaseQuery implements S
     @ApiModelProperty(name="productionTimeEnd",value = "生产时间结束")
     private String productionTimeEnd;
 
+    /**
+     * 1-未质检 2-合格 3-不合格
+     */
+    @ApiModelProperty(name="inspectionStatus",value = "1-未质检 2-合格 3-不合格")
+    private Byte inspectionStatus;
+
 
     private static final long serialVersionUID = 1L;
 }

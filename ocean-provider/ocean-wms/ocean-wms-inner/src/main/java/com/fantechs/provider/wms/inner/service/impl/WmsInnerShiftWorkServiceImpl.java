@@ -257,7 +257,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 // 创建移位单
                 innerJobOrder.setWarehouseId(baseStorage.get(0).getWarehouseId());
                 innerJobOrder.setJobOrderCode(CodeUtils.getId("SHIFT-"));
-                innerJobOrder.setJobOrderType((byte) 2);
+                innerJobOrder.setJobOrderType((byte) 3);
                 innerJobOrder.setOrderStatus((byte) 4);
                 innerJobOrder.setStatus((byte) 1);
                 innerJobOrder.setOrgId(user.getOrganizationId());
@@ -276,11 +276,12 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerJobOrderDet.setJobOrderId(dto.getJobOrderId());
 
             //保存库存ID 2021/10/18
-            wmsInnerJobOrderDet.setOutStorageId(dto.getOutStorageId());
+            wmsInnerJobOrderDet.setOutStorageId(baseStorage.get(0).getStorageId());
             wmsInnerJobOrderDet.setInStorageId(dto.getInStorageId());
             wmsInnerJobOrderDet.setMaterialId(innerInventoryDto.getMaterialId());
             wmsInnerJobOrderDet.setPlanQty(dto.getMaterialQty());
-            wmsInnerJobOrderDet.setDistributionQty(wmsInnerJobOrderDet.getPlanQty());
+            wmsInnerJobOrderDet.setDistributionQty(dto.getMaterialQty());
+            wmsInnerJobOrderDet.setActualQty(dto.getMaterialQty()); //已移位数量
             wmsInnerJobOrderDet.setProductionDate(innerInventoryDto.getProductionDate());
             wmsInnerJobOrderDet.setInventoryStatusId(innerInventoryDto.getInventoryStatusId());
             wmsInnerJobOrderDet.setWorkStartTime(new Date());
@@ -338,7 +339,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
 
         if (!dto.getPdaWmsInnerDirectTransferOrderDetDtos().isEmpty()) {
             List<WmsInnerJobOrderDetBarcode> jobOrderDetBarcodeList = new ArrayList<>();
-            List<WmsInnerHtJobOrderDetBarcode> htJobOrderDetBarcodes = new ArrayList<>();
+            List<WmsInnerMaterialBarcodeReOrder> wmsInnerMaterialBarcodeReOrders = new ArrayList<>();
 
             for (PDAWmsInnerDirectTransferOrderDetDto barcode : dto.getPdaWmsInnerDirectTransferOrderDetDtos()) {
 
@@ -365,12 +366,13 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 wmsInnerMaterialBarcodeReOrder.setCreateTime(new Date());
                 wmsInnerMaterialBarcodeReOrder.setModifiedUserId(user.getUserId());
                 wmsInnerMaterialBarcodeReOrder.setModifiedTime(new Date());
+                wmsInnerMaterialBarcodeReOrders.add(wmsInnerMaterialBarcodeReOrder);
             }
             if (jobOrderDetBarcodeList.size() > 0) {
                 wmsInnerJobOrderDetBarcodeService.batchSave(jobOrderDetBarcodeList);
             }
-            if (htJobOrderDetBarcodes.size() > 0) {
-                wmsInnerHtJobOrderDetBarcodeService.batchSave(htJobOrderDetBarcodes);
+            if (wmsInnerMaterialBarcodeReOrders.size() > 0) {
+                wmsInnerMaterialBarcodeReOrderMapper.insertList(wmsInnerMaterialBarcodeReOrders);
             }
         }
 
@@ -564,9 +566,6 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
      */
     private SysUser currentUser() {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (StringUtils.isEmpty(user)) {
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
         return user;
     }
 }

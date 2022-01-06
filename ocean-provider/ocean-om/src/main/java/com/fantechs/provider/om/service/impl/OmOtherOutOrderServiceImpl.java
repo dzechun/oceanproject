@@ -192,6 +192,17 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
                 }
             } else if ("OUT-IWK".equals(nextOrderTypeCode)) {
                 //拣货作业
+
+                //查询存货库位
+                /*SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                searchBaseStorage.setWarehouseId(omOtherOutOrderDetDtos.get(0).getWarehouseId());
+                searchBaseStorage.setStorageType((byte)1);
+                List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+                if(StringUtils.isEmpty(baseStorages)){
+                    throw new BizErrorException("该仓库未找到存货库位");
+                }
+                Long outStorageId = baseStorages.get(0).getStorageId();*/
+
                 int lineNumber = 1;
                 List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();
                 for (OmOtherOutOrderDetDto omOtherOutOrderDetDto : omOtherOutOrderDetDtos) {
@@ -206,6 +217,7 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
                     wmsInnerJobOrderDet.setBatchCode(omOtherOutOrderDetDto.getBatchCode());
                     wmsInnerJobOrderDet.setPlanQty(omOtherOutOrderDetDto.getIssueQty());
                     wmsInnerJobOrderDet.setLineStatus((byte) 1);
+                    //wmsInnerJobOrderDet.setOutStorageId(outStorageId);
                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
                 }
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
@@ -225,6 +237,21 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
                 throw new BizErrorException("单据流配置错误");
             }
         }
+
+        //修改单据状态
+        Byte orderStatus = (byte)3;
+        OmOtherOutOrder omOtherOutOrder = omOtherOutOrderMapper.selectByPrimaryKey(omOtherOutOrderDets.get(0).getOtherOutOrderId());
+        Example example = new Example(OmOtherOutOrderDet.class);
+        example.createCriteria().andEqualTo("otherOutOrderId",omOtherOutOrder.getOtherOutOrderId());
+        List<OmOtherOutOrderDet> otherOutOrderDets = omOtherOutOrderDetMapper.selectByExample(example);
+        for (OmOtherOutOrderDet omOtherOutOrderDet : otherOutOrderDets){
+            if(omOtherOutOrderDet.getIfAllIssued()!=(byte)1){
+                orderStatus = (byte)2;
+                break;
+            }
+        }
+        omOtherOutOrder.setOrderStatus(orderStatus);
+        omOtherOutOrderMapper.updateByPrimaryKeySelective(omOtherOutOrder);
 
         return i;
     }

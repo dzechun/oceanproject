@@ -118,6 +118,21 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
             i++;
         }
 
+        //修改单据状态
+        Byte orderStatus = (byte)2;
+        OmTransferOrder omTransferOrder = omTransferOrderMapper.selectByPrimaryKey(omTransferOrderDetDtos.get(0).getTransferOrderId());
+        Example example = new Example(OmTransferOrderDet.class);
+        example.createCriteria().andEqualTo("transferOrderId",omTransferOrder.getTransferOrderId());
+        List<OmTransferOrderDet> omTransferOrderDets = omTransferOrderDetMapper.selectByExample(example);
+        for (OmTransferOrderDet omTransferOrderDet : omTransferOrderDets){
+            if(omTransferOrderDet.getIfAllIssued()!=(byte)1){
+                orderStatus = (byte)3;
+                break;
+            }
+        }
+        omTransferOrder.setOrderStatus(orderStatus);
+        omTransferOrderMapper.updateByPrimaryKeySelective(omTransferOrder);
+
         return i;
     }
 

@@ -24,6 +24,22 @@ public class OmHtTransferOrderDto extends OmHtTransferOrder implements Serializa
     private BigDecimal totalQty;
 
     /**
+     * 上架总数量
+     */
+    @Transient
+    @ApiModelProperty(name="totalActualInQty",value = "上架总数量")
+    @Excel(name = "订单总数量", height = 20, width = 30)
+    private BigDecimal totalActualInQty;
+
+    /**
+     * 出货总数量
+     */
+    @Transient
+    @ApiModelProperty(name="totalActualOutQty",value = "出货总数量")
+    @Excel(name = "订单总数量", height = 20, width = 30)
+    private BigDecimal totalActualOutQty;
+
+    /**
      *调出仓库
      */
     @Transient
