@@ -108,10 +108,10 @@ public class WmsInInPlanOrder extends ValidGroup implements Serializable {
     private Long makeOrderUserId;
 
     /**
-     * 单据状态(1-待作业 2-作业中 2-完成 3-待分配 4-分配中 5-已分配)
+     * 单据状态(1-待作业 2-作业中 3-完成 4-待分配 5-分配中 6-已分配)
      */
-    @ApiModelProperty(name="orderStatus",value = "单据状态(1-待作业 2-作业中 2-完成 3-待分配 4-分配中 5-已分配)")
-    @Excel(name = "单据状态(1-待作业 2-作业中 2-完成 3-待分配 4-分配中 5-已分配)", height = 20, width = 30,orderNum="4")
+    @ApiModelProperty(name="orderStatus",value = "单据状态(1-待作业 2-作业中 3-完成 4-待分配 5-分配中 6-已分配)")
+    @Excel(name = "单据状态(1-待作业 2-作业中 3-完成 4-待分配 5-分配中 6-已分配)", height = 20, width = 30,orderNum="4")
     @Column(name = "order_status")
     private Byte orderStatus;
 
