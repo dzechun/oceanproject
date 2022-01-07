@@ -42,7 +42,6 @@ import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.om.mapper.OmOtherInOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmOtherInOrderMapper;
 import com.fantechs.provider.om.mapper.OmSalesReturnOrderDetMapper;
-import com.fantechs.provider.om.mapper.OmTransferOrderMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtOtherInOrderDetMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtOtherInOrderMapper;
 import com.fantechs.provider.om.service.OmOtherInOrderService;
@@ -72,8 +71,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
     private OmHtOtherInOrderDetMapper omHtOtherInOrderDetMapper;
     @Resource
     private SrmFeignApi srmFeignApi;
-    @Resource
-    private OmTransferOrderMapper omTransferOrderMapper;
     @Resource
     private OmSalesReturnOrderDetMapper omSalesReturnOrderDetMapper;
     @Resource

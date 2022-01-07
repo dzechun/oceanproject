@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -59,60 +60,53 @@ public class OmHtOtherInOrder extends ValidGroup implements Serializable {
     private String relatedOrderCode;
 
     /**
-     * 货主ID
-     */
-    @ApiModelProperty(name="materialOwnerId",value = "货主ID")
-    @Excel(name = "货主ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "material_owner_id")
-    private Long materialOwnerId;
-
-    /**
      * 总加入数量
      */
+    @Transient
     @ApiModelProperty(name="totalIssueQty",value = "总加入数量")
-    @Excel(name = "总加入数量", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_issue_qty")
+    @Excel(name = "总加入数量", height = 20, width = 30,orderNum="5")
     private BigDecimal totalIssueQty;
 
     /**
      * 总收货数量
      */
+    @Transient
     @ApiModelProperty(name="totalReceivingQty",value = "总收货数量")
-    @Excel(name = "总收货数量", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_receiving_qty")
+    @Excel(name = "总收货数量", height = 20, width = 30,orderNum="6")
     private BigDecimal totalReceivingQty;
 
     /**
      * 订单总数量
      */
+    @Transient
     @ApiModelProperty(name="totalQty",value = "订单总数量")
-    @Excel(name = "订单总数量", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_qty")
+    @Excel(name = "订单总数量", height = 20, width = 30,orderNum="7")
     private BigDecimal totalQty;
 
     /**
      * 订单总体积
      */
+    @Transient
     @ApiModelProperty(name="totalVolume",value = "订单总体积")
-    @Excel(name = "订单总体积", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_volume")
+    @Excel(name = "订单总体积", height = 20, width = 30,orderNum="8")
     private BigDecimal totalVolume;
 
     /**
      * 订单总净重
      */
+    @Transient
     @ApiModelProperty(name="totalNetWeight",value = "订单总净重")
-    @Excel(name = "订单总净重", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_net_weight")
+    @Excel(name = "订单总净重", height = 20, width = 30,orderNum="9")
     private BigDecimal totalNetWeight;
 
     /**
      * 订单总毛重
      */
+    @Transient
     @ApiModelProperty(name="totalGrossWeight",value = "订单总毛重")
-    @Excel(name = "订单总毛重", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_gross_weight")
+    @Excel(name = "订单总毛重", height = 20, width = 30,orderNum="10")
     private BigDecimal totalGrossWeight;
+
 
     /**
      * 订单状态(1-打开 2-下发中  3-已下发 4-完成)
