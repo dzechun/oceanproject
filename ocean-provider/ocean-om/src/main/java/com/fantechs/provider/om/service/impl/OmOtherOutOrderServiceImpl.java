@@ -14,7 +14,9 @@ import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryReqOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.om.OmHtOtherOutOrder;
 import com.fantechs.common.base.general.entity.om.OmHtOtherOutOrderDet;
 import com.fantechs.common.base.general.entity.om.OmOtherOutOrder;
@@ -193,15 +195,15 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
             } else if ("OUT-IWK".equals(nextOrderTypeCode)) {
                 //拣货作业
 
-                //查询存货库位
-                /*SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                //查询发货库位
+                SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
                 searchBaseStorage.setWarehouseId(omOtherOutOrderDetDtos.get(0).getWarehouseId());
-                searchBaseStorage.setStorageType((byte)1);
+                searchBaseStorage.setStorageType((byte)3);
                 List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
                 if(StringUtils.isEmpty(baseStorages)){
-                    throw new BizErrorException("该仓库未找到存货库位");
+                    throw new BizErrorException("该仓库未找到发货库位");
                 }
-                Long outStorageId = baseStorages.get(0).getStorageId();*/
+                Long inStorageId = baseStorages.get(0).getStorageId();
 
                 int lineNumber = 1;
                 List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();
@@ -217,7 +219,7 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
                     wmsInnerJobOrderDet.setBatchCode(omOtherOutOrderDetDto.getBatchCode());
                     wmsInnerJobOrderDet.setPlanQty(omOtherOutOrderDetDto.getIssueQty());
                     wmsInnerJobOrderDet.setLineStatus((byte) 1);
-                    //wmsInnerJobOrderDet.setOutStorageId(outStorageId);
+                    wmsInnerJobOrderDet.setInStorageId(inStorageId);
                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
                 }
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
