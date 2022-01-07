@@ -55,8 +55,8 @@
         left join base_work_shop ws on spl.work_shop_id= ws.work_shop_id
         LEFT JOIN base_organization bo ON spl.org_id = bo.organization_id
         <where>
-            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-                and date_format(spl.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            <if test="startTime != null and endTime != null">
+                and date_format(spl.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
             </if>
             <if test="proCode!=null and proCode!='' and codeQueryMark==1">
                 and spl.pro_code = #{proCode}

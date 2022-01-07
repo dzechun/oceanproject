@@ -74,8 +74,8 @@
             <if test="propertyQueryMark!=null and propertyQueryMark == 1">
                 and bt.material_property in(0,1)
             </if>
-            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-                and date_format(sm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            <if test="startTime!= null and endTime!= null">
+                and date_format(sm.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
             </if>
             <if test="materialId!=null and materialId!=''">
                 and sm.material_id =#{materialId}
@@ -142,8 +142,8 @@
             <if test="propertyQueryMark!=null and propertyQueryMark == 1">
                 and bt.material_property in(0,1)
             </if>
-            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-                and date_format(sm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            <if test="startTime!= null and endTime!= null">
+                and date_format(sm.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
             </if>
             <if test="materialId!=null and materialId!=''">
                 and sm.material_id =#{materialId}

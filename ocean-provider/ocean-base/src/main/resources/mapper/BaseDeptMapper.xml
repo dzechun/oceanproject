@@ -56,8 +56,8 @@
     left join sys_user s on sd.modified_user_id=s.user_id
     left join base_factory sf on sd.factory_id=sf.factory_id
     <where>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(sd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      <if test="startTime!= null and endTime!= null">
+        and date_format(sd.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
       </if>
       <if test="deptCode!=null and deptCode!='' and codeQueryMark != 1">
         and sd.dept_code like CONCAT('%', #{deptCode}, '%')
@@ -102,8 +102,8 @@
   <!--<select id="findList_COUNT" parameterType="map" resultType="Long">
     select count(sd.dept_id) from base_dept sd
     <where>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(sd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      <if test="startTime!= null and endTime!= null">
+        and date_format(sd.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
       </if>
       <if test="deptCode!=null and deptCode!='' and codeQueryMark != 1">
         and sd.dept_code like CONCAT('%', #{deptCode}, '%')

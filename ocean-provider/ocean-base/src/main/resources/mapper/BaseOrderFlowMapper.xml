@@ -70,8 +70,8 @@
     LEFT JOIN base_material bm ON bof.material_id=bm.material_id
     LEFT JOIN base_supplier bs ON bof.supplier_id=bs.supplier_id
     <where>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(bof.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      <if test="startTime!= null and endTime!= null">
+        and date_format(bof.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
       </if>
       <if test="operationModule != null and operationModule != ''">
         and bof.operation_module = #{operationModule}
