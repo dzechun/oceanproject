@@ -460,7 +460,7 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
             }
 
             WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
-            wmsInnerJobOrder.setSourceSysOrderTypeCode(wmsInInPlanOrders.get(0).getSourceSysOrderTypeCode());
+            wmsInnerJobOrder.setSourceSysOrderTypeCode("IN-IPO");
             wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(wmsInInPlanOrders.get(0).getCoreSourceSysOrderTypeCode());
             wmsInnerJobOrder.setWarehouseId(wmsInInPlanOrders.get(0).getWarehouseId());
             wmsInnerJobOrder.setSourceBigType((byte)1);
