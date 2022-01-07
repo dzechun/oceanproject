@@ -181,15 +181,15 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
             } else if ("OUT-IWK".equals(nextOrderTypeCode)) {
                 //拣货作业
 
-                //查询存货库位
-                /*SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                //查询发货库位
+                SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
                 searchBaseStorage.setWarehouseId(omSalesOrderDetDtos.get(0).getWarehouseId());
-                searchBaseStorage.setStorageType((byte)1);
+                searchBaseStorage.setStorageType((byte)3);
                 List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
                 if(StringUtils.isEmpty(baseStorages)){
-                    throw new BizErrorException("该仓库未找到存货库位");
+                    throw new BizErrorException("该仓库未找到发货库位");
                 }
-                Long outStorageId = baseStorages.get(0).getStorageId();*/
+                Long inStorageId = baseStorages.get(0).getStorageId();
 
                 int lineNumber = 1;
                 List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();
@@ -204,7 +204,7 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
                     wmsInnerJobOrderDet.setMaterialId(omSalesOrderDetDto.getMaterialId());
                     wmsInnerJobOrderDet.setPlanQty(omSalesOrderDetDto.getIssueQty());
                     wmsInnerJobOrderDet.setLineStatus((byte) 1);
-                    //wmsInnerJobOrderDet.setOutStorageId(outStorageId);
+                    wmsInnerJobOrderDet.setInStorageId(inStorageId);
                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
                 }
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();

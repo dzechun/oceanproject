@@ -8,6 +8,8 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmHtTransferOrderDto;
 import com.fantechs.common.base.general.dto.om.OmTransferOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmTransferOrderDto;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.om.OmHtTransferOrder;
 import com.fantechs.common.base.general.entity.om.OmHtTransferOrderDet;
 import com.fantechs.common.base.general.entity.om.OmTransferOrder;
@@ -19,6 +21,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.om.mapper.OmTransferOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmTransferOrderMapper;
@@ -46,6 +49,8 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
     private OmTransferOrderDetMapper omTransferOrderDetMapper;
     @Resource
     private InnerFeignApi innerFeignApi;
+    @Resource
+    private BaseFeignApi baseFeignApi;
     @Resource
     private OmHtTransferOrderMapper omHtTransferOrderMapper;
     @Resource
@@ -87,6 +92,16 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
         }
         i = omTransferOrderDetMapper.batchUpdate(omTransferOrderDetDtos);
 
+        //查询发货库位
+        SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+        searchBaseStorage.setWarehouseId(outWarehouseId);
+        searchBaseStorage.setStorageType((byte) 3);
+        List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+        if (StringUtils.isEmpty(baseStorages)) {
+            throw new BizErrorException("该仓库未找到发货库位");
+        }
+        Long inStorageId = baseStorages.get(0).getStorageId();
+
         //拣货作业
         int lineNumber = 1;
         List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();
@@ -102,6 +117,7 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
             wmsInnerJobOrderDet.setBatchCode(omTransferOrderDetDto.getBatchCode());
             wmsInnerJobOrderDet.setPlanQty(omTransferOrderDetDto.getIssueQty());
             wmsInnerJobOrderDet.setLineStatus((byte) 1);
+            wmsInnerJobOrderDet.setInStorageId(inStorageId);
             wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
         }
         WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
