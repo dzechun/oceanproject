@@ -129,7 +129,7 @@
             <if test="materialId!=null and materialId!=''">
                 and wiid.material_id = #{materialId}
             </if>
-            <if test="materialIds !=null and materialIds !=''">
+            <if test="materialIds !=null">
                 <foreach collection="materialIds" open="and wiid.material_id in (" separator="," close=")" item="value">
                     #{value}
                 </foreach>

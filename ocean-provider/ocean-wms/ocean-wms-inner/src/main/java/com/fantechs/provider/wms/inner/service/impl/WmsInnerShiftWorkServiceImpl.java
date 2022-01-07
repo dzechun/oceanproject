@@ -720,6 +720,8 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerJobOrderDet.setMaterialOwnerId(innerJobOrder.getMaterialOwnerId());
             wmsInnerJobOrderDet.setWarehouseId(baseStorage.getWarehouseId());
             wmsInnerJobOrderDet.setOutStorageId(dto.getOutStorageId());
+            wmsInnerJobOrderDet.setInStorageId(dto.getInStorageId());
+            wmsInnerJobOrderDet.setInventoryStatusId(innerInventoryDto.getInventoryStatusId());
             wmsInnerJobOrderDet.setMaterialId(storageMaterialDto.getMaterialId());
             wmsInnerJobOrderDet.setPackingUnitName(innerInventoryDto.getPackingUnitName());
             wmsInnerJobOrderDet.setPlanQty(storageMaterialDto.getQty());
@@ -739,8 +741,8 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerJobOrderDet.setCreateTime(new Date());
             wmsInnerJobOrderDet.setCreateUserId(user.getUserId());
             wmsInnerJobOrderDet.setIsDelete((byte) 1);
-            wmsInnerJobOrderDet.setOrderStatus((byte) 4);
-            wmsInnerJobOrderDet.setShiftStorageStatus((byte) 3);
+            wmsInnerJobOrderDet.setOrderStatus((byte) 5);
+            wmsInnerJobOrderDet.setShiftStorageStatus((byte) 5);
             wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
             WmsInnerHtJobOrderDet innerHtJobOrderDet = new WmsInnerHtJobOrderDet();
             BeanUtil.copyProperties(wmsInnerJobOrderDet, innerHtJobOrderDet);
@@ -781,6 +783,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                     .andEqualTo("qcLock", 0)
                     .andEqualTo("lockStatus", 0);
             WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
+            BigDecimal initQty = wmsInnerInventory.getPackingQty();
             wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(storageMaterialDto.getQty()));
             wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory);
 
@@ -791,9 +794,9 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
             searchWmsInnerJobOrder.setJobOrderId(oldDto.getJobOrderId());
             WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder).get(0);
-            InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrderDto,oldDto,wmsInnerInventory.getPackingQty(),wmsInnerInventory.getPackingQty(),(byte)3,(byte)2);
+            InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrderDto,oldDto,initQty,storageMaterialDto.getQty(),(byte)3,(byte)2);
 
-
+            example.clear();
             Example.Criteria criteria1 = example.createCriteria().andEqualTo("materialId", storageMaterialDto.getMaterialId())
                     .andEqualTo("warehouseId", oldDto.getWarehouseId())
                     .andEqualTo("storageId", dto.getInStorageId())
@@ -807,17 +810,20 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             WmsInnerInventory wmsInnerInventory_new = wmsInnerInventoryMapper.selectOneByExample(example);
             if (wmsInnerInventory_new != null){
                 // 累加库存
+                initQty = wmsInnerInventory_new.getPackingQty();
                 wmsInnerInventory_new.setPackingQty(wmsInnerInventory_new.getPackingQty().add(storageMaterialDto.getQty()));
                 wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory_new);
             }else {
                 // 新增库存
+                initQty = BigDecimal.ZERO;
+                wmsInnerInventory_new = new WmsInnerInventory();
                 BeanUtil.copyProperties(wmsInnerInventory, wmsInnerInventory_new);
                 wmsInnerInventory_new.setPackingQty(storageMaterialDto.getQty());
                 wmsInnerInventory_new.setStorageId(dto.getInStorageId());
                 wmsInnerInventoryService.save(wmsInnerInventory_new);
             }
             // 移入库存日志
-            InventoryLogUtil.addLog(wmsInnerInventory,innerJobOrder,wmsInnerJobOrderDet,wmsInnerInventory.getPackingQty(),wmsInnerInventory.getPackingQty(),(byte)3,(byte)1);
+            InventoryLogUtil.addLog(wmsInnerInventory,innerJobOrder,wmsInnerJobOrderDet,initQty,storageMaterialDto.getQty(),(byte)3,(byte)1);
         }
         if (jobOrderDetBarcodeList.size() > 0) {
             wmsInnerJobOrderDetBarcodeService.batchSave(jobOrderDetBarcodeList);
@@ -826,7 +832,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerHtJobOrderDetBarcodeService.batchSave(htJobOrderDetBarcodes);
         }
 
-        return 0;
+        return 1;
     }
 
 
