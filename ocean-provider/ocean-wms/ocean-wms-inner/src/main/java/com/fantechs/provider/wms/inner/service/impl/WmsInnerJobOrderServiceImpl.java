@@ -666,6 +666,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
                 //回写上游单据上架数量
                 if(wmsInnerJobOrder.getSourceBigType()==(byte)1) {
+                    wmsInnerJobOrderDet.setActualQty(totalQty);
                     num += updateLastOrderNode(wmsInnerJobOrder, wmsInnerJobOrderDet);
                 }
 
