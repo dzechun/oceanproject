@@ -2114,6 +2114,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
             //来料条码ID
             Long materialBarcodeId=Long.parseLong(map.get("materialBarcodeId").toString());
+            Long materialId=Long.parseLong(map.get("materialId").toString());
             //系统条码判断 1 判断作业单是否由上游单据下推得来
             WmsInnerJobOrder wmsInnerJobOrder=wmsInnerJobOrderMapper.selectByPrimaryKey(orderId);
             if(StringUtils.isEmpty(wmsInnerJobOrder)){
@@ -2130,7 +2131,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 // SELF-CRT 单据类型 自建
                 SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
                 sBarcodeReOrder.setMaterialBarcodeId(materialBarcodeId);
-                //sBarcodeReOrder.setOrderTypeCode("SELF-CRT");
                 sBarcodeReOrder.setOrderCode(wmsInnerJobOrder.getJobOrderCode());
                 sBarcodeReOrder.setOrderDetId(orderDetId);
                 List<WmsInnerMaterialBarcodeReOrderDto> reOrderList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
@@ -2158,7 +2158,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 }
 
                 // 物料是否相等
-                if(wmsInnerJobOrderDet.getMaterialId().longValue()!=swmsInnerMaterialBarcode.getMaterialId().longValue()){
+                if(wmsInnerJobOrderDet.getMaterialId().longValue()!=materialId.longValue()){
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码相应物料与当前上架物料不相等");
                 }
 
