@@ -93,8 +93,8 @@
             <if test="labelCategoryName!=null and labelCategoryName!=''">
                 and blc.label_category_name like CONCAT('%',#{labelCategoryName},'%')
             </if>
-            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-                and date_format(bcm.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            <if test="startTime!= null and endTime!= null">
+                and date_format(bcm.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
             </if>
             <if test="orgId!=null">
                 and bcm.org_id=#{orgId}

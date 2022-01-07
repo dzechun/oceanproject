@@ -41,8 +41,8 @@
       <if test="workShiftId != null and workShiftId != ''">
         and bwst.work_shift_id = #{workShiftId}
       </if>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(bwst.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      <if test="startTime!= null and endTime!= null">
+        and date_format(bwst.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
       </if>
         <if test="orgId!=null">
             and bwst.org_id=#{orgId}

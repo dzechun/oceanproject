@@ -69,8 +69,8 @@
     left join sys_user s on ss.modified_user_id=s.user_id
     LEFT JOIN base_organization bo ON ss.organization_id = bo.organization_id
     <where>
-      <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">
-        AND date_format(ss.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      <if test="startTime!= null and endTime!= null">
+        AND date_format(ss.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
       </if>
       <if test="supplierCode!=null and supplierCode!=''">
         and ss.supplier_code like CONCAT('%', #{supplierCode}, '%')
