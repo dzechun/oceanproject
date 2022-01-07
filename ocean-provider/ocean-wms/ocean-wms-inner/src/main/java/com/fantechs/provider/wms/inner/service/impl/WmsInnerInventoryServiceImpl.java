@@ -239,6 +239,7 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
                 .andEqualTo("materialId", record.getMaterialId())
                 .andEqualTo("lockStatus", record.getLockStatus())
                 .andEqualTo("stockLock", record.getStockLock())
+                .andEqualTo("jobStatus", record.getJobStatus())
                 .andEqualTo("packingUnitName", record.getPackingUnitName())
                 .andEqualTo("batchCode", record.getBatchCode());
         List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(example);

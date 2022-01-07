@@ -350,6 +350,8 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
         List<MesPmWorkOrderBom> boms = new ArrayList<>();
         if(StringUtils.isNotEmpty(mesPmWorkOrderDto.getMesPmWorkOrderBomDtos())) {
             for (MesPmWorkOrderBomDto mesPmWorkOrderBomDto :  mesPmWorkOrderDto.getMesPmWorkOrderBomDtos()) {
+                if(StringUtils.isEmpty(mesPmWorkOrderBomDto.getSingleQty()))
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"单个用量不能为空");
                 mesPmWorkOrderBomDto.setCreateUserId(user.getUserId());
                 mesPmWorkOrderBomDto.setCreateTime(new Date());
                 mesPmWorkOrderBomDto.setModifiedUserId(user.getUserId());
