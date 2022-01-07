@@ -95,7 +95,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
         SysUser currentUser = currentUser();
 
 
-        if(StringUtils.isEmpty(mesPmWorkOrderDto.getWorkOrderCode())){
+/*        if(StringUtils.isEmpty(mesPmWorkOrderDto.getWorkOrderCode())){
             mesPmWorkOrderDto.setWorkOrderCode(CodeUtils.getId("WORK"));
         }else{
             Example example = new Example(MesPmWorkOrder.class);
@@ -106,7 +106,8 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
             if (StringUtils.isNotEmpty(mesPmWorkOrders)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012001);
             }
-        }
+        }*/
+        mesPmWorkOrderDto.setWorkOrderCode(CodeUtils.getId("MES-WO"));
         mesPmWorkOrderDto.setTotalIssueQty(BigDecimal.ZERO);
         mesPmWorkOrderDto.setWorkOrderStatus((byte) 1);
         mesPmWorkOrderDto.setCreateUserId(currentUser.getUserId());
