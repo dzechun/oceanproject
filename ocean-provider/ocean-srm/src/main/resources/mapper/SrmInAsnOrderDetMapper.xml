@@ -116,9 +116,8 @@
             <if test="asnCode !=null and asnCode !=''">
                 and wiao.asn_code=#{asnCode}
             </if>
-            <if test="asnOrderIdList != null and asnOrderIdList.size() > 0">
-                and wiaod.asn_order_id
-                <foreach collection="asnOrderIdList" open="in (" close=")" item="item" separator="," index="index">
+            <if test="asnOrderIdList !=null">
+                <foreach collection="asnOrderIdList" item="item" index="index" open="and wiaod.asn_order_id in(" separator="," close=")">
                     #{item}
                 </foreach>
             </if>

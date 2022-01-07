@@ -22,6 +22,12 @@ public class BarcodeResultDto implements Serializable {
     private Long materialBarcodeId;
 
     /**
+     * 条码对应物料ID
+     */
+    @ApiModelProperty(name="materialId",value = "条码对应物料ID")
+    private Long materialId;
+
+    /**
      * 条码类型(1-SN码 2-彩盒号 3-箱号 4-栈板号 5-非系统条码)
      */
     @ApiModelProperty(name="barcodeType",value = "条码类型(1-SN码 2-彩盒号 3-箱号 4-栈板号 5-非系统条码)")

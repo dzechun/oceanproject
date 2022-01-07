@@ -46,8 +46,8 @@
     LEFT JOIN sys_user su ON bws.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON bws.modified_user_id = sus.user_id
     <where>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(bws.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      <if test="startTime!= null and endTime!= null">
+        and date_format(bws.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
       </if>
       <if test="workShiftCode != null and workShiftCode!=''">
         and bws.work_shift_code like CONCAT('%', #{workShiftCode}, '%')

@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.dto.wms.in.imports.WmsInInPlanOrderImpor
 import com.fantechs.common.base.general.entity.wms.in.WmsInInPlanOrder;
 import com.fantechs.common.base.support.IService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 /**
@@ -24,4 +25,6 @@ public interface WmsInInPlanOrderService extends IService<WmsInInPlanOrder> {
     Map<String, Object> importExcel(List<WmsInInPlanOrderImport> list);
 
     int pushDown(String ids);
+
+    int updatePutawayQty(Long inPlanOrderDetId, BigDecimal putawayQty);
 }

@@ -183,6 +183,7 @@ public class InBarcodeUtil {
             barcodeResultDto.setMaterialQty(barcodeDtos.get(0).getMaterialQty());
             barcodeResultDto.setBarcode(barcode);
             barcodeResultDto.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
+            barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
         }
         else {
             //彩盒
@@ -198,6 +199,7 @@ public class InBarcodeUtil {
                 barcodeResultDto.setMaterialQty(barcodeDtos.get(0).getMaterialQty());
                 barcodeResultDto.setBarcode(barcode);
                 barcodeResultDto.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
+                barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
             }
             else {
                 //箱码
@@ -216,6 +218,7 @@ public class InBarcodeUtil {
                     barcodeResultDto.setMaterialQty(totalQty);
                     barcodeResultDto.setBarcode(barcode);
                     barcodeResultDto.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
+                    barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
                 }
                 else {
                     //栈板
@@ -235,6 +238,7 @@ public class InBarcodeUtil {
                         barcodeResultDto.setMaterialQty(totalQty);
                         barcodeResultDto.setBarcode(barcode);
                         barcodeResultDto.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
+                        barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
                     }
                 }
             }

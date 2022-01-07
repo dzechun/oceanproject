@@ -274,7 +274,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         List<WmsInnerStockOrderDet> list = new ArrayList<>();
         //查询库位下所有库存货品
         //库位盘点
-        if(type==1){
+        if(type==2){
             for (Long storageId : storageList) {
                 //获取库位名称
                 Example example = new Example(WmsInnerInventory.class);
@@ -282,8 +282,12 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 //jobStatus 作业状态(1正常 2待出)
                 //lockStatus 锁定状态(0-否 1-是)
                 //stockLock 盘点锁(0-否 1-是)
-                example.createCriteria().andEqualTo("warehouseId",warehouseId).andEqualTo("storageId",storageId).andEqualTo("stockLock",0)
-                        .andGreaterThan("packingQty",0).andEqualTo("jobStatus",1).andEqualTo("orgId",sysUser.getOrganizationId())
+                example.createCriteria().andEqualTo("warehouseId",warehouseId)
+                        .andEqualTo("storageId",storageId)
+                        .andEqualTo("stockLock",0)
+                        .andGreaterThan("packingQty",0)
+                        .andEqualTo("jobStatus",1)
+                        .andEqualTo("orgId",sysUser.getOrganizationId())
                         .andEqualTo("lockStatus", 0);
                 //获取库位库存
                 List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(example);

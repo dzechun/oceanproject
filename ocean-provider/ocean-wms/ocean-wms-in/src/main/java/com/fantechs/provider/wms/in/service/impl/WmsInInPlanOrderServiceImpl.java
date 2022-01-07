@@ -496,5 +496,18 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
         return i;
     }
 
-
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int updatePutawayQty(Long inPlanOrderDetId, BigDecimal putawayQty) {
+        int num=1;
+        WmsInInPlanOrderDet wmsInInPlanOrderDet=wmsInInPlanOrderDetMapper.selectByPrimaryKey(inPlanOrderDetId);
+        if(StringUtils.isNotEmpty(wmsInInPlanOrderDet)){
+            if(StringUtils.isEmpty(wmsInInPlanOrderDet.getPutawayQty())){
+                wmsInInPlanOrderDet.setPutawayQty(new BigDecimal(0));
+            }
+            wmsInInPlanOrderDet.setPutawayQty(wmsInInPlanOrderDet.getPutawayQty().add(putawayQty));
+            num+=wmsInInPlanOrderDetMapper.updateByPrimaryKeySelective(wmsInInPlanOrderDet);
+        }
+        return num;
+    }
 }

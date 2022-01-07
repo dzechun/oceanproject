@@ -70,8 +70,8 @@
             <if test="materialCategoryId != null and materialCategoryId != ''">
                 and smc.material_category_id = #{materialCategoryId}
             </if>
-            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-                and date_format(smc.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            <if test="startTime!= null and endTime!= null">
+                and date_format(smc.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
             </if>
             <if test="status!=null">
                 and smc.status=#{status}

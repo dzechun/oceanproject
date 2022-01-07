@@ -44,9 +44,6 @@
     shps.package_specification_name,
     shps.package_specification_desc,
     shps.package_specification_quantity,
-#     shps.material_id,
-#     shps.barcode_rule_id,
-#     shps.packing_unit_id,
     shps.status,
     shps.create_user_id,
     shps.create_time,
@@ -62,21 +59,15 @@
 
   <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
     select <include refid="Base_Column_List" />,
-#     su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-#     spu.packing_unit_name, spu.packing_unit_desc,
-#     sm.material_code, sm.material_desc,sm.material_version,
-#     sbr.barcode_rule,
+     su.user_name AS create_user_name, sus.user_name AS modified_user_name,
       bo.organization_name
     from base_ht_package_specification shps
-#     LEFT JOIN base_barcode_rule sbr ON shps.barcode_rule_id = sbr.barcode_rule_id
-#     LEFT JOIN base_material sm ON shps.material_id = sm.material_id
-#     LEFT JOIN base_packing_unit spu ON shps.packing_unit_id = spu.packing_unit_id
     LEFT JOIN sys_user su  ON shps.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON shps.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON shps.org_id = bo.organization_id
     <where>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(shps.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      <if test="startTime!= null and endTime!= null">
+        and date_format(shps.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
       </if>
       <if test="packageSpecificationCode != null and packageSpecificationCode != ''">
         and shps.package_specification_code like CONCAT('%', #{packageSpecificationCode}, '%')
@@ -90,21 +81,6 @@
         <if test="orgId!=null">
             and shps.org_id=#{orgId}
         </if>
-<!--      <if test="packingUnitId != null">-->
-<!--        and shps.packing_unit_id=#{packingUnitId}-->
-<!--      </if>-->
-<!--      <if test="packingUnitName != null">-->
-<!--        and spu.packing_unit_name like CONCAT('%', #{packingUnitName}, '%')-->
-<!--      </if>-->
-<!--      <if test="packingUnitDesc != null">-->
-<!--        and spu.packing_unit_desc like CONCAT('%', #{packingUnitDesc}, '%')-->
-<!--      </if>-->
-<!--      <if test="materialCode != null">-->
-<!--        and sm.material_code like CONCAT('%', #{materialCode}, '%')-->
-<!--      </if>-->
-<!--      <if test="materialDesc != null">-->
-<!--        and sm.material_desc like CONCAT('%', #{materialDesc}, '%')-->
-<!--      </if>-->
     </where>
     order by shps.modified_time desc
   </select>

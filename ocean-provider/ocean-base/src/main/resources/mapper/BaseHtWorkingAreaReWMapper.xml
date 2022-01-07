@@ -44,8 +44,8 @@
         LEFT JOIN base_working_area bwa ON bhwarw.working_area_id = bwa.working_area_id
         LEFT JOIN base_warehouse_area bwha ON bhwarw.warehouse_area_id = bwa.warehouse_area_id
         <where>
-            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-                AND date_format(bhwarw.create_time, "%Y-%m-%d") BETWEEN #{startTime} AND #{endTime}
+            <if test="startTime!= null and endTime!= null">
+                AND date_format(bhwarw.create_time, "%Y-%m-%d") BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
             </if>
             <if test="worker_id != null">
                 AND bhwarw.worker_id = #{worker_id}

@@ -244,6 +244,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                             WmsInnerInventoryDet wmsInnerInventoryDet = new WmsInnerInventoryDet();
                             wmsInnerInventoryDet.setInventoryDetId(scan.getInventoryDetId());
                             wmsInnerInventoryDet.setStorageId(storageList.get(0).getStorageId());
+                            wmsInnerInventoryDet.setBarcodeStatus((byte) 2);
                             planQty = planQty.add(scan.getMaterialQty());
                             wmsInnerInventoryDetList.add(wmsInnerInventoryDet);
 
@@ -270,7 +271,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                                 WmsInnerInventoryDet wmsInnerInventoryDet = new WmsInnerInventoryDet();
                                 wmsInnerInventoryDet.setInventoryDetId(wmsInnerInventoryDetDto.getInventoryDetId());
                                 wmsInnerInventoryDet.setStorageId(storageList.get(0).getStorageId());
-                                wmsInnerInventoryDet.setBarcodeStatus((byte) 6);
+                                wmsInnerInventoryDet.setBarcodeStatus((byte) 2);
                                 planQty = planQty.add(wmsInnerInventoryDetDto.getMaterialQty());
                                 wmsInnerInventoryDetList.add(wmsInnerInventoryDet);
 
@@ -465,7 +466,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     WmsInnerInventoryDet wmsInnerInventoryDet = new WmsInnerInventoryDet();
                     wmsInnerInventoryDet.setInventoryDetId(wmsInnerInventoryDetList.get(0).getInventoryDetId());
                     wmsInnerInventoryDet.setStorageId(wmsInnerJobOrderDet.getInStorageId());
-                    wmsInnerInventoryDet.setBarcodeStatus((byte) 6);
+                    wmsInnerInventoryDet.setBarcodeStatus((byte) 2);
                     inventoryDetList.add(wmsInnerInventoryDet);
                 }
 
