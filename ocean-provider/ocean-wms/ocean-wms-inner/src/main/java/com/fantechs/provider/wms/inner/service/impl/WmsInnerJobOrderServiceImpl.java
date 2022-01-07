@@ -1873,9 +1873,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         }
 
 //        if (record.getJobOrderType() == (byte) 2) {
-            Example example = new Example(WmsInnerJobOrderDet.class);
-            example.createCriteria().andEqualTo("jobOrderId",record.getJobOrderId());
-            wmsInnerJobOrderDetMapper.deleteByExample(example);
+
+        //不能删除 删除后重新新增明细会导致条码关系表明细ID对不上
+//        Example example = new Example(WmsInnerJobOrderDet.class);
+//        example.createCriteria().andEqualTo("jobOrderId",record.getJobOrderId());
+//        wmsInnerJobOrderDetMapper.deleteByExample(example);
 
 //            // 查询明细
 //            SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
@@ -1921,6 +1923,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 wmsInPutawayOrderDet.setJobOrderId(record.getJobOrderId());
                 wmsInPutawayOrderDet.setOrgId(sysUser.getOrganizationId());
                 wmsInPutawayOrderDet.setLineStatus((byte) 1);
+                wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInPutawayOrderDet);
 //                Example example = new Example(WmsInnerInventory.class);
 //                example.createCriteria().andEqualTo("jobOrderDetId",wmsInPutawayOrderDet.getJobOrderDetId());
 //
@@ -1955,7 +1958,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 //                innerInventory.setPackingQty(innerInventory.getPackingQty().subtract(wmsInPutawayOrderDet.getPlanQty()));
 //                wmsInnerInventoryService.update(innerInventory);
             }
-            wmsInnerJobOrderDetMapper.insertList(record.getWmsInPutawayOrderDets());
+            //wmsInnerJobOrderDetMapper.insertList(record.getWmsInPutawayOrderDets());
 //        }
         int i = wmsInnerJobOrderMapper.updateByPrimaryKey(record);
         return i;
