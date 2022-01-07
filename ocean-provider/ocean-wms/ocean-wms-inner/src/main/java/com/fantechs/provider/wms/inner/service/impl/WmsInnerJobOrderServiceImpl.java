@@ -643,7 +643,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     inventoryDet.setAsnCode(wmsInnerJobOrder.getJobOrderCode());//入库单号
                     inventoryDet.setIfStockLock((byte)0);
                     inventoryDet.setInventoryStatusId(wmsInnerJobOrderDet.getInventoryStatusId());
-                    inventoryDet.setBarcodeStatus((byte)3);//在库
+                    inventoryDet.setBarcodeStatus((byte)1);//在库
                     inventoryDet.setCreateUserId(sysUser.getUserId());
                     inventoryDet.setCreateTime(new Date());
                     inventoryDet.setOrgId(sysUser.getOrganizationId());
@@ -1284,7 +1284,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         //wmsInnerInventoryDet.setAsnCode(jobOrderCode);
         wmsInnerInventoryDet.setStorageId(wmsInnerJobOrderDet.getInStorageId());
         wmsInnerInventoryDet.setReceivingDate(new Date());
-        wmsInnerInventoryDet.setBarcodeStatus((byte)3);
+        wmsInnerInventoryDet.setBarcodeStatus((byte)1);
         return wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
     }
 
@@ -2599,7 +2599,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 inventoryDet.setAsnCode(wmsInnerJobOrder.getJobOrderCode());//入库单号
                 inventoryDet.setIfStockLock((byte)0);
                 inventoryDet.setInventoryStatusId(wmsInnerJobOrderDet.getInventoryStatusId());
-                inventoryDet.setBarcodeStatus((byte)3);//在库
+                inventoryDet.setBarcodeStatus((byte)1);//在库
                 inventoryDet.setCreateUserId(sysUser.getUserId());
                 inventoryDet.setCreateTime(new Date());
                 wmsInnerInventoryDets.add(inventoryDet);
@@ -2670,7 +2670,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     inventoryDet.setAsnCode(wmsInnerJobOrder.getJobOrderCode());//入库单号
                     inventoryDet.setIfStockLock((byte)0);
                     inventoryDet.setInventoryStatusId(wmsInnerJobOrderDet.getInventoryStatusId());
-                    inventoryDet.setBarcodeStatus((byte)3);//在库
+                    inventoryDet.setBarcodeStatus((byte)1);//在库
                     inventoryDet.setCreateUserId(sysUser.getUserId());
                     inventoryDet.setCreateTime(new Date());
                     wmsInnerInventoryDets.add(inventoryDet);
@@ -2912,7 +2912,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 inventoryDet.setAsnCode(record.getJobOrderCode());//上架单号
                 inventoryDet.setIfStockLock((byte)0);
                 inventoryDet.setInventoryStatusId(null);
-                inventoryDet.setBarcodeStatus((byte)3);//在库
+                inventoryDet.setBarcodeStatus((byte)1);//在库
                 inventoryDet.setCreateUserId(sysUser.getUserId());
                 inventoryDet.setCreateTime(new Date());
                 ////条码库存集合
@@ -2962,7 +2962,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     inventoryDet.setAsnCode(record.getJobOrderCode());//上架单号
                     inventoryDet.setIfStockLock((byte)0);
                     inventoryDet.setInventoryStatusId(null);
-                    inventoryDet.setBarcodeStatus((byte)3);//在库
+                    inventoryDet.setBarcodeStatus((byte)1);//在库
                     inventoryDet.setCreateUserId(sysUser.getUserId());
                     inventoryDet.setCreateTime(new Date());
                     //条码库存集合
