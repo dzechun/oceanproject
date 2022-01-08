@@ -65,6 +65,30 @@ public class SearchWmsInnerStockOrderDetBarcode extends BaseQuery implements Ser
     private String palletCode;
 
     /**
+     * 物料编码
+     */
+    @ApiModelProperty(name="materialCode",value = "物料编码")
+    private String materialCode;
+
+    /**
+     * 物料名称
+     */
+    @ApiModelProperty(name="materialName",value = "物料名称")
+    private String materialName;
+
+    /**
+     * 批号
+     */
+    @ApiModelProperty(name="batchCode",value = "批号")
+    private String batchCode;
+
+    /**
+     * 生产日期
+     */
+    @ApiModelProperty(name="productionTime",value = "生产日期")
+    private String productionTime;
+
+    /**
      * 扫描状态(1-未扫描 2-已保存 3-已提交)
      */
     @ApiModelProperty(name="scanStatus",value = "扫描状态(1-未扫描 2-已保存 3-已提交)")

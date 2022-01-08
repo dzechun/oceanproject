@@ -667,7 +667,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 //回写上游单据上架数量
                 if(wmsInnerJobOrder.getSourceBigType()==(byte)1) {
                     wmsInnerJobOrderDet.setActualQty(totalQty);
-                    num += updateLastOrderNode(wmsInnerJobOrder, wmsInnerJobOrderDet);
+                    num += updateLastOrderNode((byte)1,wmsInnerJobOrder, wmsInnerJobOrderDet);
                 }
 
                 //更改库存为正常状态
@@ -1172,9 +1172,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
     /**
      * 回写上游单据
+     * @param opType 操作类型 1 上架确认 2 上架删除
+     *
      * @return
      */
-    public int updateLastOrderNode(WmsInnerJobOrder wmsInnerJobOrder,WmsInnerJobOrderDet wmsInnerJobOrderDet){
+    public int updateLastOrderNode(Byte opType,WmsInnerJobOrder wmsInnerJobOrder,WmsInnerJobOrderDet wmsInnerJobOrderDet){
         int num=0;
 
         //来源系统单据类型编码
@@ -1186,7 +1188,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         switch (sourceSysOrderTypeCode) {
             case "IN-IPO":
                 //入库计划
-                inFeignApi.updatePutawayQty(sourceId,actualQty);
+                inFeignApi.updatePutawayQty(opType,sourceId, actualQty);
                 break;
             case "IN-SWK":
                 //收货作业
@@ -1991,6 +1993,14 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             criteriaInventory.andEqualTo("orgId",sysUser.getOrganizationId());
             wmsInnerInventoryMapper.deleteByExample(exampleInventory);
 
+            //删除条码关系表
+            Example exampleReOrder = new Example(WmsInnerMaterialBarcodeReOrder.class);
+            Example.Criteria criteriaReOrder = exampleReOrder.createCriteria();
+            criteriaReOrder.andEqualTo("orderTypeCode", "IN-IWK");
+            criteriaReOrder.andEqualTo("orderCode", wmsInnerJobOrder.getJobOrderCode());
+            criteriaReOrder.andEqualTo("orgId",sysUser.getOrganizationId());
+            wmsInnerMaterialBarcodeReOrderMapper.deleteByExample(exampleReOrder);
+
             //回写上游单据已下推数量
             Example exampleDet = new Example(WmsInnerJobOrderDet.class);
             exampleDet.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrder.getJobOrderId());
@@ -2000,7 +2010,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 case "IN-IPO":
                     //入库计划
                     for (WmsInnerJobOrderDet jobOrderDetIPO : jobOrderDets) {
-
+                        updateLastOrderNode((byte)2,wmsInnerJobOrder,jobOrderDetIPO);
                     }
                     break;
                 case "IN-SWK":
@@ -2532,7 +2542,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
             //回写上游单据上架数量
             if(wmsInnerJobOrder.getSourceBigType()==(byte)1) {
-                num += updateLastOrderNode(wmsInnerJobOrder, wmss);
+                num += updateLastOrderNode((byte)1,wmsInnerJobOrder, wmss);
             }
 
             wmsInnerJobOrderDet.setLineStatus((byte) 2);
@@ -2557,7 +2567,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
             //回写上游单据上架数量
             if(wmsInnerJobOrder.getSourceBigType()==(byte)1) {
-                num += updateLastOrderNode(wmsInnerJobOrder, wmsInnerJobOrderDet);
+                num += updateLastOrderNode((byte)1,wmsInnerJobOrder, wmsInnerJobOrderDet);
             }
         }
         if (num == 0) {

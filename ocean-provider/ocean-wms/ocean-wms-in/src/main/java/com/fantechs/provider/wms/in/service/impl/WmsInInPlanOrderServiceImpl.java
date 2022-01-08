@@ -498,15 +498,68 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int updatePutawayQty(Long inPlanOrderDetId, BigDecimal putawayQty) {
+    public int updatePutawayQty(Byte opType,Long inPlanOrderDetId, BigDecimal putawayQty) {
         int num=1;
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         WmsInInPlanOrderDet wmsInInPlanOrderDet=wmsInInPlanOrderDetMapper.selectByPrimaryKey(inPlanOrderDetId);
         if(StringUtils.isNotEmpty(wmsInInPlanOrderDet)){
             if(StringUtils.isEmpty(wmsInInPlanOrderDet.getPutawayQty())){
                 wmsInInPlanOrderDet.setPutawayQty(new BigDecimal(0));
             }
-            wmsInInPlanOrderDet.setPutawayQty(wmsInInPlanOrderDet.getPutawayQty().add(putawayQty));
+            if(opType==(byte)1) {
+                wmsInInPlanOrderDet.setPutawayQty(wmsInInPlanOrderDet.getPutawayQty().add(putawayQty));
+                if(wmsInInPlanOrderDet.getPutawayQty().compareTo(wmsInInPlanOrderDet.getPlanQty())==0){
+                    //完成
+                    wmsInInPlanOrderDet.setLineStatus((byte)3);
+                }
+            }
+            else{
+                wmsInInPlanOrderDet.setPutawayQty(wmsInInPlanOrderDet.getPutawayQty().subtract(putawayQty));
+                if(wmsInInPlanOrderDet.getPutawayQty().compareTo(new BigDecimal(0))==0){
+                    //待作业
+                    wmsInInPlanOrderDet.setLineStatus((byte)1);
+                }
+            }
             num+=wmsInInPlanOrderDetMapper.updateByPrimaryKeySelective(wmsInInPlanOrderDet);
+
+            WmsInInPlanOrderDet planOrderDet = new WmsInInPlanOrderDet();
+            planOrderDet.setInPlanOrderId(wmsInInPlanOrderDet.getInPlanOrderId());
+            int totalCount = wmsInInPlanOrderDetMapper.selectCount(planOrderDet);
+            if(opType==(byte)1)
+                planOrderDet.setLineStatus((byte) 3);
+            else
+                planOrderDet.setLineStatus((byte)1);
+
+            int finishCount = wmsInInPlanOrderDetMapper.selectCount(planOrderDet);
+
+            if (totalCount == finishCount) {
+                WmsInInPlanOrder inPlanOrder = new WmsInInPlanOrder();
+                inPlanOrder.setInPlanOrderId(wmsInInPlanOrderDet.getInPlanOrderId());
+                if(opType==(byte)1) {
+                    //更新单据状态及计划完成时间
+                    inPlanOrder.setOrderStatus((byte) 3);
+                    inPlanOrder.setPlanEndTime(new Date());
+                }
+                else
+                    inPlanOrder.setOrderStatus((byte)1);
+
+                inPlanOrder.setModifiedUserId(sysUser.getUserId());
+                inPlanOrder.setModifiedTime(new Date());
+
+                num += wmsInInPlanOrderMapper.updateByPrimaryKeySelective(inPlanOrder);
+
+            } else {
+                //更新计划开始作业时间
+                if(opType==(byte)1) {
+                    WmsInInPlanOrder inPlanOrder = wmsInInPlanOrderMapper.selectByPrimaryKey(wmsInInPlanOrderDet.getInPlanOrderId());
+                    if (StringUtils.isEmpty(inPlanOrder.getPlanStartTime())) {
+                        inPlanOrder.setPlanStartTime(new Date());
+                        inPlanOrder.setModifiedUserId(sysUser.getUserId());
+                        inPlanOrder.setModifiedTime(new Date());
+                    }
+                    num += wmsInInPlanOrderMapper.updateByPrimaryKeySelective(inPlanOrder);
+                }
+            }
         }
         return num;
     }

@@ -26,5 +26,5 @@ public interface WmsInInPlanOrderService extends IService<WmsInInPlanOrder> {
 
     int pushDown(String ids);
 
-    int updatePutawayQty(Long inPlanOrderDetId, BigDecimal putawayQty);
+    int updatePutawayQty(Byte opType,Long inPlanOrderDetId, BigDecimal putawayQty);
 }

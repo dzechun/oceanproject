@@ -35,5 +35,5 @@ public interface InFeignApi {
 
     @ApiOperation(value = "更新入库计划上架数量",notes = "更新入库计划上架数量")
     @PostMapping("/wmsInInPlanOrder/updatePutawayQty")
-    ResponseEntity updatePutawayQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long inPlanOrderDetId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty);
+    ResponseEntity updatePutawayQty(@ApiParam(value = "必传操作类型",required = true)@RequestParam Byte opType,@ApiParam(value = "必传明细ID",required = true)@RequestParam Long inPlanOrderDetId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty);
 }

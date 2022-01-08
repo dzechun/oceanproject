@@ -1418,13 +1418,16 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         WmsInnerInventoryLog wmsInnerInventoryLog = new WmsInnerInventoryLogDto();
             Example example = new Example(WmsInnerInventory.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("warehouseId",wmsInnerStockOrder.getWarehouseId()).andEqualTo("storageId",wmsInnerStockOrderDet.getStorageId())
+            criteria.andEqualTo("warehouseId",wmsInnerStockOrder.getWarehouseId())
+                    .andEqualTo("storageId",wmsInnerStockOrderDet.getStorageId())
                     .andEqualTo("materialId",wmsInnerStockOrderDet.getMaterialId())
                     .andEqualTo("batchCode",wmsInnerStockOrderDet.getBatchCode())
                     .andEqualTo("relevanceOrderCode",wmsInnerStockOrder.getRelatedOrderCode())
                     .andEqualTo("stockLock",1)
                     .andEqualTo("orgId",wmsInnerStockOrder.getOrganizationId())
-                    .andGreaterThan("packingQty",0).andEqualTo("jobStatus",1).andEqualTo("packingQty",wmsInnerStockOrderDet.getOriginalQty());
+                    .andGreaterThan("packingQty",0)
+                    .andEqualTo("jobStatus",1)
+                    .andEqualTo("packingQty",wmsInnerStockOrderDet.getOriginalQty());
             WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
             example.clear();
             criteria = example.createCriteria();
