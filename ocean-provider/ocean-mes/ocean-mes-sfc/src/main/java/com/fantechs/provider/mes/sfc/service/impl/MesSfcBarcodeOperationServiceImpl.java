@@ -95,9 +95,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     @LcnTransaction
     public Boolean pdaCartonWork(PdaCartonWorkDto dto) throws Exception {
         // 获取登录用户
-        long start = System.currentTimeMillis();
-        log.info("==================== 包箱作业开始时间：" + start);
-
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         if (dto.getBarCode().length() != 23){
@@ -209,9 +206,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             }
         }
 
-        long checkF = System.currentTimeMillis();
-        log.info("==================== 包箱作业校验完成，花费时间 毫秒：" + (checkF - start));
-
         // 5、是否要扫附件码
         if(dto.getAnnex() && StringUtils.isEmpty(dto.getBarAnnexCode())){
             return false;
@@ -255,7 +249,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             if (keyPartRelevanceDtos.size() >= usageQty.intValue()) {
                 throw new BizErrorException(ErrorCodeEnum.PDA40012020);
             }
-
 
             // 查找该附件码是否存在系统中
             List<MesSfcWorkOrderBarcodeDto> sfcWorkOrderAnnexBarcodeDtos = mesSfcWorkOrderBarcodeService
@@ -498,9 +491,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findBarcode(SearchMesSfcBarcodeProcess.builder()
                 .cartonCode(sfcProductCarton.getCartonCode())
                 .build());
-
-        long workF = System.currentTimeMillis();
-        log.info("==================== 包箱作业过站完成，花费时间 毫秒：" + (workF - checkF));
 
         if (mesSfcBarcodeProcessList.size() >= sfcProductCarton.getNowPackageSpecQty().intValue()) {
             // 包箱已满，关箱

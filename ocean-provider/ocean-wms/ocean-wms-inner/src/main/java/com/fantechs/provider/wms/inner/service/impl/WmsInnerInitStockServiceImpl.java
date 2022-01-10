@@ -253,30 +253,30 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
                 }else{
                     clientCode = wmsInnerInitStockBarcode.getClientBarcode3();
                 }
-                if (!StringUtils.isEmpty(clientCode)){
-                    // 匹配特征码字段
-                    SearchBaseSignature baseSignature = new SearchBaseSignature();
-                    baseSignature.setMaterialCode(innerInitStockDet.getMaterialCode());
-                    // 查找物料特征码
-                    List<BaseSignature> signatureList = baseFeignApi.findSignatureList(baseSignature).getData();
-                    if (signatureList.isEmpty()){
-                        throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码中客户条码与特征码不匹配，不允许操作");
-                    }
-                    boolean flag = false;
-                    for (BaseSignature signature : signatureList){
-                        // 校验附件码是否符合特征码规则
-                        Pattern pattern = Pattern.compile(signature.getSignatureRegex());
-                        Matcher matcher = pattern.matcher(clientCode);
-                        if (!matcher.matches()) {
-                            // 该附件码不满足特征码，检查零件料号特征码
-                            continue;
-                        }
-                        flag = true;
-                    }
-                    if (!flag){
-                        throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码中客户条码与特征码不匹配，不允许操作");
-                    }
-                }
+//                if (!StringUtils.isEmpty(clientCode)){
+//                    // 匹配特征码字段
+//                    SearchBaseSignature baseSignature = new SearchBaseSignature();
+//                    baseSignature.setMaterialCode(innerInitStockDet.getMaterialCode());
+//                    // 查找物料特征码
+//                    List<BaseSignature> signatureList = baseFeignApi.findSignatureList(baseSignature).getData();
+//                    if (signatureList.isEmpty()){
+//                        throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码中客户条码与特征码不匹配，不允许操作");
+//                    }
+//                    boolean flag = false;
+//                    for (BaseSignature signature : signatureList){
+//                        // 校验附件码是否符合特征码规则
+//                        Pattern pattern = Pattern.compile(signature.getSignatureRegex());
+//                        Matcher matcher = pattern.matcher(clientCode);
+//                        if (!matcher.matches()) {
+//                            // 该附件码不满足特征码，检查零件料号特征码
+//                            continue;
+//                        }
+//                        flag = true;
+//                    }
+//                    if (!flag){
+//                        throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码中客户条码与特征码不匹配，不允许操作");
+//                    }
+//                }
                 example = new Example(WmsInnerInventoryDet.class);
                 example.createCriteria().andEqualTo("barcode", wmsInnerInitStockBarcode.getInPlantBarcode()).andEqualTo("storageId", wmsInnerInitStock.getStorageId()).andEqualTo("materialId", innerInitStockDet.getMaterialId()).andEqualTo("orgId",sysUser.getOrganizationId());
                 WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDetMapper.selectOneByExample(example);
