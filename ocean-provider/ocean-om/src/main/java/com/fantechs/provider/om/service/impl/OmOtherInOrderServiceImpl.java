@@ -20,10 +20,7 @@ import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
-import com.fantechs.common.base.general.entity.om.OmHtOtherInOrder;
-import com.fantechs.common.base.general.entity.om.OmHtOtherInOrderDet;
-import com.fantechs.common.base.general.entity.om.OmOtherInOrder;
-import com.fantechs.common.base.general.entity.om.OmOtherInOrderDet;
+import com.fantechs.common.base.general.entity.om.*;
 import com.fantechs.common.base.general.entity.wms.in.WmsInPlanReceivingOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
@@ -707,5 +704,24 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         return i;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updateOtherInPutDownQty(Long otherInOrderDetId, BigDecimal putawayQty) {
+        int num=1;
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        OmOtherInOrderDet omOtherInOrderDet=omOtherInOrderDetMapper.selectByPrimaryKey(otherInOrderDetId);
+        if(StringUtils.isNotEmpty(omOtherInOrderDet)){
+            if(StringUtils.isEmpty(omOtherInOrderDet.getTotalIssueQty())){
+                omOtherInOrderDet.setTotalIssueQty(new BigDecimal(0));
+            }
+
+            omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().subtract(putawayQty));
+            omOtherInOrderDet.setIfAllIssued((byte)0);
+            omOtherInOrderDet.setModifiedUserId(sysUser.getUserId());
+            omOtherInOrderDet.setModifiedTime(new Date());
+            num+=omOtherInOrderDetMapper.updateByPrimaryKeySelective(omOtherInOrderDet);
+        }
+        return num;
+    }
 
 }

@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.entity.om.OmSalesReturnOrder;
 import com.fantechs.common.base.general.entity.om.OmSalesReturnOrderDet;
 import com.fantechs.common.base.support.IService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 /**
@@ -23,4 +24,6 @@ public interface OmSalesReturnOrderService extends IService<OmSalesReturnOrder> 
     int writeQty(OmSalesReturnOrderDet omSalesReturnOrderDet);
 
     int pushDown(List<OmSalesReturnOrderDet> omSalesReturnOrderDets);
+
+    int updateSalesReturnPutDownQty(Long salesReturnOrderDetId, BigDecimal putawayQty);
 }

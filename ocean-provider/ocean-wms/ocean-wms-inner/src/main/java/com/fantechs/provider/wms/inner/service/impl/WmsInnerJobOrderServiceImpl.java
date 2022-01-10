@@ -1199,11 +1199,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 break;
             case "IN-SRO":
                 //销退订单
-
+                omFeignApi.updateSalesReturnPutDownQty(sourceId,actualQty);
                 break;
             case "IN-OIO":
                 //其它入库订单
-
+                omFeignApi.updateOtherInPutDownQty(sourceId,actualQty);
                 break;
             case "IN-IPO":
                 //入库计划
@@ -1245,7 +1245,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 break;
             case "IN-IPO":
                 //入库计划
-                inFeignApi.updatePutawayQty(opType,sourceId, actualQty);
+
                 break;
             case "IN-SWK":
                 //收货作业
@@ -1259,9 +1259,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 //来料检验
                 QmsIncomingInspectionOrder incomingOrder=new QmsIncomingInspectionOrder();
                 incomingOrder.setIncomingInspectionOrderId(sourceId);
-                //incomingOrder
-//                incomingOrder.setIfAllIssued((byte)0);//是否已全部下发(0-否 1-是)
-                //qmsFeignApi.updateIfAllIssued(incomingOrder);
+
                 break;
             default:
                 break;
@@ -2175,6 +2173,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             BarcodeResultDto resultDto=InBarcodeUtil.scanBarcode(barCode);
             map.put("barcodeType",resultDto.getBarcodeType());
             map.put("materialBarcodeId",resultDto.getMaterialBarcodeId());
+            map.put("materialId",resultDto.getMaterialId());
             map.put("qty",resultDto.getMaterialQty());
 
             if(StringUtils.isNotEmpty(map.get("barcodeType")) && map.get("barcodeType").toString().equals("5")){
@@ -2902,6 +2901,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         List<WmsInnerInventoryDet> wmsInnerInventoryDets =new ArrayList<>();
 
         for (SaveInnerJobOrderDto saveInnerJobOrderDto : list) {
+            if(StringUtils.isEmpty(saveInnerJobOrderDto.getMaterialId())){
+                BarcodeResultDto resultDto=InBarcodeUtil.scanBarcode(saveInnerJobOrderDto.getBarcode());
+                if(StringUtils.isNotEmpty(resultDto))
+                    saveInnerJobOrderDto.setMaterialId(resultDto.getMaterialId());
+            }
             String keyS=saveInnerJobOrderDto.getMaterialId().toString()+(StringUtils.isEmpty(saveInnerJobOrderDto.getBatchCode())?"":saveInnerJobOrderDto.getBatchCode());
             if (map.containsKey(keyS)) {
                 List<WmsInnerJobOrderDet> nm = new ArrayList<>();

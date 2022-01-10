@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -111,5 +112,11 @@ public class OmOtherInOrderController {
     @PostMapping("/pushDown")
     public ResponseEntity pushDown(@ApiParam(value = "其他入库计划ID列表，多个逗号分隔",required = true)@RequestBody  List<OmOtherInOrderDet> omOtherInOrderDets) {
         return ControllerUtil.returnCRUD(omOtherInOrderService.pushDown(omOtherInOrderDets));
+    }
+
+    @ApiOperation(value = "更新其他入库订单下推数量",notes = "更新其他入库订单下推数量")
+    @PostMapping("/updateOtherInPutDownQty")
+    public ResponseEntity updateOtherInPutDownQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long purchaseOrderDetId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty) {
+        return ControllerUtil.returnCRUD(omOtherInOrderService.updateOtherInPutDownQty(purchaseOrderDetId,putawayQty));
     }
 }
