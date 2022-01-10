@@ -150,7 +150,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         map.put("storageId",storageId);
         map.put("materialId",materialId);
         map.put("materialBarcodeIdList",barcodeIds);
-        map.put("barcodeStatus",3);
+        map.put("barcodeStatus",1);
         List<WmsInnerInventoryDetDto> list = wmsInnerInventoryDetMapper.findList(map);
         if (StringUtils.isEmpty(list)) {
             throw new BizErrorException("库存未找到当前条码数据，或该条码已拣货");
@@ -553,7 +553,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 wmsInnerJobOrderService.save(innerJobOrder);
             }
         }
-
+        wmsInnerJobOrder.setWorkerId(sysUser.getUserId());
         return wmsInnerJobOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
     }
 
@@ -592,7 +592,6 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         }else {
             inventoryExample.createCriteria().andEqualTo("jobOrderDetId",wmsInnerJobOrderDet.getJobOrderDetId());
             wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(inventoryExample);
-            inventoryExample.clear();
 
             WmsInnerInventory jobDetInventory = wmsInnerInventories.get(0);
             BeanUtil.copyProperties(jobDetInventory,wmsInnerInventory);
@@ -915,7 +914,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                         wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
                         //添加新库存
                         newWmsInnerInventory.setPackingQty(qty);
-                        newWmsInnerInventory.setJobStatus((byte) 0);
+                        newWmsInnerInventory.setJobStatus((byte) 2);
                         newWmsInnerInventory.setJobOrderDetId(jobDetId);
                         wmsInnerInventoryMapper.insertUseGeneratedKeys(newWmsInnerInventory);
 
@@ -1012,7 +1011,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventoryDto);
                     //添加新库存
                     newWmsInnerInventory.setPackingQty(wmsInnerInventoryDto.getDistributionQty());
-                    newWmsInnerInventory.setJobStatus((byte) 0);
+                    newWmsInnerInventory.setJobStatus((byte) 2);
                     newWmsInnerInventory.setJobOrderDetId(wmsInPutawayOrderDet.getJobOrderDetId());
                     wmsInnerInventoryMapper.insertUseGeneratedKeys(newWmsInnerInventory);
 
