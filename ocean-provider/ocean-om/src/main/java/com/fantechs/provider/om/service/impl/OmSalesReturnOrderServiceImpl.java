@@ -338,7 +338,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                 //生成收货计划
                 List<WmsInPlanReceivingOrderDetDto> detList = new LinkedList<>();
 
-                for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrderDets) {
+                for (OmSalesReturnOrderDet omSalesReturnOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     Map map = new HashMap();
@@ -393,7 +393,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
 
                 List<WmsInReceivingOrderDetDto> detList = new LinkedList<>();
 
-                for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrderDets) {
+                for (OmSalesReturnOrderDet omSalesReturnOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
                     Map map = new HashMap();
                     map.put("salesReturnOrderId", omSalesReturnOrderDet.getSalesReturnOrderId());
@@ -446,7 +446,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                 //生成来料检验单
 
                 List<QmsIncomingInspectionOrderDto> detList = new LinkedList<>();
-                for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrderDets) {
+                for (OmSalesReturnOrderDet omSalesReturnOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     Map map = new HashMap();
@@ -503,7 +503,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
 
                 List<WmsInInPlanOrderDetDto> detList = new LinkedList<>();
 
-                for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrderDets) {
+                for (OmSalesReturnOrderDet omSalesReturnOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     Map map = new HashMap();
@@ -558,7 +558,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                 //生成上架作业单
 
                 List<WmsInnerJobOrderDet> detList = new LinkedList<>();
-                for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrderDets) {
+                for (OmSalesReturnOrderDet omSalesReturnOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     Map map = new HashMap();

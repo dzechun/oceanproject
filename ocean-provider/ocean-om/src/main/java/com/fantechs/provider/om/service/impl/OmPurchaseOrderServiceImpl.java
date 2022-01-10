@@ -302,7 +302,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                 //生成收货计划
                 List<WmsInPlanReceivingOrderDetDto> detList = new LinkedList<>();
 
-                for (OmPurchaseOrderDet omPurchaseOrderDet : omPurchaseOrderDets) {
+                for (OmPurchaseOrderDet omPurchaseOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     Map map = new HashMap();
@@ -364,7 +364,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
                 List<WmsInReceivingOrderDetDto> detList = new LinkedList<>();
 
-                for (OmPurchaseOrderDet omPurchaseOrderDet : omPurchaseOrderDets) {
+                for (OmPurchaseOrderDet omPurchaseOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
                     Map map = new HashMap();
                     map.put("purchaseOrderId", omPurchaseOrderDet.getPurchaseOrderId());
@@ -424,7 +424,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                 //生成来料检验单
 
                 List<QmsIncomingInspectionOrderDto> detList = new LinkedList<>();
-                for (OmPurchaseOrderDet omPurchaseOrderDet : omPurchaseOrderDets) {
+                for (OmPurchaseOrderDet omPurchaseOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
                     Map map = new HashMap();
                     map.put("purchaseOrderId", omPurchaseOrderDet.getPurchaseOrderId());
@@ -482,7 +482,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
                 List<WmsInInPlanOrderDetDto> detList = new LinkedList<>();
 
-                for (OmPurchaseOrderDet omPurchaseOrderDet : omPurchaseOrderDets) {
+                for (OmPurchaseOrderDet omPurchaseOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     Map map = new HashMap();
@@ -550,7 +550,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                 //生成上架作业单
 
                 List<WmsInnerJobOrderDet> detList = new LinkedList<>();
-                for (OmPurchaseOrderDet omPurchaseOrderDet : omPurchaseOrderDets) {
+                for (OmPurchaseOrderDet omPurchaseOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     Map map = new HashMap();
