@@ -31,6 +31,7 @@ import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
+import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.wms.inner.mapper.*;
@@ -68,6 +69,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     private SFCFeignApi sfcFeignApi;
     @Resource
     private InFeignApi inFeignApi;
+    @Resource
+    private OMFeignApi omFeignApi;
     @Resource
     private WmsInnerInventoryDetMapper wmsInnerInventoryDetMapper;
     @Resource
@@ -769,7 +772,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     .jobOrderId(wmsInnerJobOrder.getJobOrderId())
                     .workStartTime(new Date())
                     .workEndtTime(new Date())
-                    .workerId(StringUtils.isEmpty(wmsInnerJobOrder.getWorkerId())?sysUser.getUserId():wmsInnerJobOrder.getWorkerId())
+                    .workerId(sysUser.getUserId())
                     .build();
 
             //更改表头为作业完成状态
@@ -1177,15 +1180,31 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      * @return
      */
     public int updateLastOrderNode(Byte opType,WmsInnerJobOrder wmsInnerJobOrder,WmsInnerJobOrderDet wmsInnerJobOrderDet){
-        int num=0;
-
+        int num=1;
         //来源系统单据类型编码
         String sourceSysOrderTypeCode=wmsInnerJobOrder.getSourceSysOrderTypeCode();
+        //核心单据类型编码
+        String coreSourceTypeCode=wmsInnerJobOrder.getCoreSourceSysOrderTypeCode();
         //来源明细ID
         Long sourceId=wmsInnerJobOrderDet.getSourceId();
+        //核心单据明细ID
+        Long coreSourceId=wmsInnerJobOrderDet.getCoreSourceId();
         //上架数量
         BigDecimal actualQty=wmsInnerJobOrderDet.getActualQty();
+        //来源单据回写
         switch (sourceSysOrderTypeCode) {
+            case "IN-PO":
+                //采购订单
+                omFeignApi.updatePutDownQty(sourceId,actualQty);
+                break;
+            case "IN-SRO":
+                //销退订单
+
+                break;
+            case "IN-OIO":
+                //其它入库订单
+
+                break;
             case "IN-IPO":
                 //入库计划
                 inFeignApi.updatePutawayQty(opType,sourceId, actualQty);
@@ -1210,6 +1229,43 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 break;
         }
 
+        //核心单据回写
+        switch (coreSourceTypeCode) {
+            case "IN-PO":
+                //采购订单
+                omFeignApi.updatePutawayQty(opType,coreSourceId,actualQty);
+                break;
+            case "IN-SRO":
+                //销退订单
+
+                break;
+            case "IN-OIO":
+                //其它入库订单
+
+                break;
+            case "IN-IPO":
+                //入库计划
+                inFeignApi.updatePutawayQty(opType,sourceId, actualQty);
+                break;
+            case "IN-SWK":
+                //收货作业
+
+                break;
+            case "IN-SPO":
+                //收货计划
+
+                break;
+            case "QMS-MIIO":
+                //来料检验
+                QmsIncomingInspectionOrder incomingOrder=new QmsIncomingInspectionOrder();
+                incomingOrder.setIncomingInspectionOrderId(sourceId);
+                //incomingOrder
+//                incomingOrder.setIfAllIssued((byte)0);//是否已全部下发(0-否 1-是)
+                //qmsFeignApi.updateIfAllIssued(incomingOrder);
+                break;
+            default:
+                break;
+        }
         return num;
     }
 
@@ -2005,40 +2061,10 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             Example exampleDet = new Example(WmsInnerJobOrderDet.class);
             exampleDet.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrder.getJobOrderId());
             List<WmsInnerJobOrderDet> jobOrderDets = wmsInnerJobOrderDetMapper.selectByExample(exampleDet);
-            String sourceSysOrderTypeCode=wmsInnerJobOrder.getSourceSysOrderTypeCode();
-            switch (sourceSysOrderTypeCode) {
-                case "IN-IPO":
-                    //入库计划
-                    for (WmsInnerJobOrderDet jobOrderDetIPO : jobOrderDets) {
-                        updateLastOrderNode((byte)2,wmsInnerJobOrder,jobOrderDetIPO);
-                    }
-                    break;
-                case "IN-SWK":
-                    //收货作业
-                    for (WmsInnerJobOrderDet jobOrderDetSWK : jobOrderDets) {
 
-                    }
-                    break;
-                case "IN-SPO":
-                    //收货计划
-                    for (WmsInnerJobOrderDet jobOrderDetSPO : jobOrderDets) {
-
-                    }
-                    break;
-                case "QMS-MIIO":
-                    //来料检验
-                    for (WmsInnerJobOrderDet jobOrderDetMIIO : jobOrderDets) {
-                        Long sourceId=jobOrderDetMIIO.getSourceId();
-                        QmsIncomingInspectionOrder incomingOrder=new QmsIncomingInspectionOrder();
-                        incomingOrder.setIncomingInspectionOrderId(sourceId);
-//                        incomingOrder.setIfAllIssued((byte)0);//是否已全部下发(0-否 1-是)
-                        //qmsFeignApi.updateIfAllIssued(incomingOrder);
-                    }
-                    break;
-                default:
-                    break;
+            for (WmsInnerJobOrderDet jobOrderDetIPO : jobOrderDets) {
+                updateLastOrderNode((byte) 2, wmsInnerJobOrder, jobOrderDetIPO);
             }
-
 
             Example example = new Example(WmsInnerJobOrderDet.class);
             example.createCriteria().andEqualTo("jobOrderId", s);
@@ -2749,9 +2775,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             ws.setModifiedUserId(sysUser.getUserId());
             ws.setModifiedTime(new Date());
             ws.setWorkEndtTime(new Date());
-            if (StringUtils.isEmpty(wmsInnerJobOrder.getWorkerId())) {
-                ws.setWorkerId(sysUser.getUserId());
-            }
+            ws.setWorkerId(sysUser.getUserId());
             if (StringUtils.isEmpty(wmsInnerJobOrder.getWorkStartTime())) {
                 ws.setWorkStartTime(new Date());
             }
@@ -2764,9 +2788,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             ws.setOrderStatus((byte) 4);
             ws.setModifiedUserId(sysUser.getUserId());
             ws.setModifiedTime(new Date());
-            if (StringUtils.isEmpty(wmsInnerJobOrder.getWorkerId())) {
-                ws.setWorkerId(sysUser.getUserId());
-            }
+            ws.setWorkerId(sysUser.getUserId());
             if (StringUtils.isEmpty(wmsInnerJobOrder.getWorkStartTime())) {
                 ws.setWorkStartTime(new Date());
             }

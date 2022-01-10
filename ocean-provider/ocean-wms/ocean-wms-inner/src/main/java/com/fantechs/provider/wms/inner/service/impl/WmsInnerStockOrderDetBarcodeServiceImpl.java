@@ -21,10 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -42,6 +39,33 @@ public class WmsInnerStockOrderDetBarcodeServiceImpl extends BaseService<WmsInne
     @Override
     public List<WmsInnerStockOrderDetBarcodeDto> findList(Map<String, Object> map) {
         return wmsInnerStockOrderDetBarcodeMapper.findList(map);
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int save(WmsInnerStockOrderDetBarcodeDto record) {
+        int num=0;
+        SysUser sysUser=CurrentUserInfoUtils.getCurrentUserInfo();
+        Example exampleDet = new Example(WmsInnerMaterialBarcode.class);
+        Example.Criteria criteriaDet = exampleDet.createCriteria();
+        criteriaDet.andEqualTo("barcode", record.getBarcode());
+        List<WmsInnerMaterialBarcode> materialBarcodes=wmsInnerMaterialBarcodeMapper.selectByExample(exampleDet);
+        if(materialBarcodes.size()>0){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已存在不能重复新增");
+        }
+        WmsInnerMaterialBarcode materialBarcode=new WmsInnerMaterialBarcode();
+        materialBarcode.setBarcode(record.getBarcode());
+        materialBarcode.setMaterialId(record.getMaterialId());
+        materialBarcode.setMaterialQty(record.getMaterialQty());
+        materialBarcode.setIfSysBarcode((byte)0);
+        materialBarcode.setBatchCode(record.getBatchCode());
+        materialBarcode.setProductionTime(record.getProductionTime());
+        materialBarcode.setCreateUserId(sysUser.getUserId());
+        materialBarcode.setCreateTime(new Date());
+        materialBarcode.setOrgId(sysUser.getOrganizationId());
+        num+=wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(materialBarcode);
+
+        return num;
     }
 
     @Override

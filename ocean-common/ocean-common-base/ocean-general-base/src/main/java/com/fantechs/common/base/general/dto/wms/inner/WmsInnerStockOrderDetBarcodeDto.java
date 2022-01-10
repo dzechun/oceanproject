@@ -52,6 +52,13 @@ public class WmsInnerStockOrderDetBarcodeDto extends WmsInnerStockOrderDetBarcod
     private String palletCode;
 
     /**
+     * 物料ID
+     */
+    @Transient
+    @ApiModelProperty(name = "materialId",value = "物料ID")
+    private Long materialId;
+
+    /**
      * 物料编码
      */
     @Transient

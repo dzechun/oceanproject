@@ -15,5 +15,5 @@ import java.util.Map;
 public interface WmsInnerStockOrderDetBarcodeService extends IService<WmsInnerStockOrderDetBarcode> {
     List<WmsInnerStockOrderDetBarcodeDto> findList(Map<String, Object> map);
 
-    //Map<String, Object> importExcel(List<WmsInnerStockOrderDetBarcode> list);
+    int save(WmsInnerStockOrderDetBarcodeDto record);
 }

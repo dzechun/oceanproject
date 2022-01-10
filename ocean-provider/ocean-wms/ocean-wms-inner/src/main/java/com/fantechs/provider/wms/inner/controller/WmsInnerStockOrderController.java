@@ -85,7 +85,7 @@ public class WmsInnerStockOrderController {
         return ControllerUtil.returnDataSuccess(wmsInventoryVerificationService.webScanBarcode(stockOrderDetId,barcode),1);
     }
 
-    @ApiOperation("盘点扫码提交")
+    @ApiOperation("盘点扫码提交或选择条码提交")
     @PostMapping("/webCommit")
     public ResponseEntity webCommit(@ApiParam(value = "提交类型 1 选择条码提交 2 扫描条码提交")@RequestParam(required = true) Byte commitType,
                                     @ApiParam(value = "盘点明细ID")@RequestParam(required = true) Long stockOrderDetId,

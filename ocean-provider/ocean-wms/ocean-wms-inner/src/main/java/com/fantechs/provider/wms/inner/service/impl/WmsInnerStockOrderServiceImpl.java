@@ -208,8 +208,12 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             //获取库位名称
             Example example = new Example(WmsInnerInventory.class);
             //盘点锁 0 否 1 是
-            example.createCriteria().andEqualTo("warehouseId",warehouseId).andEqualTo("materialId",materialId).andEqualTo("stockLock",0)
-                    .andGreaterThan("packingQty",0).andEqualTo("jobStatus",1).andEqualTo("orgId",sysUser.getOrganizationId())
+            example.createCriteria().andEqualTo("warehouseId",warehouseId)
+                    .andEqualTo("materialId",materialId)
+                    .andEqualTo("stockLock",0)
+                    .andGreaterThan("packingQty",0)
+                    .andEqualTo("jobStatus",1)
+                    .andEqualTo("orgId",sysUser.getOrganizationId())
                     .andEqualTo("lockStatus", 0);
             //获取货品库存
             List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(example);
