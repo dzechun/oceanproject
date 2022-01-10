@@ -244,7 +244,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
 
             innerJobOrder = new WmsInnerJobOrder();
             SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
-            searchBaseStorage.setStorageId(dto.getInStorageId());
+            searchBaseStorage.setStorageId(dto.getOutStorageId());
             List<BaseStorage> baseStorage = baseFeignApi.findList(searchBaseStorage).getData();
             if(StringUtils.isEmpty(baseStorage))
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到移出库位");
