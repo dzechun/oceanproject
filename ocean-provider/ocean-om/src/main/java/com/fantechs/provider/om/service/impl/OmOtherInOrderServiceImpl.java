@@ -90,13 +90,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
     }
 
     @Override
-    public List<OmOtherInOrderDto> findHtList(Map<String, Object> map) {
-        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        map.put("orgId", sysUser.getOrganizationId());
-        return omHtOtherInOrderMapper.findList(map);
-    }
-
-    @Override
     @Transactional(rollbackFor = RuntimeException.class)
     @LcnTransaction
     public int packageAutoOutOrder(OmOtherInOrder omOtherInOrder) {
@@ -410,7 +403,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 //生成收货计划
                 List<WmsInPlanReceivingOrderDetDto> detList = new LinkedList<>();
 
-                for (OmOtherInOrderDet omOtherInOrderDet : omOtherInOrderDets) {
+                for (OmOtherInOrderDet omOtherInOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     Map map = new HashMap();
@@ -466,7 +459,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
                 List<WmsInReceivingOrderDetDto> detList = new LinkedList<>();
 
-                for (OmOtherInOrderDet omOtherInOrderDet : omOtherInOrderDets) {
+                for (OmOtherInOrderDet omOtherInOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
                     Map map = new HashMap();
                     map.put("otherInOrderId", omOtherInOrderDet.getOtherInOrderId());
@@ -519,7 +512,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 //生成来料检验单
 
                 List<QmsIncomingInspectionOrderDto> detList = new LinkedList<>();
-                for (OmOtherInOrderDet omOtherInOrderDet : omOtherInOrderDets) {
+                for (OmOtherInOrderDet omOtherInOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     Map map = new HashMap();
@@ -576,7 +569,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
                 List<WmsInInPlanOrderDetDto> detList = new LinkedList<>();
 
-                for (OmOtherInOrderDet omOtherInOrderDet : omOtherInOrderDets) {
+                for (OmOtherInOrderDet omOtherInOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     Map map = new HashMap();
@@ -630,7 +623,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 //生成上架作业单
 
                 List<WmsInnerJobOrderDet> detList = new LinkedList<>();
-                for (OmOtherInOrderDet omOtherInOrderDet : omOtherInOrderDets) {
+                for (OmOtherInOrderDet omOtherInOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     Map map = new HashMap();

@@ -16,8 +16,6 @@ import java.util.Map;
 public interface OmOtherInOrderService extends IService<OmOtherInOrder> {
     List<OmOtherInOrderDto> findList(Map<String, Object> map);
 
-    List<OmOtherInOrderDto> findHtList(Map<String,Object> map);
-
     int packageAutoOutOrder(OmOtherInOrder omOtherInOrder);
 
     /**
