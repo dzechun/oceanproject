@@ -804,12 +804,15 @@ public class SyncDataServiceImpl implements SyncDataService {
             JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
             if ("0".equals(jsonObject.get("all"))) {
                 map.put("date", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
+            }else {
+                map.put("date", "2021-10-01");
             }
         }
         // 执行查询
+        log.info("------map----------"+ JSON.toJSONString(map));
         DynamicDataSourceHolder.putDataSouce("thirdary");
         List<MiddleProduct> barcodeDatas = middleProductMapper.findBarcodeData(map);
-        log.info("------barcodeDatas----------"+barcodeDatas);
+        log.info("------barcodeDatas----------"+barcodeDatas.size());
         DynamicDataSourceHolder.removeDataSource();
 
         if (StringUtils.isNotEmpty(barcodeDatas)) {
