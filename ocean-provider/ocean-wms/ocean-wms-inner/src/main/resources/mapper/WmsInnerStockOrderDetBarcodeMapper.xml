@@ -96,6 +96,12 @@
       <if test="materialName!=null and materialName!=''">
         and bm.material_name like CONCAT('%',#{materialName},'%')
       </if>
+      <if test="batchCode!=null and batchCode!=''">
+        and wimb.batch_code like CONCAT('%',#{batchCode},'%')
+      </if>
+      <if test="productionTime!=null and productionTime!=''">
+        and date_format(wimb.production_time, '%Y-%m-%d') = #{productionTime}
+      </if>
       <if test="barcode !=null and barcode!=''">
         and wimb.barcode = #{barcode}
       </if>

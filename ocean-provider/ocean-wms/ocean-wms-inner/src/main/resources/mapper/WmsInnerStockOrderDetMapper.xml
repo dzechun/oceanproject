@@ -94,7 +94,7 @@
     bm.material_code,
     bm.material_name,
     bm.material_desc,
-    s.user_name as work_name,
+    wr.user_name as work_name,
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,
     bo.organization_name,
@@ -106,7 +106,8 @@
     LEFT JOIN base_material bm ON wivd.material_id = bm.material_id
     LEFT JOIN base_inventory_status bis ON bis.inventory_status_id = wivd.inventory_status_id
     LEFT JOIN base_supplier bss on bss.supplier_id = wivd.supplier_id
-    left join sys_user s  ON wivd.stock_user_id = s.user_id
+    LEFT JOIN sys_user wr ON wivd.worker_id=wr.user_id
+    LEFT JOIN sys_user s  ON wivd.stock_user_id = s.user_id
     LEFT JOIN sys_user su  ON wivd.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON wivd.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON wivd.org_id = bo.organization_id
@@ -126,6 +127,13 @@
         <if test="storageCode!=null and storageCode!=''">
           and bs.storage_code = #{storageCode}
         </if>
+        <if test="batchCode!=null and batchCode!=''">
+          and wivd.batch_code = #{batchCode}
+        </if>
+        <if test="workName!=null and workName!=''">
+          and wr.user_name = #{workName}
+        </if>
+
       <if test="ifRegister!=null and ifRegister!=''">
         and wivd.if_register = #{ifRegister}
       </if>
