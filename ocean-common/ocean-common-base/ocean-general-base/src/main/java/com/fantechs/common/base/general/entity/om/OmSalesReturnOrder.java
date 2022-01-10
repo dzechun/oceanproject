@@ -108,8 +108,8 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
     /**
      * 订单状态(1-打开 2-下发中  3-已下发 4-完成)
      */
-    @ApiModelProperty(name="orderStatus",value = "订单状态(1-打开  3-已下发 4-完成)")
-    @Excel(name = "订单状态(1-打开 2-下发中  3-已下发 4-完成)", height = 20, width = 30,orderNum="10")
+    @ApiModelProperty(name="orderStatus",value = "订单状态(1-打开 2-下发中 3-已下发 4-完成)")
+    @Excel(name = "订单状态(1-打开 2-下发中  3-已下发 4-完成)", height = 20, width = 30,orderNum="2")
     @Column(name = "order_status")
     private Byte orderStatus;
 
@@ -123,7 +123,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      * 订单日期
      */
     @ApiModelProperty(name="orderDate",value = "订单日期")
-    @Excel(name = "订单日期", height = 20, width = 30,orderNum="11")
+    @Excel(name = "订单日期", height = 20, width = 30,orderNum="4")
     @Column(name = "order_date")
     private Date orderDate;
 
@@ -131,7 +131,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      * 要求完成日期
      */
     @ApiModelProperty(name="completeDate",value = "要求完成日期")
-    @Excel(name = "要求完成日期", height = 20, width = 30,orderNum="12")
+    @Excel(name = "要求完成日期", height = 20, width = 30,orderNum="3")
     @Column(name = "complete_date")
     @JSONField(format = "yyyy-MM-dd")
     private Date completeDate;
@@ -140,7 +140,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="13")
+    @Excel(name = "备注", height = 20, width = 30,orderNum="10")
     private String remark;
 
     /**
@@ -161,7 +161,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="14",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="12",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -177,7 +177,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="16",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="14",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
