@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -126,5 +127,13 @@ public interface OMFeignApi {
     @ApiOperation("销售订单明细列表")
     @PostMapping("/omSalesOrderDet/findList")
     ResponseEntity<List<OmSalesOrderDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrderDetDto searchOmSalesOrderDetDto);
+
+    @ApiOperation(value = "更新采购订单上架数量",notes = "更新采购订单上架数量")
+    @PostMapping("/omPurchaseOrder/updatePutawayQty")
+    ResponseEntity updatePutawayQty(@ApiParam(value = "必传操作类型",required = true)@RequestParam Byte opType,@ApiParam(value = "必传明细ID",required = true)@RequestParam Long purchaseOrderDetId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty);
+
+    @ApiOperation(value = "更新采购订单下推数量",notes = "更新采购订单下推数量")
+    @PostMapping("/omPurchaseOrder/updatePutDownQty")
+    ResponseEntity updatePutDownQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long purchaseOrderDetId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty);
 
 }
