@@ -88,7 +88,7 @@
                 and oio.order_status = #{orderStatus}
             </if>
             <if test="startTime != null and endTime != null ">
-                and date_format(oio.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d')  AND date_format(#{endTime}, '%Y-%m-%d')
+                and date_format(oio.order_date, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d')  AND date_format(#{endTime}, '%Y-%m-%d')
             </if>
         </where>
         order by oio.create_time desc

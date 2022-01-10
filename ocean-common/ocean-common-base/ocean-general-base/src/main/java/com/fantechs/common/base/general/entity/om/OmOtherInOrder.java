@@ -128,6 +128,7 @@ public class OmOtherInOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="orderDate",value = "订单日期")
     @Excel(name = "订单日期", height = 20, width = 30,orderNum="13")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "order_date")
     private Date orderDate;
 
