@@ -568,7 +568,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                     }
                     //按照最大的条码维度确定导入条码类型
                     WmsInnerMaterialBarcodeDto parentBarcode = new WmsInnerMaterialBarcodeDto();
-                    BeanUtil.copyProperties(wmsInnerMaterialBarcodeImport,parentBarcode);
+                    BeanUtil.copyProperties(addWmsInnerMaterialBarcode,parentBarcode);
                     parentBarcode.setCreateType((byte) 3);
                     parentBarcode.setPrintOrderTypeCode(printOrderTypeCode);
                     parentBarcode.setIfSysBarcode((byte) 1);

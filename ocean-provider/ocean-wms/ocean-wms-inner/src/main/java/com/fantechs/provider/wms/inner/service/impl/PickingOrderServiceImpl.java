@@ -815,6 +815,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         SysUser sysUser = currentUser();
         String[] arrId = ids.split(",");
         int num = 1;
+        Map<String, Object> map = new HashMap<>();
         for (String id : arrId) {
             WmsInnerJobOrder wmsInnerJobOrder = wmsInnerJobOrderMapper.selectByPrimaryKey(id);
             if(wmsInnerJobOrder.getOrderStatus()==(byte)3){
@@ -835,13 +836,12 @@ public class PickingOrderServiceImpl implements PickingOrderService {
 //                    throw new BizErrorException("未匹配到库位");
 //                }
                 Example inventorExample = new Example(WmsInnerInventory.class);
-                inventorExample.createCriteria().andEqualTo("warehouseId",wmsInnerJobOrder.getWarehouseId())
-                        .andEqualTo("materialId",wms.getMaterialId()).andEqualTo("jobStatus",1)
-                        .andEqualTo("lockStatus",0).andEqualTo("stockLock",0)
-                        .andGreaterThan("packingQty",0);
 
-                List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(inventorExample);
-                inventorExample.clear();
+                map.put("isStorage",1);
+                map.put("warehouseId",wmsInnerJobOrder.getWarehouseId());
+                map.put("materialId",wms.getMaterialId());
+                List<WmsInnerInventoryDto> wmsInnerInventories = wmsInnerInventoryMapper.findList(map);
+
                 if(StringUtils.isEmpty(wmsInnerInventories)) {
                     continue;
                 }
