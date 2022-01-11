@@ -142,9 +142,10 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
                 if(StringUtils.isNotEmpty(wmsInInPlanOrderDto.getSourceSysOrderTypeCode())){
                     SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
                     searchWmsInnerMaterialBarcodeReOrder.setOrderCode(wmsInInPlanOrderDetDto.getSourceOrderCode());
-                    searchWmsInnerMaterialBarcodeReOrder.setInspectionStatus((byte)2);
+                    //searchWmsInnerMaterialBarcodeReOrder.setInspectionStatus((byte)2);
                     if("QMS-MIIO".equals(wmsInInPlanOrderDto.getSourceSysOrderTypeCode())){
                         searchWmsInnerMaterialBarcodeReOrder.setOrderId(wmsInInPlanOrderDetDto.getSourceId());
+                        searchWmsInnerMaterialBarcodeReOrder.setInspectionStatus((byte)2);
                     }else{
                         searchWmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInInPlanOrderDetDto.getSourceId());
                     }

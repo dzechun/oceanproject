@@ -1435,12 +1435,13 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
             example.clear();
             criteria = example.createCriteria();
-                    criteria.andEqualTo("warehouseId",wmsInnerStockOrder.getWarehouseId()).andEqualTo("storageId",wmsInnerStockOrderDet.getStorageId())
-                    .andEqualTo("materialId",wmsInnerStockOrderDet.getMaterialId())
-                    .andEqualTo("stockLock",0)
-                    .andEqualTo("orgId",wmsInnerStockOrder.getOrganizationId())
-                    .andEqualTo("jobStatus",1)
-                    .andEqualTo("lockStatus",0);
+            criteria.andEqualTo("warehouseId",wmsInnerStockOrder.getWarehouseId())
+                    .andEqualTo("storageId",wmsInnerStockOrderDet.getStorageId())
+            .andEqualTo("materialId",wmsInnerStockOrderDet.getMaterialId())
+            .andEqualTo("stockLock",0)
+            .andEqualTo("orgId",wmsInnerStockOrder.getOrganizationId())
+            .andEqualTo("jobStatus",1)
+            .andEqualTo("lockStatus",0);
             if(StringUtils.isNotEmpty(wmsInnerStockOrderDet.getBatchCode())){
                 criteria.andEqualTo("batchCode",wmsInnerStockOrderDet.getBatchCode());
             }else {
