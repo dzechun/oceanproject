@@ -1192,77 +1192,81 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         //上架数量
         BigDecimal actualQty=wmsInnerJobOrderDet.getActualQty();
         //来源单据回写
-        switch (sourceSysOrderTypeCode) {
-            case "IN-PO":
-                //采购订单
-                omFeignApi.updatePutDownQty(sourceId,actualQty);
-                break;
-            case "IN-SRO":
-                //销退订单
-                omFeignApi.updateSalesReturnPutDownQty(sourceId,actualQty);
-                break;
-            case "IN-OIO":
-                //其它入库订单
-                omFeignApi.updateOtherInPutDownQty(sourceId,actualQty);
-                break;
-            case "IN-IPO":
-                //入库计划
-                inFeignApi.updatePutawayQty(opType,sourceId, actualQty);
-                break;
-            case "IN-SWK":
-                //收货作业
+        if(StringUtils.isNotEmpty(sourceSysOrderTypeCode)) {
+            switch (sourceSysOrderTypeCode) {
+                case "IN-PO":
+                    //采购订单
+                    omFeignApi.updatePutDownQty(sourceId, actualQty);
+                    break;
+                case "IN-SRO":
+                    //销退订单
+                    omFeignApi.updateSalesReturnPutDownQty(sourceId, actualQty);
+                    break;
+                case "IN-OIO":
+                    //其它入库订单
+                    omFeignApi.updateOtherInPutDownQty(sourceId, actualQty);
+                    break;
+                case "IN-IPO":
+                    //入库计划
+                    inFeignApi.updatePutawayQty(opType, sourceId, actualQty);
+                    break;
+                case "IN-SWK":
+                    //收货作业
 
-                break;
-            case "IN-SPO":
-                //收货计划
+                    break;
+                case "IN-SPO":
+                    //收货计划
 
-                break;
-            case "QMS-MIIO":
-                //来料检验
-                QmsIncomingInspectionOrder incomingOrder=new QmsIncomingInspectionOrder();
-                incomingOrder.setIncomingInspectionOrderId(sourceId);
-                //incomingOrder
+                    break;
+                case "QMS-MIIO":
+                    //来料检验
+                    QmsIncomingInspectionOrder incomingOrder = new QmsIncomingInspectionOrder();
+                    incomingOrder.setIncomingInspectionOrderId(sourceId);
+                    //incomingOrder
 //                incomingOrder.setIfAllIssued((byte)0);//是否已全部下发(0-否 1-是)
-                //qmsFeignApi.updateIfAllIssued(incomingOrder);
-                break;
-            default:
-                break;
+                    //qmsFeignApi.updateIfAllIssued(incomingOrder);
+                    break;
+                default:
+                    break;
+            }
         }
 
         //核心单据回写
-        switch (coreSourceTypeCode) {
-            case "IN-PO":
-                //采购订单
-                omFeignApi.updatePutawayQty(opType,coreSourceId,actualQty);
-                break;
-            case "IN-SRO":
-                //销退订单
+        if(StringUtils.isNotEmpty(coreSourceTypeCode)) {
+            switch (coreSourceTypeCode) {
+                case "IN-PO":
+                    //采购订单
+                    omFeignApi.updatePutawayQty(opType, coreSourceId, actualQty);
+                    break;
+                case "IN-SRO":
+                    //销退订单
 
-                break;
-            case "IN-OIO":
-                //其它入库订单
+                    break;
+                case "IN-OIO":
+                    //其它入库订单
 
-                break;
-            case "IN-IPO":
-                //入库计划
+                    break;
+                case "IN-IPO":
+                    //入库计划
 
-                break;
-            case "IN-SWK":
-                //收货作业
+                    break;
+                case "IN-SWK":
+                    //收货作业
 
-                break;
-            case "IN-SPO":
-                //收货计划
+                    break;
+                case "IN-SPO":
+                    //收货计划
 
-                break;
-            case "QMS-MIIO":
-                //来料检验
-                QmsIncomingInspectionOrder incomingOrder=new QmsIncomingInspectionOrder();
-                incomingOrder.setIncomingInspectionOrderId(sourceId);
+                    break;
+                case "QMS-MIIO":
+                    //来料检验
+                    QmsIncomingInspectionOrder incomingOrder = new QmsIncomingInspectionOrder();
+                    incomingOrder.setIncomingInspectionOrderId(sourceId);
 
-                break;
-            default:
-                break;
+                    break;
+                default:
+                    break;
+            }
         }
         return num;
     }

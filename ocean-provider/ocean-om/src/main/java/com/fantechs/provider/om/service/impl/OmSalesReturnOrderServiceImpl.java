@@ -348,7 +348,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     coreSourceSysOrderTypeCode = order.getSysOrderTypeCode();
                     if(StringUtils.isEmpty(coreSourceSysOrderTypeCode))
                         coreSourceSysOrderTypeCode="IN-SRO";
-                    
+
                     WmsInPlanReceivingOrderDetDto wmsInPlanReceivingOrderDetDto = new WmsInPlanReceivingOrderDetDto();
                     wmsInPlanReceivingOrderDetDto.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
                     wmsInPlanReceivingOrderDetDto.setSourceOrderCode(order.getSalesReturnOrderCode());
