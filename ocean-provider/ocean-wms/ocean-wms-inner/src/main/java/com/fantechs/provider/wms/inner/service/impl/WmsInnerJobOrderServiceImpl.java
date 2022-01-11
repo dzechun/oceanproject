@@ -2266,8 +2266,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     }
                 }
             }
-            map.put("materialBarcodeId","");
-            map.put("barcodeType","");
+            map.put("materialBarcodeId","0");
+            map.put("barcodeType","5");
             map.put("qty",0);
         }
 

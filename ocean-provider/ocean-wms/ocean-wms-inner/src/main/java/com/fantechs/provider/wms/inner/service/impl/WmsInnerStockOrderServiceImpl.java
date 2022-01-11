@@ -1114,6 +1114,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             barcodeResultDto.setMaterialQty(detBarcodeDtos.get(0).getMaterialQty());
             barcodeResultDto.setBarcode(barcode);
             barcodeResultDto.setMaterialId(detBarcodeDtos.get(0).getMaterialId());
+            barcodeResultDto.setMaterialBarcodeId(detBarcodeDtos.get(0).getMaterialBarcodeId());
         }
         else {
             searchOrderDetBarcode.setBarcode(null);
@@ -1128,6 +1129,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 barcodeResultDto.setMaterialQty(detBarcodeDtos.get(0).getMaterialQty());
                 barcodeResultDto.setBarcode(barcode);
                 barcodeResultDto.setMaterialId(detBarcodeDtos.get(0).getMaterialId());
+                barcodeResultDto.setMaterialBarcodeId(detBarcodeDtos.get(0).getMaterialBarcodeId());
             }
             else {
                 searchOrderDetBarcode.setBarcode(null);
@@ -1145,6 +1147,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     barcodeResultDto.setMaterialQty(totalQty);
                     barcodeResultDto.setBarcode(barcode);
                     barcodeResultDto.setMaterialId(detBarcodeDtos.get(0).getMaterialId());
+                    barcodeResultDto.setMaterialBarcodeId(detBarcodeDtos.get(0).getMaterialBarcodeId());
                 }
                 else {
                     searchOrderDetBarcode.setBarcode(null);
@@ -1163,6 +1166,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                         barcodeResultDto.setMaterialQty(totalQty);
                         barcodeResultDto.setBarcode(barcode);
                         barcodeResultDto.setMaterialId(detBarcodeDtos.get(0).getMaterialId());
+                        barcodeResultDto.setMaterialBarcodeId(detBarcodeDtos.get(0).getMaterialBarcodeId());
                     }
                 }
             }

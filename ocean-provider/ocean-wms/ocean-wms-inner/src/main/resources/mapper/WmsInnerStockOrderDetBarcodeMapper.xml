@@ -30,7 +30,7 @@
     <result column="pallet_code" jdbcType="VARCHAR" property="palletCode"/>
     <result column="production_time" jdbcType="VARCHAR" property="productionTime"/>
     <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
-
+    <result column="material_id" jdbcType="VARCHAR" property="materialId"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
@@ -59,6 +59,7 @@
   </sql>
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     SELECT <include refid="Base_Column_List"/>,
+    wimb.material_id,
     wimb.barcode,
     wimb.color_box_code,
     wimb.carton_code,
