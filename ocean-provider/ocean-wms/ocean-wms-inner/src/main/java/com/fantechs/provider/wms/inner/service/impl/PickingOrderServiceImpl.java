@@ -1152,7 +1152,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 }
                 //删除分配库存
                 Example example1 = new Example(WmsInnerInventory.class);
-                example1.createCriteria().andEqualTo("jobOrderDetId",wmsInnerJobOrderDet.getJobOrderDetId()).andEqualTo("jobStatus",(byte)0);
+                example1.createCriteria().andEqualTo("jobOrderDetId",wmsInnerJobOrderDet.getJobOrderDetId()).andEqualTo("jobStatus",(byte)2);
                 wmsInnerInventoryMapper.deleteByExample(example1);
             }
             wmsInnerJobOrderDetMapper.deleteByExample(example);
