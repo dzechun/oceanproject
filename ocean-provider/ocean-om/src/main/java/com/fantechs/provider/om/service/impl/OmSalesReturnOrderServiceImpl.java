@@ -346,7 +346,9 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     List<OmSalesReturnOrderDto> omSalesReturnOrderDto = omSalesReturnOrderMapper.findList(map);
                     OmSalesReturnOrderDto order = omSalesReturnOrderDto.get(0);
                     coreSourceSysOrderTypeCode = order.getSysOrderTypeCode();
-
+                    if(StringUtils.isEmpty(coreSourceSysOrderTypeCode))
+                        coreSourceSysOrderTypeCode="IN-SRO";
+                    
                     WmsInPlanReceivingOrderDetDto wmsInPlanReceivingOrderDetDto = new WmsInPlanReceivingOrderDetDto();
                     wmsInPlanReceivingOrderDetDto.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
                     wmsInPlanReceivingOrderDetDto.setSourceOrderCode(order.getSalesReturnOrderCode());
@@ -400,6 +402,8 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     List<OmSalesReturnOrderDto> omSalesReturnOrderDto = omSalesReturnOrderMapper.findList(map);
                     OmSalesReturnOrderDto order = omSalesReturnOrderDto.get(0);
                     coreSourceSysOrderTypeCode = order.getSysOrderTypeCode();
+                    if(StringUtils.isEmpty(coreSourceSysOrderTypeCode))
+                        coreSourceSysOrderTypeCode="IN-SRO";
 
                     WmsInReceivingOrderDetDto wmsInReceivingOrderDetDto = new WmsInReceivingOrderDetDto();
                     wmsInReceivingOrderDetDto.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
@@ -454,6 +458,8 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     List<OmSalesReturnOrderDto> omSalesReturnOrderDto = omSalesReturnOrderMapper.findList(map);
                     OmSalesReturnOrderDto order = omSalesReturnOrderDto.get(0);
                     coreSourceSysOrderTypeCode = order.getSysOrderTypeCode();
+                    if(StringUtils.isEmpty(coreSourceSysOrderTypeCode))
+                        coreSourceSysOrderTypeCode="IN-SRO";
 
                     QmsIncomingInspectionOrderDto qmsIncomingInspectionOrderDto = new QmsIncomingInspectionOrderDto();
                     qmsIncomingInspectionOrderDto.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
@@ -511,6 +517,8 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     List<OmSalesReturnOrderDto> omSalesReturnOrderDto = omSalesReturnOrderMapper.findList(map);
                     OmSalesReturnOrderDto order = omSalesReturnOrderDto.get(0);
                     coreSourceSysOrderTypeCode = order.getSysOrderTypeCode();
+                    if(StringUtils.isEmpty(coreSourceSysOrderTypeCode))
+                        coreSourceSysOrderTypeCode="IN-SRO";
 
                     WmsInInPlanOrderDetDto wmsInInPlanOrderDet = new WmsInInPlanOrderDetDto();
                     wmsInInPlanOrderDet.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
@@ -566,6 +574,8 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     List<OmSalesReturnOrderDto> omSalesReturnOrderDto = omSalesReturnOrderMapper.findList(map);
                     OmSalesReturnOrderDto order = omSalesReturnOrderDto.get(0);
                     coreSourceSysOrderTypeCode = order.getSysOrderTypeCode();
+                    if(StringUtils.isEmpty(coreSourceSysOrderTypeCode))
+                        coreSourceSysOrderTypeCode="IN-SRO";
 
                     WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
                     wmsInnerJobOrderDet.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
