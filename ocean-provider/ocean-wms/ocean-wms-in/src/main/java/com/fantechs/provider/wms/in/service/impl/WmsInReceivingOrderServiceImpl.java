@@ -150,7 +150,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                             //产生类型(1-供应商条码 2-自己打印 3-生产条码)
                             wmsInnerMaterialBarcode.setCreateType((byte)1);
                             //条码状态(1-已生成 2-已打印 3-已收货 4-已质检 5-已上架 6-已出库)
-                            wmsInnerMaterialBarcode.setBarcodeStatus((byte)5);
+                            wmsInnerMaterialBarcode.setBarcodeStatus((byte)3);
                             wmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
                             wmsInnerMaterialBarcode.setCreateTime(new Date());
                             wmsInnerMaterialBarcode.setCreateUserId(sysUser.getUserId());
@@ -289,7 +289,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                     //系统条码更新条码状态
                     WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcode=new WmsInnerMaterialBarcodeDto();
                     wmsInnerMaterialBarcode.setMaterialBarcodeId(wmsInReceivingOrderBarcode.getMaterialBarcodeId());
-                    wmsInnerMaterialBarcode.setBarcodeStatus((byte)5);
+                    wmsInnerMaterialBarcode.setBarcodeStatus((byte)3);
                     wmsInnerMaterialBarcode.setModifiedUserId(sysUser.getUserId());
                     wmsInnerMaterialBarcode.setModifiedTime(new Date());
                     wmsInnerMaterialBarcodeDtos.add(wmsInnerMaterialBarcode);
