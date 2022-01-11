@@ -29,11 +29,11 @@
         LEFT JOIN base_storage bs ON wii.storage_id = bs.storage_id
         LEFT JOIN base_material bm ON wii.material_id = bm.material_id
         LEFT JOIN base_inventory_status bis ON bis.inventory_status_id = wii.inventory_status_id
-<where>
-    wii.job_status=1 and bs.storage_type=1 and wii.packing_qty > 0
-<if test="warehouseName!=null and warehouseName!=''">
-    and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
-</if>
+        <where>
+            wii.job_status=1 and bs.storage_type=1 and wii.packing_qty > 0
+        <if test="warehouseName!=null and warehouseName!=''">
+            and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
+        </if>
         <if test="storageCode!=null and storageCode!=''">
             and bs.storage_code like CONCAT('%',#{storageCode},'%')
         </if>

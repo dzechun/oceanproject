@@ -488,12 +488,15 @@ public class BarcodeUtils {
                     List<MesSfcWorkOrderBarcodeDto> barcodeDtos = barcodeUtils.mesSfcWorkOrderBarcodeService.findList(new SearchMesSfcWorkOrderBarcode());
                     List<MesSfcWorkOrderBarcode> barcodes = new ArrayList<>();
                     for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : keyPartRelevanceDtos){
-                        if (keyPartRelevanceDto.getPartBarcode() != null){
-                            MesSfcWorkOrderBarcodeDto barcodeDto = barcodeDtos.stream().filter(item -> item.getBarcode().equals(keyPartRelevanceDto.getPartBarcode())).findFirst().get();
-                            MesSfcWorkOrderBarcode barcode = new MesSfcWorkOrderBarcode();
-                            barcode.setWorkOrderBarcodeId(barcodeDto.getWorkOrderBarcodeId());
-                            barcode.setBarcodeStatus((byte) 2);
-                            barcodes.add(barcode);
+                        if (keyPartRelevanceDto.getPartBarcode() != null && !barcodeDtos.isEmpty()){
+                            List<MesSfcWorkOrderBarcodeDto> orderBarcodeDtos = barcodeDtos.stream().filter(item -> item.getBarcode().equals(keyPartRelevanceDto.getPartBarcode())).collect(Collectors.toList());
+                            if (!orderBarcodeDtos.isEmpty()){
+                                MesSfcWorkOrderBarcodeDto barcodeDto = orderBarcodeDtos.get(0);
+                                MesSfcWorkOrderBarcode barcode = new MesSfcWorkOrderBarcode();
+                                barcode.setWorkOrderBarcodeId(barcodeDto.getWorkOrderBarcodeId());
+                                barcode.setBarcodeStatus((byte) 2);
+                                barcodes.add(barcode);
+                            }
                         }
                     }
                     if (barcodes.size() > 0){

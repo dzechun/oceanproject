@@ -97,6 +97,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         // 获取登录用户
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
+        String customerBarcode = null;
         if (dto.getBarCode().length() != 23){
             // 万宝项目-判断是三星客户条码还是厂内码
             SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
@@ -110,6 +111,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 if (mesSfcBarcodeProcesses.isEmpty()){
                     throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码BarcodeUtils：" + dto.getBarCode() + "在系统中不存在");
                 }
+                customerBarcode = dto.getBarCode();
                 MesSfcBarcodeProcess barcodeProcess = mesSfcBarcodeProcesses.get(0);
                 dto.setBarCode(barcodeProcess.getBarcode());
             }
@@ -445,6 +447,35 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     // 但是附件数量不满足工单清单用量，直接返回
                     return false;
                 }
+            }
+        }else {
+            if (StringUtils.isNotEmpty(customerBarcode)){
+                // 不扫附件码，只扫一次，是三星客户条码，需补充附件码关键物料条码表数据
+                mesSfcKeyPartRelevanceService.save(MesSfcKeyPartRelevance.builder()
+                        .barcodeCode(dto.getBarCode())
+                        .workOrderId(mesPmWorkOrder.getWorkOrderId())
+                        .workOrderCode(mesPmWorkOrder.getWorkOrderCode())
+                        .workOrderBarcodeId(orderBarcodeDto.getWorkOrderBarcodeId())
+                        .proLineId(proLine.getProLineId())
+                        .proCode(proLine.getProCode())
+                        .proName(proLine.getProName())
+                        .processId(baseProcess.getProcessId())
+                        .processCode(baseProcess.getProcessCode())
+                        .processName(baseProcess.getProcessName())
+                        .stationId(baseStation.getStationId())
+                        .stationCode(baseStation.getStationCode())
+                        .stationName(baseStation.getStationName())
+                        .materialId(mesPmWorkOrder.getMaterialId())
+                        .materialCode(mesSfcBarcodeProcess.getMaterialCode())
+                        .materialName(mesSfcBarcodeProcess.getMaterialName())
+                        .partBarcode(customerBarcode)
+                        .operatorUserId(user.getUserId())
+                        .operatorTime(new Date())
+                        .orgId(user.getOrganizationId())
+                        .createTime(new Date())
+                        .createUserId(user.getUserId())
+                        .isDelete((byte) 1)
+                        .build());
             }
         }
         // 6、判断是否已有箱码，生成箱码
