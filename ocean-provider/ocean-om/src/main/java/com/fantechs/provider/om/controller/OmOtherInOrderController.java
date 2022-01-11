@@ -1,6 +1,7 @@
 package com.fantechs.provider.om.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.om.OmHtOtherInOrderDto;
 import com.fantechs.common.base.general.dto.om.OmOtherInOrderDto;
 import com.fantechs.common.base.general.entity.om.OmOtherInOrder;
 import com.fantechs.common.base.general.entity.om.OmOtherInOrderDet;
@@ -10,6 +11,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.om.service.OmOtherInOrderService;
+import com.fantechs.provider.om.service.ht.OmHtOtherInOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -22,6 +24,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -36,6 +39,8 @@ public class OmOtherInOrderController {
 
     @Resource
     private OmOtherInOrderService omOtherInOrderService;
+    @Resource
+    private OmHtOtherInOrderService omHtOtherInOrderService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -72,9 +77,9 @@ public class OmOtherInOrderController {
 
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<OmOtherInOrderDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchOmOtherInOrder searchOmOtherInOrder) {
+    public ResponseEntity<List<OmHtOtherInOrderDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchOmOtherInOrder searchOmOtherInOrder) {
         Page<Object> page = PageHelper.startPage(searchOmOtherInOrder.getStartPage(),searchOmOtherInOrder.getPageSize());
-        List<OmOtherInOrderDto> list = omOtherInOrderService.findHtList(ControllerUtil.dynamicConditionByEntity(searchOmOtherInOrder));
+        List<OmHtOtherInOrderDto> list = omHtOtherInOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchOmOtherInOrder));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -107,5 +112,11 @@ public class OmOtherInOrderController {
     @PostMapping("/pushDown")
     public ResponseEntity pushDown(@ApiParam(value = "其他入库计划ID列表，多个逗号分隔",required = true)@RequestBody  List<OmOtherInOrderDet> omOtherInOrderDets) {
         return ControllerUtil.returnCRUD(omOtherInOrderService.pushDown(omOtherInOrderDets));
+    }
+
+    @ApiOperation(value = "更新其他入库订单下推数量",notes = "更新其他入库订单下推数量")
+    @PostMapping("/updateOtherInPutDownQty")
+    public ResponseEntity updateOtherInPutDownQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long purchaseOrderDetId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty) {
+        return ControllerUtil.returnCRUD(omOtherInOrderService.updateOtherInPutDownQty(purchaseOrderDetId,putawayQty));
     }
 }

@@ -1,16 +1,16 @@
 package com.fantechs.common.base.general.entity.om;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 ;
@@ -19,17 +19,17 @@ import java.util.Date;
 /**
  * 其他入库订单履历表
  * om_ht_other_in_order
- * @author mr.lei
- * @date 2021-06-21 17:40:47
+ * @author 81947
+ * @date 2022-01-10 14:08:48
  */
 @Data
 @Table(name = "om_ht_other_in_order")
 public class OmHtOtherInOrder extends ValidGroup implements Serializable {
     /**
-     * 其他入库订单履历表ID
+     * 其他入库订单履历ID
      */
-    @ApiModelProperty(name="htOtherInOrderId",value = "其他入库订单履历表ID")
-    @Excel(name = "其他入库订单履历表ID", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="htOtherInOrderId",value = "其他入库订单履历ID")
+    @Excel(name = "其他入库订单履历ID", height = 20, width = 30,orderNum="") 
     @Id
     @Column(name = "ht_other_in_order_id")
     private Long htOtherInOrderId;
@@ -41,6 +41,38 @@ public class OmHtOtherInOrder extends ValidGroup implements Serializable {
     @Excel(name = "其他入库订单ID", height = 20, width = 30,orderNum="") 
     @Column(name = "other_in_order_id")
     private Long otherInOrderId;
+
+    /**
+     * 核心单据类型编码
+     */
+    @ApiModelProperty(name="coreSourceSysOrderTypeCode",value = "核心单据类型编码")
+    @Excel(name = "核心单据类型编码", height = 20, width = 30,orderNum="") 
+    @Column(name = "core_source_sys_order_type_code")
+    private String coreSourceSysOrderTypeCode;
+
+    /**
+     * 来源单据类型编码
+     */
+    @ApiModelProperty(name="sourceSysOrderTypeCode",value = "来源单据类型编码")
+    @Excel(name = "来源单据类型编码", height = 20, width = 30,orderNum="") 
+    @Column(name = "source_sys_order_type_code")
+    private String sourceSysOrderTypeCode;
+
+    /**
+     * 来源大类(1-系统下推 2-自建 3-第三方系统)
+     */
+    @ApiModelProperty(name="sourceBigType",value = "来源大类(1-系统下推 2-自建 3-第三方系统)")
+    @Excel(name = "来源大类(1-系统下推 2-自建 3-第三方系统)", height = 20, width = 30,orderNum="") 
+    @Column(name = "source_big_type")
+    private Byte sourceBigType;
+
+    /**
+     * 系统单据类型编码
+     */
+    @ApiModelProperty(name="sysOrderTypeCode",value = "系统单据类型编码")
+    @Excel(name = "系统单据类型编码", height = 20, width = 30,orderNum="") 
+    @Column(name = "sys_order_type_code")
+    private String sysOrderTypeCode;
 
     /**
      * 其他入库订单单号
@@ -59,60 +91,13 @@ public class OmHtOtherInOrder extends ValidGroup implements Serializable {
     private String relatedOrderCode;
 
     /**
-     * 货主ID
+     * 计划完成时间
      */
-    @ApiModelProperty(name="materialOwnerId",value = "货主ID")
-    @Excel(name = "货主ID", height = 20, width = 30,orderNum="") 
-    @Column(name = "material_owner_id")
-    private Long materialOwnerId;
-
-    /**
-     * 总加入数量
-     */
-    @ApiModelProperty(name="totalIssueQty",value = "总加入数量")
-    @Excel(name = "总加入数量", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_issue_qty")
-    private BigDecimal totalIssueQty;
-
-    /**
-     * 总收货数量
-     */
-    @ApiModelProperty(name="totalReceivingQty",value = "总收货数量")
-    @Excel(name = "总收货数量", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_receiving_qty")
-    private BigDecimal totalReceivingQty;
-
-    /**
-     * 订单总数量
-     */
-    @ApiModelProperty(name="totalQty",value = "订单总数量")
-    @Excel(name = "订单总数量", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_qty")
-    private BigDecimal totalQty;
-
-    /**
-     * 订单总体积
-     */
-    @ApiModelProperty(name="totalVolume",value = "订单总体积")
-    @Excel(name = "订单总体积", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_volume")
-    private BigDecimal totalVolume;
-
-    /**
-     * 订单总净重
-     */
-    @ApiModelProperty(name="totalNetWeight",value = "订单总净重")
-    @Excel(name = "订单总净重", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_net_weight")
-    private BigDecimal totalNetWeight;
-
-    /**
-     * 订单总毛重
-     */
-    @ApiModelProperty(name="totalGrossWeight",value = "订单总毛重")
-    @Excel(name = "订单总毛重", height = 20, width = 30,orderNum="") 
-    @Column(name = "total_gross_weight")
-    private BigDecimal totalGrossWeight;
+    @ApiModelProperty(name="planCompleteTime",value = "计划完成时间")
+    @Excel(name = "计划完成时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @Column(name = "plan_complete_time")
+    private Date planCompleteTime;
 
     /**
      * 订单状态(1-打开 2-下发中  3-已下发 4-完成)
@@ -136,14 +121,6 @@ public class OmHtOtherInOrder extends ValidGroup implements Serializable {
     @Excel(name = "订单日期", height = 20, width = 30,orderNum="") 
     @Column(name = "order_date")
     private Date orderDate;
-
-    /**
-     * 要求完成日期
-     */
-    @ApiModelProperty(name="planCompleteTime",value = "要求完成日期")
-    @Excel(name = "要求完成日期", height = 20, width = 30,orderNum="")
-    @Column(name = "plan_complete_time")
-    private Date planCompleteTime;
 
     /**
      * 备注
@@ -172,8 +149,8 @@ public class OmHtOtherInOrder extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "create_time")
     private Date createTime;
 
@@ -190,7 +167,7 @@ public class OmHtOtherInOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
     @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Column(name = "modified_time")
     private Date modifiedTime;
 

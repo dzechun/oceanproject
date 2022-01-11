@@ -50,8 +50,8 @@
         LEFT JOIN sys_user suc ON bw.create_user_id = suc.user_id
         LEFT JOIN sys_user sumod ON bw.modified_user_id = sumod.user_id
         <where>
-            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-                AND date_format(bw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            <if test="startTime != null and endTime != null">
+                AND date_format(bw.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
             </if>
             <if test="userName != null and userName != ''">
                 AND su.user_name LIKE CONCAT('%', #{userName}, '%')

@@ -571,6 +571,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                     addWmsInnerMaterialBarcode.setCreateType((byte) 3);
                     addWmsInnerMaterialBarcode.setPrintOrderTypeCode(printOrderTypeCode);
                     addWmsInnerMaterialBarcode.setIfSysBarcode((byte) 1);
+                    addWmsInnerMaterialBarcode.setBarcodeStatus((byte) 1);
                     wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(addWmsInnerMaterialBarcode);
                     dataList.add(addWmsInnerMaterialBarcode);
                     //添加履历

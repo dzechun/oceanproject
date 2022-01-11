@@ -95,7 +95,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
         SysUser currentUser = currentUser();
 
 
-        if(StringUtils.isEmpty(mesPmWorkOrderDto.getWorkOrderCode())){
+/*        if(StringUtils.isEmpty(mesPmWorkOrderDto.getWorkOrderCode())){
             mesPmWorkOrderDto.setWorkOrderCode(CodeUtils.getId("WORK"));
         }else{
             Example example = new Example(MesPmWorkOrder.class);
@@ -106,7 +106,8 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
             if (StringUtils.isNotEmpty(mesPmWorkOrders)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012001);
             }
-        }
+        }*/
+        mesPmWorkOrderDto.setWorkOrderCode(CodeUtils.getId("MES-WO"));
         mesPmWorkOrderDto.setTotalIssueQty(BigDecimal.ZERO);
         mesPmWorkOrderDto.setWorkOrderStatus((byte) 1);
         mesPmWorkOrderDto.setCreateUserId(currentUser.getUserId());
@@ -350,6 +351,8 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
         List<MesPmWorkOrderBom> boms = new ArrayList<>();
         if(StringUtils.isNotEmpty(mesPmWorkOrderDto.getMesPmWorkOrderBomDtos())) {
             for (MesPmWorkOrderBomDto mesPmWorkOrderBomDto :  mesPmWorkOrderDto.getMesPmWorkOrderBomDtos()) {
+                if(StringUtils.isEmpty(mesPmWorkOrderBomDto.getSingleQty()))
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"单个用量不能为空");
                 mesPmWorkOrderBomDto.setCreateUserId(user.getUserId());
                 mesPmWorkOrderBomDto.setCreateTime(new Date());
                 mesPmWorkOrderBomDto.setModifiedUserId(user.getUserId());
@@ -589,7 +592,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                 //生成收货计划
                 List<WmsInPlanReceivingOrderDetDto> detList = new LinkedList<>();
 
-                for (MesPmWorkOrder mesPmWorkOrder : mesPmWorkOrders) {
+                for (MesPmWorkOrder mesPmWorkOrder : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     WmsInPlanReceivingOrderDetDto wmsInPlanReceivingOrderDetDto = new WmsInPlanReceivingOrderDetDto();
@@ -636,7 +639,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
 
                 List<WmsInReceivingOrderDetDto> detList = new LinkedList<>();
 
-                for (MesPmWorkOrder mesPmWorkOrder : mesPmWorkOrders) {
+                for (MesPmWorkOrder mesPmWorkOrder : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     WmsInReceivingOrderDetDto wmsInReceivingOrderDetDto = new WmsInReceivingOrderDetDto();
@@ -682,7 +685,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                 //生成来料检验单
 
                 List<QmsIncomingInspectionOrderDto> detList = new LinkedList<>();
-                for (MesPmWorkOrder mesPmWorkOrder : mesPmWorkOrders) {
+                for (MesPmWorkOrder mesPmWorkOrder : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     QmsIncomingInspectionOrderDto qmsIncomingInspectionOrderDto = new QmsIncomingInspectionOrderDto();
@@ -729,7 +732,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
 
                 List<WmsInInPlanOrderDetDto> detList = new LinkedList<>();
 
-                for (MesPmWorkOrder mesPmWorkOrder : mesPmWorkOrders) {
+                for (MesPmWorkOrder mesPmWorkOrder : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     WmsInInPlanOrderDetDto wmsInInPlanOrderDet = new WmsInInPlanOrderDetDto();
@@ -774,7 +777,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                 //生成上架作业单
 
                 List<WmsInnerJobOrderDet> detList = new LinkedList<>();
-                for (MesPmWorkOrder mesPmWorkOrder : mesPmWorkOrders) {
+                for (MesPmWorkOrder mesPmWorkOrder : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();

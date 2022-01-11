@@ -35,7 +35,6 @@
     </resultMap>
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
                type="com.fantechs.common.base.general.dto.om.OmSalesReturnOrderDto">
-        <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
@@ -92,11 +91,11 @@
             <if test="orderStatus!=null and orderStatus!=''">
                 and osro.order_status = #{orderStatus}
             </if>
-            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-                and date_format(osro.order_date, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            <if test="startTime != null and endTime != null ">
+                and date_format(osro.order_date, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d')  AND date_format(#{endTime}, '%Y-%m-%d')
             </if>
-            <if test="completeDate!=null and completeDate!=''">
-                and date_format(osro.complete_date,'%Y-%m-%d') = #{completeDate}
+            <if test="completeDate!=null">
+                and date_format(osro.complete_date,'%Y-%m-%d') = date_format(#{completeDate}, '%Y-%m-%d')
             </if>
         </where>
         order by osro.create_time desc

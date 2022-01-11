@@ -58,7 +58,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
     WmsInnerJobOrderDetBarcodeService wmsInnerJobOrderDetBarcodeService;
 
     @Resource
-    WmsInnerHtJobOrderDetBarcodeService wmsInnerHtJobOrderDetBarcodeService;
+    private WmsInnerInventoryDetMapper wmsInnerInventoryDetMapper;
 
     @Resource
     WmsInnerInventoryDetService wmsInnerInventoryDetService;
@@ -244,7 +244,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
 
             innerJobOrder = new WmsInnerJobOrder();
             SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
-            searchBaseStorage.setStorageId(dto.getInStorageId());
+            searchBaseStorage.setStorageId(dto.getOutStorageId());
             List<BaseStorage> baseStorage = baseFeignApi.findList(searchBaseStorage).getData();
             if(StringUtils.isEmpty(baseStorage))
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到移出库位");
@@ -337,21 +337,36 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
 
         }
 
+        //保存条码
         if (!dto.getPdaWmsInnerDirectTransferOrderDetDtos().isEmpty()) {
             List<WmsInnerJobOrderDetBarcode> jobOrderDetBarcodeList = new ArrayList<>();
             List<WmsInnerMaterialBarcodeReOrder> wmsInnerMaterialBarcodeReOrders = new ArrayList<>();
 
             for (PDAWmsInnerDirectTransferOrderDetDto barcode : dto.getPdaWmsInnerDirectTransferOrderDetDtos()) {
 
-                //查询条码
+                //查询条码是否存在
                 Example example2 = new Example(WmsInnerMaterialBarcode.class);
                 Example.Criteria criteria2 = example2.createCriteria();
                 criteria2.andEqualTo("materialId", dto.getMaterialId());
                 criteria2.andEqualTo("materialBarcodeId", barcode.getMaterialBarcodeId());
                 List<WmsInnerMaterialBarcode> wmsInnerMaterialBarcodes = wmsInnerMaterialBarcodeMapper.selectByExample(example2);
                 if(StringUtils.isEmpty(wmsInnerMaterialBarcodes)){
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到对应的物料条码，条码为："+barcode.getBarcode());
+                    throw new BizErrorException(ErrorCodeEnum.PDA5001004);
                 }
+
+                //查询条码是否在库,更新库存明细状态
+                Example example3 = new Example(WmsInnerInventoryDet.class);
+                Example.Criteria criteria3 = example3.createCriteria()
+                        .andEqualTo("storageId", dto.getOutStorageId())
+                        .andEqualTo("materialBarcodeId", barcode.getMaterialBarcodeId())
+                        .andEqualTo("barcodeStatus", 1);
+                List<WmsInnerInventoryDet> wmsInnerInventoryDets = wmsInnerInventoryDetMapper.selectByExample(example3);
+                if(StringUtils.isEmpty(wmsInnerInventoryDets)){
+                    throw new BizErrorException(ErrorCodeEnum.PDA5001009);
+                }
+                WmsInnerInventoryDet det =wmsInnerInventoryDets.get(0);
+                det.setBarcodeStatus((byte)2);
+                wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(det);
 
                 // 创建条码移位单明细关系
                 WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
@@ -485,7 +500,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             //wmsInnerInventoryService.delete(wmsInnerInventory);
         }
 
-        //更新库存明细  待测试
+        //更新库存明细、状态
         Example example1 = new Example(WmsInnerMaterialBarcodeReOrderDto.class);
         example1.createCriteria().andEqualTo("jobOrderDetId", dto.getJobOrderDetId());
         List<WmsInnerMaterialBarcodeReOrder> wmsInnerMaterialBarcodeReOrders = wmsInnerMaterialBarcodeReOrderMapper.selectByExample(example1);
@@ -500,6 +515,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 }
                 WmsInnerInventoryDetDto inventoryDetDto = inventoryDetDtos.get(0);
                 inventoryDetDto.setStorageId(dto.getStorageId());
+                inventoryDetDto.setBarcodeType((byte)1);
                 wmsInnerInventoryDetService.update(inventoryDetDto);
             }
         }

@@ -8,7 +8,8 @@
         <id column="ht_sales_return_order_id" jdbcType="BIGINT" property="htSalesReturnOrderId"/>
         <result column="sales_return_order_id" jdbcType="BIGINT" property="salesReturnOrderId"/>
         <result column="sales_return_order_code" jdbcType="VARCHAR" property="salesReturnOrderCode"/>
-        <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode"/>
+        <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode"/>
+        <result column="source_big_type" jdbcType="TINYINT" property="sourceBigType"/>
         <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty"/>
         <result column="total_receiving_qty" jdbcType="DECIMAL" property="totalReceivingQty"/>
         <result column="total_qty" jdbcType="DECIMAL" property="totalQty"/>
@@ -32,16 +33,15 @@
     </resultMap>
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
                type="com.fantechs.common.base.general.dto.om.OmHtSalesReturnOrderDto">
-        <result column="material_owner_name" jdbcType="VARCHAR" property="materialOwnerName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     </resultMap>
+
     <sql id="Base_Column_List">
         osro.ht_sales_return_order_id,
         osro.sales_return_order_id,
         osro.sales_return_order_code,
-        osro.related_order_code,
         osro.total_issue_qty,
         osro.total_receiving_qty,
         osro.total_qty,
@@ -64,7 +64,7 @@
         osro.option3
   </sql>
     <select id="findList" resultMap="BaseResultMapDto">
-        SELECT<include refid="Base_Column_List"/>, bmo.material_owner_name,su.user_name as
+        SELECT<include refid="Base_Column_List"/>,su.user_name as
         create_user_name,sus.user_name as modified_user_name,bo.organization_name,
         (SELECT SUM(osrod.order_qty) FROM om_sales_return_order_det osrod where osrod.sales_return_order_id =
         osro.sales_return_order_id) as total_qty,
@@ -92,14 +92,11 @@
             <if test="orgId!=null and orgId!=''">
                 and osro.org_id = #{orgId}
             </if>
-            <if test="materialOwnerName!=null and materialOwnerName!=''">
-                and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')
-            </if>
             <if test="orderStatus!=null and orderStatus!=''">
                 and osro.order_status = #{orderStatus}
             </if>
-            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-                and date_format(osro.order_date, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            <if test="startTime!= null and endTime != null">
+                and date_format(osro.order_date, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d')  AND date_format(#{endTime}, '%Y-%m-%d')
             </if>
         </where>
         order by osro.create_time desc

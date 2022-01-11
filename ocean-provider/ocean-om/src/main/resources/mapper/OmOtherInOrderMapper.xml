@@ -9,12 +9,6 @@
         <result column="other_in_order_code" jdbcType="VARCHAR" property="otherInOrderCode"/>
         <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode"/>
         <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode"/>
-        <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty"/>
-        <result column="total_receiving_qty" jdbcType="DECIMAL" property="totalReceivingQty"/>
-        <result column="total_qty" jdbcType="DECIMAL" property="totalQty"/>
-        <result column="total_volume" jdbcType="DECIMAL" property="totalVolume"/>
-        <result column="total_net_weight" jdbcType="DECIMAL" property="totalNetWeight"/>
-        <result column="total_gross_weight" jdbcType="DECIMAL" property="totalGrossWeight"/>
         <result column="order_status" jdbcType="TINYINT" property="orderStatus"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="order_date" jdbcType="TIMESTAMP" property="orderDate"/>
@@ -63,19 +57,19 @@
         SELECT<include refid="Base_Column_List"/>,su.user_name as
         create_user_name,sus.user_name as modified_user_name,bo.organization_name,
         (SELECT SUM(oiod.order_qty) FROM om_other_in_order_det oiod where oiod.other_in_order_id =
-        oio.other_in_order_id) as total_qty,
+        oio.other_in_order_id) as totalQty,
         (SELECT SUM(oiod.issue_qty) FROM om_other_in_order_det oiod where oiod.other_in_order_id =
-        oio.other_in_order_id) as total_issue_qty,
+        oio.other_in_order_id) as totalIssueQty,
         (SELECT SUM(oiod.receiving_qty) FROM om_other_in_order_det oiod where oiod.other_in_order_id =
-        oio.other_in_order_id) as total_receiving_qty,
+        oio.other_in_order_id) as totalReceivingQty,
         (SELECT IFNULL(SUM(bmb.volume*oiod.order_qty),0) FROM om_other_in_order_det oiod left join base_material_tab bmb
-        ON oiod.material_id = bmb.material_id where oiod.other_in_order_id = oio.other_in_order_id) as total_volume,
+        ON oiod.material_id = bmb.material_id where oiod.other_in_order_id = oio.other_in_order_id) as totalVolume,
         (SELECT IFNULL(SUM(bmb.net_weight*oiod.order_qty),0) FROM om_other_in_order_det oiod left join base_material_tab
         bmb ON oiod.material_id = bmb.material_id where oiod.other_in_order_id = oio.other_in_order_id) as
-        total_net_weight,
+        totalNetWeight,
         (SELECT IFNULL(SUM(bmb.gross_weight*oiod.order_qty),0) FROM om_other_in_order_det oiod left join
         base_material_tab bmb ON oiod.material_id = bmb.material_id where oiod.other_in_order_id =
-        oio.other_in_order_id) as total_gross_weight
+        oio.other_in_order_id) as totalGrossWeight
         FROM om_other_in_order oio
         left join sys_user su on oio.create_user_id = su.user_id
         left join sys_user sus on oio.modified_user_id = sus.user_id
@@ -93,14 +87,14 @@
             <if test="orderStatus!=null and orderStatus!=''">
                 and oio.order_status = #{orderStatus}
             </if>
-            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-                and date_format(oio.order_date, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            <if test="startTime != null and endTime != null ">
+                and date_format(oio.order_date, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d')  AND date_format(#{endTime}, '%Y-%m-%d')
             </if>
         </where>
         order by oio.create_time desc
     </select>
     <select id="findMaterial" resultMap="BaseResultMap">
-    select IFNULL(bmb.volume,0) as total_volume,IFNULL(bmb.net_weight,0) as total_net_weight,IFNULL(bmb.gross_weight,0) as total_gross_weight
+    select IFNULL(bmb.volume,0) as total_volume,IFNULL(bmb.net_weight,0) as totalNetWeight,IFNULL(bmb.gross_weight,0) as totalGrossWeight
     From base_material bm
            left join base_material_tab bmb ON bm.material_id = bmb.material_id
     where bm.material_id = #{materialId}

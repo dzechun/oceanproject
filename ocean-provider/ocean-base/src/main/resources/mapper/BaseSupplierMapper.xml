@@ -75,8 +75,8 @@
                 IF ((SELECT supplier_id FROM base_supplier_re_user WHERE user_id = #{userId} AND organization_id = #{orgId} LIMIT 1) IS NULL,
                 1=1,ss.supplier_id =(SELECT supplier_id FROM base_supplier_re_user WHERE user_id = #{userId} AND organization_id = #{orgId} LIMIT 1))
             </if>
-            <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">
-                AND date_format(ss.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            <if test="startTime!= null and endTime!= null">
+                AND date_format(ss.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
             </if>
             <if test="supplierCode!=null and supplierCode!=''">
                 and ss.supplier_code like CONCAT('%', #{supplierCode}, '%')

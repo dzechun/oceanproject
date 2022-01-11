@@ -49,8 +49,8 @@
     left join sys_user sus on bhw.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON bhw.org_id = bo.organization_id
     <where>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
-        and date_format(bhw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      <if test="startTime!= null and endTime!= null">
+        and date_format(bhw.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
       </if>
       <if test="(warningType != null and warningType != '') or warningType == 0">
         and bhw.warning_type = #{warningType}

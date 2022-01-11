@@ -162,6 +162,7 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
                         wmsInPlanReceivingOrder.setCoreSourceSysOrderTypeCode(srmInAsnOrder.getSourceSysOrderTypeCode());
                         wmsInPlanReceivingOrder.setSourceSysOrderTypeCode(srmInAsnOrder.getSourceSysOrderTypeCode());
                         wmsInPlanReceivingOrder.setSourceBigType((byte) 1);
+                        wmsInPlanReceivingOrder.setSourceSysOrderTypeCode("SRM-ASN");
 
                         WmsInPlanReceivingOrderDetDto wmsInPlanReceivingOrderDetDto = new WmsInPlanReceivingOrderDetDto();
                         wmsInPlanReceivingOrderDetDto.setCoreSourceOrderCode(srmInAsnOrderDetDto.getCoreSourceOrderCode());
@@ -182,6 +183,7 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
                         wmsInReceivingOrder.setCoreSourceSysOrderTypeCode(srmInAsnOrder.getSourceSysOrderTypeCode());
                         wmsInReceivingOrder.setSourceSysOrderTypeCode(srmInAsnOrder.getSourceSysOrderTypeCode());
                         wmsInReceivingOrder.setSourceBigType((byte) 1);
+                        wmsInReceivingOrder.setSourceSysOrderTypeCode("SRM-ASN");
 
                         WmsInReceivingOrderDetDto wmsInReceivingOrderDetDto = new WmsInReceivingOrderDetDto();
                         wmsInReceivingOrderDetDto.setCoreSourceOrderCode(srmInAsnOrderDetDto.getCoreSourceOrderCode());
@@ -198,8 +200,9 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
                         QmsIncomingInspectionOrderDto qmsIncomingInspectionOrderDto = new QmsIncomingInspectionOrderDto();
                         qmsIncomingInspectionOrderDto.setSourceId(srmInAsnOrderDetDto.getAsnOrderDetId());
                         qmsIncomingInspectionOrderDto.setSourceOrderCode(srmInAsnOrderDetDto.getAsnCode());
-                        qmsIncomingInspectionOrderDto.setSourceSysOrderTypeCode(srmInAsnOrder.getSourceSysOrderTypeCode());
+                        qmsIncomingInspectionOrderDto.setSourceSysOrderTypeCode("SRM-ASN");
                         qmsIncomingInspectionOrderDto.setSourceBigType((byte) 1);
+//                        qmsIncomingInspectionOrderDto.setSourceSysOrderTypeCode();
                         qmsIncomingInspectionOrderDto.setCoreSourceSysOrderTypeCode(srmInAsnOrder.getSourceSysOrderTypeCode());
                         qmsIncomingInspectionOrderDto.setCoreSourceOrderCode(srmInAsnOrderDetDto.getCoreSourceOrderCode());
                         qmsIncomingInspectionOrderDto.setMaterialId(srmInAsnOrderDetDto.getMaterialId());
@@ -213,7 +216,7 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
                         wmsInInPlanOrder.setOrderStatus((byte) 1);
                         wmsInInPlanOrder.setCoreSourceSysOrderTypeCode(srmInAsnOrder.getSourceSysOrderTypeCode());
                         wmsInInPlanOrder.setSourceSysOrderTypeCode(srmInAsnOrder.getSourceSysOrderTypeCode());
-
+                        wmsInInPlanOrder.setSourceSysOrderTypeCode("SRM-ASN");
 
                         WmsInInPlanOrderDetDto wmsInInPlanOrderDetDto = new WmsInInPlanOrderDetDto();
                         wmsInInPlanOrderDetDto.setCoreSourceOrderCode(srmInAsnOrderDetDto.getCoreSourceOrderCode());
@@ -232,6 +235,7 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
                         wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(srmInAsnOrder.getSourceSysOrderTypeCode());
                         wmsInnerJobOrder.setSourceSysOrderTypeCode(srmInAsnOrder.getSourceSysOrderTypeCode());
                         wmsInnerJobOrder.setSourceBigType((byte) 1);
+                        wmsInnerJobOrder.setSourceSysOrderTypeCode("SRM-ASN");
 
                         searchBaseStorage.setWarehouseId(srmInAsnOrderDetDto.getWarehouseId());
                         searchBaseStorage.setStorageType((byte) 2);

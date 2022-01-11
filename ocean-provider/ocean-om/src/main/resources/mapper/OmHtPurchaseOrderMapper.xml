@@ -152,10 +152,9 @@
       <if test="supplierName != null and supplierName != ''">
         and bs.supplier_name like CONCAT('%', #{supplierName}, '%')
       </if>
-      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-        and date_format(ohpo.create_time, '%Y-%m-%d') <![CDATA[ >= ]]> #{startTime}
-        and date_format(ohpo.create_time, '%Y-%m-%d') <![CDATA[ <= ]]> #{endTime}
-      </if>
+        <if test="startTime != null and endTime != null ">
+            and date_format(opo.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d')  AND date_format(#{endTime}, '%Y-%m-%d')
+        </if>
     </where>
     group by ohpo.ht_purchase_order_id
     order by ohpo.create_time desc

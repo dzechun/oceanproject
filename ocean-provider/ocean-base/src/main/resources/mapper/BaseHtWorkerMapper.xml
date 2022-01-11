@@ -53,8 +53,8 @@
         LEFT JOIN base_organization bo ON bhw.org_id = bo.organization_id
 
         <where>
-            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-                AND date_format(bhw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            <if test="startTime!= null and endTime!= null">
+                AND date_format(bhw.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
             </if>
             <if test="userName != null and userName != ''">
                 AND su.user_name LIKE CONCAT('%', #{userName}, '%')

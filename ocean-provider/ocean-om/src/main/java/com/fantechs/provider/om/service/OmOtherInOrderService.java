@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.entity.om.OmOtherInOrder;
 import com.fantechs.common.base.general.entity.om.OmOtherInOrderDet;
 import com.fantechs.common.base.support.IService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 /**
@@ -14,8 +15,6 @@ import java.util.Map;
 
 public interface OmOtherInOrderService extends IService<OmOtherInOrder> {
     List<OmOtherInOrderDto> findList(Map<String, Object> map);
-
-    List<OmOtherInOrderDto> findHtList(Map<String,Object> map);
 
     int packageAutoOutOrder(OmOtherInOrder omOtherInOrder);
 
@@ -27,4 +26,6 @@ public interface OmOtherInOrderService extends IService<OmOtherInOrder> {
     int writeQty(OmOtherInOrderDet omOtherInOrderDet);
 
     int pushDown(List<OmOtherInOrderDet> omOtherInOrderDets);
+
+    int updateOtherInPutDownQty(Long otherInOrderDetId, BigDecimal putawayQty);
 }

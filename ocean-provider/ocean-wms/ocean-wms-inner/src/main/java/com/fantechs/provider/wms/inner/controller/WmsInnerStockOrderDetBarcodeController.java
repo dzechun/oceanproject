@@ -41,8 +41,8 @@ public class WmsInnerStockOrderDetBarcodeController {
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
-    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerStockOrderDetBarcode wmsInnerStockOrderDetBarcode) {
-        return ControllerUtil.returnCRUD(wmsInnerStockOrderDetBarcodeService.save(wmsInnerStockOrderDetBarcode));
+    public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerStockOrderDetBarcodeDto wmsInnerStockOrderDetBarcodeDto) {
+        return ControllerUtil.returnCRUD(wmsInnerStockOrderDetBarcodeService.save(wmsInnerStockOrderDetBarcodeDto));
     }
 
     @ApiOperation("删除")

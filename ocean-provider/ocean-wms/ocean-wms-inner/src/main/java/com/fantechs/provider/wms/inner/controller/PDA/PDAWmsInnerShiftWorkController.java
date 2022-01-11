@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 仓库作业-PDA库内移位作业管理
+ * PDA库内移位作业管理
  */
 @RestController
-@Api(tags = "仓库作业-PDA库内移位作业管理")
+@Api(tags = "PDA库内移位作业管理")
 @RequestMapping("/pdaWmsInnerShiftWork")
 @Validated
 public class PDAWmsInnerShiftWorkController {

@@ -14,6 +14,8 @@ import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.om.*;
+import com.fantechs.common.base.general.entity.wms.in.WmsInInPlanOrder;
+import com.fantechs.common.base.general.entity.wms.in.WmsInInPlanOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -302,7 +304,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                 //生成收货计划
                 List<WmsInPlanReceivingOrderDetDto> detList = new LinkedList<>();
 
-                for (OmPurchaseOrderDet omPurchaseOrderDet : omPurchaseOrderDets) {
+                for (OmPurchaseOrderDet omPurchaseOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     Map map = new HashMap();
@@ -364,7 +366,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
                 List<WmsInReceivingOrderDetDto> detList = new LinkedList<>();
 
-                for (OmPurchaseOrderDet omPurchaseOrderDet : omPurchaseOrderDets) {
+                for (OmPurchaseOrderDet omPurchaseOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
                     Map map = new HashMap();
                     map.put("purchaseOrderId", omPurchaseOrderDet.getPurchaseOrderId());
@@ -424,7 +426,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                 //生成来料检验单
 
                 List<QmsIncomingInspectionOrderDto> detList = new LinkedList<>();
-                for (OmPurchaseOrderDet omPurchaseOrderDet : omPurchaseOrderDets) {
+                for (OmPurchaseOrderDet omPurchaseOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
                     Map map = new HashMap();
                     map.put("purchaseOrderId", omPurchaseOrderDet.getPurchaseOrderId());
@@ -482,7 +484,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
                 List<WmsInInPlanOrderDetDto> detList = new LinkedList<>();
 
-                for (OmPurchaseOrderDet omPurchaseOrderDet : omPurchaseOrderDets) {
+                for (OmPurchaseOrderDet omPurchaseOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     Map map = new HashMap();
@@ -550,7 +552,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                 //生成上架作业单
 
                 List<WmsInnerJobOrderDet> detList = new LinkedList<>();
-                for (OmPurchaseOrderDet omPurchaseOrderDet : omPurchaseOrderDets) {
+                for (OmPurchaseOrderDet omPurchaseOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     Map map = new HashMap();
@@ -631,4 +633,62 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
         return i;
     }
 
+    /**
+     * 更新累计交货数量
+     * opType 1 确认 2 删除
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updatePutawayQty(Byte opType, Long purchaseOrderDetId, BigDecimal putawayQty) {
+        int num=1;
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        OmPurchaseOrderDet omPurchaseOrderDet=omPurchaseOrderDetMapper.selectByPrimaryKey(purchaseOrderDetId);
+        if(StringUtils.isNotEmpty(omPurchaseOrderDet)){
+            if(StringUtils.isEmpty(omPurchaseOrderDet.getActualQty())){
+                omPurchaseOrderDet.setActualQty(new BigDecimal(0));
+            }
+            if(opType==(byte)1) {
+                omPurchaseOrderDet.setActualQty(omPurchaseOrderDet.getActualQty().add(putawayQty));
+                if(omPurchaseOrderDet.getActualQty().compareTo(omPurchaseOrderDet.getOrderQty())==0){
+                    //完成
+                    omPurchaseOrderDet.setMaterialStatus((byte)3);
+                }
+            }
+            else{
+                omPurchaseOrderDet.setActualQty(omPurchaseOrderDet.getActualQty().subtract(putawayQty));
+            }
+
+            omPurchaseOrderDet.setModifiedUserId(sysUser.getUserId());
+            omPurchaseOrderDet.setModifiedTime(new Date());
+            num+=omPurchaseOrderDetMapper.updateByPrimaryKeySelective(omPurchaseOrderDet);
+
+        }
+        return num;
+    }
+
+    /**
+     * 更新累计下发数量
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updatePutDownQty(Long purchaseOrderDetId, BigDecimal putawayQty) {
+        int num=1;
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        OmPurchaseOrderDet omPurchaseOrderDet=omPurchaseOrderDetMapper.selectByPrimaryKey(purchaseOrderDetId);
+        if(StringUtils.isNotEmpty(omPurchaseOrderDet)){
+            if(StringUtils.isEmpty(omPurchaseOrderDet.getTotalIssueQty())){
+                omPurchaseOrderDet.setTotalIssueQty(new BigDecimal(0));
+            }
+
+            omPurchaseOrderDet.setTotalIssueQty(omPurchaseOrderDet.getTotalIssueQty().subtract(putawayQty));
+            omPurchaseOrderDet.setIfAllIssued((byte)0);
+            omPurchaseOrderDet.setModifiedUserId(sysUser.getUserId());
+            omPurchaseOrderDet.setModifiedTime(new Date());
+            num+=omPurchaseOrderDetMapper.updateByPrimaryKeySelective(omPurchaseOrderDet);
+
+        }
+        return num;
+    }
 }

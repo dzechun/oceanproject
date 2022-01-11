@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -116,5 +117,17 @@ public class OmPurchaseOrderController {
     @PostMapping("/pushDown")
     public ResponseEntity pushDown(@ApiParam(value = "采购订单明细ID列表，多个逗号分隔",required = true)@RequestBody List<OmPurchaseOrderDet> omPurchaseOrderDets) {
         return ControllerUtil.returnCRUD(omPurchaseOrderService.pushDown(omPurchaseOrderDets));
+    }
+
+    @ApiOperation(value = "更新采购订单上架数量",notes = "更新采购订单上架数量")
+    @PostMapping("/updatePutawayQty")
+    public ResponseEntity updatePutawayQty(@ApiParam(value = "必传操作类型 1 确认 2 删除",required = true)@RequestParam Byte opType,@ApiParam(value = "必传明细ID",required = true)@RequestParam Long purchaseOrderDetId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty) {
+        return ControllerUtil.returnCRUD(omPurchaseOrderService.updatePutawayQty(opType,purchaseOrderDetId,putawayQty));
+    }
+
+    @ApiOperation(value = "更新采购订单下推数量",notes = "更新采购订单下推数量")
+    @PostMapping("/updatePutDownQty")
+    public ResponseEntity updatePutDownQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long purchaseOrderDetId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty) {
+        return ControllerUtil.returnCRUD(omPurchaseOrderService.updatePutDownQty(purchaseOrderDetId,putawayQty));
     }
 }

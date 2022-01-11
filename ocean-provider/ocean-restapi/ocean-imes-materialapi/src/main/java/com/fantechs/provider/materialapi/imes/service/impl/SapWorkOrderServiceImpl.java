@@ -89,9 +89,10 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
                         mesPmWorkOrder.setPutIntoProcessId(data.get(0).getProcessId());
                         mesPmWorkOrder.setOutputProcessId(data.get(data.size()-1).getProcessId());
                     }
-                }else{
-                    return "未配置产品工艺路线";
                 }
+               /* else{
+                    return "未配置产品工艺路线";
+                }*/
                 mesPmWorkOrder.setOrgId(orgId);
                 mesPmWorkOrder.setIsDelete((byte)1);
                 mesPmWorkOrder.setWorkOrderType((byte)0);

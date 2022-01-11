@@ -20,10 +20,7 @@ import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
-import com.fantechs.common.base.general.entity.om.OmHtOtherInOrder;
-import com.fantechs.common.base.general.entity.om.OmHtOtherInOrderDet;
-import com.fantechs.common.base.general.entity.om.OmOtherInOrder;
-import com.fantechs.common.base.general.entity.om.OmOtherInOrderDet;
+import com.fantechs.common.base.general.entity.om.*;
 import com.fantechs.common.base.general.entity.wms.in.WmsInPlanReceivingOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
@@ -42,7 +39,6 @@ import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.om.mapper.OmOtherInOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmOtherInOrderMapper;
 import com.fantechs.provider.om.mapper.OmSalesReturnOrderDetMapper;
-import com.fantechs.provider.om.mapper.OmTransferOrderMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtOtherInOrderDetMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtOtherInOrderMapper;
 import com.fantechs.provider.om.service.OmOtherInOrderService;
@@ -73,8 +69,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
     @Resource
     private SrmFeignApi srmFeignApi;
     @Resource
-    private OmTransferOrderMapper omTransferOrderMapper;
-    @Resource
     private OmSalesReturnOrderDetMapper omSalesReturnOrderDetMapper;
     @Resource
     private BaseFeignApi baseFeignApi;
@@ -93,13 +87,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId", sysUser.getOrganizationId());
         return omOtherInOrderMapper.findList(map);
-    }
-
-    @Override
-    public List<OmOtherInOrderDto> findHtList(Map<String, Object> map) {
-        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        map.put("orgId", sysUser.getOrganizationId());
-        return omHtOtherInOrderMapper.findList(map);
     }
 
     @Override
@@ -416,7 +403,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 //生成收货计划
                 List<WmsInPlanReceivingOrderDetDto> detList = new LinkedList<>();
 
-                for (OmOtherInOrderDet omOtherInOrderDet : omOtherInOrderDets) {
+                for (OmOtherInOrderDet omOtherInOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     Map map = new HashMap();
@@ -472,7 +459,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
                 List<WmsInReceivingOrderDetDto> detList = new LinkedList<>();
 
-                for (OmOtherInOrderDet omOtherInOrderDet : omOtherInOrderDets) {
+                for (OmOtherInOrderDet omOtherInOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
                     Map map = new HashMap();
                     map.put("otherInOrderId", omOtherInOrderDet.getOtherInOrderId());
@@ -525,7 +512,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 //生成来料检验单
 
                 List<QmsIncomingInspectionOrderDto> detList = new LinkedList<>();
-                for (OmOtherInOrderDet omOtherInOrderDet : omOtherInOrderDets) {
+                for (OmOtherInOrderDet omOtherInOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     Map map = new HashMap();
@@ -582,7 +569,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
                 List<WmsInInPlanOrderDetDto> detList = new LinkedList<>();
 
-                for (OmOtherInOrderDet omOtherInOrderDet : omOtherInOrderDets) {
+                for (OmOtherInOrderDet omOtherInOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     Map map = new HashMap();
@@ -636,7 +623,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 //生成上架作业单
 
                 List<WmsInnerJobOrderDet> detList = new LinkedList<>();
-                for (OmOtherInOrderDet omOtherInOrderDet : omOtherInOrderDets) {
+                for (OmOtherInOrderDet omOtherInOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     Map map = new HashMap();
@@ -717,5 +704,24 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         return i;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updateOtherInPutDownQty(Long otherInOrderDetId, BigDecimal putawayQty) {
+        int num=1;
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        OmOtherInOrderDet omOtherInOrderDet=omOtherInOrderDetMapper.selectByPrimaryKey(otherInOrderDetId);
+        if(StringUtils.isNotEmpty(omOtherInOrderDet)){
+            if(StringUtils.isEmpty(omOtherInOrderDet.getTotalIssueQty())){
+                omOtherInOrderDet.setTotalIssueQty(new BigDecimal(0));
+            }
+
+            omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().subtract(putawayQty));
+            omOtherInOrderDet.setIfAllIssued((byte)0);
+            omOtherInOrderDet.setModifiedUserId(sysUser.getUserId());
+            omOtherInOrderDet.setModifiedTime(new Date());
+            num+=omOtherInOrderDetMapper.updateByPrimaryKeySelective(omOtherInOrderDet);
+        }
+        return num;
+    }
 
 }

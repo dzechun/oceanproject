@@ -20,7 +20,7 @@ public class WmsInnerStockOrderDetDto extends WmsInnerStockOrderDet implements S
      * 盘点单号
      */
     @ApiModelProperty(name="planStockOrderCode",value = "盘点单号")
-    @Excel(name = "盘点计划单号", height = 20, width = 30,orderNum="1")
+    @Excel(name = "盘点计划单号", height = 20, width = 30)
     private String planStockOrderCode;
 
     /**
@@ -28,7 +28,7 @@ public class WmsInnerStockOrderDetDto extends WmsInnerStockOrderDet implements S
      */
     @Transient
     @ApiModelProperty(name = "warehouseName",value = "仓库名称")
-    @Excel(name = "仓库", height = 20, width = 30,orderNum="2")
+    @Excel(name = "仓库", height = 20, width = 30)
     private String warehouseName;
 
     /**
@@ -36,7 +36,7 @@ public class WmsInnerStockOrderDetDto extends WmsInnerStockOrderDet implements S
      */
     @Transient
     @ApiModelProperty(name = "storageCode",value = "库位编码")
-    @Excel(name = "库位编码", height = 20, width = 30,orderNum="3")
+    @Excel(name = "库位编码", height = 20, width = 30)
     private String storageCode;
 
     /**
@@ -44,6 +44,7 @@ public class WmsInnerStockOrderDetDto extends WmsInnerStockOrderDet implements S
      */
     @Transient
     @ApiModelProperty(name = "storageName",value = "库位名称")
+    @Excel(name = "库位名称", height = 20, width = 30)
     private String storageName;
 
     /**
@@ -58,7 +59,7 @@ public class WmsInnerStockOrderDetDto extends WmsInnerStockOrderDet implements S
      */
     @Transient
     @ApiModelProperty(name = "materialCode",value = "物料编码")
-    @Excel(name = "物料编码", height = 20, width = 30,orderNum="4")
+    @Excel(name = "物料编码", height = 20, width = 30)
     private String materialCode;
 
     /**
@@ -66,7 +67,7 @@ public class WmsInnerStockOrderDetDto extends WmsInnerStockOrderDet implements S
      */
     @Transient
     @ApiModelProperty(name = "materialName",value = "物料名称")
-    @Excel(name = "物料名称", height = 20, width = 30,orderNum="5")
+    @Excel(name = "物料名称", height = 20, width = 30)
     private String materialName;
 
     /**
@@ -74,7 +75,7 @@ public class WmsInnerStockOrderDetDto extends WmsInnerStockOrderDet implements S
      */
     @Transient
     @ApiModelProperty(name = "materialDesc",value = "物料规格")
-    @Excel(name = "物料规格", height = 20, width = 30,orderNum="6")
+    @Excel(name = "物料规格", height = 20, width = 30)
     private String materialDesc;
 
     /**
@@ -82,7 +83,7 @@ public class WmsInnerStockOrderDetDto extends WmsInnerStockOrderDet implements S
      */
     @Transient
     @ApiModelProperty(name="workName",value = "作业员")
-    @Excel(name = "作业员", height = 20, width = 30,orderNum="8")
+    @Excel(name = "作业员", height = 20, width = 30)
     private String workName;
 
     /**
@@ -90,7 +91,7 @@ public class WmsInnerStockOrderDetDto extends WmsInnerStockOrderDet implements S
      */
     @Transient
     @ApiModelProperty(name = "inventoryStatusName",value = "库存状态")
-    @Excel(name = "库存状态", height = 20, width = 30,orderNum="9")
+    @Excel(name = "库存状态", height = 20, width = 30)
     private String inventoryStatusName;
 
     /**
@@ -98,7 +99,7 @@ public class WmsInnerStockOrderDetDto extends WmsInnerStockOrderDet implements S
      */
     @Transient
     @ApiModelProperty(name="supplierName" ,value="供应商")
-    @Excel(name = "供应商", height = 20, width = 30,orderNum="23")
+    @Excel(name = "供应商", height = 20, width = 30)
     private String supplierName;
 
     /**
@@ -106,7 +107,6 @@ public class WmsInnerStockOrderDetDto extends WmsInnerStockOrderDet implements S
      */
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
-    @Excel(name = "组织名称", height = 20, width = 30,orderNum="24")
     private String organizationName;
 
     /**
@@ -114,7 +114,7 @@ public class WmsInnerStockOrderDetDto extends WmsInnerStockOrderDet implements S
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="25")
+    @Excel(name = "创建用户名称", height = 20, width = 30)
     private String createUserName;
 
     /**
@@ -122,6 +122,6 @@ public class WmsInnerStockOrderDetDto extends WmsInnerStockOrderDet implements S
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="27")
+    @Excel(name = "修改用户名称", height = 20, width = 30)
     private String modifiedUserName;
 }

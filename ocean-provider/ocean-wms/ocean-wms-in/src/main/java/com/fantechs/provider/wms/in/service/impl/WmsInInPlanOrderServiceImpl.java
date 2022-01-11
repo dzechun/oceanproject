@@ -142,9 +142,10 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
                 if(StringUtils.isNotEmpty(wmsInInPlanOrderDto.getSourceSysOrderTypeCode())){
                     SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
                     searchWmsInnerMaterialBarcodeReOrder.setOrderCode(wmsInInPlanOrderDetDto.getSourceOrderCode());
-                    searchWmsInnerMaterialBarcodeReOrder.setInspectionStatus((byte)2);
+                    //searchWmsInnerMaterialBarcodeReOrder.setInspectionStatus((byte)2);
                     if("QMS-MIIO".equals(wmsInInPlanOrderDto.getSourceSysOrderTypeCode())){
                         searchWmsInnerMaterialBarcodeReOrder.setOrderId(wmsInInPlanOrderDetDto.getSourceId());
+                        searchWmsInnerMaterialBarcodeReOrder.setInspectionStatus((byte)2);
                     }else{
                         searchWmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInInPlanOrderDetDto.getSourceId());
                     }
@@ -154,7 +155,8 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
                             WmsInnerMaterialBarcodeReOrder reOrder = new WmsInnerMaterialBarcodeReOrder();
                             BeanUtils.copyProperties(dto,reOrder, new String[]{"materialBarcodeReOrderId","orderTypeCode","orderId"});
                             reOrder.setOrderTypeCode(wmsInInPlanOrderDto.getSysOrderTypeCode());
-                            reOrder.setOrderId(wmsInInPlanOrderDetDto.getInPlanOrderDetId());
+                            reOrder.setOrderDetId(wmsInInPlanOrderDetDto.getInPlanOrderDetId());
+                            reOrder.setOrderId(wmsInInPlanOrderDto.getInPlanOrderId());
                             reOrder.setCreateUserId(user.getUserId());
                             reOrder.setCreateTime(new Date());
                             reOrder.setModifiedUserId(user.getUserId());
@@ -459,7 +461,7 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
             }
 
             WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
-            wmsInnerJobOrder.setSourceSysOrderTypeCode(wmsInInPlanOrders.get(0).getSourceSysOrderTypeCode());
+            wmsInnerJobOrder.setSourceSysOrderTypeCode("IN-IPO");
             wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(wmsInInPlanOrders.get(0).getCoreSourceSysOrderTypeCode());
             wmsInnerJobOrder.setWarehouseId(wmsInInPlanOrders.get(0).getWarehouseId());
             wmsInnerJobOrder.setSourceBigType((byte)1);
@@ -495,5 +497,71 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
         return i;
     }
 
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int updatePutawayQty(Byte opType,Long inPlanOrderDetId, BigDecimal putawayQty) {
+        int num=1;
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        WmsInInPlanOrderDet wmsInInPlanOrderDet=wmsInInPlanOrderDetMapper.selectByPrimaryKey(inPlanOrderDetId);
+        if(StringUtils.isNotEmpty(wmsInInPlanOrderDet)){
+            if(StringUtils.isEmpty(wmsInInPlanOrderDet.getPutawayQty())){
+                wmsInInPlanOrderDet.setPutawayQty(new BigDecimal(0));
+            }
+            if(opType==(byte)1) {
+                wmsInInPlanOrderDet.setPutawayQty(wmsInInPlanOrderDet.getPutawayQty().add(putawayQty));
+                if(wmsInInPlanOrderDet.getPutawayQty().compareTo(wmsInInPlanOrderDet.getPlanQty())==0){
+                    //完成
+                    wmsInInPlanOrderDet.setLineStatus((byte)3);
+                }
+            }
+            else{
+                wmsInInPlanOrderDet.setPutawayQty(wmsInInPlanOrderDet.getPutawayQty().subtract(putawayQty));
+                if(wmsInInPlanOrderDet.getPutawayQty().compareTo(new BigDecimal(0))==0){
+                    //待作业
+                    wmsInInPlanOrderDet.setLineStatus((byte)1);
+                }
+            }
+            num+=wmsInInPlanOrderDetMapper.updateByPrimaryKeySelective(wmsInInPlanOrderDet);
 
+            WmsInInPlanOrderDet planOrderDet = new WmsInInPlanOrderDet();
+            planOrderDet.setInPlanOrderId(wmsInInPlanOrderDet.getInPlanOrderId());
+            int totalCount = wmsInInPlanOrderDetMapper.selectCount(planOrderDet);
+            if(opType==(byte)1)
+                planOrderDet.setLineStatus((byte) 3);
+            else
+                planOrderDet.setLineStatus((byte)1);
+
+            int finishCount = wmsInInPlanOrderDetMapper.selectCount(planOrderDet);
+
+            if (totalCount == finishCount) {
+                WmsInInPlanOrder inPlanOrder = new WmsInInPlanOrder();
+                inPlanOrder.setInPlanOrderId(wmsInInPlanOrderDet.getInPlanOrderId());
+                if(opType==(byte)1) {
+                    //更新单据状态及计划完成时间
+                    inPlanOrder.setOrderStatus((byte) 3);
+                    inPlanOrder.setPlanEndTime(new Date());
+                }
+                else
+                    inPlanOrder.setOrderStatus((byte)1);
+
+                inPlanOrder.setModifiedUserId(sysUser.getUserId());
+                inPlanOrder.setModifiedTime(new Date());
+
+                num += wmsInInPlanOrderMapper.updateByPrimaryKeySelective(inPlanOrder);
+
+            } else {
+                //更新计划开始作业时间
+                if(opType==(byte)1) {
+                    WmsInInPlanOrder inPlanOrder = wmsInInPlanOrderMapper.selectByPrimaryKey(wmsInInPlanOrderDet.getInPlanOrderId());
+                    if (StringUtils.isEmpty(inPlanOrder.getPlanStartTime())) {
+                        inPlanOrder.setPlanStartTime(new Date());
+                        inPlanOrder.setModifiedUserId(sysUser.getUserId());
+                        inPlanOrder.setModifiedTime(new Date());
+                    }
+                    num += wmsInInPlanOrderMapper.updateByPrimaryKeySelective(inPlanOrder);
+                }
+            }
+        }
+        return num;
+    }
 }

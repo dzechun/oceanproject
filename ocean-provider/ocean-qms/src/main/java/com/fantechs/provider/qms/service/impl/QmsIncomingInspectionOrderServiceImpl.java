@@ -245,10 +245,6 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 wmsInInPlanOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInInPlanOrder.setWarehouseId(orders.get(0).getWarehouseId());
                 wmsInInPlanOrder.setOrderStatus((byte) 1);
-                wmsInInPlanOrder.setCreateUserId(user.getUserId());
-                wmsInInPlanOrder.setCreateTime(new Date());
-                wmsInInPlanOrder.setModifiedUserId(user.getUserId());
-                wmsInInPlanOrder.setModifiedTime(new Date());
                 wmsInInPlanOrder.setStatus((byte) 1);
                 wmsInInPlanOrder.setOrgId(user.getOrganizationId());
                 wmsInInPlanOrder.setWmsInInPlanOrderDetDtos(detList);
@@ -297,11 +293,6 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 wmsInnerJobOrder.setWarehouseId(orders.get(0).getWarehouseId());
                 wmsInnerJobOrder.setJobOrderType((byte) 1);
                 wmsInnerJobOrder.setOrderStatus((byte) 1);
-                wmsInnerJobOrder.setCreateUserId(user.getUserId());
-                wmsInnerJobOrder.setCreateTime(new Date());
-                wmsInnerJobOrder.setModifiedUserId(user.getUserId());
-                wmsInnerJobOrder.setModifiedTime(new Date());
-                wmsInnerJobOrder.setStatus((byte) 1);
                 wmsInnerJobOrder.setOrgId(user.getOrganizationId());
                 wmsInnerJobOrder.setWmsInPutawayOrderDets(detList);
 

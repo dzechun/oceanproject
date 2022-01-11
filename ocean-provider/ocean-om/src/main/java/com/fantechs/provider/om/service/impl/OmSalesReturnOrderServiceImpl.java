@@ -338,7 +338,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                 //生成收货计划
                 List<WmsInPlanReceivingOrderDetDto> detList = new LinkedList<>();
 
-                for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrderDets) {
+                for (OmSalesReturnOrderDet omSalesReturnOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     Map map = new HashMap();
@@ -346,6 +346,8 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     List<OmSalesReturnOrderDto> omSalesReturnOrderDto = omSalesReturnOrderMapper.findList(map);
                     OmSalesReturnOrderDto order = omSalesReturnOrderDto.get(0);
                     coreSourceSysOrderTypeCode = order.getSysOrderTypeCode();
+                    if(StringUtils.isEmpty(coreSourceSysOrderTypeCode))
+                        coreSourceSysOrderTypeCode="IN-SRO";
 
                     WmsInPlanReceivingOrderDetDto wmsInPlanReceivingOrderDetDto = new WmsInPlanReceivingOrderDetDto();
                     wmsInPlanReceivingOrderDetDto.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
@@ -393,13 +395,15 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
 
                 List<WmsInReceivingOrderDetDto> detList = new LinkedList<>();
 
-                for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrderDets) {
+                for (OmSalesReturnOrderDet omSalesReturnOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
                     Map map = new HashMap();
                     map.put("salesReturnOrderId", omSalesReturnOrderDet.getSalesReturnOrderId());
                     List<OmSalesReturnOrderDto> omSalesReturnOrderDto = omSalesReturnOrderMapper.findList(map);
                     OmSalesReturnOrderDto order = omSalesReturnOrderDto.get(0);
                     coreSourceSysOrderTypeCode = order.getSysOrderTypeCode();
+                    if(StringUtils.isEmpty(coreSourceSysOrderTypeCode))
+                        coreSourceSysOrderTypeCode="IN-SRO";
 
                     WmsInReceivingOrderDetDto wmsInReceivingOrderDetDto = new WmsInReceivingOrderDetDto();
                     wmsInReceivingOrderDetDto.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
@@ -446,7 +450,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                 //生成来料检验单
 
                 List<QmsIncomingInspectionOrderDto> detList = new LinkedList<>();
-                for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrderDets) {
+                for (OmSalesReturnOrderDet omSalesReturnOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     Map map = new HashMap();
@@ -454,6 +458,8 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     List<OmSalesReturnOrderDto> omSalesReturnOrderDto = omSalesReturnOrderMapper.findList(map);
                     OmSalesReturnOrderDto order = omSalesReturnOrderDto.get(0);
                     coreSourceSysOrderTypeCode = order.getSysOrderTypeCode();
+                    if(StringUtils.isEmpty(coreSourceSysOrderTypeCode))
+                        coreSourceSysOrderTypeCode="IN-SRO";
 
                     QmsIncomingInspectionOrderDto qmsIncomingInspectionOrderDto = new QmsIncomingInspectionOrderDto();
                     qmsIncomingInspectionOrderDto.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
@@ -503,7 +509,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
 
                 List<WmsInInPlanOrderDetDto> detList = new LinkedList<>();
 
-                for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrderDets) {
+                for (OmSalesReturnOrderDet omSalesReturnOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     Map map = new HashMap();
@@ -511,6 +517,8 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     List<OmSalesReturnOrderDto> omSalesReturnOrderDto = omSalesReturnOrderMapper.findList(map);
                     OmSalesReturnOrderDto order = omSalesReturnOrderDto.get(0);
                     coreSourceSysOrderTypeCode = order.getSysOrderTypeCode();
+                    if(StringUtils.isEmpty(coreSourceSysOrderTypeCode))
+                        coreSourceSysOrderTypeCode="IN-SRO";
 
                     WmsInInPlanOrderDetDto wmsInInPlanOrderDet = new WmsInInPlanOrderDetDto();
                     wmsInInPlanOrderDet.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
@@ -558,7 +566,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                 //生成上架作业单
 
                 List<WmsInnerJobOrderDet> detList = new LinkedList<>();
-                for (OmSalesReturnOrderDet omSalesReturnOrderDet : omSalesReturnOrderDets) {
+                for (OmSalesReturnOrderDet omSalesReturnOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
                     Map map = new HashMap();
@@ -566,6 +574,8 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     List<OmSalesReturnOrderDto> omSalesReturnOrderDto = omSalesReturnOrderMapper.findList(map);
                     OmSalesReturnOrderDto order = omSalesReturnOrderDto.get(0);
                     coreSourceSysOrderTypeCode = order.getSysOrderTypeCode();
+                    if(StringUtils.isEmpty(coreSourceSysOrderTypeCode))
+                        coreSourceSysOrderTypeCode="IN-SRO";
 
                     WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
                     wmsInnerJobOrderDet.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
@@ -629,6 +639,26 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
             }
         }
         return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updateSalesReturnPutDownQty(Long salesReturnOrderDetId, BigDecimal putawayQty) {
+        int num=1;
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        OmSalesReturnOrderDet omSalesReturnOrderDet=omSalesReturnOrderDetMapper.selectByPrimaryKey(salesReturnOrderDetId);
+        if(StringUtils.isNotEmpty(omSalesReturnOrderDet)){
+            if(StringUtils.isEmpty(omSalesReturnOrderDet.getTotalIssueQty())){
+                omSalesReturnOrderDet.setTotalIssueQty(new BigDecimal(0));
+            }
+
+            omSalesReturnOrderDet.setTotalIssueQty(omSalesReturnOrderDet.getTotalIssueQty().subtract(putawayQty));
+            omSalesReturnOrderDet.setIfAllIssued((byte)0);
+            omSalesReturnOrderDet.setModifiedUserId(sysUser.getUserId());
+            omSalesReturnOrderDet.setModifiedTime(new Date());
+            num+=omSalesReturnOrderDetMapper.updateByPrimaryKeySelective(omSalesReturnOrderDet);
+        }
+        return num;
     }
 
 }
