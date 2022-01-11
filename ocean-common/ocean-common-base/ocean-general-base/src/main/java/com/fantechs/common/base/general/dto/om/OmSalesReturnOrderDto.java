@@ -14,20 +14,13 @@ import java.io.Serializable;
  */
 @Data
 public class OmSalesReturnOrderDto extends OmSalesReturnOrder implements Serializable {
-    /**
-     * 货主
-     */
-    @Transient
-    @ApiModelProperty(name = "materialOwnerName",value = "货主")
-    @Excel(name = "货主", height = 20, width = 30,orderNum="3")
-    private String materialOwnerName;
 
     /**
      * 创建名称
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建名称")
-    @Excel(name = "创建名称", height = 20, width = 30,orderNum="15")
+    @Excel(name = "创建名称", height = 20, width = 30,orderNum="11")
     private String createUserName;
 
     /**
@@ -35,7 +28,7 @@ public class OmSalesReturnOrderDto extends OmSalesReturnOrder implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "modifiedUserName",value = "修改人")
-    @Excel(name = "修改人", height = 20, width = 30,orderNum="17")
+    @Excel(name = "修改人", height = 20, width = 30,orderNum="13")
     private String modifiedUserName;
 
     /**
