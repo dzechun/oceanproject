@@ -619,7 +619,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                             parentBarcode.setBarcodeType((byte) 2);
                             parentBarcode.setPalletCode(null);
                             parentBarcode.setBarcode(null);
-                            parentBarcode.setColorBoxCode(null);
+                            parentBarcode.setCartonCode(null);
                             parentBarcode.setMaterialQty(new BigDecimal(1));
                             wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(parentBarcode);
 
@@ -637,9 +637,6 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                             parentMaterialBarcodeList.get(0).setMaterialQty(parentMaterialBarcodeList.get(0).getMaterialQty().add(new BigDecimal(1)));
                         }else {
                             parentBarcode.setBarcodeType((byte) 1);
-                            parentBarcode.setPalletCode(null);
-                            parentBarcode.setBarcode(null);
-                            parentBarcode.setColorBoxCode(null);
                             wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(parentBarcode);
 
                             //添加导入条码履历与单据中间表数据
