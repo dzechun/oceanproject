@@ -1113,6 +1113,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             barcodeResultDto.setBarcodeType((byte)1);
             barcodeResultDto.setMaterialQty(detBarcodeDtos.get(0).getMaterialQty());
             barcodeResultDto.setBarcode(barcode);
+            barcodeResultDto.setMaterialId(detBarcodeDtos.get(0).getMaterialId());
         }
         else {
             searchOrderDetBarcode.setBarcode(null);
@@ -1126,6 +1127,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 barcodeResultDto.setBarcodeType((byte)2);
                 barcodeResultDto.setMaterialQty(detBarcodeDtos.get(0).getMaterialQty());
                 barcodeResultDto.setBarcode(barcode);
+                barcodeResultDto.setMaterialId(detBarcodeDtos.get(0).getMaterialId());
             }
             else {
                 searchOrderDetBarcode.setBarcode(null);
@@ -1142,6 +1144,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     barcodeResultDto.setBarcodeType((byte)3);
                     barcodeResultDto.setMaterialQty(totalQty);
                     barcodeResultDto.setBarcode(barcode);
+                    barcodeResultDto.setMaterialId(detBarcodeDtos.get(0).getMaterialId());
                 }
                 else {
                     searchOrderDetBarcode.setBarcode(null);
@@ -1159,6 +1162,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                         barcodeResultDto.setBarcodeType((byte)4);
                         barcodeResultDto.setMaterialQty(totalQty);
                         barcodeResultDto.setBarcode(barcode);
+                        barcodeResultDto.setMaterialId(detBarcodeDtos.get(0).getMaterialId());
                     }
                 }
             }

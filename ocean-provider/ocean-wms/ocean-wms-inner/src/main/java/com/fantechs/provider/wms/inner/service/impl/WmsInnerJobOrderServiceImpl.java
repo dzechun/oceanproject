@@ -2997,14 +2997,17 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 //系统条码更新条码状态
                 //条码类别处理
                 SearchWmsInnerMaterialBarcode sWmsBarcode=new SearchWmsInnerMaterialBarcode();
-                if(saveInnerJobOrderDto.getBarcodeType()==((byte)2)){
-                    sWmsBarcode.setColorBoxCode(saveInnerJobOrderDto.getBatchCode());
+                if(saveInnerJobOrderDto.getBarcodeType()==((byte)1)){
+                    sWmsBarcode.setBarcode(saveInnerJobOrderDto.getBarcode());
+                }
+                else if(saveInnerJobOrderDto.getBarcodeType()==((byte)2)){
+                    sWmsBarcode.setColorBoxCode(saveInnerJobOrderDto.getBarcode());
                 }
                 else if(saveInnerJobOrderDto.getBarcodeType()==((byte)3)){
-                    sWmsBarcode.setCartonCode(saveInnerJobOrderDto.getBatchCode());
+                    sWmsBarcode.setCartonCode(saveInnerJobOrderDto.getBarcode());
                 }
                 else if(saveInnerJobOrderDto.getBarcodeType()==((byte)4)){
-                    sWmsBarcode.setPalletCode(saveInnerJobOrderDto.getBatchCode());
+                    sWmsBarcode.setPalletCode(saveInnerJobOrderDto.getBarcode());
                 }
                 List<WmsInnerMaterialBarcodeDto> materialDtoList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(sWmsBarcode));
                 for (WmsInnerMaterialBarcodeDto materialBarcodeDto : materialDtoList) {
