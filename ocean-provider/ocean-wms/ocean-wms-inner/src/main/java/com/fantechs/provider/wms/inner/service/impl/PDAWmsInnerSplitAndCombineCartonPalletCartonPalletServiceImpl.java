@@ -161,6 +161,9 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
             throw new BizErrorException("该条码不属于该包箱/栈板");
         }
 
+        if(scanInventoryDetDto.getStorageType()==null){
+            throw new BizErrorException("扫描条码库位类型为空");
+        }
         if(scanInventoryDetDto.getStorageType()==(byte)3){
             throw new BizErrorException("不能扫描发货库位中的条码");
         }
@@ -319,6 +322,11 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
                 } else {
                     sourceInventoryDetDtos.add(nextLevelInventoryDetDto);
                 }
+            }
+            if(StringUtils.isEmpty(sourceInventoryDetDtos)){
+                throw new BizErrorException("不可扫描该栈板/包箱下的所有条码");
+            }else if(StringUtils.isEmpty(newInventoryDetDtos)){
+                throw new BizErrorException("请至少扫描一个条码");
             }
 
             //修改源包箱（栈板）信息
