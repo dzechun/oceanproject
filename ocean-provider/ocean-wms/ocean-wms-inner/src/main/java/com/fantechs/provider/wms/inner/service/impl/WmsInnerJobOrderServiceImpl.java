@@ -2059,11 +2059,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             Example exampleDet = new Example(WmsInnerJobOrderDet.class);
             exampleDet.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrder.getJobOrderId());
             List<WmsInnerJobOrderDet> jobOrderDets = wmsInnerJobOrderDetMapper.selectByExample(exampleDet);
-
-            for (WmsInnerJobOrderDet jobOrderDetIPO : jobOrderDets) {
-                updateLastOrderNode((byte) 2, wmsInnerJobOrder, jobOrderDetIPO);
+            if(wmsInnerJobOrder.getJobOrderType()==(byte)1 && wmsInnerJobOrder.getSourceBigType()!=(byte)2) {
+                for (WmsInnerJobOrderDet jobOrderDetIPO : jobOrderDets) {
+                    updateLastOrderNode((byte) 2, wmsInnerJobOrder, jobOrderDetIPO);
+                }
             }
-
             Example example = new Example(WmsInnerJobOrderDet.class);
             example.createCriteria().andEqualTo("jobOrderId", s);
             wmsInnerJobOrderDetMapper.deleteByExample(example);
