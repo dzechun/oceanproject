@@ -593,16 +593,16 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                             pallet.setMaterialQty(pallet.getMaterialQty().add(new BigDecimal(1)));
                             wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(pallet);
                         }else {
-                            parentBarcode.setBarcodeType((byte) 4);
-                            parentBarcode.setCartonCode(null);
-                            parentBarcode.setBarcode(null);
-                            parentBarcode.setColorBoxCode(null);
-                            parentBarcode.setMaterialQty(new BigDecimal(1));
-                            wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(parentBarcode);
-                            pallet = parentBarcode;
+                            BeanUtil.copyProperties(parentBarcode,pallet);
+                            pallet.setBarcodeType((byte) 4);
+                            pallet.setCartonCode(null);
+                            pallet.setBarcode(null);
+                            pallet.setColorBoxCode(null);
+                            pallet.setMaterialQty(new BigDecimal(1));
+                            wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(pallet);
+
                             //添加导入条码履历与单据中间表数据
-                            addHt(parentBarcode,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
-                            BeanUtil.copyProperties(addWmsInnerMaterialBarcode,parentBarcode);
+                            addHt(pallet,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
                         }
                     }
                     if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeImport.getCartonCode())) {
@@ -615,16 +615,15 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                             cartonCode.setMaterialQty(cartonCode.getMaterialQty().add(new BigDecimal(1)));
                             wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(cartonCode);
                         }else {
-                            parentBarcode.setBarcodeType((byte) 3);
-                            parentBarcode.setPalletCode(null);
-                            parentBarcode.setBarcode(null);
-                            parentBarcode.setColorBoxCode(null);
-                            parentBarcode.setMaterialQty(new BigDecimal(1));
+                            BeanUtil.copyProperties(parentBarcode,cartonCode);
+                            cartonCode.setBarcodeType((byte) 3);
+                            cartonCode.setPalletCode(null);
+                            cartonCode.setBarcode(null);
+                            cartonCode.setColorBoxCode(null);
+                            cartonCode.setMaterialQty(new BigDecimal(1));
                             wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(parentBarcode);
-                            cartonCode = parentBarcode;
                             //添加导入条码履历与单据中间表数据
-                            addHt(parentBarcode,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
-                            BeanUtil.copyProperties(addWmsInnerMaterialBarcode,parentBarcode);
+                            addHt(cartonCode,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
                         }
 
                     }
@@ -645,16 +644,15 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                             fail.add(i + 1);
                             continue;
                         }else {
-                            parentBarcode.setBarcodeType((byte) 2);
-                            parentBarcode.setPalletCode(null);
-                            parentBarcode.setBarcode(null);
-                            parentBarcode.setCartonCode(null);
-                            parentBarcode.setMaterialQty(new BigDecimal(1));
-                            wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(parentBarcode);
-                            colorBoxCode = parentBarcode;
+                            BeanUtil.copyProperties(parentBarcode,cartonCode);
+                            colorBoxCode.setBarcodeType((byte) 2);
+                            colorBoxCode.setPalletCode(null);
+                            colorBoxCode.setBarcode(null);
+                            colorBoxCode.setCartonCode(null);
+                            colorBoxCode.setMaterialQty(new BigDecimal(1));
+                            wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(colorBoxCode);
                             //添加导入条码履历与单据中间表数据
-                            addHt(parentBarcode,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
-                            BeanUtil.copyProperties(addWmsInnerMaterialBarcode,parentBarcode);
+                            addHt(colorBoxCode,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
                         }
                     }
 
@@ -705,7 +703,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
         return resultMap;
     }
 
-    private void addHt(WmsInnerMaterialBarcodeDto parentBarcode,String printOrderTypeCode,
+    private void addHt(WmsInnerMaterialBarcode parentBarcode,String printOrderTypeCode,
                        List<WmsInnerMaterialBarcodeReOrder> wmsInnerMaterialBarcodeReOrderList,WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto,
                        SysUser user){
         //添加履历
