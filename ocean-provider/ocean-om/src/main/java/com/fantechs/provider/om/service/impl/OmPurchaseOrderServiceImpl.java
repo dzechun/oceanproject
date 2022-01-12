@@ -14,8 +14,6 @@ import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.om.*;
-import com.fantechs.common.base.general.entity.wms.in.WmsInInPlanOrder;
-import com.fantechs.common.base.general.entity.wms.in.WmsInInPlanOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -120,6 +118,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
         int i=0;
         List<OmPurchaseOrderDet> detList = new ArrayList<>();
         List<OmHtPurchaseOrderDet> htdetList = new ArrayList<>();
+        omPurchaseOrder.setSysOrderTypeCode("IN-PO");
         omPurchaseOrder.setPurchaseOrderCode(CodeUtils.getId("IN-PO"));
         omPurchaseOrder.setOrderStatus((byte) 1);
         omPurchaseOrder.setStatus((byte) 1);

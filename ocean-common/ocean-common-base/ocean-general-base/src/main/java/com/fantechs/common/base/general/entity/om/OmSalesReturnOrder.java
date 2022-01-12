@@ -62,7 +62,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="totalIssueQty",value = "总加入数量")
-    @Excel(name = "总加入数量", height = 20, width = 30,orderNum="4")
+    @Excel(name = "累计下发数量", height = 20, width = 30,orderNum="6")
     private BigDecimal totalIssueQty;
 
     /**
@@ -70,7 +70,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="totalReceivingQty",value = "总收货数量")
-    @Excel(name = "总收货数量", height = 20, width = 30,orderNum="5")
+    @Excel(name = "实收数量", height = 20, width = 30,orderNum="7")
     private BigDecimal totalReceivingQty;
 
     /**
@@ -78,14 +78,14 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="totalQty",value = "订单总数量")
-    @Excel(name = "订单总数量", height = 20, width = 30,orderNum="6")
+    @Excel(name = "数量", height = 20, width = 30,orderNum="5")
     private BigDecimal totalQty;
 
     /**
      * 订单总体积
      */
     @ApiModelProperty(name="totalVolume",value = "订单总体积")
-    @Excel(name = "订单总体积", height = 20, width = 30,orderNum="7")
+    @Excel(name = "体积", height = 20, width = 30,orderNum="8")
     @Transient
     private BigDecimal totalVolume;
 
@@ -93,7 +93,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      * 订单总净重
      */
     @ApiModelProperty(name="totalNetWeight",value = "订单总净重")
-    @Excel(name = "订单总净重", height = 20, width = 30,orderNum="8")
+    @Excel(name = "净重", height = 20, width = 30,orderNum="9")
     @Transient
     private BigDecimal totalNetWeight;
 
@@ -101,7 +101,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      * 订单总毛重
      */
     @ApiModelProperty(name="totalGrossWeight",value = "订单总毛重")
-    @Excel(name = "订单总毛重", height = 20, width = 30,orderNum="9")
+    @Excel(name = "毛重", height = 20, width = 30,orderNum="10")
     @Transient
     private BigDecimal totalGrossWeight;
 
@@ -123,7 +123,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      * 订单日期
      */
     @ApiModelProperty(name="orderDate",value = "订单日期")
-    @Excel(name = "订单日期", height = 20, width = 30,orderNum="4")
+    @Excel(name = "订单日期", height = 20, width = 30,orderNum="4",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "order_date")
     private Date orderDate;
 
@@ -131,7 +131,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      * 要求完成日期
      */
     @ApiModelProperty(name="completeDate",value = "要求完成日期")
-    @Excel(name = "要求完成日期", height = 20, width = 30,orderNum="3")
+    @Excel(name = "要求完成日期", height = 20, width = 30,orderNum="3",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "complete_date")
     @JSONField(format = "yyyy-MM-dd")
     private Date completeDate;
@@ -140,7 +140,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30,orderNum="10")
+    @Excel(name = "备注", height = 20, width = 30,orderNum="11")
     private String remark;
 
     /**
@@ -161,7 +161,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="12",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="13",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -177,7 +177,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="14",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="15",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;

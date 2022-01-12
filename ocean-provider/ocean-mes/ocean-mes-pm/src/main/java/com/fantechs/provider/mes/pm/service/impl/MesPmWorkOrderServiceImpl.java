@@ -108,6 +108,8 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
             }
         }*/
         mesPmWorkOrderDto.setWorkOrderCode(CodeUtils.getId("MES-WO"));
+        mesPmWorkOrderDto.setSysOrderTypeCode("MES-WO");
+        mesPmWorkOrderDto.setSourceBigType((byte)2);
         mesPmWorkOrderDto.setTotalIssueQty(BigDecimal.ZERO);
         mesPmWorkOrderDto.setWorkOrderStatus((byte) 1);
         mesPmWorkOrderDto.setCreateUserId(currentUser.getUserId());

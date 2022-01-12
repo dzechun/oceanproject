@@ -212,6 +212,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
     public int save(OmOtherInOrder record) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         record.setOtherInOrderCode(CodeUtils.getId("IN-OIO"));
+        record.setSysOrderTypeCode("IN-OIO");
         record.setCreateTime(new Date());
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
