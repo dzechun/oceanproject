@@ -602,6 +602,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                             pallet = parentBarcode;
                             //添加导入条码履历与单据中间表数据
                             addHt(parentBarcode,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
+                            BeanUtil.copyProperties(addWmsInnerMaterialBarcode,parentBarcode);
                         }
                     }
                     if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeImport.getCartonCode())) {
@@ -623,6 +624,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                             cartonCode = parentBarcode;
                             //添加导入条码履历与单据中间表数据
                             addHt(parentBarcode,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
+                            BeanUtil.copyProperties(addWmsInnerMaterialBarcode,parentBarcode);
                         }
 
                     }
@@ -652,6 +654,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                             colorBoxCode = parentBarcode;
                             //添加导入条码履历与单据中间表数据
                             addHt(parentBarcode,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
+                            BeanUtil.copyProperties(addWmsInnerMaterialBarcode,parentBarcode);
                         }
                     }
 
