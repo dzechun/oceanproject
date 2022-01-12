@@ -39,7 +39,7 @@ public class OmSalesReturnOrder extends ValidGroup implements Serializable {
      * 销退入库单号
      */
     @ApiModelProperty(name="salesReturnOrderCode",value = "销退入库单号")
-    @Excel(name = "销退入库单号", height = 20, width = 30,orderNum="1")
+    @Excel(name = "销退订单单号", height = 20, width = 30,orderNum="1")
     @Column(name = "sales_return_order_code")
     private String salesReturnOrderCode;
 
