@@ -456,7 +456,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
             //不同单据流分组
             for (MesPmWorkOrderBomDto mesPmWorkOrderBomDto : mesPmWorkOrderBomDtos) {
                 //当前单据的下游单据
-                BaseOrderFlow baseOrderFlow = OrderFlowUtil.getOrderFlow(baseOrderFlowDtos, null, null);
+                BaseOrderFlow baseOrderFlow = OrderFlowUtil.getOrderFlow(baseOrderFlowDtos, mesPmWorkOrderBomDto.getPartMaterialId(), null);
                 String key = baseOrderFlow.getNextOrderTypeCode();
                 if (detMap.get(key) == null) {
                     List<MesPmWorkOrderBomDto> diffOrderFlows = new LinkedList<>();
