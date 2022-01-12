@@ -87,16 +87,13 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
         List<WmsInnerInventoryDetDto> detDtos = new LinkedList<>();
         for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : inventoryDetDtoList){
             if(type == (byte)1){
-                if(StringUtils.isEmpty(wmsInnerInventoryDetDto.getColorBoxCode())
-                        &&StringUtils.isEmpty(wmsInnerInventoryDetDto.getBarcode())){
+                if(wmsInnerInventoryDetDto.getBarcodeType()!=null&&wmsInnerInventoryDetDto.getBarcodeType()==(byte)3){
                     cartonPalletInfoDto.setCartonPalletInventoryDetDto(wmsInnerInventoryDetDto);
                 }else {
                     detDtos.add(wmsInnerInventoryDetDto);
                 }
             }else if(type == (byte)2){
-                if(StringUtils.isEmpty(wmsInnerInventoryDetDto.getCartonCode())
-                        &&StringUtils.isEmpty(wmsInnerInventoryDetDto.getColorBoxCode())
-                        &&StringUtils.isEmpty(wmsInnerInventoryDetDto.getBarcode())){
+                if(wmsInnerInventoryDetDto.getBarcodeType()!=null&&wmsInnerInventoryDetDto.getBarcodeType()==(byte)4){
                     cartonPalletInfoDto.setCartonPalletInventoryDetDto(wmsInnerInventoryDetDto);
                 }else {
                     detDtos.add(wmsInnerInventoryDetDto);
@@ -128,10 +125,15 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
         }
         List<WmsInnerInventoryDetDto> nextLevelInventoryDetDtos = new LinkedList<>();
         for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : inventoryDetDtoList){
-            if(type == (byte)1&&StringUtils.isNotEmpty(wmsInnerInventoryDetDto.getBarcode())){
+            if(type == (byte)1
+                    &&(wmsInnerInventoryDetDto.getBarcodeType()!=null
+                    &&wmsInnerInventoryDetDto.getBarcodeType()!=(byte)3
+                    &&wmsInnerInventoryDetDto.getBarcodeType()!=(byte)4)){
                 nextLevelInventoryDetDtos.add(wmsInnerInventoryDetDto);
             }
-            if(type == (byte)2&&StringUtils.isNotEmpty(wmsInnerInventoryDetDto.getBarcode())){
+            if(type == (byte)2
+                    &&(wmsInnerInventoryDetDto.getBarcodeType()!=null
+                    &&wmsInnerInventoryDetDto.getBarcodeType()!=(byte)4)){
                 nextLevelInventoryDetDtos.add(wmsInnerInventoryDetDto);
             }
         }
@@ -140,7 +142,9 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
         WmsInnerInventoryDetDto scanInventoryDetDto = null;
         for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : nextLevelInventoryDetDtos){
             if(type == (byte)2){
-                if(barcode.equals(wmsInnerInventoryDetDto.getCartonCode())){
+                if(barcode.equals(wmsInnerInventoryDetDto.getCartonCode())
+                        &&wmsInnerInventoryDetDto.getBarcodeType()!=null
+                        &&wmsInnerInventoryDetDto.getBarcodeType()==(byte)3){
                     scanInventoryDetDto = wmsInnerInventoryDetDto;
                     break;
                 }
@@ -157,6 +161,9 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
             throw new BizErrorException("该条码不属于该包箱/栈板");
         }
 
+        if(scanInventoryDetDto.getStorageType()==null){
+            throw new BizErrorException("扫描条码库位类型为空");
+        }
         if(scanInventoryDetDto.getStorageType()==(byte)3){
             throw new BizErrorException("不能扫描发货库位中的条码");
         }
@@ -315,6 +322,11 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
                 } else {
                     sourceInventoryDetDtos.add(nextLevelInventoryDetDto);
                 }
+            }
+            if(StringUtils.isEmpty(sourceInventoryDetDtos)){
+                throw new BizErrorException("不可扫描该栈板/包箱下的所有条码");
+            }else if(StringUtils.isEmpty(newInventoryDetDtos)){
+                throw new BizErrorException("请至少扫描一个条码");
             }
 
             //修改源包箱（栈板）信息

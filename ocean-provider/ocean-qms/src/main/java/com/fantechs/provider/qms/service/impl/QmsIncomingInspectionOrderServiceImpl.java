@@ -387,7 +387,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
         }
 
         //插入上游单据条码
-        insertMaterialBarcode(record);
+        insertMaterialBarcode(record,user);
 
         //履历
         QmsHtIncomingInspectionOrder qmsHtIncomingInspectionOrder = new QmsHtIncomingInspectionOrder();
@@ -399,7 +399,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
 
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
-    public int insertMaterialBarcode(QmsIncomingInspectionOrderDto qmsIncomingInspectionOrderDto){
+    public int insertMaterialBarcode(QmsIncomingInspectionOrderDto qmsIncomingInspectionOrderDto,SysUser user){
         int i = 0;
         if(StringUtils.isNotEmpty(qmsIncomingInspectionOrderDto.getSourceId())) {
             //上游单据所有条码
@@ -416,6 +416,9 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                     wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("QMS-MIIO");
                     wmsInnerMaterialBarcodeReOrder.setOrderCode(qmsIncomingInspectionOrderDto.getIncomingInspectionOrderCode());
                     wmsInnerMaterialBarcodeReOrder.setOrderId(qmsIncomingInspectionOrderDto.getIncomingInspectionOrderId());
+                    wmsInnerMaterialBarcodeReOrder.setCreateTime(new Date());
+                    wmsInnerMaterialBarcodeReOrder.setCreateUserId(user.getUserId());
+                    wmsInnerMaterialBarcodeReOrder.setOrgId(user.getOrganizationId());
                     barcodeReOrderList.add(wmsInnerMaterialBarcodeReOrder);
                     i++;
                 }
