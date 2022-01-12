@@ -126,6 +126,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
     public int save(OmSalesReturnOrder record) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         record.setSalesReturnOrderCode(CodeUtils.getId("IN-SRO"));
+        record.setSysOrderTypeCode("IN-SRO");
         record.setCreateTime(new Date());
         record.setCreateUserId(sysUser.getUserId());
         record.setModifiedTime(new Date());
