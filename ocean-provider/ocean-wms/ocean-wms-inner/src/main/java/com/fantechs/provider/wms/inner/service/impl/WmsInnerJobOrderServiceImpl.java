@@ -620,7 +620,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             List<WmsInnerMaterialBarcodeReOrderDto> barcodeList = reOrderList.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
             BigDecimal totalQty=barcodeList.stream().map(WmsInnerMaterialBarcodeReOrderDto::getQty).reduce(BigDecimal.ZERO,BigDecimal::add);
             if(totalQty.compareTo(totalPlanQty)==-1) {
-                throw new BizErrorException(ErrorCodeEnum.OPT20012009.getCode(), "未扫条码数量总数小于明细计划总数量");
+                throw new BizErrorException(ErrorCodeEnum.OPT20012009.getCode(), "未扫条码数量总数小于未完成明细计划总数量");
             }
 
             //库存条码明细集合

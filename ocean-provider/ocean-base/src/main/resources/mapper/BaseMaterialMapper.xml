@@ -124,14 +124,14 @@
         select<include refid="Base_Column_List"/>,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name,
         bo.organization_name
-        from wms_inner_stock_order_det det
-        left join base_material sm det.material_id=sm.material_id
-        left join sys_user su on sm.create_user_id=su.user_id
-        left join sys_user sus on sm.modified_user_id=sus.user_id
-        LEFT JOIN base_barcode_rule_set sbrs on sm.barcode_rule_set_id = sbrs.barcode_rule_set_id
+        FROM wms_inner_stock_order_det det
+        LEFT JOIN base_material sm ON det.material_id=sm.material_id
+        LEFT JOIN sys_user su ON sm.create_user_id=su.user_id
+        LEFT JOIN sys_user sus ON sm.modified_user_id=sus.user_id
+        LEFT JOIN base_barcode_rule_set sbrs ON sm.barcode_rule_set_id = sbrs.barcode_rule_set_id
         LEFT JOIN base_organization bo ON sm.org_id = bo.organization_id
-        LEFT JOIN base_material_tab bt on sm.material_id = bt.material_id
-        LEFT JOIN base_material_category bmc on bmc.material_category_id = bt.material_category_id
+        LEFT JOIN base_material_tab bt ON sm.material_id = bt.material_id
+        LEFT JOIN base_material_category bmc ON bmc.material_category_id = bt.material_category_id
         <where>
             <if test="sourceId!=null and sourceId!=''">
                 and det.stock_order_id=#{sourceId}
