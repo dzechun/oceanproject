@@ -233,8 +233,8 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         Example example = new Example(WmsInnerInventory.class);
-        example.createCriteria()
-                .andEqualTo("warehouseId", record.getWarehouseId())
+        Example.Criteria criteria = example.createCriteria();
+        criteria .andEqualTo("warehouseId", record.getWarehouseId())
                 .andEqualTo("storageId", record.getStorageId())
                 .andEqualTo("materialId", record.getMaterialId())
                 .andEqualTo("lockStatus", record.getLockStatus())
@@ -242,9 +242,12 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
                 .andEqualTo("jobStatus", record.getJobStatus())
                 .andEqualTo("packingUnitName", record.getPackingUnitName())
                 .andEqualTo("batchCode", record.getBatchCode());
+        if(StringUtils.isNotEmpty(record.getJobOrderDetId()))
+            criteria.andEqualTo("jobOrderDetId", record.getJobOrderDetId());
+
         List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(example);
         if(StringUtils.isNotEmpty(wmsInnerInventories))
-            throw new BizErrorException("添加失败，存在相同的库存,请进行合并");
+            throw new BizErrorException("添加失败，已存在相同的库存");
 
         record.setCreateTime(new Date());
         record.setCreateUserId(user.getUserId());

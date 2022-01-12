@@ -334,7 +334,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 wms.setJobOrderDetId(null);
                 wms.setPlanQty(wmsInPutawayOrderDet.getDistributionQty());
                 wms.setDistributionQty(wmsInPutawayOrderDet.getDistributionQty());
-                wms.setLineStatus((byte) 2);
+         //       wms.setLineStatus((byte) 2);
                 num += wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wms);
                 id = wms.getJobOrderDetId();
 
@@ -348,7 +348,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 num += wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInPutawayOrderDet);
             } else if (wmsInPutawayOrderDet.getDistributionQty().compareTo(wmsInPutawayOrderDet.getPlanQty()) == 0) {
                 //分配完成
-                wmsInPutawayOrderDet.setLineStatus((byte) 2);
+            //    wmsInPutawayOrderDet.setLineStatus((byte) 2);
+                wmsInPutawayOrderDet.setLineStatus((byte) 1);
                 wmsInPutawayOrderDet.setModifiedUserId(sysUser.getUserId());
                 wmsInPutawayOrderDet.setModifiedTime(new Date());
                 num += wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInPutawayOrderDet);
@@ -376,8 +377,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 criteria.andEqualTo("materialId", wmsInnerJobOrderDetDto.getMaterialId())
                         .andEqualTo("warehouseId", wmsInnerJobOrderDto.getWarehouseId())
                         .andEqualTo("storageId", wmsInnerJobOrderDetDto.getOutStorageId())
-                 //       .andEqualTo("jobOrderDetId", wmsInPutawayOrderDet.getJobOrderDetId())
-                 //       .andEqualTo("relevanceOrderCode", wmsInnerJobOrder.getJobOrderCode())   //库存会进行合并，因此相关单号可能变化
+                        .andEqualTo("jobOrderDetId", wmsInPutawayOrderDet.getJobOrderDetId())
                         .andEqualTo("jobStatus", (byte) 2)
                         .andEqualTo("stockLock", 0)
                         .andEqualTo("lockStatus", 0)
@@ -400,7 +400,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         .andEqualTo("warehouseId", wmsInnerJobOrderDto.getWarehouseId())
                         .andEqualTo("storageId", wmsInnerJobOrderDetDto.getOutStorageId())
         //                .andEqualTo("relevanceOrderCode", wmsInnerJobOrder.getJobOrderCode())
-        //                .andEqualTo("jobOrderDetId", id)
+                        .andEqualTo("jobOrderDetId", id)
                         .andEqualTo("jobStatus", (byte) 2)
                         .andEqualTo("stockLock", 0)
                         .andEqualTo("lockStatus", 0)
@@ -435,7 +435,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
 
             //如果货品全部分配完成更改表头状态为待作业状态
-            List<WmsInnerJobOrderDetDto> orderDetDtos = dto.stream().filter(li -> li.getLineStatus() != null && li.getLineStatus() == (byte) 2).collect(Collectors.toList());
+            List<WmsInnerJobOrderDetDto> orderDetDtos = dto.stream().filter(li -> li.getOutStorageId() != null).collect(Collectors.toList());
             if (!orderDetDtos.isEmpty() && orderDetDtos.size() == dto.size()) {
                 //更新表头状态
                 //完工入库单需要激活状态 其他则不需要
@@ -541,7 +541,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     wmsInnerJobOrderDet.setLineStatus((byte) 1);
                     wmsInnerJobOrderDet.setModifiedTime(new Date());
                     wmsInnerJobOrderDet.setModifiedUserId(sysUser.getUserId());
-                    wmsInnerJobOrderDet.setLineStatus((byte) 1);
                     num += wmsInnerJobOrderDetMapper.insertSelective(wmsInnerJobOrderDet);
                 }
             }
