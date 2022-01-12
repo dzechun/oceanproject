@@ -128,6 +128,9 @@
         <if test="productionDate!= null and productionDate!= null">
             and date_format(wimb.production_time, '%Y-%m-%d') BETWEEN date_format(#{productionDate}, '%Y-%m-%d') AND  date_format(#{productionDate}, '%Y-%m-%d')
         </if>
+        <if test="materialId!=null and materialId!=''">
+            and wimb.material_id = #{materialId}
+        </if>
         <if test="materialCode!=null and materialCode!=''">
             and bm.material_code like CONCAT('%',#{materialCode},'%')
         </if>
