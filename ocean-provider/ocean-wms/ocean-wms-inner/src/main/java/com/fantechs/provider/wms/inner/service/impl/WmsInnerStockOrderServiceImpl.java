@@ -218,27 +218,45 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             //获取货品库存
             List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(example);
             wmsInnerInventories = this.filtration(wmsInnerInventories);
-            for (WmsInnerInventory wmsInnerInventory : wmsInnerInventories) {
-                WmsInnerStockOrderDet wmsInventoryVerificationDet = new WmsInnerStockOrderDet();
-                wmsInventoryVerificationDet.setStockOrderId(id);
-                wmsInventoryVerificationDet.setMaterialId(wmsInnerInventory.getMaterialId());
-                wmsInventoryVerificationDet.setStorageId(wmsInnerInventory.getStorageId());
-                wmsInventoryVerificationDet.setIfRegister((byte)2);
-                wmsInventoryVerificationDet.setOriginalQty(wmsInnerInventory.getPackingQty());
-                wmsInventoryVerificationDet.setCreateTime(new Date());
-                wmsInventoryVerificationDet.setCreateUserId(sysUser.getUserId());
-                wmsInventoryVerificationDet.setModifiedTime(new Date());
-                wmsInventoryVerificationDet.setModifiedUserId(sysUser.getUserId());
-                wmsInventoryVerificationDet.setOrgId(sysUser.getOrganizationId());
-                wmsInventoryVerificationDet.setBatchCode(wmsInnerInventory.getBatchCode());
-                wmsInventoryVerificationDet.setInventoryStatusId(wmsInnerInventory.getInventoryStatusId());
-                wmsInventoryVerificationDet.setSupplierId(wmsInnerInventory.getSupplierId());
-                list.add(wmsInventoryVerificationDet);
+            if(wmsInnerInventories.size()>0) {
+                for (WmsInnerInventory wmsInnerInventory : wmsInnerInventories) {
+                    WmsInnerStockOrderDet wmsInventoryVerificationDet = new WmsInnerStockOrderDet();
+                    wmsInventoryVerificationDet.setStockOrderId(id);
+                    wmsInventoryVerificationDet.setMaterialId(wmsInnerInventory.getMaterialId());
+                    wmsInventoryVerificationDet.setStorageId(wmsInnerInventory.getStorageId());
+                    wmsInventoryVerificationDet.setIfRegister((byte) 2);
+                    wmsInventoryVerificationDet.setOriginalQty(wmsInnerInventory.getPackingQty());
+                    wmsInventoryVerificationDet.setCreateTime(new Date());
+                    wmsInventoryVerificationDet.setCreateUserId(sysUser.getUserId());
+                    wmsInventoryVerificationDet.setModifiedTime(new Date());
+                    wmsInventoryVerificationDet.setModifiedUserId(sysUser.getUserId());
+                    wmsInventoryVerificationDet.setOrgId(sysUser.getOrganizationId());
+                    wmsInventoryVerificationDet.setBatchCode(wmsInnerInventory.getBatchCode());
+                    wmsInventoryVerificationDet.setInventoryStatusId(wmsInnerInventory.getInventoryStatusId());
+                    wmsInventoryVerificationDet.setSupplierId(wmsInnerInventory.getSupplierId());
+                    list.add(wmsInventoryVerificationDet);
+                }
+            }else {
+                //允许无库存盘点
+                WmsInnerStockOrderDet newStockOrderDet = new WmsInnerStockOrderDet();
+                newStockOrderDet.setStockOrderId(id);
+                newStockOrderDet.setMaterialId(materialId);
+                newStockOrderDet.setStorageId(null);
+                newStockOrderDet.setIfRegister((byte)2);
+                newStockOrderDet.setOriginalQty(new BigDecimal(0));
+                newStockOrderDet.setCreateTime(new Date());
+                newStockOrderDet.setCreateUserId(sysUser.getUserId());
+                newStockOrderDet.setModifiedTime(new Date());
+                newStockOrderDet.setModifiedUserId(sysUser.getUserId());
+                newStockOrderDet.setOrgId(sysUser.getOrganizationId());
+                newStockOrderDet.setBatchCode(null);
+                newStockOrderDet.setInventoryStatusId(null);
+                newStockOrderDet.setSupplierId(null);
+                list.add(newStockOrderDet);
             }
+
         }
-        if(list.size()<1){
-            throw new BizErrorException("所选产品暂无库存");
-        }
+
         return list;
     }
 
