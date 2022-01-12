@@ -621,7 +621,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                             cartonCode.setBarcode(null);
                             cartonCode.setColorBoxCode(null);
                             cartonCode.setMaterialQty(new BigDecimal(1));
-                            wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(parentBarcode);
+                            wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(cartonCode);
                             //添加导入条码履历与单据中间表数据
                             addHt(cartonCode,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
                         }
