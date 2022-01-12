@@ -856,7 +856,11 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         SearchWmsInnerStockOrderDetBarcode searchOrderDetBarcode=new SearchWmsInnerStockOrderDetBarcode();
         //更新盘点条码状态为已提交
         for (CommitInnerStockBarcodeDto item : barcodeList) {
-            byte barcodeType=item.getBarcodeType();
+            WmsInnerStockOrderDetBarcodeDto result= webScanBarcode(stockOrderDetId,item.getBarcode());
+            if(StringUtils.isEmpty(result)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"提交条码无效");
+            }
+            byte barcodeType=result.getBarcodeType();
             if(StringUtils.isEmpty(barcodeType))
                 barcodeType=(byte)0;
             String barcode=item.getBarcode();
