@@ -604,6 +604,21 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 map.put("materialId", inventoryDets.get(0).getMaterialId());
             }
             List<InStorageMaterialDto> inStorageMaterialDtos = wmsInnerInventoryDetService.findInventoryDetByStorage(map);
+            for (InStorageMaterialDto inStorageMaterialDto : inStorageMaterialDtos){
+                Example example = new Example(WmsInnerInventory.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("materialId", inStorageMaterialDto.getMaterialId())
+                        .andEqualTo("warehouseId", baseStorages.get(0).getWarehouseId())
+                        .andEqualTo("storageId", storageDto.getStorageId())
+                        .andEqualTo("jobStatus", (byte) 1)
+                        .andEqualTo("stockLock", 0)
+                        .andEqualTo("qcLock", 0)
+                        .andEqualTo("lockStatus", 0);
+                WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
+                if (wmsInnerInventory == null){
+                    throw new BizErrorException(ErrorCodeEnum.PDA5001012.getCode(), inStorageMaterialDto.getMaterialCode() + "的物料暂无库存或存库状态为待入，不可操作");
+                }
+            }
             storageDto.setList(inStorageMaterialDtos);
         }
         return storageDto;
@@ -783,6 +798,9 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                     .andEqualTo("qcLock", 0)
                     .andEqualTo("lockStatus", 0);
             WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
+            if (wmsInnerInventory == null){
+                throw new BizErrorException(ErrorCodeEnum.PDA5001012.getCode(), storageMaterialDto.getMaterialCode() + "的物料暂无库存或存库状态为待入，不可操作");
+            }
             BigDecimal initQty = wmsInnerInventory.getPackingQty();
             wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(storageMaterialDto.getQty()));
             wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory);

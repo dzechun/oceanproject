@@ -244,14 +244,28 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
             for (WmsInnerInitStockBarcode wmsInnerInitStockBarcode : wmsInnerInitStockBarcodes) {
 
                 //获取最短客户条码
-                //获取长度最
+                //获取长度最小
                 String clientCode = null;
-                if(wmsInnerInitStockBarcode.getClientBarcode1().length()<wmsInnerInitStockBarcode.getClientBarcode2().length() && wmsInnerInitStockBarcode.getClientBarcode1().length()<wmsInnerInitStockBarcode.getClientBarcode3().length()){
+                if (StringUtils.isNotEmpty(wmsInnerInitStockBarcode.getClientBarcode1())){
                     clientCode = wmsInnerInitStockBarcode.getClientBarcode1();
-                }else if(wmsInnerInitStockBarcode.getClientBarcode2().length()<wmsInnerInitStockBarcode.getClientBarcode1().length() && wmsInnerInitStockBarcode.getClientBarcode2().length()<wmsInnerInitStockBarcode.getClientBarcode3().length()){
-                    clientCode = wmsInnerInitStockBarcode.getClientBarcode2();
-                }else{
-                    clientCode = wmsInnerInitStockBarcode.getClientBarcode3();
+                }
+                if (StringUtils.isNotEmpty(wmsInnerInitStockBarcode.getClientBarcode2())){
+                    if (clientCode != null){
+                        if(clientCode.length() > wmsInnerInitStockBarcode.getClientBarcode2().length()){
+                            clientCode = wmsInnerInitStockBarcode.getClientBarcode2();
+                        }
+                    }else {
+                        clientCode = wmsInnerInitStockBarcode.getClientBarcode2();
+                    }
+                }
+                if (StringUtils.isNotEmpty(wmsInnerInitStockBarcode.getClientBarcode3())){
+                    if (clientCode != null){
+                        if(clientCode.length() > wmsInnerInitStockBarcode.getClientBarcode3().length()){
+                            clientCode = wmsInnerInitStockBarcode.getClientBarcode3();
+                        }
+                    }else {
+                        clientCode = wmsInnerInitStockBarcode.getClientBarcode3();
+                    }
                 }
 //                if (!StringUtils.isEmpty(clientCode)){
 //                    // 匹配特征码字段
