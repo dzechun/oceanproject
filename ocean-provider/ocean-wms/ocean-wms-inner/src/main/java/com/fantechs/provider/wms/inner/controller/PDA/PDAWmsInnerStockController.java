@@ -71,8 +71,8 @@ public class PDAWmsInnerStockController {
 
     @ApiOperation("PDA盘点提交")
     @PostMapping("/pdaCommit")
-    public ResponseEntity pdaCommit(@RequestBody(required = true) WmsInnerStockOrderDet wmsInnerStockOrderDet,@RequestBody(required = true) List<CommitInnerStockBarcodeDto> barcodeList){
-        return ControllerUtil.returnCRUD(wmsInnerStockOrderService.pdaCommit(wmsInnerStockOrderDet,barcodeList));
+    public ResponseEntity pdaCommit(@ApiParam(value = "盘点明细ID")@RequestParam Long stockOrderDetId,@RequestBody(required = true) List<CommitInnerStockBarcodeDto> barcodeList){
+        return ControllerUtil.returnCRUD(wmsInnerStockOrderService.pdaCommit(stockOrderDetId,barcodeList));
     }
 
     @ApiOperation("PDA盘点确认")
