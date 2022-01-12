@@ -539,8 +539,8 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
     public int inPushDown(List<MesPmWorkOrder> mesPmWorkOrders) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         List<MesPmWorkOrder> list = new ArrayList<>();
-        String sourceSysOrderTypeCode = mesPmWorkOrders.get(0).getSourceSysOrderTypeCode();
-        String coreSourceSysOrderTypeCode = mesPmWorkOrders.get(0).getCoreSourceSysOrderTypeCode();
+        String sourceSysOrderTypeCode = mesPmWorkOrders.get(0).getSysOrderTypeCode();
+        String coreSourceSysOrderTypeCode = mesPmWorkOrders.get(0).getSysOrderTypeCode();
 
         int i = 0;
         HashSet<Long> set = new HashSet();
@@ -805,6 +805,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                 wmsInnerJobOrder.setSourceBigType((byte)1);
                 wmsInnerJobOrder.setJobOrderType((byte) 1);
                 wmsInnerJobOrder.setOrderStatus((byte) 1);
+                wmsInnerJobOrder.setWarehouseId(detMap.get(nextOrderTypeCode).get(0).getWarehouseId());
                 wmsInnerJobOrder.setCreateUserId(user.getUserId());
                 wmsInnerJobOrder.setCreateTime(new Date());
                 wmsInnerJobOrder.setModifiedUserId(user.getUserId());
