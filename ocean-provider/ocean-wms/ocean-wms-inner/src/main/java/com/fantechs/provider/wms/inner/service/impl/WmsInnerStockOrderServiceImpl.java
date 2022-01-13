@@ -649,16 +649,26 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
     @Transactional(rollbackFor = RuntimeException.class)
     public int pdaCommit(Long stockOrderDetId,List<CommitInnerStockBarcodeDto> barcodeList){
         int num = 0;
-        if(barcodeList.size()<=0){
-            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未提交任何条码");
-        }
-        List<WmsInnerStockOrderDetBarcodeDto> detBarcodeDtos=new ArrayList<>();
         SysUser sysUser = currentUser();
-        //Long stockOrderDetId=wmsInnerStockOrderDet.getStockOrderDetId();
         WmsInnerStockOrderDet stockOrderDet=wmsInventoryVerificationDetMapper.selectByPrimaryKey(stockOrderDetId);
         if(StringUtils.isEmpty(stockOrderDet)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"找不到相应的盘点明细信息");
         }
+        if(barcodeList.size()<=0){
+            //throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未提交任何条码");
+            if(StringUtils.isEmpty(stockOrderDet.getOriginalQty())){
+                stockOrderDet.setOriginalQty(new BigDecimal(0));
+            }
+            stockOrderDet.setStockQty(BigDecimal.ZERO);
+            stockOrderDet.setVarianceQty(stockOrderDet.getStockQty().subtract(stockOrderDet.getOriginalQty()));
+            stockOrderDet.setIfRegister((byte)1);
+            stockOrderDet.setStockUserId(sysUser.getUserId());
+            stockOrderDet.setModifiedTime(new Date());
+            stockOrderDet.setModifiedUserId(sysUser.getUserId());
+            num += wmsInventoryVerificationDetMapper.updateByPrimaryKeySelective(stockOrderDet);
+            return num;
+        }
+        List<WmsInnerStockOrderDetBarcodeDto> detBarcodeDtos=new ArrayList<>();
 
         WmsInnerStockOrder wmsInnerStockOrder=wmsInventoryVerificationMapper.selectByPrimaryKey(stockOrderDet.getStockOrderId());
         if(StringUtils.isEmpty(wmsInnerStockOrder)){

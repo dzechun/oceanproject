@@ -83,7 +83,7 @@ wirod.option3
     LEFT JOIN sys_user sus ON wirod.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON wirod.org_id = bo.organization_id
     left join wms_inner_material_barcode_re_order wimbro on wimbro.order_code = wiro.receiving_order_code
-    left join wms_inner_material_barcode wimb on wimb.material_barcode_id = wimbro=material_barcode_id and wimb.material_id = wirod.material_id
+    left join wms_inner_material_barcode wimb on wimb.material_barcode_id = wimbro.material_barcode_id and wimb.material_id = wirod.material_id
 
     <where>
         <if test="receivingOrderId!=null and receivingOrderId!=''">

@@ -109,7 +109,7 @@
         LEFT JOIN base_organization bo ON wiaod.org_id = bo.organization_id
         left join base_supplier bs on bs.supplier_id=wiao.supplier_id
         left join wms_inner_material_barcode_re_order wimbro on wimbro.order_code = wiao.asn_code
-        left join wms_inner_material_barcode wimb on wimb.material_barcode_id = wimbro=material_barcode_id and wimb.material_id = wiaod.material_id
+        left join wms_inner_material_barcode wimb on wimb.material_barcode_id = wimbro.material_barcode_id and wimb.material_id = wiaod.material_id
         <where>
             <if test="asnOrderId !=null and asnOrderId !=''">
                 and wiaod.asn_order_id=#{asnOrderId}
