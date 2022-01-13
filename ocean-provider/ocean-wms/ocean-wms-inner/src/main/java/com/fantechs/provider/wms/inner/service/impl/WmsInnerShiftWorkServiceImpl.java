@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -29,6 +30,7 @@ import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
 import com.fantechs.provider.wms.inner.service.*;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -40,6 +42,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
 
     @Resource
@@ -604,6 +607,10 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 map.put("materialId", inventoryDets.get(0).getMaterialId());
             }
             List<InStorageMaterialDto> inStorageMaterialDtos = wmsInnerInventoryDetService.findInventoryDetByStorage(map);
+            if (inStorageMaterialDtos.isEmpty()){
+                throw new BizErrorException(ErrorCodeEnum.PDA5001012.getCode(), dto.getStorageCode() + "的库位暂无库存或存库非正常状态");
+            }
+            List<InStorageMaterialDto> list = new ArrayList<>();
             for (InStorageMaterialDto inStorageMaterialDto : inStorageMaterialDtos){
                 Example example = new Example(WmsInnerInventory.class);
                 Example.Criteria criteria = example.createCriteria();
@@ -615,11 +622,14 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                         .andEqualTo("qcLock", 0)
                         .andEqualTo("lockStatus", 0);
                 WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
-                if (wmsInnerInventory == null){
-                    throw new BizErrorException(ErrorCodeEnum.PDA5001012.getCode(), inStorageMaterialDto.getMaterialCode() + "的物料暂无库存或存库状态为待入，不可操作");
+                if (wmsInnerInventory != null && wmsInnerInventory.getPackingQty().compareTo(BigDecimal.ZERO) ==1){
+                    list.add(inStorageMaterialDto);
                 }
             }
-            storageDto.setList(inStorageMaterialDtos);
+            if (list.size() < 1){
+                throw new BizErrorException(ErrorCodeEnum.PDA5001012.getCode(), dto.getStorageCode() + "的库位暂无库存或存库非正常状态");
+            }
+            storageDto.setList(list);
         }
         return storageDto;
     }
@@ -651,16 +661,19 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         }
 
         // 计算库容容量能否存放
-        BigDecimal decimal = new BigDecimal(100);
         BigDecimal count = BigDecimal.ZERO;
         for (InStorageMaterialDto storageMaterialDto : dto.getList()){
-            BigDecimal calculate = calculate(baseStorage, storageMaterialDto.getMaterialId());
-            if (calculate.compareTo(decimal) == 1){
+            // 暂用数量
+            BigDecimal calculate = calculate(baseStorage, storageMaterialDto.getMaterialId(), storageMaterialDto.getMaterialCode());
+            if (storageMaterialDto.getQty().compareTo(calculate) == 1){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "移入库位" + baseStorage.getStorageCode() + "的库容容量不足以存放此次移位");
             }
-            count.add(calculate);
+            // 当前物料数量占用库位中可用数量的百分比
+            BigDecimal divide = storageMaterialDto.getQty().divide(calculate,2, BigDecimal.ROUND_DOWN);
+            count.add(divide);
         }
-        if (count.compareTo(decimal) == 1){
+        // 累积百分比大于100，总库存不可存放
+        if (count.compareTo(new BigDecimal("100")) == 1){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "移入库位" + baseStorage.getStorageCode() + "的库容容量不足以存放此次移位");
         }
 
@@ -858,14 +871,13 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
      * 库容比例计算
      * @return
      */
-    private BigDecimal calculate(BaseStorage baseStorage, Long materialId){
+    private BigDecimal calculate(BaseStorage baseStorage, Long materialId, String materalCode){
 
         //获取物料编码并截取前八位数
-        BaseMaterial baseMaterialList = baseFeignApi.materialDetail(materialId).getData();
-        if(baseMaterialList.getMaterialCode().length()<8){
+        if(materalCode.length()<8){
             throw new BizErrorException("物料编码错误，长度小于规定8位，无法匹配库容");
         }
-        String strMaterialCode = baseMaterialList.getMaterialCode().substring(0,8);
+        String strMaterialCode = materalCode.substring(0,8);
         SearchBaseStorageCapacity searchBaseStorageCapacity = new SearchBaseStorageCapacity();
         searchBaseStorageCapacity.setPageSize(99999);
         searchBaseStorageCapacity.setMaterialCodePrefix(strMaterialCode);
@@ -913,7 +925,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                         type = 4;
                         break;
                 }
-
+                log.info("======TypeCapacity：" + TypeCapacity);
                 if(wmsInnerInventories.size()>0){
                     BigDecimal qty = baseStorageCapacities.get(0).getTypeACapacity();
                     for (WmsInnerInventory wmsInnerInventory : wmsInnerInventories) {
@@ -921,7 +933,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
 
                             //获取物料编码并截取前八位数
                             BaseMaterial baseMaterial = baseFeignApi.materialDetail(wmsInnerInventory.getMaterialId()).getData();
-                            if(baseMaterialList.getMaterialCode().length()<8){
+                            if(baseMaterial.getMaterialCode().length()<8){
                                 throw new BizErrorException("物料编码错误，长度小于规定8位，无法匹配库容");
                             }
                             String substring = baseMaterial.getMaterialCode().substring(0,8);
@@ -947,20 +959,26 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                                     shiftCapacity = shiftStorageCapacity.get(0).getTypeDCapacity();
                                 }
                             }
+                            log.info("====== shiftCapacity：" + shiftCapacity + "=======wmsInnerInventory.getPackingQty()：" + wmsInnerInventory.getPackingQty() + "=====TypeCapacity：" +TypeCapacity);
                             //库存数/转换货品库容*货品库容
                             BigDecimal a = wmsInnerInventory.getPackingQty().divide(shiftCapacity,2).multiply(TypeCapacity);
+                            log.info("====== a：" + a);
                             //四舍五入取整数
                             a = a.setScale(0, RoundingMode.HALF_UP);
+                            log.info("====== a：" + a);
                             qty = qty.subtract(a);
+                            log.info("====== qty：" + qty);
                         }else {
                             qty = qty.subtract(wmsInnerInventory.getPackingQty());
                         }
                     }
+                    log.info("====== qty.compareTo(BigDecimal.ZERO)：" + qty.compareTo(BigDecimal.ZERO));
                     if(qty.compareTo(BigDecimal.ZERO)==1){
                         totalQty = qty;
                     }
+                    log.info("====== totalQty：" + totalQty);
                 }else {
-                    totalQty = baseStorageCapacities.get(0).getTypeACapacity();
+                    totalQty = TypeCapacity;
                 }
             }
         }
