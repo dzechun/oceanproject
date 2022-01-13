@@ -654,7 +654,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         if(StringUtils.isEmpty(stockOrderDet)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"找不到相应的盘点明细信息");
         }
-        if(barcodeList.size()==1 && barcodeList.get(0).getBarcode().equals("noBarcode")){
+        if(barcodeList.size()==1 && (barcodeList.get(0).getBarcode().equals("noBarcode") || StringUtils.isEmpty(barcodeList.get(0).getBarcode()))){
             //throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未提交任何条码");
             if(StringUtils.isEmpty(stockOrderDet.getOriginalQty())){
                 stockOrderDet.setOriginalQty(new BigDecimal(0));
