@@ -116,7 +116,8 @@
     left join sys_user u on qiio.create_user_id=u.user_id
     left join sys_user s on qiio.modified_user_id=s.user_id
     left join base_organization bo ON qiio.org_id = bo.organization_id
-    left join wms_inner_material_barcode wimb on wimb.print_order_code = qiio.incoming_inspection_order_code
+    left join wms_inner_material_barcode_re_order wimbro on wimbro.order_code = qiio.incoming_inspection_order_code
+    left join wms_inner_material_barcode wimb on wimb.material_barcode_id = wimbro=material_barcode_id
     <where>
       <if test="incomingInspectionOrderId != null">
         and qiio.incoming_inspection_order_id = #{incomingInspectionOrderId}
