@@ -6,13 +6,11 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorker;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
@@ -494,8 +492,8 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         }
 
         //更新库存明细、状态
-        Example example1 = new Example(WmsInnerMaterialBarcodeReOrderDto.class);
-        example1.createCriteria().andEqualTo("jobOrderDetId", dto.getJobOrderDetId());
+        Example example1 = new Example(WmsInnerMaterialBarcodeReOrder.class);
+        example1.createCriteria().andEqualTo("orderDetId", dto.getJobOrderDetId());
         List<WmsInnerMaterialBarcodeReOrder> wmsInnerMaterialBarcodeReOrders = wmsInnerMaterialBarcodeReOrderMapper.selectByExample(example1);
         if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeReOrders)) {
             for (WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder : wmsInnerMaterialBarcodeReOrders) {
@@ -531,17 +529,18 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
 //        wms.setOrderStatus((byte) 5);
         int oCount = wmsInnerJobOrderDetService.selectCount(wms);
 
-        SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
+        //移位上架作业不校验工作人员
+/*        SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
         searchBaseWorker.setWarehouseId(wmsInnerJobOrderDto.getWarehouseId());
         searchBaseWorker.setUserId(sysUser.getUserId());
         List<BaseWorkerDto> workerDtos = baseFeignApi.findList(searchBaseWorker).getData();
         if (workerDtos.isEmpty()) {
             throw new BizErrorException(ErrorCodeEnum.PDA5001014);
-        }
+        }*/
 
-        BigDecimal resQty = wmsInnerJobOrderDetDto.stream()
+/*        BigDecimal resQty = wmsInnerJobOrderDetDto.stream()
                 .map(WmsInnerJobOrderDet::getDistributionQty)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .reduce(BigDecimal.ZERO, BigDecimal::add);*/
 
         WmsInnerJobOrder ws = new WmsInnerJobOrder();
         ws.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
@@ -549,7 +548,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         ws.setModifiedUserId(sysUser.getUserId());
         ws.setModifiedTime(new Date());
         ws.setWorkEndtTime(new Date());
-        ws.setWorkerId(workerDtos.get(0).getWorkerId());
+//        ws.setWorkerId(workerDtos.get(0).getWorkerId());
         if (oCount == count) {
             ws.setOrderStatus((byte) 5);
             if (StringUtils.isEmpty(wmsInnerJobOrderDto.getWorkStartTime())) {
