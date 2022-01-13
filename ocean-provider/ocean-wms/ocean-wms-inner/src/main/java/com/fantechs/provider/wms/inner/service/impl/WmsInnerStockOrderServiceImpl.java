@@ -622,14 +622,25 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int pdaConfirm(String ids) {
+        int num=1;
         //盘点确认
-        WmsInnerStockOrder wmsInnerStockOrder = new WmsInnerStockOrder();
-        wmsInnerStockOrder.setOrderStatus((byte)3);
-        wmsInnerStockOrder.setStockOrderId(Long.parseLong(ids));
-        int num = wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInnerStockOrder);
-        if(num<1){
-            throw new BizErrorException("盘点确认失败");
+        //明细是否已全部登记
+        Example example = new Example(WmsInnerStockOrderDet.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("stockOrderId", ids);
+        criteria.andNotEqualTo("ifRegister",1);
+        List<WmsInnerStockOrderDet> stockOrderDetList=wmsInventoryVerificationDetMapper.selectByExample(example);
+        if(stockOrderDetList.size()>0){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"盘点单存在未登记的明细 不能确认");
         }
+
+//        WmsInnerStockOrder wmsInnerStockOrder = new WmsInnerStockOrder();
+//        wmsInnerStockOrder.setOrderStatus((byte)3);
+//        wmsInnerStockOrder.setStockOrderId(Long.parseLong(ids));
+//        int num = wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInnerStockOrder);
+//        if(num<1){
+//            throw new BizErrorException("盘点确认失败");
+//        }
         num+= this.ascertained(ids);
         return num;
     }
