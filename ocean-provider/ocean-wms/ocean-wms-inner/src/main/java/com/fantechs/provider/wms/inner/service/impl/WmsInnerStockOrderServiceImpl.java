@@ -490,24 +490,30 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     }
                 }
             }
-            //解锁及复盘库存
-            num+=this.unlockOrLock((byte)1,wmsInventoryVerificationDets,wmsInventoryVerification);
 
-            //解锁库存明细条码
             if(wmsInventoryVerificationDets.size()>0){
+                //无差异数量 解锁及复盘库存
+                num+=this.unlockOrLock((byte)1,wmsInventoryVerificationDets,wmsInventoryVerification);
+
+                //无差异数量 解锁库存明细条码
                 num+=addStockOrderDetBarcode((byte)2,(byte)1,wmsInventoryVerificationDets,sysUser);
             }
 
             //单据状态(1-打开 2-待作业 3-作业中 4-待处理 5-完成 6-作废)
-            if(wmsInventoryVerification.getProjectType()==2){
+            if(wmsInventoryVerification.getProjectType()==2 && wmsInventoryVerification.getStockMode()==(byte)2){
                 // 复盘单确认后 单据状态为 4-待处理
-                //wmsInventoryVerification.setOrderStatus((byte)5);
                 wmsInventoryVerification.setOrderStatus((byte)4);
-            }else {
+            }else if(wmsInventoryVerification.getProjectType()==(byte)1){
                 //更改盘点状态（已完成）
-                //wmsInventoryVerification.setOrderStatus((byte)6);
                 wmsInventoryVerification.setOrderStatus((byte)5);
+            }else if(wmsInventoryVerification.getProjectType()==2 && wmsInventoryVerification.getStockMode()==(byte)1){
+                //PDA 复盘确认
+                wmsInventoryVerification.setOrderStatus((byte)5);
+
+                //PDA 差异处理
+                this.difference(id);
             }
+
             wmsInventoryVerification.setModifiedTime(new Date());
             wmsInventoryVerification.setModifiedUserId(sysUser.getUserId());
             num +=wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInventoryVerification);
@@ -1421,10 +1427,17 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     inventoryDet.setIfStockLock((byte)0);
                     inventoryDet.setModifiedUserId(sysUser.getUserId());
                     inventoryDet.setModifiedTime(new Date());
-                    num+=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(inventoryDet);
 
-                    //更新盘点条码明细状态为已盘点
-                    stockOrderDetBarcode.setStockResult((byte)2);
+                    int countResult=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(inventoryDet);
+                    if(countResult>0) {
+                        //已盘点
+                        stockOrderDetBarcode.setStockResult((byte) 2);
+                    }else {
+                        //盘盈
+                        stockOrderDetBarcode.setStockResult((byte) 3);
+                    }
+
+                    //更新盘点条码明细状态为已盘点,盘盈或盘亏
                     stockOrderDetBarcode.setModifiedUserId(sysUser.getUserId());
                     stockOrderDetBarcode.setModifiedTime(new Date());
                     num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(stockOrderDetBarcode);

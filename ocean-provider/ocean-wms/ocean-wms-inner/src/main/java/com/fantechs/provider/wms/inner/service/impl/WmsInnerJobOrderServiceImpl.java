@@ -1795,6 +1795,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         SysUser sysUser = currentUser();
         List<WmsInnerMaterialBarcodeReOrder> barcodeReOrderList=new ArrayList<>();
         String orderTypeCode="IN-IWK";
+        Long outStorageId=null;
         if (record.getJobOrderType() == (byte) 1) {
             //上架单
             if(StringUtils.isEmpty(record.getWarehouseId())) {
@@ -1804,8 +1805,10 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 searchBaseStorage.setWarehouseId(record.getWarehouseId());
                 searchBaseStorage.setStorageType((byte)2);//库位类型（1-存货 2-收货 3-发货）
                 List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
-                if(StringUtils.isEmpty(baseStorages))
+                if(baseStorages.size()<=0)
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "未查询到该仓库的收货库位");
+
+                outStorageId=baseStorages.get(0).getStorageId();
 
                 searchBaseStorage.setStorageType((byte)1);
                 baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
@@ -1841,6 +1844,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             wmsInPutawayOrderDet.setModifiedTime(new Date());
             wmsInPutawayOrderDet.setModifiedUserId(sysUser.getUserId());
             wmsInPutawayOrderDet.setOrgId(sysUser.getOrganizationId());
+            if(StringUtils.isEmpty(wmsInPutawayOrderDet.getOutStorageId()) && StringUtils.isNotEmpty(outStorageId))
+                wmsInPutawayOrderDet.setOutStorageId(outStorageId);
+
             wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInPutawayOrderDet);
             //非自建单据新增条码关系表数据
             if(record.getSourceBigType()!=((byte)2) && StringUtils.isNotEmpty(record.getSourceBigType())) {
@@ -2506,7 +2512,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
 
     /**
-     * PDA先单后作业 提交
+     * PDA先单后作业 提交 web端单一确认提交
      * @param
      * @return
      */
