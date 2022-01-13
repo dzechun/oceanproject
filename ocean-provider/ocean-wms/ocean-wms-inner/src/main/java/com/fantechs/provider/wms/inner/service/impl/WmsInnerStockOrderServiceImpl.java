@@ -224,7 +224,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     wmsInventoryVerificationDet.setStockOrderId(id);
                     wmsInventoryVerificationDet.setMaterialId(wmsInnerInventory.getMaterialId());
                     wmsInventoryVerificationDet.setStorageId(wmsInnerInventory.getStorageId());
-                    wmsInventoryVerificationDet.setIfRegister((byte) 2);
+                    wmsInventoryVerificationDet.setIfRegister((byte) 0);
                     wmsInventoryVerificationDet.setOriginalQty(wmsInnerInventory.getPackingQty());
                     wmsInventoryVerificationDet.setCreateTime(new Date());
                     wmsInventoryVerificationDet.setCreateUserId(sysUser.getUserId());
@@ -242,7 +242,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 newStockOrderDet.setStockOrderId(id);
                 newStockOrderDet.setMaterialId(materialId);
                 newStockOrderDet.setStorageId(null);
-                newStockOrderDet.setIfRegister((byte)2);
+                newStockOrderDet.setIfRegister((byte) 0);
                 newStockOrderDet.setOriginalQty(new BigDecimal(0));
                 newStockOrderDet.setCreateTime(new Date());
                 newStockOrderDet.setCreateUserId(sysUser.getUserId());
@@ -319,7 +319,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     wmsInventoryVerificationDet.setStockOrderId(id);
                     wmsInventoryVerificationDet.setMaterialId(wmsInnerInventory.getMaterialId());
                     wmsInventoryVerificationDet.setStorageId(storageId);
-                    wmsInventoryVerificationDet.setIfRegister((byte)2);
+                    wmsInventoryVerificationDet.setIfRegister((byte) 0);
                     wmsInventoryVerificationDet.setOriginalQty(wmsInnerInventory.getPackingQty());
                     wmsInventoryVerificationDet.setCreateTime(new Date());
                     wmsInventoryVerificationDet.setCreateUserId(sysUser.getUserId());
@@ -349,7 +349,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 wmsInventoryVerificationDet.setMaterialId(wmsInnerInventory.getMaterialId());
                 //获取库位id
                 wmsInventoryVerificationDet.setStorageId(wmsInnerInventory.getStorageId());
-                wmsInventoryVerificationDet.setIfRegister((byte)2);
+                wmsInventoryVerificationDet.setIfRegister((byte) 0);
                 wmsInventoryVerificationDet.setOriginalQty(wmsInnerInventory.getPackingQty());
                 wmsInventoryVerificationDet.setCreateTime(new Date());
                 wmsInventoryVerificationDet.setCreateUserId(sysUser.getUserId());
