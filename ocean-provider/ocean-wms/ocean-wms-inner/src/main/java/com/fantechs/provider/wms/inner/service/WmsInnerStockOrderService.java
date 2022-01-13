@@ -62,7 +62,7 @@ public interface WmsInnerStockOrderService extends IService<WmsInnerStockOrder> 
      * @param
      * @return
      */
-    int pdaCommit(WmsInnerStockOrderDet wmsInnerStockOrderDet,List<CommitInnerStockBarcodeDto> barcodeList);
+    int pdaCommit(Long stockOrderDetId,List<CommitInnerStockBarcodeDto> barcodeList);
 
     /**
      * web扫条码提交

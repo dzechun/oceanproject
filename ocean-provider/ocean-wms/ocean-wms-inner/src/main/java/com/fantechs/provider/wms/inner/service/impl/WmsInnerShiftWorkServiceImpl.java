@@ -210,10 +210,20 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             //      innerJobOrder.set(innerJobOrder.getActualQty() != null ? innerJobOrder.getActualQty().add(dto.getMaterialQty()) : dto.getMaterialQty());
             wmsInnerJobOrderMapper.updateByPrimaryKey(innerJobOrder);
         } else {
+            //获取其中一条库存，查询移出库位等信息
+            Example example4 = new Example(WmsInnerInventoryDet.class);
+            example4.createCriteria()
+                    .andEqualTo("materialBarcodeId", dto.getPdaWmsInnerDirectTransferOrderDetDtos().get(0).getMaterialBarcodeId())
+                    .andEqualTo("barcodeStatus", 1);
+            List<WmsInnerInventoryDet> inventoryDets = wmsInnerInventoryDetMapper.selectByExample(example4);
+            if (StringUtils.isEmpty(inventoryDets) || inventoryDets.size()>1) {
+                throw new BizErrorException(ErrorCodeEnum.PDA5001009.getCode(),"未查询到对应库存中正确的条码");
+            }
+
             // 查询库存信息，同一库位跟同物料有且只有一条数据
             Map<String, Object> map = new HashMap<>();
             map.put("materialId", dto.getMaterialId());
-            map.put("storageId", dto.getOutStorageId());
+            map.put("storageId", inventoryDets.get(0).getStorageId());
             map.put("jobStatus", (byte) 1);
             map.put("lockStatus", (byte) 0);
             map.put("stockLock", (byte) 0);
@@ -244,7 +254,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
 
             innerJobOrder = new WmsInnerJobOrder();
             SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
-            searchBaseStorage.setStorageId(dto.getOutStorageId());
+            searchBaseStorage.setStorageId(inventoryDets.get(0).getStorageId());
             List<BaseStorage> baseStorage = baseFeignApi.findList(searchBaseStorage).getData();
             if (StringUtils.isEmpty(baseStorage))
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未查询到移出库位");
@@ -428,7 +438,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         criteria.andEqualTo("materialId", oldDto.getMaterialId())
 //                .andEqualTo("warehouseId", oldDto.getWarehouseId())
                 .andEqualTo("storageId", oldDto.getOutStorageId())
-//                .andEqualTo("jobOrderDetId", oldDto.getJobOrderDetId())
+                .andEqualTo("jobOrderDetId", oldDto.getJobOrderDetId())
                 .andEqualTo("jobStatus", (byte) 2)
                 .andEqualTo("stockLock", 0)
                 .andEqualTo("lockStatus", 0);
