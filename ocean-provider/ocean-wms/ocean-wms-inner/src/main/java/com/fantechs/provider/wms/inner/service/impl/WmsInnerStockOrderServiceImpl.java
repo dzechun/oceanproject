@@ -1487,6 +1487,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     .andEqualTo("jobStatus",1)
                     .andEqualTo("packingQty",wmsInnerStockOrderDet.getOriginalQty());
             WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
+            if(StringUtils.isEmpty(wmsInnerInventory)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"库存变动 请重新盘点");
+            }
             example.clear();
             criteria = example.createCriteria();
             criteria.andEqualTo("warehouseId",wmsInnerStockOrder.getWarehouseId())
