@@ -1210,25 +1210,32 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         //核心单据明细ID
         Long coreSourceId=wmsInnerJobOrderDet.getCoreSourceId();
         //上架数量
-        BigDecimal actualQty=wmsInnerJobOrderDet.getActualQty();
+        BigDecimal actualQty=new BigDecimal(0);
+        if(StringUtils.isNotEmpty(wmsInnerJobOrderDet.getActualQty()))
+            actualQty=wmsInnerJobOrderDet.getActualQty();
+        //计划数量
+        BigDecimal planQty=new BigDecimal(0);
+        if(StringUtils.isNotEmpty(wmsInnerJobOrderDet.getPlanQty()))
+            planQty=wmsInnerJobOrderDet.getPlanQty();
+
         //来源单据回写
-        if(StringUtils.isNotEmpty(sourceSysOrderTypeCode)) {
+        if(StringUtils.isNotEmpty(sourceSysOrderTypeCode) && planQty.compareTo(BigDecimal.ZERO)==1) {
             switch (sourceSysOrderTypeCode) {
                 case "IN-PO":
                     //采购订单
-                    omFeignApi.updatePutDownQty(sourceId, actualQty);
+                    omFeignApi.updatePutDownQty(sourceId, planQty);
                     break;
                 case "IN-SRO":
                     //销退订单
-                    omFeignApi.updateSalesReturnPutDownQty(sourceId, actualQty);
+                    omFeignApi.updateSalesReturnPutDownQty(sourceId, planQty);
                     break;
                 case "IN-OIO":
                     //其它入库订单
-                    omFeignApi.updateOtherInPutDownQty(sourceId, actualQty);
+                    omFeignApi.updateOtherInPutDownQty(sourceId, planQty);
                     break;
                 case "IN-IPO":
                     //入库计划
-                    inFeignApi.updatePutawayQty(opType, sourceId, actualQty);
+                    inFeignApi.updatePutawayQty(opType, sourceId, planQty);
                     break;
                 case "IN-SWK":
                     //收货作业
@@ -1252,7 +1259,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         }
 
         //核心单据回写
-        if(StringUtils.isNotEmpty(coreSourceTypeCode)) {
+        if(StringUtils.isNotEmpty(coreSourceTypeCode) && actualQty.compareTo(BigDecimal.ZERO)==1) {
             switch (coreSourceTypeCode) {
                 case "IN-PO":
                     //采购订单
