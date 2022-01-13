@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.entity.om.OmHtPurchaseReturnOrderDet;
 import com.fantechs.common.base.general.entity.om.OmPurchaseReturnOrderDet;
 import com.fantechs.common.base.support.IService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -16,4 +17,6 @@ import java.util.Map;
 public interface OmPurchaseReturnOrderDetService extends IService<OmPurchaseReturnOrderDet> {
     List<OmPurchaseReturnOrderDetDto> findList(Map<String, Object> map);
     List<OmHtPurchaseReturnOrderDet> findHtList(Map<String, Object> map);
+
+    int updatePutDownQty(Long detId, BigDecimal putawayQty);
 }

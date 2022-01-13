@@ -1210,32 +1210,28 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         //核心单据明细ID
         Long coreSourceId=wmsInnerJobOrderDet.getCoreSourceId();
         //上架数量
-        BigDecimal actualQty=new BigDecimal(0);
-        if(StringUtils.isNotEmpty(wmsInnerJobOrderDet.getActualQty()))
-            actualQty=wmsInnerJobOrderDet.getActualQty();
-        //计划数量
-        BigDecimal planQty=new BigDecimal(0);
-        if(StringUtils.isNotEmpty(wmsInnerJobOrderDet.getPlanQty()))
-            planQty=wmsInnerJobOrderDet.getPlanQty();
-
+        BigDecimal actualQty=wmsInnerJobOrderDet.getPlanQty();
+        if (opType == 1 ) {
+            actualQty = wmsInnerJobOrderDet.getActualQty();
+        }
         //来源单据回写
-        if(StringUtils.isNotEmpty(sourceSysOrderTypeCode) && planQty.compareTo(BigDecimal.ZERO)==1) {
+        if(StringUtils.isNotEmpty(sourceSysOrderTypeCode)) {
             switch (sourceSysOrderTypeCode) {
                 case "IN-PO":
                     //采购订单
-                    omFeignApi.updatePutDownQty(sourceId, planQty);
+                    omFeignApi.updatePutDownQty(sourceId, actualQty);
                     break;
                 case "IN-SRO":
                     //销退订单
-                    omFeignApi.updateSalesReturnPutDownQty(sourceId, planQty);
+                    omFeignApi.updateSalesReturnPutDownQty(sourceId, actualQty);
                     break;
                 case "IN-OIO":
                     //其它入库订单
-                    omFeignApi.updateOtherInPutDownQty(sourceId, planQty);
+                    omFeignApi.updateOtherInPutDownQty(sourceId, actualQty);
                     break;
                 case "IN-IPO":
                     //入库计划
-                    inFeignApi.updatePutawayQty(opType, sourceId, planQty);
+                    inFeignApi.updatePutawayQty(opType, sourceId, actualQty);
                     break;
                 case "IN-SWK":
                     //收货作业
@@ -1253,13 +1249,33 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 //                incomingOrder.setIfAllIssued((byte)0);//是否已全部下发(0-否 1-是)
                     //qmsFeignApi.updateIfAllIssued(incomingOrder);
                     break;
+                case "INNER-TO":
+                    //调拨单
+                    omFeignApi.updateTransferOrderPutDownQty(sourceId,actualQty);
+                    break;
+                case "OUT-SO":
+                    //销售订单
+                    omFeignApi.updateSalesOrderPutDownQty(sourceId,actualQty);
+                    break;
+                case "OUT-OOO":
+                    //其他出库单
+                    omFeignApi.updateOtherOutOrderPutDownQty(sourceId,actualQty);
+                    break;
+                case "OUT-PRO":
+                    //采购退货出库
+                    omFeignApi.updatePurchaseReturnOrderPutDownQty(sourceId,actualQty);
+                    break;
+                case "OUT-PSLO":
+                    //备料计划
+
+                    break;
                 default:
                     break;
             }
         }
 
         //核心单据回写
-        if(StringUtils.isNotEmpty(coreSourceTypeCode) && actualQty.compareTo(BigDecimal.ZERO)==1) {
+        if(StringUtils.isNotEmpty(coreSourceTypeCode)) {
             switch (coreSourceTypeCode) {
                 case "IN-PO":
                     //采购订单

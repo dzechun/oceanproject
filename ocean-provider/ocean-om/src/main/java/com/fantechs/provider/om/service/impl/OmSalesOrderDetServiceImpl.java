@@ -4,6 +4,7 @@ package com.fantechs.provider.om.service.impl;
 import cn.hutool.core.date.DateTime;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
+import com.fantechs.common.base.general.entity.om.OmOtherOutOrderDet;
 import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -53,5 +55,28 @@ public class OmSalesOrderDetServiceImpl extends BaseService<OmSalesOrderDet> imp
         return omSalesOrderDetMapper.findList(map);
     }
 
+    /**
+     * 更新累计下发数量
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updatePutDownQty(Long detId, BigDecimal putawayQty) {
+        int num=1;
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        OmSalesOrderDet omSalesOrderDet = omSalesOrderDetMapper.selectByPrimaryKey(detId);
+        if(StringUtils.isNotEmpty(omSalesOrderDet)){
+            if(StringUtils.isEmpty(omSalesOrderDet.getTotalIssueQty())){
+                omSalesOrderDet.setTotalIssueQty(new BigDecimal(0));
+            }
 
+            omSalesOrderDet.setTotalIssueQty(omSalesOrderDet.getTotalIssueQty().subtract(putawayQty));
+            omSalesOrderDet.setIfAllIssued((byte)0);
+            omSalesOrderDet.setModifiedUserId(sysUser.getUserId());
+            omSalesOrderDet.setModifiedTime(new Date());
+            num+=omSalesOrderDetMapper.updateByPrimaryKeySelective(omSalesOrderDet);
+
+        }
+        return num;
+    }
 }
