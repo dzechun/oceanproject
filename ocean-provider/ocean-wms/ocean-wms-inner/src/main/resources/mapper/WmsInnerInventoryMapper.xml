@@ -90,6 +90,7 @@
     wii.work_order_code,
     wii.sales_order_code,
     wii.supplier_id,
+    wii.job_order_det_id,
 	wii.`status`,
 	wii.remark,
 	wii.org_id,
@@ -131,10 +132,10 @@
             <if test="storageType!=null and storageType!=''">
                 and bs.storage_type = #{storageType}
             </if>
-            <if test="lockStatus!=null and lockStatus != ''">
+            <if test="lockStatus!=null">
                 and wii.lock_status = #{lockStatus}
             </if>
-            <if test="stockLock!=null and stockLock != ''">
+            <if test="stockLock!=null">
                 and wii.stock_lock = #{stockLock}
             </if>
             <if test="jobStatus!=null and jobStatus != ''">
@@ -220,9 +221,6 @@
             </if>
             <if test="inventoryStatusId!=null and inventoryStatusId != ''">
                 and wii.inventory_status_id = #{inventoryStatusId}
-            </if>
-            <if test="jobOrderDetId!=null and jobOrderDetId != ''">
-                and wii.job_order_det_id = #{jobOrderDetId}
             </if>
             <if test="jobOrderDetId!=null and jobOrderDetId != ''">
                 and wii.job_order_det_id = #{jobOrderDetId}
