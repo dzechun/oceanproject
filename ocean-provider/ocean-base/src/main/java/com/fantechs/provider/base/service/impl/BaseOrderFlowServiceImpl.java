@@ -60,6 +60,9 @@ public class BaseOrderFlowServiceImpl extends BaseService<BaseOrderFlow> impleme
         else if(record.getOrderFlowDimension()==(byte)3)
             criteria.andEqualTo("materialId", record.getMaterialId());
 
+        criteria.andEqualTo("sourceOrderTypeCode",record.getSourceOrderTypeCode());
+        criteria.andEqualTo("nextOrderTypeCode",record.getNextOrderTypeCode());
+
         List<BaseOrderFlow> baseOrderFlows = baseOrderFlowMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(baseOrderFlows)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"单据节点和单据流维度已存在");
