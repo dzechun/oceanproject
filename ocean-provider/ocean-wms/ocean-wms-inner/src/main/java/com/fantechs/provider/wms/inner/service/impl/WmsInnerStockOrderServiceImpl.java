@@ -1000,7 +1000,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 wmsInnerMaterialBarcode.setIfSysBarcode((byte) 0);
                 Date productionTime=null;
                 try {
-                    productionTime=sdf.parse(item.getProductionTime());
+                    if(StringUtils.isNotEmpty(item.getProductionTime())){
+                        productionTime=sdf.parse(item.getProductionTime());
+                    }
+
                 }catch (Exception ex){
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"参数生产日期转换为时间类型异常");
                 }
@@ -1056,10 +1059,12 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 detBarcode.setCreateTime(new Date());
                 orderDetBarcodeList.add(detBarcode);
 
+                totalQty=totalQty.add(item.getMaterialQty());
             }
         }
         //更新明细为登记状态 盘点数量
-        wmsInnerStockOrderDet.setStockQty(totalQty);
+        wmsInnerStockOrderDet.setStockQty(wmsInnerStockOrderDet.getStockQty().add(totalQty));
+        wmsInnerStockOrderDet.setVarianceQty(wmsInnerStockOrderDet.getStockQty().subtract(wmsInnerStockOrderDet.getOriginalQty()));
         wmsInnerStockOrderDet.setIfRegister((byte)1);
         wmsInnerStockOrderDet.setStockUserId(sysUser.getUserId());
         wmsInnerStockOrderDet.setModifiedTime(new Date());
