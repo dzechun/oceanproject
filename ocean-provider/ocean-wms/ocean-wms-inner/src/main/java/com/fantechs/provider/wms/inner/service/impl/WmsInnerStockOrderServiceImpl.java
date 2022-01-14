@@ -430,7 +430,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             if (StringUtils.isEmpty(wmsInventoryVerification)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
-            if(wmsInventoryVerification.getOrderStatus()!=3){
+            if(wmsInventoryVerification.getOrderStatus()!=3 && wmsInventoryVerification.getProjectType()==(byte)1){
                 throw new BizErrorException("盘点单未登记,无法确认");
             }
             Example example = new Example(WmsInnerStockOrderDet.class);
@@ -507,9 +507,6 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 //更改盘点状态（已完成）
                 wmsInventoryVerification.setOrderStatus((byte)5);
             }else if(wmsInventoryVerification.getProjectType()==2 && wmsInventoryVerification.getStockMode()==(byte)1){
-                //PDA 复盘确认
-                wmsInventoryVerification.setOrderStatus((byte)5);
-
                 //PDA 差异处理
                 this.difference(id);
             }
@@ -633,6 +630,12 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         if(stockOrderDetList.size()>0){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"盘点单存在未登记的明细 不能确认");
         }
+        WmsInnerStockOrder wmsInnerStockOrder=wmsInventoryVerificationMapper.selectByPrimaryKey(ids);
+        if(StringUtils.isEmpty(wmsInnerStockOrder)){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"找不到相应的盘点单信息");
+        }
+        if(wmsInnerStockOrder.getProjectType()==(byte)2)
+            wmsInnerStockOrder.setOrderStatus((byte)4);
 
 //        WmsInnerStockOrder wmsInnerStockOrder = new WmsInnerStockOrder();
 //        wmsInnerStockOrder.setOrderStatus((byte)3);
