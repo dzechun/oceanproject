@@ -666,6 +666,14 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             stockOrderDet.setModifiedTime(new Date());
             stockOrderDet.setModifiedUserId(sysUser.getUserId());
             num += wmsInventoryVerificationDetMapper.updateByPrimaryKeySelective(stockOrderDet);
+
+            Long stockOrderId=stockOrderDet.getStockOrderId();
+            WmsInnerStockOrder wmsInnerStockOrder=wmsInventoryVerificationMapper.selectByPrimaryKey(stockOrderId);
+            wmsInnerStockOrder.setOrderStatus((byte)3);
+            wmsInnerStockOrder.setModifiedUserId(sysUser.getUserId());
+            wmsInnerStockOrder.setModifiedTime(new Date());
+            num+=wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInnerStockOrder);
+
             return num;
         }
         List<WmsInnerStockOrderDetBarcodeDto> detBarcodeDtos=new ArrayList<>();
@@ -684,6 +692,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
 
         //更新盘点条码状态为已提交
         for (CommitInnerStockBarcodeDto item : barcodeList) {
+            if(StringUtils.isEmpty(item.getBarcodeType())){
+                item.setBarcodeType((byte)0);
+            }
             byte barcodeType=item.getBarcodeType();
             String barcode=item.getBarcode();
             if(barcodeType==(byte)1){
@@ -840,6 +851,14 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         if(stockOrderDetBarcodeList.size()>0){
             num+=wmsInnerStockOrderDetBarcodeMapper.insertList(stockOrderDetBarcodeList);
         }
+
+        Long stockOrderId=stockOrderDet.getStockOrderId();
+        WmsInnerStockOrder upWmsInnerStockOrder=wmsInventoryVerificationMapper.selectByPrimaryKey(stockOrderId);
+        upWmsInnerStockOrder.setOrderStatus((byte)3);
+        upWmsInnerStockOrder.setModifiedUserId(sysUser.getUserId());
+        upWmsInnerStockOrder.setModifiedTime(new Date());
+        num+=wmsInventoryVerificationMapper.updateByPrimaryKeySelective(upWmsInnerStockOrder);
+
         return num;
     }
 
