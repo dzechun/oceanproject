@@ -115,8 +115,8 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         for(SrmCarportTimeQuantumDto dto :srmCarportTimeQuantumDtos){
             Date startTime = dto.getStartTime();
             Date endTime = dto.getEndTime();
-            String str1 =  DateUtils.getDateString(startTime,"HH:mm:ss");
-            String str2 =  DateUtils.getDateString(srmDeliveryAppointDto.getAppointStartTime(),"HH:mm:ss");
+            String str1 =  DateUtils.getDateString(startTime,"HH:mm");
+            String str2 =  DateUtils.getDateString(srmDeliveryAppointDto.getAppointStartTime(),"HH:mm");
             if(str1.equals(str2))
                 srmCarportTimeQuantumDto = dto;
         }

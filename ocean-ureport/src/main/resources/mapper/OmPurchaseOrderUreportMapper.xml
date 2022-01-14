@@ -25,12 +25,12 @@
             opo.order_date,
             bd.dept_name,
             su.user_name as make_order_user_name,
-            opo.make_order_date,
+            opo.create_time as make_order_date,
             opo.remark
         from om_purchase_order opo
         left join base_supplier bs on bs.supplier_id = opo.supplier_id
         left join base_dept bd on bd.dept_id = opo.purchase_dept_id
-        left join sys_user su on su.user_id = opo.make_order_user_id
+        left join sys_user su on su.user_id = opo.purchase_user_id
         <where>
             <if test="purchaseOrderCode!=null and purchaseOrderCode!=''">
                 and opo.purchase_order_code like CONCAT('%', #{purchaseOrderCode}, '%')

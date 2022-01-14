@@ -102,6 +102,7 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
 
         //二级条码信息
         List<WmsInnerInventoryDetDto> nextLevelInventoryDetDtos = new LinkedList<>();
+        List<Long> idList = new LinkedList<>();
         Map<String,Object> nextLevelMap = new HashMap<>();
         for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : detDtos) {
             if (type == (byte) 2 && StringUtils.isNotEmpty(wmsInnerInventoryDetDto.getCartonCode())) {
@@ -118,7 +119,11 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
             if(StringUtils.isEmpty(inventoryDetDtos)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"找不到二级条码");
             }
-            nextLevelInventoryDetDtos.add(inventoryDetDtos.get(0));
+            WmsInnerInventoryDetDto inventoryDetDto = inventoryDetDtos.get(0);
+            if(!idList.contains(inventoryDetDto.getInventoryDetId())) {
+                nextLevelInventoryDetDtos.add(inventoryDetDto);
+                idList.add(inventoryDetDto.getInventoryDetId());
+            }
         }
         cartonPalletInfoDto.setNextLevelInventoryDetDtos(nextLevelInventoryDetDtos);
 
