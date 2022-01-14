@@ -184,6 +184,12 @@ public class SearchWmsInnerMaterialBarcodeReOrder extends BaseQuery implements S
     @ApiModelProperty(name="inspectionStatus",value = "1-未质检 2-合格 3-不合格")
     private Byte inspectionStatus;
 
+    /**
+     *全局查（栈板、包箱、sn、彩盒码）
+     */
+    @ApiModelProperty(name = "overallCode",value = "全局查（栈板、包箱、sn、彩盒码）")
+    private String overallCode;
+
 
     private static final long serialVersionUID = 1L;
 }
