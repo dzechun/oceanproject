@@ -15,10 +15,7 @@ import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderType;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
-import com.fantechs.common.base.general.entity.srm.SrmAppointDeliveryReAsn;
-import com.fantechs.common.base.general.entity.srm.SrmDeliveryAppoint;
-import com.fantechs.common.base.general.entity.srm.SrmInAsnOrder;
-import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDet;
+import com.fantechs.common.base.general.entity.srm.*;
 import com.fantechs.common.base.general.entity.srm.history.SrmInHtAsnOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcodeReOrder;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -63,6 +60,9 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
     private SrmAppointDeliveryReAsnService srmAppointDeliveryReAsnService;
     @Resource
     private InnerFeignApi innerFeignApi;
+    @Resource
+    private SrmPlanDeliveryOrderDetMapper srmPlanDeliveryOrderDetMapper;
+
 
     @Override
     public List<SrmInAsnOrderDto> findList(Map<String, Object> map) {
@@ -258,46 +258,6 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
             if (StringUtils.isNotEmpty(addlist))
                 srmInAsnOrderDetMapper.insertList(addlist);
         }
-
-        //保存详情表
-/*        if(StringUtils.isNotEmpty(srmInAsnOrderDto.getSrmInAsnOrderDetDtos())) {
-
-            //删除子表重新添加
-            Example example1 = new Example(SrmInAsnOrderDet.class);
-            Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andEqualTo("asnOrderId",srmInAsnOrderDto.getAsnOrderId());
-            srmInAsnOrderDetMapper.deleteByExample(example1);
-
-            List<SrmInAsnOrderDetDto> list = new ArrayList<>();
-            List<SrmInHtAsnOrderDetDto> htList = new ArrayList<>();
-            for (SrmInAsnOrderDetDto srmInAsnOrderDetDto : srmInAsnOrderDto.getSrmInAsnOrderDetDtos()) {
-                if (StringUtils.isEmpty(srmInAsnOrderDetDto.getOrderQty()))
-                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"采购订单数量不能为空");
-                if (StringUtils.isEmpty(srmInAsnOrderDetDto.getTotalDeliveryQty()))
-                    srmInAsnOrderDetDto.setTotalDeliveryQty(BigDecimal.ZERO);
-                if (StringUtils.isEmpty(srmInAsnOrderDetDto.getDeliveryQty()))
-                    srmInAsnOrderDetDto.setDeliveryQty(BigDecimal.ZERO);
-                if(srmInAsnOrderDetDto.getDeliveryQty().compareTo(BigDecimal.ZERO)<0)
-                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"发货数量不能小于0");
-                if (srmInAsnOrderDetDto.getOrderQty().compareTo(srmInAsnOrderDetDto.getTotalDeliveryQty().add(srmInAsnOrderDetDto.getDeliveryQty())) == -1)
-                    throw new BizErrorException("交货总量大于订单数量");
-                srmInAsnOrderDetDto.setAsnOrderId(srmInAsnOrderDto.getAsnOrderId());
-                srmInAsnOrderDetDto.setCreateUserId(user.getUserId());
-                srmInAsnOrderDetDto.setCreateTime(new Date());
-                srmInAsnOrderDetDto.setModifiedUserId(user.getUserId());
-                srmInAsnOrderDetDto.setModifiedTime(new Date());
-                srmInAsnOrderDetDto.setStatus(StringUtils.isEmpty(srmInAsnOrderDetDto.getStatus()) ? 1 : srmInAsnOrderDetDto.getStatus());
-                srmInAsnOrderDetDto.setOrgId(user.getOrganizationId());
-                list.add(srmInAsnOrderDetDto);
-
-                SrmInHtAsnOrderDetDto srmInHtAsnOrderDetDto = new SrmInHtAsnOrderDetDto();
-                BeanUtils.copyProperties(srmInAsnOrderDetDto, srmInHtAsnOrderDetDto);
-                htList.add(srmInHtAsnOrderDetDto);
-            }
-            if (StringUtils.isNotEmpty(list)) srmInAsnOrderDetMapper.insertList(list);
-            if (StringUtils.isNotEmpty(htList)) srmInHtAsnOrderDetMapper.insertList(htList);
-        }*/
-
         return i;
     }
 
@@ -387,6 +347,16 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
             Example example1 = new Example(SrmInAsnOrderDet.class);
             Example.Criteria criteria1 = example1.createCriteria();
             criteria1.andEqualTo("asnOrderId",id);
+            List<SrmInAsnOrderDet> srmInAsnOrderDets = srmInAsnOrderDetMapper.selectByExample(example1);
+            for(SrmInAsnOrderDet det : srmInAsnOrderDets){
+                if(StringUtils.isNotEmpty(det.getSourceId())) {
+                    Example example = new Example(SrmPlanDeliveryOrderDet.class);
+                    example.createCriteria().andEqualTo("planDeliveryOrderDetId", det.getSourceId());
+                    List<SrmPlanDeliveryOrderDet> srmPlanDeliveryOrderDets = srmPlanDeliveryOrderDetMapper.selectByExample(example1);
+                    srmPlanDeliveryOrderDets.get(0).setIfCreateAsn((byte)1);
+                    srmPlanDeliveryOrderDetMapper.updateByPrimaryKey(srmPlanDeliveryOrderDets.get(0));
+                }
+            }
             srmInAsnOrderDetMapper.deleteByExample(example1);
         }
         int i = srmInAsnOrderMapper.deleteByIds(ids);

@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -65,6 +64,7 @@ public class SrmPlanDeliveryOrderDetServiceImpl extends BaseService<SrmPlanDeliv
 
                 SrmInAsnOrderDetDto srmInAsnOrderDetDto = new SrmInAsnOrderDetDto();
                 srmInAsnOrderDetDto.setSourceOrderId(srmPlanDeliveryOrderDetDto.getPurchaseOrderDetId());
+                srmInAsnOrderDetDto.setSourceId(srmPlanDeliveryOrderDetDto.getPlanDeliveryOrderDetId());
                 srmInAsnOrderDetDto.setWarehouseId(srmPlanDeliveryOrderDetDto.getWarehouseId());
                 srmInAsnOrderDetDto.setMaterialId(srmPlanDeliveryOrderDetDto.getMaterialId());
                 srmInAsnOrderDetDto.setDeliveryQty(srmPlanDeliveryOrderDetDto.getPlanDeliveryQty());
