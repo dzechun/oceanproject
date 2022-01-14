@@ -89,6 +89,12 @@
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.fantechs.provider.api.wms.in</groupId>
+            <artifactId>ocean-wms-in-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
         <!--<dependency>
             <groupId>com.fantechs.provider.api.srm</groupId>
             <artifactId>ocean-srm-api</artifactId>
