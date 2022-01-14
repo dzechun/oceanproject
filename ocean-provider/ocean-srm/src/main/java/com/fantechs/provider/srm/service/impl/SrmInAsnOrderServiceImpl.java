@@ -231,7 +231,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         }
 
         //删除更新之外的明细
-        Example example1 = new Example(SrmInAsnOrderDetDto.class);
+        Example example1 = new Example(SrmInAsnOrderDet.class);
         Example.Criteria criteria1 = example1.createCriteria();
         criteria1.andEqualTo("asnOrderId", srmInAsnOrderDto.getAsnOrderId());
         if (idList.size() > 0) {
