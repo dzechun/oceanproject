@@ -352,9 +352,12 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
                 if(StringUtils.isNotEmpty(det.getSourceId())) {
                     Example example = new Example(SrmPlanDeliveryOrderDet.class);
                     example.createCriteria().andEqualTo("planDeliveryOrderDetId", det.getSourceId());
-                    List<SrmPlanDeliveryOrderDet> srmPlanDeliveryOrderDets = srmPlanDeliveryOrderDetMapper.selectByExample(example1);
-                    srmPlanDeliveryOrderDets.get(0).setIfCreateAsn((byte)1);
-                    srmPlanDeliveryOrderDetMapper.updateByPrimaryKey(srmPlanDeliveryOrderDets.get(0));
+                    List<SrmPlanDeliveryOrderDet> srmPlanDeliveryOrderDets = srmPlanDeliveryOrderDetMapper.selectByExample(example);
+                    if (StringUtils.isNotEmpty(srmPlanDeliveryOrderDets)) {
+                        SrmPlanDeliveryOrderDet srmPlanDeliveryOrderDet = srmPlanDeliveryOrderDets.get(0);
+                        srmPlanDeliveryOrderDet.setIfCreateAsn((byte) 1);
+                        srmPlanDeliveryOrderDetMapper.updateByPrimaryKey(srmPlanDeliveryOrderDet);
+                    }
                 }
             }
             srmInAsnOrderDetMapper.deleteByExample(example1);
