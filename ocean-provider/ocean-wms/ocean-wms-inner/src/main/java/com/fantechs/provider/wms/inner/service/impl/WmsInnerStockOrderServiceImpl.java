@@ -464,8 +464,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                             det.setSourceDetId(wmsInventoryVerificationDet.getStockOrderDetId());
                             det.setStorageId(wmsInventoryVerificationDet.getStorageId());
                             det.setMaterialId(wmsInventoryVerificationDet.getMaterialId());
-                            det.setLastTimeVarianceQty(wmsInventoryVerificationDet.getVarianceQty());
                             det.setOriginalQty(wmsInventoryVerificationDet.getOriginalQty());
+                            det.setStockQty(null);
+                            det.setVarianceQty(null);
+                            det.setLastTimeVarianceQty(wmsInventoryVerificationDet.getVarianceQty());
                             det.setIfRegister((byte)0);
                             det.setCreateUserId(sysUser.getUserId());
                             det.setCreateTime(new Date());
@@ -1053,7 +1055,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 detBarcode.setStockOrderDetBarcodeId(null);
                 detBarcode.setStockOrderDetId(stockOrderDetId);
                 detBarcode.setMaterialBarcodeId(materialBarcodeId);
-                detBarcode.setStockResult((byte)2);
+                detBarcode.setStockResult((byte)1);
                 detBarcode.setScanStatus((byte)3);
                 detBarcode.setCreateUserId(sysUser.getUserId());
                 detBarcode.setCreateTime(new Date());
@@ -1063,6 +1065,11 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             }
         }
         //更新明细为登记状态 盘点数量
+        if(StringUtils.isEmpty(wmsInnerStockOrderDet.getStockQty()))
+            wmsInnerStockOrderDet.setStockQty(BigDecimal.ZERO);
+        if(StringUtils.isEmpty(wmsInnerStockOrderDet.getOriginalQty()))
+            wmsInnerStockOrderDet.setOriginalQty(BigDecimal.ZERO);
+
         wmsInnerStockOrderDet.setStockQty(wmsInnerStockOrderDet.getStockQty().add(totalQty));
         wmsInnerStockOrderDet.setVarianceQty(wmsInnerStockOrderDet.getStockQty().subtract(wmsInnerStockOrderDet.getOriginalQty()));
         wmsInnerStockOrderDet.setIfRegister((byte)1);
@@ -1070,6 +1077,12 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         wmsInnerStockOrderDet.setModifiedTime(new Date());
         wmsInnerStockOrderDet.setModifiedUserId(sysUser.getUserId());
         num += wmsInventoryVerificationDetMapper.updateByPrimaryKeySelective(wmsInnerStockOrderDet);
+
+        //更新表头状态为作业中
+        wmsInnerStockOrder.setOrderStatus((byte)3);
+        wmsInnerStockOrder.setModifiedUserId(sysUser.getUserId());
+        wmsInnerStockOrder.setModifiedTime(new Date());
+        num+=wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInnerStockOrder);
 
         //非系统条码增加到关系表
         if(materialBarcodeReOrderList.size()>0){
