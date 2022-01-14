@@ -612,17 +612,16 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             }
             List<InStorageMaterialDto> list = new ArrayList<>();
             for (InStorageMaterialDto inStorageMaterialDto : inStorageMaterialDtos){
-                Example example = new Example(WmsInnerInventory.class);
-                Example.Criteria criteria = example.createCriteria();
-                criteria.andEqualTo("materialId", inStorageMaterialDto.getMaterialId())
-                        .andEqualTo("warehouseId", baseStorages.get(0).getWarehouseId())
-                        .andEqualTo("storageId", storageDto.getStorageId())
-                        .andEqualTo("jobStatus", (byte) 1)
-                        .andEqualTo("stockLock", 0)
-                        .andEqualTo("qcLock", 0)
-                        .andEqualTo("lockStatus", 0);
-                WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
-                if (wmsInnerInventory != null && wmsInnerInventory.getPackingQty().compareTo(BigDecimal.ZERO) ==1){
+                Map<String, Object> inventoryMap = new HashMap<>();
+                inventoryMap.put("materialId", inStorageMaterialDto.getMaterialId());
+                inventoryMap.put("storageId", storageDto.getStorageId());
+                inventoryMap.put("warehouseId", baseStorages.get(0).getWarehouseId());
+                inventoryMap.put("jobStatus", 1);
+                inventoryMap.put("stockLock", 0);
+                inventoryMap.put("qcLock", 0);
+                inventoryMap.put("lockStatus", 0);
+                List<WmsInnerInventoryDto> innerInventoryDtoList = wmsInnerInventoryService.findList(inventoryMap);
+                if (!innerInventoryDtoList.isEmpty() && innerInventoryDtoList.get(0).getInventoryStatusName().equals("合格")){
                     list.add(inStorageMaterialDto);
                 }
             }
@@ -927,8 +926,9 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 }
                 log.info("======TypeCapacity：" + TypeCapacity);
                 if(wmsInnerInventories.size()>0){
-                    BigDecimal qty = baseStorageCapacities.get(0).getTypeACapacity();
+                    BigDecimal qty = TypeCapacity;
                     for (WmsInnerInventory wmsInnerInventory : wmsInnerInventories) {
+                        log.info("====== wmsInnerInventory.getMaterialId()：" + wmsInnerInventory.getMaterialId() + "====== materialId：" + materialId);
                         if(!Objects.equals(wmsInnerInventory.getMaterialId(), materialId)){
 
                             //获取物料编码并截取前八位数
@@ -959,7 +959,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                                     shiftCapacity = shiftStorageCapacity.get(0).getTypeDCapacity();
                                 }
                             }
-                            log.info("====== shiftCapacity：" + shiftCapacity + "=======wmsInnerInventory.getPackingQty()：" + wmsInnerInventory.getPackingQty() + "=====TypeCapacity：" +TypeCapacity);
+                            log.info("=======qty:" + qty + "====== shiftCapacity：" + shiftCapacity + "=====TypeCapacity：" + TypeCapacity);
                             //库存数/转换货品库容*货品库容
                             BigDecimal a = wmsInnerInventory.getPackingQty().divide(shiftCapacity,2).multiply(TypeCapacity);
                             log.info("====== a：" + a);

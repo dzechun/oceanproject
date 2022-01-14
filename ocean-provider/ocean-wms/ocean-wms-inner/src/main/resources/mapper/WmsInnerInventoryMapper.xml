@@ -138,6 +138,9 @@ wii.option5
       <if test="lockStatus!=null and lockStatus != ''">
         and wii.lock_status = #{lockStatus}
       </if>
+      <if test="stockLock!=null and stockLock != ''">
+        and wii.stock_lock = #{stockLock}
+      </if>
       <if test="jobStatus!=null and jobStatus != ''">
         and wii.job_status = #{jobStatus}
       </if>
