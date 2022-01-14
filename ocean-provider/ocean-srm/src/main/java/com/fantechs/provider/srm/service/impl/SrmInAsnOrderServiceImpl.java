@@ -1,5 +1,6 @@
 package com.fantechs.provider.srm.service.impl;
 
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -82,6 +83,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
 
 
     @Override
+    @LcnTransaction
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(SrmInAsnOrderDto srmInAsnOrderDto) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -170,25 +172,12 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
             if (StringUtils.isNotEmpty(list)) srmInAsnOrderDetMapper.insertList(list);
             if (StringUtils.isNotEmpty(htList)) srmInHtAsnOrderDetMapper.insertList(htList);
         }
-        //保存条码表---条码未自动生成，此处只展示，暂不做保存
-       /* List<SrmInAsnOrderDetBarcode> barcodeList = new ArrayList<>();
-        for(SrmInAsnOrderDetBarcode srmInAsnOrderDetBarcode : srmInAsnOrderDto.getSrmInAsnOrderDetBarcodes()){
-            srmInAsnOrderDetBarcode.setAsnOrderId(srmInAsnOrderDto.getAsnOrderId());
-            srmInAsnOrderDetBarcode.setCreateUserId(user.getUserId());
-            srmInAsnOrderDetBarcode.setCreateTime(new Date());
-            srmInAsnOrderDetBarcode.setModifiedUserId(user.getUserId());
-            srmInAsnOrderDetBarcode.setModifiedTime(new Date());
-            srmInAsnOrderDetBarcode.setStatus(StringUtils.isEmpty(srmInAsnOrderDetBarcode.getStatus())?1: srmInAsnOrderDetBarcode.getStatus());
-            srmInAsnOrderDetBarcode.setOrgId(user.getOrganizationId());
-            barcodeList.add(srmInAsnOrderDetBarcode);
-        }
-        if(StringUtils.isNotEmpty(barcodeList)) srmInAsnOrderDetBarcodeMapper.insertList(barcodeList);*/
-
         return i;
     }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int update(SrmInAsnOrderDto srmInAsnOrderDto) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -216,8 +205,62 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         BeanUtils.copyProperties(srmInAsnOrderDto, srmInHtAsnOrder);
         srmInHtAsnOrderMapper.insertSelective(srmInHtAsnOrder);
 
+
         //保存详情表
-        if(StringUtils.isNotEmpty(srmInAsnOrderDto.getSrmInAsnOrderDetDtos())) {
+        //更新原有明细
+        ArrayList<Long> idList = new ArrayList<>();
+        List<SrmInAsnOrderDetDto> list = srmInAsnOrderDto.getSrmInAsnOrderDetDtos();
+        if(StringUtils.isNotEmpty(list)) {
+            for (SrmInAsnOrderDetDto det : list) {
+                if (StringUtils.isEmpty(det.getOrderQty()))
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"采购订单数量不能为空");
+                if (StringUtils.isEmpty(det.getTotalDeliveryQty()))
+                    det.setTotalDeliveryQty(BigDecimal.ZERO);
+                if (StringUtils.isEmpty(det.getDeliveryQty()))
+                    det.setDeliveryQty(BigDecimal.ZERO);
+                if(det.getDeliveryQty().compareTo(BigDecimal.ZERO)<0)
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"发货数量不能小于0");
+                if (det.getOrderQty().compareTo(det.getTotalDeliveryQty().add(det.getDeliveryQty())) == -1)
+                    throw new BizErrorException("交货总量大于订单数量");
+
+                if (StringUtils.isNotEmpty(det.getAsnOrderDetId())) {
+                    srmInAsnOrderDetMapper.updateByPrimaryKey(det);
+                    idList.add(det.getAsnOrderDetId());
+                }
+            }
+        }
+
+        //删除更新之外的明细
+        Example example1 = new Example(SrmInAsnOrderDetDto.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("asnOrderId", srmInAsnOrderDto.getAsnOrderId());
+        if (idList.size() > 0) {
+            criteria1.andNotIn("asnOrderDetId", idList);
+        }
+        srmInAsnOrderDetMapper.deleteByExample(example1);
+
+        //新增剩余的明细
+        if(StringUtils.isNotEmpty(list)){
+            List<SrmInAsnOrderDetDto> addlist = new ArrayList<>();
+            for (SrmInAsnOrderDetDto det  : list){
+                if (idList.contains(det.getAsnOrderDetId())) {
+                    continue;
+                }
+                det.setAsnOrderId(srmInAsnOrderDto.getAsnOrderId());
+                det.setCreateUserId(user.getUserId());
+                det.setCreateTime(new Date());
+                det.setModifiedUserId(user.getUserId());
+                det.setModifiedTime(new Date());
+                det.setStatus(StringUtils.isEmpty(det.getStatus())?1: det.getStatus());
+                det.setOrgId(user.getOrganizationId());
+                addlist.add(det);
+            }
+            if (StringUtils.isNotEmpty(addlist))
+                srmInAsnOrderDetMapper.insertList(addlist);
+        }
+
+        //保存详情表
+/*        if(StringUtils.isNotEmpty(srmInAsnOrderDto.getSrmInAsnOrderDetDtos())) {
 
             //删除子表重新添加
             Example example1 = new Example(SrmInAsnOrderDet.class);
@@ -253,7 +296,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
             }
             if (StringUtils.isNotEmpty(list)) srmInAsnOrderDetMapper.insertList(list);
             if (StringUtils.isNotEmpty(htList)) srmInHtAsnOrderDetMapper.insertList(htList);
-        }
+        }*/
 
         return i;
     }
@@ -267,6 +310,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
     }
 
     @Override
+    @LcnTransaction
     public int send(List<SrmInAsnOrderDto> srmInAsnOrderDtos) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isNotEmpty(srmInAsnOrderDtos)) {
