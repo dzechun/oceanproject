@@ -334,7 +334,10 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 wms.setJobOrderDetId(null);
                 wms.setPlanQty(wmsInPutawayOrderDet.getDistributionQty());
                 wms.setDistributionQty(wmsInPutawayOrderDet.getDistributionQty());
-         //       wms.setLineStatus((byte) 2);
+                if(wmsInnerJobOrder.getJobOrderType()==(byte)1)
+                    wms.setLineStatus((byte) 2);
+                else if(wmsInnerJobOrder.getJobOrderType()==(byte)3)
+                    wms.setLineStatus((byte) 1);
                 num += wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wms);
                 id = wms.getJobOrderDetId();
 
@@ -348,8 +351,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 num += wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInPutawayOrderDet);
             } else if (wmsInPutawayOrderDet.getDistributionQty().compareTo(wmsInPutawayOrderDet.getPlanQty()) == 0) {
                 //分配完成
-            //    wmsInPutawayOrderDet.setLineStatus((byte) 2);
-                wmsInPutawayOrderDet.setLineStatus((byte) 1);
+                if(wmsInnerJobOrder.getJobOrderType()==(byte)1)
+                    wmsInPutawayOrderDet.setLineStatus((byte) 2);
+                else if(wmsInnerJobOrder.getJobOrderType()==(byte)3)
+                    wmsInPutawayOrderDet.setLineStatus((byte) 1);
+
                 wmsInPutawayOrderDet.setModifiedUserId(sysUser.getUserId());
                 wmsInPutawayOrderDet.setModifiedTime(new Date());
                 num += wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInPutawayOrderDet);
@@ -1837,6 +1843,15 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
                 if(StringUtils.isEmpty(baseStorages))
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "未查询到该仓库的存货库位");
+
+                SearchBaseInventoryStatus searchBaseInventoryStatus=new SearchBaseInventoryStatus();
+                searchBaseInventoryStatus.setWarehouseId(record.getWarehouseId());
+                searchBaseInventoryStatus.setInventoryStatusName("合格");
+                searchBaseInventoryStatus.setNameQueryMark(1);
+                List<BaseInventoryStatus> inventoryStatuses= baseFeignApi.findList(searchBaseInventoryStatus).getData();
+                if(inventoryStatuses.size()<=0){
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"该仓库无合格库存状态");
+                }
             }
             record.setJobOrderCode(CodeUtils.getId("IN-IWK"));
             //record.setSourceSysOrderTypeCode("IN-IWK");
@@ -2666,7 +2681,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             if (ifSysBarcode.equals("0")) {
                 //非系统条码
                 WmsInnerMaterialBarcode wmsInnerMaterialBarcode = new WmsInnerMaterialBarcode();
-                wmsInnerMaterialBarcode.setMaterialId(item.getMaterialId());
+                wmsInnerMaterialBarcode.setMaterialId(wmsInnerJobOrderDet.getMaterialId());
                 wmsInnerMaterialBarcode.setBarcode(item.getBarcode());
                 wmsInnerMaterialBarcode.setBatchCode(item.getBatchCode());
                 wmsInnerMaterialBarcode.setMaterialQty(item.getMaterialQty());
@@ -2894,9 +2909,14 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         SearchBaseInventoryStatus searchBaseInventoryStatus=new SearchBaseInventoryStatus();
         searchBaseInventoryStatus.setWarehouseId(warehouseId);
         searchBaseInventoryStatus.setInventoryStatusName("合格");
+        searchBaseInventoryStatus.setNameQueryMark(1);
         ResponseEntity<List<BaseInventoryStatus>> rStatus=baseFeignApi.findList(searchBaseInventoryStatus);
         if(StringUtils.isNotEmpty(rStatus.getData()))
             inventoryStatusId=rStatus.getData().get(0).getInventoryStatusId();
+
+        if(StringUtils.isEmpty(inventoryStatusId)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"该仓库无合格库存状态");
+        }
 
         //找收货库位
         SearchBaseStorage searchBaseStorage=new SearchBaseStorage();

@@ -95,7 +95,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         int num = wmsInventoryVerificationMapper.insertUseGeneratedKeys(record);
         //库位盘点/全盘
         if(record.getStockType()==(byte)2 || record.getStockType()==(byte)3){
-            if(record.getStockType()==(byte)2 && (StringUtils.isNotEmpty(record.getMaxStorageCount()) && record.getMaxStorageCount()> record.getStorageList().size())){
+            if(record.getStockType()==(byte)2 && (StringUtils.isNotEmpty(record.getMaxStorageCount()) && record.getMaxStorageCount()< record.getStorageList().size())){
                 throw new BizErrorException("所选库位数不能大于最大库位数");
             }
             //盘点类型：按库位盘点
