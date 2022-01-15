@@ -2201,6 +2201,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     @Override
     public Map<String, Object> checkBarcodeHaveOrder(String ifSysBarcode, Long orderId, Long orderDetId, String barCode) {
         Map<String, Object> map = new HashMap<>();
+        SysUser sysUser=currentUser();
         if(StringUtils.isEmpty(barCode)){
             throw new BizErrorException(ErrorCodeEnum.PDA40012033);
         }
@@ -2218,6 +2219,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         }
         SearchWmsInnerMaterialBarcode swmsInnerMaterialBarcode=new SearchWmsInnerMaterialBarcode();
         swmsInnerMaterialBarcode.setBarcode(barCode);
+        swmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
         List<WmsInnerMaterialBarcodeDto> materialBarcodeList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(swmsInnerMaterialBarcode));
 
         if(ifSysBarcode.equals("1")){
@@ -2321,9 +2323,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      */
     @Override
     public Map<String, Object> checkBarcodeNotOrder(String ifSysBarcode, String barCode) {
+        SysUser sysUser=currentUser();
         Map<String, Object> map = new HashMap<>();
         SearchWmsInnerMaterialBarcode swmsInnerMaterialBarcode=new SearchWmsInnerMaterialBarcode();
         swmsInnerMaterialBarcode.setBarcode(barCode);
+        swmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
         List<WmsInnerMaterialBarcodeDto> materialBarcodeList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(swmsInnerMaterialBarcode));
         if(ifSysBarcode.equals("1")){
             Long materialBarcodeReOrderId=null;
@@ -2416,6 +2420,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     public WmsInnerMaterialBarcodeDto checkBarcodeOrderWeb(String ifSysBarcode, Long orderId, Long orderDetId, String barCode) {
         WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto=new WmsInnerMaterialBarcodeDto();
         Map<String,Object> map=new HashMap<>();
+        SysUser sysUser=currentUser();
         if(StringUtils.isEmpty(barCode)){
             throw new BizErrorException(ErrorCodeEnum.PDA40012033);
         }
@@ -2434,6 +2439,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
         SearchWmsInnerMaterialBarcode swmsInnerMaterialBarcode=new SearchWmsInnerMaterialBarcode();
         swmsInnerMaterialBarcode.setBarcode(barCode);
+        swmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
         List<WmsInnerMaterialBarcodeDto> materialBarcodeList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(swmsInnerMaterialBarcode));
 
         if(ifSysBarcode.equals("1")){
@@ -2746,6 +2752,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         sWmsBarcode.setPalletCode(item.getBarcode());
                     }
                 }
+                sWmsBarcode.setOrgId(sysUser.getOrganizationId());
                 List<WmsInnerMaterialBarcodeDto> materialDtoList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(sWmsBarcode));
                 for (WmsInnerMaterialBarcodeDto materialBarcodeDto : materialDtoList) {
                     WmsInnerMaterialBarcode upBarcode=new WmsInnerMaterialBarcode();
@@ -3043,6 +3050,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 else if(saveInnerJobOrderDto.getBarcodeType()==((byte)4)){
                     sWmsBarcode.setPalletCode(saveInnerJobOrderDto.getBarcode());
                 }
+                sWmsBarcode.setOrgId(sysUser.getOrganizationId());
                 List<WmsInnerMaterialBarcodeDto> materialDtoList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(sWmsBarcode));
                 for (WmsInnerMaterialBarcodeDto materialBarcodeDto : materialDtoList) {
                     WmsInnerMaterialBarcode upBarcode=new WmsInnerMaterialBarcode();

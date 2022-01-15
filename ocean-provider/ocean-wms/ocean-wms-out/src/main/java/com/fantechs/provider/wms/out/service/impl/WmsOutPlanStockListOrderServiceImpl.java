@@ -18,6 +18,7 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.wms.out.mapper.WmsOutPlanStockListOrderDetMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutPlanStockListOrderMapper;
 import com.fantechs.provider.wms.out.service.WmsOutPlanDeliveryOrderService;
@@ -46,6 +47,8 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
     private WmsOutPlanDeliveryOrderService wmsOutPlanDeliveryOrderService;
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private InnerFeignApi innerFeignApi;
 
     @Override
     public List<WmsOutPlanStockListOrderDto> findList(SearchWmsOutPlanStockListOrder searchWmsOutPlanStockListOrder) {
@@ -261,16 +264,13 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
             if ("OUT-PDO".equals(code)) {
                 //出库计划
                 //核心单据类型编码
-                String coreSourceSysOrderTypeCode=wmsOutPlanStockListOrderDetDtos.get(0).getCoreSourceSysOrderTypeCode();
+                String coreSourceSysOrderTypeCode=listOrderDetDtos.get(0).getCoreSourceSysOrderTypeCode();
                 if(StringUtils.isEmpty(coreSourceSysOrderTypeCode))
                     coreSourceSysOrderTypeCode="OUT-PSLO";
                 WmsOutPlanDeliveryOrderDto planDeliveryOrderDto=new WmsOutPlanDeliveryOrderDto();
                 List<WmsOutPlanDeliveryOrderDetDto> deliveryOrderDetDtos=new ArrayList<>();
 
-                for (WmsOutPlanStockListOrderDetDto listOrderDetDto : wmsOutPlanStockListOrderDetDtos) {
-                    if (listOrderDetDto.getIfAllIssued() != null && listOrderDetDto.getIfAllIssued() == (byte) 1) {
-                        throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"备料计划物料已下推完成，无法再次下推");
-                    }
+                for (WmsOutPlanStockListOrderDetDto listOrderDetDto : listOrderDetDtos) {
 
                     WmsOutPlanDeliveryOrderDetDto deliveryorderDetDto=new WmsOutPlanDeliveryOrderDetDto();
                     //核心单据编号
@@ -296,16 +296,7 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
                     deliveryorderDetDto.setCreateTime(new Date());
                     deliveryOrderDetDtos.add(deliveryorderDetDto);
 
-                    //更新明细
-                    WmsOutPlanStockListOrderDet stockListOrderDet=new WmsOutPlanStockListOrderDet();
-                    stockListOrderDet.setPlanStockListOrderDetId(listOrderDetDto.getPlanStockListOrderDetId());
-                    stockListOrderDet.setTotalIssueQty(listOrderDetDto.getOrderQty());
-                    stockListOrderDet.setIfAllIssued((byte)1);
-                    stockListOrderDet.setModifiedUserId(user.getUserId());
-                    stockListOrderDet.setModifiedTime(new Date());
-                    num=wmsOutPlanStockListOrderDetMapper.updateByPrimaryKeySelective(stockListOrderDet);
                 }
-
 
                 planDeliveryOrderDto.setWarehouseId(warehouseId);
                 planDeliveryOrderDto.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);//核心单据编码
@@ -314,7 +305,6 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
                 planDeliveryOrderDto.setOrderStatus((byte)1);//待执行
                 planDeliveryOrderDto.setCreateUserId(user.getUserId());
                 planDeliveryOrderDto.setCreateTime(new Date());
-
 
                 planDeliveryOrderDto.setWmsOutPlanDeliveryOrderDetDtos(deliveryOrderDetDtos);
                 num=wmsOutPlanDeliveryOrderService.save(planDeliveryOrderDto);
@@ -348,12 +338,10 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
                 wmsInnerJobOrder.setWarehouseId(warehouseId);
                 wmsInnerJobOrder.setJobOrderType((byte) 2);
                 wmsInnerJobOrder.setWmsInPutawayOrderDets(wmsInnerJobOrderDets);
-//                ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
-//                if (responseEntity.getCode() != 0) {
-//                    throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
-//                } else {
-//                    i++;
-//                }
+                ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
+                if (responseEntity.getCode() != 0) {
+                    throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
+                }
             }
         }
 
