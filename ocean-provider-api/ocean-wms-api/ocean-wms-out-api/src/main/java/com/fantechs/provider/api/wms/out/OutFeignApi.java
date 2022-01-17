@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -90,4 +91,13 @@ public interface OutFeignApi {
     @PostMapping("/wmsOutPlanStockListOrder/add")
     ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsOutPlanStockListOrderDto wmsOutPlanStockListOrderDto);
 
+    @ApiOperation(value = "更新出库计划上架数量",notes = "更新出库计划上架数量")
+    @PostMapping("/wmsOutPlanDeliveryOrder/updatePutawayQty")
+    ResponseEntity updatePlanDeliveryOrderPutawayQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long planDeliveryOrderDetId,
+                                           @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty);
+
+    @ApiOperation(value = "更新出库通知单上架数量",notes = "更新出库通知单上架数量")
+    @PostMapping("/wmsOutDeliveryReqOrder/updatePutawayQty")
+    ResponseEntity updateDeliveryReqOrderPutawayQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long deliveryReqOrderDetId,
+                                           @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty);
 }

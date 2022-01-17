@@ -140,4 +140,12 @@
     </where>
     order by wopslod.create_time desc
   </select>
+  <update id="batchUpdate" parameterType="java.util.List">
+    <foreach collection="list" item="item" separator=";">
+      update wms_out_plan_stock_list_order_det wodrod set
+      wodrod.total_issue_qty = #{item.totalIssueQty},
+      wodrod.if_all_issued = #{item.ifAllIssued}
+      where wodrod.plan_stock_list_order_det_id = #{item.planStockListOrderDetId}
+    </foreach>
+  </update>
 </mapper>

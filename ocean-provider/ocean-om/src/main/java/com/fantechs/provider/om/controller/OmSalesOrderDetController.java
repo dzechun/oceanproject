@@ -1,26 +1,20 @@
 package com.fantechs.provider.om.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDetDto;
 import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.EasyPoiUtils;
-import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.om.service.OmSalesOrderDetService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -29,7 +23,7 @@ import java.util.List;
  * Created by leifengzhi on 2021/04/19.
  */
 @RestController
-@Api(tags = "订单详情管理")
+@Api(tags = "销售订单详情管理")
 @RequestMapping("/omSalesOrderDet")
 @Validated
 public class OmSalesOrderDetController {
@@ -90,4 +84,10 @@ public class OmSalesOrderDetController {
 //        throw new BizErrorException(e);
 //        }
 //    }
+
+    @ApiOperation(value = "更新销售订单下推数量",notes = "更新销售订单下推数量")
+    @PostMapping("/updatePutDownQty")
+    public ResponseEntity updatePutDownQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long detId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty) {
+        return ControllerUtil.returnCRUD(omSalesOrderDetService.updatePutDownQty(detId,putawayQty));
+    }
 }

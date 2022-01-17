@@ -21,8 +21,10 @@ import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.BaseProductMaterialReP;
 import com.fantechs.common.base.general.entity.basic.BaseProductProcessReM;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductProcessReM;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderBom;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrderProcessReWo;
@@ -108,6 +110,8 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
             }
         }*/
         mesPmWorkOrderDto.setWorkOrderCode(CodeUtils.getId("MES-WO"));
+        mesPmWorkOrderDto.setSysOrderTypeCode("MES-WO");
+        mesPmWorkOrderDto.setSourceBigType((byte)2);
         mesPmWorkOrderDto.setTotalIssueQty(BigDecimal.ZERO);
         mesPmWorkOrderDto.setWorkOrderStatus((byte) 1);
         mesPmWorkOrderDto.setCreateUserId(currentUser.getUserId());
@@ -454,7 +458,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
             //不同单据流分组
             for (MesPmWorkOrderBomDto mesPmWorkOrderBomDto : mesPmWorkOrderBomDtos) {
                 //当前单据的下游单据
-                BaseOrderFlow baseOrderFlow = OrderFlowUtil.getOrderFlow(baseOrderFlowDtos, null, null);
+                BaseOrderFlow baseOrderFlow = OrderFlowUtil.getOrderFlow(baseOrderFlowDtos, mesPmWorkOrderBomDto.getPartMaterialId(), null);
                 String key = baseOrderFlow.getNextOrderTypeCode();
                 if (detMap.get(key) == null) {
                     List<MesPmWorkOrderBomDto> diffOrderFlows = new LinkedList<>();
@@ -523,6 +527,48 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                     } else {
                         i++;
                     }
+                }else if ("OUT-IWK".equals(nextOrderTypeCode)) {
+                    //拣货作业
+
+                    //查询发货库位
+                    SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                    searchBaseStorage.setWarehouseId(workOrderBomDtos.get(0).getWarehouseId());
+                    searchBaseStorage.setStorageType((byte)3);
+                    List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+                    if(StringUtils.isEmpty(baseStorages)){
+                        throw new BizErrorException("该仓库未找到发货库位");
+                    }
+                    Long inStorageId = baseStorages.get(0).getStorageId();
+
+                    int lineNumber = 1;
+                    List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();
+                    for (MesPmWorkOrderBomDto mesPmWorkOrderBomDto : workOrderBomDtos) {
+                        WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                        wmsInnerJobOrderDet.setCoreSourceOrderCode(mesPmWorkOrderBomDto.getWorkOrderCode());
+                        wmsInnerJobOrderDet.setSourceOrderCode(mesPmWorkOrderBomDto.getWorkOrderCode());
+                        wmsInnerJobOrderDet.setCoreSourceId(mesPmWorkOrderBomDto.getWorkOrderBomId());
+                        wmsInnerJobOrderDet.setSourceId(mesPmWorkOrderBomDto.getWorkOrderBomId());
+                        wmsInnerJobOrderDet.setLineNumber(lineNumber + "");
+                        lineNumber++;
+                        wmsInnerJobOrderDet.setMaterialId(mesPmWorkOrderBomDto.getPartMaterialId());
+                        wmsInnerJobOrderDet.setPlanQty(mesPmWorkOrderBomDto.getIssueQty());
+                        wmsInnerJobOrderDet.setLineStatus((byte) 1);
+                        wmsInnerJobOrderDet.setInStorageId(inStorageId);
+                        wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
+                    }
+                    WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+                    wmsInnerJobOrder.setSourceBigType((byte)1);
+                    wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("MES-WO");
+                    wmsInnerJobOrder.setSourceSysOrderTypeCode("MES-WO");
+                    wmsInnerJobOrder.setWarehouseId(workOrderBomDtos.get(0).getWarehouseId());
+                    wmsInnerJobOrder.setJobOrderType((byte) 2);
+                    wmsInnerJobOrder.setWmsInPutawayOrderDets(wmsInnerJobOrderDets);
+                    ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
+                    if (responseEntity.getCode() != 0) {
+                        throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
+                    } else {
+                        i++;
+                    }
                 }else {
                     throw new BizErrorException("单据流配置错误");
                 }
@@ -537,8 +583,8 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
     public int inPushDown(List<MesPmWorkOrder> mesPmWorkOrders) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         List<MesPmWorkOrder> list = new ArrayList<>();
-        String sourceSysOrderTypeCode = mesPmWorkOrders.get(0).getSourceSysOrderTypeCode();
-        String coreSourceSysOrderTypeCode = mesPmWorkOrders.get(0).getCoreSourceSysOrderTypeCode();
+        String sourceSysOrderTypeCode = mesPmWorkOrders.get(0).getSysOrderTypeCode();
+        String coreSourceSysOrderTypeCode = mesPmWorkOrders.get(0).getSysOrderTypeCode();
 
         int i = 0;
         HashSet<Long> set = new HashSet();
@@ -803,6 +849,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                 wmsInnerJobOrder.setSourceBigType((byte)1);
                 wmsInnerJobOrder.setJobOrderType((byte) 1);
                 wmsInnerJobOrder.setOrderStatus((byte) 1);
+                wmsInnerJobOrder.setWarehouseId(detMap.get(nextOrderTypeCode).get(0).getWarehouseId());
                 wmsInnerJobOrder.setCreateUserId(user.getUserId());
                 wmsInnerJobOrder.setCreateTime(new Date());
                 wmsInnerJobOrder.setModifiedUserId(user.getUserId());

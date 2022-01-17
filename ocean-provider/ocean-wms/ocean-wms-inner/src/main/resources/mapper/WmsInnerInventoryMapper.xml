@@ -90,6 +90,7 @@
     wii.work_order_code,
     wii.sales_order_code,
     wii.supplier_id,
+    wii.job_order_det_id,
 	wii.`status`,
 	wii.remark,
 	wii.org_id,
@@ -123,7 +124,7 @@
         <where>
             and wii.packing_qty > 0
             <if test="isStorage!=null and isStorage!='' and isStorage==1">
-                and wii.lock_status=0 and wii.stock_lock=0 and wii.job_status=1
+                and wii.lock_status=0 and wii.stock_lock=0 and wii.job_status=1 and bs.storage_type != 3
             </if>
             <if test="inventoryStatusName!=null and inventoryStatusName != ''">
                 and bis.inventory_status_name = #{inventoryStatusName}
@@ -131,10 +132,10 @@
             <if test="storageType!=null and storageType!=''">
                 and bs.storage_type = #{storageType}
             </if>
-            <if test="lockStatus!=null and lockStatus != ''">
+            <if test="lockStatus!=null">
                 and wii.lock_status = #{lockStatus}
             </if>
-            <if test="stockLock!=null and stockLock != ''">
+            <if test="stockLock!=null">
                 and wii.stock_lock = #{stockLock}
             </if>
             <if test="jobStatus!=null and jobStatus != ''">
@@ -224,9 +225,6 @@
             <if test="jobOrderDetId!=null and jobOrderDetId != ''">
                 and wii.job_order_det_id = #{jobOrderDetId}
             </if>
-            <if test="jobOrderDetId!=null and jobOrderDetId != ''">
-                and wii.job_order_det_id = #{jobOrderDetId}
-            </if>
             <if test="contractCode!=null and contractCode!=''">
                 and wii.contract_code like CONCAT('%',#{contractCode},'%')
             </if>
@@ -253,7 +251,7 @@
             </if>
         </where>
         <if test="isStorage!=null and isStorage!='' and isStorage==1">
-            group by wii.storage_id
+--             group by wii.storage_id
         </if>
         order by wii.create_time desc
     </select>

@@ -1,23 +1,28 @@
 package com.fantechs.common.base.general.entity.wms.inner;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.fantechs.common.base.support.ValidGroup;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import javax.persistence.*;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+;
+;
 
 /**
  * 作业单明细
@@ -181,9 +186,9 @@ public class WmsInnerJobOrderDet extends ValidGroup implements Serializable {
     private Date workEndTime;
 
     /**
-     * 行状态(1-待分配、2-待作业、3-完成)
+     * 行状态(1-待分配、2-待作业、3-完成)，PDA状态（1-待拣货，2-待上架，3-已完成）
      */
-    @ApiModelProperty(name="lineStatus",value = "行状态(1-待分配、2-待作业、3-完成)")
+    @ApiModelProperty(name="lineStatus",value = "行状态(1-待分配、2-待作业、3-完成)，PDA状态（1-待拣货，2-待上架，3-已完成）")
     @Excel(name = "行状态(1-待分配、2-待作业、3-完成)", height = 20, width = 30,orderNum="")
     @Column(name = "line_status")
     private Byte lineStatus;
@@ -261,6 +266,15 @@ public class WmsInnerJobOrderDet extends ValidGroup implements Serializable {
     private String option3;
 
     List<WmsInnerInventoryDto> wmsInnerInventory = new ArrayList<>();
+
+    /**
+     * 库存状态ID
+     */
+    @ApiModelProperty(name="inventoryId",value = "库存ID")
+    @Transient
+    private Long inventoryId;
+
+
 
     private static final long serialVersionUID = 1L;
 }

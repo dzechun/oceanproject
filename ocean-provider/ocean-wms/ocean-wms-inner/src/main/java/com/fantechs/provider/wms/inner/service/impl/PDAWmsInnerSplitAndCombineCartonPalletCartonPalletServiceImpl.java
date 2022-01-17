@@ -11,10 +11,7 @@ import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductCa
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductCartonDet;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPallet;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPalletDet;
-import com.fantechs.common.base.general.dto.wms.inner.PDAWmsInnerSplitAndCombineCartonPalletInfoDto;
-import com.fantechs.common.base.general.dto.wms.inner.PDAWmsInnerSplitAndCombineCheckBarcodeDto;
-import com.fantechs.common.base.general.dto.wms.inner.PDAWmsInnerSplitAndCombinePrintDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
+import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRule;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
@@ -27,6 +24,8 @@ import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPalletDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcode;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerSplitAndCombineLog;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
@@ -100,7 +99,33 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
                 }
             }
         }
-        cartonPalletInfoDto.setNextLevelInventoryDetDtos(detDtos);
+
+        //二级条码信息
+        List<WmsInnerInventoryDetDto> nextLevelInventoryDetDtos = new LinkedList<>();
+        List<Long> idList = new LinkedList<>();
+        Map<String,Object> nextLevelMap = new HashMap<>();
+        for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : detDtos) {
+            if (type == (byte) 2 && StringUtils.isNotEmpty(wmsInnerInventoryDetDto.getCartonCode())) {
+                nextLevelMap.put("cartonCode", wmsInnerInventoryDetDto.getCartonCode());
+                nextLevelMap.put("barcodeType", 3);
+            } else if (StringUtils.isNotEmpty(wmsInnerInventoryDetDto.getColorBoxCode())) {
+                nextLevelMap.put("colorBoxCode", wmsInnerInventoryDetDto.getColorBoxCode());
+                nextLevelMap.put("barcodeType", 2);
+            } else if (StringUtils.isNotEmpty(wmsInnerInventoryDetDto.getBarcode())) {
+                nextLevelMap.put("barcode", wmsInnerInventoryDetDto.getBarcode());
+                nextLevelMap.put("barcodeType", 1);
+            }
+            List<WmsInnerInventoryDetDto> inventoryDetDtos = wmsInnerInventoryDetMapper.findList(nextLevelMap);
+            if(StringUtils.isEmpty(inventoryDetDtos)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"找不到二级条码");
+            }
+            WmsInnerInventoryDetDto inventoryDetDto = inventoryDetDtos.get(0);
+            if(!idList.contains(inventoryDetDto.getInventoryDetId())) {
+                nextLevelInventoryDetDtos.add(inventoryDetDto);
+                idList.add(inventoryDetDto.getInventoryDetId());
+            }
+        }
+        cartonPalletInfoDto.setNextLevelInventoryDetDtos(nextLevelInventoryDetDtos);
 
         return cartonPalletInfoDto;
     }
@@ -127,8 +152,7 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
         for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : inventoryDetDtoList){
             if(type == (byte)1
                     &&(wmsInnerInventoryDetDto.getBarcodeType()!=null
-                    &&wmsInnerInventoryDetDto.getBarcodeType()!=(byte)3
-                    &&wmsInnerInventoryDetDto.getBarcodeType()!=(byte)4)){
+                    &&wmsInnerInventoryDetDto.getBarcodeType()!=(byte)3)){
                 nextLevelInventoryDetDtos.add(wmsInnerInventoryDetDto);
             }
             if(type == (byte)2
@@ -139,28 +163,38 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
         }
 
         //所扫条码信息
-        WmsInnerInventoryDetDto scanInventoryDetDto = null;
+        Map<String,Object> nextLevelMap = new HashMap<>();
         for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : nextLevelInventoryDetDtos){
             if(type == (byte)2){
-                if(barcode.equals(wmsInnerInventoryDetDto.getCartonCode())
-                        &&wmsInnerInventoryDetDto.getBarcodeType()!=null
-                        &&wmsInnerInventoryDetDto.getBarcodeType()==(byte)3){
-                    scanInventoryDetDto = wmsInnerInventoryDetDto;
+                if(barcode.equals(wmsInnerInventoryDetDto.getCartonCode())){
+                    nextLevelMap.put("cartonCode", wmsInnerInventoryDetDto.getCartonCode());
+                    nextLevelMap.put("barcodeType", 3);
                     break;
                 }
             }
             if(barcode.equals(wmsInnerInventoryDetDto.getColorBoxCode())){
-                scanInventoryDetDto = wmsInnerInventoryDetDto;
+                nextLevelMap.put("colorBoxCode", wmsInnerInventoryDetDto.getColorBoxCode());
+                nextLevelMap.put("barcodeType", 2);
                 break;
             }else if (barcode.equals(wmsInnerInventoryDetDto.getBarcode())){
-                scanInventoryDetDto = wmsInnerInventoryDetDto;
+                nextLevelMap.put("barcode", wmsInnerInventoryDetDto.getBarcode());
+                nextLevelMap.put("barcodeType", 1);
                 break;
             }
         }
-        if(scanInventoryDetDto == null){
+        if(!nextLevelMap.containsKey("barcodeType")){
             throw new BizErrorException("该条码不属于该包箱/栈板");
         }
+        List<WmsInnerInventoryDetDto> inventoryDetDtos = wmsInnerInventoryDetMapper.findList(nextLevelMap);
+        if(StringUtils.isEmpty(inventoryDetDtos)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未找到扫描条码信息");
+        }
+        WmsInnerInventoryDetDto scanInventoryDetDto = inventoryDetDtos.get(0);
 
+
+        if(scanInventoryDetDto.getStorageType()==null){
+            throw new BizErrorException("扫描条码库位类型为空");
+        }
         if(scanInventoryDetDto.getStorageType()==(byte)3){
             throw new BizErrorException("不能扫描发货库位中的条码");
         }
@@ -288,8 +322,36 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
         //查询包箱/栈板信息
         List<PDAWmsInnerSplitAndCombineCartonPalletInfoDto> cartonPalletInfoDtos = new LinkedList<>();
         for (String cartonPalletCode : cartonPalletCodes){
-            PDAWmsInnerSplitAndCombineCartonPalletInfoDto cartonPalletInfo = getCartonPalletInfo(cartonPalletCode, type == (byte) 1 || type == (byte) 2 ? (byte) 1 : (byte) 2);
-            cartonPalletInfoDtos.add(cartonPalletInfo);
+            PDAWmsInnerSplitAndCombineCartonPalletInfoDto cartonPalletInfoDto = new PDAWmsInnerSplitAndCombineCartonPalletInfoDto();
+            Map<String,Object> map = new HashMap<>();
+            if(type == (byte)1||type == (byte)2){
+                map.put("cartonCode",cartonPalletCode);
+            }else if(type == (byte)3||type == (byte)4){
+                map.put("palletCode",cartonPalletCode);
+            }
+            List<WmsInnerInventoryDetDto> inventoryDetDtoList = wmsInnerInventoryDetMapper.findList(map);
+            if(StringUtils.isEmpty(inventoryDetDtoList)){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"找不到该包箱/栈板信息");
+            }
+
+            List<WmsInnerInventoryDetDto> detDtos = new LinkedList<>();
+            for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : inventoryDetDtoList){
+                if(type == (byte)1||type == (byte)2){
+                    if(wmsInnerInventoryDetDto.getBarcodeType()!=null&&wmsInnerInventoryDetDto.getBarcodeType()==(byte)3){
+                        cartonPalletInfoDto.setCartonPalletInventoryDetDto(wmsInnerInventoryDetDto);
+                    }else {
+                        detDtos.add(wmsInnerInventoryDetDto);
+                    }
+                }else if(type == (byte)3||type == (byte)4){
+                    if(wmsInnerInventoryDetDto.getBarcodeType()!=null&&wmsInnerInventoryDetDto.getBarcodeType()==(byte)4){
+                        cartonPalletInfoDto.setCartonPalletInventoryDetDto(wmsInnerInventoryDetDto);
+                    }else {
+                        detDtos.add(wmsInnerInventoryDetDto);
+                    }
+                }
+            }
+            cartonPalletInfoDto.setNextLevelInventoryDetDtos(detDtos);
+            cartonPalletInfoDtos.add(cartonPalletInfoDto);
         }
 
         String barcodes = null;
@@ -311,14 +373,27 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
             WmsInnerInventoryDetDto cartonPalletInventoryDetDto = cartonPalletInfoDto.getCartonPalletInventoryDetDto();
 
             //源条码与扫描条码分组
-            List<WmsInnerInventoryDetDto> sourceInventoryDetDtos = new LinkedList<>();
+            List<WmsInnerInventoryDetDto> sourceInventoryDetDtos = nextLevelInventoryDetDtos;
             List<WmsInnerInventoryDetDto> newInventoryDetDtos = new LinkedList<>();
-            for (WmsInnerInventoryDetDto nextLevelInventoryDetDto : nextLevelInventoryDetDtos) {
-                if (materialBarcodeIdList.contains(nextLevelInventoryDetDto.getMaterialBarcodeId())) {
-                    newInventoryDetDtos.add(nextLevelInventoryDetDto);
-                } else {
-                    sourceInventoryDetDtos.add(nextLevelInventoryDetDto);
+            SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode = new SearchWmsInnerMaterialBarcode();
+            searchWmsInnerMaterialBarcode.setMaterialBarcodeIdList(materialBarcodeIdList);
+            List<WmsInnerMaterialBarcodeDto> materialBarcodeDtos = wmsInnerMaterialBarcodeMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
+            for (WmsInnerMaterialBarcodeDto materialBarcodeDto : materialBarcodeDtos) {
+                for (WmsInnerInventoryDetDto nextLevelInventoryDetDto : nextLevelInventoryDetDtos) {
+                    if(materialBarcodeDto.getBarcodeType()==(byte)3&&materialBarcodeDto.getCartonCode().equals(nextLevelInventoryDetDto.getCartonCode())){
+                        newInventoryDetDtos.add(nextLevelInventoryDetDto);
+                    }else if(materialBarcodeDto.getBarcodeType()==(byte)2&&materialBarcodeDto.getColorBoxCode().equals(nextLevelInventoryDetDto.getColorBoxCode())){
+                        newInventoryDetDtos.add(nextLevelInventoryDetDto);
+                    }else if(materialBarcodeDto.getBarcodeType()==(byte)1&&materialBarcodeDto.getBarcode().equals(nextLevelInventoryDetDto.getBarcode())){
+                        newInventoryDetDtos.add(nextLevelInventoryDetDto);
+                    }
                 }
+            }
+            sourceInventoryDetDtos.removeAll(newInventoryDetDtos);
+            if(StringUtils.isEmpty(sourceInventoryDetDtos)){
+                throw new BizErrorException("不可扫描该栈板/包箱下的所有条码");
+            }else if(StringUtils.isEmpty(newInventoryDetDtos)){
+                throw new BizErrorException("请至少扫描一个条码");
             }
 
             //修改源包箱（栈板）信息
@@ -628,8 +703,7 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
 
             WmsInnerSplitAndCombineLog wmsInnerSplitAndCombineLog = new WmsInnerSplitAndCombineLog();
             wmsInnerSplitAndCombineLog.setOperatorType(type);
-            wmsInnerSplitAndCombineLog.setDataType((byte)1);
-            wmsInnerSplitAndCombineLog.setDataType((byte) 2);
+            wmsInnerSplitAndCombineLog.setDataType((byte)2);
             wmsInnerSplitAndCombineLog.setBarcode(cartonPalletInventoryDetDto.getBarcode());
             wmsInnerSplitAndCombineLog.setColorBoxCode(cartonPalletInventoryDetDto.getColorBoxCode());
             wmsInnerSplitAndCombineLog.setCartonCode(cartonPalletInventoryDetDto.getCartonCode());

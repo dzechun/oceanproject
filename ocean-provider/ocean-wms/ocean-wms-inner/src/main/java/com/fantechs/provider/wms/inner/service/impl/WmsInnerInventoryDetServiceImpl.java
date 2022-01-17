@@ -152,6 +152,8 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
                 }
             }
         }
+        if(StringUtils.isEmpty(barCodes))
+            throw new BizErrorException("未在条码表中查询到相应的条码信息");
         Map map = new HashMap();
         map.put("materialBarcodeIdList",barCodes);
         return wmsInnerInventoryDetMapper.findList(map);

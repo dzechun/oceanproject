@@ -14,6 +14,7 @@ import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.dto.wms.inner.export.WmsInnerJobOrderExport;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
@@ -334,7 +335,10 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 wms.setJobOrderDetId(null);
                 wms.setPlanQty(wmsInPutawayOrderDet.getDistributionQty());
                 wms.setDistributionQty(wmsInPutawayOrderDet.getDistributionQty());
-                wms.setLineStatus((byte) 2);
+                if(wmsInnerJobOrder.getJobOrderType()==(byte)1)
+                    wms.setLineStatus((byte) 2);
+                else if(wmsInnerJobOrder.getJobOrderType()==(byte)3)
+                    wms.setLineStatus((byte) 1);
                 num += wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wms);
                 id = wms.getJobOrderDetId();
 
@@ -348,7 +352,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 num += wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInPutawayOrderDet);
             } else if (wmsInPutawayOrderDet.getDistributionQty().compareTo(wmsInPutawayOrderDet.getPlanQty()) == 0) {
                 //分配完成
-                wmsInPutawayOrderDet.setLineStatus((byte) 2);
+                if(wmsInnerJobOrder.getJobOrderType()==(byte)1)
+                    wmsInPutawayOrderDet.setLineStatus((byte) 2);
+                else if(wmsInnerJobOrder.getJobOrderType()==(byte)3)
+                    wmsInPutawayOrderDet.setLineStatus((byte) 1);
+
                 wmsInPutawayOrderDet.setModifiedUserId(sysUser.getUserId());
                 wmsInPutawayOrderDet.setModifiedTime(new Date());
                 num += wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInPutawayOrderDet);
@@ -376,8 +384,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 criteria.andEqualTo("materialId", wmsInnerJobOrderDetDto.getMaterialId())
                         .andEqualTo("warehouseId", wmsInnerJobOrderDto.getWarehouseId())
                         .andEqualTo("storageId", wmsInnerJobOrderDetDto.getOutStorageId())
-                 //       .andEqualTo("jobOrderDetId", wmsInPutawayOrderDet.getJobOrderDetId())
-                 //       .andEqualTo("relevanceOrderCode", wmsInnerJobOrder.getJobOrderCode())   //库存会进行合并，因此相关单号可能变化
+                        .andEqualTo("jobOrderDetId", wmsInPutawayOrderDet.getJobOrderDetId())
                         .andEqualTo("jobStatus", (byte) 2)
                         .andEqualTo("stockLock", 0)
                         .andEqualTo("lockStatus", 0)
@@ -400,7 +407,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         .andEqualTo("warehouseId", wmsInnerJobOrderDto.getWarehouseId())
                         .andEqualTo("storageId", wmsInnerJobOrderDetDto.getOutStorageId())
         //                .andEqualTo("relevanceOrderCode", wmsInnerJobOrder.getJobOrderCode())
-        //                .andEqualTo("jobOrderDetId", id)
+                        .andEqualTo("jobOrderDetId", id)
                         .andEqualTo("jobStatus", (byte) 2)
                         .andEqualTo("stockLock", 0)
                         .andEqualTo("lockStatus", 0)
@@ -435,7 +442,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
 
             //如果货品全部分配完成更改表头状态为待作业状态
-            List<WmsInnerJobOrderDetDto> orderDetDtos = dto.stream().filter(li -> li.getLineStatus() != null && li.getLineStatus() == (byte) 2).collect(Collectors.toList());
+            List<WmsInnerJobOrderDetDto> orderDetDtos = dto.stream().filter(li -> li.getOutStorageId() != null).collect(Collectors.toList());
             if (!orderDetDtos.isEmpty() && orderDetDtos.size() == dto.size()) {
                 //更新表头状态
                 //完工入库单需要激活状态 其他则不需要
@@ -541,7 +548,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     wmsInnerJobOrderDet.setLineStatus((byte) 1);
                     wmsInnerJobOrderDet.setModifiedTime(new Date());
                     wmsInnerJobOrderDet.setModifiedUserId(sysUser.getUserId());
-                    wmsInnerJobOrderDet.setLineStatus((byte) 1);
                     num += wmsInnerJobOrderDetMapper.insertSelective(wmsInnerJobOrderDet);
                 }
             }
@@ -604,28 +610,59 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             .andNotEqualTo("lineStatus",(byte)3);
 
             List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = wmsInnerJobOrderDetMapper.selectByExample(example);
+
+            //未完成的明细总数量
+            BigDecimal totalPlanQty=wmsInnerJobOrderDets.stream().map(WmsInnerJobOrderDet::getPlanQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+
+            SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
+            sBarcodeReOrder.setOrderTypeCode("IN-IWK");
+            sBarcodeReOrder.setOrderId(wmsInnerJobOrder.getJobOrderId());
+            sBarcodeReOrder.setScanStatus((byte)1);
+            List<WmsInnerMaterialBarcodeReOrderDto> reOrderList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
+            if(reOrderList.size()<=0){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"上架单未找到相应的条码数据-->"+wmsInnerJobOrder.getJobOrderCode());
+            }
+
+            List<WmsInnerMaterialBarcodeReOrderDto> barcodeList = reOrderList.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
+            //未扫描的条码总数
+            BigDecimal totalQty=barcodeList.stream().map(WmsInnerMaterialBarcodeReOrderDto::getQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+            if(totalQty.compareTo(totalPlanQty)!=0) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012009.getCode(), "未扫条码数量总数与未完成明细计划总数量不相等");
+            }
+
             //库存条码明细集合
             List<WmsInnerInventoryDet> wmsInnerInventoryDets=new ArrayList<>();
 
+            //Map<String, List<WmsInnerJobOrderDet>> collect = wmsInnerJobOrderDets.stream().collect(Collectors.groupingBy(e->e.getMaterialId().toString()+e.getInStorageId().toString()));
+
             for (WmsInnerJobOrderDet wmsInnerJobOrderDet : wmsInnerJobOrderDets) {
+                Iterator<WmsInnerMaterialBarcodeReOrderDto> iterator = reOrderList.iterator();
+                List<WmsInnerMaterialBarcodeReOrderDto> barcodeList1=new ArrayList<>();
+                BigDecimal actQty=wmsInnerJobOrderDet.getDistributionQty();
+                BigDecimal totalActQty=BigDecimal.ZERO;
+                while (iterator.hasNext()) {
+                    WmsInnerMaterialBarcodeReOrderDto reOrderDto = iterator.next();
+                    if(reOrderDto.getScanStatus()==(byte)1) {
+                        Long materialId = reOrderDto.getMaterialId();
+                        if (wmsInnerJobOrderDet.getMaterialId().longValue() == materialId.longValue()) {
+                            totalActQty = totalActQty.add(reOrderDto.getQty());
+                            barcodeList1.add(reOrderDto);
+                            //iterator.remove();
+                            if (actQty.compareTo(totalActQty) == 0) {
+                                break;
+                            }
+
+                        }
+                    }
+                }
+                if(actQty.compareTo(totalActQty)!=0){
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"条码数量与明细分配数量不相等");
+                }
+
+                //List<WmsInnerMaterialBarcodeReOrderDto> barcodeList1=reOrderList.stream().filter(u -> (u.getMaterialId()==wmsInnerJobOrderDet.getMaterialId())).collect(Collectors.toList());
                 //判断条码数量是否和明细数量相等
-                SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
-                sBarcodeReOrder.setOrderTypeCode("IN-IWK");
-                sBarcodeReOrder.setOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
-                sBarcodeReOrder.setScanStatus((byte)1);
-                List<WmsInnerMaterialBarcodeReOrderDto> reOrderList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
-                if(reOrderList.size()<=0){
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"上架单未找到相应的条码数据-->"+wmsInnerJobOrder.getJobOrderCode());
-                }
 
-                List<WmsInnerMaterialBarcodeReOrderDto> barcodeList = reOrderList.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
-                BigDecimal totalQty=barcodeList.stream().map(WmsInnerMaterialBarcodeReOrderDto::getQty).reduce(BigDecimal.ZERO,BigDecimal::add);
-
-                if(totalQty.compareTo(wmsInnerJobOrderDet.getPlanQty())!=0){
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012009.getCode(),"条码数量和明细计划数量不相等");
-                }
-
-                for (WmsInnerMaterialBarcodeReOrderDto reOrderDto : reOrderList) {
+                for (WmsInnerMaterialBarcodeReOrderDto reOrderDto : barcodeList1) {
                     //更新条码关系表为已提交
                     reOrderDto.setScanStatus((byte)3);
                     reOrderDto.setModifiedTime(new Date());
@@ -1190,7 +1227,10 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         //核心单据明细ID
         Long coreSourceId=wmsInnerJobOrderDet.getCoreSourceId();
         //上架数量
-        BigDecimal actualQty=wmsInnerJobOrderDet.getActualQty();
+        BigDecimal actualQty=wmsInnerJobOrderDet.getPlanQty();
+        if (opType == 1 ) {
+            actualQty = wmsInnerJobOrderDet.getActualQty();
+        }
         //来源单据回写
         if(StringUtils.isNotEmpty(sourceSysOrderTypeCode)) {
             switch (sourceSysOrderTypeCode) {
@@ -1225,6 +1265,26 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     //incomingOrder
 //                incomingOrder.setIfAllIssued((byte)0);//是否已全部下发(0-否 1-是)
                     //qmsFeignApi.updateIfAllIssued(incomingOrder);
+                    break;
+                case "INNER-TO":
+                    //调拨单
+                    omFeignApi.updateTransferOrderPutDownQty(sourceId,actualQty);
+                    break;
+                case "OUT-SO":
+                    //销售订单
+                    omFeignApi.updateSalesOrderPutDownQty(sourceId,actualQty);
+                    break;
+                case "OUT-OOO":
+                    //其他出库单
+                    omFeignApi.updateOtherOutOrderPutDownQty(sourceId,actualQty);
+                    break;
+                case "OUT-PRO":
+                    //采购退货出库
+                    omFeignApi.updatePurchaseReturnOrderPutDownQty(sourceId,actualQty);
+                    break;
+                case "OUT-PSLO":
+                    //备料计划
+
                     break;
                 default:
                     break;
@@ -1775,6 +1835,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         SysUser sysUser = currentUser();
         List<WmsInnerMaterialBarcodeReOrder> barcodeReOrderList=new ArrayList<>();
         String orderTypeCode="IN-IWK";
+        Long outStorageId=null;
         if (record.getJobOrderType() == (byte) 1) {
             //上架单
             if(StringUtils.isEmpty(record.getWarehouseId())) {
@@ -1784,13 +1845,24 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 searchBaseStorage.setWarehouseId(record.getWarehouseId());
                 searchBaseStorage.setStorageType((byte)2);//库位类型（1-存货 2-收货 3-发货）
                 List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
-                if(StringUtils.isEmpty(baseStorages))
+                if(baseStorages.size()<=0)
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "未查询到该仓库的收货库位");
+
+                outStorageId=baseStorages.get(0).getStorageId();
 
                 searchBaseStorage.setStorageType((byte)1);
                 baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
                 if(StringUtils.isEmpty(baseStorages))
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "未查询到该仓库的存货库位");
+
+                SearchBaseInventoryStatus searchBaseInventoryStatus=new SearchBaseInventoryStatus();
+                searchBaseInventoryStatus.setWarehouseId(record.getWarehouseId());
+                searchBaseInventoryStatus.setInventoryStatusName("合格");
+                searchBaseInventoryStatus.setNameQueryMark(1);
+                List<BaseInventoryStatus> inventoryStatuses= baseFeignApi.findList(searchBaseInventoryStatus).getData();
+                if(inventoryStatuses.size()<=0){
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"该仓库无合格库存状态");
+                }
             }
             record.setJobOrderCode(CodeUtils.getId("IN-IWK"));
             //record.setSourceSysOrderTypeCode("IN-IWK");
@@ -1821,6 +1893,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             wmsInPutawayOrderDet.setModifiedTime(new Date());
             wmsInPutawayOrderDet.setModifiedUserId(sysUser.getUserId());
             wmsInPutawayOrderDet.setOrgId(sysUser.getOrganizationId());
+            if(StringUtils.isEmpty(wmsInPutawayOrderDet.getOutStorageId()) && StringUtils.isNotEmpty(outStorageId))
+                wmsInPutawayOrderDet.setOutStorageId(outStorageId);
+
             wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInPutawayOrderDet);
             //非自建单据新增条码关系表数据
             if(record.getSourceBigType()!=((byte)2) && StringUtils.isNotEmpty(record.getSourceBigType())) {
@@ -1849,6 +1924,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
             if (record.getJobOrderType() == (byte) 3) {
                 //移位作业校验
+
                 Example example = new Example(WmsInnerInventory.class);
                 Example.Criteria criteria = example.createCriteria();
                 criteria.andEqualTo("warehouseId", record.getWarehouseId());
@@ -1857,11 +1933,14 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 criteria .andEqualTo("lockStatus", (byte)0);
                 criteria .andEqualTo("stockLock", (byte)0);
                 criteria.andEqualTo("jobStatus", (byte)1);
+                criteria.andEqualTo("inventoryId", wmsInPutawayOrderDet.getInventoryId());
                 List<WmsInnerInventory> wmsInnerInventorys = wmsInnerInventoryMapper.selectByExample(example);
                 if(StringUtils.isEmpty(wmsInnerInventorys)){
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到出库位的物料条码，物料为："+wmsInPutawayOrderDet.getMaterialId());
                 }
-
+                if(wmsInnerInventorys.size() > 1){
+                    throw new BizErrorException(ErrorCodeEnum.STO30012002.getCode(),"查询到的库存不唯一,相同的库位未合并");
+                }
 
                  // 生成库存，扣减原库存 移位作业
                 WmsInnerInventory innerInventory = wmsInnerInventorys.get(0);
@@ -2170,6 +2249,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         }
         SearchWmsInnerMaterialBarcode swmsInnerMaterialBarcode=new SearchWmsInnerMaterialBarcode();
         swmsInnerMaterialBarcode.setBarcode(barCode);
+        swmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
         List<WmsInnerMaterialBarcodeDto> materialBarcodeList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(swmsInnerMaterialBarcode));
 
         if(ifSysBarcode.equals("1")){
@@ -2198,16 +2278,20 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
             //单据类型
             String sourceSysOrderTypeCode=wmsInnerJobOrder.getSourceSysOrderTypeCode();
-            Long materialBarcodeReOrderId=null;
             if(wmsInnerJobOrder.getSourceBigType()==((byte)2)){
                 // SELF-CRT 单据类型 自建
                 SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
+                sBarcodeReOrder.setOrderTypeCode("IN-IWK");
                 sBarcodeReOrder.setMaterialBarcodeId(materialBarcodeId);
-                sBarcodeReOrder.setOrderCode(wmsInnerJobOrder.getJobOrderCode());
-                sBarcodeReOrder.setOrderDetId(orderDetId);
+                sBarcodeReOrder.setOrderId(orderId);//上架单表头ID
                 List<WmsInnerMaterialBarcodeReOrderDto> reOrderList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
                 if(reOrderList.size()<=0){
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"自建的上架单未找到此条码数据-->"+barCode);
+                }
+
+                // 物料是否相等
+                if(wmsInnerJobOrderDet.getMaterialId().longValue()!=materialId.longValue()){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码相应物料与当前上架物料不相等");
                 }
 
                 WmsInnerMaterialBarcodeReOrderDto reOrderDto=reOrderList.get(0);
@@ -2215,14 +2299,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     throw new BizErrorException(ErrorCodeEnum.PDA40012001.getCode(),"条码已扫描-->"+barCode);
                 }
 
-                materialBarcodeReOrderId=reOrderDto.getMaterialBarcodeReOrderId();
-
             }
             else if(StringUtils.isNotEmpty(sourceSysOrderTypeCode) && wmsInnerJobOrder.getSourceBigType()!=((byte)2)) {
                 // 由上游单据下推
                 SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
-                sBarcodeReOrder.setMaterialBarcodeId(materialBarcodeId);
                 sBarcodeReOrder.setOrderTypeCode("IN-IWK");//上架作业单类型
+                sBarcodeReOrder.setMaterialBarcodeId(materialBarcodeId);
                 sBarcodeReOrder.setOrderId(orderId);
                 List<WmsInnerMaterialBarcodeReOrderDto> reOrderList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
                 if(reOrderList.size()<=0){
@@ -2239,18 +2321,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     throw new BizErrorException(ErrorCodeEnum.PDA40012001.getCode(),"条码已扫描-->"+barCode);
                 }
 
-                materialBarcodeReOrderId=reOrderDto.getMaterialBarcodeReOrderId();
             }
 
-            //更新条码扫描状态 扫描的时候由前端直接判断
-//            if(StringUtils.isNotEmpty(materialBarcodeReOrderId)) {
-//                WmsInnerMaterialBarcodeReOrder upBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
-//                upBarcodeReOrder.setMaterialBarcodeReOrderId(materialBarcodeReOrderId);
-//                upBarcodeReOrder.setScanStatus((byte) 2);
-//                upBarcodeReOrder.setModifiedUserId(sysUser.getUserId());
-//                upBarcodeReOrder.setModifiedTime(new Date());
-//                wmsInnerMaterialBarcodeReOrderMapper.updateByPrimaryKeySelective(upBarcodeReOrder);
-//            }
         }
         else if(ifSysBarcode.equals("0")){
             //非系统条码判断
@@ -2266,8 +2338,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     }
                 }
             }
-            map.put("materialBarcodeId","");
-            map.put("barcodeType","");
+            map.put("materialBarcodeId",0);
+            map.put("barcodeType",5);
             map.put("qty",0);
         }
 
@@ -2281,10 +2353,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      */
     @Override
     public Map<String, Object> checkBarcodeNotOrder(String ifSysBarcode, String barCode) {
-        Map<String, Object> map = new HashMap<>();
         SysUser sysUser=currentUser();
+        Map<String, Object> map = new HashMap<>();
         SearchWmsInnerMaterialBarcode swmsInnerMaterialBarcode=new SearchWmsInnerMaterialBarcode();
         swmsInnerMaterialBarcode.setBarcode(barCode);
+        swmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
         List<WmsInnerMaterialBarcodeDto> materialBarcodeList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(swmsInnerMaterialBarcode));
         if(ifSysBarcode.equals("1")){
             Long materialBarcodeReOrderId=null;
@@ -2318,16 +2391,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     throw new BizErrorException(ErrorCodeEnum.PDA40012001.getCode(),"条码已扫描-->"+barCode);
                 }
 
-                //更新条码扫描状态 由前端直接判断
-//                materialBarcodeReOrderId=reOrderDtoLast.getMaterialBarcodeReOrderId();
-//                if(StringUtils.isNotEmpty(materialBarcodeReOrderId)) {
-//                    WmsInnerMaterialBarcodeReOrder upBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
-//                    upBarcodeReOrder.setMaterialBarcodeReOrderId(materialBarcodeReOrderId);
-//                    upBarcodeReOrder.setScanStatus((byte) 2);
-//                    upBarcodeReOrder.setModifiedUserId(sysUser.getUserId());
-//                    upBarcodeReOrder.setModifiedTime(new Date());
-//                    wmsInnerMaterialBarcodeReOrderMapper.updateByPrimaryKeySelective(upBarcodeReOrder);
-//                }
             }
 
         }
@@ -2345,8 +2408,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     }
                 }
             }
-            map.put("materialBarcodeId","");
-            map.put("barcodeType","");
+            map.put("materialBarcodeId",0);
+            map.put("barcodeType",5);
             map.put("qty",0);
         }
         return map;
@@ -2387,6 +2450,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     public WmsInnerMaterialBarcodeDto checkBarcodeOrderWeb(String ifSysBarcode, Long orderId, Long orderDetId, String barCode) {
         WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto=new WmsInnerMaterialBarcodeDto();
         Map<String,Object> map=new HashMap<>();
+        SysUser sysUser=currentUser();
         if(StringUtils.isEmpty(barCode)){
             throw new BizErrorException(ErrorCodeEnum.PDA40012033);
         }
@@ -2405,6 +2469,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
         SearchWmsInnerMaterialBarcode swmsInnerMaterialBarcode=new SearchWmsInnerMaterialBarcode();
         swmsInnerMaterialBarcode.setBarcode(barCode);
+        swmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
         List<WmsInnerMaterialBarcodeDto> materialBarcodeList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(swmsInnerMaterialBarcode));
 
         if(ifSysBarcode.equals("1")){
@@ -2436,12 +2501,17 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             if(wmsInnerJobOrder.getSourceBigType()==((byte)2)){
                 // SELF-CRT 单据类型 自建
                 SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
+                sBarcodeReOrder.setOrderTypeCode("IN-IWK");//上架作业单类型
                 sBarcodeReOrder.setMaterialBarcodeId(materialBarcodeId);
-                sBarcodeReOrder.setOrderTypeCode("SELF-CRT");
-                sBarcodeReOrder.setOrderDetId(orderDetId);
+                sBarcodeReOrder.setOrderId(orderId);
                 List<WmsInnerMaterialBarcodeReOrderDto> reOrderList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
                 if(reOrderList.size()<=0){
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"自建的上架单未找到此条码数据-->"+barCode);
+                }
+
+                // 物料是否相等
+                if(wmsInnerJobOrderDet.getMaterialId().longValue()!=swmsInnerMaterialBarcode.getMaterialId().longValue()){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码相应物料与当前上架物料不相等");
                 }
 
                 WmsInnerMaterialBarcodeReOrderDto reOrderDto=reOrderList.get(0);
@@ -2453,8 +2523,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             else if(StringUtils.isNotEmpty(sourceSysOrderTypeCode) && wmsInnerJobOrder.getSourceBigType()!=((byte)2)) {
                 // 由上游单据下推
                 SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
-                sBarcodeReOrder.setMaterialBarcodeId(materialBarcodeId);
                 sBarcodeReOrder.setOrderTypeCode("IN-IWK");//上架作业单类型
+                sBarcodeReOrder.setMaterialBarcodeId(materialBarcodeId);
                 sBarcodeReOrder.setOrderId(orderId);
                 List<WmsInnerMaterialBarcodeReOrderDto> reOrderList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
                 if(reOrderList.size()<=0){
@@ -2501,7 +2571,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
 
     /**
-     * PDA先单后作业 提交
+     * PDA先单后作业 提交 web端单一确认提交
      * @param
      * @return
      */
@@ -2626,7 +2696,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             if (ifSysBarcode.equals("0")) {
                 //非系统条码
                 WmsInnerMaterialBarcode wmsInnerMaterialBarcode = new WmsInnerMaterialBarcode();
-                wmsInnerMaterialBarcode.setMaterialId(item.getMaterialId());
+                wmsInnerMaterialBarcode.setMaterialId(wmsInnerJobOrderDet.getMaterialId());
                 wmsInnerMaterialBarcode.setBarcode(item.getBarcode());
                 wmsInnerMaterialBarcode.setBatchCode(item.getBatchCode());
                 wmsInnerMaterialBarcode.setMaterialQty(item.getMaterialQty());
@@ -2712,6 +2782,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         sWmsBarcode.setPalletCode(item.getBarcode());
                     }
                 }
+                sWmsBarcode.setOrgId(sysUser.getOrganizationId());
                 List<WmsInnerMaterialBarcodeDto> materialDtoList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(sWmsBarcode));
                 for (WmsInnerMaterialBarcodeDto materialBarcodeDto : materialDtoList) {
                     WmsInnerMaterialBarcode upBarcode=new WmsInnerMaterialBarcode();
@@ -2853,9 +2924,14 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         SearchBaseInventoryStatus searchBaseInventoryStatus=new SearchBaseInventoryStatus();
         searchBaseInventoryStatus.setWarehouseId(warehouseId);
         searchBaseInventoryStatus.setInventoryStatusName("合格");
+        searchBaseInventoryStatus.setNameQueryMark(1);
         ResponseEntity<List<BaseInventoryStatus>> rStatus=baseFeignApi.findList(searchBaseInventoryStatus);
         if(StringUtils.isNotEmpty(rStatus.getData()))
             inventoryStatusId=rStatus.getData().get(0).getInventoryStatusId();
+
+        if(StringUtils.isEmpty(inventoryStatusId)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"该仓库无合格库存状态");
+        }
 
         //找收货库位
         SearchBaseStorage searchBaseStorage=new SearchBaseStorage();
@@ -2997,15 +3073,19 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 //系统条码更新条码状态
                 //条码类别处理
                 SearchWmsInnerMaterialBarcode sWmsBarcode=new SearchWmsInnerMaterialBarcode();
-                if(saveInnerJobOrderDto.getBarcodeType()==((byte)2)){
-                    sWmsBarcode.setColorBoxCode(saveInnerJobOrderDto.getBatchCode());
+                if(saveInnerJobOrderDto.getBarcodeType()==((byte)1)){
+                    sWmsBarcode.setBarcode(saveInnerJobOrderDto.getBarcode());
+                }
+                else if(saveInnerJobOrderDto.getBarcodeType()==((byte)2)){
+                    sWmsBarcode.setColorBoxCode(saveInnerJobOrderDto.getBarcode());
                 }
                 else if(saveInnerJobOrderDto.getBarcodeType()==((byte)3)){
-                    sWmsBarcode.setCartonCode(saveInnerJobOrderDto.getBatchCode());
+                    sWmsBarcode.setCartonCode(saveInnerJobOrderDto.getBarcode());
                 }
                 else if(saveInnerJobOrderDto.getBarcodeType()==((byte)4)){
-                    sWmsBarcode.setPalletCode(saveInnerJobOrderDto.getBatchCode());
+                    sWmsBarcode.setPalletCode(saveInnerJobOrderDto.getBarcode());
                 }
+                sWmsBarcode.setOrgId(sysUser.getOrganizationId());
                 List<WmsInnerMaterialBarcodeDto> materialDtoList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(sWmsBarcode));
                 for (WmsInnerMaterialBarcodeDto materialBarcodeDto : materialDtoList) {
                     WmsInnerMaterialBarcode upBarcode=new WmsInnerMaterialBarcode();

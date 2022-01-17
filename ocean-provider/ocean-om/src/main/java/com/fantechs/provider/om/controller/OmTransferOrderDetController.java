@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -52,4 +53,11 @@ public class OmTransferOrderDetController {
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value= OmTransferOrderDet.update.class) OmTransferOrderDet omTransferOrderDet) {
         return ControllerUtil.returnCRUD(omTransferOrderDetService.update(omTransferOrderDet));
     }
+
+    @ApiOperation(value = "更新调拨订单下推数量",notes = "更新调拨订单下推数量")
+    @PostMapping("/updatePutDownQty")
+    public ResponseEntity updatePutDownQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long detId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty) {
+        return ControllerUtil.returnCRUD(omTransferOrderDetService.updatePutDownQty(detId,putawayQty));
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.out.service.impl;
 
 import cn.hutool.core.date.DateTime;
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysImportAndExportLog;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -29,6 +30,7 @@ import com.fantechs.provider.wms.out.mapper.WmsOutHtPlanDeliveryOrderDetMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutHtPlanDeliveryOrderMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutPlanDeliveryOrderDetMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutPlanDeliveryOrderMapper;
+import com.fantechs.provider.wms.out.service.WmsOutDeliveryReqOrderService;
 import com.fantechs.provider.wms.out.service.WmsOutPlanDeliveryOrderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -60,6 +63,8 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
     private SecurityFeignApi securityFeignApi;
     @Resource
     private InnerFeignApi innerFeignApi;
+    @Resource
+    private WmsOutDeliveryReqOrderService wmsOutDeliveryReqOrderService;
 
     @Override
     public List<WmsOutPlanDeliveryOrderDto> findList(Map<String, Object> map) {
@@ -132,6 +137,46 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
             throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
         } else {
             i++;
+        }
+
+        return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updatePutawayQty(Long planDeliveryOrderDetId, BigDecimal putawayQty) {
+        int i = 0;
+        WmsOutPlanDeliveryOrderDet wmsOutPlanDeliveryOrderDet = wmsOutPlanDeliveryOrderDetMapper.selectByPrimaryKey(planDeliveryOrderDetId);
+        if(StringUtils.isEmpty(wmsOutPlanDeliveryOrderDet)) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003, "找不到明细信息");
+        }
+        BigDecimal actualQty = StringUtils.isNotEmpty(wmsOutPlanDeliveryOrderDet.getActualQty()) ? wmsOutPlanDeliveryOrderDet.getActualQty().add(putawayQty) : putawayQty;
+        wmsOutPlanDeliveryOrderDet.setActualQty(actualQty);
+        if (actualQty.compareTo(BigDecimal.ZERO) == 1 && actualQty.compareTo(wmsOutPlanDeliveryOrderDet.getTotalIssueQty()) == -1) {
+            wmsOutPlanDeliveryOrderDet.setLineStatus((byte) 2);
+        } else if (actualQty.compareTo(wmsOutPlanDeliveryOrderDet.getTotalIssueQty()) == 0) {
+            wmsOutPlanDeliveryOrderDet.setLineStatus((byte) 3);
+        }
+        i = wmsOutPlanDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutPlanDeliveryOrderDet);
+
+        WmsOutPlanDeliveryOrder wmsOutPlanDeliveryOrder = wmsOutPlanDeliveryOrderMapper.selectByPrimaryKey(wmsOutPlanDeliveryOrderDet.getPlanDeliveryOrderId());
+        Example example = new Example(WmsOutPlanDeliveryOrderDet.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("planDeliveryOrderId", wmsOutPlanDeliveryOrderDet.getPlanDeliveryOrderId());
+        List<WmsOutPlanDeliveryOrderDet> wmsOutPlanDeliveryOrderDets = wmsOutPlanDeliveryOrderDetMapper.selectByExample(example);
+        Byte orderStatus = 3;
+        for (WmsOutPlanDeliveryOrderDet planDeliveryOrderDet : wmsOutPlanDeliveryOrderDets){
+            if(planDeliveryOrderDet.getLineStatus()!=(byte)3){
+                orderStatus = 2;
+                break;
+            }
+        }
+        wmsOutPlanDeliveryOrder.setOrderStatus(orderStatus);
+        i += wmsOutPlanDeliveryOrderMapper.updateByPrimaryKeySelective(wmsOutPlanDeliveryOrder);
+
+        //如果出库计划的上游单据是出库通知单，也需返写
+        if("OUT-DRO".equals(wmsOutPlanDeliveryOrder.getSourceSysOrderTypeCode())){
+            wmsOutDeliveryReqOrderService.updatePutawayQty(wmsOutPlanDeliveryOrderDet.getSourceId(),putawayQty);
         }
 
         return i;

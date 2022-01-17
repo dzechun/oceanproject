@@ -28,6 +28,7 @@
         <result column="barcode_status" jdbcType="TINYINT" property="barcodeStatus" />
         <result column="barcode_rule_id" jdbcType="BIGINT" property="barcodeRuleId" />
         <result column="label_id" jdbcType="BIGINT" property="labelId" />
+        <result column="barcode_type" jdbcType="TINYINT" property="barcodeType" />
         <result column="remark" jdbcType="VARCHAR" property="remark" />
         <result column="org_id" jdbcType="BIGINT" property="orgId" />
         <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -66,6 +67,7 @@
         wimb.production_time,
         wimb.expired_time,
         wimb.label_id,
+        wimb.barcode_type,
         wimb.inspection_status,
         wimb.barcode_status,
         wimb.barcode_rule_id,

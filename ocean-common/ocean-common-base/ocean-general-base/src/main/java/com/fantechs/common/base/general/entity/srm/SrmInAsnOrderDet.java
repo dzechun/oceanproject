@@ -248,9 +248,9 @@ public class SrmInAsnOrderDet extends ValidGroup implements Serializable {
     /**
      * ASN单号
      */
-    @ApiModelProperty(name="asnCode",value = "ASN单号")
-    @Excel(name = "ASN单号", height = 20, width = 30,orderNum="1")
-    private String asnCode;
+//    @ApiModelProperty(name="asnCode",value = "ASN单号")
+//    @Excel(name = "ASN单号", height = 20, width = 30,orderNum="1")
+//    private String asnCode;
 
     private static final long serialVersionUID = 1L;
 }

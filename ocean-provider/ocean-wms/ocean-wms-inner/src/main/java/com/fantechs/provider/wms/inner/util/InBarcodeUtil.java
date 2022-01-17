@@ -169,10 +169,13 @@ public class InBarcodeUtil {
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码不能为空");
         }
 
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+
         //条码判断
         List<WmsInnerMaterialBarcodeDto> barcodeDtos=new ArrayList<>();
         SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode=new SearchWmsInnerMaterialBarcode();
         searchWmsInnerMaterialBarcode.setBarcode(barcode);
+        searchWmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
         barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
         if(barcodeDtos.size()>0){
             //SN码

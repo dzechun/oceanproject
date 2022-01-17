@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrder;
 import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrderDet;
 import com.fantechs.common.base.general.entity.om.search.SearchOmSalesCodeReSpc;
 import com.fantechs.common.base.general.entity.om.search.SearchOmTransferOrderDet;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -144,4 +145,19 @@ public interface OMFeignApi {
     @PostMapping("/omSalesReturnOrder/updateSalesReturnPutDownQty")
     ResponseEntity updateSalesReturnPutDownQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long salesReturnOrderDetId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty);
 
+    @ApiOperation(value = "更新调拨订单下推数量",notes = "更新调拨订单下推数量")
+    @PostMapping("/omTransferOrderDet/updatePutDownQty")
+    ResponseEntity updateTransferOrderPutDownQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long detId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty);
+
+    @ApiOperation(value = "更新采退订单下推数量",notes = "更新采退订单下推数量")
+    @PostMapping("/omPurchaseReturnOrderDet/updatePutDownQty")
+    ResponseEntity updatePurchaseReturnOrderPutDownQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long detId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty) ;
+
+    @ApiOperation(value = "更新其他出库订单下推数量",notes = "更新其他出库订单下推数量")
+    @PostMapping("/omOtherOutOrderDet/updatePutDownQty")
+    ResponseEntity updateOtherOutOrderPutDownQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long detId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty) ;
+
+    @ApiOperation(value = "更新销售订单下推数量",notes = "更新销售订单下推数量")
+    @PostMapping("/omSalesOrderDet/updatePutDownQty")
+    ResponseEntity updateSalesOrderPutDownQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long detId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty) ;
 }

@@ -7,6 +7,7 @@ import com.fantechs.common.base.general.entity.wms.out.WmsOutPlanDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtPlanDeliveryOrder;
 import com.fantechs.common.base.support.IService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -22,4 +23,5 @@ public interface WmsOutPlanDeliveryOrderService extends IService<WmsOutPlanDeliv
     int save(WmsOutPlanDeliveryOrderDto record);
     int update(WmsOutPlanDeliveryOrderDto entity);
     int pushDown(List<WmsOutPlanDeliveryOrderDetDto> wmsOutPlanDeliveryOrderDetDtos);
+    int updatePutawayQty(Long planDeliveryOrderDetId, BigDecimal putawayQty);
 }
