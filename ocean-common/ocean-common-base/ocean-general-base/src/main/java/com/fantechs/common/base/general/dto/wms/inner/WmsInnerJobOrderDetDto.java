@@ -73,6 +73,13 @@ public class WmsInnerJobOrderDetDto extends WmsInnerJobOrderDet implements Seria
     private Byte inStorageType;
 
     /**
+     * 供应商ID
+     */
+    @Transient
+    @ApiModelProperty(name = "supplierId",value = "供应商ID")
+    private Long supplierId;
+
+    /**
      * 物料编码
      */
     @Transient

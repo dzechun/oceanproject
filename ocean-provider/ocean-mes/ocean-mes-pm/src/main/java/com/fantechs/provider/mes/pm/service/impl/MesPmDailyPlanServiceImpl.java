@@ -6,6 +6,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDetDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanStockListDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDetDto;
@@ -121,75 +122,10 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
         List<MesPmDailyPlanStockList> planStockLists=new ArrayList<>();
         if(mesPmDailyPlanDets.size()>0){
             for (MesPmDailyPlanDetDto mesPmDailyPlanDet : mesPmDailyPlanDets) {
-                MesPmWorkOrder mesPmWorkOrder=mesPmWorkOrderMapper.selectByPrimaryKey(mesPmDailyPlanDet.getWorkOrderId());
-                if(StringUtils.isEmpty(mesPmWorkOrder)){
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"找不到相应的工单信息");
-                }
-                BigDecimal nowQty=new BigDecimal(0);
-                BigDecimal scheduleQty=new BigDecimal(0);
-                BigDecimal workOrderQty=new BigDecimal(0);
-                if(StringUtils.isNotEmpty(mesPmWorkOrder.getScheduledQty()))
-                    scheduleQty=mesPmWorkOrder.getScheduledQty();//工单已排产数量
-
-                if(StringUtils.isNotEmpty(mesPmWorkOrder.getWorkOrderQty()))
-                    workOrderQty=mesPmWorkOrder.getWorkOrderQty();//工单数量
-
-                if(StringUtils.isNotEmpty(mesPmDailyPlanDet.getScheduleQty()))
-                    nowQty=mesPmDailyPlanDet.getScheduleQty();//本次排产数量
-
-                if(nowQty.compareTo(new BigDecimal(0))!=1){
-                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"排产数量必须大于0");
-                }
-                if((nowQty.add(scheduleQty)).compareTo(workOrderQty)==1){
-                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"排产数量不能大于工单数量");
-                }
-
-                //新增明细
-                mesPmDailyPlanDet.setDailyPlanId(mesPmDailyPlanDto.getDailyPlanId());
-                mesPmDailyPlanDet.setCoreSourceOrderCode(mesPmWorkOrder.getWorkOrderCode());
-                mesPmDailyPlanDet.setSourceOrderCode(mesPmWorkOrder.getSourceOrderCode());
-                mesPmDailyPlanDet.setCreateUserId(user.getUserId());
-                mesPmDailyPlanDet.setCreateTime(new Date());
-                mesPmDailyPlanDet.setIsDelete((byte)1);
-                mesPmDailyPlanDet.setOrgId(user.getOrganizationId());
-                num=mesPmDailyPlanDetMapper.insertUseGeneratedKeys(mesPmDailyPlanDet);
-
-                //更新工单排产数量
-                MesPmWorkOrder upMesPmWorkOrder=new MesPmWorkOrder();
-                upMesPmWorkOrder.setWorkOrderId(mesPmWorkOrder.getWorkOrderId());
-                upMesPmWorkOrder.setScheduledQty(mesPmWorkOrder.getScheduledQty().add(nowQty));
-                upMesPmWorkOrder.setMaterialId(user.getUserId());
-                upMesPmWorkOrder.setModifiedTime(new Date());
-                num=mesPmWorkOrderMapper.updateByPrimaryKeySelective(upMesPmWorkOrder);
-
-                //新增日计划物料明细
-                Example exampleDet = new Example(MesPmWorkOrderBom.class);
-                Example.Criteria criteriaDet = exampleDet.createCriteria();
-                criteriaDet.andEqualTo("workOrderId", mesPmWorkOrder.getWorkOrderId());
-                List<MesPmWorkOrderBom> workOrderBoms=mesPmWorkOrderBomMapper.selectByExample(exampleDet);
-                if(workOrderBoms.size()>0){
-                    for (MesPmWorkOrderBom workOrderBom : workOrderBoms) {
-                        MesPmDailyPlanStockList mesPmDailyPlanStockList=new MesPmDailyPlanStockList();
-                        mesPmDailyPlanStockList.setDailyPlanDetId(mesPmDailyPlanDet.getDailyPlanDetId());
-                        mesPmDailyPlanStockList.setPartMaterialId(workOrderBom.getPartMaterialId());
-                        mesPmDailyPlanStockList.setProcessId(workOrderBom.getProcessId());
-                        mesPmDailyPlanStockList.setSingleQty(workOrderBom.getSingleQty());
-                        mesPmDailyPlanStockList.setDailyPlanUsageQty(nowQty.multiply(StringUtils.isEmpty(workOrderBom.getSingleQty())?new BigDecimal(1):workOrderBom.getSingleQty()));
-                        mesPmDailyPlanStockList.setCreateUserId(user.getUserId());
-                        mesPmDailyPlanStockList.setCreateTime(new Date());
-                        mesPmDailyPlanStockList.setOrgId(user.getOrganizationId());
-                        planStockLists.add(mesPmDailyPlanStockList);
-                    }
-
-                }
-
+                createDet(mesPmDailyPlanDet,mesPmDailyPlanDto.getDailyPlanId(),user);
             }
         }
 
-        //新增日计划物料明细
-        if(planStockLists.size()>0) {
-            mesPmDailyPlanStockListMapper.insertList(planStockLists);
-        }
         return num;
     }
 
@@ -236,7 +172,7 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
             }
             else {
                 //处理要删除的
-                Example exampleListDet = new Example(MesPmDailyPlanStockList.class);
+                /*Example exampleListDet = new Example(MesPmDailyPlanStockList.class);
                 Example.Criteria criteriaListDet = exampleListDet.createCriteria();
                 criteriaListDet.andEqualTo("dailyPlanDetId", mesPmDailyPlanDet.getDailyPlanDetId());
                 criteriaListDet.andIsNotNull("totalIssueQty");
@@ -254,12 +190,92 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
                 num=mesPmDailyPlanStockListMapper.deleteByExample(exampleListDetDelete);
 
                 //删日计划明细
-                num=mesPmDailyPlanDetMapper.deleteByPrimaryKey(mesPmDailyPlanDet);
+                num=mesPmDailyPlanDetMapper.deleteByPrimaryKey(mesPmDailyPlanDet);*/
 
             }
         }
 
+        //新增
+        List<MesPmDailyPlanDetDto> planDetDtoList = mesPmDailyPlanDets.stream().filter(u -> (StringUtils.isEmpty(u.getDailyPlanDetId()))).collect(Collectors.toList());
+        if(planDetDtoList.size()>0){
+            for (MesPmDailyPlanDetDto mesPmDailyPlanDetDto : planDetDtoList) {
+                createDet(mesPmDailyPlanDetDto,mesPmDailyPlanDto.getDailyPlanId(),user);
+            }
+        }
         num=mesPmDailyPlanMapper.updateByPrimaryKeySelective(mesPmDailyPlanDto);
+
+        return num;
+    }
+
+    private int createDet(MesPmDailyPlanDetDto mesPmDailyPlanDet,Long dailyPlanId,SysUser sysUser){
+        int num=0;
+        List<MesPmDailyPlanStockList> planStockLists=new ArrayList<>();
+
+        MesPmWorkOrder mesPmWorkOrder=mesPmWorkOrderMapper.selectByPrimaryKey(mesPmDailyPlanDet.getWorkOrderId());
+        if(StringUtils.isEmpty(mesPmWorkOrder)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"找不到相应的工单信息");
+        }
+        BigDecimal nowQty=new BigDecimal(0);
+        BigDecimal scheduleQty=new BigDecimal(0);
+        BigDecimal workOrderQty=new BigDecimal(0);
+        if(StringUtils.isNotEmpty(mesPmWorkOrder.getScheduledQty()))
+            scheduleQty=mesPmWorkOrder.getScheduledQty();//工单已排产数量
+
+        if(StringUtils.isNotEmpty(mesPmWorkOrder.getWorkOrderQty()))
+            workOrderQty=mesPmWorkOrder.getWorkOrderQty();//工单数量
+
+        if(StringUtils.isNotEmpty(mesPmDailyPlanDet.getScheduleQty()))
+            nowQty=mesPmDailyPlanDet.getScheduleQty();//本次排产数量
+
+        if(nowQty.compareTo(new BigDecimal(0))!=1){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"排产数量必须大于0");
+        }
+        if((nowQty.add(scheduleQty)).compareTo(workOrderQty)==1){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"排产数量不能大于工单数量");
+        }
+
+        //新增明细
+        mesPmDailyPlanDet.setDailyPlanId(dailyPlanId);
+        mesPmDailyPlanDet.setCoreSourceOrderCode(mesPmWorkOrder.getWorkOrderCode());
+        mesPmDailyPlanDet.setSourceOrderCode(mesPmWorkOrder.getSourceOrderCode());
+        mesPmDailyPlanDet.setCreateUserId(sysUser.getUserId());
+        mesPmDailyPlanDet.setCreateTime(new Date());
+        mesPmDailyPlanDet.setIsDelete((byte)1);
+        mesPmDailyPlanDet.setOrgId(sysUser.getOrganizationId());
+        num+=mesPmDailyPlanDetMapper.insertUseGeneratedKeys(mesPmDailyPlanDet);
+
+        //更新工单排产数量
+        MesPmWorkOrder upMesPmWorkOrder=new MesPmWorkOrder();
+        upMesPmWorkOrder.setWorkOrderId(mesPmWorkOrder.getWorkOrderId());
+        upMesPmWorkOrder.setScheduledQty(mesPmWorkOrder.getScheduledQty().add(nowQty));
+        upMesPmWorkOrder.setMaterialId(sysUser.getUserId());
+        upMesPmWorkOrder.setModifiedTime(new Date());
+        num+=mesPmWorkOrderMapper.updateByPrimaryKeySelective(upMesPmWorkOrder);
+
+        //新增日计划物料明细
+        Example exampleDet = new Example(MesPmWorkOrderBom.class);
+        Example.Criteria criteriaDet = exampleDet.createCriteria();
+        criteriaDet.andEqualTo("workOrderId", mesPmWorkOrder.getWorkOrderId());
+        List<MesPmWorkOrderBom> workOrderBoms=mesPmWorkOrderBomMapper.selectByExample(exampleDet);
+        if(workOrderBoms.size()>0){
+            for (MesPmWorkOrderBom workOrderBom : workOrderBoms) {
+                MesPmDailyPlanStockList mesPmDailyPlanStockList=new MesPmDailyPlanStockList();
+                mesPmDailyPlanStockList.setDailyPlanDetId(mesPmDailyPlanDet.getDailyPlanDetId());
+                mesPmDailyPlanStockList.setPartMaterialId(workOrderBom.getPartMaterialId());
+                mesPmDailyPlanStockList.setProcessId(workOrderBom.getProcessId());
+                mesPmDailyPlanStockList.setSingleQty(workOrderBom.getSingleQty());
+                mesPmDailyPlanStockList.setDailyPlanUsageQty(nowQty.multiply(StringUtils.isEmpty(workOrderBom.getSingleQty())?new BigDecimal(1):workOrderBom.getSingleQty()));
+                mesPmDailyPlanStockList.setCreateUserId(sysUser.getUserId());
+                mesPmDailyPlanStockList.setCreateTime(new Date());
+                mesPmDailyPlanStockList.setOrgId(sysUser.getOrganizationId());
+                planStockLists.add(mesPmDailyPlanStockList);
+            }
+        }
+
+        //新增日计划物料明细
+        if(planStockLists.size()>0) {
+            num+=mesPmDailyPlanStockListMapper.insertList(planStockLists);
+        }
 
         return num;
     }

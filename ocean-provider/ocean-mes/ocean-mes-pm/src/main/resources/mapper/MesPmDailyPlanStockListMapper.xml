@@ -110,9 +110,6 @@
       <if test="status!=null">
         and mpdpd.status = #{status}
       </if>
-      <if test="ifOrderInserting!=null">
-        and mpdpd.if_order_inserting = #{ifOrderInserting}
-      </if>
       <if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
         and date_format(mpdp.plan_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>

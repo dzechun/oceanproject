@@ -133,9 +133,16 @@ public class WmsInnerInventoryUtil {
             if (!StringUtils.isEmpty(newDto.getBatchCode())) {
                 criteria.andEqualTo("batchCode", newDto.getBatchCode());
             }
+            if(StringUtils.isNotEmpty(newDto.getProductionDate())){
+                criteria.andEqualTo("productionDate", newDto.getProductionDate());
+            }
+            if(StringUtils.isNotEmpty(newDto.getSupplierId())){
+                criteria.andEqualTo("supplierId", newDto.getSupplierId());
+            }
             criteria.andEqualTo("jobStatus", (byte) 1);
             criteria.andEqualTo("inventoryStatusId", newDto.getInventoryStatusId());
-            criteria.andEqualTo("stockLock", 0).andEqualTo("lockStatus", 0);
+            criteria.andEqualTo("stockLock", 0);
+            criteria.andEqualTo("lockStatus", 0);
             criteria.andEqualTo("orgId", sysUser.getOrganizationId());
             WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryUtil.wmsInnerInventoryMapper.selectOneByExample(example);
             BigDecimal qty = BigDecimal.ZERO;
@@ -148,6 +155,8 @@ public class WmsInnerInventoryUtil {
                 inv.setWarehouseId(wmsInnerJobOrder.getWarehouseId());
                 inv.setStorageId(newDto.getInStorageId());
                 inv.setBatchCode(newDto.getBatchCode());
+                inv.setProductionDate(newDto.getProductionDate());
+                inv.setSupplierId(newDto.getSupplierId());
                 inv.setJobStatus((byte) 1);
                 inv.setInventoryStatusId(newDto.getInventoryStatusId());
                 inv.setStockLock((byte) 0);
