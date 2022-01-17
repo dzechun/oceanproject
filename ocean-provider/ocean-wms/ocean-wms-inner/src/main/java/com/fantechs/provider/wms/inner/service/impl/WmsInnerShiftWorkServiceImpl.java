@@ -256,6 +256,10 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             List<BaseStorage> baseStorage = baseFeignApi.findList(searchBaseStorage).getData();
             if (StringUtils.isEmpty(baseStorage))
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未查询到移出库位");
+            if (baseStorage.get(0).getStorageType() != 1)
+                throw new BizErrorException(ErrorCodeEnum.PDA40012037.getCode(),"库位类型错误，移出库位必须是存货库位");
+
+
             if (dto.getJobOrderId() != null) {
                 // 更新移位单
                 innerJobOrder = wmsInnerJobOrderService.selectByKey(dto.getJobOrderId());
@@ -391,29 +395,32 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
     public int saveJobOrder(SaveShiftJobOrderDto dto) {
         SysUser sysUser = currentUser();
 
-        WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderDetMapper.selectByPrimaryKey(dto.getJobOrderDetId());
-        if (StringUtils.isEmpty(wmsInnerJobOrderDet))
-            throw new BizErrorException("未查询到对应的移位单明细");
-        if (StringUtils.isEmpty(wmsInnerJobOrderDet.getDistributionQty()) || wmsInnerJobOrderDet.getDistributionQty().compareTo(BigDecimal.ZERO) < 0) {
-            throw new BizErrorException("上架数量不能小于1");
-        }
-        wmsInnerJobOrderDet.setActualQty(wmsInnerJobOrderDet.getDistributionQty());
-        BaseStorage baseStorage = baseFeignApi.detail(dto.getStorageId()).getData();
-        if (baseStorage == null) {
-            throw new BizErrorException(ErrorCodeEnum.PDA5001007);
-        }
-
+ //       WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderDetMapper.selectByPrimaryKey(dto.getJobOrderDetId());
         SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
         searchWmsInnerJobOrderDet.setJobOrderDetId(dto.getJobOrderDetId());
         WmsInnerJobOrderDetDto oldDto = wmsInnerJobOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
-        if (wmsInnerJobOrderDet.getActualQty().compareTo(wmsInnerJobOrderDet.getDistributionQty()) != 0) {
+        if (StringUtils.isEmpty(oldDto))
+            throw new BizErrorException("未查询到对应的移位单明细");
+        if (StringUtils.isEmpty(oldDto.getDistributionQty()) || oldDto.getDistributionQty().compareTo(BigDecimal.ZERO) < 0)
+            throw new BizErrorException("上架数量不能小于1");
+        oldDto.setActualQty(oldDto.getDistributionQty());
+        BaseStorage baseStorage = baseFeignApi.detail(dto.getStorageId()).getData();
+        if (baseStorage == null)
+            throw new BizErrorException(ErrorCodeEnum.PDA5001007);
+        if (baseStorage.getStorageType() != 1)
+            throw new BizErrorException(ErrorCodeEnum.PDA40012037.getCode(),"库位类型错误，移入库位必须是存货库位");
+        if (oldDto.getActualQty().compareTo(oldDto.getDistributionQty()) != 0)
             throw new BizErrorException("上架数量不能大于分配数量");
-        }
+
+ //       if(oldDto)
+
+
+
         // 变更移位单明细
         WmsInnerJobOrderDet wms = WmsInnerJobOrderDet.builder()
                 .jobOrderDetId(dto.getJobOrderDetId())
                 .inStorageId(baseStorage.getStorageId())
-                .actualQty(wmsInnerJobOrderDet.getActualQty())
+                .actualQty(oldDto.getActualQty())
                 .modifiedTime(new Date())
                 .lineStatus((byte) 3)
                 .modifiedUserId(sysUser.getUserId())
@@ -426,11 +433,11 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         }
 
         SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
-        searchWmsInnerJobOrder.setJobOrderId(wmsInnerJobOrderDet.getJobOrderId());
+        searchWmsInnerJobOrder.setJobOrderId(oldDto.getJobOrderId());
         WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder).get(0);
         List<WmsInnerJobOrderDet> wmsInnerJobOrderDetDto = wmsInnerJobOrderDto.getWmsInPutawayOrderDets();
 
-        // 更改库存
+        // 更改库存状态
         Example example = new Example(WmsInnerInventory.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialId", oldDto.getMaterialId())
@@ -442,7 +449,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 .andEqualTo("lockStatus", 0);
         WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
         if (StringUtils.isEmpty(wmsInnerInventory))
-            throw new BizErrorException("未查询到移出库位");
+            throw new BizErrorException("未查询到移出库存");
         example.clear();
         Example.Criteria criteria1 = example.createCriteria().andEqualTo("materialId", oldDto.getMaterialId())
 //                .andEqualTo("warehouseId", oldDto.getWarehouseId())
@@ -483,7 +490,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             InventoryLogUtil.addLog(wmsInnerInventory_old, wmsInnerJobOrderDto, oldDto, initQty, wmsInnerInventory.getPackingQty(), (byte) 3, (byte) 2);
             InventoryLogUtil.addLog(wmsInnerInventory_old, wmsInnerJobOrderDto, oldDto, wmsInnerInventory_old.getPackingQty(), wmsInnerInventory.getPackingQty(), (byte) 3, (byte) 1);
 
-            wmsInnerInventory_old.setPackingQty(wmsInnerInventory_old.getPackingQty() != null ? wmsInnerInventory_old.getPackingQty().add(wmsInnerJobOrderDet.getActualQty()) : wmsInnerInventory.getPackingQty());
+            wmsInnerInventory_old.setPackingQty(wmsInnerInventory_old.getPackingQty() != null ? wmsInnerInventory_old.getPackingQty().add(oldDto.getActualQty()) : wmsInnerInventory.getPackingQty());
             wmsInnerInventory_old.setRelevanceOrderCode(wmsInnerInventory.getRelevanceOrderCode());
             wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory_old);
             wmsInnerInventory.setPackingQty(BigDecimal.ZERO);
@@ -498,7 +505,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeReOrders)) {
             for (WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder : wmsInnerMaterialBarcodeReOrders) {
                 Map<String, Object> map = new HashMap<>();
-                map.put("storageId", wmsInnerJobOrderDet.getOutStorageId());
+                map.put("storageId", oldDto.getOutStorageId());
                 map.put("materialBarcodeId", wmsInnerMaterialBarcodeReOrder.getMaterialBarcodeId());
                 List<WmsInnerInventoryDetDto> inventoryDetDtos = wmsInnerInventoryDetService.findList(map);
                 if (inventoryDetDtos.isEmpty()) {
@@ -512,7 +519,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         }
 
         Map<String, Object> map = new HashMap<>();
-        map.put("storageId", wmsInnerJobOrderDet.getOutStorageId());
+        map.put("storageId", oldDto.getOutStorageId());
         List<WmsInnerInventoryDetDto> inventoryDetDtos = wmsInnerInventoryDetService.findList(map);
         if (inventoryDetDtos.isEmpty()) {
             throw new BizErrorException(ErrorCodeEnum.PDA5001004);
