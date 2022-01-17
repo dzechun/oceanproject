@@ -13,7 +13,6 @@ import com.fantechs.common.base.general.dto.basic.BaseLabelDto;
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerHtMaterialBarcodeDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerMaterialBarcodeImport;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
@@ -280,6 +279,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                 wmsInnerMaterialBarCode.setModifiedUserId(sysUser.getUserId());
                 wmsInnerMaterialBarCode.setCreateType((byte) 3);
                 wmsInnerMaterialBarCode.setBarcodeType((byte) 1);
+                wmsInnerMaterialBarCode.setSupplierId(sysUser.getSupplierId());
                 wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(wmsInnerMaterialBarCode);
 
                 //添加履历
