@@ -148,6 +148,9 @@
         <if test="inspectionStatus!=null">
             and wimb.inspection_status = #{inspectionStatus}
         </if>
+        <if test="overallCode!=null and overallCode!=''">
+            and (wimb.barcode = #{overallCode} or wimb.color_box_code=#{overallCode} or wimb.carton_code=#{overallCode} or wimb.pallet_code=#{overallCode})
+        </if>
     </where>
     order by wimbro.create_time desc
   </select>

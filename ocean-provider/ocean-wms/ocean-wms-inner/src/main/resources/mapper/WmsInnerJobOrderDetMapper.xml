@@ -41,8 +41,10 @@
         <result column="job_order_code" jdbcType="VARCHAR" property="jobOrderCode"/>
         <result column="out_storage_name" jdbcType="VARCHAR" property="outStorageName"/>
         <result column="out_storage_code" jdbcType="VARCHAR" property="outStorageCode"/>
+        <result column="out_storage_type" jdbcType="VARCHAR" property="outStorageType"/>
         <result column="in_storage_name" jdbcType="VARCHAR" property="inStorageName"/>
         <result column="in_storage_code" jdbcType="VARCHAR" property="inStorageCode"/>
+        <result column="in_storage_type" jdbcType="VARCHAR" property="inStorageType"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
@@ -89,8 +91,10 @@
         SELECT<include refid="BaseColumnList"/>,
         bso.storage_name AS out_storage_name,
         bso.storage_code AS out_storage_code,
+        bso.storage_type AS out_storage_type,
         bsi.storage_name AS in_storage_name,
         bsi.storage_code AS in_storage_code,
+        bsi.storage_type AS in_storage_type,
         bm.material_code,
         bm.material_name,
         bm.material_desc,

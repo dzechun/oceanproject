@@ -30,6 +30,7 @@ import com.fantechs.provider.wms.out.mapper.WmsOutHtPlanDeliveryOrderDetMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutHtPlanDeliveryOrderMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutPlanDeliveryOrderDetMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutPlanDeliveryOrderMapper;
+import com.fantechs.provider.wms.out.service.WmsOutDeliveryReqOrderService;
 import com.fantechs.provider.wms.out.service.WmsOutPlanDeliveryOrderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -62,6 +63,8 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
     private SecurityFeignApi securityFeignApi;
     @Resource
     private InnerFeignApi innerFeignApi;
+    @Resource
+    private WmsOutDeliveryReqOrderService wmsOutDeliveryReqOrderService;
 
     @Override
     public List<WmsOutPlanDeliveryOrderDto> findList(Map<String, Object> map) {
@@ -170,6 +173,11 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
         }
         wmsOutPlanDeliveryOrder.setOrderStatus(orderStatus);
         i += wmsOutPlanDeliveryOrderMapper.updateByPrimaryKeySelective(wmsOutPlanDeliveryOrder);
+
+        //如果出库计划的上游单据是出库通知单，也需返写
+        if("OUT-DRO".equals(wmsOutPlanDeliveryOrder.getSourceSysOrderTypeCode())){
+            wmsOutDeliveryReqOrderService.updatePutawayQty(wmsOutPlanDeliveryOrderDet.getSourceId(),putawayQty);
+        }
 
         return i;
     }

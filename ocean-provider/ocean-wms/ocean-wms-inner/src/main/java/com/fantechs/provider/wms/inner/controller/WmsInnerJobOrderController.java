@@ -92,7 +92,7 @@ public class WmsInnerJobOrderController {
     @PostMapping("/singleReceivingByBarcode")
     public ResponseEntity singleReceivingByBarcode(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerJobOrderDet wmsInPutawayOrderDet,
                                                    @ApiParam(value = "条码ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids,
-                                                    @ApiParam(value = "单据类型，1-上架作业, 3-移位作业",required = true) @RequestParam @NotBlank(message="orderType不能为空") Byte orderType){
+                                                    @ApiParam(value = "必传，单据类型，1-上架作业, 3-移位作业",required = true) @RequestParam  Byte orderType){
         return ControllerUtil.returnCRUD(wmsInPutawayOrderService.singleReceivingByBarcode(wmsInPutawayOrderDet,ids,orderType));
     }
 

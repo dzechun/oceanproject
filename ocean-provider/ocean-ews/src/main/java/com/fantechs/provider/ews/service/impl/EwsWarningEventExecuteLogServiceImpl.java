@@ -101,15 +101,15 @@ public class EwsWarningEventExecuteLogServiceImpl extends BaseService<EwsWarning
             String resMessage = null;
             String message = null;
                 switch (pushMessageDto.getNotificationMethod()){
-                    case "0":
+                    case "1":
                         //微信
                         String[] weChat = ewsWarningPushConfigReWuiDtos.stream().map(EwsWarningPushConfigReWuiDto::getWechat).toArray(String[]::new);
                         break;
-                    case "1":
+                    case "2":
                         String[] phone = ewsWarningPushConfigReWuiDtos.stream().map(EwsWarningPushConfigReWuiDto::getMobilePhone).toArray(String[]::new);
                         //短信
                         break;
-                    case "2":
+                    case "3":
                         //钉钉
                         List<String> dingTalk = ewsWarningPushConfigReWuiDtos.stream().map(EwsWarningPushConfigReWuiDto::getDingTalk).collect(Collectors.toList());
                         //获取配置项
@@ -128,7 +128,7 @@ public class EwsWarningEventExecuteLogServiceImpl extends BaseService<EwsWarning
                         resMessage = response;
                         isOk = true;
                         break;
-                    case "3":
+                    case "4":
                         String[] mail = ewsWarningPushConfigReWuiDtos.stream().map(EwsWarningPushConfigReWuiDto::getEMailAddress).toArray(String[]::new);
                         //邮件
                         SearchSysSpecItem searchSysSpecItemMail = new SearchSysSpecItem();

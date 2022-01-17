@@ -310,7 +310,7 @@ public enum ErrorCodeEnum {
     PDA40012034(40012034, "该包箱条码不属于同个工单，不可扫码"),
     PDA40012035(40012035, "工段基础信息不存在"),
     PDA40012036(40012036, "包装规格中找不到物料materialId=%s与工序processId=%s对应的条码规则"),
-
+    PDA40012037(40012037, "库位类型错误"),
     // endregion
 
     // region PDA 移位作业相关 error code enum
