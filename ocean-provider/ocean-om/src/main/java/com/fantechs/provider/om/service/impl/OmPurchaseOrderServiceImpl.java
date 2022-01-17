@@ -569,6 +569,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                     WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
                     wmsInnerJobOrderDet.setCoreSourceOrderCode(order.getPurchaseOrderCode());
                     wmsInnerJobOrderDet.setSourceOrderCode(order.getPurchaseOrderCode());
+                    wmsInnerJobOrderDet.setCoreSourceId(omPurchaseOrderDet.getPurchaseOrderDetId());
                     wmsInnerJobOrderDet.setSourceId(omPurchaseOrderDet.getPurchaseOrderDetId());
                     wmsInnerJobOrderDet.setLineNumber(lineNumber + "");
                     wmsInnerJobOrderDet.setMaterialId(omPurchaseOrderDet.getMaterialId());
