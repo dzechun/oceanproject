@@ -416,6 +416,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                     wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("QMS-MIIO");
                     wmsInnerMaterialBarcodeReOrder.setOrderCode(qmsIncomingInspectionOrderDto.getIncomingInspectionOrderCode());
                     wmsInnerMaterialBarcodeReOrder.setOrderId(qmsIncomingInspectionOrderDto.getIncomingInspectionOrderId());
+                    wmsInnerMaterialBarcodeReOrder.setOrderDetId(qmsIncomingInspectionOrderDto.getIncomingInspectionOrderId());
                     wmsInnerMaterialBarcodeReOrder.setCreateTime(new Date());
                     wmsInnerMaterialBarcodeReOrder.setCreateUserId(user.getUserId());
                     wmsInnerMaterialBarcodeReOrder.setOrgId(user.getOrganizationId());
