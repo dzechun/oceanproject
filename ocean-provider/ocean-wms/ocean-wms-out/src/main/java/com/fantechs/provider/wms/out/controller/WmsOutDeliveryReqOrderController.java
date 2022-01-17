@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -125,5 +126,12 @@ public class WmsOutDeliveryReqOrderController {
             log.error(e.getMessage());
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
+    }
+
+    @ApiOperation(value = "更新出库通知单上架数量",notes = "更新出库通知单上架数量")
+    @PostMapping("/updatePutawayQty")
+    public ResponseEntity updateDeliveryReqOrderPutawayQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long deliveryReqOrderDetId,
+                                           @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty) {
+        return ControllerUtil.returnCRUD(wmsOutDeliveryReqOrderService.updatePutawayQty(deliveryReqOrderDetId,putawayQty));
     }
 }

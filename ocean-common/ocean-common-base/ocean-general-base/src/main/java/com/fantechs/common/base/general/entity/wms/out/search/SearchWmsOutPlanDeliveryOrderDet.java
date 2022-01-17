@@ -15,4 +15,10 @@ public class SearchWmsOutPlanDeliveryOrderDet extends BaseQuery implements Seria
     @ApiModelProperty(name="planDeliveryOrderId",value = "出库计划单ID")
     private Long planDeliveryOrderId;
 
+    /**
+     * 出库计划单明细ID
+     */
+    @ApiModelProperty(name="planDeliveryOrderDetId",value = "出库计划单明细ID")
+    private Long planDeliveryOrderDetId;
+
 }
