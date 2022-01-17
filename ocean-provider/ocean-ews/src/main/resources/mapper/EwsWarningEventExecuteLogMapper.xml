@@ -140,7 +140,7 @@ eweel.execute_result_message
     <if test="personnelLevel!=null and personnelLevel!=''">
       eweep.personnel_level = #{personnelLevel}
     </if>
-      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+      <if test="startTime!= null and endTime!= null">
         and date_format(eweep.handle_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
     </where>

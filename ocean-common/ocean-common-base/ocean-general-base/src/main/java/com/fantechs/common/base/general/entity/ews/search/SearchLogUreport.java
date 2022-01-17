@@ -33,7 +33,7 @@ public class SearchLogUreport extends BaseQuery implements Serializable {
     /**
      *通知方式（0、微信 1、短信 2、钉钉 3、邮件）
      */
-    @ApiModelProperty(name = "notificationMethod",value = "通知方式（0、微信 1、短信 2、钉钉 3、邮件）")
+    @ApiModelProperty(name = "notificationMethod",value = "通知方式（1、微信 2、短信 3、钉钉 4、邮件）")
     private Byte notificationMethod;
 
     /**
