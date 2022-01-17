@@ -7,6 +7,7 @@ import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryReqOrder;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtDeliveryReqOrder;
 import com.fantechs.common.base.support.IService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -22,4 +23,5 @@ public interface WmsOutDeliveryReqOrderService extends IService<WmsOutDeliveryRe
     int update(WmsOutDeliveryReqOrderDto entity);
     int pushDown(List<WmsOutDeliveryReqOrderDetDto> wmsOutDeliveryReqOrderDetDtos);
     Map<String, Object> importExcel(List<WmsOutDeliveryReqOrderImport> wmsOutDeliveryReqOrderImports);
+    int updatePutawayQty(Long planDeliveryOrderDetId, BigDecimal putawayQty);
 }

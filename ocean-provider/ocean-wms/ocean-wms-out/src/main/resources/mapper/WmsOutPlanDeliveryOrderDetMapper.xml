@@ -84,6 +84,9 @@
       <if test="planDeliveryOrderId != null">
         and wopdod.plan_delivery_order_id = #{planDeliveryOrderId}
       </if>
+      <if test="planDeliveryOrderDetId != null">
+        and wopdod.plan_delivery_order_det_id = #{planDeliveryOrderDetId}
+      </if>
       <if test="orgId!=null">
         and wopdod.org_id = #{orgId}
       </if>

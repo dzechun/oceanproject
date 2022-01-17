@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.out.service.impl;
 
 import cn.hutool.core.date.DateTime;
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysImportAndExportLog;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -43,6 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -82,6 +84,41 @@ public class WmsOutDeliveryReqOrderServiceImpl extends BaseService<WmsOutDeliver
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",user.getOrganizationId());
         return wmsOutHtDeliveryReqOrderMapper.findHtList(map);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updatePutawayQty(Long deliveryReqOrderDetId, BigDecimal putawayQty) {
+        int i = 0;
+        WmsOutDeliveryReqOrderDet wmsOutDeliveryReqOrderDet = wmsOutDeliveryReqOrderDetMapper.selectByPrimaryKey(deliveryReqOrderDetId);
+        if(StringUtils.isEmpty(wmsOutDeliveryReqOrderDet)) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003, "找不到明细信息");
+        }
+        BigDecimal actualQty = StringUtils.isNotEmpty(wmsOutDeliveryReqOrderDet.getActualQty()) ? wmsOutDeliveryReqOrderDet.getActualQty().add(putawayQty) : putawayQty;
+        wmsOutDeliveryReqOrderDet.setActualQty(actualQty);
+        if (actualQty.compareTo(BigDecimal.ZERO) == 1 && actualQty.compareTo(wmsOutDeliveryReqOrderDet.getTotalIssueQty()) == -1) {
+            wmsOutDeliveryReqOrderDet.setLineStatus((byte) 2);
+        } else if (actualQty.compareTo(wmsOutDeliveryReqOrderDet.getTotalIssueQty()) == 0) {
+            wmsOutDeliveryReqOrderDet.setLineStatus((byte) 3);
+        }
+        i = wmsOutDeliveryReqOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryReqOrderDet);
+
+        WmsOutDeliveryReqOrder wmsOutDeliveryReqOrder = wmsOutDeliveryReqOrderMapper.selectByPrimaryKey(wmsOutDeliveryReqOrderDet.getDeliveryReqOrderId());
+        Example example = new Example(WmsOutDeliveryReqOrderDet.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("deliveryReqOrderId", wmsOutDeliveryReqOrderDet.getDeliveryReqOrderId());
+        List<WmsOutDeliveryReqOrderDet> wmsOutDeliveryReqOrderDets = wmsOutDeliveryReqOrderDetMapper.selectByExample(example);
+        Byte orderStatus = 3;
+        for (WmsOutDeliveryReqOrderDet deliveryReqOrderDet : wmsOutDeliveryReqOrderDets){
+            if(deliveryReqOrderDet.getLineStatus()!=(byte)3){
+                orderStatus = 2;
+                break;
+            }
+        }
+        wmsOutDeliveryReqOrder.setOrderStatus(orderStatus);
+        i += wmsOutDeliveryReqOrderMapper.updateByPrimaryKeySelective(wmsOutDeliveryReqOrder);
+
+        return i;
     }
 
     @Override

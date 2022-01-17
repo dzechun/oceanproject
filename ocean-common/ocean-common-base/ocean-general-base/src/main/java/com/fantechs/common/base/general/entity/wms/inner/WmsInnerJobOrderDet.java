@@ -14,6 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -265,6 +266,15 @@ public class WmsInnerJobOrderDet extends ValidGroup implements Serializable {
     private String option3;
 
     List<WmsInnerInventoryDto> wmsInnerInventory = new ArrayList<>();
+
+    /**
+     * 库存状态ID
+     */
+    @ApiModelProperty(name="inventoryId",value = "库存ID")
+    @Transient
+    private Long inventoryId;
+
+
 
     private static final long serialVersionUID = 1L;
 }

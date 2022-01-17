@@ -553,6 +553,16 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 innerJobOrder.setSourceBigType((byte)1);
                 wmsInnerJobOrderService.save(innerJobOrder);
             }
+        }else if("OUT-PDO".equals(wmsInnerJobOrder.getSourceSysOrderTypeCode())){
+            ResponseEntity responseEntity = outFeignApi.updatePlanDeliveryOrderPutawayQty(wmsInnerJobOrderDet.getSourceId(), wmsInnerPdaJobOrderDet.getActualQty());
+            if(responseEntity.getCode()!=0){
+                throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+            }
+        }else if("OUT-DRO".equals(wmsInnerJobOrder.getSourceSysOrderTypeCode())){
+            ResponseEntity responseEntity = outFeignApi.updateDeliveryReqOrderPutawayQty(wmsInnerJobOrderDet.getSourceId(), wmsInnerPdaJobOrderDet.getActualQty());
+            if(responseEntity.getCode()!=0){
+                throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+            }
         }
         wmsInnerJobOrder.setWorkerId(sysUser.getUserId());
         return wmsInnerJobOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);

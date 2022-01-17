@@ -46,6 +46,12 @@ public class WmsInnerJobOrderDetDto extends WmsInnerJobOrderDet implements Seria
     private String outStorageCode;
 
     /**
+     * 移出库位类型（1-存货 2-收货 3-发货）
+     */
+    @ApiModelProperty(name="outStorageType",value = "库位类型（1-存货 2-收货 3-发货）")
+    private Byte outStorageType;
+
+    /**
      * 移入库位
      */
     @Transient
@@ -59,6 +65,12 @@ public class WmsInnerJobOrderDetDto extends WmsInnerJobOrderDet implements Seria
     @Transient
     @ApiModelProperty(name = "inStorageCode",value = "移入库位编码")
     private String inStorageCode;
+
+    /**
+     * 移出库位类型（1-存货 2-收货 3-发货）
+     */
+    @ApiModelProperty(name="inStorageType",value = "库位类型（1-存货 2-收货 3-发货）")
+    private Byte inStorageType;
 
     /**
      * 物料编码
