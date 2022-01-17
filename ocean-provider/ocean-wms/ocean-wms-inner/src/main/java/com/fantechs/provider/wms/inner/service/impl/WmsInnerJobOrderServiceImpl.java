@@ -14,15 +14,11 @@ import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.dto.wms.inner.export.WmsInnerJobOrderExport;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
-import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
 import com.fantechs.common.base.general.entity.wms.inner.*;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcodeReOrder;
+import com.fantechs.common.base.general.entity.wms.inner.search.*;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
@@ -88,6 +84,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     WmsInnerMaterialBarcodeReOrderMapper wmsInnerMaterialBarcodeReOrderMapper;
     @Resource
     WmsInnerMaterialBarcodeService wmsInnerMaterialBarcodeService;
+
 
     @Override
     public List<WmsInnerJobOrderDto> findList(SearchWmsInnerJobOrder searchWmsInnerJobOrder) {
@@ -1064,21 +1061,18 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未选择需确认的条码信息");
         }
 
-        List<WmsInnerMaterialBarcodeReOrderDto> reOrderDtoList=new ArrayList<>();
+        List<WmsInnerInventoryDetDto> reOrderDtoList=new ArrayList<>();
         BigDecimal totalQty=new BigDecimal(0);
         BigDecimal distributionQty=StringUtils.isEmpty(wmsInPutawayOrderDet.getDistributionQty())?new BigDecimal(0):wmsInPutawayOrderDet.getDistributionQty();
         String[] arrId = ids.split(",");
         for (String item : arrId) {
-            SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
-            if(orderType == 1) {
-                sBarcodeReOrder.setOrderTypeCode("IN-IWK");
-            }else if(orderType == 3){
-                sBarcodeReOrder.setOrderTypeCode("INNER-SSO");
-            }
+            //单一确认的条码为库存明细中的条码，而不是
+            SearchWmsInnerInventoryDet sBarcodeReOrder=new SearchWmsInnerInventoryDet();
             sBarcodeReOrder.setMaterialBarcodeId(Long.parseLong(item));
-            List<WmsInnerMaterialBarcodeReOrderDto> barcodeReOrderDtoList= wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
+            sBarcodeReOrder.setOrgId(sysUser.getOrganizationId());
+            List<WmsInnerInventoryDetDto> barcodeReOrderDtoList = wmsInnerInventoryDetMapper.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
             if(barcodeReOrderDtoList.size()>0) {
-                totalQty = totalQty.add((StringUtils.isEmpty(barcodeReOrderDtoList.get(0).getQty()) ? new BigDecimal(0) : barcodeReOrderDtoList.get(0).getQty()));
+                totalQty = totalQty.add((StringUtils.isEmpty(barcodeReOrderDtoList.get(0).getMaterialQty()) ? new BigDecimal(0) : barcodeReOrderDtoList.get(0).getMaterialQty()));
                 reOrderDtoList.add(barcodeReOrderDtoList.get(0));
             }
         }
@@ -1148,12 +1142,24 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         }
 
         //更新条码状态
-        for (WmsInnerMaterialBarcodeReOrderDto reOrderDto : reOrderDtoList) {
-            reOrderDto.setScanStatus((byte)3);
-            reOrderDto.setModifiedUserId(sysUser.getUserId());
-            reOrderDto.setModifiedTime(new Date());
-            wmsInnerMaterialBarcodeReOrderMapper.updateByPrimaryKeySelective(reOrderDto);
+        List<WmsInnerMaterialBarcodeReOrder> list = new ArrayList<>();
+        for (WmsInnerInventoryDetDto reOrderDto : reOrderDtoList) {
+            //增加条码中间表信息
+            WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
+            wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("INNER-SSO");
+            wmsInnerMaterialBarcodeReOrder.setOrderCode(wmsInnerJobOrder.getJobOrderCode());
+            wmsInnerMaterialBarcodeReOrder.setOrderId(wmsInnerJobOrder.getJobOrderId());
+            wmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInPutawayOrderDet.getJobOrderDetId());
+            wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(reOrderDto.getMaterialBarcodeId());
+            wmsInnerMaterialBarcodeReOrder.setStatus((byte)1);
+            wmsInnerMaterialBarcodeReOrder.setOrgId(sysUser.getOrganizationId());
+            wmsInnerMaterialBarcodeReOrder.setCreateUserId(sysUser.getUserId());
+            wmsInnerMaterialBarcodeReOrder.setCreateTime(new Date());
+            wmsInnerMaterialBarcodeReOrder.setModifiedUserId(sysUser.getUserId());
+            wmsInnerMaterialBarcodeReOrder.setModifiedTime(new Date());
+            list.add(wmsInnerMaterialBarcodeReOrder);
 
+            //更新条码状态
             WmsInnerMaterialBarcode wmsInnerMaterialBarcode=new WmsInnerMaterialBarcode();
             wmsInnerMaterialBarcode.setMaterialBarcodeId(reOrderDto.getMaterialBarcodeId());
             wmsInnerMaterialBarcode.setBarcodeStatus((byte)5);//已上架
@@ -1161,6 +1167,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             wmsInnerMaterialBarcode.setModifiedTime(new Date());
             wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(wmsInnerMaterialBarcode);
         }
+        if(StringUtils.isNotEmpty(list))
+            wmsInnerMaterialBarcodeReOrderMapper.insertList(list);
 
         WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
         wmsInnerJobOrderDet.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
