@@ -269,6 +269,8 @@ public enum ErrorCodeEnum {
 
     STO30012001(30012001,"库存不存在"),
 
+    STO30012002(30012002,"查询到的数据不唯一"),
+
     // region PDA 作业相关 error code enum
 
     PDA40012000(40012000, "条码不存在"),

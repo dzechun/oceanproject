@@ -506,7 +506,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 }
                 WmsInnerInventoryDetDto inventoryDetDto = inventoryDetDtos.get(0);
                 inventoryDetDto.setStorageId(dto.getStorageId());
-                inventoryDetDto.setBarcodeType((byte) 1);
+                inventoryDetDto.setBarcodeStatus((byte) 1);
                 wmsInnerInventoryDetService.update(inventoryDetDto);
             }
         }
@@ -548,7 +548,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         ws.setModifiedUserId(sysUser.getUserId());
         ws.setModifiedTime(new Date());
         ws.setWorkEndtTime(new Date());
-//        ws.setWorkerId(workerDtos.get(0).getWorkerId());
+        ws.setWorkerId(sysUser.getUserId());
         if (oCount == count) {
             ws.setOrderStatus((byte) 5);
             if (StringUtils.isEmpty(wmsInnerJobOrderDto.getWorkStartTime())) {

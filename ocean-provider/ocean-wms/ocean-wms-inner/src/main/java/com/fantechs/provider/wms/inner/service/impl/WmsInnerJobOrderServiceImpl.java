@@ -1913,6 +1913,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
             if (record.getJobOrderType() == (byte) 3) {
                 //移位作业校验
+
                 Example example = new Example(WmsInnerInventory.class);
                 Example.Criteria criteria = example.createCriteria();
                 criteria.andEqualTo("warehouseId", record.getWarehouseId());
@@ -1921,11 +1922,14 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 criteria .andEqualTo("lockStatus", (byte)0);
                 criteria .andEqualTo("stockLock", (byte)0);
                 criteria.andEqualTo("jobStatus", (byte)1);
+                criteria.andEqualTo("inventoryId", wmsInPutawayOrderDet.getInventoryId());
                 List<WmsInnerInventory> wmsInnerInventorys = wmsInnerInventoryMapper.selectByExample(example);
                 if(StringUtils.isEmpty(wmsInnerInventorys)){
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到出库位的物料条码，物料为："+wmsInPutawayOrderDet.getMaterialId());
                 }
-
+                if(wmsInnerInventorys.size() > 1){
+                    throw new BizErrorException(ErrorCodeEnum.STO30012002.getCode(),"查询到的库存不唯一,相同的库位未合并");
+                }
 
                  // 生成库存，扣减原库存 移位作业
                 WmsInnerInventory innerInventory = wmsInnerInventorys.get(0);
