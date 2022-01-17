@@ -14,6 +14,7 @@ import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.dto.wms.inner.export.WmsInnerJobOrderExport;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
@@ -623,35 +624,45 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
 
             List<WmsInnerMaterialBarcodeReOrderDto> barcodeList = reOrderList.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
+            //未扫描的条码总数
             BigDecimal totalQty=barcodeList.stream().map(WmsInnerMaterialBarcodeReOrderDto::getQty).reduce(BigDecimal.ZERO,BigDecimal::add);
-            if(totalQty.compareTo(totalPlanQty)==-1) {
-                throw new BizErrorException(ErrorCodeEnum.OPT20012009.getCode(), "未扫条码数量总数小于未完成明细计划总数量");
+            if(totalQty.compareTo(totalPlanQty)!=0) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012009.getCode(), "未扫条码数量总数与未完成明细计划总数量不相等");
             }
 
             //库存条码明细集合
             List<WmsInnerInventoryDet> wmsInnerInventoryDets=new ArrayList<>();
 
-            for (WmsInnerJobOrderDet wmsInnerJobOrderDet : wmsInnerJobOrderDets) {
-                //判断条码数量是否和明细数量相等
-//                SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
-//                sBarcodeReOrder.setOrderTypeCode("IN-IWK");
-//                //sBarcodeReOrder.setOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
-//                sBarcodeReOrder.setOrderId(wmsInnerJobOrder.getJobOrderId());
-//                sBarcodeReOrder.setMaterialId(wmsInnerJobOrderDet.getMaterialId());
-//                sBarcodeReOrder.setScanStatus((byte)1);
-//                List<WmsInnerMaterialBarcodeReOrderDto> reOrderList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
-//                if(reOrderList.size()<=0){
-//                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"上架单未找到相应的条码数据-->"+wmsInnerJobOrder.getJobOrderCode());
-//                }
-//
-//                List<WmsInnerMaterialBarcodeReOrderDto> barcodeList = reOrderList.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
-//                BigDecimal totalQty=barcodeList.stream().map(WmsInnerMaterialBarcodeReOrderDto::getQty).reduce(BigDecimal.ZERO,BigDecimal::add);
-//
-//                if(totalQty.compareTo(wmsInnerJobOrderDet.getPlanQty())==-1){
-//                    throw new BizErrorException(ErrorCodeEnum.OPT20012009.getCode(),"条码数量小于明细计划数量");
-//                }
+            //Map<String, List<WmsInnerJobOrderDet>> collect = wmsInnerJobOrderDets.stream().collect(Collectors.groupingBy(e->e.getMaterialId().toString()+e.getInStorageId().toString()));
 
-                for (WmsInnerMaterialBarcodeReOrderDto reOrderDto : reOrderList) {
+            for (WmsInnerJobOrderDet wmsInnerJobOrderDet : wmsInnerJobOrderDets) {
+                Iterator<WmsInnerMaterialBarcodeReOrderDto> iterator = reOrderList.iterator();
+                List<WmsInnerMaterialBarcodeReOrderDto> barcodeList1=new ArrayList<>();
+                BigDecimal actQty=wmsInnerJobOrderDet.getDistributionQty();
+                BigDecimal totalActQty=BigDecimal.ZERO;
+                while (iterator.hasNext()) {
+                    WmsInnerMaterialBarcodeReOrderDto reOrderDto = iterator.next();
+                    if(reOrderDto.getScanStatus()==(byte)1) {
+                        Long materialId = reOrderDto.getMaterialId();
+                        if (wmsInnerJobOrderDet.getMaterialId().longValue() == materialId.longValue()) {
+                            totalActQty = totalActQty.add(reOrderDto.getQty());
+                            barcodeList1.add(reOrderDto);
+                            //iterator.remove();
+                            if (actQty.compareTo(totalActQty) == 0) {
+                                break;
+                            }
+
+                        }
+                    }
+                }
+                if(actQty.compareTo(totalActQty)!=0){
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"条码数量与明细分配数量不相等");
+                }
+
+                //List<WmsInnerMaterialBarcodeReOrderDto> barcodeList1=reOrderList.stream().filter(u -> (u.getMaterialId()==wmsInnerJobOrderDet.getMaterialId())).collect(Collectors.toList());
+                //判断条码数量是否和明细数量相等
+
+                for (WmsInnerMaterialBarcodeReOrderDto reOrderDto : barcodeList1) {
                     //更新条码关系表为已提交
                     reOrderDto.setScanStatus((byte)3);
                     reOrderDto.setModifiedTime(new Date());

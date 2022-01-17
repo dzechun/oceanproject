@@ -38,6 +38,13 @@ public class WmsInnerMaterialBarcodeReOrderDto extends WmsInnerMaterialBarcodeRe
     private String materialName;
 
     /**
+     * 物料ID
+     */
+    @Transient
+    @ApiModelProperty(name="materialId",value = "物料ID")
+    private Long materialId;
+
+    /**
      * 数量
      */
     @Transient
