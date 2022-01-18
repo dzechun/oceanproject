@@ -924,6 +924,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
                     orderDetBarcode.setStockOrderDetBarcodeId(detBarcodeDtos.get(0).getStockOrderDetBarcodeId());
                     orderDetBarcode.setScanStatus((byte)3);
+                    orderDetBarcode.setStockResult((byte)2);
                     orderDetBarcode.setModifiedUserId(sysUser.getUserId());
                     orderDetBarcode.setModifiedTime(new Date());
                     num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);
@@ -942,6 +943,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                         WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
                         orderDetBarcode.setStockOrderDetBarcodeId(detBarcodeDto.getStockOrderDetBarcodeId());
                         orderDetBarcode.setScanStatus((byte)3);
+                        orderDetBarcode.setStockResult((byte)2);
                         orderDetBarcode.setModifiedUserId(sysUser.getUserId());
                         orderDetBarcode.setModifiedTime(new Date());
                         num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);
@@ -961,6 +963,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                         WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
                         orderDetBarcode.setStockOrderDetBarcodeId(detBarcodeDto.getStockOrderDetBarcodeId());
                         orderDetBarcode.setScanStatus((byte)3);
+                        orderDetBarcode.setStockResult((byte)2);
                         orderDetBarcode.setModifiedUserId(sysUser.getUserId());
                         orderDetBarcode.setModifiedTime(new Date());
                         num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);
@@ -982,6 +985,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                         WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
                         orderDetBarcode.setStockOrderDetBarcodeId(detBarcodeDto.getStockOrderDetBarcodeId());
                         orderDetBarcode.setScanStatus((byte)3);
+                        orderDetBarcode.setStockResult((byte)2);
                         orderDetBarcode.setModifiedUserId(sysUser.getUserId());
                         orderDetBarcode.setModifiedTime(new Date());
                         num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);
@@ -1055,8 +1059,8 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 detBarcode.setStockOrderDetBarcodeId(null);
                 detBarcode.setStockOrderDetId(stockOrderDetId);
                 detBarcode.setMaterialBarcodeId(materialBarcodeId);
-                detBarcode.setStockResult((byte)1);
                 detBarcode.setScanStatus((byte)3);
+                detBarcode.setStockResult((byte)3);//盘盈
                 detBarcode.setCreateUserId(sysUser.getUserId());
                 detBarcode.setCreateTime(new Date());
                 orderDetBarcodeList.add(detBarcode);
@@ -1070,7 +1074,8 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         if(StringUtils.isEmpty(wmsInnerStockOrderDet.getOriginalQty()))
             wmsInnerStockOrderDet.setOriginalQty(BigDecimal.ZERO);
 
-        wmsInnerStockOrderDet.setStockQty(wmsInnerStockOrderDet.getStockQty().add(totalQty));
+        //wmsInnerStockOrderDet.setStockQty(wmsInnerStockOrderDet.getStockQty().add(totalQty));
+        wmsInnerStockOrderDet.setStockQty(totalQty);
         wmsInnerStockOrderDet.setVarianceQty(wmsInnerStockOrderDet.getStockQty().subtract(wmsInnerStockOrderDet.getOriginalQty()));
         wmsInnerStockOrderDet.setIfRegister((byte)1);
         wmsInnerStockOrderDet.setStockUserId(sysUser.getUserId());

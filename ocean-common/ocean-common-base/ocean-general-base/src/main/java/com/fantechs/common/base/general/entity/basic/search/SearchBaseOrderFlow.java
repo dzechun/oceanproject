@@ -28,6 +28,12 @@ public class SearchBaseOrderFlow extends BaseQuery implements Serializable {
     private Byte orderFlowDimension;
 
     /**
+     * 维度值
+     */
+    @ApiModelProperty(name="djVal",value = "维度值")
+    private String djVal;
+
+    /**
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")
