@@ -363,6 +363,13 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                 mesPmWorkOrderBomDto.setModifiedTime(new Date());
                 mesPmWorkOrderBomDto.setOrgId(user.getOrganizationId());
                 mesPmWorkOrderBomDto.setWorkOrderId(mesPmWorkOrderDto.getWorkOrderId());
+
+                //计算工单用量
+                if(StringUtils.isEmpty(mesPmWorkOrderDto.getWorkOrderQty())){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"工单数量不能为零或空");
+                }
+
+                mesPmWorkOrderBomDto.setUsageQty(mesPmWorkOrderDto.getWorkOrderQty().multiply(mesPmWorkOrderBomDto.getSingleQty()));
                 boms.add(mesPmWorkOrderBomDto);
             }
         }
