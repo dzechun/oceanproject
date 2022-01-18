@@ -2717,14 +2717,16 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             qty=qty.add(StringUtils.isEmpty(saveHaveInnerJobOrderDto.getMaterialQty())?new BigDecimal(0):saveHaveInnerJobOrderDto.getMaterialQty());
         }
 
+        if (qty.compareTo(BigDecimal.ZERO)==0) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码总数量等于0");
+        }
+
         ResponseEntity<BaseStorage> rbaseStorage=baseFeignApi.detail(inStorageId);
         if(StringUtils.isEmpty(rbaseStorage.getData())){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"扫描的库位无效");
         }
         BaseStorage baseStorage=rbaseStorage.getData();
-        if (StringUtils.isEmpty(qty)) {
-            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"上架数量不能小于1");
-        }
+
 
         WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderDetMapper.selectByPrimaryKey(jobOrderDetId);
         if(StringUtils.isEmpty(wmsInnerJobOrderDet)){
