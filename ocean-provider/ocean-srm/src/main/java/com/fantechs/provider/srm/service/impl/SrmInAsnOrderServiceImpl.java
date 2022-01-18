@@ -115,13 +115,14 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         srmInAsnOrderDto.setStatus(StringUtils.isEmpty(srmInAsnOrderDto.getStatus())?1: srmInAsnOrderDto.getStatus());
         srmInAsnOrderDto.setOrgId(user.getOrganizationId());
 
-        //保存供应商
-        SearchBaseSupplierReUser searchBaseSupplierReUser = new SearchBaseSupplierReUser();
-        searchBaseSupplierReUser.setUserId(user.getUserId());
-        List<BaseSupplierReUser> baseSupplierReUsers = baseFeignApi.findList(searchBaseSupplierReUser).getData();
-        if(StringUtils.isNotEmpty(baseSupplierReUsers))
-            srmInAsnOrderDto.setSupplierId(baseSupplierReUsers.get(0).getSupplierId());
-
+        if(StringUtils.isEmpty(srmInAsnOrderDto.getSupplierId())) {
+            //保存供应商
+            SearchBaseSupplierReUser searchBaseSupplierReUser = new SearchBaseSupplierReUser();
+            searchBaseSupplierReUser.setUserId(user.getUserId());
+            List<BaseSupplierReUser> baseSupplierReUsers = baseFeignApi.findList(searchBaseSupplierReUser).getData();
+            if (StringUtils.isNotEmpty(baseSupplierReUsers))
+                srmInAsnOrderDto.setSupplierId(baseSupplierReUsers.get(0).getSupplierId());
+        }
         int i = srmInAsnOrderMapper.insertUseGeneratedKeys(srmInAsnOrderDto);
 
 
