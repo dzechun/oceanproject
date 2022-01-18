@@ -11,6 +11,7 @@
     <result column="core_source_id" jdbcType="BIGINT" property="coreSourceId" />
     <result column="source_id" jdbcType="BIGINT" property="sourceId" />
     <result column="plan_stock_list_order_id" jdbcType="BIGINT" property="planStockListOrderId" />
+    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="order_qty" jdbcType="DECIMAL" property="orderQty" />
     <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
@@ -56,6 +57,7 @@
     wopslod.core_source_id,
     wopslod.source_id,
     wopslod.plan_stock_list_order_id,
+    wopslod.work_order_id,
     wopslod.material_id,
     wopslod.order_qty,
     wopslod.actual_qty,
@@ -96,7 +98,7 @@
     LEFT JOIN mes_pm_daily_plan_stock_list mpdplist ON wopslod.source_id=mpdplist.daily_plan_stock_list_id
     LEFT JOIN mes_pm_daily_plan_det mpdpd ON mpdplist.daily_plan_det_id=mpdpd.daily_plan_det_id
     LEFT JOIN mes_pm_daily_plan mpdp  ON mpdpd.daily_plan_id=mpdp.daily_plan_id
-    LEFT JOIN mes_pm_work_order mpwo ON mpdpd.work_order_id = mpwo.work_order_id
+    LEFT JOIN mes_pm_work_order mpwo ON wopslod.work_order_id = mpwo.work_order_id
     LEFT JOIN base_material sm on wopslod.material_id=sm.material_id
     LEFT JOIN base_material smp on mpwo.material_id=smp.material_id
     LEFT JOIN sys_user su ON wopslod.create_user_id = su.user_id
