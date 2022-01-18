@@ -221,7 +221,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
                     det.setDeliveryQty(BigDecimal.ZERO);
                 if(det.getDeliveryQty().compareTo(BigDecimal.ZERO)<0)
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"发货数量不能小于0");
-                if (det.getOrderQty().compareTo(det.getTotalDeliveryQty().add(det.getDeliveryQty())) == -1)
+                if (det.getOrderQty().compareTo(det.getTotalDeliveryQty()) == -1)
                     throw new BizErrorException("交货总量大于订单数量");
 
                 if (StringUtils.isNotEmpty(det.getAsnOrderDetId())) {
