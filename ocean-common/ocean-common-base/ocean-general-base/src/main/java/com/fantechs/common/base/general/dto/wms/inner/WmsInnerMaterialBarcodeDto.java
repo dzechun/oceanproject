@@ -2,13 +2,16 @@ package com.fantechs.common.base.general.dto.wms.inner;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcode;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Data
 public class WmsInnerMaterialBarcodeDto extends WmsInnerMaterialBarcode implements Serializable {
@@ -19,6 +22,21 @@ public class WmsInnerMaterialBarcodeDto extends WmsInnerMaterialBarcode implemen
     @ApiModelProperty(name="orderQty",value = "订单数量")
     @Transient
     private BigDecimal orderQty;
+
+    /**
+     * 数量
+     */
+    @ApiModelProperty(name="qty",value = "数量")
+    @Transient
+    private BigDecimal qty;
+
+    /**
+     * 生产日期
+     */
+    @ApiModelProperty(name="productionDate",value = "生产日期")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date productionDate;
 
     /**
      * 打印张数

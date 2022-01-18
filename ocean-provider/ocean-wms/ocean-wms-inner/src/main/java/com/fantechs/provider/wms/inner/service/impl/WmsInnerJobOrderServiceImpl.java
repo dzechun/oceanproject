@@ -1928,6 +1928,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         List<WmsInnerMaterialBarcodeReOrder> barcodeReOrderList=new ArrayList<>();
         String orderTypeCode="IN-IWK";
         Long outStorageId=null;
+        Long inventoryStatusId=null;
         if (record.getJobOrderType() == (byte) 1) {
             //上架单
             if(StringUtils.isEmpty(record.getWarehouseId())) {
@@ -1965,15 +1966,19 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         searchInventoryStatus.setInventoryStatusName("合格");
                         searchInventoryStatus.setNameQueryMark(1);
                         List<BaseInventoryStatus> warehouseStatuses= baseFeignApi.findList(searchInventoryStatus).getData();
-                        if(StringUtils.isEmpty(warehouseStatuses) || warehouseStatuses.size()<=0){
-                            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"该仓库无合格库存状态");
+                        if(StringUtils.isNotEmpty(warehouseStatuses) && warehouseStatuses.size()>0){
+                            inventoryStatusId=warehouseStatuses.get(0).getInventoryStatusId();
                         }
-                    }else {
-                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"该仓库无合格库存状态");
                     }
+                }else{
+                    inventoryStatusId=inventoryStatuses.get(0).getInventoryStatusId();
+                }
 
+                if(StringUtils.isEmpty(inventoryStatusId)){
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"该仓库无合格库存状态");
                 }
             }
+
             record.setJobOrderCode(CodeUtils.getId("IN-IWK"));
             //record.setSourceSysOrderTypeCode("IN-IWK");
 
@@ -1996,6 +2001,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         record.setOrderStatus((byte) 1);
         int num = wmsInnerJobOrderMapper.insertUseGeneratedKeys(record);
         for (WmsInnerJobOrderDet wmsInPutawayOrderDet : record.getWmsInPutawayOrderDets()) {
+            if(StringUtils.isEmpty(wmsInPutawayOrderDet.getInventoryStatusId()) && record.getJobOrderType() == (byte) 1){
+                wmsInPutawayOrderDet.setInventoryStatusId(inventoryStatusId);
+            }
             wmsInPutawayOrderDet.setJobOrderId(record.getJobOrderId());
             wmsInPutawayOrderDet.setLineStatus((byte)1);
             wmsInPutawayOrderDet.setCreateTime(new Date());
@@ -2637,12 +2645,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 sBarcodeReOrder.setMaterialBarcodeId(materialBarcodeId);
                 sBarcodeReOrder.setOrderId(orderId);
                 List<WmsInnerMaterialBarcodeReOrderDto> reOrderList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
-                if(reOrderList.size()<=0){
+                if(reOrderList.size()<=0 || StringUtils.isEmpty(reOrderList)){
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"上架单未找到此条码数据-->"+barCode);
                 }
 
                 // 物料是否相等
-                if(wmsInnerJobOrderDet.getMaterialId().longValue()!=swmsInnerMaterialBarcode.getMaterialId().longValue()){
+                if(wmsInnerJobOrderDet.getMaterialId().longValue()!=reOrderList.get(0).getMaterialId().longValue()){
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码相应物料与当前上架物料不相等");
                 }
 

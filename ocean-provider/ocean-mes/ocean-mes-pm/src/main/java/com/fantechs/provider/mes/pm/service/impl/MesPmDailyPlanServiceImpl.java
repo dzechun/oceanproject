@@ -248,7 +248,7 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
         MesPmWorkOrder upMesPmWorkOrder=new MesPmWorkOrder();
         upMesPmWorkOrder.setWorkOrderId(mesPmWorkOrder.getWorkOrderId());
         upMesPmWorkOrder.setScheduledQty(mesPmWorkOrder.getScheduledQty().add(nowQty));
-        upMesPmWorkOrder.setMaterialId(sysUser.getUserId());
+        upMesPmWorkOrder.setModifiedUserId(sysUser.getUserId());
         upMesPmWorkOrder.setModifiedTime(new Date());
         num+=mesPmWorkOrderMapper.updateByPrimaryKeySelective(upMesPmWorkOrder);
 
