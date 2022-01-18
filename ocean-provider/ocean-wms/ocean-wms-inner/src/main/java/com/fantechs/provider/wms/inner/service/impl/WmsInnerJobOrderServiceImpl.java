@@ -1324,7 +1324,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             actualQty = wmsInnerJobOrderDet.getActualQty();
         }
         //来源单据回写
-        if(StringUtils.isNotEmpty(sourceSysOrderTypeCode)) {
+        if(StringUtils.isNotEmpty(sourceSysOrderTypeCode) && StringUtils.isNotEmpty(sourceId)) {
             switch (sourceSysOrderTypeCode) {
                 case "IN-PO":
                     //采购订单
@@ -1384,7 +1384,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         }
 
         //核心单据回写
-        if(StringUtils.isNotEmpty(coreSourceTypeCode)) {
+        if(StringUtils.isNotEmpty(coreSourceTypeCode) && StringUtils.isNotEmpty(coreSourceId)) {
             switch (coreSourceTypeCode) {
                 case "IN-PO":
                     //采购订单
@@ -1392,7 +1392,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     break;
                 case "IN-SRO":
                     //销退订单
-                    omFeignApi.updateSalesReturnPutQty(sourceId, actualQty);
+                    omFeignApi.updateSalesReturnPutQty(coreSourceId, actualQty);
                     break;
                 case "IN-OIO":
                     //其它入库订单

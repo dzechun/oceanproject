@@ -90,6 +90,10 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
 
         srmInAsnOrderDto.setAsnCode(CodeUtils.getId("SRM-ASN"));
 
+        //设置核心单据类型  采购订单 20220118
+        srmInAsnOrderDto.setCorSourceSysOrderTypeCode("IN-PO");
+        //设置来源单据类型  采购订单 20220118
+        srmInAsnOrderDto.setSourceSysOrderTypeCode("IN-PO");
        // 默认收货通知单
         if(StringUtils.isEmpty(srmInAsnOrderDto.getOrderTypeId())) {
             SearchBaseOrderType searchBaseOrderType = new SearchBaseOrderType();
@@ -154,6 +158,9 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
 
                 if (srmInAsnOrderDetDto.getOrderQty().compareTo(srmInAsnOrderDetDto.getTotalDeliveryQty().add(srmInAsnOrderDetDto.getDeliveryQty())) == -1)
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"交货总量大于订单数量");
+
+                //设置核心单据明细ID 20220118
+                srmInAsnOrderDetDto.setCoreSourceId(srmInAsnOrderDetDto.getSourceOrderId());
 
                 srmInAsnOrderDetDto.setAsnOrderId(srmInAsnOrderDto.getAsnOrderId());
                 if (StringUtils.isEmpty(srmInAsnOrderDetDto.getDeliveryQty()))
