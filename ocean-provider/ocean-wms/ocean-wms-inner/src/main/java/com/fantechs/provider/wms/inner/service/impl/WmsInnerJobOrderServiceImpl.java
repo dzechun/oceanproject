@@ -1937,7 +1937,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 searchBaseStorage.setWarehouseId(record.getWarehouseId());
                 searchBaseStorage.setStorageType((byte)2);//库位类型（1-存货 2-收货 3-发货）
                 List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
-                if(baseStorages.size()<=0)
+                if(StringUtils.isEmpty(baseStorages) || baseStorages.size()<=0)
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "未查询到该仓库的收货库位");
 
                 outStorageId=baseStorages.get(0).getStorageId();
@@ -1952,8 +1952,26 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 searchBaseInventoryStatus.setInventoryStatusName("合格");
                 searchBaseInventoryStatus.setNameQueryMark(1);
                 List<BaseInventoryStatus> inventoryStatuses= baseFeignApi.findList(searchBaseInventoryStatus).getData();
-                if(inventoryStatuses.size()<=0){
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"该仓库无合格库存状态");
+                if(StringUtils.isEmpty(inventoryStatuses) || inventoryStatuses.size()<=0){
+                    //throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"该仓库无合格库存状态");
+                    SearchBaseWarehouse searchBaseWarehouse=new SearchBaseWarehouse();
+                    searchBaseWarehouse.setWarehouseCode("***");
+                    searchBaseWarehouse.setOrgId(sysUser.getOrganizationId());
+                    searchBaseWarehouse.setCodeQueryMark(1);
+                    List<BaseWarehouse> baseWarehouses = baseFeignApi.findList(searchBaseWarehouse).getData();
+                    if(StringUtils.isNotEmpty(baseWarehouses) && baseWarehouses.size()>0){
+                        SearchBaseInventoryStatus searchInventoryStatus=new SearchBaseInventoryStatus();
+                        searchInventoryStatus.setWarehouseId(baseWarehouses.get(0).getWarehouseId());
+                        searchInventoryStatus.setInventoryStatusName("合格");
+                        searchInventoryStatus.setNameQueryMark(1);
+                        List<BaseInventoryStatus> warehouseStatuses= baseFeignApi.findList(searchInventoryStatus).getData();
+                        if(StringUtils.isEmpty(warehouseStatuses) || warehouseStatuses.size()<=0){
+                            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"该仓库无合格库存状态");
+                        }
+                    }else {
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"该仓库无合格库存状态");
+                    }
+
                 }
             }
             record.setJobOrderCode(CodeUtils.getId("IN-IWK"));
@@ -2722,9 +2740,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         }
         // 生产日期
         Date productionDate=null;
-        if(StringUtils.isNotEmpty(list.get(0).getProductionTime())){
+        if(StringUtils.isNotEmpty(list.get(0).getProductionDate())){
             try{
-                productionDate=sdf.parse(list.get(0).getProductionTime());
+                productionDate=sdf.parse(list.get(0).getProductionDate());
             }catch (Exception ex) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "参数生产日期转换为时间类型异常");
             }
@@ -2834,9 +2852,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 wmsInnerMaterialBarcode.setMaterialQty(item.getMaterialQty());
                 wmsInnerMaterialBarcode.setIfSysBarcode((byte) 0);
                 Date productionTime=null;
-                if(StringUtils.isNotEmpty(item.getProductionTime())) {
+                if(StringUtils.isNotEmpty(item.getProductionDate())) {
                     try {
-                        productionTime = sdf.parse(item.getProductionTime());
+                        productionTime = sdf.parse(item.getProductionDate());
                     } catch (Exception ex) {
                         throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "参数生产日期转换为时间类型异常");
                     }

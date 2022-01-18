@@ -82,6 +82,9 @@
       <if test="orderFlowDimension!=null and orderFlowDimension != ''">
         and bof.order_flow_dimension = #{orderFlowDimension}
       </if>
+        <if test="djVal!=null and djVal != ''">
+            and (bm.material_code = #{djVal} OR bs.supplier_name = #{djVal})
+        </if>
       <if test="materialId != null and materialId != ''">
         and bof.material_id = #{materialId}
       </if>
