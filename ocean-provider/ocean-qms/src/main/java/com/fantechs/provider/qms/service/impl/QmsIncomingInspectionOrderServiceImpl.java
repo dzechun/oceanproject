@@ -273,6 +273,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                     }
                     WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
                     wmsInnerJobOrderDet.setCoreSourceOrderCode(qmsIncomingInspectionOrder.getCoreSourceOrderCode());
+                    wmsInnerJobOrderDet.setCoreSourceId(qmsIncomingInspectionOrder.getCoreSourceId());
                     wmsInnerJobOrderDet.setSourceOrderCode(qmsIncomingInspectionOrder.getIncomingInspectionOrderCode());
                     wmsInnerJobOrderDet.setSourceId(qmsIncomingInspectionOrder.getIncomingInspectionOrderId());
                     wmsInnerJobOrderDet.setLineNumber(lineNumber + "");
