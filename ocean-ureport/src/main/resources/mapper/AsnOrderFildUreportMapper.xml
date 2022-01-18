@@ -43,21 +43,23 @@
             wiaodb.color_box_code,
             wiaodb.carton_code,
             wiaodb.pallet_code,
-            wiaodb.qty,
+            wiaodb.material_qty as qty,
             wiaodb.batch_code,
-            wiaodb.production_date,
+            wiaodb.production_time as production_date,
             wiao.shipper_name,
             wiao.deliver_date,
             wiao.order_status
         from wms_in_asn_order wiao
-        left join wms_in_asn_order_det_barcode wiaodb on wiaodb.asn_order_id = wiao.asn_order_id
+        left join wms_in_asn_order_det wiaod on wiaod.asn_order_id = wiao.asn_order_id
+        LEFT JOIN wms_inner_material_barcode_re_order wimbro ON wimbro.order_id = wiao.asn_order_id and wimbro.order_type_code = 'SRM-ASN'
+        LEFT JOIN wms_inner_material_barcode wiaodb on wiaodb.material_barcode_id = wimbro.material_barcode_id
         left join base_order_type bot on bot.order_type_id = wiao.order_type_id
-        left join om_purchase_order opo on opo.purchase_order_id = wiao.source_order_id
-        left join om_purchase_order_det opod on opod.purchase_order_id = opo.purchase_order_id
-        left join base_warehouse bw on bw.warehouse_id = opod.warehouse_id
+        left join om_purchase_order opo on opo.purchase_order_id = wiaod.source_order_id
+        left join om_purchase_order_det opod on opod.purchase_order_id = opo.purchase_order_id  and opod.material_id = wiaod.material_id
+        left join base_warehouse bw on bw.warehouse_id = opo.warehouse_id
         left join base_material bm on bm.material_id = opod.material_id
         <where>
-            and bot.business_type = 1
+            and bot.business_type = 1 and wiaodb.barcode_type = 1
             <if test="asnOrderCode!=null and asnOrderCode!=''">
                 and  wiao.asn_code like CONCAT('%', #{asnOrderCode}, '%')
             </if>
