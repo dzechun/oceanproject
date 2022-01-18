@@ -224,7 +224,7 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
         example.createCriteria().andEqualTo("purchaseReturnOrderId",omPurchaseReturnOrder.getPurchaseReturnOrderId());
         List<OmPurchaseReturnOrderDet> omPurchaseReturnOrderDets = omPurchaseReturnOrderDetMapper.selectByExample(example);
         for (OmPurchaseReturnOrderDet omPurchaseReturnOrderDet : omPurchaseReturnOrderDets){
-            if(omPurchaseReturnOrderDet.getIfAllIssued()!=(byte)1){
+            if(omPurchaseReturnOrderDet.getIfAllIssued()==null||omPurchaseReturnOrderDet.getIfAllIssued()!=(byte)1){
                 orderStatus = (byte)2;
                 break;
             }

@@ -226,19 +226,19 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
         }
 
         //修改单据状态
-        /*Byte orderStatus = (byte)3;
+        Byte orderStatus = (byte)3;
         OmSalesOrder omSalesOrder = omSalesOrderMapper.selectByPrimaryKey(omSalesOrderDetDtoList.get(0).getSalesOrderId());
         Example example = new Example(OmSalesOrderDet.class);
         example.createCriteria().andEqualTo("salesOrderId",omSalesOrder.getSalesOrderId());
         List<OmSalesOrderDet> omSalesOrderDets = omSalesOrderDetMapper.selectByExample(example);
         for (OmSalesOrderDet omSalesOrderDet : omSalesOrderDets){
-            if(omSalesOrderDet.getIfAllIssued()!=(byte)1){
+            if(omSalesOrderDet.getIfAllIssued()==null||omSalesOrderDet.getIfAllIssued()!=(byte)1){
                 orderStatus = (byte)2;
                 break;
             }
         }
         omSalesOrder.setOrderStatus(orderStatus);
-        omSalesOrderMapper.updateByPrimaryKeySelective(omSalesOrder);*/
+        omSalesOrderMapper.updateByPrimaryKeySelective(omSalesOrder);
 
         return i;
     }
