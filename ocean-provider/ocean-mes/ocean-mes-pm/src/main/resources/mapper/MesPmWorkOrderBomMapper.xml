@@ -16,6 +16,8 @@
     <result column="delivered_qty" jdbcType="DECIMAL" property="deliveredQty" />
     <result column="undelivered_qty" jdbcType="DECIMAL" property="undeliveredQty" />
     <result column="position" jdbcType="VARCHAR" property="position" />
+    <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty" />
+    <result column="if_all_issued" jdbcType="TINYINT" property="ifAllIssued" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="org_id" jdbcType="BIGINT" property="orgId" />
     <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
@@ -78,6 +80,8 @@
     mpwob.usage_qty,
     mpwob.base_qty,
     mpwob.position,
+    mpwob.total_issue_qty,
+    mpwob.if_all_issued,
     mpwob.create_user_id,
     u.user_name AS create_user_name,
     mpwob.create_time,
