@@ -2628,7 +2628,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 }
 
                 // 物料是否相等
-                if(wmsInnerJobOrderDet.getMaterialId().longValue()!=swmsInnerMaterialBarcode.getMaterialId().longValue()){
+                if(wmsInnerJobOrderDet.getMaterialId().longValue()!=reOrderList.get(0).getMaterialId().longValue()){
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码相应物料与当前上架物料不相等");
                 }
 

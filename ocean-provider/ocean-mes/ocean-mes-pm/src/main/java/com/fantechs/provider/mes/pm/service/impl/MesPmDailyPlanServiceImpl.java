@@ -340,6 +340,13 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
             if (PlanStockListDto.getIfAllIssued() != null && PlanStockListDto.getIfAllIssued() == (byte) 1) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"生产日计划物料已下推完成，无法再次下推");
             }
+            if(StringUtils.isEmpty(PlanStockListDto.getDailyPlanUsageQty()))
+                PlanStockListDto.setDailyPlanUsageQty(BigDecimal.ZERO);
+            if(StringUtils.isEmpty(PlanStockListDto.getTotalIssueQty()))
+                PlanStockListDto.setTotalIssueQty(BigDecimal.ZERO);
+            if(StringUtils.isEmpty(PlanStockListDto.getIssueQty()))
+                PlanStockListDto.setIssueQty(BigDecimal.ZERO);
+
             if(PlanStockListDto.getDailyPlanUsageQty().compareTo(PlanStockListDto.getTotalIssueQty().add(PlanStockListDto.getIssueQty())) == -1 )
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "累计下发数量大于日计划使用数量");
         }
