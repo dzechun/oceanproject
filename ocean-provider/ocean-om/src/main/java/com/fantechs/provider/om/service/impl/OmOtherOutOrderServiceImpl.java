@@ -247,7 +247,7 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
         example.createCriteria().andEqualTo("otherOutOrderId",omOtherOutOrder.getOtherOutOrderId());
         List<OmOtherOutOrderDet> otherOutOrderDets = omOtherOutOrderDetMapper.selectByExample(example);
         for (OmOtherOutOrderDet omOtherOutOrderDet : otherOutOrderDets){
-            if(omOtherOutOrderDet.getIfAllIssued()!=(byte)1){
+            if(omOtherOutOrderDet.getIfAllIssued()==null||omOtherOutOrderDet.getIfAllIssued()!=(byte)1){
                 orderStatus = (byte)2;
                 break;
             }

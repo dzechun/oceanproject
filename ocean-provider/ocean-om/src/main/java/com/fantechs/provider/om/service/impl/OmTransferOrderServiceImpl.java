@@ -141,7 +141,7 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
         example.createCriteria().andEqualTo("transferOrderId",omTransferOrder.getTransferOrderId());
         List<OmTransferOrderDet> omTransferOrderDets = omTransferOrderDetMapper.selectByExample(example);
         for (OmTransferOrderDet omTransferOrderDet : omTransferOrderDets){
-            if(omTransferOrderDet.getIfAllIssued()!=(byte)1){
+            if(omTransferOrderDet.getIfAllIssued()==null||omTransferOrderDet.getIfAllIssued()!=(byte)1){
                 orderStatus = (byte)3;
                 break;
             }
