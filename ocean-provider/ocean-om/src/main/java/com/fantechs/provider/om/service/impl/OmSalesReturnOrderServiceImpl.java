@@ -662,4 +662,23 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
         return num;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updateSalesReturnPutQty(Long salesReturnOrderDetId, BigDecimal putawayQty) {
+        int num=1;
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        OmSalesReturnOrderDet omSalesReturnOrderDet=omSalesReturnOrderDetMapper.selectByPrimaryKey(salesReturnOrderDetId);
+        if(StringUtils.isNotEmpty(omSalesReturnOrderDet)){
+            if(StringUtils.isEmpty(omSalesReturnOrderDet.getIssueQty())){
+                omSalesReturnOrderDet.setIssueQty(new BigDecimal(0));
+            }
+
+            omSalesReturnOrderDet.setIssueQty(omSalesReturnOrderDet.getIssueQty().add(putawayQty));
+            omSalesReturnOrderDet.setModifiedUserId(sysUser.getUserId());
+            omSalesReturnOrderDet.setModifiedTime(new Date());
+            num+=omSalesReturnOrderDetMapper.updateByPrimaryKeySelective(omSalesReturnOrderDet);
+        }
+        return num;
+    }
+
 }

@@ -181,10 +181,47 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 return num;
             }
 
+            //找仓库的存货库位
+            Long inStorageId=null;
+            if(StringUtils.isEmpty(wmsInnerJobOrder.getWarehouseId())) {
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "仓库不能为空");
+            }else{
+                SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                searchBaseStorage.setWarehouseId(wmsInnerJobOrder.getWarehouseId());
+                searchBaseStorage.setStorageType((byte)1);//库位类型（1-存货 2-收货 3-发货）
+                List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+                if(baseStorages.size()<=0)
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "未查询到该仓库的存货库位");
+
+                inStorageId=baseStorages.get(0).getStorageId();
+            }
+
             Example example = new Example(WmsInnerJobOrderDet.class);
             example.createCriteria().andEqualTo("jobOrderId", wmsInnerJobOrder.getJobOrderId()).andEqualTo("lineStatus",1);
             list = wmsInnerJobOrderDetMapper.selectByExample(example);
-            for (WmsInnerJobOrderDet wms : list) {
+            for (WmsInnerJobOrderDet wmsInnerJobOrderDet : list) {
+                num += wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(WmsInnerJobOrderDet.builder()
+                        .jobOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId())
+                        .inStorageId(inStorageId)
+                        .distributionQty(wmsInnerJobOrderDet.getPlanQty())
+                        .modifiedUserId(sysUser.getUserId())
+                        .modifiedTime(new Date())
+                        .lineStatus((byte) 2) //行状态(1-待分配、2-待作业、3-完成)
+                        .workStartTime(new Date())
+                        .workEndTime(new Date())
+                        .build());
+
+                //获取明细详情
+                SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
+                searchWmsInnerJobOrderDet.setJobOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
+                WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = wmsInnerJobOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
+
+                //分配库存
+                num+= WmsInnerInventoryUtil.distributionInventory(wmsInnerJobOrderDto, wmsInnerJobOrderDetDto,wmsInnerJobOrderDetDto.getPlanQty(),sysUser,(byte) 1);
+            }
+
+            //库容逻辑 先注释
+            /*for (WmsInnerJobOrderDet wms : list) {
                 if (StringUtils.isEmpty(wms)) {
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003);
                 }
@@ -283,8 +320,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     wmsInnerJobOrder.setOrderStatus((byte)2);
 
                 }
-            }
+            }*/
 
+            wmsInnerJobOrder.setOrderStatus((byte)3);
             wmsInnerJobOrder.setModifiedTime(new Date());
             wmsInnerJobOrder.setModifiedUserId(sysUser.getUserId());
             wmsInnerJobOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
@@ -1354,7 +1392,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     break;
                 case "IN-SRO":
                     //销退订单
-
+                    omFeignApi.updateSalesReturnPutQty(sourceId, actualQty);
                     break;
                 case "IN-OIO":
                     //其它入库订单

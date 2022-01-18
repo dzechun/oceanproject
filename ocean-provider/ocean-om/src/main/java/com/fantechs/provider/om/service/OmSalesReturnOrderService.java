@@ -26,4 +26,6 @@ public interface OmSalesReturnOrderService extends IService<OmSalesReturnOrder> 
     int pushDown(List<OmSalesReturnOrderDet> omSalesReturnOrderDets);
 
     int updateSalesReturnPutDownQty(Long salesReturnOrderDetId, BigDecimal putawayQty);
+
+    int updateSalesReturnPutQty(Long salesReturnOrderDetId, BigDecimal putawayQty);
 }

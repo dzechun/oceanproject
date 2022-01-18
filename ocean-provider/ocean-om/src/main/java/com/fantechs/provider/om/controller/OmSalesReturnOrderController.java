@@ -109,4 +109,10 @@ public class OmSalesReturnOrderController {
     public ResponseEntity updateSalesReturnPutDownQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long salesReturnOrderDetId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty) {
         return ControllerUtil.returnCRUD(omSalesReturnOrderService.updateSalesReturnPutDownQty(salesReturnOrderDetId,putawayQty));
     }
+
+    @ApiOperation(value = "更新销退订单收货数量",notes = "更新销退订单收货数量")
+    @PostMapping("/updateSalesReturnPutQty")
+    public ResponseEntity updateSalesReturnPutQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long salesReturnOrderDetId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty) {
+        return ControllerUtil.returnCRUD(omSalesReturnOrderService.updateSalesReturnPutQty(salesReturnOrderDetId,putawayQty));
+    }
 }
