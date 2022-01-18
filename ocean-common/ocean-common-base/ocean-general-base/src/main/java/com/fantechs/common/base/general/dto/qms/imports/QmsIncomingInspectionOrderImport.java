@@ -12,11 +12,11 @@ import java.math.BigDecimal;
 public class QmsIncomingInspectionOrderImport implements Serializable {
 
     /**
-     * 来料检验单号(必填)
+     * 组号(必填)
      */
-    @ApiModelProperty(name="incomingInspectionOrderCode",value = "来料检验单号(必填)")
-    @Excel(name = "来料检验单号(必填)", height = 20, width = 30)
-    private String incomingInspectionOrderCode;
+    @ApiModelProperty(name="groupCode",value = "组号(必填)")
+    @Excel(name = "组号(必填)", height = 20, width = 30)
+    private String groupCode;
 
     /**
      * 产品料号(必填)

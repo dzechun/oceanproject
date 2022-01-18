@@ -662,26 +662,14 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
 
         for (int i = 0; i < qmsIncomingInspectionOrderImports.size(); i++) {
             QmsIncomingInspectionOrderImport qmsIncomingInspectionOrderImport = qmsIncomingInspectionOrderImports.get(i);
-            String incomingInspectionOrderCode = qmsIncomingInspectionOrderImport.getIncomingInspectionOrderCode();
+            String groupCode = qmsIncomingInspectionOrderImport.getGroupCode();
             String materialCode = qmsIncomingInspectionOrderImport.getMaterialCode();
 
             if (StringUtils.isEmpty(
-                    incomingInspectionOrderCode,materialCode
+                    groupCode,materialCode
             )){
                 failCount++;
                 failInfo.append("必填项为空").append(",");
-                fail.add(i+4);
-                continue;
-            }
-
-            //判断单号是否重复
-            Example example = new Example(QmsIncomingInspectionOrder.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("orgId", user.getOrganizationId())
-                    .andEqualTo("incomingInspectionOrderCode", incomingInspectionOrderCode);
-            if (StringUtils.isNotEmpty(qmsIncomingInspectionOrderMapper.selectOneByExample(example))){
-                failCount++;
-                failInfo.append("单号已存在").append(",");
                 fail.add(i+4);
                 continue;
             }
@@ -802,13 +790,15 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
 
         if(StringUtils.isNotEmpty(incomingInspectionOrderImports)){
             //对合格数据进行分组
-            HashMap<String, List<QmsIncomingInspectionOrderImport>> map = incomingInspectionOrderImports.stream().collect(Collectors.groupingBy(QmsIncomingInspectionOrderImport::getIncomingInspectionOrderCode, HashMap::new, Collectors.toList()));
+            HashMap<String, List<QmsIncomingInspectionOrderImport>> map = incomingInspectionOrderImports.stream().collect(Collectors.groupingBy(QmsIncomingInspectionOrderImport::getGroupCode, HashMap::new, Collectors.toList()));
             Set<String> codeList = map.keySet();
             for (String code : codeList) {
                 List<QmsIncomingInspectionOrderImport> qmsIncomingInspectionOrderImports1 = map.get(code);
                 QmsIncomingInspectionOrder qmsIncomingInspectionOrder = new QmsIncomingInspectionOrder();
                 //新增父级数据
                 BeanUtils.copyProperties(qmsIncomingInspectionOrderImports1.get(0), qmsIncomingInspectionOrder);
+                qmsIncomingInspectionOrder.setIncomingInspectionOrderCode(CodeUtils.getId("QMS-MIIO"));
+                qmsIncomingInspectionOrder.setSysOrderTypeCode("QMS-MIIO");
                 qmsIncomingInspectionOrder.setInspectionStatus((byte)1);
                 qmsIncomingInspectionOrder.setCreateTime(new Date());
                 qmsIncomingInspectionOrder.setCreateUserId(user.getUserId());

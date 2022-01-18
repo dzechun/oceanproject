@@ -3,8 +3,10 @@ package com.fantechs.common.base.general.entity.srm;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -82,8 +84,10 @@ public class SrmDeliveryAppoint extends ValidGroup implements Serializable {
      * 预约日期
      */
     @ApiModelProperty(name="appointDate",value = "预约日期")
-    @Excel(name = "预约日期", height = 20, width = 30,orderNum="7")
+    @Excel(name = "预约日期", height = 20, width = 30,orderNum="7",exportFormat ="yyyy-MM-dd")
     @Column(name = "appoint_date")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date appointDate;
 
     /**
