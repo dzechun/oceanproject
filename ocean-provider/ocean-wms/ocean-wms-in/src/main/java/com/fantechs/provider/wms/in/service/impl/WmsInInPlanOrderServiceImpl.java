@@ -149,13 +149,15 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
                     }else{
                         searchWmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInInPlanOrderDetDto.getSourceId());
                     }
+                    searchWmsInnerMaterialBarcodeReOrder.setPageSize(9999);
                     List<WmsInnerMaterialBarcodeReOrderDto> data = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder).getData();
                     if(StringUtils.isNotEmpty(data)){
                         for(WmsInnerMaterialBarcodeReOrderDto dto : data) {
                             WmsInnerMaterialBarcodeReOrder reOrder = new WmsInnerMaterialBarcodeReOrder();
-                            BeanUtils.copyProperties(dto,reOrder, new String[]{"materialBarcodeReOrderId","orderTypeCode","orderId"});
+                            BeanUtils.copyProperties(dto,reOrder, new String[]{"materialBarcodeReOrderId","orderTypeCode","orderId","orderCode"});
                             reOrder.setOrderTypeCode(wmsInInPlanOrderDto.getSysOrderTypeCode());
                             reOrder.setOrderDetId(wmsInInPlanOrderDetDto.getInPlanOrderDetId());
+                            reOrder.setOrderCode(wmsInInPlanOrderDto.getInPlanOrderCode());
                             reOrder.setOrderId(wmsInInPlanOrderDto.getInPlanOrderId());
                             reOrder.setCreateUserId(user.getUserId());
                             reOrder.setCreateTime(new Date());
