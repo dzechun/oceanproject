@@ -51,7 +51,7 @@ public class AsnOrderFindUreportController {
         List<SrmAsnOrder> list = asnOrderFindUreportService.findList(ControllerUtil.dynamicConditionByEntity(searchSupplierUreport));
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(list, "供应商信息报表", "供应商信息报表", SrmAsnOrder.class, "供应商信息报表.xls", response);
+            EasyPoiUtils.exportExcel(list, "ANS查询信息报表", "ANS查询信息报表", SrmAsnOrder.class, "ANS查询信息报表.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }
