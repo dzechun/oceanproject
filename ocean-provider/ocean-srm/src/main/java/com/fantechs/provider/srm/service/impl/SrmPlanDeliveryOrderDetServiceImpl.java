@@ -4,11 +4,13 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDetDto;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDto;
 import com.fantechs.common.base.general.dto.srm.SrmPlanDeliveryOrderDetDto;
+import com.fantechs.common.base.general.entity.srm.SrmPlanDeliveryOrder;
 import com.fantechs.common.base.general.entity.srm.SrmPlanDeliveryOrderDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.srm.mapper.SrmPlanDeliveryOrderDetMapper;
+import com.fantechs.provider.srm.mapper.SrmPlanDeliveryOrderMapper;
 import com.fantechs.provider.srm.service.SrmInAsnOrderService;
 import com.fantechs.provider.srm.service.SrmPlanDeliveryOrderDetService;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,8 @@ public class SrmPlanDeliveryOrderDetServiceImpl extends BaseService<SrmPlanDeliv
     @Resource
     private SrmPlanDeliveryOrderDetMapper srmPlanDeliveryOrderDetMapper;
     @Resource
+    private SrmPlanDeliveryOrderMapper srmPlanDeliveryOrderMapper;
+    @Resource
     private SrmInAsnOrderService srmInAsnOrderService;
 
     @Override
@@ -48,8 +52,16 @@ public class SrmPlanDeliveryOrderDetServiceImpl extends BaseService<SrmPlanDeliv
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isNotEmpty(list)) {
 
+
             SrmInAsnOrderDto srmInAsnOrderDto = new SrmInAsnOrderDto();
             srmInAsnOrderDto.setOrderStatus((byte) 1);
+
+            Example example1 = new Example(SrmPlanDeliveryOrder.class);
+            example1.createCriteria().andEqualTo("planDeliveryOrderId",list.get(0).getPlanDeliveryOrderId());
+            List<SrmPlanDeliveryOrder> srmPlanDeliveryOrders = srmPlanDeliveryOrderMapper.selectByExample(example1);
+            if (StringUtils.isNotEmpty(srmPlanDeliveryOrders)) {
+                srmInAsnOrderDto.setSupplierId(srmPlanDeliveryOrders.get(0).getSupplierId());
+            }
             List<SrmInAsnOrderDetDto> srmInAsnOrderDetDtos = new ArrayList<>();
 
             List<Long> idList = new ArrayList<>();

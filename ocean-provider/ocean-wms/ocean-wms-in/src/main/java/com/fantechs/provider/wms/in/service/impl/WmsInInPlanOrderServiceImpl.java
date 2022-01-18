@@ -515,11 +515,9 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
                 }
             }
             else{
-                wmsInInPlanOrderDet.setPutawayQty(wmsInInPlanOrderDet.getPutawayQty().subtract(putawayQty));
-                if(wmsInInPlanOrderDet.getPutawayQty().compareTo(new BigDecimal(0))==0){
-                    //待作业
-                    wmsInInPlanOrderDet.setLineStatus((byte)1);
-                }
+                //wmsInInPlanOrderDet.setPutawayQty(wmsInInPlanOrderDet.getPutawayQty().subtract(putawayQty));
+                //待作业
+                wmsInInPlanOrderDet.setLineStatus((byte)1);
             }
             num+=wmsInInPlanOrderDetMapper.updateByPrimaryKeySelective(wmsInInPlanOrderDet);
 
