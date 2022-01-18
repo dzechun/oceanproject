@@ -1396,7 +1396,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     break;
                 case "IN-OIO":
                     //其它入库订单
-
+                    omFeignApi.updateOtherInPutQty(coreSourceId, actualQty);
                     break;
                 case "IN-IPO":
                     //入库计划

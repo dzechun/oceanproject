@@ -119,4 +119,10 @@ public class OmOtherInOrderController {
     public ResponseEntity updateOtherInPutDownQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long purchaseOrderDetId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty) {
         return ControllerUtil.returnCRUD(omOtherInOrderService.updateOtherInPutDownQty(purchaseOrderDetId,putawayQty));
     }
+
+    @ApiOperation(value = "更新其他入库订单收货数量",notes = "更新其他入库订单收货数量")
+    @PostMapping("/updateOtherInPutQty")
+    public ResponseEntity updateOtherInPutQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long purchaseOrderDetId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty) {
+        return ControllerUtil.returnCRUD(omOtherInOrderService.updateOtherInPutQty(purchaseOrderDetId,putawayQty));
+    }
 }
