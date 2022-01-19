@@ -28,10 +28,10 @@ import java.util.List;
  * Created by Mr.Lei on 2021/05/06.
  */
 @RestController
-@Api(tags = "上架作业明细")
+@Api(tags = "移位作业明细")
 @RequestMapping("/wmsInnerShiftWorkDet")
 @Validated
-public class WmsInnerShiftWorkServiceDetController {
+public class WmsInnerShiftWorkDetController {
 
     @Resource
     private WmsInnerShiftWorkDetService wmsInnerShiftWorkDetService;
