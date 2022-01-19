@@ -37,4 +37,6 @@ public interface MesPmWorkOrderService extends IService<MesPmWorkOrder> {
     int inPushDown(List<MesPmWorkOrder> mesPmWorkOrders);
 
     int outPushDown(List<MesPmWorkOrderBomDto> mesPmWorkOrderBomDtos);
+
+    int outPushDownDailyPlan(List<MesPmWorkOrderDto> mesPmWorkOrderDtos);
 }

@@ -353,6 +353,10 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
     @ApiModelProperty("下发数量")
     private BigDecimal qty;
 
+    @Transient
+    @ApiModelProperty("日计划下发数量")
+    private BigDecimal issueQty;
+
     /**
      * 仓库ID
      */
