@@ -2673,7 +2673,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             swmsInnerMaterialBarcode.setMaterialBarcodeId(materialBarcodeId);
             materialBarcodeList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(swmsInnerMaterialBarcode));
             wmsInnerMaterialBarcodeDto=materialBarcodeList.get(0);
-
+            wmsInnerMaterialBarcodeDto.setMaterialQty(resultDto.getMaterialQty());
             return wmsInnerMaterialBarcodeDto;
         }
         else if(ifSysBarcode.equals("0")){
