@@ -130,5 +130,11 @@ public class SearchWmsInnerMaterialBarcode extends BaseQuery implements Serializ
     @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
     private Integer codeQueryMark;
 
+    /**
+     * 类型（1SN 2彩盒 3包箱 4栈板）
+     */
+    @ApiModelProperty(name="type",value = "类型（1SN 2彩盒 3包箱 4栈板）")
+    private String type;
+
     private static final long serialVersionUID = 1L;
 }
