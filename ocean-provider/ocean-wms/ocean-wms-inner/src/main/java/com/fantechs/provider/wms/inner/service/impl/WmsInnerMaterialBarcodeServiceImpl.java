@@ -432,6 +432,9 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                 reprintList.add(wmsInnerMaterialBarcodeReprint);
             }
             PrintModel printModel = wmsInnerMaterialBarcodeMapper.findPrintModel(wmsInnerMaterialBarcode.getMaterialBarcodeId(),labelList.get(0).getLabelCode());
+            if (StringUtils.isEmpty(printModel)) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到模板视图");
+            }
             printModel.setSize(printQty);
             PrintDto printDto = new PrintDto();
             printDto.setLabelName(labelList.get(0).getLabelName());
