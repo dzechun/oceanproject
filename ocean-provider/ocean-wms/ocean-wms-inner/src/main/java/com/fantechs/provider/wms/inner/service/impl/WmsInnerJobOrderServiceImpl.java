@@ -1966,7 +1966,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 if(StringUtils.isEmpty(inventoryStatuses) || inventoryStatuses.size()<=0){
                     //throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"该仓库无合格库存状态");
                     SearchBaseWarehouse searchBaseWarehouse=new SearchBaseWarehouse();
-                    searchBaseWarehouse.setWarehouseCode("***");
+                    searchBaseWarehouse.setWarehouseCode("common");
                     searchBaseWarehouse.setOrgId(sysUser.getOrganizationId());
                     searchBaseWarehouse.setCodeQueryMark(1);
                     List<BaseWarehouse> baseWarehouses = baseFeignApi.findList(searchBaseWarehouse).getData();
