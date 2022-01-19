@@ -1,5 +1,6 @@
 package com.fantechs.provider.wms.in.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysImportAndExportLog;
@@ -12,6 +13,7 @@ import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderBarcode;
 import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.imports.WmsInReceivingOrderImport;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
@@ -24,6 +26,7 @@ import com.fantechs.common.base.general.entity.wms.in.*;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcodeReOrder;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcodeReOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -132,42 +135,41 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                     wmsInReceivingOrderDetMapper.insertUseGeneratedKeys(wmsInReceivingOrderDet);
 
                     List<WmsInnerMaterialBarcodeDto> wmsInnerMaterialBarcodeList = new LinkedList<>();
-                    for (WmsInReceivingOrderBarcode wmsInReceivingOrderBarcode : wmsInReceivingOrderDet.getWmsInReceivingOrderBarcodeList()) {
-                        //是否非系统条码
-                        if(wmsInReceivingOrderDet.getIfSysBarcode()==0){
+                        for (WmsInReceivingOrderBarcode wmsInReceivingOrderBarcode : wmsInReceivingOrderDet.getWmsInReceivingOrderBarcodeList()) {
+                            //是否系统条码
+                            if (wmsInReceivingOrderDet.getIfSysBarcode() == 0) {
 
-                            WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcode=new WmsInnerMaterialBarcodeDto();
-                            wmsInnerMaterialBarcode.setMaterialId(wmsInReceivingOrderDet.getMaterialId());
-                            wmsInnerMaterialBarcode.setBarcode(wmsInReceivingOrderBarcode.getBarcode());
-                            wmsInnerMaterialBarcode.setBatchCode(wmsInReceivingOrderDet.getBatchCode());
-                            wmsInnerMaterialBarcode.setMaterialQty(wmsInReceivingOrderBarcode.getMaterialQty());
-                            wmsInnerMaterialBarcode.setPrintOrderTypeCode("IN-SWK");
-                            wmsInnerMaterialBarcode.setPrintOrderCode(record.getReceivingOrderCode());
-                            wmsInnerMaterialBarcode.setPrintOrderId(record.getReceivingOrderId());
-                            wmsInnerMaterialBarcode.setPrintOrderDetId(wmsInReceivingOrderDet.getReceivingOrderDetId());
-                            wmsInnerMaterialBarcode.setIfSysBarcode((byte)0);
-                            wmsInnerMaterialBarcode.setProductionTime(wmsInReceivingOrderDet.getProductionTime());
-                            //产生类型(1-供应商条码 2-自己打印 3-生产条码)
-                            wmsInnerMaterialBarcode.setCreateType((byte)1);
-                            //条码状态(1-已生成 2-已打印 3-已收货 4-已质检 5-已上架 6-已出库)
-                            wmsInnerMaterialBarcode.setBarcodeStatus((byte)3);
-                            wmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
-                            wmsInnerMaterialBarcode.setCreateTime(new Date());
-                            wmsInnerMaterialBarcode.setCreateUserId(sysUser.getUserId());
+                                WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcode = new WmsInnerMaterialBarcodeDto();
+                                wmsInnerMaterialBarcode.setMaterialId(wmsInReceivingOrderDet.getMaterialId());
+                                wmsInnerMaterialBarcode.setBarcode(wmsInReceivingOrderBarcode.getBarcode());
+                                wmsInnerMaterialBarcode.setBatchCode(wmsInReceivingOrderDet.getBatchCode());
+                                wmsInnerMaterialBarcode.setMaterialQty(wmsInReceivingOrderBarcode.getMaterialQty());
+                                wmsInnerMaterialBarcode.setPrintOrderTypeCode("IN-SWK");
+                                wmsInnerMaterialBarcode.setPrintOrderCode(record.getReceivingOrderCode());
+                                wmsInnerMaterialBarcode.setPrintOrderId(record.getReceivingOrderId());
+                                wmsInnerMaterialBarcode.setPrintOrderDetId(wmsInReceivingOrderDet.getReceivingOrderDetId());
+                                wmsInnerMaterialBarcode.setIfSysBarcode((byte) 0);
+                                wmsInnerMaterialBarcode.setProductionTime(wmsInReceivingOrderDet.getProductionTime());
+                                //产生类型(1-供应商条码 2-自己打印 3-生产条码)
+                                wmsInnerMaterialBarcode.setCreateType((byte) 1);
+                                //条码状态(1-已生成 2-已打印 3-已收货 4-已质检 5-已上架 6-已出库)
+                                wmsInnerMaterialBarcode.setBarcodeStatus((byte) 3);
+                                wmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
+                                wmsInnerMaterialBarcode.setCreateTime(new Date());
+                                wmsInnerMaterialBarcode.setCreateUserId(sysUser.getUserId());
 
-                            //num+=innerFeignApi.batchSave(wmsInnerMaterialBarcode);
-                            wmsInnerMaterialBarcodeList.add(wmsInnerMaterialBarcode);
-                            //设置来料条码ID
-                        }
-                        else {
-                            //系统条码更新条码状态
-                            WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcode=new WmsInnerMaterialBarcodeDto();
-                            wmsInnerMaterialBarcode.setMaterialBarcodeId(wmsInReceivingOrderBarcode.getMaterialBarcodeId());
-                            wmsInnerMaterialBarcode.setBarcodeStatus((byte)5);
-                            wmsInnerMaterialBarcode.setModifiedUserId(sysUser.getUserId());
-                            wmsInnerMaterialBarcode.setModifiedTime(new Date());
-                            wmsInnerMaterialBarcodeList.add(wmsInnerMaterialBarcode);
-                        }
+                                //num+=innerFeignApi.batchSave(wmsInnerMaterialBarcode);
+                                wmsInnerMaterialBarcodeList.add(wmsInnerMaterialBarcode);
+                                //设置来料条码ID
+                            } else {
+                                //系统条码更新条码状态
+                                WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcode = new WmsInnerMaterialBarcodeDto();
+                                wmsInnerMaterialBarcode.setMaterialBarcodeId(wmsInReceivingOrderBarcode.getMaterialBarcodeId());
+                                wmsInnerMaterialBarcode.setBarcodeStatus((byte) 5);
+                                wmsInnerMaterialBarcode.setModifiedUserId(sysUser.getUserId());
+                                wmsInnerMaterialBarcode.setModifiedTime(new Date());
+                                wmsInnerMaterialBarcodeList.add(wmsInnerMaterialBarcode);
+                            }
                     }
                     //更新条码状态
                     if(wmsInReceivingOrderDet.getIfSysBarcode()==1 && !wmsInnerMaterialBarcodeList.isEmpty()){
@@ -219,6 +221,33 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                             if (responseEntity.getCode() != 0) {
                                 throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
                             }
+                        }
+                    }else {
+                        List<WmsInnerMaterialBarcodeReOrder> barcodeReOrderList=new ArrayList<>();
+                        SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
+                        sBarcodeReOrder.setOrderTypeCode(record.getSourceSysOrderTypeCode());//单据类型
+                        sBarcodeReOrder.setOrderDetId(wmsInReceivingOrderDet.getSourceId());//明细ID
+                        List<WmsInnerMaterialBarcodeReOrderDto> reOrderList = innerFeignApi.findAll(sBarcodeReOrder).getData();
+                        if (reOrderList.size() > 0) {
+                            for (WmsInnerMaterialBarcodeReOrderDto item : reOrderList) {
+                                WmsInnerMaterialBarcodeReOrder barcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
+                                BeanUtil.copyProperties(item, barcodeReOrder);
+                                barcodeReOrder.setOrderTypeCode(record.getSysOrderTypeCode());
+                                barcodeReOrder.setOrderCode(record.getReceivingOrderCode());
+                                barcodeReOrder.setOrderId(record.getReceivingOrderId());
+                                barcodeReOrder.setOrderDetId(wmsInReceivingOrderDet.getReceivingOrderDetId());
+                                barcodeReOrder.setScanStatus((byte) 1);
+                                barcodeReOrder.setCreateUserId(sysUser.getUserId());
+                                barcodeReOrder.setCreateTime(new Date());
+                                barcodeReOrder.setModifiedUserId(sysUser.getUserId());
+                                barcodeReOrder.setModifiedTime(new Date());
+                                barcodeReOrder.setMaterialBarcodeReOrderId(null);
+                                barcodeReOrderList.add(barcodeReOrder);
+                            }
+                        }
+                        //批量新增到条码关系表
+                        if(barcodeReOrderList.size()>0){
+                            innerFeignApi.batchAdd(barcodeReOrderList);
                         }
                     }
                 }

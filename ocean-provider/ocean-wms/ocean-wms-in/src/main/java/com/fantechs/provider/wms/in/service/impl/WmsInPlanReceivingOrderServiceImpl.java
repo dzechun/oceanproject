@@ -171,6 +171,7 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
             inPlanReceivingOrderDet.setCreateTime(entity.getCreateTime());
             inPlanReceivingOrderDet.setModifiedTime(new Date());
             inPlanReceivingOrderDet.setModifiedUserId(sysUser.getUserId());
+            inPlanReceivingOrderDet.setIfAllIssued((byte)0);
             inPlanReceivingOrderDet.setOrgId(sysUser.getOrganizationId());
 
             WmsInHtPlanReceivingOrderDet wmsInHtPlanReceivingOrderDet = new WmsInHtPlanReceivingOrderDet();
@@ -381,11 +382,11 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
                         wmsInReceivingOrderDet.setOrgId(sysUser.getOrganizationId());
                         wmsInReceivingOrderDet.setIfAllIssued((byte)0);
 
-                        //查找是否有条码
+
+                        //找上游单据条码
                         SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
-                        searchWmsInnerMaterialBarcodeReOrder.setOrderId(wmsInPlanReceivingOrder.getPlanReceivingOrderId());
-                        searchWmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInPlanReceivingOrderDet.getPlanReceivingOrderDetId());
-                        searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode("IN-SPO");
+                        searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode(wmsInPlanReceivingOrder.getSourceSysOrderTypeCode());//单据类型
+                        searchWmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInPlanReceivingOrderDet.getSourceId());//明细ID
                         ResponseEntity<List<WmsInnerMaterialBarcodeReOrderDto>> listResponseEntity = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder);
                         if(listResponseEntity.getCode()!=0){
                             throw new BizErrorException(listResponseEntity.getCode(),listResponseEntity.getMessage());
