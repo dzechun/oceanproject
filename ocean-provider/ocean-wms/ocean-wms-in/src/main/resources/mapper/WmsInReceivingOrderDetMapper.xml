@@ -37,6 +37,7 @@
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="materialDesc" jdbcType="VARCHAR" property="materialDesc"/>
+    <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
     <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
     <result column="operator_user_name" jdbcType="VARCHAR" property="operatorUserName"/>
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
@@ -75,9 +76,11 @@ wirod.option3
   <select id="findList" resultMap="BaseResultMapDto">
     select * from (
     select <include refid="base_column_list"/>,wiro.receiving_order_code,sum(wimb.material_qty) as total_material_qty,bm.material_code,bm.material_name,bm.material_desc,bm.material_version,u.user_name as operator_user_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name
+    ,bmt.main_unit
     FROM wms_in_receiving_order_det wirod
     left join wms_in_receiving_order wiro on wiro.receiving_order_id = wirod.receiving_order_id
     LEFT JOIN base_material bm ON wirod.material_id = bm.material_id
+    LEFT JOIN base_material_tab bmt ON bmt.material_id = bm.material_id
     LEFT JOIN sys_user u ON u.user_id = wirod.operator_user_id
     LEFT JOIN sys_user su ON wirod.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON wirod.modified_user_id = sus.user_id

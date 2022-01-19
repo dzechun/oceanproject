@@ -67,7 +67,7 @@
     opo.order_status,
     opo.order_date,
     bd.dept_name as purchase_dept_name,
-    mosu.nick_name as make_order_user_name,
+    csu.nick_name as make_order_user_name,
     opo.create_time as make_order_date,
     opo.remark as order_remark
     from srm_po_expedite spe
@@ -76,7 +76,6 @@
     left join sys_user csu on csu.user_id = spe.create_user_id
     left join sys_user msu on msu.user_id = spe.modified_user_id
     left join base_dept bd on bd.dept_id = opo.purchase_dept_id
-    left join sys_user mosu on mosu.user_id = opo.purchase_user_id
     left join base_address ba on ba.address_id = bs.address_id
     <where>
       <if test="supplierId != null">

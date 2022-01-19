@@ -101,6 +101,9 @@
         <if test="orgId!=null and orgId!=''">
             and wimb.org_id = #{orgId}
         </if>
+        <if test="barcodeType!=null and barcodeType!=''">
+            and wimb.barcode_type = #{barcodeType}
+        </if>
         <if test="materialBarcodeId!=null and materialBarcodeId!=''">
             and wimb.material_barcode_id = #{materialBarcodeId}
         </if>

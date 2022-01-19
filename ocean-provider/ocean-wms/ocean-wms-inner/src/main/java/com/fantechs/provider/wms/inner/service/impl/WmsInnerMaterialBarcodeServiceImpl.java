@@ -79,12 +79,16 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
 
         if (StringUtils.isNotEmpty(map.get("printOrderTypeCode")) && Integer.valueOf(map.get("printOrderTypeCode").toString()) == 1) {
             map.put("printOrderTypeCode","SRM-ASN");
+            map.put("barcodeType",1);
         }else if (StringUtils.isNotEmpty(map.get("printOrderTypeCode")) && Integer.valueOf(map.get("printOrderTypeCode").toString()) == 2) {
             map.put("printOrderTypeCode","IN-SWK");
+            map.put("barcodeType",1);
         }else if (StringUtils.isNotEmpty(map.get("printOrderTypeCode")) && Integer.valueOf(map.get("printOrderTypeCode").toString()) == 3) {
             map.put("printOrderTypeCode","QMS-MIIO");
+            map.put("barcodeType",1);
         }else if (StringUtils.isNotEmpty(map.get("printOrderTypeCode")) && Integer.valueOf(map.get("printOrderTypeCode").toString()) == 4) {
             map.put("printOrderTypeCode","IN-IWK");
+            map.put("barcodeType",1);
         }
 
         return wmsInnerMaterialBarcodeMapper.findList(map);
