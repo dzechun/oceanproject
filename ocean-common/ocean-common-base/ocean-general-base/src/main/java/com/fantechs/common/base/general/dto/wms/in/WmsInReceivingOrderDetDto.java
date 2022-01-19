@@ -29,6 +29,9 @@ public class WmsInReceivingOrderDetDto extends WmsInReceivingOrderDet implements
     @ApiModelProperty(name = "materialDesc",value = "物料描述")
     private String materialDesc;
 
+    @ApiModelProperty(name = "mainUnit",value = "单位")
+    private String mainUnit;
+
     @ApiModelProperty(name = "createUserName",value = "创建人")
     private String createUserName;
 

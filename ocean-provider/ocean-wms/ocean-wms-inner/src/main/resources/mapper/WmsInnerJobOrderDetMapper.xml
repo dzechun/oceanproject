@@ -48,6 +48,8 @@
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
+        <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
         <result column="inventory_status_name" jdbcType="VARCHAR" property="inventoryStatusName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
@@ -98,6 +100,8 @@
         bm.material_code,
         bm.material_name,
         bm.material_desc,
+        bm.material_version,
+        bmt.main_unit,
         wijo.job_order_code,
         bis.inventory_status_name,
         su.user_name AS create_user_name,
@@ -110,11 +114,13 @@
         LEFT JOIN base_storage bsi ON wipod.in_storage_id = bsi.storage_id
         LEFT JOIN base_inventory_status bis ON wipod.inventory_status_id = bis.inventory_status_id
         LEFT JOIN base_material bm ON wipod.material_id = bm.material_id
+        LEFT JOIN base_material_tab bmt ON bmt.material_id = bm.material_id
         LEFT JOIN sys_user su ON wipod.create_user_id = su.user_id
         LEFT JOIN sys_user sus ON wipod.modified_user_id = sus.user_id
         LEFT JOIN base_organization bo ON wipod.org_id = bo.organization_id
         left join wms_inner_material_barcode_re_order wimbro on wimbro.order_code = wijo.job_order_code
         left join wms_inner_material_barcode wimb on wimb.material_barcode_id = wimbro.material_barcode_id and wimb.material_id = wipod.material_id
+        and wimb.barcode_type = 1
         <where>
             <if test="jobOrderId!=null and jobOrderId!=''">
                 and wipod.job_order_id = #{jobOrderId}

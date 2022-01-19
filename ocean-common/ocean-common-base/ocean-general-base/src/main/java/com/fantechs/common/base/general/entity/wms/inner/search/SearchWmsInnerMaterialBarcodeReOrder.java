@@ -196,6 +196,11 @@ public class SearchWmsInnerMaterialBarcodeReOrder extends BaseQuery implements S
     @ApiModelProperty(name = "overallCode",value = "全局查（栈板、包箱、sn、彩盒码）")
     private String overallCode;
 
+    /**
+     *查询类型( 1 SN 2 彩盒 3 箱号 4 栈板 )
+     */
+    @ApiModelProperty(name = "queryType",value = "查询类型( 1 SN 2 彩盒 3 箱号 4 栈板 )")
+    private String queryType;
 
     private static final long serialVersionUID = 1L;
 }

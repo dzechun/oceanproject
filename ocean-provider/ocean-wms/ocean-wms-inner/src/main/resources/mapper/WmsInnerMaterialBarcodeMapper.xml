@@ -101,6 +101,9 @@
         <if test="orgId!=null and orgId!=''">
             and wimb.org_id = #{orgId}
         </if>
+        <if test="barcodeType!=null and barcodeType!=''">
+            and wimb.barcode_type = #{barcodeType}
+        </if>
         <if test="materialBarcodeId!=null and materialBarcodeId!=''">
             and wimb.material_barcode_id = #{materialBarcodeId}
         </if>
@@ -213,6 +216,7 @@
         FROM wms_inner_material_barcode wimb
         LEFT JOIN base_material bm on bm.material_id = wimb.material_id
         <where>
+            wimb.barcode_type = 1
             <if test="orgId!=null and orgId!=''">
                 and wimb.org_id = #{orgId}
             </if>

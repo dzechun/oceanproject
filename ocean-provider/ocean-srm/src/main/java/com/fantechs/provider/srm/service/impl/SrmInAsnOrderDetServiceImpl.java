@@ -253,7 +253,7 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
                                 .planQty(srmInAsnOrderDetDto.getIssueQty())
                                 .materialId(srmInAsnOrderDetDto.getMaterialId())
                                 .lineStatus((byte) 1)
-                                .inStorageId(StringUtils.isNotEmpty(storageList)?storageList.get(0).getStorageId():null)
+                                .outStorageId(StringUtils.isNotEmpty(storageList)?storageList.get(0).getStorageId():null)
                                 .batchCode(srmInAsnOrderDetDto.getBatchCode()).build();
 
                         wmsInnerJobOrderDetList.add(wmsInnerJobOrderDet);
