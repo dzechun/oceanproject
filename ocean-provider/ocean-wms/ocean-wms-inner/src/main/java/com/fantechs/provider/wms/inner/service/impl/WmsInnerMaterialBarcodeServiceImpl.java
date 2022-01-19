@@ -567,7 +567,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                     if (StringUtils.isEmpty(addWmsInnerMaterialBarcode.getMaterialQty())) {
                         fail.add(i + 1);
                         continue;
-                    } else if (wmsInnerMaterialBarcodeDto.getOrderQty().compareTo(addWmsInnerMaterialBarcode.getMaterialQty().add(StringUtils.isNotEmpty(wmsInnerMaterialBarcodeDto.getTotalMaterialQty())?wmsInnerMaterialBarcodeDto.getTotalMaterialQty():new BigDecimal(0))) == -1) {
+                    } else if (wmsInnerMaterialBarcodeDto.getOrderQty().compareTo((addWmsInnerMaterialBarcode.getMaterialQty().add(StringUtils.isNotEmpty(wmsInnerMaterialBarcodeDto.getTotalMaterialQty())?wmsInnerMaterialBarcodeDto.getTotalMaterialQty():new BigDecimal(0)))) == -1) {
                         fail.add(i + 1);
                         continue;
                     }
@@ -583,6 +583,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                     parentBarcode.setModifiedUserId(user.getUserId());
                     parentBarcode.setModifiedTime(new Date());
                     parentBarcode.setOrgId(user.getOrganizationId());
+                    parentBarcode.setSupplierId(user.getSupplierId());
 
                     WmsInnerMaterialBarcode pallet = new WmsInnerMaterialBarcode();
                     WmsInnerMaterialBarcode cartonCode = new WmsInnerMaterialBarcode();
@@ -611,7 +612,6 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                             continue;
                         }else {
                             parentBarcode.setBarcodeType((byte) 1);
-                            colorBoxCode.setSupplierId(user.getSupplierId());
                             wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(parentBarcode);
 
                             //添加导入条码履历与单据中间表数据
@@ -643,7 +643,6 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                             colorBoxCode.setBarcode(null);
                             colorBoxCode.setCartonCode(null);
                             colorBoxCode.setMaterialQty(new BigDecimal(1));
-                            colorBoxCode.setSupplierId(user.getSupplierId());
                             wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(colorBoxCode);
                             //添加导入条码履历与单据中间表数据
                             addHt(colorBoxCode,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
@@ -668,7 +667,6 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                             cartonCode.setBarcode(null);
                             cartonCode.setColorBoxCode(null);
                             cartonCode.setMaterialQty(new BigDecimal(1));
-                            cartonCode.setSupplierId(user.getSupplierId());
                             wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(cartonCode);
                             //添加导入条码履历与单据中间表数据
                             addHt(cartonCode,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
@@ -694,7 +692,6 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                             pallet.setBarcode(null);
                             pallet.setColorBoxCode(null);
                             pallet.setMaterialQty(new BigDecimal(1));
-                            pallet.setSupplierId(user.getSupplierId());
                             wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(pallet);
 
                             //添加导入条码履历与单据中间表数据
