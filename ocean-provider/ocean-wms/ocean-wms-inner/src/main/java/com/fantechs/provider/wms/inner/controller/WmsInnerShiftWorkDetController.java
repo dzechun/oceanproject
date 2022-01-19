@@ -29,7 +29,7 @@ import java.util.List;
  */
 @RestController
 @Api(tags = "移位作业明细")
-@RequestMapping("/wmsInnerJobOrderDet")
+@RequestMapping("/wmsInnerShiftWorkDet")
 @Validated
 public class WmsInnerShiftWorkDetController {
 
