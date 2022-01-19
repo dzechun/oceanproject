@@ -47,6 +47,7 @@
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanStockListDto">
     <result column="daily_plan_code" jdbcType="VARCHAR" property="dailyPlanCode"/>
     <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+    <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
     <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="coreSourceSysOrderTypeCode"/>
     <result column="material_code_product" jdbcType="VARCHAR" property="materialCodeProduct"/>
     <result column="material_name_product" jdbcType="VARCHAR" property="materialNameProduct"/>
@@ -65,6 +66,7 @@
     mpdp.daily_plan_code,
     mpdp.core_source_sys_order_type_code,
     mpwo.work_order_code,
+    mpdpd.work_order_id,
     smp.material_code AS material_code_product,
     smp.material_name AS material_name_product,
     sm.material_code,

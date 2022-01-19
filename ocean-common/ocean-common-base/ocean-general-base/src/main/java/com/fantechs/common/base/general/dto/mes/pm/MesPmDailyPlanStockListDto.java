@@ -29,6 +29,13 @@ public class MesPmDailyPlanStockListDto extends MesPmDailyPlanStockList implemen
     private String workOrderCode;
 
     /**
+     * 生产订单ID
+     */
+    @Transient
+    @ApiModelProperty(name="workOrderId",value = "生产订单ID")
+    private Long workOrderId;
+
+    /**
      * 订单号
      */
     @Transient
