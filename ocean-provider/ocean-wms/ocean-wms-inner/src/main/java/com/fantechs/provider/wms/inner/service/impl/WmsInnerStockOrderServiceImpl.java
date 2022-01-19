@@ -1459,6 +1459,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 searchinventoryDet.setStorageId(wmsInnerStockOrderDet.getStorageId());
                 searchinventoryDet.setNotEqualMark(0);
                 searchinventoryDet.setMaterialId(wmsInnerStockOrderDet.getMaterialId());
+                searchinventoryDet.setQueryType("1");
                 if(StringUtils.isNotEmpty(activeOrAgain) && activeOrAgain==(byte)1)
                     searchinventoryDet.setIfStockLock((byte)0);//盘点锁(0-否 1-是)
                 else if(StringUtils.isNotEmpty(activeOrAgain) && activeOrAgain==(byte)2)

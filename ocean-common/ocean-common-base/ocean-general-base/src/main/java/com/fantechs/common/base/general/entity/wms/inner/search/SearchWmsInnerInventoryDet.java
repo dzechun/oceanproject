@@ -68,6 +68,12 @@ public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializabl
     @ApiModelProperty("栈板码")
     private String palletCode;
 
+    /**
+     *查询类型( 1 SN 2 彩盒 3 箱号 4 栈板 )
+     */
+    @ApiModelProperty(name = "queryType",value = "查询类型( 1 SN 2 彩盒 3 箱号 4 栈板 )")
+    private String queryType;
+
     @ApiModelProperty("条码id")
     private Long materialBarcodeId;
 
