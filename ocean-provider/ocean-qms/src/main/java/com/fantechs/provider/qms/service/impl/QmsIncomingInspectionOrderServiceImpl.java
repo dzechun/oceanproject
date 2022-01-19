@@ -91,7 +91,6 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
     public List<QmsHtIncomingInspectionOrder> findHtList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",user.getOrganizationId());
-        map.put("supplierId",user.getSupplierId());
         return qmsHtIncomingInspectionOrderMapper.findHtList(map);
     }
 
@@ -99,7 +98,6 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
     public List<QmsIncomingInspectionOrderDto> findList(Map<String, Object> map) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",user.getOrganizationId());
-        map.put("supplierId",user.getSupplierId());
         return qmsIncomingInspectionOrderMapper.findList(map);
     }
 
