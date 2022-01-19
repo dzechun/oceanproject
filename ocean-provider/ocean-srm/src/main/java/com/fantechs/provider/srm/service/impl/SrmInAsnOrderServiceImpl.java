@@ -5,6 +5,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrderTypeDto;
+import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDetDto;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDetDto;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDto;
 import com.fantechs.common.base.general.dto.srm.SrmInHtAsnOrderDetDto;
@@ -15,6 +16,7 @@ import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderType;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplierReUser;
+import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrderDet;
 import com.fantechs.common.base.general.entity.srm.*;
 import com.fantechs.common.base.general.entity.srm.history.SrmInHtAsnOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcodeReOrder;
@@ -24,6 +26,7 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.srm.mapper.*;
 import com.fantechs.provider.srm.service.SrmAppointDeliveryReAsnService;
@@ -62,7 +65,8 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
     private InnerFeignApi innerFeignApi;
     @Resource
     private SrmPlanDeliveryOrderDetMapper srmPlanDeliveryOrderDetMapper;
-
+    @Resource
+    private OMFeignApi omFeignApi;
 
     @Override
     public List<SrmInAsnOrderDto> findList(Map<String, Object> map) {
@@ -123,9 +127,13 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
             //保存供应商
             SearchBaseSupplierReUser searchBaseSupplierReUser = new SearchBaseSupplierReUser();
             searchBaseSupplierReUser.setUserId(user.getUserId());
+            searchBaseSupplierReUser.setOrgId(user.getOrganizationId());
             List<BaseSupplierReUser> baseSupplierReUsers = baseFeignApi.findList(searchBaseSupplierReUser).getData();
-            if (StringUtils.isNotEmpty(baseSupplierReUsers))
+            if (StringUtils.isNotEmpty(baseSupplierReUsers) &&  baseSupplierReUsers.size() == 1)
                 srmInAsnOrderDto.setSupplierId(baseSupplierReUsers.get(0).getSupplierId());
+            else
+                throw new BizErrorException("未查询到订单及用户绑定的供应商");
+
         }
         int i = srmInAsnOrderMapper.insertUseGeneratedKeys(srmInAsnOrderDto);
 
@@ -231,6 +239,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
                 if (det.getOrderQty().compareTo(det.getTotalDeliveryQty()) == -1)
                     throw new BizErrorException("交货总量大于订单数量");
 
+
                 if (StringUtils.isNotEmpty(det.getAsnOrderDetId())) {
                     srmInAsnOrderDetMapper.updateByPrimaryKey(det);
                     idList.add(det.getAsnOrderDetId());
@@ -266,6 +275,24 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
             if (StringUtils.isNotEmpty(addlist))
                 srmInAsnOrderDetMapper.insertList(addlist);
         }
+
+        //返写采购订单累计交货数量
+        if(srmInAsnOrderDto.getOrderStatus() == 2){
+            for(SrmInAsnOrderDetDto detDto : srmInAsnOrderDto.getSrmInAsnOrderDetDtos()) {
+                SearchOmPurchaseOrderDet searchOmPurchaseOrderDet = new SearchOmPurchaseOrderDet();
+                searchOmPurchaseOrderDet.setPurchaseOrderDetId(detDto.getOrderDetId());
+                List<OmPurchaseOrderDetDto> datas = omFeignApi.findList(searchOmPurchaseOrderDet).getData();
+                if(StringUtils.isEmpty(datas)) {
+                    OmPurchaseOrderDetDto orderDet = datas.get(0);
+                    if(StringUtils.isEmpty(orderDet.getTotalIssueQty()))
+                        orderDet.setTotalPlanDeliveryQty(detDto.getDeliveryQty());
+                    else
+                        orderDet.setTotalPlanDeliveryQty(orderDet.getTotalPlanDeliveryQty().add(detDto.getDeliveryQty()));
+                    omFeignApi.update(orderDet);
+                }
+            }
+        }
+
         return i;
     }
 
@@ -286,6 +313,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
                 SearchBaseSupplier  searchBaseSupplier = new SearchBaseSupplier();
                 searchBaseSupplier.setSupplierId(dto.getSupplierId());
                 List<BaseSupplier> baseSuppliers = baseFeignApi.findSupplierList(searchBaseSupplier).getData();
+
                 if(StringUtils.isEmpty(baseSuppliers) || baseSuppliers.get(0).getIfAppointDeliver()==0 ){
                     if(dto.getOrderStatus() != 3)
                         throw new BizErrorException("只有状态为审核通过的订单才能发货");
