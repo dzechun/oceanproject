@@ -6,14 +6,10 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDetDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanStockListDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReOrderDto;
-import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDetDto;
-import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDto;
 import com.fantechs.common.base.general.entity.mes.pm.*;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmDailyPlan;
-import com.fantechs.common.base.general.entity.wms.out.WmsOutPlanStockListOrderDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -218,8 +214,11 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
         BigDecimal nowQty=new BigDecimal(0);
         BigDecimal scheduleQty=new BigDecimal(0);
         BigDecimal workOrderQty=new BigDecimal(0);
-        if(StringUtils.isNotEmpty(mesPmWorkOrder.getScheduledQty()))
-            scheduleQty=mesPmWorkOrder.getScheduledQty();//工单已排产数量
+        if(StringUtils.isNotEmpty(mesPmWorkOrder.getScheduledQty())) {
+            scheduleQty = mesPmWorkOrder.getScheduledQty();//工单已排产数量
+        }else {
+            mesPmWorkOrder.setScheduledQty(BigDecimal.ZERO);
+        }
 
         if(StringUtils.isNotEmpty(mesPmWorkOrder.getWorkOrderQty()))
             workOrderQty=mesPmWorkOrder.getWorkOrderQty();//工单数量
