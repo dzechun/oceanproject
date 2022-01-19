@@ -34,6 +34,7 @@
     <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
     <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
     <result column="create_type" jdbcType="TINYINT" property="createType" />
+      <result column="if_sys_barcode" jdbcType="VARCHAR" property="ifSysBarcode" />
   </resultMap>
 
   <sql id="BaseColumnList">
@@ -64,7 +65,12 @@
     wimb.production_time as production_date,
     wimb.create_type,
     wimb.inspection_status,
-    wimb.color_box_code,wimb.carton_code,wimb.pallet_code,wimb.batch_code,wimb.barcode
+    wimb.color_box_code,
+    wimb.carton_code,
+    wimb.pallet_code,
+    wimb.batch_code,
+    wimb.barcode,
+    wimb.if_sys_barcode
     FROM wms_inner_material_barcode_re_order wimbro
     LEFT JOIN sys_user su ON wimbro.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON wimbro.modified_user_id = sus.user_id
@@ -151,6 +157,19 @@
         <if test="overallCode!=null and overallCode!=''">
             and (wimb.barcode = #{overallCode} or wimb.color_box_code=#{overallCode} or wimb.carton_code=#{overallCode} or wimb.pallet_code=#{overallCode})
         </if>
+        <if test="queryType!=null and queryType!='' and queryType =='1'">
+            and IFNULL(wimb.barcode,'') != ''
+        </if>
+        <if test="queryType!=null and queryType!='' and queryType =='2'">
+            and IFNULL(wimb.color_box_code,'') != '' and IFNULL(wimb.barcode,'')=''
+        </if>
+        <if test="queryType!=null and queryType!='' and queryType =='3'">
+            and IFNULL(wimb.carton_code,'') != '' and IFNULL(wimb.barcode,'')=''
+        </if>
+        <if test="queryType!=null and queryType!='' and queryType =='4'">
+            and IFNULL(wimb.pallet_code,'') != '' and IFNULL(wimb.barcode,'')=''
+        </if>
+
     </where>
     order by wimbro.create_time desc
   </select>

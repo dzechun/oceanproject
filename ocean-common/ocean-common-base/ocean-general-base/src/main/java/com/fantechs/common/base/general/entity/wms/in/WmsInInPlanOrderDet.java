@@ -81,6 +81,13 @@ public class WmsInInPlanOrderDet extends ValidGroup implements Serializable {
     private Long sourceId;
 
     /**
+     * 核心明细ID
+     */
+    @ApiModelProperty(name="coreSourceId",value = "核心明细ID")
+    @Column(name = "core_source_id")
+    private Long coreSourceId;
+
+    /**
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")

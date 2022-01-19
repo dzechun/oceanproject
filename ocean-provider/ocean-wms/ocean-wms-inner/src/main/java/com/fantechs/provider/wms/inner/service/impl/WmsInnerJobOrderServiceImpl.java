@@ -1393,6 +1393,10 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
         //核心单据回写
         if(opType==(byte)1) {
+            if("IN-IPO".equals(sourceSysOrderTypeCode) && StringUtils.isNotEmpty(sourceId)){
+                //入库计划
+                inFeignApi.updatePutawayQty(opType, sourceId, actualQty);
+            }
             if (StringUtils.isNotEmpty(coreSourceTypeCode) && StringUtils.isNotEmpty(coreSourceId)) {
                 switch (coreSourceTypeCode) {
                     case "IN-PO":
@@ -1406,10 +1410,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     case "IN-OIO":
                         //其它入库订单
                         omFeignApi.updateOtherInPutQty(coreSourceId, actualQty);
-                        break;
-                    case "IN-IPO":
-                        //入库计划
-                        inFeignApi.updatePutawayQty(opType, sourceId, actualQty);
                         break;
                     case "IN-SWK":
                         //收货作业
@@ -1966,7 +1966,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 if(StringUtils.isEmpty(inventoryStatuses) || inventoryStatuses.size()<=0){
                     //throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"该仓库无合格库存状态");
                     SearchBaseWarehouse searchBaseWarehouse=new SearchBaseWarehouse();
-                    searchBaseWarehouse.setWarehouseCode("common");
+                    searchBaseWarehouse.setWarehouseCode("default");
                     searchBaseWarehouse.setOrgId(sysUser.getOrganizationId());
                     searchBaseWarehouse.setCodeQueryMark(1);
                     List<BaseWarehouse> baseWarehouses = baseFeignApi.findList(searchBaseWarehouse).getData();

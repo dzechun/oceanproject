@@ -89,6 +89,13 @@ public class WmsInnerMaterialBarcodeReOrderDto extends WmsInnerMaterialBarcodeRe
     private String batchCode;
 
     /**
+     * 是否系统条码
+     */
+    @Transient
+    @ApiModelProperty(name="ifSysBarcode",value = "是否系统条码")
+    private String ifSysBarcode;
+
+    /**
      * 产生类型(1-供应商条码 2-自己打印 3-生产条码)
      */
     @Transient

@@ -453,6 +453,7 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
                 wmsInnerJobOrderDet.setCoreSourceOrderCode(wmsInInPlanOrderDet.getCoreSourceOrderCode());
                 wmsInnerJobOrderDet.setSourceOrderCode(wmsInInPlanOrders.get(0).getInPlanOrderCode());
                 wmsInnerJobOrderDet.setSourceId(wmsInInPlanOrderDet.getInPlanOrderDetId());
+                wmsInnerJobOrderDet.setCoreSourceId(wmsInInPlanOrderDet.getCoreSourceId());
                 wmsInnerJobOrderDet.setLineNumber(lineNumber+"");
                 wmsInnerJobOrderDet.setMaterialId(wmsInInPlanOrderDet.getMaterialId());
                 wmsInnerJobOrderDet.setPlanQty(wmsInInPlanOrderDet.getPlanQty());
