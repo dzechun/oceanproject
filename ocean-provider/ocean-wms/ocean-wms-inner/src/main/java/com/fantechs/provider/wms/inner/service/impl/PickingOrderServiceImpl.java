@@ -1018,6 +1018,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                         wmsInPutawayOrderDet.setModifiedTime(new Date());
                         num += wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInPutawayOrderDet);
                         planQty = planQty.subtract(wmsInnerInventoryDto.getDistributionQty());
+
+                        wmsInPutawayOrderDet.setJobOrderDetId(wms.getJobOrderDetId());
                     }
 
                     WmsInnerInventory newWmsInnerInventory = new WmsInnerInventory();

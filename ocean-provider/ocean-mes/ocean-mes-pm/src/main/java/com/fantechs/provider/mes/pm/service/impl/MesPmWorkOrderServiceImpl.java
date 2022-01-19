@@ -363,6 +363,13 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                 mesPmWorkOrderBomDto.setModifiedTime(new Date());
                 mesPmWorkOrderBomDto.setOrgId(user.getOrganizationId());
                 mesPmWorkOrderBomDto.setWorkOrderId(mesPmWorkOrderDto.getWorkOrderId());
+
+                //计算工单用量
+                if(StringUtils.isEmpty(mesPmWorkOrderDto.getWorkOrderQty())){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"工单数量不能为零或空");
+                }
+
+                mesPmWorkOrderBomDto.setUsageQty(mesPmWorkOrderDto.getWorkOrderQty().multiply(mesPmWorkOrderBomDto.getSingleQty()));
                 boms.add(mesPmWorkOrderBomDto);
             }
         }
@@ -649,7 +656,6 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                     wmsInPlanReceivingOrderDetDto.setMaterialId(mesPmWorkOrder.getMaterialId());
                     wmsInPlanReceivingOrderDetDto.setPlanQty(mesPmWorkOrder.getQty());
                     wmsInPlanReceivingOrderDetDto.setLineStatus((byte) 1);
-                    wmsInPlanReceivingOrderDetDto.setActualQty(mesPmWorkOrder.getOutputQty());
                     wmsInPlanReceivingOrderDetDto.setOperatorUserId(user.getUserId());
                     detList.add(wmsInPlanReceivingOrderDetDto);
                     mesPmWorkOrder.setTotalIssueQty(mesPmWorkOrder.getTotalIssueQty().add(mesPmWorkOrder.getQty()));
@@ -696,7 +702,6 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                     wmsInReceivingOrderDetDto.setMaterialId(mesPmWorkOrder.getMaterialId());
                     wmsInReceivingOrderDetDto.setPlanQty(mesPmWorkOrder.getQty());
                     wmsInReceivingOrderDetDto.setLineStatus((byte) 1);
-                    wmsInReceivingOrderDetDto.setActualQty(mesPmWorkOrder.getOutputQty());
                     wmsInReceivingOrderDetDto.setOperatorUserId(user.getUserId());
                     detList.add(wmsInReceivingOrderDetDto);
                     mesPmWorkOrder.setTotalIssueQty(mesPmWorkOrder.getTotalIssueQty().add(mesPmWorkOrder.getQty()));

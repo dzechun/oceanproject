@@ -28,4 +28,6 @@ public interface OmOtherInOrderService extends IService<OmOtherInOrder> {
     int pushDown(List<OmOtherInOrderDet> omOtherInOrderDets);
 
     int updateOtherInPutDownQty(Long otherInOrderDetId, BigDecimal putawayQty);
+
+    int updateOtherInPutQty(Long otherInOrderDetId, BigDecimal putawayQty);
 }

@@ -725,4 +725,23 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         return num;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updateOtherInPutQty(Long otherInOrderDetId, BigDecimal putawayQty) {
+        int num=1;
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        OmOtherInOrderDet omOtherInOrderDet=omOtherInOrderDetMapper.selectByPrimaryKey(otherInOrderDetId);
+        if(StringUtils.isNotEmpty(omOtherInOrderDet)){
+            if(StringUtils.isEmpty(omOtherInOrderDet.getReceivingQty())){
+                omOtherInOrderDet.setReceivingQty(new BigDecimal(0));
+            }
+
+            omOtherInOrderDet.setReceivingQty(omOtherInOrderDet.getReceivingQty().add(putawayQty));
+            omOtherInOrderDet.setModifiedUserId(sysUser.getUserId());
+            omOtherInOrderDet.setModifiedTime(new Date());
+            num+=omOtherInOrderDetMapper.updateByPrimaryKeySelective(omOtherInOrderDet);
+        }
+        return num;
+    }
+
 }

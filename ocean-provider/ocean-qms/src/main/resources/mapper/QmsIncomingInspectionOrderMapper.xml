@@ -167,6 +167,9 @@
       <if test="orgId!=null">
         and qiio.org_id=#{orgId}
       </if>
+      <if test="supplierId!=null">
+        and qiio.supplier_id=#{supplierId}
+      </if>
     </where>
     GROUP BY qiio.incoming_inspection_order_id
     order by qiio.create_time desc

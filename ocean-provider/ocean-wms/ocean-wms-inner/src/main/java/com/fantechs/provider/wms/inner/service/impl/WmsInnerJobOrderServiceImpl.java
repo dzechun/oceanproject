@@ -480,7 +480,13 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
 
             //如果货品全部分配完成更改表头状态为待作业状态
-            List<WmsInnerJobOrderDetDto> orderDetDtos = dto.stream().filter(li -> li.getOutStorageId() != null).collect(Collectors.toList());
+            List<WmsInnerJobOrderDetDto> orderDetDtos=new ArrayList<>();
+            if(wmsInnerJobOrder.getJobOrderType()==(byte)3) {
+                orderDetDtos = dto.stream().filter(li -> li.getOutStorageId() != null).collect(Collectors.toList());
+            }
+            else if(wmsInnerJobOrder.getJobOrderType()==(byte)1){
+                orderDetDtos = dto.stream().filter(li -> li.getInStorageId() != null).collect(Collectors.toList());
+            }
             if (!orderDetDtos.isEmpty() && orderDetDtos.size() == dto.size()) {
                 //更新表头状态
                 //完工入库单需要激活状态 其他则不需要
@@ -1324,100 +1330,104 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             actualQty = wmsInnerJobOrderDet.getActualQty();
         }
         //来源单据回写
-        if(StringUtils.isNotEmpty(sourceSysOrderTypeCode)) {
-            switch (sourceSysOrderTypeCode) {
-                case "IN-PO":
-                    //采购订单
-                    omFeignApi.updatePutDownQty(sourceId, actualQty);
-                    break;
-                case "IN-SRO":
-                    //销退订单
-                    omFeignApi.updateSalesReturnPutDownQty(sourceId, actualQty);
-                    break;
-                case "IN-OIO":
-                    //其它入库订单
-                    omFeignApi.updateOtherInPutDownQty(sourceId, actualQty);
-                    break;
-                case "IN-IPO":
-                    //入库计划
-                    inFeignApi.updatePutawayQty(opType, sourceId, actualQty);
-                    break;
-                case "IN-SWK":
-                    //收货作业
+        if(opType==(byte)2) {
+            if (StringUtils.isNotEmpty(sourceSysOrderTypeCode) && StringUtils.isNotEmpty(sourceId)) {
+                switch (sourceSysOrderTypeCode) {
+                    case "IN-PO":
+                        //采购订单
+                        omFeignApi.updatePutDownQty(sourceId, actualQty);
+                        break;
+                    case "IN-SRO":
+                        //销退订单
+                        omFeignApi.updateSalesReturnPutDownQty(sourceId, actualQty);
+                        break;
+                    case "IN-OIO":
+                        //其它入库订单
+                        omFeignApi.updateOtherInPutDownQty(sourceId, actualQty);
+                        break;
+                    case "IN-IPO":
+                        //入库计划
+                        inFeignApi.updatePutawayQty(opType, sourceId, actualQty);
+                        break;
+                    case "IN-SWK":
+                        //收货作业
 
-                    break;
-                case "IN-SPO":
-                    //收货计划
+                        break;
+                    case "IN-SPO":
+                        //收货计划
 
-                    break;
-                case "QMS-MIIO":
-                    //来料检验
-                    QmsIncomingInspectionOrder incomingOrder = new QmsIncomingInspectionOrder();
-                    incomingOrder.setIncomingInspectionOrderId(sourceId);
-                    //incomingOrder
+                        break;
+                    case "QMS-MIIO":
+                        //来料检验
+                        QmsIncomingInspectionOrder incomingOrder = new QmsIncomingInspectionOrder();
+                        incomingOrder.setIncomingInspectionOrderId(sourceId);
+                        //incomingOrder
 //                incomingOrder.setIfAllIssued((byte)0);//是否已全部下发(0-否 1-是)
-                    //qmsFeignApi.updateIfAllIssued(incomingOrder);
-                    break;
-                case "INNER-TO":
-                    //调拨单
-                    omFeignApi.updateTransferOrderPutDownQty(sourceId,actualQty);
-                    break;
-                case "OUT-SO":
-                    //销售订单
-                    omFeignApi.updateSalesOrderPutDownQty(sourceId,actualQty);
-                    break;
-                case "OUT-OOO":
-                    //其他出库单
-                    omFeignApi.updateOtherOutOrderPutDownQty(sourceId,actualQty);
-                    break;
-                case "OUT-PRO":
-                    //采购退货出库
-                    omFeignApi.updatePurchaseReturnOrderPutDownQty(sourceId,actualQty);
-                    break;
-                case "OUT-PSLO":
-                    //备料计划
+                        //qmsFeignApi.updateIfAllIssued(incomingOrder);
+                        break;
+                    case "INNER-TO":
+                        //调拨单
+                        omFeignApi.updateTransferOrderPutDownQty(sourceId, actualQty);
+                        break;
+                    case "OUT-SO":
+                        //销售订单
+                        omFeignApi.updateSalesOrderPutDownQty(sourceId, actualQty);
+                        break;
+                    case "OUT-OOO":
+                        //其他出库单
+                        omFeignApi.updateOtherOutOrderPutDownQty(sourceId, actualQty);
+                        break;
+                    case "OUT-PRO":
+                        //采购退货出库
+                        omFeignApi.updatePurchaseReturnOrderPutDownQty(sourceId, actualQty);
+                        break;
+                    case "OUT-PSLO":
+                        //备料计划
 
-                    break;
-                default:
-                    break;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
         //核心单据回写
-        if(StringUtils.isNotEmpty(coreSourceTypeCode)) {
-            switch (coreSourceTypeCode) {
-                case "IN-PO":
-                    //采购订单
-                    omFeignApi.updatePutawayQty(opType, coreSourceId, actualQty);
-                    break;
-                case "IN-SRO":
-                    //销退订单
-                    omFeignApi.updateSalesReturnPutQty(sourceId, actualQty);
-                    break;
-                case "IN-OIO":
-                    //其它入库订单
+        if(opType==(byte)1) {
+            if (StringUtils.isNotEmpty(coreSourceTypeCode) && StringUtils.isNotEmpty(coreSourceId)) {
+                switch (coreSourceTypeCode) {
+                    case "IN-PO":
+                        //采购订单
+                        omFeignApi.updatePutawayQty(opType, coreSourceId, actualQty);
+                        break;
+                    case "IN-SRO":
+                        //销退订单
+                        omFeignApi.updateSalesReturnPutQty(coreSourceId, actualQty);
+                        break;
+                    case "IN-OIO":
+                        //其它入库订单
+                        omFeignApi.updateOtherInPutQty(coreSourceId, actualQty);
+                        break;
+                    case "IN-IPO":
+                        //入库计划
+                        inFeignApi.updatePutawayQty(opType, sourceId, actualQty);
+                        break;
+                    case "IN-SWK":
+                        //收货作业
 
-                    break;
-                case "IN-IPO":
-                    //入库计划
+                        break;
+                    case "IN-SPO":
+                        //收货计划
 
-                    break;
-                case "IN-SWK":
-                    //收货作业
+                        break;
+                    case "QMS-MIIO":
+                        //来料检验
+                        QmsIncomingInspectionOrder incomingOrder = new QmsIncomingInspectionOrder();
+                        incomingOrder.setIncomingInspectionOrderId(sourceId);
 
-                    break;
-                case "IN-SPO":
-                    //收货计划
-
-                    break;
-                case "QMS-MIIO":
-                    //来料检验
-                    QmsIncomingInspectionOrder incomingOrder = new QmsIncomingInspectionOrder();
-                    incomingOrder.setIncomingInspectionOrderId(sourceId);
-
-                    break;
-                default:
-                    break;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
         return num;
@@ -2628,7 +2638,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 }
 
                 // 物料是否相等
-                if(wmsInnerJobOrderDet.getMaterialId().longValue()!=swmsInnerMaterialBarcode.getMaterialId().longValue()){
+                if(wmsInnerJobOrderDet.getMaterialId().longValue()!=reOrderList.get(0).getMaterialId().longValue()){
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码相应物料与当前上架物料不相等");
                 }
 
@@ -2717,14 +2727,16 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             qty=qty.add(StringUtils.isEmpty(saveHaveInnerJobOrderDto.getMaterialQty())?new BigDecimal(0):saveHaveInnerJobOrderDto.getMaterialQty());
         }
 
+        if (qty.compareTo(BigDecimal.ZERO)==0) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码总数量等于0");
+        }
+
         ResponseEntity<BaseStorage> rbaseStorage=baseFeignApi.detail(inStorageId);
         if(StringUtils.isEmpty(rbaseStorage.getData())){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"扫描的库位无效");
         }
         BaseStorage baseStorage=rbaseStorage.getData();
-        if (StringUtils.isEmpty(qty)) {
-            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"上架数量不能小于1");
-        }
+
 
         WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderDetMapper.selectByPrimaryKey(jobOrderDetId);
         if(StringUtils.isEmpty(wmsInnerJobOrderDet)){

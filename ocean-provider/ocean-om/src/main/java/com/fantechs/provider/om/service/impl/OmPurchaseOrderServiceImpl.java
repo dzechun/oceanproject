@@ -656,7 +656,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                 }
             }
             else{
-                omPurchaseOrderDet.setActualQty(omPurchaseOrderDet.getActualQty().subtract(putawayQty));
+                //omPurchaseOrderDet.setActualQty(omPurchaseOrderDet.getActualQty().subtract(putawayQty));
             }
 
             omPurchaseOrderDet.setModifiedUserId(sysUser.getUserId());

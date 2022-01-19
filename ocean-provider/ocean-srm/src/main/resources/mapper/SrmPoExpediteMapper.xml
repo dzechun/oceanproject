@@ -28,7 +28,7 @@
     <result column="supplier_code" jdbcType="VARCHAR" property="supplierCode" />
     <result column="order_date" jdbcType="TIMESTAMP" property="orderDate" />
     <result column="purchase_dept_name" jdbcType="VARCHAR" property="purchaseDeptName" />
-    <result column="makeOrder_user_name" jdbcType="VARCHAR" property="makeOrderUserName" />
+    <result column="make_order_user_name" jdbcType="VARCHAR" property="makeOrderUserName" />
     <result column="make_order_date" jdbcType="TIMESTAMP" property="makeOrderDate" />
     <result column="order_remark" jdbcType="VARCHAR" property="orderRemark" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
@@ -67,8 +67,8 @@
     opo.order_status,
     opo.order_date,
     bd.dept_name as purchase_dept_name,
-    mosu.user_name as makeOrder_user_name,
-    opo.make_order_date,
+    csu.nick_name as make_order_user_name,
+    opo.create_time as make_order_date,
     opo.remark as order_remark
     from srm_po_expedite spe
     left join om_purchase_order opo on opo.purchase_order_id = spe.purchase_order_id
@@ -76,7 +76,6 @@
     left join sys_user csu on csu.user_id = spe.create_user_id
     left join sys_user msu on msu.user_id = spe.modified_user_id
     left join base_dept bd on bd.dept_id = opo.purchase_dept_id
-    left join sys_user mosu on mosu.user_id = opo.make_order_user_id
     left join base_address ba on ba.address_id = bs.address_id
     <where>
       <if test="supplierId != null">
@@ -113,10 +112,10 @@
         and spe.remark like CONCAT('%', #{remark}, '%')
       </if>
       <if test="orderDateStart != null and orderDateStart != '' and orderDateEnd != null and orderDateEnd != ''">
-        and date_format(spe.order_date, '%Y-%m-%d') between #{orderDateStart} and #{orderDateEnd}
+        and date_format(opo.order_date, '%Y-%m-%d') between #{orderDateStart} and #{orderDateEnd}
       </if>
       <if test="makeOrderDateStart != null and makeOrderDateStart != '' and makeOrderDateEnd != null and makeOrderDateEnd != ''">
-        and date_format(spe.make_order_date, '%Y-%m-%d') between #{makeOrderDateStart} and #{makeOrderDateEnd}
+        and date_format(opo.create_time, '%Y-%m-%d') between #{makeOrderDateStart} and #{makeOrderDateEnd}
       </if>
       <if test="modifiedTimeStart != null and modifiedTimeStart != '' and modifiedTimeEnd != null and modifiedTimeEnd != ''">
         and date_format(spe.modified_time, '%Y-%m-%d') between #{modifiedTimeStart} and #{modifiedTimeEnd}
