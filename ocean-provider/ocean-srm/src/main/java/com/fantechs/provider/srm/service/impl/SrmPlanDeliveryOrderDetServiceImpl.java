@@ -54,7 +54,6 @@ public class SrmPlanDeliveryOrderDetServiceImpl extends BaseService<SrmPlanDeliv
 
 
             SrmInAsnOrderDto srmInAsnOrderDto = new SrmInAsnOrderDto();
-            srmInAsnOrderDto.setOrderStatus((byte) 1);
 
             Example example1 = new Example(SrmPlanDeliveryOrder.class);
             example1.createCriteria().andEqualTo("planDeliveryOrderId",list.get(0).getPlanDeliveryOrderId());
@@ -62,8 +61,13 @@ public class SrmPlanDeliveryOrderDetServiceImpl extends BaseService<SrmPlanDeliv
             if (StringUtils.isNotEmpty(srmPlanDeliveryOrders)) {
                 srmInAsnOrderDto.setSupplierId(srmPlanDeliveryOrders.get(0).getSupplierId());
             }
-            List<SrmInAsnOrderDetDto> srmInAsnOrderDetDtos = new ArrayList<>();
+            srmInAsnOrderDto.setOrderStatus((byte) 1);
+            srmInAsnOrderDto.setSourceOrderId(srmPlanDeliveryOrders.get(0).getPlanDeliveryOrderId());
+            srmInAsnOrderDto.setSourceSysOrderTypeCode(srmPlanDeliveryOrders.get(0).getSysOrderTypeCode());
+            srmInAsnOrderDto.setCorSourceSysOrderTypeCode(srmPlanDeliveryOrders.get(0).getCorSourceSysOrderTypeCode());
 
+
+            List<SrmInAsnOrderDetDto> srmInAsnOrderDetDtos = new ArrayList<>();
             List<Long> idList = new ArrayList<>();
             for (SrmPlanDeliveryOrderDetDto srmPlanDeliveryOrderDetDto : list) {
                 if (srmPlanDeliveryOrderDetDto.getIfCreateAsn() == 1) {
@@ -77,6 +81,8 @@ public class SrmPlanDeliveryOrderDetServiceImpl extends BaseService<SrmPlanDeliv
                 SrmInAsnOrderDetDto srmInAsnOrderDetDto = new SrmInAsnOrderDetDto();
                 srmInAsnOrderDetDto.setSourceOrderId(srmPlanDeliveryOrderDetDto.getPurchaseOrderDetId());
                 srmInAsnOrderDetDto.setSourceId(srmPlanDeliveryOrderDetDto.getPlanDeliveryOrderDetId());
+                srmInAsnOrderDetDto.setCoreSourceId(srmPlanDeliveryOrderDetDto.getPurchaseOrderDetId());
+                srmInAsnOrderDetDto.setCoreSourceOrderCode(srmPlanDeliveryOrderDetDto.getPurchaseOrderCode());
                 srmInAsnOrderDetDto.setWarehouseId(srmPlanDeliveryOrderDetDto.getWarehouseId());
                 srmInAsnOrderDetDto.setMaterialId(srmPlanDeliveryOrderDetDto.getMaterialId());
                 srmInAsnOrderDetDto.setDeliveryQty(srmPlanDeliveryOrderDetDto.getPlanDeliveryQty());

@@ -124,16 +124,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
         srmInAsnOrderDto.setOrgId(user.getOrganizationId());
 
         if(StringUtils.isEmpty(srmInAsnOrderDto.getSupplierId())) {
-            //保存供应商
-            SearchBaseSupplierReUser searchBaseSupplierReUser = new SearchBaseSupplierReUser();
-            searchBaseSupplierReUser.setUserId(user.getUserId());
-            searchBaseSupplierReUser.setOrgId(user.getOrganizationId());
-            List<BaseSupplierReUser> baseSupplierReUsers = baseFeignApi.findList(searchBaseSupplierReUser).getData();
-            if (StringUtils.isNotEmpty(baseSupplierReUsers) &&  baseSupplierReUsers.size() == 1)
-                srmInAsnOrderDto.setSupplierId(baseSupplierReUsers.get(0).getSupplierId());
-            else
-                throw new BizErrorException("未查询到订单及用户绑定的供应商");
-
+            srmInAsnOrderDto.setSupplierId(srmInAsnOrderDto.getSrmInAsnOrderDetDtos().get(0).getSupplierId());
         }
         int i = srmInAsnOrderMapper.insertUseGeneratedKeys(srmInAsnOrderDto);
 
@@ -276,18 +267,18 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
                 srmInAsnOrderDetMapper.insertList(addlist);
         }
 
-        //返写采购订单累计交货数量
-        if(srmInAsnOrderDto.getOrderStatus() == 2){
+        //如果订单为送货计划下推，返写送货计划
+        if(srmInAsnOrderDto.getOrderStatus() == 2 && "SRM-DPO".equals(srmInAsnOrderDto.getSourceSysOrderTypeCode())){
             for(SrmInAsnOrderDetDto detDto : srmInAsnOrderDto.getSrmInAsnOrderDetDtos()) {
                 SearchOmPurchaseOrderDet searchOmPurchaseOrderDet = new SearchOmPurchaseOrderDet();
                 searchOmPurchaseOrderDet.setPurchaseOrderDetId(detDto.getOrderDetId());
                 List<OmPurchaseOrderDetDto> datas = omFeignApi.findList(searchOmPurchaseOrderDet).getData();
                 if(StringUtils.isEmpty(datas)) {
                     OmPurchaseOrderDetDto orderDet = datas.get(0);
-                    if(StringUtils.isEmpty(orderDet.getTotalIssueQty()))
+                    if(StringUtils.isEmpty(orderDet.getTotalReceivingQty()))
                         orderDet.setTotalPlanDeliveryQty(detDto.getDeliveryQty());
                     else
-                        orderDet.setTotalPlanDeliveryQty(orderDet.getTotalPlanDeliveryQty().add(detDto.getDeliveryQty()));
+                        orderDet.setTotalPlanDeliveryQty(orderDet.getTotalReceivingQty().add(detDto.getDeliveryQty()));
                     omFeignApi.update(orderDet);
                 }
             }
