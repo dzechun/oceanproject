@@ -588,29 +588,70 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                     WmsInnerMaterialBarcode cartonCode = new WmsInnerMaterialBarcode();
                     WmsInnerMaterialBarcode colorBoxCode = new WmsInnerMaterialBarcode();
 
-                    if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeImport.getPalletCode())) {
-                        barcodeExample.createCriteria().andEqualTo("palletCode",wmsInnerMaterialBarcodeImport.getPalletCode())
-                                .andEqualTo("barcodeType",4);
+                    //SN添加
+                    if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeImport.getBarcode())) {
+                        barcodeExample.createCriteria().andEqualTo("barcode",wmsInnerMaterialBarcodeImport.getBarcode())
+                                .andEqualTo("barcodeType",1);
                         List<WmsInnerMaterialBarcode> parentMaterialBarcodeList = wmsInnerMaterialBarcodeMapper.selectByExample(barcodeExample);
                         barcodeExample.clear();
                         if (StringUtils.isNotEmpty(parentMaterialBarcodeList)) {
-                            pallet = parentMaterialBarcodeList.get(0);
-                            pallet.setMaterialQty(pallet.getMaterialQty().add(new BigDecimal(1)));
-                            wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(pallet);
+//                            if (StringUtils.isNotEmpty(pallet)) {
+//                                pallet.setMaterialQty(pallet.getMaterialQty().subtract(new BigDecimal(1)));
+//                                wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(pallet);
+//                            }
+//                            if (StringUtils.isNotEmpty(cartonCode)) {
+//                                cartonCode.setMaterialQty(cartonCode.getMaterialQty().subtract(new BigDecimal(1)));
+//                                wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(cartonCode);
+//                            }
+//                            if (StringUtils.isNotEmpty(colorBoxCode)) {
+//                                colorBoxCode.setMaterialQty(colorBoxCode.getMaterialQty().subtract(new BigDecimal(1)));
+//                                wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(colorBoxCode);
+//                            }
+                            fail.add(i + 1);
+                            continue;
                         }else {
-                            BeanUtil.copyProperties(parentBarcode,pallet);
-                            pallet.setBarcodeType((byte) 4);
-                            pallet.setCartonCode(null);
-                            pallet.setBarcode(null);
-                            pallet.setColorBoxCode(null);
-                            pallet.setMaterialQty(new BigDecimal(1));
-                            pallet.setSupplierId(user.getSupplierId());
-                            wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(pallet);
+                            parentBarcode.setBarcodeType((byte) 1);
+                            colorBoxCode.setSupplierId(user.getSupplierId());
+                            wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(parentBarcode);
 
                             //添加导入条码履历与单据中间表数据
-                            addHt(pallet,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
+                            addHt(parentBarcode,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
                         }
                     }
+
+                    //彩盒码添加
+                    if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeImport.getColorBoxCode())) {
+                        barcodeExample.createCriteria().andEqualTo("colorBoxCode",wmsInnerMaterialBarcodeImport.getColorBoxCode())
+                                .andEqualTo("barcodeType",2);
+                        List<WmsInnerMaterialBarcode> parentMaterialBarcodeList = wmsInnerMaterialBarcodeMapper.selectByExample(barcodeExample);
+                        barcodeExample.clear();
+                        if (StringUtils.isNotEmpty(parentMaterialBarcodeList)) {
+//                            if (StringUtils.isNotEmpty(pallet)) {
+//                                pallet.setMaterialQty(pallet.getMaterialQty().subtract(new BigDecimal(1)));
+//                                wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(pallet);
+//                            }
+//                            if (StringUtils.isNotEmpty(cartonCode)) {
+//                                cartonCode.setMaterialQty(cartonCode.getMaterialQty().subtract(new BigDecimal(1)));
+//                                wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(cartonCode);
+//                            }
+                            fail.add(i + 1);
+                            continue;
+                        }else {
+                            BeanUtil.copyProperties(parentBarcode,cartonCode);
+                            colorBoxCode.setBarcodeType((byte) 2);
+                            colorBoxCode.setPalletCode(null);
+                            colorBoxCode.setBarcode(null);
+                            colorBoxCode.setCartonCode(null);
+                            colorBoxCode.setMaterialQty(new BigDecimal(1));
+                            colorBoxCode.setSupplierId(user.getSupplierId());
+                            wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(colorBoxCode);
+                            //添加导入条码履历与单据中间表数据
+                            addHt(colorBoxCode,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
+
+                        }
+                    }
+                    boolean ifAdd =false;
+                    //箱码添加
                     if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeImport.getCartonCode())) {
                         barcodeExample.createCriteria().andEqualTo("cartonCode",wmsInnerMaterialBarcodeImport.getCartonCode())
                                 .andEqualTo("barcodeType",3);
@@ -631,66 +672,33 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                             wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(cartonCode);
                             //添加导入条码履历与单据中间表数据
                             addHt(cartonCode,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
+                            ifAdd = true;
                         }
 
                     }
-                    if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeImport.getColorBoxCode())) {
-                        barcodeExample.createCriteria().andEqualTo("colorBoxCode",wmsInnerMaterialBarcodeImport.getColorBoxCode())
-                                .andEqualTo("barcodeType",2);
+
+                    //栈板添加
+                    if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeImport.getPalletCode())) {
+                        barcodeExample.createCriteria().andEqualTo("palletCode",wmsInnerMaterialBarcodeImport.getPalletCode())
+                                .andEqualTo("barcodeType",4);
                         List<WmsInnerMaterialBarcode> parentMaterialBarcodeList = wmsInnerMaterialBarcodeMapper.selectByExample(barcodeExample);
                         barcodeExample.clear();
-                        if (StringUtils.isNotEmpty(parentMaterialBarcodeList)) {
-                            if (StringUtils.isNotEmpty(pallet)) {
-                                pallet.setMaterialQty(pallet.getMaterialQty().subtract(new BigDecimal(1)));
-                                wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(pallet);
-                            }
-                            if (StringUtils.isNotEmpty(cartonCode)) {
-                                cartonCode.setMaterialQty(cartonCode.getMaterialQty().subtract(new BigDecimal(1)));
-                                wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(cartonCode);
-                            }
-                            fail.add(i + 1);
-                            continue;
-                        }else {
-                            BeanUtil.copyProperties(parentBarcode,cartonCode);
-                            colorBoxCode.setBarcodeType((byte) 2);
-                            colorBoxCode.setPalletCode(null);
-                            colorBoxCode.setBarcode(null);
-                            colorBoxCode.setCartonCode(null);
-                            colorBoxCode.setMaterialQty(new BigDecimal(1));
-                            colorBoxCode.setSupplierId(user.getSupplierId());
-                            wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(colorBoxCode);
-                            //添加导入条码履历与单据中间表数据
-                            addHt(colorBoxCode,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
-                        }
-                    }
-
-                    if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeImport.getBarcode())) {
-                        barcodeExample.createCriteria().andEqualTo("barcode",wmsInnerMaterialBarcodeImport.getBarcode())
-                                .andEqualTo("barcodeType",1);
-                        List<WmsInnerMaterialBarcode> parentMaterialBarcodeList = wmsInnerMaterialBarcodeMapper.selectByExample(barcodeExample);
-                        barcodeExample.clear();
-                        if (StringUtils.isNotEmpty(parentMaterialBarcodeList)) {
-                            if (StringUtils.isNotEmpty(pallet)) {
-                                pallet.setMaterialQty(pallet.getMaterialQty().subtract(new BigDecimal(1)));
-                                wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(pallet);
-                            }
-                            if (StringUtils.isNotEmpty(cartonCode)) {
-                                cartonCode.setMaterialQty(cartonCode.getMaterialQty().subtract(new BigDecimal(1)));
-                                wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(cartonCode);
-                            }
-                            if (StringUtils.isNotEmpty(colorBoxCode)) {
-                                colorBoxCode.setMaterialQty(colorBoxCode.getMaterialQty().subtract(new BigDecimal(1)));
-                                wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(colorBoxCode);
-                            }
-                            fail.add(i + 1);
-                            continue;
-                        }else {
-                            parentBarcode.setBarcodeType((byte) 1);
-                            colorBoxCode.setSupplierId(user.getSupplierId());
-                            wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(parentBarcode);
+                        if (StringUtils.isNotEmpty(parentMaterialBarcodeList) && ifAdd) {
+                            pallet = parentMaterialBarcodeList.get(0);
+                            pallet.setMaterialQty(pallet.getMaterialQty().add(new BigDecimal(1)));
+                            wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(pallet);
+                        }else if (StringUtils.isEmpty(parentMaterialBarcodeList)){
+                            BeanUtil.copyProperties(parentBarcode,pallet);
+                            pallet.setBarcodeType((byte) 4);
+                            pallet.setCartonCode(null);
+                            pallet.setBarcode(null);
+                            pallet.setColorBoxCode(null);
+                            pallet.setMaterialQty(new BigDecimal(1));
+                            pallet.setSupplierId(user.getSupplierId());
+                            wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(pallet);
 
                             //添加导入条码履历与单据中间表数据
-                            addHt(parentBarcode,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
+                            addHt(pallet,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
                         }
                     }
                     success++;

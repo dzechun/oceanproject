@@ -120,6 +120,7 @@
         LEFT JOIN base_organization bo ON wipod.org_id = bo.organization_id
         left join wms_inner_material_barcode_re_order wimbro on wimbro.order_code = wijo.job_order_code
         left join wms_inner_material_barcode wimb on wimb.material_barcode_id = wimbro.material_barcode_id and wimb.material_id = wipod.material_id
+        and wimb.barcode_type = 1
         <where>
             <if test="jobOrderId!=null and jobOrderId!=''">
                 and wipod.job_order_id = #{jobOrderId}
