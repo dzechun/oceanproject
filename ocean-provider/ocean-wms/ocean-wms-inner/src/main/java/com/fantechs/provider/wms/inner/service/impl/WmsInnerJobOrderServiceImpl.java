@@ -2966,7 +2966,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     SearchWmsInnerMaterialBarcodeReOrder sReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
                     sReOrder.setOrderTypeCode("IN-IWK");
                     sReOrder.setOrderId(wmsInnerJobOrder.getJobOrderId());
-                    sReOrder.setMaterialBarcodeId(item.getMaterialBarcodeId());
+                    sReOrder.setMaterialBarcodeId(materialBarcodeDto.getMaterialBarcodeId());
                     List<WmsInnerMaterialBarcodeReOrderDto> reOrderDtoList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sReOrder));
                     if(reOrderDtoList.size()<=0){
                         throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"条码关系表找不到此条码数据 条码ID-->"+item.getMaterialBarcodeId().toString());
