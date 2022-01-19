@@ -41,7 +41,7 @@ import java.util.Map;
  * Created by Mr.Lei on 2021/05/06.
  */
 @RestController
-@Api(tags = "上架作业")
+@Api(tags = "移位作业")
 @RequestMapping("/wmsInnerShiftWork")
 @Validated
 @Slf4j
