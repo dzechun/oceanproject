@@ -7,10 +7,12 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcode;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
+import com.fantechs.provider.wms.inner.mapper.WmsInnerMaterialBarcodeMapper;
 import com.fantechs.provider.wms.inner.service.WmsInnerInventoryDetService;
 import com.fantechs.provider.wms.inner.service.WmsInnerMaterialBarcodeService;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -32,6 +35,8 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
     private WmsInnerInventoryDetMapper wmsInnerInventoryDetMapper;
     @Resource
     private WmsInnerMaterialBarcodeService wmsInnerMaterialBarcodeService;
+    @Resource
+    private WmsInnerMaterialBarcodeMapper wmsInnerMaterialBarcodeMapper;
 
     @Override
     public List<WmsInnerInventoryDetDto> findList(Map<String, Object> map) {
@@ -139,7 +144,7 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
         if(StringUtils.isNotEmpty(list)){
             for(String code : codes){
                 for(WmsInnerMaterialBarcodeDto dto : list) {
-                    if(dto.getIfScan() == 1) throw new BizErrorException(ErrorCodeEnum.OPT20012001,"该条码或该条码下的其他条码已经被扫描");
+                    if(StringUtils.isNotEmpty(dto.getIfScan()) && dto.getIfScan() == 1) throw new BizErrorException(ErrorCodeEnum.OPT20012001,"该条码或该条码下的其他条码已经被扫描");
                     m.clear();
                     m.put("materialBarcodeId",dto.getMaterialBarcodeId());
                     List<WmsInnerInventoryDetDto> det = wmsInnerInventoryDetMapper.findList(m);
@@ -193,4 +198,52 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
             wmsInnerMaterialBarcodeService.batchUpdate(wmsInnerMaterialBarcodeDtoList);
         return wmsInnerInventoryDetDtos;
     }
+
+
+    @Override
+    public int isAllOutInventory(List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos) {
+        int i= 1;
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        Map<String, List<WmsInnerInventoryDetDto>> palletCodes =
+                wmsInnerInventoryDetDtos.stream().collect(Collectors.groupingBy(WmsInnerInventoryDetDto::getPalletCode));
+        Set<String> palletCodeList = palletCodes.keySet();
+        Example example = new Example(WmsInnerMaterialBarcode.class);
+        for (String palletCode : palletCodeList) {
+            example.clear();
+            example.createCriteria()
+                    .andEqualTo("palletCode",palletCode)
+                    .andEqualTo("orgId",sysUser.getOrganizationId());
+           int palletNum = wmsInnerMaterialBarcodeMapper.selectCountByExample(example);
+           if(palletCodes.get(palletCode).size() + 1 != palletNum)
+               throw new BizErrorException("栈板码对应的条码数量错误，栈板码为："+palletCode);
+        }
+
+        Map<String, List<WmsInnerInventoryDetDto>> cartonCodes =
+                palletCodes.get(null).stream().collect(Collectors.groupingBy(WmsInnerInventoryDetDto::getCartonCode));
+        Set<String> cartonCodeList = cartonCodes.keySet();
+        for (String cartonCode : cartonCodeList) {
+            example.clear();
+            example.createCriteria()
+                    .andEqualTo("cartonCode",cartonCode)
+                    .andEqualTo("orgId",sysUser.getOrganizationId());
+            int palletNum = wmsInnerMaterialBarcodeMapper.selectCountByExample(example);
+            if(palletCodes.get(cartonCode).size() + 1 != palletNum)
+                throw new BizErrorException("箱码对应的条码数量错误，箱码为："+cartonCode);
+        }
+
+        Map<String, List<WmsInnerInventoryDetDto>> colorBoxCodes =
+                cartonCodes.get(null).stream().collect(Collectors.groupingBy(WmsInnerInventoryDetDto::getColorBoxCode));
+        Set<String> colorBoxCodeList = colorBoxCodes.keySet();
+        for (String colorBoxCode : colorBoxCodeList) {
+            example.clear();
+            example.createCriteria()
+                    .andEqualTo("colorBoxCode",colorBoxCode)
+                    .andEqualTo("orgId",sysUser.getOrganizationId());
+            int palletNum = wmsInnerMaterialBarcodeMapper.selectCountByExample(example);
+            if(palletCodes.get(colorBoxCode).size() + 1 != palletNum)
+                throw new BizErrorException("彩盒码对应的条码数量错误，彩盒码为："+colorBoxCode);
+        }
+        return i;
+    }
+
 }

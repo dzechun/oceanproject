@@ -21,4 +21,11 @@ public interface WmsInnerInventoryDetService extends IService<WmsInnerInventoryD
     WmsInnerInventoryDet findByOne(String barCode);
 
     List<WmsInnerInventoryDetDto> findListByBarCode(List<String> codes);
+
+    /**
+     * 查询是否整单出库
+     *
+     * */
+
+    int isAllOutInventory(List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos);
 }

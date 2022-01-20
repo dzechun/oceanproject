@@ -169,14 +169,6 @@ public interface WmsInnerShiftWorkService extends IService<WmsInnerJobOrder> {
 
     int cancelJobOrder(List<EngPackingOrderTakeCancel> engPackingOrderTakeCancels);
 
-    /**
-     * 库容入库规则判断入库数量
-     * @param materialId
-     * @param storageId
-     * @param qty
-     * @return
-     */
-    Boolean storageCapacity(Long materialId, Long storageId, BigDecimal qty);
 
     Map<String, Object> importExcel(List<WmsInnerJobOrderImport> wmsInnerJobOrderImportList) throws ParseException;
 
