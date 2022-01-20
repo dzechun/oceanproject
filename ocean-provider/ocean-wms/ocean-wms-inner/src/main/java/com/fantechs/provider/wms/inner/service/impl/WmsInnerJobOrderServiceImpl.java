@@ -2695,6 +2695,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         if(collet.size()>1){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"系统条码和非系统条码不能一起提交");
         }
+        //yyyy-MM-dd
+        //EEE MMM dd HH:mm:ss zzz yyyy
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         //是否系统条码(0-否 1-是)
         String ifSysBarcode=list.get(0).getIfSysBarcode();
@@ -2846,6 +2848,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         for (SaveHaveInnerJobOrderDto item : list) {
             if (ifSysBarcode.equals("0")) {
                 //非系统条码
+                //yyyy-MM-dd
+                sdf = new SimpleDateFormat("yyyy-MM-dd");
                 WmsInnerMaterialBarcode wmsInnerMaterialBarcode = new WmsInnerMaterialBarcode();
                 wmsInnerMaterialBarcode.setMaterialId(wmsInnerJobOrderDet.getMaterialId());
                 wmsInnerMaterialBarcode.setBarcode(item.getBarcode());
@@ -2941,6 +2945,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     WmsInnerMaterialBarcode upBarcode=new WmsInnerMaterialBarcode();
                     upBarcode.setMaterialBarcodeId(materialBarcodeDto.getMaterialBarcodeId());
                     upBarcode.setBarcodeStatus((byte)5);
+                    upBarcode.setIfScan((byte)0);//解锁
                     upBarcode.setModifiedUserId(sysUser.getUserId());
                     upBarcode.setModifiedTime(new Date());
                     wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(upBarcode);
