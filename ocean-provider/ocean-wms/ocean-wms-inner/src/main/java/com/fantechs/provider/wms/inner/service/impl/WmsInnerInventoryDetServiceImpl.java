@@ -130,32 +130,63 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
     @Override
     public List<WmsInnerInventoryDetDto> findListByBarCode(List<String> codes) {
         List<WmsInnerMaterialBarcodeDto> list = wmsInnerMaterialBarcodeService.findListByCode(codes);
+        List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos = new ArrayList<>();
         List<Long> barCodes = new ArrayList<>();
+        Map m = new HashMap();
+        Map map = new HashMap();
         if(StringUtils.isNotEmpty(list)){
             for(String code : codes){
                 for(WmsInnerMaterialBarcodeDto dto : list) {
                     if (code.equals(dto.getBarcode())) {
-                        barCodes.add(dto.getMaterialBarcodeId());
+                        m.clear();
+                        m.put("materialBarcodeId",dto.getMaterialBarcodeId());
+                        List<WmsInnerInventoryDetDto> det = wmsInnerInventoryDetMapper.findList(m);
+                        wmsInnerInventoryDetDtos.add(det.get(0));
                     }else if(code.equals(dto.getColorBoxCode())){
                         //彩盒码,箱码为空
-                        if(StringUtils.isEmpty(dto.getBarcode()))
-                            barCodes.add(dto.getMaterialBarcodeId());
+                        m.clear();
+                        if(StringUtils.isEmpty(dto.getBarcode())) {
+                            m.put("materialBarcodeId",dto.getMaterialBarcodeId());
+                            List<WmsInnerInventoryDetDto> det = wmsInnerInventoryDetMapper.findList(m);
+                            map.put("colorBoxCode",dto.getBarcode());
+                            Integer i = wmsInnerInventoryDetMapper.materialQty(map);
+                            WmsInnerInventoryDetDto wmsInnerInventoryDetDto = det.get(0);
+                            wmsInnerInventoryDetDto.setMaterialTotalQty(new BigDecimal(i));
+                            wmsInnerInventoryDetDtos.add(wmsInnerInventoryDetDto);
+                        }
+
                     }else if(code.equals(dto.getCartonCode())){
                         //箱码,箱码为空
-                        if(StringUtils.isEmpty(dto.getBarcode()) ||  StringUtils.isEmpty(dto.getColorBoxCode()))
-                            barCodes.add(dto.getMaterialBarcodeId());
+                        m.clear();
+                        if(StringUtils.isEmpty(dto.getBarcode())  &&  StringUtils.isEmpty(dto.getColorBoxCode())) {
+                            m.put("materialBarcodeId",dto.getMaterialBarcodeId());
+                            List<WmsInnerInventoryDetDto> det = wmsInnerInventoryDetMapper.findList(m);
+                            map.put("cartonCode",dto.getBarcode());
+                            Integer i = wmsInnerInventoryDetMapper.materialQty(map);
+                            WmsInnerInventoryDetDto wmsInnerInventoryDetDto = det.get(0);
+                            wmsInnerInventoryDetDto.setMaterialTotalQty(new BigDecimal(i));
+                            wmsInnerInventoryDetDtos.add(wmsInnerInventoryDetDto);
+                        }
+
                     }else if(code.equals(dto.getPalletCode())){
                         //栈板码,箱码为空
-                        if(StringUtils.isEmpty(dto.getBarcode()) ||  StringUtils.isEmpty(dto.getColorBoxCode()) || StringUtils.isEmpty(dto.getCartonCode()))
-                            barCodes.add(dto.getMaterialBarcodeId());
+                        m.clear();
+                        if(StringUtils.isEmpty(dto.getBarcode()) &&  StringUtils.isEmpty(dto.getColorBoxCode())  && StringUtils.isEmpty(dto.getCartonCode())) {
+                            m.put("materialBarcodeId",dto.getMaterialBarcodeId());
+                            List<WmsInnerInventoryDetDto> det = wmsInnerInventoryDetMapper.findList(m);
+                            map.put("palletCode",dto.getPalletCode());
+                            Integer i = wmsInnerInventoryDetMapper.materialQty(map);
+                            WmsInnerInventoryDetDto wmsInnerInventoryDetDto = det.get(0);
+                            wmsInnerInventoryDetDto.setMaterialTotalQty(new BigDecimal(i));
+                            wmsInnerInventoryDetDtos.add(wmsInnerInventoryDetDto);
+                        }
                     }
                 }
             }
         }
-        if(StringUtils.isEmpty(barCodes))
-            throw new BizErrorException("未在条码表中查询到相应的条码信息");
-        Map map = new HashMap();
-        map.put("materialBarcodeIdList",barCodes);
-        return wmsInnerInventoryDetMapper.findList(map);
+        if(StringUtils.isEmpty(wmsInnerInventoryDetDtos))
+            throw new BizErrorException("未在库存明细中查询到相应的条码信息");
+
+        return wmsInnerInventoryDetDtos;
     }
 }
