@@ -52,6 +52,7 @@ public class BaseOrderFlowServiceImpl extends BaseService<BaseOrderFlow> impleme
 
         Example example = new Example(BaseOrderFlow.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("businessType", record.getBusinessType());//业务类型
         criteria.andEqualTo("orderTypeCode", record.getOrderTypeCode());//单据节点编码
         criteria.andEqualTo("orderFlowDimension", record.getOrderFlowDimension());//单据流维度
@@ -90,6 +91,7 @@ public class BaseOrderFlowServiceImpl extends BaseService<BaseOrderFlow> impleme
 
         Example example = new Example(BaseOrderFlow.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("businessType", entity.getBusinessType());//业务类型
         criteria.andEqualTo("orderTypeCode", entity.getOrderTypeCode());//单据节点
         criteria.andEqualTo("orderFlowDimension", entity.getOrderFlowDimension());//单据流维度
