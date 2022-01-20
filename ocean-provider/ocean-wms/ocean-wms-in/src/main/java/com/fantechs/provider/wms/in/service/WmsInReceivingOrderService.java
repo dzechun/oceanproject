@@ -1,5 +1,6 @@
 package com.fantechs.provider.wms.in.service;
 
+import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderBarcode;
 import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.imports.WmsInReceivingOrderImport;
 import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrder;
@@ -18,4 +19,7 @@ public interface WmsInReceivingOrderService extends IService<WmsInReceivingOrder
     Map<String, Object> importExcel(List<WmsInReceivingOrderImport> list);
 
     int pushDown(String ids);
+
+
+    List<WmsInReceivingOrderBarcode> scanBarcode(String barcode);
 }

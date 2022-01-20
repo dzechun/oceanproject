@@ -24,4 +24,13 @@ public class WmsInReceivingOrderBarcode implements Serializable {
 
     @ApiModelProperty(name = "materialQty",value = "物料数量")
     private BigDecimal materialQty;
+
+    @ApiModelProperty(name = "barcodeType",value = "条码类型(1-SN码 2-彩盒号 3-箱号 4-栈板号)")
+    private Byte barcodeType;
+
+    @ApiModelProperty(name = "materialId",value = "物料id")
+    private Long materialId;
+
+    @ApiModelProperty(name = "materialCode",value = "物料编码")
+    private String materialCode;
 }
