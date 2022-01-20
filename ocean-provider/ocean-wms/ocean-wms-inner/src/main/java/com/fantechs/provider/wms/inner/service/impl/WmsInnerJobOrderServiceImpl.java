@@ -2409,51 +2409,29 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             if(StringUtils.isEmpty(wmsInnerJobOrderDet)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"作业单明细ID找不到对应的作业单明细");
             }
-            //单据类型
-            String sourceSysOrderTypeCode=wmsInnerJobOrder.getSourceSysOrderTypeCode();
-            if(wmsInnerJobOrder.getSourceBigType()==((byte)2)){
-                // SELF-CRT 单据类型 自建
-                SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
-                sBarcodeReOrder.setOrderTypeCode("IN-IWK");
-                sBarcodeReOrder.setMaterialBarcodeId(materialBarcodeId);
-                sBarcodeReOrder.setOrderId(orderId);//上架单表头ID
-                List<WmsInnerMaterialBarcodeReOrderDto> reOrderList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
-                if(reOrderList.size()<=0){
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"自建的上架单未找到此条码数据-->"+barCode);
-                }
 
-                // 物料是否相等
-                if(wmsInnerJobOrderDet.getMaterialId().longValue()!=materialId.longValue()){
-                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码相应物料与当前上架物料不相等");
-                }
-
-                WmsInnerMaterialBarcodeReOrderDto reOrderDto=reOrderList.get(0);
-                if(reOrderDto.getScanStatus()>(byte)1){
-                    throw new BizErrorException(ErrorCodeEnum.PDA40012001.getCode(),"条码已扫描-->"+barCode);
-                }
-
+            SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
+            sBarcodeReOrder.setOrderTypeCode("IN-IWK");
+            sBarcodeReOrder.setMaterialBarcodeId(materialBarcodeId);
+            sBarcodeReOrder.setOrderId(orderId);//上架单表头ID
+            List<WmsInnerMaterialBarcodeReOrderDto> reOrderList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
+            if(reOrderList.size()<=0){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"上架单未找到此条码数据-->"+barCode);
             }
-            else if(StringUtils.isNotEmpty(sourceSysOrderTypeCode) && wmsInnerJobOrder.getSourceBigType()!=((byte)2)) {
-                // 由上游单据下推
-                SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
-                sBarcodeReOrder.setOrderTypeCode("IN-IWK");//上架作业单类型
-                sBarcodeReOrder.setMaterialBarcodeId(materialBarcodeId);
-                sBarcodeReOrder.setOrderId(orderId);
-                List<WmsInnerMaterialBarcodeReOrderDto> reOrderList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
-                if(reOrderList.size()<=0){
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"上架单未找到此条码数据-->"+barCode);
-                }
 
-                // 物料是否相等
-                if(wmsInnerJobOrderDet.getMaterialId().longValue()!=materialId.longValue()){
-                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码相应物料与当前上架物料不相等");
-                }
+            // 物料是否相等
+            if(wmsInnerJobOrderDet.getMaterialId().longValue()!=materialId.longValue()){
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码相应物料与当前上架物料不相等");
+            }
 
-                WmsInnerMaterialBarcodeReOrderDto reOrderDto=reOrderList.get(0);
-                if(reOrderDto.getScanStatus()>(byte)1){
-                    throw new BizErrorException(ErrorCodeEnum.PDA40012001.getCode(),"条码已扫描-->"+barCode);
-                }
+            WmsInnerMaterialBarcodeReOrderDto reOrderDto=reOrderList.get(0);
+            if(reOrderDto.getScanStatus()>(byte)1){
+                throw new BizErrorException(ErrorCodeEnum.PDA40012001.getCode(),"条码已扫描-->"+barCode);
+            }
 
+            //扫描彩盒 把SN条码状态修改 不能再扫描SN
+            if(resultDto.getBarcodeType()==(byte)2){
+                
             }
 
         }
