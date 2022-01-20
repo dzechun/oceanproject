@@ -141,17 +141,21 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
                         m.clear();
                         m.put("materialBarcodeId",dto.getMaterialBarcodeId());
                         List<WmsInnerInventoryDetDto> det = wmsInnerInventoryDetMapper.findList(m);
-                        wmsInnerInventoryDetDtos.add(det.get(0));
+                        if(StringUtils.isEmpty(det))  throw new BizErrorException("未在库存中查询到该条码");
+                        WmsInnerInventoryDetDto wmsInnerInventoryDetDto = det.get(0);
+                        wmsInnerInventoryDetDto.setMaterialTotalQty(wmsInnerInventoryDetDto.getMaterialQty());
+                        wmsInnerInventoryDetDtos.add(wmsInnerInventoryDetDto);
                     }else if(code.equals(dto.getColorBoxCode())){
                         //彩盒码,箱码为空
                         m.clear();
                         if(StringUtils.isEmpty(dto.getBarcode())) {
                             m.put("materialBarcodeId",dto.getMaterialBarcodeId());
                             List<WmsInnerInventoryDetDto> det = wmsInnerInventoryDetMapper.findList(m);
+                            if(StringUtils.isEmpty(det))  throw new BizErrorException("未在库存中查询到该条码");
                             map.put("colorBoxCode",dto.getBarcode());
                             Integer i = wmsInnerInventoryDetMapper.materialQty(map);
                             WmsInnerInventoryDetDto wmsInnerInventoryDetDto = det.get(0);
-                            wmsInnerInventoryDetDto.setMaterialTotalQty(new BigDecimal(i));
+                            wmsInnerInventoryDetDto.setMaterialTotalQty(new BigDecimal(i).subtract(wmsInnerInventoryDetDto.getMaterialQty()));
                             wmsInnerInventoryDetDtos.add(wmsInnerInventoryDetDto);
                         }
 
@@ -161,10 +165,11 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
                         if(StringUtils.isEmpty(dto.getBarcode())  &&  StringUtils.isEmpty(dto.getColorBoxCode())) {
                             m.put("materialBarcodeId",dto.getMaterialBarcodeId());
                             List<WmsInnerInventoryDetDto> det = wmsInnerInventoryDetMapper.findList(m);
+                            if(StringUtils.isEmpty(det))  throw new BizErrorException("未在库存中查询到该条码");
                             map.put("cartonCode",dto.getBarcode());
                             Integer i = wmsInnerInventoryDetMapper.materialQty(map);
                             WmsInnerInventoryDetDto wmsInnerInventoryDetDto = det.get(0);
-                            wmsInnerInventoryDetDto.setMaterialTotalQty(new BigDecimal(i));
+                            wmsInnerInventoryDetDto.setMaterialTotalQty(new BigDecimal(i).subtract(wmsInnerInventoryDetDto.getMaterialQty()));
                             wmsInnerInventoryDetDtos.add(wmsInnerInventoryDetDto);
                         }
 
@@ -174,10 +179,11 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
                         if(StringUtils.isEmpty(dto.getBarcode()) &&  StringUtils.isEmpty(dto.getColorBoxCode())  && StringUtils.isEmpty(dto.getCartonCode())) {
                             m.put("materialBarcodeId",dto.getMaterialBarcodeId());
                             List<WmsInnerInventoryDetDto> det = wmsInnerInventoryDetMapper.findList(m);
+                            if(StringUtils.isEmpty(det))  throw new BizErrorException("未在库存中查询到该条码");
                             map.put("palletCode",dto.getPalletCode());
                             Integer i = wmsInnerInventoryDetMapper.materialQty(map);
                             WmsInnerInventoryDetDto wmsInnerInventoryDetDto = det.get(0);
-                            wmsInnerInventoryDetDto.setMaterialTotalQty(new BigDecimal(i));
+                            wmsInnerInventoryDetDto.setMaterialTotalQty(new BigDecimal(i).subtract(wmsInnerInventoryDetDto.getMaterialQty()));
                             wmsInnerInventoryDetDtos.add(wmsInnerInventoryDetDto);
                         }
                     }
