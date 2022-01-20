@@ -214,7 +214,7 @@ public class InBarcodeUtil {
                 barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
                 barcodeResultDto.setBatchCode(barcodeListSn.get(0).getBatchCode());
                 barcodeResultDto.setProductionDate(barcodeListSn.get(0).getProductionTime().toString());
-
+                barcodeResultDto.setMaterialBarcodeDtoList(barcodeListSn);
             }
             else {
                 //箱码
@@ -241,6 +241,7 @@ public class InBarcodeUtil {
                     barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
                     barcodeResultDto.setBatchCode(barcodeList.get(0).getBatchCode());
                     barcodeResultDto.setProductionDate(barcodeList.get(0).getProductionTime().toString());
+                    barcodeResultDto.setMaterialBarcodeDtoList(barcodeList);
                 }
                 else {
                     //栈板
@@ -268,6 +269,7 @@ public class InBarcodeUtil {
                         barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
                         barcodeResultDto.setBatchCode(barcodeList.get(0).getBatchCode());
                         barcodeResultDto.setProductionDate(barcodeList.get(0).getProductionTime().toString());
+                        barcodeResultDto.setMaterialBarcodeDtoList(barcodeList);
                     }
                 }
             }
