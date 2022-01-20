@@ -192,38 +192,71 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
 
 
             SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
+            SearchBaseBarcodeRuleSetDet searchBaseBarcodeRuleSetDet = new SearchBaseBarcodeRuleSetDet();
+//            //取系统配置默认编码
+            BaseBarcodeRuleDto baseBarCode = null;
+//
+//            searchBaseMaterial.setMaterialId(wmsInnerMaterialBarcodeDto.getMaterialId());
+//            List<BaseMaterial> baseMaterialList = baseFeignApi.findList(searchBaseMaterial).getData();
+//
+//
+//            if (StringUtils.isEmpty(baseMaterialList) || StringUtils.isEmpty(baseMaterialList.get(0).getBarcodeRuleSetId())) {
+//                searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
+//            }else {
+//                searchBaseBarcodeRule.setBarcodeRuleSetId(baseMaterialList.get(0).getBarcodeRuleSetId());
+//                List<BaseBarcodeRuleDto> baseBarcodeRuleList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule).getData();
+//                if (StringUtils.isEmpty(baseBarcodeRuleList)) {
+//                    searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
+//                }
+//                Long barcodeRuleId = null;
+//                for (BaseBarcodeRuleDto baseBarcodeRuleDto : baseBarcodeRuleList) {
+//                    if ("物料条码".equals(baseBarcodeRuleDto.getLabelCategoryName())) {
+//                        barcodeRuleId = baseBarcodeRuleDto.getBarcodeRuleId();
+//                        break;
+//                    }
+//                }
+//
+//                if (StringUtils.isEmpty(barcodeRuleId)) {
+//                    searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
+//                }else {
+//                    searchBaseBarcodeRuleSpec.setBarcodeRuleId(barcodeRuleId);
+//                }
+//
+//            }
 
-            //取系统配置默认编码
-            BaseBarcodeRuleDto baseBarCode = getBaseBarCode();
-
-            searchBaseMaterial.setMaterialId(wmsInnerMaterialBarcodeDto.getMaterialId());
             List<BaseMaterial> baseMaterialList = baseFeignApi.findList(searchBaseMaterial).getData();
 
 
             if (StringUtils.isEmpty(baseMaterialList) || StringUtils.isEmpty(baseMaterialList.get(0).getBarcodeRuleSetId())) {
+                //取系统配置默认编码
+                baseBarCode = getBaseBarCode();
                 searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
             }else {
                 searchBaseBarcodeRule.setBarcodeRuleSetId(baseMaterialList.get(0).getBarcodeRuleSetId());
                 List<BaseBarcodeRuleDto> baseBarcodeRuleList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule).getData();
-                if (StringUtils.isEmpty(baseBarcodeRuleList)) {
+                if (StringUtils.isEmpty(baseMaterialList.get(0).getBarcodeRuleSetId()) || StringUtils.isEmpty(baseBarcodeRuleList)) {
+                    //取系统配置默认编码
+                    baseBarCode = getBaseBarCode();
                     searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
-                }
-                Long barcodeRuleId = null;
-                for (BaseBarcodeRuleDto baseBarcodeRuleDto : baseBarcodeRuleList) {
-                    if ("物料条码".equals(baseBarcodeRuleDto.getLabelCategoryName())) {
-                        barcodeRuleId = baseBarcodeRuleDto.getBarcodeRuleId();
-                        break;
+                }else {
+                    Long barcodeRuleId = null;
+                    for (BaseBarcodeRuleDto baseBarcodeRuleDto : baseBarcodeRuleList) {
+                        if ("物料条码".equals(baseBarcodeRuleDto.getLabelCategoryName())) {
+                            barcodeRuleId = baseBarcodeRuleDto.getBarcodeRuleId();
+                            break;
+                        }
+                    }
+
+                    if (StringUtils.isEmpty(barcodeRuleId)) {
+                        //取系统配置默认编码
+                        baseBarCode = getBaseBarCode();
+                        searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
+                    }else {
+                        searchBaseBarcodeRuleSpec.setBarcodeRuleId(barcodeRuleId);
                     }
                 }
 
-                if (StringUtils.isEmpty(barcodeRuleId)) {
-                    searchBaseBarcodeRuleSpec.setBarcodeRuleId(baseBarCode.getBarcodeRuleId());
-                }else {
-                    searchBaseBarcodeRuleSpec.setBarcodeRuleId(barcodeRuleId);
-                }
-
             }
-
 
 
             ResponseEntity<List<BaseBarcodeRuleSpec>> barcodeRuleSpecList= baseFeignApi.findSpec(searchBaseBarcodeRuleSpec);

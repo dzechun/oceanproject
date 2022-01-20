@@ -187,7 +187,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 wmsInnerJobOrder = wmsInnerJobOrderMapper.selectOneByExample(example);
                 wmsInnerJobOrder.setWorkEndtTime(new Date());
             }else {
-                wmsInnerJobOrder.setJobOrderCode(CodeUtils.getId("PICK-"));
+                wmsInnerJobOrder.setJobOrderCode(CodeUtils.getId("OUT-IWK"));
                 wmsInnerJobOrder.setCreateTime(new Date());
                 wmsInnerJobOrder.setCreateUserId(sysUser.getUserId());
                 wmsInnerJobOrder.setModifiedTime(new Date());
