@@ -2378,6 +2378,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         SearchWmsInnerMaterialBarcode swmsInnerMaterialBarcode=new SearchWmsInnerMaterialBarcode();
         swmsInnerMaterialBarcode.setBarcode(barCode);
         swmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
+        swmsInnerMaterialBarcode.setCodeQueryMark(1);
         List<WmsInnerMaterialBarcodeDto> materialBarcodeList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(swmsInnerMaterialBarcode));
 
         if(ifSysBarcode.equals("1")){
@@ -2486,6 +2487,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         SearchWmsInnerMaterialBarcode swmsInnerMaterialBarcode=new SearchWmsInnerMaterialBarcode();
         swmsInnerMaterialBarcode.setBarcode(barCode);
         swmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
+        swmsInnerMaterialBarcode.setCodeQueryMark(1);
         List<WmsInnerMaterialBarcodeDto> materialBarcodeList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(swmsInnerMaterialBarcode));
         if(ifSysBarcode.equals("1")){
             Long materialBarcodeReOrderId=null;
@@ -2598,6 +2600,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         SearchWmsInnerMaterialBarcode swmsInnerMaterialBarcode=new SearchWmsInnerMaterialBarcode();
         swmsInnerMaterialBarcode.setBarcode(barCode);
         swmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
+        swmsInnerMaterialBarcode.setCodeQueryMark(1);
         List<WmsInnerMaterialBarcodeDto> materialBarcodeList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(swmsInnerMaterialBarcode));
 
         if(ifSysBarcode.equals("1")){
@@ -2673,7 +2676,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             swmsInnerMaterialBarcode.setMaterialBarcodeId(materialBarcodeId);
             materialBarcodeList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(swmsInnerMaterialBarcode));
             wmsInnerMaterialBarcodeDto=materialBarcodeList.get(0);
-
+            wmsInnerMaterialBarcodeDto.setMaterialQty(resultDto.getMaterialQty());
             return wmsInnerMaterialBarcodeDto;
         }
         else if(ifSysBarcode.equals("0")){
@@ -2953,6 +2956,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     }
                 }
                 sWmsBarcode.setOrgId(sysUser.getOrganizationId());
+                sWmsBarcode.setCodeQueryMark(1);
                 List<WmsInnerMaterialBarcodeDto> materialDtoList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(sWmsBarcode));
                 for (WmsInnerMaterialBarcodeDto materialBarcodeDto : materialDtoList) {
                     WmsInnerMaterialBarcode upBarcode=new WmsInnerMaterialBarcode();
@@ -2966,7 +2970,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     SearchWmsInnerMaterialBarcodeReOrder sReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
                     sReOrder.setOrderTypeCode("IN-IWK");
                     sReOrder.setOrderId(wmsInnerJobOrder.getJobOrderId());
-                    sReOrder.setMaterialBarcodeId(item.getMaterialBarcodeId());
+                    sReOrder.setMaterialBarcodeId(materialBarcodeDto.getMaterialBarcodeId());
                     List<WmsInnerMaterialBarcodeReOrderDto> reOrderDtoList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sReOrder));
                     if(reOrderDtoList.size()<=0){
                         throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"条码关系表找不到此条码数据 条码ID-->"+item.getMaterialBarcodeId().toString());
@@ -3269,6 +3273,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     sWmsBarcode.setPalletCode(saveInnerJobOrderDto.getBarcode());
                 }
                 sWmsBarcode.setOrgId(sysUser.getOrganizationId());
+                sWmsBarcode.setCodeQueryMark(1);
                 List<WmsInnerMaterialBarcodeDto> materialDtoList=wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(sWmsBarcode));
                 for (WmsInnerMaterialBarcodeDto materialBarcodeDto : materialDtoList) {
                     WmsInnerMaterialBarcode upBarcode=new WmsInnerMaterialBarcode();

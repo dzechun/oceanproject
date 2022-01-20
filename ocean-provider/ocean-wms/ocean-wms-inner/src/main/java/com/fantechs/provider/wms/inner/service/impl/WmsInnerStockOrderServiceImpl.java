@@ -169,6 +169,13 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             }
             //int num = wmsInventoryVerificationDetMapper.insertList(entity.getWmsInnerStockOrderDets());
         }else if(entity.getType()==(byte) 1){
+            if(entity.getOrderStatus()!=1){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"盘点单不是打开状态 不能修改");
+            }
+            //删除原来明细
+            Example example = new Example(WmsInnerStockOrderDet.class);
+            example.createCriteria().andEqualTo("stockOrderId",entity.getStockOrderId());
+            wmsInventoryVerificationDetMapper.deleteByExample(example);
             //库位盘点/全盘
             if(entity.getStockType()==(byte)1 || entity.getStockType()==(byte)3){
                 if(entity.getStockType()==(byte)1 && (StringUtils.isNotEmpty(entity.getMaxStorageCount()) && entity.getMaxStorageCount()<entity.getStorageList().size())){
@@ -1452,6 +1459,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 searchinventoryDet.setStorageId(wmsInnerStockOrderDet.getStorageId());
                 searchinventoryDet.setNotEqualMark(0);
                 searchinventoryDet.setMaterialId(wmsInnerStockOrderDet.getMaterialId());
+                searchinventoryDet.setQueryType("1");
                 if(StringUtils.isNotEmpty(activeOrAgain) && activeOrAgain==(byte)1)
                     searchinventoryDet.setIfStockLock((byte)0);//盘点锁(0-否 1-是)
                 else if(StringUtils.isNotEmpty(activeOrAgain) && activeOrAgain==(byte)2)

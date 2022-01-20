@@ -130,15 +130,19 @@ public class WmsInnerInventoryUtil {
             criteria.andEqualTo("materialId", newDto.getMaterialId());
             criteria.andEqualTo("warehouseId", wmsInnerJobOrder.getWarehouseId());
             criteria.andEqualTo("storageId", newDto.getInStorageId());
-            if (!StringUtils.isEmpty(newDto.getBatchCode())) {
-                criteria.andEqualTo("batchCode", newDto.getBatchCode());
-            }
-            if(StringUtils.isNotEmpty(newDto.getProductionDate())){
-                criteria.andEqualTo("productionDate", newDto.getProductionDate());
-            }
-            if(StringUtils.isNotEmpty(newDto.getSupplierId())){
-                criteria.andEqualTo("supplierId", newDto.getSupplierId());
-            }
+//            if (!StringUtils.isEmpty(newDto.getBatchCode())) {
+//                criteria.andEqualTo("batchCode", newDto.getBatchCode());
+//            }
+            criteria.andEqualTo("batchCode", newDto.getBatchCode());
+//            if(StringUtils.isNotEmpty(newDto.getProductionDate())){
+//                criteria.andEqualTo("productionDate", newDto.getProductionDate());
+//            }
+            criteria.andEqualTo("productionDate", newDto.getProductionDate());
+//            if(StringUtils.isNotEmpty(newDto.getSupplierId())){
+//                criteria.andEqualTo("supplierId", newDto.getSupplierId());
+//            }
+            criteria.andEqualTo("supplierId", newDto.getSupplierId());
+
             criteria.andEqualTo("jobStatus", (byte) 1);
             criteria.andEqualTo("inventoryStatusId", newDto.getInventoryStatusId());
             criteria.andEqualTo("stockLock", 0);

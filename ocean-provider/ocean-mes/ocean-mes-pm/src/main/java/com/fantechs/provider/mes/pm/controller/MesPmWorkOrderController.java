@@ -166,4 +166,10 @@ public class MesPmWorkOrderController {
     public ResponseEntity outPushDown(@ApiParam(value = "必传",required = true)@RequestBody List<MesPmWorkOrderBomDto> mesPmWorkOrderBomDtos) {
         return ControllerUtil.returnCRUD(mesPmWorkOrderService.outPushDown(mesPmWorkOrderBomDtos));
     }
+
+    @ApiOperation(value = "出库下推成生产日计划",notes = "出库下推成生产日计划")
+    @PostMapping("/outPushDownDailyPlan")
+    public ResponseEntity outPushDownDailyPlan(@ApiParam(value = "必传",required = true)@RequestBody List<MesPmWorkOrderDto> mesPmWorkOrderDtos) {
+        return ControllerUtil.returnCRUD(mesPmWorkOrderService.outPushDownDailyPlan(mesPmWorkOrderDtos));
+    }
 }

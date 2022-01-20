@@ -176,6 +176,7 @@ public class InBarcodeUtil {
         SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode=new SearchWmsInnerMaterialBarcode();
         searchWmsInnerMaterialBarcode.setBarcode(barcode);
         searchWmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
+        searchWmsInnerMaterialBarcode.setCodeQueryMark(1);
         barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
         if(barcodeDtos.size()>0){
             //SN码
@@ -192,16 +193,18 @@ public class InBarcodeUtil {
             //彩盒
             searchWmsInnerMaterialBarcode.setBarcode(null);
             searchWmsInnerMaterialBarcode.setColorBoxCode(barcode);
+            searchWmsInnerMaterialBarcode.setCodeQueryMark(1);
             barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
             if(barcodeDtos.size()>0){
                 List<WmsInnerMaterialBarcodeDto> barcodeListOne = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
                 if(barcodeListOne.get(0).getBarcodeStatus()>=(byte)5){
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
                 }
+                List<WmsInnerMaterialBarcodeDto> barcodeListColorBox = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
                 barcodeResultDto.setBarcodeType((byte)2);
                 barcodeResultDto.setMaterialQty(barcodeDtos.get(0).getMaterialQty());
                 barcodeResultDto.setBarcode(barcode);
-                barcodeResultDto.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
+                barcodeResultDto.setMaterialBarcodeId(barcodeListColorBox.get(0).getMaterialBarcodeId());
                 barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
             }
             else {
@@ -209,6 +212,7 @@ public class InBarcodeUtil {
                 searchWmsInnerMaterialBarcode.setBarcode(null);
                 searchWmsInnerMaterialBarcode.setColorBoxCode(null);
                 searchWmsInnerMaterialBarcode.setCartonCode(barcode);
+                searchWmsInnerMaterialBarcode.setCodeQueryMark(1);
                 barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
                 if(barcodeDtos.size()>0){
                     List<WmsInnerMaterialBarcodeDto> barcodeListOne = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
@@ -216,11 +220,12 @@ public class InBarcodeUtil {
                         throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
                     }
                     List<WmsInnerMaterialBarcodeDto> barcodeList = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
+                    List<WmsInnerMaterialBarcodeDto> barcodeListCarton = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
                     BigDecimal totalQty=barcodeList.stream().map(WmsInnerMaterialBarcodeDto::getMaterialQty).reduce(BigDecimal.ZERO,BigDecimal::add);
                     barcodeResultDto.setBarcodeType((byte)3);
                     barcodeResultDto.setMaterialQty(totalQty);
                     barcodeResultDto.setBarcode(barcode);
-                    barcodeResultDto.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
+                    barcodeResultDto.setMaterialBarcodeId(barcodeListCarton.get(0).getMaterialBarcodeId());
                     barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
                 }
                 else {
@@ -229,6 +234,7 @@ public class InBarcodeUtil {
                     searchWmsInnerMaterialBarcode.setColorBoxCode(null);
                     searchWmsInnerMaterialBarcode.setCartonCode(null);
                     searchWmsInnerMaterialBarcode.setPalletCode(barcode);
+                    searchWmsInnerMaterialBarcode.setCodeQueryMark(1);
                     barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
                     if(barcodeDtos.size()>0){
                         List<WmsInnerMaterialBarcodeDto> barcodeListOne = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
@@ -236,11 +242,12 @@ public class InBarcodeUtil {
                             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
                         }
                         List<WmsInnerMaterialBarcodeDto> barcodeList = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
+                        List<WmsInnerMaterialBarcodeDto> barcodeListPallet = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
                         BigDecimal totalQty=barcodeList.stream().map(WmsInnerMaterialBarcodeDto::getMaterialQty).reduce(BigDecimal.ZERO,BigDecimal::add);
                         barcodeResultDto.setBarcodeType((byte)4);
                         barcodeResultDto.setMaterialQty(totalQty);
                         barcodeResultDto.setBarcode(barcode);
-                        barcodeResultDto.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
+                        barcodeResultDto.setMaterialBarcodeId(barcodeListPallet.get(0).getMaterialBarcodeId());
                         barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
                     }
                 }

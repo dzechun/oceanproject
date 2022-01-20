@@ -379,208 +379,216 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
+    public int outPushDownDailyPlan(List<MesPmWorkOrderDto> mesPmWorkOrderDtos) {
+        int i = 0;
+        Long warehouseId = mesPmWorkOrderDtos.get(0).getWarehouseId();
+        Byte workOrderType = mesPmWorkOrderDtos.get(0).getWorkOrderType();
+        Date planStartTime = mesPmWorkOrderDtos.get(0).getPlanStartTime();
+        Long proLineId = mesPmWorkOrderDtos.get(0).getProLineId();
+        for (MesPmWorkOrderDto mesPmWorkOrderDto : mesPmWorkOrderDtos) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            if (!workOrderType.equals(mesPmWorkOrderDto.getWorkOrderType())
+                    || !sdf.format(planStartTime).equals(sdf.format(mesPmWorkOrderDto.getPlanStartTime()))
+                    || !proLineId.equals(mesPmWorkOrderDto.getProLineId())) {
+                throw new BizErrorException("下发所选数据的工单类型、产线、计划开始时间需一致");
+            }
+
+            if(StringUtils.isNotEmpty(warehouseId)&&!warehouseId.equals(mesPmWorkOrderDto.getWarehouseId())){
+                throw new BizErrorException("请选择相同仓库的进行下发操作");
+            }
+            BigDecimal totalIssueQty = mesPmWorkOrderDto.getTotalIssueQty() == null ? BigDecimal.ZERO : mesPmWorkOrderDto.getTotalIssueQty();
+            BigDecimal add = totalIssueQty.add(mesPmWorkOrderDto.getIssueQty());
+
+            if (add.compareTo(mesPmWorkOrderDto.getWorkOrderQty()) == 1) {
+                throw new BizErrorException("累计下发数量不能大于工单数量");
+            } else if (add.compareTo(mesPmWorkOrderDto.getWorkOrderQty()) == 0) {
+                mesPmWorkOrderDto.setIfAllIssued((byte) 1);
+            }
+
+            mesPmWorkOrderDto.setTotalIssueQty(add);
+            mesPmWorkOrderMapper.updateByPrimaryKeySelective(mesPmWorkOrderDto);
+        }
+
+        //下推成生产日计划
+        List<MesPmDailyPlanDetDto> mesPmDailyPlanDetDtos = new LinkedList<>();
+        for (MesPmWorkOrderDto mesPmWorkOrderDto : mesPmWorkOrderDtos) {
+            MesPmDailyPlanDetDto mesPmDailyPlanDetDto = new MesPmDailyPlanDetDto();
+            mesPmDailyPlanDetDto.setCoreSourceOrderCode(mesPmWorkOrderDto.getWorkOrderCode());
+            mesPmDailyPlanDetDto.setSourceOrderCode(mesPmWorkOrderDto.getWorkOrderCode());
+            mesPmDailyPlanDetDto.setCoreSourceId(mesPmWorkOrderDto.getWorkOrderId());
+            mesPmDailyPlanDetDto.setSourceId(mesPmWorkOrderDto.getWorkOrderId());
+            mesPmDailyPlanDetDto.setWorkOrderId(mesPmWorkOrderDto.getWorkOrderId());
+            mesPmDailyPlanDetDto.setScheduleQty(mesPmWorkOrderDto.getIssueQty());
+            mesPmDailyPlanDetDto.setPlanStartTime(mesPmWorkOrderDto.getPlanStartTime());
+            mesPmDailyPlanDetDtos.add(mesPmDailyPlanDetDto);
+        }
+        MesPmDailyPlanDto mesPmDailyPlanDto = new MesPmDailyPlanDto();
+        mesPmDailyPlanDto.setProLineId(mesPmWorkOrderDtos.get(0).getProLineId());
+        mesPmDailyPlanDto.setCoreSourceSysOrderTypeCode("MES-WO");
+        mesPmDailyPlanDto.setSourceSysOrderTypeCode("MES-WO");
+        mesPmDailyPlanDto.setSourceBigType((byte)1);
+        mesPmDailyPlanDto.setWorkOrderType(mesPmWorkOrderDtos.get(0).getWorkOrderType());
+        mesPmDailyPlanDto.setPlanStartTime(mesPmWorkOrderDtos.get(0).getPlanStartTime());
+        mesPmDailyPlanDto.setMesPmDailyPlanDetDtos(mesPmDailyPlanDetDtos);
+        i = mesPmDailyPlanService.save(mesPmDailyPlanDto);
+
+        return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
     public int outPushDown(List<MesPmWorkOrderBomDto> mesPmWorkOrderBomDtos) {
         int i = 0;
 
-        //是否先下推日计划
-        boolean ifPushDownDailyPlan = false;
-        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-        searchSysSpecItem.setSpecCode("IfPushDownDailyPlan");
-        List<SysSpecItem> sysSpecItemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-        if(StringUtils.isNotEmpty(sysSpecItemList)&&"1".equals(sysSpecItemList.get(0).getParaValue())){
-            ifPushDownDailyPlan = true;
-        }
-
         Long warehouseId = mesPmWorkOrderBomDtos.get(0).getWarehouseId();
-        Byte workOrderType = mesPmWorkOrderBomDtos.get(0).getWorkOrderType();
-        Date planStartTime = mesPmWorkOrderBomDtos.get(0).getPlanStartTime();
-        Long proLineId = mesPmWorkOrderBomDtos.get(0).getProLineId();
-        for (MesPmWorkOrderBomDto mesPmWorkOrderBomDto : mesPmWorkOrderBomDtos){
-            if(ifPushDownDailyPlan){
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                if(!workOrderType.equals(mesPmWorkOrderBomDto.getWorkOrderType())
-                    ||!sdf.format(planStartTime).equals(sdf.format(mesPmWorkOrderBomDto.getPlanStartTime()))
-                    ||!proLineId.equals(mesPmWorkOrderBomDto.getProLineId())){
-                    throw new BizErrorException("下发所选数据的工单类型、产线、计划开始时间需一致");
-                }
-            }
-            if(StringUtils.isNotEmpty(warehouseId)&&!warehouseId.equals(mesPmWorkOrderBomDto.getWarehouseId())){
+        for (MesPmWorkOrderBomDto mesPmWorkOrderBomDto : mesPmWorkOrderBomDtos) {
+            if (StringUtils.isNotEmpty(warehouseId) && !warehouseId.equals(mesPmWorkOrderBomDto.getWarehouseId())) {
                 throw new BizErrorException("请选择相同仓库的进行下发操作");
             }
             BigDecimal totalIssueQty = mesPmWorkOrderBomDto.getTotalIssueQty() == null ? BigDecimal.ZERO : mesPmWorkOrderBomDto.getTotalIssueQty();
             BigDecimal add = totalIssueQty.add(mesPmWorkOrderBomDto.getIssueQty());
 
-            if(ifPushDownDailyPlan){
-                if(add.compareTo(mesPmWorkOrderBomDto.getWorkOrderQty()) == 1){
-                    throw new BizErrorException("累计下发数量不能大于工单数量");
-                }else if(add.compareTo(mesPmWorkOrderBomDto.getWorkOrderQty()) == 0){
-                    mesPmWorkOrderBomDto.setIfAllIssued((byte)1);
-                }
-            }else {
-                if(add.compareTo(mesPmWorkOrderBomDto.getUsageQty()) == 1){
-                    throw new BizErrorException("累计下发数量不能大于工单用量");
-                }else if(add.compareTo(mesPmWorkOrderBomDto.getUsageQty()) == 0){
-                    mesPmWorkOrderBomDto.setIfAllIssued((byte)1);
-                }
+            if (add.compareTo(mesPmWorkOrderBomDto.getUsageQty()) == 1) {
+                throw new BizErrorException("累计下发数量不能大于工单用量");
+            } else if (add.compareTo(mesPmWorkOrderBomDto.getUsageQty()) == 0) {
+                mesPmWorkOrderBomDto.setIfAllIssued((byte) 1);
             }
+
             mesPmWorkOrderBomDto.setTotalIssueQty(add);
             mesPmWorkOrderBomMapper.updateByPrimaryKeySelective(mesPmWorkOrderBomDto);
         }
 
+        //下推成备料计划或出库计划
+        //查当前单据的下游单据
+        SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
+        searchBaseOrderFlow.setOrderTypeCode("MES-WO");
+        searchBaseOrderFlow.setStatus((byte) 1);
+        List<BaseOrderFlowDto> baseOrderFlowDtos = baseFeignApi.findAll(searchBaseOrderFlow).getData();
+        if (StringUtils.isEmpty(baseOrderFlowDtos)) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未找到当前单据配置的下游单据");
+        }
 
-        if(ifPushDownDailyPlan){
-            //下推成生产日计划
-            List<MesPmDailyPlanDetDto> mesPmDailyPlanDetDtos = new LinkedList<>();
-            for (MesPmWorkOrderBomDto mesPmWorkOrderBomDto : mesPmWorkOrderBomDtos) {
-                MesPmDailyPlanDetDto mesPmDailyPlanDetDto = new MesPmDailyPlanDetDto();
-                mesPmDailyPlanDetDto.setCoreSourceOrderCode(mesPmWorkOrderBomDto.getWorkOrderCode());
-                mesPmDailyPlanDetDto.setSourceOrderCode(mesPmWorkOrderBomDto.getWorkOrderCode());
-                mesPmDailyPlanDetDto.setCoreSourceId(mesPmWorkOrderBomDto.getWorkOrderBomId());
-                mesPmDailyPlanDetDto.setSourceId(mesPmWorkOrderBomDto.getWorkOrderBomId());
-                mesPmDailyPlanDetDto.setWorkOrderId(mesPmWorkOrderBomDto.getWorkOrderId());
-                mesPmDailyPlanDetDto.setScheduleQty(mesPmWorkOrderBomDto.getIssueQty());
-                mesPmDailyPlanDetDto.setPlanStartTime(mesPmWorkOrderBomDto.getPlanStartTime());
-                mesPmDailyPlanDetDtos.add(mesPmDailyPlanDetDto);
-            }
-            MesPmDailyPlanDto mesPmDailyPlanDto = new MesPmDailyPlanDto();
-            mesPmDailyPlanDto.setProLineId(mesPmWorkOrderBomDtos.get(0).getProLineId());
-            mesPmDailyPlanDto.setCoreSourceSysOrderTypeCode("MES-WO");
-            mesPmDailyPlanDto.setSourceSysOrderTypeCode("MES-WO");
-            mesPmDailyPlanDto.setSourceBigType((byte)1);
-            mesPmDailyPlanDto.setWorkOrderType(mesPmWorkOrderBomDtos.get(0).getWorkOrderType());
-            mesPmDailyPlanDto.setPlanStartTime(mesPmWorkOrderBomDtos.get(0).getPlanStartTime());
-            mesPmDailyPlanDto.setMesPmDailyPlanDetDtos(mesPmDailyPlanDetDtos);
-            i = mesPmDailyPlanService.save(mesPmDailyPlanDto);
-        }else {//下推成备料计划或出库计划
-            //查当前单据的下游单据
-            SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
-            searchBaseOrderFlow.setOrderTypeCode("MES-WO");
-            searchBaseOrderFlow.setStatus((byte)1);
-            List<BaseOrderFlowDto> baseOrderFlowDtos = baseFeignApi.findAll(searchBaseOrderFlow).getData();
-            if (StringUtils.isEmpty(baseOrderFlowDtos)) {
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未找到当前单据配置的下游单据");
-            }
-
-            Map<String, List<MesPmWorkOrderBomDto>> detMap = new HashMap<>();
-            //不同单据流分组
-            for (MesPmWorkOrderBomDto mesPmWorkOrderBomDto : mesPmWorkOrderBomDtos) {
-                //当前单据的下游单据
-                BaseOrderFlow baseOrderFlow = OrderFlowUtil.getOrderFlow(baseOrderFlowDtos, mesPmWorkOrderBomDto.getPartMaterialId(), null);
-                String key = baseOrderFlow.getNextOrderTypeCode();
-                if (detMap.get(key) == null) {
-                    List<MesPmWorkOrderBomDto> diffOrderFlows = new LinkedList<>();
-                    diffOrderFlows.add(mesPmWorkOrderBomDto);
-                    detMap.put(key, diffOrderFlows);
-                } else {
-                    List<MesPmWorkOrderBomDto> diffOrderFlows = detMap.get(key);
-                    diffOrderFlows.add(mesPmWorkOrderBomDto);
-                    detMap.put(key, diffOrderFlows);
-                }
-            }
-
-            Set<String> codes = detMap.keySet();
-            for (String nextOrderTypeCode : codes) {
-                List<MesPmWorkOrderBomDto> workOrderBomDtos = detMap.get(nextOrderTypeCode);
-                if ("OUT-PSLO".equals(nextOrderTypeCode)) {
-                    //备料计划
-                    List<WmsOutPlanStockListOrderDetDto> wmsOutPlanStockListOrderDetDtos = new LinkedList<>();
-                    for (MesPmWorkOrderBomDto mesPmWorkOrderBomDto : workOrderBomDtos) {
-                        WmsOutPlanStockListOrderDetDto wmsOutPlanStockListOrderDetDto = new WmsOutPlanStockListOrderDetDto();
-                        wmsOutPlanStockListOrderDetDto.setCoreSourceOrderCode(mesPmWorkOrderBomDto.getWorkOrderCode());
-                        wmsOutPlanStockListOrderDetDto.setSourceOrderCode(mesPmWorkOrderBomDto.getWorkOrderCode());
-                        wmsOutPlanStockListOrderDetDto.setCoreSourceId(mesPmWorkOrderBomDto.getWorkOrderBomId());
-                        wmsOutPlanStockListOrderDetDto.setSourceId(mesPmWorkOrderBomDto.getWorkOrderBomId());
-                        wmsOutPlanStockListOrderDetDto.setWorkOrderId(mesPmWorkOrderBomDto.getWorkOrderId());
-                        wmsOutPlanStockListOrderDetDto.setMaterialId(mesPmWorkOrderBomDto.getPartMaterialId());
-                        wmsOutPlanStockListOrderDetDto.setOrderQty(mesPmWorkOrderBomDto.getIssueQty());
-                        wmsOutPlanStockListOrderDetDto.setLineStatus((byte) 1);
-                        wmsOutPlanStockListOrderDetDtos.add(wmsOutPlanStockListOrderDetDto);
-                    }
-                    WmsOutPlanStockListOrderDto wmsOutPlanStockListOrderDto = new WmsOutPlanStockListOrderDto();
-                    wmsOutPlanStockListOrderDto.setSourceBigType((byte)1);
-                    wmsOutPlanStockListOrderDto.setCoreSourceSysOrderTypeCode("MES-WO");
-                    wmsOutPlanStockListOrderDto.setSourceSysOrderTypeCode("MES-WO");
-                    wmsOutPlanStockListOrderDto.setWarehouseId(workOrderBomDtos.get(0).getWarehouseId());
-                    wmsOutPlanStockListOrderDto.setWmsOutPlanStockListOrderDetDtos(wmsOutPlanStockListOrderDetDtos);
-                    ResponseEntity responseEntity = outFeignApi.add(wmsOutPlanStockListOrderDto);
-                    if (responseEntity.getCode() != 0) {
-                        throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
-                    } else {
-                        i++;
-                    }
-                }else if("OUT-PDO".equals(nextOrderTypeCode)){
-                    //出库计划
-                    List<WmsOutPlanDeliveryOrderDetDto> wmsOutPlanDeliveryOrderDetDtos = new LinkedList<>();
-                    for (MesPmWorkOrderBomDto mesPmWorkOrderBomDto : workOrderBomDtos) {
-                        WmsOutPlanDeliveryOrderDetDto wmsOutPlanDeliveryOrderDetDto = new WmsOutPlanDeliveryOrderDetDto();
-                        wmsOutPlanDeliveryOrderDetDto.setCoreSourceOrderCode(mesPmWorkOrderBomDto.getWorkOrderCode());
-                        wmsOutPlanDeliveryOrderDetDto.setSourceOrderCode(mesPmWorkOrderBomDto.getWorkOrderCode());
-                        wmsOutPlanDeliveryOrderDetDto.setCoreSourceId(mesPmWorkOrderBomDto.getWorkOrderBomId());
-                        wmsOutPlanDeliveryOrderDetDto.setSourceId(mesPmWorkOrderBomDto.getWorkOrderBomId());
-                        wmsOutPlanDeliveryOrderDetDto.setMaterialId(mesPmWorkOrderBomDto.getPartMaterialId());
-                        wmsOutPlanDeliveryOrderDetDto.setOrderQty(mesPmWorkOrderBomDto.getIssueQty());
-                        wmsOutPlanDeliveryOrderDetDto.setLineStatus((byte) 1);
-                        wmsOutPlanDeliveryOrderDetDtos.add(wmsOutPlanDeliveryOrderDetDto);
-                    }
-                    WmsOutPlanDeliveryOrderDto wmsOutPlanDeliveryOrderDto = new WmsOutPlanDeliveryOrderDto();
-                    wmsOutPlanDeliveryOrderDto.setSourceBigType((byte)1);
-                    wmsOutPlanDeliveryOrderDto.setCoreSourceSysOrderTypeCode("MES-WO");
-                    wmsOutPlanDeliveryOrderDto.setSourceSysOrderTypeCode("MES-WO");
-                    wmsOutPlanDeliveryOrderDto.setWarehouseId(workOrderBomDtos.get(0).getWarehouseId());
-                    wmsOutPlanDeliveryOrderDto.setWmsOutPlanDeliveryOrderDetDtos(wmsOutPlanDeliveryOrderDetDtos);
-                    ResponseEntity responseEntity = outFeignApi.add(wmsOutPlanDeliveryOrderDto);
-                    if (responseEntity.getCode() != 0) {
-                        throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
-                    } else {
-                        i++;
-                    }
-                }else if ("OUT-IWK".equals(nextOrderTypeCode)) {
-                    //拣货作业
-
-                    //查询发货库位
-                    SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
-                    searchBaseStorage.setWarehouseId(workOrderBomDtos.get(0).getWarehouseId());
-                    searchBaseStorage.setStorageType((byte)3);
-                    List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
-                    if(StringUtils.isEmpty(baseStorages)){
-                        throw new BizErrorException("该仓库未找到发货库位");
-                    }
-                    Long inStorageId = baseStorages.get(0).getStorageId();
-
-                    int lineNumber = 1;
-                    List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();
-                    for (MesPmWorkOrderBomDto mesPmWorkOrderBomDto : workOrderBomDtos) {
-                        WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
-                        wmsInnerJobOrderDet.setCoreSourceOrderCode(mesPmWorkOrderBomDto.getWorkOrderCode());
-                        wmsInnerJobOrderDet.setSourceOrderCode(mesPmWorkOrderBomDto.getWorkOrderCode());
-                        wmsInnerJobOrderDet.setCoreSourceId(mesPmWorkOrderBomDto.getWorkOrderBomId());
-                        wmsInnerJobOrderDet.setSourceId(mesPmWorkOrderBomDto.getWorkOrderBomId());
-                        wmsInnerJobOrderDet.setLineNumber(lineNumber + "");
-                        lineNumber++;
-                        wmsInnerJobOrderDet.setMaterialId(mesPmWorkOrderBomDto.getPartMaterialId());
-                        wmsInnerJobOrderDet.setPlanQty(mesPmWorkOrderBomDto.getIssueQty());
-                        wmsInnerJobOrderDet.setLineStatus((byte) 1);
-                        wmsInnerJobOrderDet.setInStorageId(inStorageId);
-                        wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
-                    }
-                    WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
-                    wmsInnerJobOrder.setSourceBigType((byte)1);
-                    wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("MES-WO");
-                    wmsInnerJobOrder.setSourceSysOrderTypeCode("MES-WO");
-                    wmsInnerJobOrder.setWarehouseId(workOrderBomDtos.get(0).getWarehouseId());
-                    wmsInnerJobOrder.setJobOrderType((byte) 2);
-                    wmsInnerJobOrder.setWmsInPutawayOrderDets(wmsInnerJobOrderDets);
-                    ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
-                    if (responseEntity.getCode() != 0) {
-                        throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
-                    } else {
-                        i++;
-                    }
-                }else {
-                    throw new BizErrorException("单据流配置错误");
-                }
+        Map<String, List<MesPmWorkOrderBomDto>> detMap = new HashMap<>();
+        //不同单据流分组
+        for (MesPmWorkOrderBomDto mesPmWorkOrderBomDto : mesPmWorkOrderBomDtos) {
+            //当前单据的下游单据
+            BaseOrderFlow baseOrderFlow = OrderFlowUtil.getOrderFlow(baseOrderFlowDtos, mesPmWorkOrderBomDto.getPartMaterialId(), null);
+            String key = baseOrderFlow.getNextOrderTypeCode();
+            if (detMap.get(key) == null) {
+                List<MesPmWorkOrderBomDto> diffOrderFlows = new LinkedList<>();
+                diffOrderFlows.add(mesPmWorkOrderBomDto);
+                detMap.put(key, diffOrderFlows);
+            } else {
+                List<MesPmWorkOrderBomDto> diffOrderFlows = detMap.get(key);
+                diffOrderFlows.add(mesPmWorkOrderBomDto);
+                detMap.put(key, diffOrderFlows);
             }
         }
+
+        Set<String> codes = detMap.keySet();
+        for (String nextOrderTypeCode : codes) {
+            List<MesPmWorkOrderBomDto> workOrderBomDtos = detMap.get(nextOrderTypeCode);
+            if ("OUT-PSLO".equals(nextOrderTypeCode)) {
+                //备料计划
+                List<WmsOutPlanStockListOrderDetDto> wmsOutPlanStockListOrderDetDtos = new LinkedList<>();
+                for (MesPmWorkOrderBomDto mesPmWorkOrderBomDto : workOrderBomDtos) {
+                    WmsOutPlanStockListOrderDetDto wmsOutPlanStockListOrderDetDto = new WmsOutPlanStockListOrderDetDto();
+                    wmsOutPlanStockListOrderDetDto.setCoreSourceOrderCode(mesPmWorkOrderBomDto.getWorkOrderCode());
+                    wmsOutPlanStockListOrderDetDto.setSourceOrderCode(mesPmWorkOrderBomDto.getWorkOrderCode());
+                    wmsOutPlanStockListOrderDetDto.setCoreSourceId(mesPmWorkOrderBomDto.getWorkOrderBomId());
+                    wmsOutPlanStockListOrderDetDto.setSourceId(mesPmWorkOrderBomDto.getWorkOrderBomId());
+                    wmsOutPlanStockListOrderDetDto.setWorkOrderId(mesPmWorkOrderBomDto.getWorkOrderId());
+                    wmsOutPlanStockListOrderDetDto.setMaterialId(mesPmWorkOrderBomDto.getPartMaterialId());
+                    wmsOutPlanStockListOrderDetDto.setOrderQty(mesPmWorkOrderBomDto.getIssueQty());
+                    wmsOutPlanStockListOrderDetDto.setLineStatus((byte) 1);
+                    wmsOutPlanStockListOrderDetDtos.add(wmsOutPlanStockListOrderDetDto);
+                }
+                WmsOutPlanStockListOrderDto wmsOutPlanStockListOrderDto = new WmsOutPlanStockListOrderDto();
+                wmsOutPlanStockListOrderDto.setSourceBigType((byte) 1);
+                wmsOutPlanStockListOrderDto.setCoreSourceSysOrderTypeCode("MES-WO");
+                wmsOutPlanStockListOrderDto.setSourceSysOrderTypeCode("MES-WO");
+                wmsOutPlanStockListOrderDto.setWarehouseId(workOrderBomDtos.get(0).getWarehouseId());
+                wmsOutPlanStockListOrderDto.setWmsOutPlanStockListOrderDetDtos(wmsOutPlanStockListOrderDetDtos);
+                ResponseEntity responseEntity = outFeignApi.add(wmsOutPlanStockListOrderDto);
+                if (responseEntity.getCode() != 0) {
+                    throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
+                } else {
+                    i++;
+                }
+            } else if ("OUT-PDO".equals(nextOrderTypeCode)) {
+                //出库计划
+                List<WmsOutPlanDeliveryOrderDetDto> wmsOutPlanDeliveryOrderDetDtos = new LinkedList<>();
+                for (MesPmWorkOrderBomDto mesPmWorkOrderBomDto : workOrderBomDtos) {
+                    WmsOutPlanDeliveryOrderDetDto wmsOutPlanDeliveryOrderDetDto = new WmsOutPlanDeliveryOrderDetDto();
+                    wmsOutPlanDeliveryOrderDetDto.setCoreSourceOrderCode(mesPmWorkOrderBomDto.getWorkOrderCode());
+                    wmsOutPlanDeliveryOrderDetDto.setSourceOrderCode(mesPmWorkOrderBomDto.getWorkOrderCode());
+                    wmsOutPlanDeliveryOrderDetDto.setCoreSourceId(mesPmWorkOrderBomDto.getWorkOrderBomId());
+                    wmsOutPlanDeliveryOrderDetDto.setSourceId(mesPmWorkOrderBomDto.getWorkOrderBomId());
+                    wmsOutPlanDeliveryOrderDetDto.setMaterialId(mesPmWorkOrderBomDto.getPartMaterialId());
+                    wmsOutPlanDeliveryOrderDetDto.setOrderQty(mesPmWorkOrderBomDto.getIssueQty());
+                    wmsOutPlanDeliveryOrderDetDto.setLineStatus((byte) 1);
+                    wmsOutPlanDeliveryOrderDetDtos.add(wmsOutPlanDeliveryOrderDetDto);
+                }
+                WmsOutPlanDeliveryOrderDto wmsOutPlanDeliveryOrderDto = new WmsOutPlanDeliveryOrderDto();
+                wmsOutPlanDeliveryOrderDto.setSourceBigType((byte) 1);
+                wmsOutPlanDeliveryOrderDto.setCoreSourceSysOrderTypeCode("MES-WO");
+                wmsOutPlanDeliveryOrderDto.setSourceSysOrderTypeCode("MES-WO");
+                wmsOutPlanDeliveryOrderDto.setWarehouseId(workOrderBomDtos.get(0).getWarehouseId());
+                wmsOutPlanDeliveryOrderDto.setWmsOutPlanDeliveryOrderDetDtos(wmsOutPlanDeliveryOrderDetDtos);
+                ResponseEntity responseEntity = outFeignApi.add(wmsOutPlanDeliveryOrderDto);
+                if (responseEntity.getCode() != 0) {
+                    throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
+                } else {
+                    i++;
+                }
+            } else if ("OUT-IWK".equals(nextOrderTypeCode)) {
+                //拣货作业
+
+                //查询发货库位
+                SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                searchBaseStorage.setWarehouseId(workOrderBomDtos.get(0).getWarehouseId());
+                searchBaseStorage.setStorageType((byte) 3);
+                List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+                if (StringUtils.isEmpty(baseStorages)) {
+                    throw new BizErrorException("该仓库未找到发货库位");
+                }
+                Long inStorageId = baseStorages.get(0).getStorageId();
+
+                int lineNumber = 1;
+                List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();
+                for (MesPmWorkOrderBomDto mesPmWorkOrderBomDto : workOrderBomDtos) {
+                    WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                    wmsInnerJobOrderDet.setCoreSourceOrderCode(mesPmWorkOrderBomDto.getWorkOrderCode());
+                    wmsInnerJobOrderDet.setSourceOrderCode(mesPmWorkOrderBomDto.getWorkOrderCode());
+                    wmsInnerJobOrderDet.setCoreSourceId(mesPmWorkOrderBomDto.getWorkOrderBomId());
+                    wmsInnerJobOrderDet.setSourceId(mesPmWorkOrderBomDto.getWorkOrderBomId());
+                    wmsInnerJobOrderDet.setLineNumber(lineNumber + "");
+                    lineNumber++;
+                    wmsInnerJobOrderDet.setMaterialId(mesPmWorkOrderBomDto.getPartMaterialId());
+                    wmsInnerJobOrderDet.setPlanQty(mesPmWorkOrderBomDto.getIssueQty());
+                    wmsInnerJobOrderDet.setLineStatus((byte) 1);
+                    wmsInnerJobOrderDet.setInStorageId(inStorageId);
+                    wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
+                }
+                WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+                wmsInnerJobOrder.setSourceBigType((byte) 1);
+                wmsInnerJobOrder.setCoreSourceSysOrderTypeCode("MES-WO");
+                wmsInnerJobOrder.setSourceSysOrderTypeCode("MES-WO");
+                wmsInnerJobOrder.setWarehouseId(workOrderBomDtos.get(0).getWarehouseId());
+                wmsInnerJobOrder.setJobOrderType((byte) 2);
+                wmsInnerJobOrder.setWmsInPutawayOrderDets(wmsInnerJobOrderDets);
+                ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
+                if (responseEntity.getCode() != 0) {
+                    throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
+                } else {
+                    i++;
+                }
+            } else {
+                throw new BizErrorException("单据流配置错误");
+            }
+        }
+
 
         return i;
     }

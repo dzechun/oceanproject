@@ -376,6 +376,8 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
             WmsOutPlanStockListOrderDetDto stockListOrderDetDto=new WmsOutPlanStockListOrderDetDto();
             //核心单据编号 工单号
             stockListOrderDetDto.setCoreSourceOrderCode(planStockListDto.getWorkOrderCode());
+            //工单ID
+            stockListOrderDetDto.setWorkOrderId(planStockListDto.getWorkOrderId());
             //来源单据编号 生产日计划单号
             stockListOrderDetDto.setSourceOrderCode(planStockListDto.getDailyPlanCode());
             //核心单据ID 工单BOM明细ID

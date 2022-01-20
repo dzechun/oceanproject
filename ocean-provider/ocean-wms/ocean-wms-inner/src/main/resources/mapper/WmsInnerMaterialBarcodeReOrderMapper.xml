@@ -157,16 +157,16 @@
         <if test="overallCode!=null and overallCode!=''">
             and (wimb.barcode = #{overallCode} or wimb.color_box_code=#{overallCode} or wimb.carton_code=#{overallCode} or wimb.pallet_code=#{overallCode})
         </if>
-        <if test="queryType!=null and queryType!='' and queryType =='1'">
+        <if test="queryType!=null and queryType!='' and queryType ==1">
             and IFNULL(wimb.barcode,'') != ''
         </if>
-        <if test="queryType!=null and queryType!='' and queryType =='2'">
+        <if test="queryType!=null and queryType!='' and queryType ==2">
             and IFNULL(wimb.color_box_code,'') != '' and IFNULL(wimb.barcode,'')=''
         </if>
-        <if test="queryType!=null and queryType!='' and queryType =='3'">
+        <if test="queryType!=null and queryType!='' and queryType ==3">
             and IFNULL(wimb.carton_code,'') != '' and IFNULL(wimb.barcode,'')=''
         </if>
-        <if test="queryType!=null and queryType!='' and queryType =='4'">
+        <if test="queryType!=null and queryType!='' and queryType ==4">
             and IFNULL(wimb.pallet_code,'') != '' and IFNULL(wimb.barcode,'')=''
         </if>
 
