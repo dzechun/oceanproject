@@ -4,7 +4,6 @@ import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerMaterialBarcodeImport;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcode;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
@@ -32,5 +31,11 @@ public interface WmsInnerMaterialBarcodeService extends IService<WmsInnerMateria
     Map<String, Object> importExcel(List<WmsInnerMaterialBarcodeImport> importList, List<WmsInnerMaterialBarcodeDto> list,Integer type);
 
     List<WmsInnerMaterialBarcodeDto> findListByCode(List<String> codes);
+
+    /**
+     * 根据条码id，删除其上级关联关系（例如箱码,删除其栈板码）
+     * @param  list 条码表id集合
+    */
+    int deleteBarCodeParent(List<Long> list);
 
 }

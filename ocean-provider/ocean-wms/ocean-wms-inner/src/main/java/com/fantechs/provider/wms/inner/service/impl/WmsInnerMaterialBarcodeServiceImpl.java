@@ -846,4 +846,39 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
         }
         return list;
     }
+
+
+    @Override
+    public int deleteBarCodeParent(List<Long> list) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        int i = 0;
+        Map map = new HashMap();
+        map.put("materialBarcodeIdList",list);
+        List<WmsInnerMaterialBarcodeDto> wmsInnerMaterialBarcodeDtos = wmsInnerMaterialBarcodeMapper.findList(map);
+
+        for(WmsInnerMaterialBarcodeDto dto : wmsInnerMaterialBarcodeDtos){
+            if(dto.getBarcodeType() ==1 ){
+                dto.setColorBoxCode(null);
+                dto.setCartonCode(null);
+                dto.setPalletCode(null);
+                dto.setModifiedTime(new Date());
+                dto.setModifiedUserId(user.getOrganizationId());
+                i = wmsInnerMaterialBarcodeMapper.updateByPrimaryKey(dto);
+            }else if(dto.getBarcodeType() ==2){
+                dto.setCartonCode(null);
+                dto.setPalletCode(null);
+                dto.setModifiedTime(new Date());
+                dto.setModifiedUserId(user.getOrganizationId());
+                i = wmsInnerMaterialBarcodeMapper.updateByPrimaryKey(dto);
+            }else if(dto.getBarcodeType() ==3){
+                dto.setPalletCode(null);
+                dto.setModifiedTime(new Date());
+                dto.setModifiedUserId(user.getOrganizationId());
+                i = wmsInnerMaterialBarcodeMapper.updateByPrimaryKey(dto);
+            }else{
+             continue;
+            }
+        }
+        return i;
+    }
 }

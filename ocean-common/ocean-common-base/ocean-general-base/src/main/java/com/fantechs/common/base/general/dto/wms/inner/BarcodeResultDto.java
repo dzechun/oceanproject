@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class BarcodeResultDto implements Serializable {
@@ -50,5 +51,8 @@ public class BarcodeResultDto implements Serializable {
      */
     @ApiModelProperty(name="materialQty",value = "条码物料数量")
     private BigDecimal materialQty;
+
+    @ApiModelProperty(name="materialBarcodeDtoList",value = "条码集合")
+    private List<WmsInnerMaterialBarcodeDto> materialBarcodeDtoList;
 
 }
