@@ -16,6 +16,7 @@
     <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
     <result column="total_issue_qty" jdbcType="DECIMAL" property="totalIssueQty" />
     <result column="line_status" jdbcType="TINYINT" property="lineStatus" />
+    <result column="delivery_user_id" jdbcType="BIGINT" property="deliveryUserId" />
     <result column="if_all_issued" jdbcType="TINYINT" property="ifAllIssued" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
@@ -31,6 +32,7 @@
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="delivery_user_name" jdbcType="VARCHAR" property="deliveryUserName"/>
     <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
     <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
     <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
@@ -53,6 +55,7 @@
     wopdod.actual_qty,
     wopdod.total_issue_qty,
     wopdod.line_status,
+    wopdod.delivery_user_id,
     wopdod.if_all_issued,
     wopdod.status,
     wopdod.remark,
@@ -70,6 +73,7 @@
     wopdo.warehouse_id,bw.warehouse_name,
     bm.material_code,bm.material_name,
     bm.material_desc,bm.material_version,
+    sudelivery.user_name as delivery_user_name,
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,
     bo.organization_name
@@ -77,6 +81,7 @@
     LEFT JOIN base_material bm ON wopdod.material_id = bm.material_id
     LEFT JOIN wms_out_plan_delivery_order wopdo ON wopdod.plan_delivery_order_id = wopdo.plan_delivery_order_id
     LEFT JOIN base_warehouse bw ON wopdo.warehouse_id = bw.warehouse_id
+    LEFT JOIN sys_user sudelivery ON wopdod.delivery_user_id = sudelivery.user_id
     LEFT JOIN sys_user su ON wopdod.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON wopdod.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON wopdod.org_id = bo.organization_id

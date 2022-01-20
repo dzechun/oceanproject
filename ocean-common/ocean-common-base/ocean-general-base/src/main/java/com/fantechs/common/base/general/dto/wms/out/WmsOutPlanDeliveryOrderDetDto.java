@@ -34,6 +34,14 @@ public class WmsOutPlanDeliveryOrderDetDto extends WmsOutPlanDeliveryOrderDet im
     private String modifiedUserName;
 
     /**
+     * 出库人
+     */
+    @Transient
+    @ApiModelProperty(name = "deliveryUserName",value = "出库人")
+    @Excel(name = "出库人", height = 20, width = 30,orderNum="8")
+    private String deliveryUserName;
+
+    /**
      * 物料编码
      */
     @Transient

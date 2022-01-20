@@ -114,6 +114,13 @@ public class WmsOutPlanDeliveryOrderDet extends ValidGroup implements Serializab
     private Byte lineStatus;
 
     /**
+     * 出库用户ID
+     */
+    @ApiModelProperty(name="deliveryUserId",value = "出库用户ID")
+    @Column(name = "delivery_user_id")
+    private Long deliveryUserId;
+
+    /**
      * 是否已全部下发(0-否 1-是)
      */
     @ApiModelProperty(name="ifAllIssued",value = "是否已全部下发(0-否 1-是)")

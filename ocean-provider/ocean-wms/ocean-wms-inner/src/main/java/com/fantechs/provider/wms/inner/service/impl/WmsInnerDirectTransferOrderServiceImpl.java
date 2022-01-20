@@ -15,6 +15,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.wms.inner.mapper.*;
 import com.fantechs.provider.wms.inner.service.WmsInnerDirectTransferOrderService;
+import com.fantechs.provider.wms.inner.service.WmsInnerMaterialBarcodeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +46,9 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
     private WmsInnerMaterialBarcodeMapper wmsInnerMaterialBarcodeMapper;
     @Resource
     private BaseFeignApi baseFeignApi;
+    @Resource
+    private WmsInnerMaterialBarcodeService wmsInnerMaterialBarcodeService;
+
 
     @Override
     public List<WmsInnerDirectTransferOrderDto> findList(Map<String, Object> map) {
@@ -77,7 +81,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     @LcnTransaction
-    public int save(List<PDAWmsInnerDirectTransferOrderDto> pdaWmsInnerDirectTransferOrderDtos) {
+    public int  save(List<PDAWmsInnerDirectTransferOrderDto> pdaWmsInnerDirectTransferOrderDtos) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isEmpty(pdaWmsInnerDirectTransferOrderDtos)) throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"提交参数不能为空");
         List<WmsInnerMaterialBarcodeReOrder> list = new ArrayList<>();
@@ -142,6 +146,11 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                 WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDets.get(0);
                 wmsInnerInventoryDet.setStorageId(dto.getInStorageId());
                 wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
+
+                //更新条码绑定关系
+                List<Long> ids = new ArrayList<>();
+                ids.add(wmsInnerInventoryDet.getMaterialBarcodeId());
+                wmsInnerMaterialBarcodeService.deleteBarCodeParent(ids);
 
                 //保存明细表
                 WmsInnerDirectTransferOrderDet orderDet = new WmsInnerDirectTransferOrderDet();
