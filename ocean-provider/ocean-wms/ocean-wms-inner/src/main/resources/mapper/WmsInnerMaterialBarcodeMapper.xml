@@ -18,6 +18,7 @@
         <result column="carton_code" jdbcType="VARCHAR" property="cartonCode" />
         <result column="pallet_code" jdbcType="VARCHAR" property="palletCode" />
         <result column="if_sys_barcode" jdbcType="TINYINT" property="ifSysBarcode" />
+        <result column="if_scan" jdbcType="TINYINT" property="ifScan" />
         <result column="material_id" jdbcType="BIGINT" property="materialId" />
         <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
         <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
@@ -60,6 +61,7 @@
         wimb.carton_code,
         wimb.pallet_code,
         wimb.if_sys_barcode,
+        wimb.if_scan,
         wimb.material_id,
         wimb.supplier_id,
         wimb.batch_code,

@@ -46,7 +46,6 @@ public class WmsInnerMaterialBarcodeReOrderServiceImpl extends BaseService<WmsIn
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
     public int batchAdd(List<WmsInnerMaterialBarcodeReOrder> list) {
         for (WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder : list) {
             this.save(wmsInnerMaterialBarcodeReOrder);

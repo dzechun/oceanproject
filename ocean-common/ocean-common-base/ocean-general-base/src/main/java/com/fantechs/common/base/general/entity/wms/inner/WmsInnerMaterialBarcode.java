@@ -128,6 +128,13 @@ public class WmsInnerMaterialBarcode extends ValidGroup implements Serializable 
     private Byte ifSysBarcode;
 
     /**
+     * 是否扫描(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifScan",value = "是否扫描(0-否 1-是)")
+    @Column(name = "if_scan")
+    private Byte ifScan;
+
+    /**
      * 物料ID
      */
     @ApiModelProperty(name="materialId",value = "物料ID")
