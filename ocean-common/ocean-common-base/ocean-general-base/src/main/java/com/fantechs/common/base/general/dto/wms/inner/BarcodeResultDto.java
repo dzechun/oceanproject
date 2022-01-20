@@ -22,6 +22,18 @@ public class BarcodeResultDto implements Serializable {
     private Long materialBarcodeId;
 
     /**
+     * 批号
+     */
+    @ApiModelProperty(name="batchCode",value = "批号")
+    private String batchCode;
+
+    /**
+     * 生产日期
+     */
+    @ApiModelProperty(name="productionDate",value = "生产日期")
+    private String productionDate;
+
+    /**
      * 条码对应物料ID
      */
     @ApiModelProperty(name="materialId",value = "条码对应物料ID")
