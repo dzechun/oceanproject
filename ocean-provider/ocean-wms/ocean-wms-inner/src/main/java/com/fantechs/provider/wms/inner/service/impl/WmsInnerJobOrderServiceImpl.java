@@ -2389,6 +2389,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             map.put("barcodeType",resultDto.getBarcodeType());
             map.put("materialBarcodeId",resultDto.getMaterialBarcodeId());
             map.put("materialId",resultDto.getMaterialId());
+            map.put("batchCode",resultDto.getBatchCode());
+            map.put("productionDate",resultDto.getProductionDate());
             map.put("qty",resultDto.getMaterialQty());
 
             if(StringUtils.isNotEmpty(map.get("barcodeType")) && map.get("barcodeType").toString().equals("5")){
@@ -2471,6 +2473,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
             map.put("materialBarcodeId",0);
             map.put("barcodeType",5);
+            map.put("batchCode","");
+            map.put("productionDate","");
             map.put("qty",0);
         }
 
@@ -2498,6 +2502,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             BarcodeResultDto resultDto=InBarcodeUtil.scanBarcode(barCode);
             map.put("barcodeType",resultDto.getBarcodeType());
             map.put("materialBarcodeId",resultDto.getMaterialBarcodeId());
+            map.put("batchCode",resultDto.getBatchCode());
+            map.put("productionDate",resultDto.getProductionDate());
             map.put("qty",resultDto.getMaterialQty());
 
             if(StringUtils.isNotEmpty(map.get("barcodeType")) && map.get("barcodeType").toString().equals("5")){
@@ -2542,6 +2548,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
             map.put("materialBarcodeId",0);
             map.put("barcodeType",5);
+            map.put("batchCode","");
+            map.put("productionDate","");
             map.put("qty",0);
         }
         return map;
@@ -3162,7 +3170,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             BeanUtil.copyProperties(jobOrder,record);
         }
 
-        //物料+批次号分组 数量求和
+        //物料+批次号分组+生产日期 数量求和
         Map<String, List<WmsInnerJobOrderDet>> map = new HashMap<>();
         List<WmsInnerMaterialBarcodeReOrder> materialBarcodeReOrderList=new ArrayList<>();
         //条码库存集合
@@ -3174,7 +3182,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 if(StringUtils.isNotEmpty(resultDto))
                     saveInnerJobOrderDto.setMaterialId(resultDto.getMaterialId());
             }
-            String keyS=saveInnerJobOrderDto.getMaterialId().toString()+(StringUtils.isEmpty(saveInnerJobOrderDto.getBatchCode())?"":saveInnerJobOrderDto.getBatchCode());
+            String keyS=saveInnerJobOrderDto.getMaterialId().toString()
+                    +(StringUtils.isEmpty(saveInnerJobOrderDto.getBatchCode())?"":saveInnerJobOrderDto.getBatchCode())
+                    +(StringUtils.isEmpty(saveInnerJobOrderDto.getProductionTime())?"":saveInnerJobOrderDto.getProductionTime());
             if (map.containsKey(keyS)) {
                 List<WmsInnerJobOrderDet> nm = new ArrayList<>();
                 for (WmsInnerJobOrderDet innerJobOrderDet : map.get(keyS)) {
