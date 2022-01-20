@@ -107,7 +107,7 @@ public class SrmPlanDeliveryOrderServiceImpl extends BaseService<SrmPlanDelivery
             srmPlanDeliveryOrder.setModifiedTime(new Date());
             srmPlanDeliveryOrder.setStatus((byte) 1);
             srmPlanDeliveryOrder.setOrgId(user.getOrganizationId());
-            srmPlanDeliveryOrder.setPlanDeliveryOrderCode(CodeUtils.getId("SHJH"));
+            srmPlanDeliveryOrder.setPlanDeliveryOrderCode(CodeUtils.getId("SRM-DPO"));
             srmPlanDeliveryOrder.setSupplierId(baseSupplierList.get(0).getSupplierId());
             srmPlanDeliveryOrder.setOrderStatus((byte) 1);
             srmPlanDeliveryOrderMapper.insertUseGeneratedKeys(srmPlanDeliveryOrder);
@@ -173,8 +173,11 @@ public class SrmPlanDeliveryOrderServiceImpl extends BaseService<SrmPlanDelivery
         record.setModifiedTime(new Date());
         record.setStatus(StringUtils.isEmpty(record.getStatus())?1: record.getStatus());
         record.setOrgId(user.getOrganizationId());
-        record.setPlanDeliveryOrderCode(CodeUtils.getId("SHJH"));
+        record.setPlanDeliveryOrderCode(CodeUtils.getId("SRM-DPO"));
         record.setOrderStatus((byte) 1);
+        record.setCorSourceSysOrderTypeCode("IN-PO");
+        record.setSysOrderTypeCode("SRM-DPO");
+        record.setSourceSysOrderTypeCode("IN-PO");
         int i = srmPlanDeliveryOrderMapper.insertUseGeneratedKeys(record);
 
         verify(record);

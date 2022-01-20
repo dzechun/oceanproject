@@ -14,4 +14,6 @@ public interface WmsInnerInventoryDetMapper extends MyMapper<WmsInnerInventoryDe
     List<WmsInnerInventoryDetDto> findList(Map<String,Object> map);
 
     int updateStroage(@Param("inventoryDetList") List<WmsInnerInventoryDet> inventoryDetList);
+
+    Integer materialQty(Map<String,Object> map);
 }

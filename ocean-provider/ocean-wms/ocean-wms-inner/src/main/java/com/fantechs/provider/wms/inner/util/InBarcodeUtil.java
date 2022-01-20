@@ -176,6 +176,7 @@ public class InBarcodeUtil {
         SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode=new SearchWmsInnerMaterialBarcode();
         searchWmsInnerMaterialBarcode.setBarcode(barcode);
         searchWmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
+        searchWmsInnerMaterialBarcode.setCodeQueryMark(1);
         barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
         if(barcodeDtos.size()>0){
             //SN码
@@ -192,6 +193,7 @@ public class InBarcodeUtil {
             //彩盒
             searchWmsInnerMaterialBarcode.setBarcode(null);
             searchWmsInnerMaterialBarcode.setColorBoxCode(barcode);
+            searchWmsInnerMaterialBarcode.setCodeQueryMark(1);
             barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
             if(barcodeDtos.size()>0){
                 List<WmsInnerMaterialBarcodeDto> barcodeListOne = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
@@ -210,6 +212,7 @@ public class InBarcodeUtil {
                 searchWmsInnerMaterialBarcode.setBarcode(null);
                 searchWmsInnerMaterialBarcode.setColorBoxCode(null);
                 searchWmsInnerMaterialBarcode.setCartonCode(barcode);
+                searchWmsInnerMaterialBarcode.setCodeQueryMark(1);
                 barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
                 if(barcodeDtos.size()>0){
                     List<WmsInnerMaterialBarcodeDto> barcodeListOne = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
@@ -231,6 +234,7 @@ public class InBarcodeUtil {
                     searchWmsInnerMaterialBarcode.setColorBoxCode(null);
                     searchWmsInnerMaterialBarcode.setCartonCode(null);
                     searchWmsInnerMaterialBarcode.setPalletCode(barcode);
+                    searchWmsInnerMaterialBarcode.setCodeQueryMark(1);
                     barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
                     if(barcodeDtos.size()>0){
                         List<WmsInnerMaterialBarcodeDto> barcodeListOne = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());

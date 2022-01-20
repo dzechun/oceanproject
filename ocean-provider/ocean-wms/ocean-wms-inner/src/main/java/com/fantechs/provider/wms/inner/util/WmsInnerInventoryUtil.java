@@ -130,18 +130,27 @@ public class WmsInnerInventoryUtil {
             criteria.andEqualTo("materialId", newDto.getMaterialId());
             criteria.andEqualTo("warehouseId", wmsInnerJobOrder.getWarehouseId());
             criteria.andEqualTo("storageId", newDto.getInStorageId());
-//            if (!StringUtils.isEmpty(newDto.getBatchCode())) {
-//                criteria.andEqualTo("batchCode", newDto.getBatchCode());
-//            }
-            criteria.andEqualTo("batchCode", newDto.getBatchCode());
-//            if(StringUtils.isNotEmpty(newDto.getProductionDate())){
-//                criteria.andEqualTo("productionDate", newDto.getProductionDate());
-//            }
-            criteria.andEqualTo("productionDate", newDto.getProductionDate());
-//            if(StringUtils.isNotEmpty(newDto.getSupplierId())){
-//                criteria.andEqualTo("supplierId", newDto.getSupplierId());
-//            }
-            criteria.andEqualTo("supplierId", newDto.getSupplierId());
+
+            if (StringUtils.isEmpty(newDto.getBatchCode())) {
+                criteria.andIsNull("batchCode");
+            }
+            else {
+                criteria.andEqualTo("batchCode",newDto.getBatchCode());
+            }
+
+            if(StringUtils.isEmpty(newDto.getProductionDate())){
+                criteria.andIsNull("productionDate");
+            }
+            else {
+                criteria.andEqualTo("productionDate", newDto.getProductionDate());
+            }
+
+            if(StringUtils.isEmpty(newDto.getSupplierId())){
+                criteria.andIsNull("supplierId");
+            }
+            else {
+                criteria.andEqualTo("supplierId", newDto.getSupplierId());
+            }
 
             criteria.andEqualTo("jobStatus", (byte) 1);
             criteria.andEqualTo("inventoryStatusId", newDto.getInventoryStatusId());
