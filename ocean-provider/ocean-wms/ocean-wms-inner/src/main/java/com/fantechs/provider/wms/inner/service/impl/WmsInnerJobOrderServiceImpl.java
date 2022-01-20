@@ -740,18 +740,20 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     num += wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(wmsInnerMaterialBarcode);
 
                     //库存条码明细集合
-                    WmsInnerInventoryDet inventoryDet=new WmsInnerInventoryDet();
-                    inventoryDet.setStorageId(wmsInnerJobOrderDet.getInStorageId());
-                    inventoryDet.setMaterialBarcodeId(wmsInnerMaterialBarcode.getMaterialBarcodeId());
-                    inventoryDet.setReceivingDate(new Date());//入库日期
-                    inventoryDet.setAsnCode(wmsInnerJobOrder.getJobOrderCode());//入库单号
-                    inventoryDet.setIfStockLock((byte)0);
-                    inventoryDet.setInventoryStatusId(wmsInnerJobOrderDet.getInventoryStatusId());
-                    inventoryDet.setBarcodeStatus((byte)1);//在库
-                    inventoryDet.setCreateUserId(sysUser.getUserId());
-                    inventoryDet.setCreateTime(new Date());
-                    inventoryDet.setOrgId(sysUser.getOrganizationId());
-                    wmsInnerInventoryDets.add(inventoryDet);
+                    if(reOrderDto.getBarcode()!=null && reOrderDto.getBarcode()!="") {
+                        WmsInnerInventoryDet inventoryDet = new WmsInnerInventoryDet();
+                        inventoryDet.setStorageId(wmsInnerJobOrderDet.getInStorageId());
+                        inventoryDet.setMaterialBarcodeId(wmsInnerMaterialBarcode.getMaterialBarcodeId());
+                        inventoryDet.setReceivingDate(new Date());//入库日期
+                        inventoryDet.setAsnCode(wmsInnerJobOrder.getJobOrderCode());//入库单号
+                        inventoryDet.setIfStockLock((byte) 0);
+                        inventoryDet.setInventoryStatusId(wmsInnerJobOrderDet.getInventoryStatusId());
+                        inventoryDet.setBarcodeStatus((byte) 1);//在库
+                        inventoryDet.setCreateUserId(sysUser.getUserId());
+                        inventoryDet.setCreateTime(new Date());
+                        inventoryDet.setOrgId(sysUser.getOrganizationId());
+                        wmsInnerInventoryDets.add(inventoryDet);
+                    }
                 }
 
                 SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
@@ -2982,17 +2984,19 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     wmsInnerMaterialBarcodeReOrder.setModifiedTime(new Date());
                     wmsInnerMaterialBarcodeReOrderMapper.updateByPrimaryKeySelective(wmsInnerMaterialBarcodeReOrder);
 
-                    WmsInnerInventoryDet inventoryDet=new WmsInnerInventoryDet();
-                    inventoryDet.setStorageId(inStorageId);
-                    inventoryDet.setMaterialBarcodeId(materialBarcodeDto.getMaterialBarcodeId());
-                    inventoryDet.setReceivingDate(new Date());//入库日期
-                    inventoryDet.setAsnCode(wmsInnerJobOrder.getJobOrderCode());//入库单号
-                    inventoryDet.setIfStockLock((byte)0);
-                    inventoryDet.setInventoryStatusId(wmsInnerJobOrderDet.getInventoryStatusId());
-                    inventoryDet.setBarcodeStatus((byte)1);//在库
-                    inventoryDet.setCreateUserId(sysUser.getUserId());
-                    inventoryDet.setCreateTime(new Date());
-                    wmsInnerInventoryDets.add(inventoryDet);
+                    if(materialBarcodeDto.getBarcode()!=null && materialBarcodeDto.getBarcode()!="") {
+                        WmsInnerInventoryDet inventoryDet = new WmsInnerInventoryDet();
+                        inventoryDet.setStorageId(inStorageId);
+                        inventoryDet.setMaterialBarcodeId(materialBarcodeDto.getMaterialBarcodeId());
+                        inventoryDet.setReceivingDate(new Date());//入库日期
+                        inventoryDet.setAsnCode(wmsInnerJobOrder.getJobOrderCode());//入库单号
+                        inventoryDet.setIfStockLock((byte) 0);
+                        inventoryDet.setInventoryStatusId(wmsInnerJobOrderDet.getInventoryStatusId());
+                        inventoryDet.setBarcodeStatus((byte) 1);//在库
+                        inventoryDet.setCreateUserId(sysUser.getUserId());
+                        inventoryDet.setCreateTime(new Date());
+                        wmsInnerInventoryDets.add(inventoryDet);
+                    }
                 }
             }
         }
@@ -3297,19 +3301,20 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
                     //条码关系集合
                     materialBarcodeReOrderList.add(newReOrder);
-
-                    WmsInnerInventoryDet inventoryDet=new WmsInnerInventoryDet();
-                    inventoryDet.setStorageId(inStorageId);
-                    inventoryDet.setMaterialBarcodeId(materialBarcodeDto.getMaterialBarcodeId());
-                    inventoryDet.setReceivingDate(new Date());//入库日期
-                    inventoryDet.setAsnCode(record.getJobOrderCode());//上架单号
-                    inventoryDet.setIfStockLock((byte)0);
-                    inventoryDet.setInventoryStatusId(null);
-                    inventoryDet.setBarcodeStatus((byte)1);//在库
-                    inventoryDet.setCreateUserId(sysUser.getUserId());
-                    inventoryDet.setCreateTime(new Date());
-                    //条码库存集合
-                    wmsInnerInventoryDets.add(inventoryDet);
+                    if(materialBarcodeDto.getBarcode()!=null && materialBarcodeDto.getBarcode()!="") {
+                        WmsInnerInventoryDet inventoryDet = new WmsInnerInventoryDet();
+                        inventoryDet.setStorageId(inStorageId);
+                        inventoryDet.setMaterialBarcodeId(materialBarcodeDto.getMaterialBarcodeId());
+                        inventoryDet.setReceivingDate(new Date());//入库日期
+                        inventoryDet.setAsnCode(record.getJobOrderCode());//上架单号
+                        inventoryDet.setIfStockLock((byte) 0);
+                        inventoryDet.setInventoryStatusId(null);
+                        inventoryDet.setBarcodeStatus((byte) 1);//在库
+                        inventoryDet.setCreateUserId(sysUser.getUserId());
+                        inventoryDet.setCreateTime(new Date());
+                        //条码库存集合
+                        wmsInnerInventoryDets.add(inventoryDet);
+                    }
                 }
             }
         }
