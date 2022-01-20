@@ -199,6 +199,9 @@ public class InBarcodeUtil {
             barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
             if(barcodeDtos.size()>0){
                 List<WmsInnerMaterialBarcodeDto> barcodeListOne = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
+                if(StringUtils.isEmpty(barcodeListOne) || barcodeListOne.size()<=0){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未找到彩盒码 请确认-->"+barcode);
+                }
                 if(barcodeListOne.get(0).getBarcodeStatus()>=(byte)5){
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
                 }
@@ -211,6 +214,7 @@ public class InBarcodeUtil {
                 barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
                 barcodeResultDto.setBatchCode(barcodeListSn.get(0).getBatchCode());
                 barcodeResultDto.setProductionDate(barcodeListSn.get(0).getProductionTime().toString());
+                barcodeResultDto.setMaterialBarcodeDtoList(barcodeListSn);
             }
             else {
                 //箱码
@@ -221,6 +225,9 @@ public class InBarcodeUtil {
                 barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
                 if(barcodeDtos.size()>0){
                     List<WmsInnerMaterialBarcodeDto> barcodeListOne = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
+                    if(StringUtils.isEmpty(barcodeListOne) || barcodeListOne.size()<=0){
+                        throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未找到箱码 请确认-->"+barcode);
+                    }
                     if(barcodeListOne.get(0).getBarcodeStatus()>=(byte)5){
                         throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
                     }
@@ -234,6 +241,7 @@ public class InBarcodeUtil {
                     barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
                     barcodeResultDto.setBatchCode(barcodeList.get(0).getBatchCode());
                     barcodeResultDto.setProductionDate(barcodeList.get(0).getProductionTime().toString());
+                    barcodeResultDto.setMaterialBarcodeDtoList(barcodeList);
                 }
                 else {
                     //栈板
@@ -245,6 +253,9 @@ public class InBarcodeUtil {
                     barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
                     if(barcodeDtos.size()>0){
                         List<WmsInnerMaterialBarcodeDto> barcodeListOne = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
+                        if(StringUtils.isEmpty(barcodeListOne) || barcodeListOne.size()<=0){
+                            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未找到栈板码 请确认-->"+barcode);
+                        }
                         if(barcodeListOne.get(0).getBarcodeStatus()>=(byte)5){
                             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
                         }
@@ -258,6 +269,7 @@ public class InBarcodeUtil {
                         barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
                         barcodeResultDto.setBatchCode(barcodeList.get(0).getBatchCode());
                         barcodeResultDto.setProductionDate(barcodeList.get(0).getProductionTime().toString());
+                        barcodeResultDto.setMaterialBarcodeDtoList(barcodeList);
                     }
                 }
             }

@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.srm.SrmPoExpediteRecordDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReOrderDto;
@@ -17,6 +18,7 @@ import com.fantechs.provider.wms.inner.mapper.WmsInnerMaterialBarcodeReOrderMapp
 import com.fantechs.provider.wms.inner.service.WmsInnerMaterialBarcodeReOrderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -43,6 +45,8 @@ public class WmsInnerMaterialBarcodeReOrderServiceImpl extends BaseService<WmsIn
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int batchAdd(List<WmsInnerMaterialBarcodeReOrder> list) {
         for (WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder : list) {
             this.save(wmsInnerMaterialBarcodeReOrder);
