@@ -225,8 +225,9 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
             }
             item.setTotalIssueQty(item.getOrderQty());
             item.setIfAllIssued((byte)1);
+            num += wmsOutPlanStockListOrderDetMapper.updateByPrimaryKeySelective(item);
         }
-        num = wmsOutPlanStockListOrderDetMapper.batchUpdate(wmsOutPlanStockListOrderDetDtos);
+        //num = wmsOutPlanStockListOrderDetMapper.batchUpdate(wmsOutPlanStockListOrderDetDtos);
 
         //查当前单据类型的所有单据流
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();

@@ -224,4 +224,24 @@
         </foreach>
     </update>
 
+    <select id="materialQty" parameterType="map" resultType="java.lang.Integer">
+        select sum(wimb.material_qty)
+        from wms_inner_inventory_det wiid
+        LEFT JOIN wms_inner_material_barcode wimb ON wiid.material_barcode_id = wimb.material_barcode_id
+        <where>
+            <if test="barcode!=null and barcode!=''">
+                and wimb.barcode = #{barcode}
+            </if>
+            <if test="colorBoxCode!=null and colorBoxCode!=''">
+                and wimb.color_box_code = #{colorBoxCode}
+            </if>
+            <if test="cartonCode!=null and cartonCode!=''">
+                and wimb.carton_code = #{cartonCode}
+            </if>
+            <if test="palletCode!=null and palletCode!=''">
+                and wimb.pallet_code = #{palletCode}
+            </if>
+        </where>
+    </select>
+
 </mapper>
