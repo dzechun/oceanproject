@@ -181,6 +181,9 @@
             <if test="workOrderCode!=null and workOrderCode!='' and codeQueryMark == 1">
                 and swo.work_order_code = #{workOrderCode}
             </if>
+            <if test="workOrderType!=null">
+                and swo.work_order_type = #{workOrderType}
+            </if>
             <if test="workOrderId!=null">
                 and swo.work_order_id =#{workOrderId}
             </if>
