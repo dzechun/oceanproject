@@ -92,12 +92,14 @@ public class WmsOutDeliveryReqOrderServiceImpl extends BaseService<WmsOutDeliver
     @Transactional(rollbackFor = Exception.class)
     public int updatePutawayQty(Long deliveryReqOrderDetId, BigDecimal putawayQty) {
         int i = 0;
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         WmsOutDeliveryReqOrderDet wmsOutDeliveryReqOrderDet = wmsOutDeliveryReqOrderDetMapper.selectByPrimaryKey(deliveryReqOrderDetId);
         if(StringUtils.isEmpty(wmsOutDeliveryReqOrderDet)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003, "找不到明细信息");
         }
         BigDecimal actualQty = StringUtils.isNotEmpty(wmsOutDeliveryReqOrderDet.getActualQty()) ? wmsOutDeliveryReqOrderDet.getActualQty().add(putawayQty) : putawayQty;
         wmsOutDeliveryReqOrderDet.setActualQty(actualQty);
+        wmsOutDeliveryReqOrderDet.setDeliveryUserId(user.getUserId());
         if (actualQty.compareTo(BigDecimal.ZERO) == 1 && actualQty.compareTo(wmsOutDeliveryReqOrderDet.getTotalIssueQty()) == -1) {
             wmsOutDeliveryReqOrderDet.setLineStatus((byte) 2);
         } else if (actualQty.compareTo(wmsOutDeliveryReqOrderDet.getTotalIssueQty()) == 0) {

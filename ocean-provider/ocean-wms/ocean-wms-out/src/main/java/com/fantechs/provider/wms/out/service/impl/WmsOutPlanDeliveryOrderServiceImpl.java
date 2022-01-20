@@ -149,12 +149,14 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
     @Transactional(rollbackFor = Exception.class)
     public int updatePutawayQty(Long planDeliveryOrderDetId, BigDecimal putawayQty) {
         int i = 0;
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         WmsOutPlanDeliveryOrderDet wmsOutPlanDeliveryOrderDet = wmsOutPlanDeliveryOrderDetMapper.selectByPrimaryKey(planDeliveryOrderDetId);
         if(StringUtils.isEmpty(wmsOutPlanDeliveryOrderDet)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003, "找不到明细信息");
         }
         BigDecimal actualQty = StringUtils.isNotEmpty(wmsOutPlanDeliveryOrderDet.getActualQty()) ? wmsOutPlanDeliveryOrderDet.getActualQty().add(putawayQty) : putawayQty;
         wmsOutPlanDeliveryOrderDet.setActualQty(actualQty);
+        wmsOutPlanDeliveryOrderDet.setDeliveryUserId(user.getUserId());
         if (actualQty.compareTo(BigDecimal.ZERO) == 1 && actualQty.compareTo(wmsOutPlanDeliveryOrderDet.getTotalIssueQty()) == -1) {
             wmsOutPlanDeliveryOrderDet.setLineStatus((byte) 2);
         } else if (actualQty.compareTo(wmsOutPlanDeliveryOrderDet.getTotalIssueQty()) == 0) {
