@@ -120,6 +120,11 @@ public class WmsOutDeliveryReqOrderServiceImpl extends BaseService<WmsOutDeliver
         wmsOutDeliveryReqOrder.setOrderStatus(orderStatus);
         i += wmsOutDeliveryReqOrderMapper.updateByPrimaryKeySelective(wmsOutDeliveryReqOrder);
 
+        //如果出库通知单的上游单据是出库计划，也需返写
+        if("OUT-PDO".equals(wmsOutDeliveryReqOrder.getSourceSysOrderTypeCode())){
+            wmsOutPlanDeliveryOrderService.updatePutawayQty(wmsOutDeliveryReqOrderDet.getSourceId(),putawayQty);
+        }
+
         return i;
     }
 
