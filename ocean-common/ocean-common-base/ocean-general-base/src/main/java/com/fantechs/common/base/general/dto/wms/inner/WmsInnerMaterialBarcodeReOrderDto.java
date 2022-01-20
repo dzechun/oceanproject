@@ -55,8 +55,8 @@ public class WmsInnerMaterialBarcodeReOrderDto extends WmsInnerMaterialBarcodeRe
      */
     @Transient
     @ApiModelProperty(name="productionDate",value = "生产日期")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date productionDate;
 
     /**
