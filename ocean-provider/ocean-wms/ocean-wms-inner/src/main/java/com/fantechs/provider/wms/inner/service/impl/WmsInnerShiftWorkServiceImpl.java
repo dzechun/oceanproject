@@ -109,6 +109,7 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
                 throw new BizErrorException("单据已经作业，无法删除");
             }
             if (StringUtils.isEmpty(wmsInnerJobOrder)) {
+
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
             Example example = new Example(WmsInnerJobOrderDet.class);

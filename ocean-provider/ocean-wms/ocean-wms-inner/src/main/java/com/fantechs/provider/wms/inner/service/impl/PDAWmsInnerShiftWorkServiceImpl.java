@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -18,11 +19,11 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.wms.inner.mapper.*;
 import com.fantechs.provider.wms.inner.service.*;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -36,46 +37,32 @@ public class PDAWmsInnerShiftWorkServiceImpl implements PDAWmsInnerShiftWorkServ
 
     @Resource
     WmsInnerJobOrderService wmsInnerJobOrderService;
-
     @Resource
     WmsInnerHtJobOrderService wmsInnerHtJobOrderService;
-
     @Resource
     WmsInnerJobOrderMapper wmsInnerJobOrderMapper;
-
     @Resource
     WmsInnerJobOrderDetService wmsInnerJobOrderDetService;
-
     @Resource
     WmsInnerHtJobOrderDetService wmsInnerHtJobOrderDetService;
-
     @Resource
     WmsInnerJobOrderDetMapper wmsInnerJobOrderDetMapper;
-
     @Resource
     WmsInnerJobOrderDetBarcodeService wmsInnerJobOrderDetBarcodeService;
-
     @Resource
     private WmsInnerInventoryDetMapper wmsInnerInventoryDetMapper;
-
     @Resource
     WmsInnerInventoryDetService wmsInnerInventoryDetService;
-
     @Resource
     WmsInnerInventoryService wmsInnerInventoryService;
-
     @Resource
     WmsInnerInventoryMapper wmsInnerInventoryMapper;
-
     @Resource
     BaseFeignApi baseFeignApi;
-
     @Resource
     private SecurityFeignApi securityFeignApi;
-
     @Resource
-    private EngFeignApi engFeignApi;
-
+    private WmsInnerMaterialBarcodeService wmsInnerMaterialBarcodeService;
     @Resource
     private WmsInnerMaterialBarcodeMapper wmsInnerMaterialBarcodeMapper;
     @Resource
@@ -178,6 +165,7 @@ public class PDAWmsInnerShiftWorkServiceImpl implements PDAWmsInnerShiftWorkServ
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public String saveShiftWorkDetBarcode(SaveShiftWorkDetDto dto) {
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -214,9 +202,10 @@ public class PDAWmsInnerShiftWorkServiceImpl implements PDAWmsInnerShiftWorkServ
                     .andEqualTo("materialBarcodeId", dto.getPdaWmsInnerDirectTransferOrderDetDtos().get(0).getMaterialBarcodeId())
                     .andEqualTo("barcodeStatus", 1);
             List<WmsInnerInventoryDet> inventoryDets = wmsInnerInventoryDetMapper.selectByExample(example4);
-            if (StringUtils.isEmpty(inventoryDets) || inventoryDets.size()>1) {
-                throw new BizErrorException(ErrorCodeEnum.PDA5001009.getCode(),"未查询到对应库存中正确的条码");
+            if (StringUtils.isEmpty(inventoryDets) || inventoryDets.size() > 1) {
+                throw new BizErrorException(ErrorCodeEnum.PDA5001009.getCode(), "未查询到对应库存中正确的条码");
             }
+
 
             // 查询库存信息，同一库位跟同物料有且只有一条数据
             Map<String, Object> map = new HashMap<>();
@@ -257,7 +246,7 @@ public class PDAWmsInnerShiftWorkServiceImpl implements PDAWmsInnerShiftWorkServ
             if (StringUtils.isEmpty(baseStorage))
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未查询到移出库位");
             if (baseStorage.get(0).getStorageType() != 1)
-                throw new BizErrorException(ErrorCodeEnum.PDA40012037.getCode(),"库位类型错误，移出库位必须是存货库位");
+                throw new BizErrorException(ErrorCodeEnum.PDA40012037.getCode(), "库位类型错误，移出库位必须是存货库位");
 
 
             if (dto.getJobOrderId() != null) {
@@ -336,47 +325,76 @@ public class PDAWmsInnerShiftWorkServiceImpl implements PDAWmsInnerShiftWorkServ
         if (!dto.getPdaWmsInnerDirectTransferOrderDetDtos().isEmpty()) {
             List<WmsInnerJobOrderDetBarcode> jobOrderDetBarcodeList = new ArrayList<>();
             List<WmsInnerMaterialBarcodeReOrder> wmsInnerMaterialBarcodeReOrders = new ArrayList<>();
+            List<WmsInnerMaterialBarcodeDto> wmsInnerMaterialBarcodeDtoList = new ArrayList<>();
 
-            for (PDAWmsInnerDirectTransferOrderDetDto barcode : dto.getPdaWmsInnerDirectTransferOrderDetDtos()) {
+            for (PDAWmsInnerDirectTransferOrderDetDto det : dto.getPdaWmsInnerDirectTransferOrderDetDtos()) {
 
-                //查询条码是否存在
+                //查询条码
                 Example example2 = new Example(WmsInnerMaterialBarcode.class);
                 Example.Criteria criteria2 = example2.createCriteria();
                 criteria2.andEqualTo("materialId", dto.getMaterialId());
-                criteria2.andEqualTo("materialBarcodeId", barcode.getMaterialBarcodeId());
+                if (det.getBarcodeType() == 1) {
+                    criteria2.andEqualTo("barcode", det.getBarcode());
+                } else if (det.getBarcodeType() == 2) {
+                    criteria2.andEqualTo("colorBoxCode", det.getBarcode());
+                } else if (det.getBarcodeType() == 3) {
+                    criteria2.andEqualTo("cartonCode", det.getBarcode());
+                } else if (det.getBarcodeType() == 4) {
+                    criteria2.andEqualTo("palletCode", det.getBarcode());
+                } else {
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "未上传条码类型条码类型不正确");
+                }
                 List<WmsInnerMaterialBarcode> wmsInnerMaterialBarcodes = wmsInnerMaterialBarcodeMapper.selectByExample(example2);
                 if (StringUtils.isEmpty(wmsInnerMaterialBarcodes)) {
-                    throw new BizErrorException(ErrorCodeEnum.PDA5001004);
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未查询到对应的物料条码，条码为：" + det.getBarcode());
                 }
 
-                //查询条码是否在库,更新库存明细状态
-                Example example3 = new Example(WmsInnerInventoryDet.class);
-                Example.Criteria criteria3 = example3.createCriteria()
-                        .andEqualTo("storageId", dto.getOutStorageId())
-                        .andEqualTo("materialBarcodeId", barcode.getMaterialBarcodeId())
-                        .andEqualTo("barcodeStatus", 1);
-                List<WmsInnerInventoryDet> wmsInnerInventoryDets = wmsInnerInventoryDetMapper.selectByExample(example3);
-                if (StringUtils.isEmpty(wmsInnerInventoryDets)) {
-                    throw new BizErrorException(ErrorCodeEnum.PDA5001009);
-                }
-                WmsInnerInventoryDet det = wmsInnerInventoryDets.get(0);
-                det.setBarcodeStatus((byte) 2);
-                wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(det);
+                for (WmsInnerMaterialBarcode barcode : wmsInnerMaterialBarcodes) {
 
-                // 创建条码移位单明细关系
-                WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
-                wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("INNER-SSO");
-                wmsInnerMaterialBarcodeReOrder.setOrderCode(innerJobOrder.getJobOrderCode());
-                wmsInnerMaterialBarcodeReOrder.setOrderId(innerJobOrder.getJobOrderId());
-                wmsInnerMaterialBarcodeReOrder.setOrderDetId(jobOrderDet.getJobOrderDetId());
-                wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(wmsInnerMaterialBarcodes.get(0).getMaterialBarcodeId());
-                wmsInnerMaterialBarcodeReOrder.setStatus((byte) 1);
-                wmsInnerMaterialBarcodeReOrder.setOrgId(user.getOrganizationId());
-                wmsInnerMaterialBarcodeReOrder.setCreateUserId(user.getUserId());
-                wmsInnerMaterialBarcodeReOrder.setCreateTime(new Date());
-                wmsInnerMaterialBarcodeReOrder.setModifiedUserId(user.getUserId());
-                wmsInnerMaterialBarcodeReOrder.setModifiedTime(new Date());
-                wmsInnerMaterialBarcodeReOrders.add(wmsInnerMaterialBarcodeReOrder);
+                    if (det.getBarcodeType() == 1 && (StringUtils.isNotEmpty(barcode.getColorBoxCode()) || StringUtils.isNotEmpty(barcode.getCartonCode()) || StringUtils.isNotEmpty(barcode.getPalletCode())))
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "调拨出库需以最大单位进行，如需单独移动SN码，请先进行拆分操作");
+                    if (det.getBarcodeType() == 2 && (StringUtils.isNotEmpty(barcode.getCartonCode()) || StringUtils.isNotEmpty(barcode.getPalletCode())))
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "调拨出库需以最大单位进行，如需单独移动彩盒码，请先进行拆分操作");
+                    if (det.getBarcodeType() == 3 && (StringUtils.isNotEmpty(barcode.getPalletCode())))
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "调拨出库需以最大单位进行，如需单独移动箱码，请先进行拆分操作");
+
+                    //查询条码是否在库,更新库存明细状态
+                    Example example3 = new Example(WmsInnerInventoryDet.class);
+                    example3.createCriteria()
+                            .andEqualTo("storageId", dto.getOutStorageId())
+                            .andEqualTo("materialBarcodeId", barcode.getMaterialBarcodeId())
+                            .andEqualTo("barcodeStatus", 1);
+                    List<WmsInnerInventoryDet> wmsInnerInventoryDets = wmsInnerInventoryDetMapper.selectByExample(example3);
+                    if (StringUtils.isEmpty(wmsInnerInventoryDets)) {
+                        throw new BizErrorException(ErrorCodeEnum.PDA5001009);
+                    }
+                    WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDets.get(0);
+                    wmsInnerInventoryDet.setBarcodeStatus((byte) 2);
+                    wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
+
+                    // 创建条码移位单明细关系
+                    WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
+                    wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("INNER-SSO");
+                    wmsInnerMaterialBarcodeReOrder.setOrderCode(innerJobOrder.getJobOrderCode());
+                    wmsInnerMaterialBarcodeReOrder.setOrderId(innerJobOrder.getJobOrderId());
+                    wmsInnerMaterialBarcodeReOrder.setOrderDetId(jobOrderDet.getJobOrderDetId());
+                    wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(barcode.getMaterialBarcodeId());
+                    wmsInnerMaterialBarcodeReOrder.setStatus((byte) 1);
+                    wmsInnerMaterialBarcodeReOrder.setOrgId(user.getOrganizationId());
+                    wmsInnerMaterialBarcodeReOrder.setCreateUserId(user.getUserId());
+                    wmsInnerMaterialBarcodeReOrder.setCreateTime(new Date());
+                    wmsInnerMaterialBarcodeReOrder.setModifiedUserId(user.getUserId());
+                    wmsInnerMaterialBarcodeReOrder.setModifiedTime(new Date());
+                    wmsInnerMaterialBarcodeReOrders.add(wmsInnerMaterialBarcodeReOrder);
+
+                    //还原被标记的条码状态
+                    WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto = new WmsInnerMaterialBarcodeDto();
+                    BeanUtils.copyProperties(barcode, wmsInnerMaterialBarcodeDto);
+                    wmsInnerMaterialBarcodeDto.setIfScan((byte) 0);
+                    wmsInnerMaterialBarcodeDto.setModifiedUserId(user.getUserId());
+                    wmsInnerMaterialBarcodeDto.setModifiedTime(new Date());
+                    wmsInnerMaterialBarcodeDtoList.add(wmsInnerMaterialBarcodeDto);
+                }
             }
             if (jobOrderDetBarcodeList.size() > 0) {
                 wmsInnerJobOrderDetBarcodeService.batchSave(jobOrderDetBarcodeList);
@@ -384,6 +402,8 @@ public class PDAWmsInnerShiftWorkServiceImpl implements PDAWmsInnerShiftWorkServ
             if (wmsInnerMaterialBarcodeReOrders.size() > 0) {
                 wmsInnerMaterialBarcodeReOrderMapper.insertList(wmsInnerMaterialBarcodeReOrders);
             }
+            if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeDtoList))
+                wmsInnerMaterialBarcodeService.batchUpdate(wmsInnerMaterialBarcodeDtoList);
         }
 
         return dto.getJobOrderId().toString();
@@ -395,7 +415,7 @@ public class PDAWmsInnerShiftWorkServiceImpl implements PDAWmsInnerShiftWorkServ
     public int saveJobOrder(SaveShiftJobOrderDto dto) {
         SysUser sysUser = currentUser();
 
- //       WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderDetMapper.selectByPrimaryKey(dto.getJobOrderDetId());
+        //       WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderDetMapper.selectByPrimaryKey(dto.getJobOrderDetId());
         SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
         searchWmsInnerJobOrderDet.setJobOrderDetId(dto.getJobOrderDetId());
         WmsInnerJobOrderDetDto oldDto = wmsInnerJobOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
@@ -408,12 +428,11 @@ public class PDAWmsInnerShiftWorkServiceImpl implements PDAWmsInnerShiftWorkServ
         if (baseStorage == null)
             throw new BizErrorException(ErrorCodeEnum.PDA5001007);
         if (baseStorage.getStorageType() != 1)
-            throw new BizErrorException(ErrorCodeEnum.PDA40012037.getCode(),"库位类型错误，移入库位必须是存货库位");
+            throw new BizErrorException(ErrorCodeEnum.PDA40012037.getCode(), "库位类型错误，移入库位必须是存货库位");
         if (oldDto.getActualQty().compareTo(oldDto.getDistributionQty()) != 0)
             throw new BizErrorException("上架数量不能大于分配数量");
 
- //       if(oldDto)
-
+        //       if(oldDto)
 
 
         // 变更移位单明细
@@ -535,19 +554,6 @@ public class PDAWmsInnerShiftWorkServiceImpl implements PDAWmsInnerShiftWorkServ
         int count = wmsInnerJobOrderDetService.selectCount(wms);
 //        wms.setOrderStatus((byte) 5);
         int oCount = wmsInnerJobOrderDetService.selectCount(wms);
-
-        //移位上架作业不校验工作人员
-/*        SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
-        searchBaseWorker.setWarehouseId(wmsInnerJobOrderDto.getWarehouseId());
-        searchBaseWorker.setUserId(sysUser.getUserId());
-        List<BaseWorkerDto> workerDtos = baseFeignApi.findList(searchBaseWorker).getData();
-        if (workerDtos.isEmpty()) {
-            throw new BizErrorException(ErrorCodeEnum.PDA5001014);
-        }*/
-
-/*        BigDecimal resQty = wmsInnerJobOrderDetDto.stream()
-                .map(WmsInnerJobOrderDet::getDistributionQty)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);*/
 
         WmsInnerJobOrder ws = new WmsInnerJobOrder();
         ws.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
