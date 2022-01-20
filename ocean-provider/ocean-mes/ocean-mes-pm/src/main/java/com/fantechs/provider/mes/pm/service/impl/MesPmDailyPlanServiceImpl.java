@@ -10,6 +10,7 @@ import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDetD
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDto;
 import com.fantechs.common.base.general.entity.mes.pm.*;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmDailyPlan;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -372,8 +373,6 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
         stockListOrderDto.setSourceSysOrderTypeCode("MES-DPO");//来源单据编码 生产日计划
         stockListOrderDto.setSourceBigType((byte)1);//来源大类 下推
         stockListOrderDto.setOrderStatus((byte)1);//待执行
-        stockListOrderDto.setCreateUserId(user.getUserId());
-        stockListOrderDto.setCreateTime(new Date());
 
         for (MesPmDailyPlanStockListDto planStockListDto : mesPmDailyPlanStockListDtos) {
             if (planStockListDto.getIfAllIssued() != null && planStockListDto.getIfAllIssued() == (byte) 1) {
@@ -395,8 +394,6 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
             stockListOrderDetDto.setMaterialId(planStockListDto.getPartMaterialId());
             stockListOrderDetDto.setOrderQty(planStockListDto.getDailyPlanUsageQty());
             stockListOrderDetDto.setLineStatus((byte)1);
-            stockListOrderDetDto.setCreateUserId(user.getUserId());
-            stockListOrderDetDto.setCreateTime(new Date());
             stockListOrderDetDtos.add(stockListOrderDetDto);
 
             //更新明细
@@ -405,8 +402,6 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
             planStockList.setTotalIssueQty(planStockListDto.getTotalIssueQty().add(planStockListDto.getIssueQty()));
             if(planStockListDto.getDailyPlanUsageQty().compareTo(planStockListDto.getTotalIssueQty().add(planStockListDto.getIssueQty()))==0)
                 planStockList.setIfAllIssued((byte)1);
-            planStockList.setModifiedUserId(user.getUserId());
-            planStockList.setModifiedTime(new Date());
             num=mesPmDailyPlanStockListMapper.updateByPrimaryKeySelective(planStockList);
             if(num<=0){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
@@ -414,7 +409,10 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
         }
         stockListOrderDto.setWmsOutPlanStockListOrderDetDtos(stockListOrderDetDtos);
         //下推备料计划
-        outFeignApi.add(stockListOrderDto);
+        ResponseEntity responseEntity = outFeignApi.add(stockListOrderDto);
+        if(responseEntity.getCode()!=0){
+            throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+        }
 
         return num;
     }
