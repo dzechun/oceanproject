@@ -26,6 +26,7 @@ import com.fantechs.common.base.general.entity.wms.in.*;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcodeReOrder;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcodeReOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
@@ -163,12 +164,59 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                                 //设置来料条码ID
                             } else {
                                 //系统条码更新条码状态
-                                WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcode = new WmsInnerMaterialBarcodeDto();
-                                wmsInnerMaterialBarcode.setMaterialBarcodeId(wmsInReceivingOrderBarcode.getMaterialBarcodeId());
-                                wmsInnerMaterialBarcode.setBarcodeStatus((byte) 5);
-                                wmsInnerMaterialBarcode.setModifiedUserId(sysUser.getUserId());
-                                wmsInnerMaterialBarcode.setModifiedTime(new Date());
-                                wmsInnerMaterialBarcodeList.add(wmsInnerMaterialBarcode);
+                                //if(wmsInReceivingOrderBarcode.getBarcodeType()!=1){
+                                    SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode=new SearchWmsInnerMaterialBarcode();
+                                    if(wmsInReceivingOrderBarcode.getBarcodeType()==1){
+                                        searchWmsInnerMaterialBarcode.setBarcode(wmsInReceivingOrderBarcode.getBarcode());
+                                    }else if(wmsInReceivingOrderBarcode.getBarcodeType()==2){
+                                        //彩盒
+                                        searchWmsInnerMaterialBarcode.setColorBoxCode(wmsInReceivingOrderBarcode.getBarcode());
+                                    }else if(wmsInReceivingOrderBarcode.getBarcodeType()==3){
+                                        //箱号
+                                        searchWmsInnerMaterialBarcode.setCartonCode(wmsInReceivingOrderBarcode.getBarcode());
+                                    }else if(wmsInReceivingOrderBarcode.getBarcodeType()==4){
+                                        //栈板
+                                        searchWmsInnerMaterialBarcode.setPalletCode(wmsInReceivingOrderBarcode.getBarcode());
+                                    }
+                                    searchWmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
+                                    List<WmsInnerMaterialBarcodeDto> barcodeDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcode).getData();
+                                    if(barcodeDtos.size()>0){
+                                        for (WmsInnerMaterialBarcodeDto barcodeDto : barcodeDtos) {
+                                            WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcode = new WmsInnerMaterialBarcodeDto();
+                                            wmsInnerMaterialBarcode.setMaterialBarcodeId(barcodeDto.getMaterialBarcodeId());
+                                            wmsInnerMaterialBarcode.setBarcodeStatus((byte) 3);
+                                            wmsInnerMaterialBarcode.setModifiedUserId(sysUser.getUserId());
+                                            wmsInnerMaterialBarcode.setModifiedTime(new Date());
+                                            wmsInnerMaterialBarcodeList.add(wmsInnerMaterialBarcode);
+
+//                                            //更新条码关系表条码状态
+//                                            SearchWmsInnerMaterialBarcodeReOrder sReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
+//                                            sReOrder.setOrderTypeCode("IN-IWK");
+//                                            sReOrder.setOrderId(wmsInnerJobOrder.getJobOrderId());
+//                                            sReOrder.setMaterialBarcodeId(materialBarcodeDto.getMaterialBarcodeId());
+//                                            List<WmsInnerMaterialBarcodeReOrderDto> reOrderDtoList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sReOrder));
+//                                            if(reOrderDtoList.size()<=0){
+//                                                throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"条码关系表找不到此条码数据 条码ID-->"+item.getMaterialBarcodeId().toString());
+//                                            }
+//                                            //更新条码关系表扫描状态
+//                                            WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder=new WmsInnerMaterialBarcodeReOrder();
+//                                            wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeReOrderId(barcodeDto.getMaterialBarcodeId());
+//                                            wmsInnerMaterialBarcodeReOrder.setScanStatus((byte)3);
+//                                            wmsInnerMaterialBarcodeReOrder.setModifiedUserId(sysUser.getUserId());
+//                                            wmsInnerMaterialBarcodeReOrder.setModifiedTime(new Date());
+//                                            innerFeignApi.update(wmsInnerMaterialBarcodeReOrder);
+                                        }
+                                    }else {
+                                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未获取到sn条码信息");
+                                    }
+//                                }else {
+//                                    WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcode = new WmsInnerMaterialBarcodeDto();
+//                                    wmsInnerMaterialBarcode.setMaterialBarcodeId(wmsInReceivingOrderBarcode.getMaterialBarcodeId());
+//                                    wmsInnerMaterialBarcode.setBarcodeStatus((byte) 3);
+//                                    wmsInnerMaterialBarcode.setModifiedUserId(sysUser.getUserId());
+//                                    wmsInnerMaterialBarcode.setModifiedTime(new Date());
+//                                    wmsInnerMaterialBarcodeList.add(wmsInnerMaterialBarcode);
+//                                }
                             }
                     }
                     //更新条码状态
@@ -310,23 +358,57 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                 wmsInReceivingOrderDetMapper.updateByPrimaryKeySelective(wmsInReceivingOrderDet);
                 wmsInReceivingOrderDet.setSourceId(inReceivingOrderDet.getSourceId());
                 //反写收货计划实收数量
-                if(wmsInReceivingOrder.getSourceBigType()==1){
+                if(wmsInReceivingOrder.getSourceBigType()==1 && wmsInReceivingOrder.getSourceSysOrderTypeCode().equals("IN-SPO")){
                     this.writeQty(wmsInReceivingOrderDet);
                 }
                 List<WmsInnerMaterialBarcodeDto> wmsInnerMaterialBarcodeDtos = new LinkedList<>();
                 for (WmsInReceivingOrderBarcode wmsInReceivingOrderBarcode : wmsInReceivingOrderDet.getWmsInReceivingOrderBarcodeList()) {
-                    //系统条码更新条码状态
-                    WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcode=new WmsInnerMaterialBarcodeDto();
-                    wmsInnerMaterialBarcode.setMaterialBarcodeId(wmsInReceivingOrderBarcode.getMaterialBarcodeId());
-                    wmsInnerMaterialBarcode.setBarcodeStatus((byte)3);
-                    wmsInnerMaterialBarcode.setModifiedUserId(sysUser.getUserId());
-                    wmsInnerMaterialBarcode.setModifiedTime(new Date());
-                    wmsInnerMaterialBarcodeDtos.add(wmsInnerMaterialBarcode);
 
-                    WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
-                    wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeReOrderId(wmsInReceivingOrderBarcode.getMaterialBarcodeReOrderId());
-                    wmsInnerMaterialBarcodeReOrder.setScanStatus((byte)3);
-                    innerFeignApi.update(wmsInnerMaterialBarcodeReOrder);
+                    //系统条码更新条码状态
+                        SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode=new SearchWmsInnerMaterialBarcode();
+                        if(wmsInReceivingOrderBarcode.getBarcodeType()==1){
+                            //sn
+                            searchWmsInnerMaterialBarcode.setBarcode(wmsInReceivingOrderBarcode.getBarcode());
+                        }else if(wmsInReceivingOrderBarcode.getBarcodeType()==2){
+                            //彩盒
+                            searchWmsInnerMaterialBarcode.setColorBoxCode(wmsInReceivingOrderBarcode.getBarcode());
+                        }else if(wmsInReceivingOrderBarcode.getBarcodeType()==3){
+                            //箱号
+                            searchWmsInnerMaterialBarcode.setCartonCode(wmsInReceivingOrderBarcode.getBarcode());
+                        }else if(wmsInReceivingOrderBarcode.getBarcodeType()==4){
+                            //栈板
+                            searchWmsInnerMaterialBarcode.setPalletCode(wmsInReceivingOrderBarcode.getBarcode());
+                        }
+                        searchWmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
+                        List<WmsInnerMaterialBarcodeDto> barcodeDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcode).getData();
+                        if(barcodeDtos.size()>0){
+                            for (WmsInnerMaterialBarcodeDto barcodeDto : barcodeDtos) {
+                                WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcode = new WmsInnerMaterialBarcodeDto();
+                                wmsInnerMaterialBarcode.setMaterialBarcodeId(barcodeDto.getMaterialBarcodeId());
+                                wmsInnerMaterialBarcode.setBarcodeStatus((byte) 3);
+                                wmsInnerMaterialBarcode.setModifiedUserId(sysUser.getUserId());
+                                wmsInnerMaterialBarcode.setModifiedTime(new Date());
+                                wmsInnerMaterialBarcodeDtos.add(wmsInnerMaterialBarcode);
+
+                                //更新条码关系表条码状态
+                                SearchWmsInnerMaterialBarcodeReOrder sReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
+                                sReOrder.setOrderTypeCode("IN-SWK");
+                                sReOrder.setOrderId(entity.getReceivingOrderId());
+                                sReOrder.setMaterialBarcodeId(barcodeDto.getMaterialBarcodeId());
+                                List<WmsInnerMaterialBarcodeReOrderDto> reOrderDtoList=innerFeignApi.findList(sReOrder).getData();
+                                if(reOrderDtoList.size()<=0){
+                                    throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"条码关系表找不到此条码数据 条码ID-->"+barcodeDto.getMaterialBarcodeId().toString());
+                                }
+                                WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
+                                wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeReOrderId(reOrderDtoList.get(0).getMaterialBarcodeReOrderId());
+                                wmsInnerMaterialBarcodeReOrder.setScanStatus((byte)3);
+                                wmsInnerMaterialBarcodeReOrder.setModifiedUserId(sysUser.getUserId());
+                                wmsInnerMaterialBarcodeReOrder.setModifiedTime(new Date());
+                                innerFeignApi.update(wmsInnerMaterialBarcodeReOrder);
+                            }
+                        }else {
+                            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未获取到sn条码信息");
+                        }
                 }
                 if(!wmsInnerMaterialBarcodeDtos.isEmpty()){
                     innerFeignApi.batchUpdate(wmsInnerMaterialBarcodeDtos);
@@ -672,5 +754,91 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
             }
         }
         return num;
+    }
+
+    @Override
+    public List<WmsInReceivingOrderBarcode> scanBarcode(String barcode) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode=new SearchWmsInnerMaterialBarcode();
+        searchWmsInnerMaterialBarcode.setBarcode(barcode);
+        searchWmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
+        List<WmsInnerMaterialBarcodeDto> barcodeDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcode).getData();
+        WmsInReceivingOrderBarcode wmsInReceivingOrderBarcode = new WmsInReceivingOrderBarcode();
+        if(barcodeDtos.size()>0){
+            //SN码
+            if(barcodeDtos.get(0).getBarcodeStatus()>=(byte)3){
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
+            }
+            wmsInReceivingOrderBarcode.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
+            wmsInReceivingOrderBarcode.setBarcodeType((byte)1);
+            wmsInReceivingOrderBarcode.setMaterialQty(barcodeDtos.get(0).getMaterialQty());
+            wmsInReceivingOrderBarcode.setBarcode(barcode);
+            wmsInReceivingOrderBarcode.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
+            wmsInReceivingOrderBarcode.setMaterialId(barcodeDtos.get(0).getMaterialId());
+            wmsInReceivingOrderBarcode.setMaterialCode(barcodeDtos.get(0).getMaterialCode());
+        }else {
+            //彩盒
+            searchWmsInnerMaterialBarcode.setBarcode(null);
+            searchWmsInnerMaterialBarcode.setColorBoxCode(barcode);
+            barcodeDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcode).getData();
+            if(barcodeDtos.size()>0){
+                List<WmsInnerMaterialBarcodeDto> barcodeListOne = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
+                if(barcodeListOne.get(0).getBarcodeStatus()>=(byte)3){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
+                }
+                wmsInReceivingOrderBarcode.setBarcodeType((byte)2);
+                wmsInReceivingOrderBarcode.setMaterialQty(barcodeDtos.get(0).getMaterialQty());
+                wmsInReceivingOrderBarcode.setBarcode(barcode);
+                wmsInReceivingOrderBarcode.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
+                wmsInReceivingOrderBarcode.setMaterialId(barcodeDtos.get(0).getMaterialId());
+                wmsInReceivingOrderBarcode.setMaterialCode(barcodeDtos.get(0).getMaterialCode());
+            }else {
+                //箱码
+                searchWmsInnerMaterialBarcode.setBarcode(null);
+                searchWmsInnerMaterialBarcode.setColorBoxCode(null);
+                searchWmsInnerMaterialBarcode.setCartonCode(barcode);
+                barcodeDtos=innerFeignApi.findList(searchWmsInnerMaterialBarcode).getData();
+                if(barcodeDtos.size()>0){
+                    List<WmsInnerMaterialBarcodeDto> barcodeListOne = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
+                    if(barcodeListOne.get(0).getBarcodeStatus()>=(byte)3){
+                        throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
+                    }
+                    List<WmsInnerMaterialBarcodeDto> barcodeList = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
+                    BigDecimal totalQty=barcodeList.stream().map(WmsInnerMaterialBarcodeDto::getMaterialQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+                    wmsInReceivingOrderBarcode.setBarcodeType((byte)3);
+                    wmsInReceivingOrderBarcode.setMaterialQty(totalQty);
+                    wmsInReceivingOrderBarcode.setBarcode(barcode);
+                    wmsInReceivingOrderBarcode.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
+                    wmsInReceivingOrderBarcode.setMaterialId(barcodeDtos.get(0).getMaterialId());
+                    wmsInReceivingOrderBarcode.setMaterialCode(barcodeDtos.get(0).getMaterialCode());
+                }else {
+                    //栈板
+                    searchWmsInnerMaterialBarcode.setBarcode(null);
+                    searchWmsInnerMaterialBarcode.setColorBoxCode(null);
+                    searchWmsInnerMaterialBarcode.setCartonCode(null);
+                    searchWmsInnerMaterialBarcode.setPalletCode(barcode);
+                    barcodeDtos=innerFeignApi.findList(searchWmsInnerMaterialBarcode).getData();
+                    if(barcodeDtos.size()>0){
+                        List<WmsInnerMaterialBarcodeDto> barcodeListOne = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
+                        if(barcodeListOne.get(0).getBarcodeStatus()>=(byte)3){
+                            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
+                        }
+                        List<WmsInnerMaterialBarcodeDto> barcodeList = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
+                        BigDecimal totalQty=barcodeList.stream().map(WmsInnerMaterialBarcodeDto::getMaterialQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+                        wmsInReceivingOrderBarcode.setBarcodeType((byte)4);
+                        wmsInReceivingOrderBarcode.setMaterialQty(totalQty);
+                        wmsInReceivingOrderBarcode.setBarcode(barcode);
+                        wmsInReceivingOrderBarcode.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
+                        wmsInReceivingOrderBarcode.setMaterialId(barcodeDtos.get(0).getMaterialId());
+                        wmsInReceivingOrderBarcode.setMaterialCode(barcodeDtos.get(0).getMaterialCode());
+                    }else {
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"条码不存在");
+                    }
+                }
+            }
+        }
+        List<WmsInReceivingOrderBarcode> list = new ArrayList<>();
+        list.add(wmsInReceivingOrderBarcode);
+        return list;
     }
 }

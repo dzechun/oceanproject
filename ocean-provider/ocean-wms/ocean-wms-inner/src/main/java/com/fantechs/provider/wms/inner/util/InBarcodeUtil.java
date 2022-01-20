@@ -188,6 +188,8 @@ public class InBarcodeUtil {
             barcodeResultDto.setBarcode(barcode);
             barcodeResultDto.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
             barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
+            barcodeResultDto.setBatchCode(barcodeDtos.get(0).getBatchCode());
+            barcodeResultDto.setProductionDate(barcodeDtos.get(0).getProductionTime().toString());
         }
         else {
             //彩盒
@@ -201,11 +203,14 @@ public class InBarcodeUtil {
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
                 }
                 List<WmsInnerMaterialBarcodeDto> barcodeListColorBox = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
+                List<WmsInnerMaterialBarcodeDto> barcodeListSn = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
                 barcodeResultDto.setBarcodeType((byte)2);
                 barcodeResultDto.setMaterialQty(barcodeDtos.get(0).getMaterialQty());
                 barcodeResultDto.setBarcode(barcode);
                 barcodeResultDto.setMaterialBarcodeId(barcodeListColorBox.get(0).getMaterialBarcodeId());
                 barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
+                barcodeResultDto.setBatchCode(barcodeListSn.get(0).getBatchCode());
+                barcodeResultDto.setProductionDate(barcodeListSn.get(0).getProductionTime().toString());
             }
             else {
                 //箱码
@@ -227,6 +232,8 @@ public class InBarcodeUtil {
                     barcodeResultDto.setBarcode(barcode);
                     barcodeResultDto.setMaterialBarcodeId(barcodeListCarton.get(0).getMaterialBarcodeId());
                     barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
+                    barcodeResultDto.setBatchCode(barcodeList.get(0).getBatchCode());
+                    barcodeResultDto.setProductionDate(barcodeList.get(0).getProductionTime().toString());
                 }
                 else {
                     //栈板
@@ -249,6 +256,8 @@ public class InBarcodeUtil {
                         barcodeResultDto.setBarcode(barcode);
                         barcodeResultDto.setMaterialBarcodeId(barcodeListPallet.get(0).getMaterialBarcodeId());
                         barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
+                        barcodeResultDto.setBatchCode(barcodeList.get(0).getBatchCode());
+                        barcodeResultDto.setProductionDate(barcodeList.get(0).getProductionTime().toString());
                     }
                 }
             }

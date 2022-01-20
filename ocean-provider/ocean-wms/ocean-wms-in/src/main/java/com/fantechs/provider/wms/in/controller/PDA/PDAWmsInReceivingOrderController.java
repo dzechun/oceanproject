@@ -1,5 +1,6 @@
 package com.fantechs.provider.wms.in.controller.PDA;
 
+import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderBarcode;
 import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDto;
 import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrder;
@@ -15,10 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -66,5 +64,11 @@ public class PDAWmsInReceivingOrderController {
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WmsInReceivingOrder.update.class) WmsInReceivingOrder wmsInReceivingOrder) {
         wmsInReceivingOrder.setIsPdaCreate((byte)1);
         return ControllerUtil.returnCRUD(wmsInReceivingOrderService.update(wmsInReceivingOrder));
+    }
+
+    @ApiOperation("PDA扫码")
+    @PostMapping("/scanBarcode")
+    public ResponseEntity<List<WmsInReceivingOrderBarcode>> scanBarcode(@ApiParam(required = true) @RequestParam String barcode){
+        return ControllerUtil.returnDataSuccess(wmsInReceivingOrderService.scanBarcode(barcode),1);
     }
 }

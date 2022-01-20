@@ -126,7 +126,7 @@ public class WmsOutDeliveryReqOrderServiceImpl extends BaseService<WmsOutDeliver
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int pushDown(List<WmsOutDeliveryReqOrderDetDto> wmsOutDeliveryReqOrderDetDtos) {
-        int i;
+        int i = 0;
         Long warehouseId = wmsOutDeliveryReqOrderDetDtos.get(0).getWarehouseId();
         for (WmsOutDeliveryReqOrderDetDto wmsOutDeliveryReqOrderDetDto : wmsOutDeliveryReqOrderDetDtos){
             if(!warehouseId.equals(wmsOutDeliveryReqOrderDetDto.getWarehouseId())){
@@ -137,8 +137,9 @@ public class WmsOutDeliveryReqOrderServiceImpl extends BaseService<WmsOutDeliver
             }
             wmsOutDeliveryReqOrderDetDto.setTotalIssueQty(wmsOutDeliveryReqOrderDetDto.getOrderQty());
             wmsOutDeliveryReqOrderDetDto.setIfAllIssued((byte)1);
+            i += wmsOutDeliveryReqOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryReqOrderDetDto);
         }
-        i = wmsOutDeliveryReqOrderDetMapper.batchUpdate(wmsOutDeliveryReqOrderDetDtos);
+        //i = wmsOutDeliveryReqOrderDetMapper.batchUpdate(wmsOutDeliveryReqOrderDetDtos);
 
         //查当前单据类型的所有单据流
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();

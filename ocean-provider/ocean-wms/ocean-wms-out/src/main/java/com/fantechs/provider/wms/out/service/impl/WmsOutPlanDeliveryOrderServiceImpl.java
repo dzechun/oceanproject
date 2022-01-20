@@ -85,7 +85,7 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int pushDown(List<WmsOutPlanDeliveryOrderDetDto> wmsOutPlanDeliveryOrderDetDtos) {
-        int i;
+        int i = 0;
         Long warehouseId = wmsOutPlanDeliveryOrderDetDtos.get(0).getWarehouseId();
         for (WmsOutPlanDeliveryOrderDetDto wmsOutPlanDeliveryOrderDetDto : wmsOutPlanDeliveryOrderDetDtos){
             if(!warehouseId.equals(wmsOutPlanDeliveryOrderDetDto.getWarehouseId())){
@@ -96,8 +96,9 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
             }
             wmsOutPlanDeliveryOrderDetDto.setTotalIssueQty(wmsOutPlanDeliveryOrderDetDto.getOrderQty());
             wmsOutPlanDeliveryOrderDetDto.setIfAllIssued((byte)1);
+            i += wmsOutPlanDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutPlanDeliveryOrderDetDto);
         }
-        i = wmsOutPlanDeliveryOrderDetMapper.batchUpdate(wmsOutPlanDeliveryOrderDetDtos);
+        //i = wmsOutPlanDeliveryOrderDetMapper.batchUpdate(wmsOutPlanDeliveryOrderDetDtos);
 
         //查询发货库位
         SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
