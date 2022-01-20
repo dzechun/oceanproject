@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
@@ -129,29 +130,28 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
      */
     @Override
     public List<WmsInnerInventoryDetDto> findListByBarCode(List<String> codes) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<WmsInnerMaterialBarcodeDto> list = wmsInnerMaterialBarcodeService.findListByCode(codes);
         List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos = new ArrayList<>();
-        List<Long> barCodes = new ArrayList<>();
+        List<WmsInnerMaterialBarcodeDto> wmsInnerMaterialBarcodeDtoList = new ArrayList<>();
         Map m = new HashMap();
         Map map = new HashMap();
         if(StringUtils.isNotEmpty(list)){
             for(String code : codes){
                 for(WmsInnerMaterialBarcodeDto dto : list) {
+                    if(dto.getIfScan() == 1) throw new BizErrorException(ErrorCodeEnum.OPT20012001,"该条码或该条码下的其他条码已经被扫描");
+                    m.clear();
+                    m.put("materialBarcodeId",dto.getMaterialBarcodeId());
+                    List<WmsInnerInventoryDetDto> det = wmsInnerInventoryDetMapper.findList(m);
+                    if(StringUtils.isEmpty(det))  throw new BizErrorException("未在库存中查询到该条码");
+
                     if (code.equals(dto.getBarcode())) {
-                        m.clear();
-                        m.put("materialBarcodeId",dto.getMaterialBarcodeId());
-                        List<WmsInnerInventoryDetDto> det = wmsInnerInventoryDetMapper.findList(m);
-                        if(StringUtils.isEmpty(det))  throw new BizErrorException("未在库存中查询到该条码");
                         WmsInnerInventoryDetDto wmsInnerInventoryDetDto = det.get(0);
                         wmsInnerInventoryDetDto.setMaterialTotalQty(wmsInnerInventoryDetDto.getMaterialQty());
                         wmsInnerInventoryDetDtos.add(wmsInnerInventoryDetDto);
                     }else if(code.equals(dto.getColorBoxCode())){
                         //彩盒码,箱码为空
-                        m.clear();
                         if(StringUtils.isEmpty(dto.getBarcode())) {
-                            m.put("materialBarcodeId",dto.getMaterialBarcodeId());
-                            List<WmsInnerInventoryDetDto> det = wmsInnerInventoryDetMapper.findList(m);
-                            if(StringUtils.isEmpty(det))  throw new BizErrorException("未在库存中查询到该条码");
                             map.put("colorBoxCode",dto.getBarcode());
                             Integer i = wmsInnerInventoryDetMapper.materialQty(map);
                             WmsInnerInventoryDetDto wmsInnerInventoryDetDto = det.get(0);
@@ -161,25 +161,16 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
 
                     }else if(code.equals(dto.getCartonCode())){
                         //箱码,箱码为空
-                        m.clear();
                         if(StringUtils.isEmpty(dto.getBarcode())  &&  StringUtils.isEmpty(dto.getColorBoxCode())) {
-                            m.put("materialBarcodeId",dto.getMaterialBarcodeId());
-                            List<WmsInnerInventoryDetDto> det = wmsInnerInventoryDetMapper.findList(m);
-                            if(StringUtils.isEmpty(det))  throw new BizErrorException("未在库存中查询到该条码");
                             map.put("cartonCode",dto.getBarcode());
                             Integer i = wmsInnerInventoryDetMapper.materialQty(map);
                             WmsInnerInventoryDetDto wmsInnerInventoryDetDto = det.get(0);
                             wmsInnerInventoryDetDto.setMaterialTotalQty(new BigDecimal(i).subtract(wmsInnerInventoryDetDto.getMaterialQty()));
                             wmsInnerInventoryDetDtos.add(wmsInnerInventoryDetDto);
                         }
-
                     }else if(code.equals(dto.getPalletCode())){
                         //栈板码,箱码为空
-                        m.clear();
                         if(StringUtils.isEmpty(dto.getBarcode()) &&  StringUtils.isEmpty(dto.getColorBoxCode())  && StringUtils.isEmpty(dto.getCartonCode())) {
-                            m.put("materialBarcodeId",dto.getMaterialBarcodeId());
-                            List<WmsInnerInventoryDetDto> det = wmsInnerInventoryDetMapper.findList(m);
-                            if(StringUtils.isEmpty(det))  throw new BizErrorException("未在库存中查询到该条码");
                             map.put("palletCode",dto.getPalletCode());
                             Integer i = wmsInnerInventoryDetMapper.materialQty(map);
                             WmsInnerInventoryDetDto wmsInnerInventoryDetDto = det.get(0);
@@ -187,12 +178,19 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
                             wmsInnerInventoryDetDtos.add(wmsInnerInventoryDetDto);
                         }
                     }
+                    dto.setIfScan((byte)1);
+                    dto.setModifiedUserId(sysUser.getUserId());
+                    dto.setModifiedTime(new Date());
+                    wmsInnerMaterialBarcodeDtoList.add(dto);
                 }
             }
+
         }
         if(StringUtils.isEmpty(wmsInnerInventoryDetDtos))
             throw new BizErrorException("未在库存明细中查询到相应的条码信息");
-
+        //增加扫描条码标记
+        if(StringUtils.isEmpty(wmsInnerMaterialBarcodeDtoList))
+            wmsInnerMaterialBarcodeService.batchUpdate(wmsInnerMaterialBarcodeDtoList);
         return wmsInnerInventoryDetDtos;
     }
 }

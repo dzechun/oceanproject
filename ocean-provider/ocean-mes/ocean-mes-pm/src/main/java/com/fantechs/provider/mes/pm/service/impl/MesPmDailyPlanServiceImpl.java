@@ -191,6 +191,13 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
             }
         }
 
+        //不用删掉的明细的id
+        List<Long> longList = mesPmDailyPlanDets.stream().filter(u -> (StringUtils.isNotEmpty(u.getDailyPlanDetId()))).map(MesPmDailyPlanDetDto::getDailyPlanDetId).collect(Collectors.toList());
+        Example example = new Example(MesPmDailyPlanDet.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("dailyPlanId",mesPmDailyPlanDto.getDailyPlanId()).andNotIn("dailyPlanDetId",longList);
+        mesPmDailyPlanDetMapper.deleteByExample(example);
+
         //新增
         List<MesPmDailyPlanDetDto> planDetDtoList = mesPmDailyPlanDets.stream().filter(u -> (StringUtils.isEmpty(u.getDailyPlanDetId()))).collect(Collectors.toList());
         if(planDetDtoList.size()>0){
