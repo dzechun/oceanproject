@@ -3,9 +3,7 @@ package com.fantechs.provider.wms.inner.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
@@ -13,7 +11,10 @@ import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.dto.wms.inner.export.WmsInnerJobOrderExport;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
-import com.fantechs.common.base.general.entity.basic.*;
+import com.fantechs.common.base.general.entity.basic.BaseInventoryStatus;
+import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
+import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrder;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
@@ -28,7 +29,6 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.wms.inner.mapper.*;
 import com.fantechs.provider.wms.inner.service.*;
@@ -74,8 +74,6 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
     @Resource
     WmsInnerJobOrderDetBarcodeService wmsInnerJobOrderDetBarcodeService;
     @Resource
-    private SecurityFeignApi securityFeignApi;
-    @Resource
     private WmsInnerMaterialBarcodeMapper wmsInnerMaterialBarcodeMapper;
     @Resource
     WmsInnerMaterialBarcodeReOrderService wmsInnerMaterialBarcodeReOrderService;
@@ -83,6 +81,8 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
     WmsInnerMaterialBarcodeReOrderMapper wmsInnerMaterialBarcodeReOrderMapper;
     @Resource
     WmsInnerMaterialBarcodeService wmsInnerMaterialBarcodeService;
+    @Resource
+    private WmsInnerInventoryDetService wmsInnerInventoryDetService;
 
 
     @Override
@@ -109,7 +109,6 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
                 throw new BizErrorException("单据已经作业，无法删除");
             }
             if (StringUtils.isEmpty(wmsInnerJobOrder)) {
-
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
             Example example = new Example(WmsInnerJobOrderDet.class);
@@ -1129,7 +1128,6 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
     public int singleReceivingByBarcode(WmsInnerJobOrderDet wmsInPutawayOrderDet,String ids,Byte orderType) {
         SysUser sysUser = currentUser();
         int num = 0;
-
         WmsInnerJobOrder wmsInnerJobOrder = wmsInnerJobOrderMapper.selectByPrimaryKey(wmsInPutawayOrderDet.getJobOrderId());
         if(StringUtils.isEmpty(wmsInnerJobOrder)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
@@ -1142,21 +1140,24 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未选择需确认的条码信息");
         }
 
-        List<WmsInnerInventoryDetDto> reOrderDtoList=new ArrayList<>();
+        List<WmsInnerInventoryDetDto> newInventoryDetDtoList = new ArrayList<>();
         BigDecimal totalQty=new BigDecimal(0);
         BigDecimal distributionQty=StringUtils.isEmpty(wmsInPutawayOrderDet.getDistributionQty())?new BigDecimal(0):wmsInPutawayOrderDet.getDistributionQty();
         String[] arrId = ids.split(",");
         for (String item : arrId) {
-            //单一确认的条码为库存明细中的条码，而不是
-            SearchWmsInnerInventoryDet sBarcodeReOrder=new SearchWmsInnerInventoryDet();
-            sBarcodeReOrder.setMaterialBarcodeId(Long.parseLong(item));
-            sBarcodeReOrder.setOrgId(sysUser.getOrganizationId());
-            List<WmsInnerInventoryDetDto> barcodeReOrderDtoList = wmsInnerInventoryDetMapper.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
-            if(barcodeReOrderDtoList.size()>0) {
-                totalQty = totalQty.add((StringUtils.isEmpty(barcodeReOrderDtoList.get(0).getMaterialQty()) ? new BigDecimal(0) : barcodeReOrderDtoList.get(0).getMaterialQty()));
-                reOrderDtoList.add(barcodeReOrderDtoList.get(0));
+            //单一确认的条码为库存明细中的条码
+            SearchWmsInnerInventoryDet det =new SearchWmsInnerInventoryDet();
+            det.setMaterialBarcodeId(Long.parseLong(item));
+            det.setOrgId(sysUser.getOrganizationId());
+            List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtoList = wmsInnerInventoryDetMapper.findList(ControllerUtil.dynamicConditionByEntity(det));
+            if(wmsInnerInventoryDetDtoList.size()>0) {
+                totalQty = totalQty.add((StringUtils.isEmpty(wmsInnerInventoryDetDtoList.get(0).getMaterialQty()) ? new BigDecimal(0) : wmsInnerInventoryDetDtoList.get(0).getMaterialQty()));
+                newInventoryDetDtoList.add(wmsInnerInventoryDetDtoList.get(0));
             }
         }
+
+        //校验是否整单发货
+        wmsInnerInventoryDetService.isAllOutInventory(newInventoryDetDtoList);
 
         //判断是否大于分配数
         if(totalQty.compareTo(distributionQty)==1){
@@ -1224,14 +1225,14 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
 
         //更新条码状态
         List<WmsInnerMaterialBarcodeReOrder> list = new ArrayList<>();
-        for (WmsInnerInventoryDetDto reOrderDto : reOrderDtoList) {
+        for (WmsInnerInventoryDetDto newInventoryDetDto : newInventoryDetDtoList) {
             //增加条码中间表信息
             WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
             wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("INNER-SSO");
             wmsInnerMaterialBarcodeReOrder.setOrderCode(wmsInnerJobOrder.getJobOrderCode());
             wmsInnerMaterialBarcodeReOrder.setOrderId(wmsInnerJobOrder.getJobOrderId());
             wmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInPutawayOrderDet.getJobOrderDetId());
-            wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(reOrderDto.getMaterialBarcodeId());
+            wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(newInventoryDetDto.getMaterialBarcodeId());
             wmsInnerMaterialBarcodeReOrder.setStatus((byte)1);
             wmsInnerMaterialBarcodeReOrder.setOrgId(sysUser.getOrganizationId());
             wmsInnerMaterialBarcodeReOrder.setCreateUserId(sysUser.getUserId());
@@ -1242,7 +1243,7 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
 
             //更新条码状态
             WmsInnerMaterialBarcode wmsInnerMaterialBarcode=new WmsInnerMaterialBarcode();
-            wmsInnerMaterialBarcode.setMaterialBarcodeId(reOrderDto.getMaterialBarcodeId());
+            wmsInnerMaterialBarcode.setMaterialBarcodeId(newInventoryDetDto.getMaterialBarcodeId());
             wmsInnerMaterialBarcode.setBarcodeStatus((byte)5);//已上架
             wmsInnerMaterialBarcode.setModifiedUserId(sysUser.getUserId());
             wmsInnerMaterialBarcode.setModifiedTime(new Date());
@@ -3486,92 +3487,6 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
         //记录库存日志
         InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrder,newDto,qty,newDto.getActualQty(),(byte)2,(byte)1);
         return num;
-    }
-
-    /**
-     * 库容入库规则计算容量
-     * @param materialId
-     * @param storageId
-     * @param qty
-     * @return
-     */
-    @Override
-    public Boolean storageCapacity(Long materialId,Long storageId,BigDecimal qty){
-        SysUser sysUser = currentUser();
-        Boolean isSuccess = true;
-        //获取配置项
-        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-        searchSysSpecItem.setSpecCode("capacity");
-        List<SysSpecItem> itemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-        if(itemList.size()>0){
-
-            //获取库位
-            SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
-            searchBaseStorage.setStorageId(storageId);
-            List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
-            if(baseStorages.size()<1){
-                throw new BizErrorException("获取库位信息失败");
-            }
-            if(StringUtils.isEmpty(baseStorages.get(0).getMaterialStoreType())){
-                throw new BizErrorException("库位未维护生产存储类型");
-            }
-
-            //库容入库规则判断是否足够存放
-            if(itemList.get(0).getParaValue().equals("base_storage_capacity")){
-                //获取库容
-                SearchBaseStorageCapacity searchBaseStorageCapacity = new SearchBaseStorageCapacity();
-                searchBaseStorageCapacity.setMaterialId(materialId);
-                List<BaseStorageCapacity> baseStorageCapacities = baseFeignApi.findList(searchBaseStorageCapacity).getData();
-                if(baseStorageCapacities.size()<1){
-                    throw new BizErrorException("物料未维护库容信息");
-                }
-                Example example = new Example(WmsInnerInventory.class);
-                example.createCriteria().andEqualTo("storageId",storageId).andEqualTo("materialId",materialId).andEqualTo("orgId",sysUser.getOrganizationId());
-                List<WmsInnerInventory> inventories = wmsInnerInventoryMapper.selectByExample(example);
-                BigDecimal totalQty = inventories.stream()
-                        .map(WmsInnerInventory::getPackingQty)
-                        .reduce(BigDecimal.ZERO,BigDecimal::add);
-                switch (baseStorages.get(0).getMaterialStoreType()) {
-                    case 1:
-                        if (StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeACapacity())) {
-                            throw new BizErrorException("未维护A类容量");
-                        }
-                        totalQty = baseStorageCapacities.get(0).getTypeACapacity().subtract(totalQty);
-                        if(totalQty.compareTo(qty)==-1){
-                            isSuccess = false;
-                        }
-                        break;
-                    case 2:
-                        if (StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeBCapacity())) {
-                            throw new BizErrorException("未维护B类容量");
-                        }
-                        totalQty = baseStorageCapacities.get(0).getTypeBCapacity().subtract(totalQty);
-                        if(totalQty.compareTo(qty)==-1){
-                            isSuccess = false;
-                        }
-                        break;
-                    case 3:
-                        if (StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeCCapacity())) {
-                            throw new BizErrorException("未维护C类容量");
-                        }
-                        totalQty = baseStorageCapacities.get(0).getTypeCCapacity().subtract(totalQty);
-                        if(totalQty.compareTo(qty)==-1){
-                            isSuccess = false;
-                        }
-                        break;
-                    case 4:
-                        if (StringUtils.isEmpty(baseStorageCapacities.get(0).getTypeDCapacity())) {
-                            throw new BizErrorException("未维护D类容量");
-                        }
-                        totalQty = baseStorageCapacities.get(0).getTypeDCapacity().subtract(totalQty);
-                        if(totalQty.compareTo(qty)==-1){
-                            isSuccess = false;
-                        }
-                        break;
-                }
-            }
-        }
-        return isSuccess;
     }
 
     /**
