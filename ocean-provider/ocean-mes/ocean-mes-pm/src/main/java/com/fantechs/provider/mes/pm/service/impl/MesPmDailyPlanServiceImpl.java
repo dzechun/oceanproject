@@ -196,7 +196,10 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
         List<Long> longList = mesPmDailyPlanDets.stream().filter(u -> (StringUtils.isNotEmpty(u.getDailyPlanDetId()))).map(MesPmDailyPlanDetDto::getDailyPlanDetId).collect(Collectors.toList());
         Example example = new Example(MesPmDailyPlanDet.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("dailyPlanId",mesPmDailyPlanDto.getDailyPlanId()).andNotIn("dailyPlanDetId",longList);
+        criteria.andEqualTo("dailyPlanId",mesPmDailyPlanDto.getDailyPlanId());
+        if (StringUtils.isNotEmpty(longList)) {
+            criteria.andNotIn("dailyPlanDetId", longList);
+        }
         mesPmDailyPlanDetMapper.deleteByExample(example);
 
         //新增
