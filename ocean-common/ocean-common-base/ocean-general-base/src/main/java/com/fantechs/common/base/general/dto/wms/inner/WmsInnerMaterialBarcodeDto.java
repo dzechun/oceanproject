@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -33,6 +32,7 @@ public class WmsInnerMaterialBarcodeDto extends WmsInnerMaterialBarcode implemen
     /**
      * 生产日期
      */
+    @Transient
     @ApiModelProperty(name="productionDate",value = "生产日期")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")

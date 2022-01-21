@@ -2386,11 +2386,13 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         if(ifSysBarcode.equals("1")){
             //map=checkBarcodeType(barCode);
             BarcodeResultDto resultDto=InBarcodeUtil.scanBarcode(barCode);
+            String dateString=DateUtils.getDateString(resultDto.getProductionDate());
+
             map.put("barcodeType",resultDto.getBarcodeType());
             map.put("materialBarcodeId",resultDto.getMaterialBarcodeId());
             map.put("materialId",resultDto.getMaterialId());
             map.put("batchCode",resultDto.getBatchCode());
-            map.put("productionDate",resultDto.getProductionDate());
+            map.put("productionDate",dateString);
             map.put("qty",resultDto.getMaterialQty());
 
             if(StringUtils.isNotEmpty(map.get("barcodeType")) && map.get("barcodeType").toString().equals("5")){
@@ -2415,7 +2417,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             sBarcodeReOrder.setMaterialBarcodeId(materialBarcodeId);
             sBarcodeReOrder.setOrderId(orderId);//上架单表头ID
             List<WmsInnerMaterialBarcodeReOrderDto> reOrderList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
-            if(reOrderList.size()<=0){
+            if(StringUtils.isEmpty(reOrderList) || reOrderList.size()<=0){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"上架单未找到此条码数据-->"+barCode);
             }
 
@@ -2696,7 +2698,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"系统条码和非系统条码不能一起提交");
         }
         //yyyy-MM-dd
-        //EEE MMM dd HH:mm:ss zzz yyyy
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         //是否系统条码(0-否 1-是)
         String ifSysBarcode=list.get(0).getIfSysBarcode();
@@ -2848,8 +2849,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         for (SaveHaveInnerJobOrderDto item : list) {
             if (ifSysBarcode.equals("0")) {
                 //非系统条码
-                //yyyy-MM-dd
-                sdf = new SimpleDateFormat("yyyy-MM-dd");
                 WmsInnerMaterialBarcode wmsInnerMaterialBarcode = new WmsInnerMaterialBarcode();
                 wmsInnerMaterialBarcode.setMaterialId(wmsInnerJobOrderDet.getMaterialId());
                 wmsInnerMaterialBarcode.setBarcode(item.getBarcode());

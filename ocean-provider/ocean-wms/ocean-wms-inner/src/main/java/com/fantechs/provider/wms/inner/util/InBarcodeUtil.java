@@ -192,7 +192,8 @@ public class InBarcodeUtil {
             barcodeResultDto.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
             barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
             barcodeResultDto.setBatchCode(barcodeDtos.get(0).getBatchCode());
-            barcodeResultDto.setProductionDate(barcodeDtos.get(0).getProductionTime().toString());
+            barcodeResultDto.setProductionDate(barcodeDtos.get(0).getProductionDate());
+            barcodeResultDto.setMaterialBarcodeDtoList(barcodeDtos);
         }
         else {
             //彩盒
@@ -221,7 +222,7 @@ public class InBarcodeUtil {
                 barcodeResultDto.setMaterialBarcodeId(barcodeListColorBox.get(0).getMaterialBarcodeId());
                 barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
                 barcodeResultDto.setBatchCode(barcodeListSn.get(0).getBatchCode());
-                barcodeResultDto.setProductionDate(barcodeListSn.get(0).getProductionTime().toString());
+                barcodeResultDto.setProductionDate(barcodeListSn.get(0).getProductionTime());
                 barcodeResultDto.setMaterialBarcodeDtoList(barcodeListSn);
             }
             else {
@@ -256,7 +257,7 @@ public class InBarcodeUtil {
                     barcodeResultDto.setMaterialBarcodeId(barcodeListCarton.get(0).getMaterialBarcodeId());
                     barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
                     barcodeResultDto.setBatchCode(barcodeList.get(0).getBatchCode());
-                    barcodeResultDto.setProductionDate(barcodeList.get(0).getProductionTime().toString());
+                    barcodeResultDto.setProductionDate(barcodeList.get(0).getProductionTime());
                     barcodeResultDto.setMaterialBarcodeDtoList(barcodeList);
                 }
                 else {
@@ -291,7 +292,7 @@ public class InBarcodeUtil {
                         barcodeResultDto.setMaterialBarcodeId(barcodeListPallet.get(0).getMaterialBarcodeId());
                         barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
                         barcodeResultDto.setBatchCode(barcodeList.get(0).getBatchCode());
-                        barcodeResultDto.setProductionDate(barcodeList.get(0).getProductionTime().toString());
+                        barcodeResultDto.setProductionDate(barcodeList.get(0).getProductionTime());
                         barcodeResultDto.setMaterialBarcodeDtoList(barcodeList);
                     }
                 }
