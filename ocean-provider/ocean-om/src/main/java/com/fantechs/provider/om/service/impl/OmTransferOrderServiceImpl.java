@@ -107,9 +107,9 @@ public class OmTransferOrderServiceImpl extends BaseService<OmTransferOrder> imp
         List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();
         for (OmTransferOrderDetDto omTransferOrderDetDto : omTransferOrderDetDtos) {
             WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
-            wmsInnerJobOrderDet.setCoreSourceOrderCode(omTransferOrderDetDto.getCoreSourceOrderCode());
+            wmsInnerJobOrderDet.setCoreSourceOrderCode(omTransferOrderDetDto.getTransferOrderCode());
             wmsInnerJobOrderDet.setSourceOrderCode(omTransferOrderDetDto.getTransferOrderCode());
-            wmsInnerJobOrderDet.setCoreSourceId(omTransferOrderDetDto.getCoreSourceId());
+            wmsInnerJobOrderDet.setCoreSourceId(omTransferOrderDetDto.getTransferOrderDetId());
             wmsInnerJobOrderDet.setSourceId(omTransferOrderDetDto.getTransferOrderDetId());
             wmsInnerJobOrderDet.setLineNumber(lineNumber + "");
             lineNumber++;

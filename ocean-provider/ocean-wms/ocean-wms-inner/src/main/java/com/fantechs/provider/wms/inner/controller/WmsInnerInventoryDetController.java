@@ -87,4 +87,11 @@ public class WmsInnerInventoryDetController {
         List<WmsInnerInventoryDetDto> list = wmsInnerInventoryDetService.findListByBarCode(codes);
         return ControllerUtil.returnDataSuccess(list,list.size());
     }
+
+
+    @ApiOperation("查询是否整单发货")
+    @PostMapping("/isAllOutInventory")
+    public ResponseEntity isAllOutInventory(@RequestBody(required = true) List<WmsInnerInventoryDetDto> list) {
+        return ControllerUtil.returnCRUD(wmsInnerInventoryDetService.isAllOutInventory(list));
+    }
 }

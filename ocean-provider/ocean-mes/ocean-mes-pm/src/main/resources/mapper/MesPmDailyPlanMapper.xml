@@ -83,25 +83,28 @@
         and mpdp.pro_line_id = #{proLineId}
       </if>
       <if test="coreSourceSysOrderTypeCode!=null and coreSourceSysOrderTypeCode!=''">
-        and mpdp.core_source_sys_order_type_code = #{coreSourceSysOrderTypeCode}
+        and mpdp.core_source_sys_order_type_code like CONCAT('%', #{coreSourceSysOrderTypeCode}, '%')
       </if>
       <if test="sourceSysOrderTypeCode!=null and sourceSysOrderTypeCode!=''">
-        and mpdp.source_sys_order_type_code = #{sourceSysOrderTypeCode}
+        and mpdp.source_sys_order_type_code like CONCAT('%', #{sourceSysOrderTypeCode}, '%')
       </if>
       <if test="sysOrderTypeCode!=null and sysOrderTypeCode!=''">
-        and mpdp.sys_order_type_code = #{sysOrderTypeCode}
+        and mpdp.sys_order_type_code like CONCAT('%', #{sysOrderTypeCode}, '%')
       </if>
       <if test="sourceBigType!=null and sourceBigType!=''">
         and mpdp.source_big_type = #{sourceBigType}
       </if>
       <if test="dailyPlanCode!=null and dailyPlanCode!=''">
-        and mpdp.daily_plan_code = #{dailyPlanCode}
+        and mpdp.daily_plan_code like CONCAT('%', #{dailyPlanCode}, '%')
       </if>
-      <if test="workOrderType!=null and workOrderType!=''">
+      <if test="proName!=null and proName!=''">
+        and bpl.pro_name like CONCAT('%', #{proName}, '%')
+      </if>
+      <if test="workOrderType!=null">
         and mpdp.work_order_type = #{workOrderType}
       </if>
       <if test="remark!=null and remark!=''">
-        and mpdp.remark = #{remark}
+        and mpdp.remark like CONCAT('%', #{remark}, '%')
       </if>
 
       <if test="status!=null">
@@ -110,8 +113,8 @@
       <if test="ifOrderInserting!=null">
         and mpdp.if_order_inserting = #{ifOrderInserting}
       </if>
-      <if test="startTime!=null and endTime!=null ">
-        and date_format(mpdp.plan_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      <if test="startTime!=null and endTime!=null">
+        and date_format(mpdp.plan_start_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
       </if>
     </where>
     order by mpdp.create_time desc

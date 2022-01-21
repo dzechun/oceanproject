@@ -1,7 +1,5 @@
 package com.fantechs.common.base.general.entity.mes.pm.search;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -9,9 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import java.io.Serializable;
-import java.util.Date;
 
 @Data
 @Builder
@@ -39,6 +35,9 @@ public class SearchMesPmDailyPlan extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name="dailyPlanCode",value = "计划单号")
     private String dailyPlanCode;
+
+    @ApiModelProperty(name="proName",value = "产线名称")
+    private String proName;
 
     /**
      * 工单类型(0、量产 1、试产 2、返工 3、维修)

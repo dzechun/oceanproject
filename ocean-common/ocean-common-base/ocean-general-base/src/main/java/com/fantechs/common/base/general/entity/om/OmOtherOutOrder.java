@@ -7,6 +7,7 @@ import com.fantechs.common.base.general.dto.om.OmOtherOutOrderDetDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -110,6 +111,8 @@ public class OmOtherOutOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="orderDate",value = "订单日期")
     @Excel(name = "订单日期", height = 20, width = 30,orderNum="4")
+    @JSONField(format ="yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "order_date")
     private Date orderDate;
 
@@ -118,6 +121,8 @@ public class OmOtherOutOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="reqArriveDate",value = "要求到达日期")
     //@Excel(name = "要求到达日期", height = 20, width = 30,orderNum="20")
+    @JSONField(format ="yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "req_arrive_date")
     private Date reqArriveDate;
 
@@ -126,6 +131,8 @@ public class OmOtherOutOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="planArriveDate",value = "计划到达日期")
     @Excel(name = "计划到达日期", height = 20, width = 30,orderNum="5")
+    @JSONField(format ="yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "plan_arrive_date")
     private Date planArriveDate;
 
@@ -134,6 +141,8 @@ public class OmOtherOutOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="actualDespatchDate",value = "实际发运日期")
     @Excel(name = "实际发运日期", height = 20, width = 30,orderNum="6")
+    @JSONField(format ="yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "actual_despatch_date")
     private Date actualDespatchDate;
 

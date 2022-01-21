@@ -204,8 +204,19 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
     public int isAllOutInventory(List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos) {
         int i= 1;
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        List<WmsInnerInventoryDetDto> palletCodeDetDtos = new ArrayList<>();
+        List<WmsInnerInventoryDetDto> cartonCodeDetDtos = new ArrayList<>();
+        List<WmsInnerInventoryDetDto> colorBoxCodeDetDtos = new ArrayList<>();
+        for(WmsInnerInventoryDetDto dto : wmsInnerInventoryDetDtos){
+            if(StringUtils.isNotEmpty(dto.getPalletCode()))
+                palletCodeDetDtos.add(dto);
+            if(StringUtils.isNotEmpty(dto.getCartonCode()) && StringUtils.isEmpty(dto.getPalletCode()))
+                cartonCodeDetDtos.add(dto);
+            if(StringUtils.isNotEmpty(dto.getColorBoxCode()) && StringUtils.isEmpty(dto.getCartonCode()) && StringUtils.isEmpty(dto.getPalletCode()))
+                colorBoxCodeDetDtos.add(dto);
+        }
         Map<String, List<WmsInnerInventoryDetDto>> palletCodes =
-                wmsInnerInventoryDetDtos.stream().collect(Collectors.groupingBy(WmsInnerInventoryDetDto::getPalletCode));
+                palletCodeDetDtos.stream().collect(Collectors.groupingBy(WmsInnerInventoryDetDto::getPalletCode));
         Set<String> palletCodeList = palletCodes.keySet();
         Example example = new Example(WmsInnerMaterialBarcode.class);
         for (String palletCode : palletCodeList) {
@@ -219,7 +230,7 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
         }
 
         Map<String, List<WmsInnerInventoryDetDto>> cartonCodes =
-                palletCodes.get(null).stream().collect(Collectors.groupingBy(WmsInnerInventoryDetDto::getCartonCode));
+                cartonCodeDetDtos.stream().collect(Collectors.groupingBy(WmsInnerInventoryDetDto::getCartonCode));
         Set<String> cartonCodeList = cartonCodes.keySet();
         for (String cartonCode : cartonCodeList) {
             example.clear();
@@ -227,12 +238,12 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
                     .andEqualTo("cartonCode",cartonCode)
                     .andEqualTo("orgId",sysUser.getOrganizationId());
             int palletNum = wmsInnerMaterialBarcodeMapper.selectCountByExample(example);
-            if(palletCodes.get(cartonCode).size() + 1 != palletNum)
+            if(cartonCodes.get(cartonCode).size() + 1 != palletNum)
                 throw new BizErrorException("箱码对应的条码数量错误，箱码为："+cartonCode);
         }
 
         Map<String, List<WmsInnerInventoryDetDto>> colorBoxCodes =
-                cartonCodes.get(null).stream().collect(Collectors.groupingBy(WmsInnerInventoryDetDto::getColorBoxCode));
+                colorBoxCodeDetDtos.stream().collect(Collectors.groupingBy(WmsInnerInventoryDetDto::getColorBoxCode));
         Set<String> colorBoxCodeList = colorBoxCodes.keySet();
         for (String colorBoxCode : colorBoxCodeList) {
             example.clear();
@@ -240,7 +251,7 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
                     .andEqualTo("colorBoxCode",colorBoxCode)
                     .andEqualTo("orgId",sysUser.getOrganizationId());
             int palletNum = wmsInnerMaterialBarcodeMapper.selectCountByExample(example);
-            if(palletCodes.get(colorBoxCode).size() + 1 != palletNum)
+            if(colorBoxCodes.get(colorBoxCode).size() + 1 != palletNum)
                 throw new BizErrorException("彩盒码对应的条码数量错误，彩盒码为："+colorBoxCode);
         }
         return i;
