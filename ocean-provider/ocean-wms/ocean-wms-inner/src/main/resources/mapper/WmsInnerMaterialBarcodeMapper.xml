@@ -45,6 +45,8 @@
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto">
+        <result column="production_date" jdbcType="TIMESTAMP" property="productionDate"/>
+
     </resultMap>
 
     <sql id="BaseColumnList">
@@ -67,6 +69,7 @@
         wimb.batch_code,
         wimb.material_qty,
         wimb.production_time,
+        wimb.production_time AS production_date,
         wimb.expired_time,
         wimb.label_id,
         wimb.barcode_type,

@@ -1,10 +1,13 @@
 package com.fantechs.common.base.general.dto.wms.inner;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -32,7 +35,9 @@ public class BarcodeResultDto implements Serializable {
      * 生产日期
      */
     @ApiModelProperty(name="productionDate",value = "生产日期")
-    private String productionDate;
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date productionDate;
 
     /**
      * 条码对应物料ID
