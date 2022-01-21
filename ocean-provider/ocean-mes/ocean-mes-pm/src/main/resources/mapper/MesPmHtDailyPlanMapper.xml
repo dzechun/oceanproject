@@ -65,9 +65,18 @@
         and mpwo.pro_line_id = #{proLineId}
       </if>
       <if test="workOrderCode!=null and workOrderCode!=''">
-        and mpwo.work_order_code = #{workOrderCode}
+        and mpwo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
       </if>
-      <if test="workOrderStatus!=null and workOrderStatus!=''">
+      <if test="dailyPlanCode!=null and dailyPlanCode!=''">
+        and mphdp.daily_plan_code like CONCAT('%', #{dailyPlanCode}, '%')
+      </if>
+      <if test="proName!=null and proName!=''">
+        and bpl.pro_name like CONCAT('%', #{proName}, '%')
+      </if>
+      <if test="workOrderType!=null">
+        and mpwo.work_order_type = #{workOrderType}
+      </if>
+      <if test="workOrderStatus!=null">
         and mpwo.work_order_status = #{workOrderStatus}
       </if>
       <if test="status!=null">
@@ -76,8 +85,8 @@
       <if test="ifOrderInserting!=null">
         and mphdp.if_order_inserting = #{ifOrderInserting}
       </if>
-      <if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
-        and date_format(mphdp.plan_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      <if test="startTime!=null and endTime!=null">
+        and date_format(mphdp.plan_start_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
       </if>
     </where>
     order by mphdp.create_time desc
