@@ -113,8 +113,8 @@
       <if test="ifOrderInserting!=null">
         and mpdp.if_order_inserting = #{ifOrderInserting}
       </if>
-      <if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
-        and date_format(mpdp.plan_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      <if test="startTime!=null and endTime!=null">
+        and date_format(mpdp.plan_start_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
       </if>
     </where>
     order by mpdp.create_time desc
