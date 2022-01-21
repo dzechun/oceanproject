@@ -2972,9 +2972,17 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         List<String> colorCodeList=new ArrayList<>();
         List<String> cartonCodeList=new ArrayList<>();
         List<String> palletCodeList=new ArrayList<>();
-
+        Example barcodeExample = new Example(WmsInnerMaterialBarcode.class);
         for (SaveHaveInnerJobOrderDto item : list) {
             if (ifSysBarcode.equals("0")) {
+
+                barcodeExample.createCriteria().andEqualTo("barcode",item.getBarcode())
+                        .andEqualTo("barcodeType",1);
+                List<WmsInnerMaterialBarcode> parentMaterialBarcodeList = wmsInnerMaterialBarcodeMapper.selectByExample(barcodeExample);
+                barcodeExample.clear();
+                if (StringUtils.isNotEmpty(parentMaterialBarcodeList)) {
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),item.getBarcode()+"已存在系统当中，生成失败");
+                }
                 //非系统条码
                 WmsInnerMaterialBarcode wmsInnerMaterialBarcode = new WmsInnerMaterialBarcode();
                 wmsInnerMaterialBarcode.setMaterialId(wmsInnerJobOrderDet.getMaterialId());
@@ -3092,7 +3100,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     wmsInnerMaterialBarcodeReOrder.setModifiedUserId(sysUser.getUserId());
                     wmsInnerMaterialBarcodeReOrder.setModifiedTime(new Date());
                     wmsInnerMaterialBarcodeReOrderMapper.updateByPrimaryKeySelective(wmsInnerMaterialBarcodeReOrder);
-                    
+
                     if(StringUtils.isNotEmpty(materialBarcodeDto.getBarcode())) {
                         WmsInnerInventoryDet inventoryDet = new WmsInnerInventoryDet();
                         inventoryDet.setStorageId(inStorageId);
@@ -3105,7 +3113,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         inventoryDet.setCreateUserId(sysUser.getUserId());
                         inventoryDet.setCreateTime(new Date());
                         wmsInnerInventoryDets.add(inventoryDet);
-                        
+
                         if(StringUtils.isNotEmpty(materialBarcodeDto.getColorBoxCode())){
                             if(!colorCodeList.contains(materialBarcodeDto.getColorBoxCode())){
                                 colorCodeList.add(materialBarcodeDto.getColorBoxCode());
@@ -3123,7 +3131,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         }
                     }
                 }
-                
+
                 //彩盒 箱码 栈板码添加到库存条码明细
                 if(colorCodeList.size()>0){
                     for (String colorBoxCode : colorCodeList) {

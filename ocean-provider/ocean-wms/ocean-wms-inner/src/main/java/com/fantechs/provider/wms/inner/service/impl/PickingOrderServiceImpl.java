@@ -510,7 +510,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             if (StringUtils.isNotEmpty(list)) {
                 OmTransferOrderDetDto omTransferOrderDetDto = list.get(0);
                 BigDecimal actualQty = StringUtils.isNotEmpty(omTransferOrderDetDto.getActualInQty())?omTransferOrderDetDto.getActualInQty():new BigDecimal(0);
-                omTransferOrderDetDto.setActualInQty(actualQty.add(wmsInnerPdaJobOrderDet.getActualQty()));
+                omTransferOrderDetDto.setActualOutQty(actualQty.add(wmsInnerPdaJobOrderDet.getActualQty()));
                 omFeignApi.update(omTransferOrderDetDto);
 
                 if (wmsInnerJobOrder.getOrderStatus() == 5) {

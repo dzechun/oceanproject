@@ -110,6 +110,8 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
         }
         mesPmDailyPlanDto.setCreateTime(new Date());
         mesPmDailyPlanDto.setCreateUserId(user.getUserId());
+        mesPmDailyPlanDto.setModifiedTime(new Date());
+        mesPmDailyPlanDto.setModifiedUserId(user.getUserId());
         mesPmDailyPlanDto.setOrgId(user.getOrganizationId());
         mesPmDailyPlanDto.setIsDelete((byte) 1);
         mesPmDailyPlanDto.setStatus((byte) 1);
