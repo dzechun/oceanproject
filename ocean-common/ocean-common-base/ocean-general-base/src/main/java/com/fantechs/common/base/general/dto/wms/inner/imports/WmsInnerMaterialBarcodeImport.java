@@ -80,9 +80,9 @@ public class WmsInnerMaterialBarcodeImport implements Serializable {
      * 生产时间
      */
     @ApiModelProperty(name="productionTime",value = "生产时间")
-    @Excel(name = "生产时间", height = 20, width = 30,orderNum="9",exportFormat ="yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @Excel(name = "生产时间", height = 20, width = 30,orderNum="9",exportFormat ="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date productionTime;
 
     /**
