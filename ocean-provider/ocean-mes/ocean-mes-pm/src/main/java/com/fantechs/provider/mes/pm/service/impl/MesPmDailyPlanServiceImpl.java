@@ -403,7 +403,7 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
             MesPmDailyPlanStockList planStockList=new MesPmDailyPlanStockList();
             planStockList.setDailyPlanStockListId(planStockListDto.getDailyPlanStockListId());
             planStockList.setTotalIssueQty(planStockListDto.getTotalIssueQty().add(planStockListDto.getIssueQty()));
-            if(planStockListDto.getDailyPlanUsageQty().compareTo(planStockListDto.getTotalIssueQty().add(planStockListDto.getIssueQty()))==0)
+            if(planStockListDto.getDailyPlanUsageQty().compareTo(planStockListDto.getTotalIssueQty().add(planStockListDto.getWorkOrderQty()))==0)
                 planStockList.setIfAllIssued((byte)1);
             num=mesPmDailyPlanStockListMapper.updateByPrimaryKeySelective(planStockList);
             if(num<=0){

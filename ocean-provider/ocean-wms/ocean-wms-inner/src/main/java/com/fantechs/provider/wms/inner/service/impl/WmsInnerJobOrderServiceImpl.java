@@ -926,7 +926,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                             Example.Criteria criteriaDet = exampleDet.createCriteria();
                             criteriaDet.andEqualTo("materialBarcodeId", cartonList.get(0).getMaterialBarcodeId());
                             criteriaDet.andEqualTo("orgId", sysUser.getOrganizationId());
-                            List<WmsInnerInventoryDet> detList=wmsInnerInventoryDetMapper.selectByExample(criteriaDet);
+                            List<WmsInnerInventoryDet> detList=wmsInnerInventoryDetMapper.selectByExample(exampleDet);
                             if(StringUtils.isEmpty(detList) || detList.size()<=0) {
                                 WmsInnerInventoryDet inventoryDet = new WmsInnerInventoryDet();
                                 inventoryDet.setStorageId(wmsInnerJobOrderDet.getInStorageId());
@@ -956,7 +956,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                             Example.Criteria criteriaDet = exampleDet.createCriteria();
                             criteriaDet.andEqualTo("materialBarcodeId", palletList.get(0).getMaterialBarcodeId());
                             criteriaDet.andEqualTo("orgId", sysUser.getOrganizationId());
-                            List<WmsInnerInventoryDet> detList=wmsInnerInventoryDetMapper.selectByExample(criteriaDet);
+                            List<WmsInnerInventoryDet> detList=wmsInnerInventoryDetMapper.selectByExample(exampleDet);
                             if(StringUtils.isEmpty(detList) || detList.size()<=0) {
                                 WmsInnerInventoryDet inventoryDet = new WmsInnerInventoryDet();
                                 inventoryDet.setStorageId(wmsInnerJobOrderDet.getInStorageId());
@@ -3161,7 +3161,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                             Example.Criteria criteriaDet = exampleDet.createCriteria();
                             criteriaDet.andEqualTo("materialBarcodeId", cartonList.get(0).getMaterialBarcodeId());
                             criteriaDet.andEqualTo("orgId", sysUser.getOrganizationId());
-                            List<WmsInnerInventoryDet> detList=wmsInnerInventoryDetMapper.selectByExample(criteriaDet);
+                            List<WmsInnerInventoryDet> detList=wmsInnerInventoryDetMapper.selectByExample(exampleDet);
                             if(StringUtils.isEmpty(detList) || detList.size()<=0) {
                                 WmsInnerInventoryDet inventoryDet = new WmsInnerInventoryDet();
                                 inventoryDet.setStorageId(inStorageId);
@@ -3191,7 +3191,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                             Example.Criteria criteriaDet = exampleDet.createCriteria();
                             criteriaDet.andEqualTo("materialBarcodeId", palletList.get(0).getMaterialBarcodeId());
                             criteriaDet.andEqualTo("orgId", sysUser.getOrganizationId());
-                            List<WmsInnerInventoryDet> detList=wmsInnerInventoryDetMapper.selectByExample(criteriaDet);
+                            List<WmsInnerInventoryDet> detList=wmsInnerInventoryDetMapper.selectByExample(exampleDet);
                             if(StringUtils.isEmpty(detList) || detList.size()<=0) {
                                 WmsInnerInventoryDet inventoryDet = new WmsInnerInventoryDet();
                                 inventoryDet.setStorageId(inStorageId);
@@ -3583,7 +3583,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     Example.Criteria criteriaDet = exampleDet.createCriteria();
                     criteriaDet.andEqualTo("materialBarcodeId", cartonList.get(0).getMaterialBarcodeId());
                     criteriaDet.andEqualTo("orgId", sysUser.getOrganizationId());
-                    List<WmsInnerInventoryDet> detList=wmsInnerInventoryDetMapper.selectByExample(criteriaDet);
+                    List<WmsInnerInventoryDet> detList=wmsInnerInventoryDetMapper.selectByExample(exampleDet);
                     if(StringUtils.isEmpty(detList) || detList.size()<=0) {
                         WmsInnerInventoryDet inventoryDet = new WmsInnerInventoryDet();
                         inventoryDet.setStorageId(inStorageId);
@@ -3613,7 +3613,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     Example.Criteria criteriaDet = exampleDet.createCriteria();
                     criteriaDet.andEqualTo("materialBarcodeId", palletList.get(0).getMaterialBarcodeId());
                     criteriaDet.andEqualTo("orgId", sysUser.getOrganizationId());
-                    List<WmsInnerInventoryDet> detList=wmsInnerInventoryDetMapper.selectByExample(criteriaDet);
+                    List<WmsInnerInventoryDet> detList=wmsInnerInventoryDetMapper.selectByExample(exampleDet);
                     if(StringUtils.isEmpty(detList) || detList.size()<=0) {
                         WmsInnerInventoryDet inventoryDet = new WmsInnerInventoryDet();
                         inventoryDet.setStorageId(inStorageId);
