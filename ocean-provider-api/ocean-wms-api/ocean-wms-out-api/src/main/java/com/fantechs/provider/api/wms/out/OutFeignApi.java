@@ -100,4 +100,10 @@ public interface OutFeignApi {
     @PostMapping("/wmsOutDeliveryReqOrder/updatePutawayQty")
     ResponseEntity updateDeliveryReqOrderPutawayQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long deliveryReqOrderDetId,
                                            @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty);
+
+    @ApiOperation(value = "更新备料计划拣货数量",notes = "更新备料计划拣货数量")
+    @PostMapping("/wmsOutPlanStockListOrder/updateActualQty")
+    ResponseEntity updatePlanStockListOrderActualQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long planStockListOrderDetId,
+                       @ApiParam(value = "必传拣货架数量",required = true)@RequestParam BigDecimal putawayQty);
+
 }

@@ -33,6 +33,9 @@ public class SearchWmsOutPlanStockListOrder extends BaseQuery implements Seriali
     @ApiModelProperty(name="planStockListOrderCode",value = "备料计划单编码")
     private String planStockListOrderCode;
 
+    @ApiModelProperty(name="warehouseName",value = "仓库名称")
+    private String warehouseName;
+
     /**
      * 仓库ID
      */

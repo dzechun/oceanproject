@@ -571,6 +571,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                 WmsInnerMaterialBarcodeImport wmsInnerMaterialBarcodeImport = importList.get(i);
                 //获取导入条码的物料是否存在
                 searchBaseMaterial.setMaterialCode(wmsInnerMaterialBarcodeImport.getMaterialCode());
+                searchBaseMaterial.setCodeQueryMark(1);
                 List<BaseMaterial> baseMaterialList = baseFeignApi.findList(searchBaseMaterial).getData();
                 if (StringUtils.isEmpty(baseMaterialList)) {
                     fail.add(i + 1);
@@ -674,7 +675,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                             fail.add(i + 1);
                             continue;
                         }else {
-                            BeanUtil.copyProperties(parentBarcode,cartonCode);
+                            BeanUtil.copyProperties(parentBarcode,colorBoxCode);
                             colorBoxCode.setBarcodeType((byte) 2);
                             colorBoxCode.setPalletCode(null);
                             colorBoxCode.setBarcode(null);

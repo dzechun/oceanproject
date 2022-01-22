@@ -110,6 +110,8 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
         }
         mesPmDailyPlanDto.setCreateTime(new Date());
         mesPmDailyPlanDto.setCreateUserId(user.getUserId());
+        mesPmDailyPlanDto.setModifiedTime(new Date());
+        mesPmDailyPlanDto.setModifiedUserId(user.getUserId());
         mesPmDailyPlanDto.setOrgId(user.getOrganizationId());
         mesPmDailyPlanDto.setIsDelete((byte) 1);
         mesPmDailyPlanDto.setStatus((byte) 1);
@@ -196,7 +198,10 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
         List<Long> longList = mesPmDailyPlanDets.stream().filter(u -> (StringUtils.isNotEmpty(u.getDailyPlanDetId()))).map(MesPmDailyPlanDetDto::getDailyPlanDetId).collect(Collectors.toList());
         Example example = new Example(MesPmDailyPlanDet.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("dailyPlanId",mesPmDailyPlanDto.getDailyPlanId()).andNotIn("dailyPlanDetId",longList);
+        criteria.andEqualTo("dailyPlanId",mesPmDailyPlanDto.getDailyPlanId());
+        if (StringUtils.isNotEmpty(longList)) {
+            criteria.andNotIn("dailyPlanDetId", longList);
+        }
         mesPmDailyPlanDetMapper.deleteByExample(example);
 
         //新增
@@ -400,7 +405,7 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
             MesPmDailyPlanStockList planStockList=new MesPmDailyPlanStockList();
             planStockList.setDailyPlanStockListId(planStockListDto.getDailyPlanStockListId());
             planStockList.setTotalIssueQty(planStockListDto.getTotalIssueQty().add(planStockListDto.getIssueQty()));
-            if(planStockListDto.getDailyPlanUsageQty().compareTo(planStockListDto.getTotalIssueQty().add(planStockListDto.getIssueQty()))==0)
+            if(planStockListDto.getDailyPlanUsageQty().compareTo(planStockListDto.getTotalIssueQty().add(planStockListDto.getWorkOrderQty()))==0)
                 planStockList.setIfAllIssued((byte)1);
             num=mesPmDailyPlanStockListMapper.updateByPrimaryKeySelective(planStockList);
             if(num<=0){

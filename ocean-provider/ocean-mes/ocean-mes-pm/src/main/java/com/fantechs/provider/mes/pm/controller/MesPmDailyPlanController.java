@@ -3,14 +3,15 @@ package com.fantechs.provider.mes.pm.controller;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanStockListDto;
-import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDetDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmDailyPlan;
+import com.fantechs.common.base.general.entity.mes.pm.MesPmHtDailyPlan;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmDailyPlan;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.pm.service.MesPmDailyPlanService;
+import com.fantechs.provider.mes.pm.service.MesPmHtDailyPlanService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -24,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -39,6 +39,8 @@ public class MesPmDailyPlanController {
 
     @Resource
     private MesPmDailyPlanService mesPmDailyPlanService;
+    @Resource
+    private MesPmHtDailyPlanService mesPmHtDailyPlanService;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -106,4 +108,11 @@ public class MesPmDailyPlanController {
 //        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
 //    }
 
+    @ApiOperation("履历")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<MesPmHtDailyPlan>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchMesPmDailyPlan searchMesPmDailyPlan) {
+        Page<Object> page = PageHelper.startPage(searchMesPmDailyPlan.getStartPage(),searchMesPmDailyPlan.getPageSize());
+        List<MesPmHtDailyPlan> list = mesPmHtDailyPlanService.findList(searchMesPmDailyPlan);
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
 }

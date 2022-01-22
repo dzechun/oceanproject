@@ -18,13 +18,6 @@ public class WmsOutPlanStockListOrderDetDto extends WmsOutPlanStockListOrderDet 
     private String dailyPlanCode;
 
     /**
-     * 生产订单号
-     */
-    @Transient
-    @ApiModelProperty(name="workOrderCode",value = "生产订单号")
-    private String workOrderCode;
-
-    /**
      * 备料计划单号
      */
     @Transient
