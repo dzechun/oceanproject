@@ -211,6 +211,8 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
                 createDet(mesPmDailyPlanDetDto,mesPmDailyPlanDto.getDailyPlanId(),user);
             }
         }
+        mesPmDailyPlanDto.setModifiedUserId(user.getUserId());
+        mesPmDailyPlanDto.setModifiedTime(new Date());
         num=mesPmDailyPlanMapper.updateByPrimaryKeySelective(mesPmDailyPlanDto);
 
         return num;

@@ -733,6 +733,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
                 for (WmsInnerMaterialBarcodeReOrderDto reOrderDto : barcodeList1) {
                     //更新条码关系表为已提交
+                    reOrderDto.setOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
                     reOrderDto.setScanStatus((byte)3);
                     reOrderDto.setModifiedTime(new Date());
                     reOrderDto.setModifiedUserId(sysUser.getUserId());
@@ -3097,6 +3098,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder=new WmsInnerMaterialBarcodeReOrder();
                     wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeReOrderId(reOrderDtoList.get(0).getMaterialBarcodeReOrderId());
                     wmsInnerMaterialBarcodeReOrder.setScanStatus((byte)3);
+                    wmsInnerMaterialBarcodeReOrder.setOrderDetId(jobOrderDetId);
                     wmsInnerMaterialBarcodeReOrder.setModifiedUserId(sysUser.getUserId());
                     wmsInnerMaterialBarcodeReOrder.setModifiedTime(new Date());
                     wmsInnerMaterialBarcodeReOrderMapper.updateByPrimaryKeySelective(wmsInnerMaterialBarcodeReOrder);
