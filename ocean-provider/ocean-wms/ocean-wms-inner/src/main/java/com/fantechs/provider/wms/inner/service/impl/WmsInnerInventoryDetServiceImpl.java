@@ -157,20 +157,20 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
                     }else if(code.equals(dto.getColorBoxCode())){
                         //彩盒码,箱码为空
                         if(StringUtils.isEmpty(dto.getBarcode())) {
-                            map.put("colorBoxCode",dto.getBarcode());
+                            map.put("colorBoxCode",dto.getColorBoxCode());
                             Integer i = wmsInnerInventoryDetMapper.materialQty(map);
                             WmsInnerInventoryDetDto wmsInnerInventoryDetDto = det.get(0);
-                            wmsInnerInventoryDetDto.setMaterialTotalQty(new BigDecimal(i).subtract(wmsInnerInventoryDetDto.getMaterialQty()));
+                            wmsInnerInventoryDetDto.setMaterialTotalQty(new BigDecimal(i));
                             wmsInnerInventoryDetDtos.add(wmsInnerInventoryDetDto);
                         }
 
                     }else if(code.equals(dto.getCartonCode())){
                         //箱码,箱码为空
                         if(StringUtils.isEmpty(dto.getBarcode())  &&  StringUtils.isEmpty(dto.getColorBoxCode())) {
-                            map.put("cartonCode",dto.getBarcode());
+                            map.put("cartonCode",dto.getCartonCode());
                             Integer i = wmsInnerInventoryDetMapper.materialQty(map);
                             WmsInnerInventoryDetDto wmsInnerInventoryDetDto = det.get(0);
-                            wmsInnerInventoryDetDto.setMaterialTotalQty(new BigDecimal(i).subtract(wmsInnerInventoryDetDto.getMaterialQty()));
+                            wmsInnerInventoryDetDto.setMaterialTotalQty(new BigDecimal(i));
                             wmsInnerInventoryDetDtos.add(wmsInnerInventoryDetDto);
                         }
                     }else if(code.equals(dto.getPalletCode())){
@@ -179,7 +179,7 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
                             map.put("palletCode",dto.getPalletCode());
                             Integer i = wmsInnerInventoryDetMapper.materialQty(map);
                             WmsInnerInventoryDetDto wmsInnerInventoryDetDto = det.get(0);
-                            wmsInnerInventoryDetDto.setMaterialTotalQty(new BigDecimal(i).subtract(wmsInnerInventoryDetDto.getMaterialQty()));
+                            wmsInnerInventoryDetDto.setMaterialTotalQty(new BigDecimal(i));
                             wmsInnerInventoryDetDtos.add(wmsInnerInventoryDetDto);
                         }
                     }

@@ -229,6 +229,7 @@
         from wms_inner_inventory_det wiid
         LEFT JOIN wms_inner_material_barcode wimb ON wiid.material_barcode_id = wimb.material_barcode_id
         <where>
+                and barcode is not null
             <if test="barcode!=null and barcode!=''">
                 and wimb.barcode = #{barcode}
             </if>

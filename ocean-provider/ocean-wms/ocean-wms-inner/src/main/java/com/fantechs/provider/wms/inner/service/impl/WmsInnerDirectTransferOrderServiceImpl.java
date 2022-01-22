@@ -154,6 +154,14 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                 if (qty.compareTo(BigDecimal.ZERO) <= 0)
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "移出库位物料数量小于等于0");
 
+                SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                searchBaseStorage.setStorageId(dto.getInStorageId());
+                List<BaseStorage> baseStorage = baseFeignApi.findList(searchBaseStorage).getData();
+                if (StringUtils.isEmpty(baseStorage))
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未查询到移入库位");
+                if (baseStorage.get(0).getStorageType() != 1)
+                    throw new BizErrorException(ErrorCodeEnum.PDA40012037.getCode(), "库位类型错误，移入库位必须是存货库位");
+
                 //保存明细表
                 WmsInnerDirectTransferOrderDet orderDet = new WmsInnerDirectTransferOrderDet();
                 orderDet.setDirectTransferOrderId(order.getDirectTransferOrderId());
@@ -219,14 +227,6 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                     if (StringUtils.isEmpty(inWmsInnerInventorys)) {
                         BeanUtils.copyProperties(wmsInnerInventory, inWmsInnerInventory, new String[]{"inventoryId"});
                         inWmsInnerInventory.setStorageId(dto.getInStorageId());
-                        SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
-                        searchBaseStorage.setStorageId(dto.getInStorageId());
-                        List<BaseStorage> baseStorage = baseFeignApi.findList(searchBaseStorage).getData();
-                        if (StringUtils.isEmpty(baseStorage))
-                            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未查询到移入库位");
-                        if (baseStorage.get(0).getStorageType() != 1)
-                            throw new BizErrorException(ErrorCodeEnum.PDA40012037.getCode(), "库位类型错误，移入库位必须是存货库位");
-
                         inWmsInnerInventory.setWarehouseId(baseStorage.get(0).getWarehouseId());
                         inWmsInnerInventory.setJobStatus((byte) 1);
                         inWmsInnerInventory.setLockStatus((byte) 0);
