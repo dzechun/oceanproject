@@ -346,15 +346,15 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             barcodeMap.put("barcode",barcode);
             return wmsInnerMaterialBarcodeMapper.findList(barcodeMap);
         }else if (barcodeType == 2) {
-            barcodeMap.put("barcodeType",2);
+            barcodeMap.put("barcodeType",1);
             barcodeMap.put("colorBoxCode",barcode);
             return wmsInnerMaterialBarcodeMapper.findList(barcodeMap);
         }else if (barcodeType == 3) {
-            barcodeMap.put("barcodeType",3);
+            barcodeMap.put("barcodeType",1);
             barcodeMap.put("cartonCode",barcode);
             return wmsInnerMaterialBarcodeMapper.findList(barcodeMap);
         }else if (barcodeType == 4) {
-            barcodeMap.put("barcodeType",4);
+            barcodeMap.put("barcodeType",1);
             barcodeMap.put("palletCode",barcode);
             return wmsInnerMaterialBarcodeMapper.findList(barcodeMap);
         }
@@ -469,6 +469,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     wmsInnerInventoryDet.setStorageId(wmsInnerJobOrderDet.getInStorageId());
                     wmsInnerInventoryDet.setBarcodeStatus((byte) 2);
                     inventoryDetList.add(wmsInnerInventoryDet);
+                    wmsInnerMaterialBarcodeDto.setBarcodeStatus((byte) 6);
                 }
 
             }
