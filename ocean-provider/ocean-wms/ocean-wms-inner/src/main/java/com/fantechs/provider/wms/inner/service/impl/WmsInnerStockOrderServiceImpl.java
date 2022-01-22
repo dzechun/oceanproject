@@ -832,7 +832,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 wmsInnerStockOrderDetBarcode.setStockOrderDetId(stockOrderDetId);
                 wmsInnerStockOrderDetBarcode.setMaterialBarcodeId(wmsInnerMaterialBarcode.getMaterialBarcodeId());
                 wmsInnerStockOrderDetBarcode.setScanStatus((byte)3);
-                wmsInnerStockOrderDetBarcode.setStockResult((byte)1);
+                wmsInnerStockOrderDetBarcode.setStockResult((byte)2);
                 wmsInnerStockOrderDetBarcode.setCreateUserId(sysUser.getUserId());
                 wmsInnerStockOrderDetBarcode.setCreateTime(new Date());
                 wmsInnerStockOrderDetBarcode.setOrgId(sysUser.getOrganizationId());

@@ -180,7 +180,7 @@ public class InBarcodeUtil {
         barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
         if(barcodeDtos.size()>0){
             //SN码
-            if(barcodeDtos.get(0).getBarcodeStatus()>=(byte)5){
+            if(barcodeDtos.get(0).getBarcodeStatus()==(byte)5){
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
             }
             if(StringUtils.isNotEmpty(barcodeDtos.get(0).getIfScan()) && barcodeDtos.get(0).getIfScan()==(byte)1){
@@ -206,7 +206,7 @@ public class InBarcodeUtil {
                 if(StringUtils.isEmpty(barcodeListOne) || barcodeListOne.size()<=0){
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未找到彩盒码 请确认-->"+barcode);
                 }
-                if(barcodeListOne.get(0).getBarcodeStatus()>=(byte)5){
+                if(barcodeListOne.get(0).getBarcodeStatus()==(byte)5){
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
                 }
                 List<WmsInnerMaterialBarcodeDto> barcodeListColorBox = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
@@ -237,7 +237,7 @@ public class InBarcodeUtil {
                     if(StringUtils.isEmpty(barcodeListOne) || barcodeListOne.size()<=0){
                         throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未找到箱码 请确认-->"+barcode);
                     }
-                    if(barcodeListOne.get(0).getBarcodeStatus()>=(byte)5){
+                    if(barcodeListOne.get(0).getBarcodeStatus()==(byte)5){
                         throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
                     }
                     List<WmsInnerMaterialBarcodeDto> barcodeList = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
@@ -273,7 +273,7 @@ public class InBarcodeUtil {
                         if(StringUtils.isEmpty(barcodeListOne) || barcodeListOne.size()<=0){
                             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未找到栈板码 请确认-->"+barcode);
                         }
-                        if(barcodeListOne.get(0).getBarcodeStatus()>=(byte)5){
+                        if(barcodeListOne.get(0).getBarcodeStatus()==(byte)5){
                             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
                         }
                         List<WmsInnerMaterialBarcodeDto> barcodeList = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
