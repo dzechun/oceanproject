@@ -1,15 +1,19 @@
 package com.fantechs.common.base.general.entity.mes.pm;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
-import javax.persistence.*;
-import lombok.Data;
+
+;
+;
 
 /**
  * 日计划
@@ -60,7 +64,7 @@ public class MesPmDailyPlan extends ValidGroup implements Serializable {
      * 来源大类(1-系统下推 2-自建 3-第三方系统)
      */
     @ApiModelProperty(name="sourceBigType",value = "来源大类(1-系统下推 2-自建 3-第三方系统)")
-    @Excel(name = "来源大类(1-系统下推 2-自建 3-第三方系统)", height = 20, width = 30)
+    //@Excel(name = "来源大类(1-系统下推 2-自建 3-第三方系统)", height = 20, width = 30)
     @Column(name = "source_big_type")
     private Byte sourceBigType;
 
@@ -68,7 +72,7 @@ public class MesPmDailyPlan extends ValidGroup implements Serializable {
      * 日计划编码
      */
     @ApiModelProperty(name="dailyPlanCode",value = "日计划编码")
-    @Excel(name = "日计划编码", height = 20, width = 30)
+    @Excel(name = "日计划编码", height = 20, width = 30,orderNum = "1")
     @Column(name = "daily_plan_code")
     private String dailyPlanCode;
 
@@ -76,7 +80,7 @@ public class MesPmDailyPlan extends ValidGroup implements Serializable {
      * 工单类型(0、量产 1、试产 2、返工 3、维修)
      */
     @ApiModelProperty(name="workOrderType",value = "工单类型(0、量产 1、试产 2、返工 3、维修)")
-    @Excel(name = "工单类型(0、量产 1、试产 2、返工 3、维修)", height = 20, width = 30)
+    @Excel(name = "工单类型(0、量产 1、试产 2、返工 3、维修)", height = 20, width = 30,orderNum = "2")
     @Column(name = "work_order_type")
     private Byte workOrderType;
 
@@ -84,7 +88,7 @@ public class MesPmDailyPlan extends ValidGroup implements Serializable {
      * 计划开始时间
      */
     @ApiModelProperty(name="planStartTime",value = "计划开始时间")
-    @Excel(name = "计划开始时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "计划开始时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss",orderNum = "4")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "plan_start_time")
     private Date planStartTime;
@@ -100,14 +104,14 @@ public class MesPmDailyPlan extends ValidGroup implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30)
+    //@Excel(name = "状态(0无效，1有效)", height = 20, width = 30)
     private Byte status;
 
     /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
-    @Excel(name = "备注", height = 20, width = 30)
+    @Excel(name = "备注", height = 20, width = 30,orderNum = "5")
     private String remark;
 
     /**
@@ -128,7 +132,7 @@ public class MesPmDailyPlan extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss",orderNum = "7")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -144,7 +148,7 @@ public class MesPmDailyPlan extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss",orderNum = "9")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;

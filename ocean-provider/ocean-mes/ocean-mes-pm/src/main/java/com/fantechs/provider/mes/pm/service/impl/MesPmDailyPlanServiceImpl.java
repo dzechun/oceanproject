@@ -19,6 +19,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.mes.pm.mapper.*;
 import com.fantechs.provider.mes.pm.service.MesPmDailyPlanService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -38,6 +39,8 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
 
     @Resource
     private MesPmDailyPlanMapper mesPmDailyPlanMapper;
+    @Resource
+    private MesPmHtDailyPlanMapper mesPmHtDailyPlanMapper;
     @Resource
     private MesPmDailyPlanDetMapper mesPmDailyPlanDetMapper;
     @Resource
@@ -125,6 +128,11 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
             }
         }
 
+        //履历
+        MesPmHtDailyPlan mesPmHtDailyPlan = new MesPmHtDailyPlan();
+        BeanUtils.copyProperties(mesPmDailyPlanDto, mesPmHtDailyPlan);
+        mesPmHtDailyPlanMapper.insertSelective(mesPmHtDailyPlan);
+
         return num;
     }
 
@@ -137,81 +145,73 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"不是自建的日计划不允许修改");
         }
 
-        //排产数量只能改大 不能改小
-        List<MesPmDailyPlanDetDto> mesPmDailyPlanDets=mesPmDailyPlanDto.getMesPmDailyPlanDetDtos();
-        List<MesPmDailyPlanDet> mesPmDailyPlanDetsOld=new ArrayList<>();
-        Example exampleDet = new Example(MesPmDailyPlanDet.class);
-        Example.Criteria criteriaDet = exampleDet.createCriteria();
-        criteriaDet.andEqualTo("dailyPlanId", mesPmDailyPlanDto.getDailyPlanId());
-        mesPmDailyPlanDetsOld=mesPmDailyPlanDetMapper.selectByExample(exampleDet);
-        for (MesPmDailyPlanDet mesPmDailyPlanDet : mesPmDailyPlanDetsOld) {
-            Optional<MesPmDailyPlanDetDto> pmDailyPlanDetOptional = mesPmDailyPlanDets.stream()
-                    .filter(i -> i.getDailyPlanDetId()==mesPmDailyPlanDet.getDailyPlanDetId())
-                    .findFirst();
-            if (pmDailyPlanDetOptional.isPresent()) {
-                MesPmDailyPlanDet dailyPlanDet=pmDailyPlanDetOptional.get();
-                if(dailyPlanDet.getScheduleQty().compareTo(mesPmDailyPlanDet.getScheduleQty())==-1){
-                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"生产日计划数不能改小");
-                }
-
-                dailyPlanDet.setModifiedUserId(user.getUserId());
-                dailyPlanDet.setModifiedTime(new Date());
-                num=mesPmDailyPlanDetMapper.updateByPrimaryKeySelective(dailyPlanDet);
-
-                Example exampleListDet = new Example(MesPmDailyPlanStockList.class);
-                Example.Criteria criteriaListDet = exampleListDet.createCriteria();
-                criteriaListDet.andEqualTo("dailyPlanDetId", dailyPlanDet.getDailyPlanDetId());
-                List<MesPmDailyPlanStockList> planStockLists=mesPmDailyPlanStockListMapper.selectByExample(exampleListDet);
-                for (MesPmDailyPlanStockList planStockList : planStockLists) {
-                    planStockList.setDailyPlanUsageQty(dailyPlanDet.getScheduleQty().multiply(StringUtils.isEmpty(planStockList.getSingleQty())?new BigDecimal(1):planStockList.getSingleQty()));
-                    planStockList.setModifiedUserId(user.getUserId());
-                    planStockList.setModifiedTime(new Date());
-                    num=mesPmDailyPlanStockListMapper.updateByPrimaryKeySelective(planStockList);
-                }
-            }
-            else {
-                //处理要删除的
-                /*Example exampleListDet = new Example(MesPmDailyPlanStockList.class);
-                Example.Criteria criteriaListDet = exampleListDet.createCriteria();
-                criteriaListDet.andEqualTo("dailyPlanDetId", mesPmDailyPlanDet.getDailyPlanDetId());
-                criteriaListDet.andIsNotNull("totalIssueQty");
-                criteriaListDet.andGreaterThan("totalIssueQty",0);
-                MesPmDailyPlanStockList pmDailyPlanStockList=mesPmDailyPlanStockListMapper.selectOneByExample(exampleListDet);
-                if(StringUtils.isNotEmpty(pmDailyPlanStockList)){
-                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"日计划备料明细已经下发 不允许删除");
-                }
-
-                Example exampleListDetDelete = new Example(MesPmDailyPlanStockList.class);
-                Example.Criteria criteriaListDetDelete = exampleListDetDelete.createCriteria();
-                criteriaListDetDelete.andEqualTo("dailyPlanDetId", mesPmDailyPlanDet.getDailyPlanDetId());
-
-                //删备料明细
-                num=mesPmDailyPlanStockListMapper.deleteByExample(exampleListDetDelete);
-
-                //删日计划明细
-                num=mesPmDailyPlanDetMapper.deleteByPrimaryKey(mesPmDailyPlanDet);*/
-
-            }
-        }
-
-        //不用删掉的明细的id
-        List<Long> longList = mesPmDailyPlanDets.stream().filter(u -> (StringUtils.isNotEmpty(u.getDailyPlanDetId()))).map(MesPmDailyPlanDetDto::getDailyPlanDetId).collect(Collectors.toList());
-        Example example = new Example(MesPmDailyPlanDet.class);
-        Example.Criteria criteria = example.createCriteria();
+        Example example1 = new Example(MesPmDailyPlanDet.class);
+        Example.Criteria criteria = example1.createCriteria();
         criteria.andEqualTo("dailyPlanId",mesPmDailyPlanDto.getDailyPlanId());
-        if (StringUtils.isNotEmpty(longList)) {
-            criteria.andNotIn("dailyPlanDetId", longList);
-        }
-        mesPmDailyPlanDetMapper.deleteByExample(example);
+        List<MesPmDailyPlanDet> oldMesPmDailyPlanDets = mesPmDailyPlanDetMapper.selectByExample(example1);
 
-        //新增
-        List<MesPmDailyPlanDetDto> planDetDtoList = mesPmDailyPlanDets.stream().filter(u -> (StringUtils.isEmpty(u.getDailyPlanDetId()))).collect(Collectors.toList());
-        if(planDetDtoList.size()>0){
-            for (MesPmDailyPlanDetDto mesPmDailyPlanDetDto : planDetDtoList) {
+        //原来有的明细只更新
+        ArrayList<Long> idList = new ArrayList<>();
+        List<MesPmDailyPlanDetDto> mesPmDailyPlanDetDtos = mesPmDailyPlanDto.getMesPmDailyPlanDetDtos();
+        if(StringUtils.isNotEmpty(mesPmDailyPlanDetDtos)) {
+            for (MesPmDailyPlanDetDto mesPmDailyPlanDetDto : mesPmDailyPlanDetDtos) {
+                if (StringUtils.isNotEmpty(mesPmDailyPlanDetDto.getDailyPlanDetId())) {
+                    for (MesPmDailyPlanDet oldMesPmDailyPlanDet : oldMesPmDailyPlanDets){
+                        if(mesPmDailyPlanDetDto.getDailyPlanDetId().equals(oldMesPmDailyPlanDet.getDailyPlanDetId())){
+                            //排产数量只能改大 不能改小
+                            if (mesPmDailyPlanDetDto.getScheduleQty().compareTo(oldMesPmDailyPlanDet.getScheduleQty()) == -1) {
+                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "生产日计划数不能改小");
+                            }
+                            mesPmDailyPlanDetDto.setModifiedUserId(user.getUserId());
+                            mesPmDailyPlanDetDto.setModifiedTime(new Date());
+                            mesPmDailyPlanDetMapper.updateByPrimaryKeySelective(mesPmDailyPlanDetDto);
+                            idList.add(mesPmDailyPlanDetDto.getDailyPlanDetId());
+
+
+                            Example exampleListDet = new Example(MesPmDailyPlanStockList.class);
+                            Example.Criteria criteriaListDet = exampleListDet.createCriteria();
+                            criteriaListDet.andEqualTo("dailyPlanDetId", mesPmDailyPlanDetDto.getDailyPlanDetId());
+                            List<MesPmDailyPlanStockList> planStockLists=mesPmDailyPlanStockListMapper.selectByExample(exampleListDet);
+                            for (MesPmDailyPlanStockList planStockList : planStockLists) {
+                                planStockList.setDailyPlanUsageQty(mesPmDailyPlanDetDto.getScheduleQty().multiply(StringUtils.isEmpty(planStockList.getSingleQty())?new BigDecimal(1):planStockList.getSingleQty()));
+                                planStockList.setModifiedUserId(user.getUserId());
+                                planStockList.setModifiedTime(new Date());
+                                num=mesPmDailyPlanStockListMapper.updateByPrimaryKeySelective(planStockList);
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+
+        //删除原明细
+        example1.clear();
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("dailyPlanId", mesPmDailyPlanDto.getDailyPlanId());
+        if (idList.size() > 0) {
+            criteria1.andNotIn("dailyPlanDetId", idList);
+        }
+        mesPmDailyPlanDetMapper.deleteByExample(example1);
+
+        //明细
+        if(StringUtils.isNotEmpty(mesPmDailyPlanDetDtos)){
+            for (MesPmDailyPlanDetDto mesPmDailyPlanDetDto : mesPmDailyPlanDetDtos){
+                if (idList.contains(mesPmDailyPlanDetDto.getDailyPlanDetId())) {
+                    continue;
+                }
                 createDet(mesPmDailyPlanDetDto,mesPmDailyPlanDto.getDailyPlanId(),user);
             }
         }
+
+        mesPmDailyPlanDto.setModifiedUserId(user.getUserId());
+        mesPmDailyPlanDto.setModifiedTime(new Date());
         num=mesPmDailyPlanMapper.updateByPrimaryKeySelective(mesPmDailyPlanDto);
+
+        //履历
+        MesPmHtDailyPlan mesPmHtDailyPlan = new MesPmHtDailyPlan();
+        BeanUtils.copyProperties(mesPmDailyPlanDto, mesPmHtDailyPlan);
+        mesPmHtDailyPlanMapper.insertSelective(mesPmHtDailyPlan);
 
         return num;
     }

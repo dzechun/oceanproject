@@ -126,6 +126,11 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
         wmsOutPlanStockListOrderDto.setStatus((byte) 1);
         num=wmsOutPlanStockListOrderMapper.insertUseGeneratedKeys(wmsOutPlanStockListOrderDto);
 
+        //履历
+        WmsOutHtPlanStockListOrder wmsOutHtPlanStockListOrder = new WmsOutHtPlanStockListOrder();
+        BeanUtils.copyProperties(wmsOutPlanStockListOrderDto, wmsOutHtPlanStockListOrder);
+        wmsOutHtPlanStockListOrderMapper.insertSelective(wmsOutHtPlanStockListOrder);
+
         List<WmsOutPlanStockListOrderDetDto> listOrderDetDtos=wmsOutPlanStockListOrderDto.getWmsOutPlanStockListOrderDetDtos();
         if(listOrderDetDtos.size()>0){
             for (WmsOutPlanStockListOrderDetDto listOrderDetDto : listOrderDetDtos) {
@@ -258,6 +263,11 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
         wmsOutPlanStockListOrderDto.setModifiedUserId(user.getUserId());
         wmsOutPlanStockListOrderDto.setModifiedTime(new Date());
         num=wmsOutPlanStockListOrderMapper.updateByPrimaryKeySelective(wmsOutPlanStockListOrderDto);
+
+        //履历
+        WmsOutHtPlanStockListOrder wmsOutHtPlanStockListOrder = new WmsOutHtPlanStockListOrder();
+        BeanUtils.copyProperties(wmsOutPlanStockListOrderDto, wmsOutHtPlanStockListOrder);
+        wmsOutHtPlanStockListOrderMapper.insertSelective(wmsOutHtPlanStockListOrder);
 
         return num;
     }
