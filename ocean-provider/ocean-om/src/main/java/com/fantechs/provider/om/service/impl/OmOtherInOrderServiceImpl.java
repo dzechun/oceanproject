@@ -427,7 +427,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     wmsInPlanReceivingOrderDetDto.setMaterialId(omOtherInOrderDet.getMaterialId());
                     wmsInPlanReceivingOrderDetDto.setPlanQty(omOtherInOrderDet.getQty());
                     wmsInPlanReceivingOrderDetDto.setLineStatus((byte) 1);
-                    wmsInPlanReceivingOrderDetDto.setActualQty(omOtherInOrderDet.getReceivingQty());
                     wmsInPlanReceivingOrderDetDto.setOperatorUserId(user.getUserId());
                     detList.add(wmsInPlanReceivingOrderDetDto);
                     omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().add(omOtherInOrderDet.getQty()));
@@ -483,7 +482,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     wmsInReceivingOrderDetDto.setMaterialId(omOtherInOrderDet.getMaterialId());
                     wmsInReceivingOrderDetDto.setPlanQty(omOtherInOrderDet.getQty());
                     wmsInReceivingOrderDetDto.setLineStatus((byte) 1);
-                    wmsInReceivingOrderDetDto.setActualQty(omOtherInOrderDet.getReceivingQty());
                     wmsInReceivingOrderDetDto.setOperatorUserId(user.getUserId());
                     detList.add(wmsInReceivingOrderDetDto);
                     omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().add(omOtherInOrderDet.getQty()));

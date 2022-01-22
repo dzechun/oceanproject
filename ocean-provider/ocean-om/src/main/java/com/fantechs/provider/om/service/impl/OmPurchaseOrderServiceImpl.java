@@ -321,7 +321,6 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                     wmsInPlanReceivingOrderDetDto.setMaterialId(omPurchaseOrderDet.getMaterialId());
                     wmsInPlanReceivingOrderDetDto.setPlanQty(omPurchaseOrderDet.getQty());
                     wmsInPlanReceivingOrderDetDto.setLineStatus((byte) 1);
-                    wmsInPlanReceivingOrderDetDto.setActualQty(omPurchaseOrderDet.getActualQty());
                     wmsInPlanReceivingOrderDetDto.setOperatorUserId(user.getUserId());
                     detList.add(wmsInPlanReceivingOrderDetDto);
                     omPurchaseOrderDet.setTotalIssueQty(omPurchaseOrderDet.getTotalIssueQty().add(omPurchaseOrderDet.getQty()));
@@ -383,7 +382,6 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                     wmsInReceivingOrderDetDto.setMaterialId(omPurchaseOrderDet.getMaterialId());
                     wmsInReceivingOrderDetDto.setPlanQty(omPurchaseOrderDet.getQty());
                     wmsInReceivingOrderDetDto.setLineStatus((byte) 1);
-                    wmsInReceivingOrderDetDto.setActualQty(omPurchaseOrderDet.getActualQty());
                     wmsInReceivingOrderDetDto.setOperatorUserId(user.getUserId());
                     detList.add(wmsInReceivingOrderDetDto);
                     omPurchaseOrderDet.setTotalIssueQty(omPurchaseOrderDet.getTotalIssueQty().add(omPurchaseOrderDet.getQty()));
