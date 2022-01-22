@@ -359,9 +359,14 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             }
             if(StringUtils.isEmpty(order.getTotalIssueQty()))
                 order.setTotalIssueQty(BigDecimal.ZERO);
-            if (order.getOrderQty().compareTo(order.getTotalIssueQty().add(order.getQty())) == -1) {
+            BigDecimal add = order.getTotalIssueQty().add(order.getQty());
+            order.setTotalIssueQty(add);
+            if (order.getOrderQty().compareTo(add) == -1) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "累计下发数量大于包装总数");
+            }else if(order.getOrderQty().compareTo(add) == 0){
+                order.setIfAllIssued((byte)1);
             }
+            omOtherInOrderDetMapper.updateByPrimaryKeySelective(order);
             set.add(order.getWarehouseId());
         }
 
