@@ -1,8 +1,10 @@
 package com.fantechs.provider.wms.out.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDto;
+import com.fantechs.common.base.general.dto.wms.out.imports.WmsOutPlanStockListOrderImport;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutPlanStockListOrder;
 import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtPlanStockListOrder;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutPlanStockListOrder;
@@ -16,8 +18,10 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +30,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -35,6 +40,7 @@ import java.util.List;
 @Api(tags = "备料计划控制器")
 @RequestMapping("/wmsOutPlanStockListOrder")
 @Validated
+@Slf4j
 public class WmsOutPlanStockListOrderController {
 
     @Resource
@@ -114,4 +120,18 @@ public class WmsOutPlanStockListOrderController {
         }
     }
 
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入",notes = "从excel导入")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true) @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<WmsOutPlanStockListOrderImport> wmsOutPlanStockListOrderImports = EasyPoiUtils.importExcel(file, 2, 1, WmsOutPlanStockListOrderImport.class);
+            Map<String, Object> resultMap = wmsOutPlanStockListOrderService.importExcel(wmsOutPlanStockListOrderImports);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
+        }
+    }
 }

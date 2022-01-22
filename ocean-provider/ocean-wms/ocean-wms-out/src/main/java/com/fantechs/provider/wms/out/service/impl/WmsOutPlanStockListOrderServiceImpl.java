@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.out.service.impl;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysImportAndExportLog;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrderFlowDto;
@@ -8,8 +9,13 @@ import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDetDt
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDto;
+import com.fantechs.common.base.general.dto.wms.out.imports.WmsOutPlanStockListOrderImport;
+import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
+import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutPlanStockListOrder;
@@ -21,6 +27,7 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.wms.out.mapper.WmsOutHtPlanStockListOrderMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutPlanStockListOrderDetMapper;
@@ -28,6 +35,7 @@ import com.fantechs.provider.wms.out.mapper.WmsOutPlanStockListOrderMapper;
 import com.fantechs.provider.wms.out.service.WmsOutPlanDeliveryOrderService;
 import com.fantechs.provider.wms.out.service.WmsOutPlanStockListOrderService;
 import com.fantechs.provider.wms.out.util.OrderFlowUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -56,6 +64,8 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
     private BaseFeignApi baseFeignApi;
     @Resource
     private InnerFeignApi innerFeignApi;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
 
     @Override
     public List<WmsOutPlanStockListOrderDto> findList(Map<String, Object> map) {
@@ -109,6 +119,8 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
         }
         wmsOutPlanStockListOrderDto.setCreateTime(new Date());
         wmsOutPlanStockListOrderDto.setCreateUserId(user.getUserId());
+        wmsOutPlanStockListOrderDto.setModifiedTime(new Date());
+        wmsOutPlanStockListOrderDto.setModifiedUserId(user.getUserId());
         wmsOutPlanStockListOrderDto.setOrgId(user.getOrganizationId());
         wmsOutPlanStockListOrderDto.setIsDelete((byte) 1);
         wmsOutPlanStockListOrderDto.setStatus((byte) 1);
@@ -183,40 +195,68 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"不是自建的备料计划不允许修改");
         }
 
-        //下发数量只能改大 不能改小
-        List<WmsOutPlanStockListOrderDetDto> orderDetDtos=wmsOutPlanStockListOrderDto.getWmsOutPlanStockListOrderDetDtos();
-        List<WmsOutPlanStockListOrderDet> orderDetsOld=new ArrayList<>();
-        Example exampleDet = new Example(WmsOutPlanStockListOrderDet.class);
-        Example.Criteria criteriaDet = exampleDet.createCriteria();
-        criteriaDet.andEqualTo("planStockListOrderId", wmsOutPlanStockListOrderDto.getPlanStockListOrderId());
-        orderDetsOld=wmsOutPlanStockListOrderDetMapper.selectByExample(exampleDet);
-        if(StringUtils.isNotEmpty(orderDetsOld)) {
-            for (WmsOutPlanStockListOrderDet listOrderDet : orderDetsOld) {
-                Optional<WmsOutPlanStockListOrderDetDto> orderDetOptional = orderDetDtos.stream()
-                        .filter(i -> i.getPlanStockListOrderDetId() == listOrderDet.getPlanStockListOrderDetId())
-                        .findFirst();
-                if (orderDetOptional.isPresent()) {
-                    WmsOutPlanStockListOrderDet orderDet = orderDetOptional.get();
-                    if (orderDet.getOrderQty().compareTo(listOrderDet.getOrderQty()) == -1) {
-                        throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "下发数量不能改小");
+        Example example1 = new Example(WmsOutPlanStockListOrderDet.class);
+        Example.Criteria criteria = example1.createCriteria();
+        criteria.andEqualTo("planStockListOrderId",wmsOutPlanStockListOrderDto.getPlanStockListOrderId());
+        List<WmsOutPlanStockListOrderDet> oldPlanStockListOrderDets = wmsOutPlanStockListOrderDetMapper.selectByExample(example1);
+
+        //原来有的明细只更新
+        ArrayList<Long> idList = new ArrayList<>();
+        List<WmsOutPlanStockListOrderDetDto> wmsOutPlanStockListOrderDetDtos = wmsOutPlanStockListOrderDto.getWmsOutPlanStockListOrderDetDtos();
+        if(StringUtils.isNotEmpty(wmsOutPlanStockListOrderDetDtos)) {
+            for (WmsOutPlanStockListOrderDetDto wmsOutPlanStockListOrderDetDto : wmsOutPlanStockListOrderDetDtos) {
+                if (StringUtils.isNotEmpty(wmsOutPlanStockListOrderDetDto.getPlanStockListOrderDetId())) {
+                    for (WmsOutPlanStockListOrderDet oldPlanStockListOrderDet : oldPlanStockListOrderDets){
+                        if(wmsOutPlanStockListOrderDetDto.getPlanStockListOrderDetId().equals(oldPlanStockListOrderDet.getPlanStockListOrderDetId())){
+                            //下发数量只能改大 不能改小
+                            if (wmsOutPlanStockListOrderDetDto.getOrderQty().compareTo(oldPlanStockListOrderDet.getOrderQty()) == -1) {
+                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "下发数量不能改小");
+                            }
+                            wmsOutPlanStockListOrderDetDto.setModifiedUserId(user.getUserId());
+                            wmsOutPlanStockListOrderDetDto.setModifiedTime(new Date());
+                            wmsOutPlanStockListOrderDetMapper.updateByPrimaryKey(wmsOutPlanStockListOrderDetDto);
+                            idList.add(wmsOutPlanStockListOrderDetDto.getPlanStockListOrderDetId());
+                        }
                     }
-
-                    orderDet.setModifiedUserId(user.getUserId());
-                    orderDet.setModifiedTime(new Date());
-                    num = wmsOutPlanStockListOrderDetMapper.updateByPrimaryKeySelective(orderDet);
-                } else {
-                    //处理要删除的
-                    if (StringUtils.isNotEmpty(listOrderDet.getTotalIssueQty())) {
-                        throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "备料明细已经下发 不允许删除");
-                    }
-
-                    //删除备料明细
-                    num = wmsOutPlanStockListOrderDetMapper.deleteByPrimaryKey(listOrderDet);
-
                 }
             }
         }
 
+        //删除原明细
+        example1.clear();
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("planStockListOrderId", wmsOutPlanStockListOrderDto.getPlanStockListOrderId());
+        if (idList.size() > 0) {
+            criteria1.andNotIn("planStockListOrderDetId", idList);
+        }
+        List<WmsOutPlanStockListOrderDet> wmsOutPlanStockListOrderDets = wmsOutPlanStockListOrderDetMapper.selectByExample(example1);
+        List<WmsOutPlanStockListOrderDet> collect = wmsOutPlanStockListOrderDets.stream()
+                .filter(i -> StringUtils.isNotEmpty(i.getTotalIssueQty()))
+                .collect(Collectors.toList());
+        if(StringUtils.isNotEmpty(collect)){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "备料明细已经下发 不允许删除");
+        }
+        wmsOutPlanStockListOrderDetMapper.deleteByExample(example1);
+
+        //明细
+        if(StringUtils.isNotEmpty(wmsOutPlanStockListOrderDetDtos)){
+            for (WmsOutPlanStockListOrderDetDto wmsOutPlanStockListOrderDetDto : wmsOutPlanStockListOrderDetDtos){
+                if (idList.contains(wmsOutPlanStockListOrderDetDto.getPlanStockListOrderDetId())) {
+                    continue;
+                }
+                wmsOutPlanStockListOrderDetDto.setPlanStockListOrderId(wmsOutPlanStockListOrderDto.getPlanStockListOrderId());
+                wmsOutPlanStockListOrderDetDto.setCreateUserId(user.getUserId());
+                wmsOutPlanStockListOrderDetDto.setCreateTime(new Date());
+                wmsOutPlanStockListOrderDetDto.setModifiedUserId(user.getUserId());
+                wmsOutPlanStockListOrderDetDto.setModifiedTime(new Date());
+                wmsOutPlanStockListOrderDetDto.setStatus(StringUtils.isEmpty(wmsOutPlanStockListOrderDetDto.getStatus())?1: wmsOutPlanStockListOrderDetDto.getStatus());
+                wmsOutPlanStockListOrderDetDto.setOrgId(user.getOrganizationId());
+                wmsOutPlanStockListOrderDetMapper.insertSelective(wmsOutPlanStockListOrderDetDto);
+            }
+        }
+
+        wmsOutPlanStockListOrderDto.setModifiedUserId(user.getUserId());
+        wmsOutPlanStockListOrderDto.setModifiedTime(new Date());
         num=wmsOutPlanStockListOrderMapper.updateByPrimaryKeySelective(wmsOutPlanStockListOrderDto);
 
         return num;
@@ -416,5 +456,132 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
         return user;
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> importExcel(List<WmsOutPlanStockListOrderImport> wmsOutPlanStockListOrderImports) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        LinkedList<WmsOutPlanStockListOrder> list = new LinkedList<>();
+        LinkedList<WmsOutHtPlanStockListOrder> htList = new LinkedList<>();
+        LinkedList<WmsOutPlanStockListOrderImport> planStockListOrderImports = new LinkedList<>();
+        //日志记录
+        StringBuilder succeedInfo = new StringBuilder();
+        StringBuilder failInfo = new StringBuilder();
+        Integer succeedCount = 0;
+        Integer failCount = 0;
+
+        for (int i = 0; i < wmsOutPlanStockListOrderImports.size(); i++) {
+            WmsOutPlanStockListOrderImport wmsOutPlanStockListOrderImport = wmsOutPlanStockListOrderImports.get(i);
+            String groupNum = wmsOutPlanStockListOrderImport.getGroupNum();
+
+            if (StringUtils.isEmpty(
+                    groupNum
+            )) {
+                failCount++;
+                failInfo.append("必填项为空").append(",");
+                fail.add(i + 4);
+                continue;
+            }
+
+            //物料
+            String materialCode = wmsOutPlanStockListOrderImport.getMaterialCode();
+            if(StringUtils.isNotEmpty(materialCode)){
+                SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
+                searchBaseMaterial.setMaterialCode(materialCode);
+                searchBaseMaterial.setCodeQueryMark(1);
+                List<BaseMaterial> baseMaterials = baseFeignApi.findList(searchBaseMaterial).getData();
+                if (StringUtils.isEmpty(baseMaterials)){
+                    failCount++;
+                    failInfo.append("物料编码不存在").append(",");
+                    fail.add(i+4);
+                    continue;
+                }
+                wmsOutPlanStockListOrderImport.setMaterialId(baseMaterials.get(0).getMaterialId());
+            }
+
+            //仓库
+            String warehouseCode = wmsOutPlanStockListOrderImport.getWarehouseCode();
+            if(StringUtils.isNotEmpty(warehouseCode)){
+                SearchBaseWarehouse searchBaseWarehouse = new SearchBaseWarehouse();
+                searchBaseWarehouse.setWarehouseCode(warehouseCode);
+                searchBaseWarehouse.setCodeQueryMark(1);
+                List<BaseWarehouse> baseWarehouses = baseFeignApi.findList(searchBaseWarehouse).getData();
+                if (StringUtils.isEmpty(baseWarehouses)){
+                    failCount++;
+                    failInfo.append("仓库编码不存在").append(",");
+                    fail.add(i+4);
+                    continue;
+                }
+                wmsOutPlanStockListOrderImport.setWarehouseId(baseWarehouses.get(0).getWarehouseId());
+            }
+
+            succeedCount++;
+            succeedInfo.append(i+4).append(",");
+            planStockListOrderImports.add(wmsOutPlanStockListOrderImport);
+        }
+
+        SysImportAndExportLog sysImportAndExportLog = new SysImportAndExportLog();
+        sysImportAndExportLog.setModuleNames("WMS-OUT");
+        sysImportAndExportLog.setFileName("备料计划导入信息表");
+        sysImportAndExportLog.setType((byte)1);
+        sysImportAndExportLog.setOperatorUserId(user.getUserId());
+        sysImportAndExportLog.setResult((byte)1);
+        sysImportAndExportLog.setTotalCount(wmsOutPlanStockListOrderImports.size());
+        sysImportAndExportLog.setFailCount(failCount);
+        sysImportAndExportLog.setSucceedCount(succeedCount);
+        sysImportAndExportLog.setFailInfo(failInfo.toString());
+        sysImportAndExportLog.setSucceedInfo(succeedInfo.toString());
+        securityFeignApi.add(sysImportAndExportLog);
+
+        if(StringUtils.isNotEmpty(planStockListOrderImports)){
+            //对合格数据进行分组
+            HashMap<String, List<WmsOutPlanStockListOrderImport>> map = planStockListOrderImports.stream().collect(Collectors.groupingBy(WmsOutPlanStockListOrderImport::getGroupNum, HashMap::new, Collectors.toList()));
+            Set<String> codeList = map.keySet();
+            for (String code : codeList) {
+                List<WmsOutPlanStockListOrderImport> wmsOutPlanStockListOrderImports1 = map.get(code);
+                WmsOutPlanStockListOrder wmsOutPlanStockListOrder = new WmsOutPlanStockListOrder();
+                //新增父级数据
+                BeanUtils.copyProperties(wmsOutPlanStockListOrderImports1.get(0), wmsOutPlanStockListOrder);
+                wmsOutPlanStockListOrder.setPlanStockListOrderCode(CodeUtils.getId("PSLO"));
+                wmsOutPlanStockListOrder.setSourceBigType((byte)2);
+                wmsOutPlanStockListOrder.setSysOrderTypeCode("OUT-PSLO");
+                wmsOutPlanStockListOrder.setSourceSysOrderTypeCode("MES-WO");
+                wmsOutPlanStockListOrder.setCreateTime(new Date());
+                wmsOutPlanStockListOrder.setCreateUserId(user.getUserId());
+                wmsOutPlanStockListOrder.setModifiedUserId(user.getUserId());
+                wmsOutPlanStockListOrder.setModifiedTime(new Date());
+                wmsOutPlanStockListOrder.setOrgId(user.getOrganizationId());
+                wmsOutPlanStockListOrder.setStatus((byte)1);
+                wmsOutPlanStockListOrder.setOrderStatus((byte)1);
+                success += wmsOutPlanStockListOrderMapper.insertUseGeneratedKeys(wmsOutPlanStockListOrder);
+
+                //履历
+                WmsOutHtPlanStockListOrder wmsOutHtPlanStockListOrder = new WmsOutHtPlanStockListOrder();
+                BeanUtils.copyProperties(wmsOutPlanStockListOrder, wmsOutHtPlanStockListOrder);
+                htList.add(wmsOutHtPlanStockListOrder);
+
+                //新增明细数据
+                LinkedList<WmsOutPlanStockListOrderDet> detList = new LinkedList<>();
+                for (WmsOutPlanStockListOrderImport wmsOutPlanStockListOrderImport : wmsOutPlanStockListOrderImports1) {
+                    WmsOutPlanStockListOrderDet wmsOutPlanStockListOrderDet = new WmsOutPlanStockListOrderDet();
+                    BeanUtils.copyProperties(wmsOutPlanStockListOrderImport, wmsOutPlanStockListOrderDet);
+                    wmsOutPlanStockListOrderDet.setPlanStockListOrderId(wmsOutPlanStockListOrder.getPlanStockListOrderId());
+                    wmsOutPlanStockListOrderDet.setStatus((byte) 1);
+                    detList.add(wmsOutPlanStockListOrderDet);
+                }
+                wmsOutPlanStockListOrderDetMapper.insertList(detList);
+            }
+            wmsOutHtPlanStockListOrderMapper.insertList(htList);
+        }
+
+        resultMap.put("操作成功总数",success);
+        resultMap.put("操作失败行数",fail);
+        return resultMap;
     }
 }
