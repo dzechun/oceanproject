@@ -548,7 +548,7 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
                 WmsOutPlanStockListOrder wmsOutPlanStockListOrder = new WmsOutPlanStockListOrder();
                 //新增父级数据
                 BeanUtils.copyProperties(wmsOutPlanStockListOrderImports1.get(0), wmsOutPlanStockListOrder);
-                wmsOutPlanStockListOrder.setPlanStockListOrderCode(CodeUtils.getId("PSLO"));
+                wmsOutPlanStockListOrder.setPlanStockListOrderCode(CodeUtils.getId("PSLO-"));
                 wmsOutPlanStockListOrder.setSourceBigType((byte)2);
                 wmsOutPlanStockListOrder.setSysOrderTypeCode("OUT-PSLO");
                 wmsOutPlanStockListOrder.setSourceSysOrderTypeCode("MES-WO");
