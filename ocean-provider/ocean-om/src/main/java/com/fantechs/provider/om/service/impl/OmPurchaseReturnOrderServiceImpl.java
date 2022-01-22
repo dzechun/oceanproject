@@ -134,9 +134,9 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
                 List<WmsOutDeliveryReqOrderDetDto> wmsOutDeliveryReqOrderDetDtos = new LinkedList<>();
                 for (OmPurchaseReturnOrderDetDto omPurchaseReturnOrderDetDto : purchaseReturnOrderDetDtos) {
                     WmsOutDeliveryReqOrderDetDto wmsOutDeliveryReqOrderDetDto = new WmsOutDeliveryReqOrderDetDto();
-                    wmsOutDeliveryReqOrderDetDto.setCoreSourceOrderCode(omPurchaseReturnOrderDetDto.getCoreSourceOrderCode());
+                    wmsOutDeliveryReqOrderDetDto.setCoreSourceOrderCode(omPurchaseReturnOrderDetDto.getPurchaseReturnOrderCode());
                     wmsOutDeliveryReqOrderDetDto.setSourceOrderCode(omPurchaseReturnOrderDetDto.getPurchaseReturnOrderCode());
-                    wmsOutDeliveryReqOrderDetDto.setCoreSourceId(omPurchaseReturnOrderDetDto.getCoreSourceId());
+                    wmsOutDeliveryReqOrderDetDto.setCoreSourceId(omPurchaseReturnOrderDetDto.getPurchaseReturnOrderDetId());
                     wmsOutDeliveryReqOrderDetDto.setSourceId(omPurchaseReturnOrderDetDto.getPurchaseReturnOrderDetId());
                     wmsOutDeliveryReqOrderDetDto.setMaterialId(omPurchaseReturnOrderDetDto.getMaterialId());
                     wmsOutDeliveryReqOrderDetDto.setOrderQty(omPurchaseReturnOrderDetDto.getIssueQty());
@@ -160,9 +160,9 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
                 List<WmsOutPlanDeliveryOrderDetDto> wmsOutPlanDeliveryOrderDetDtos = new LinkedList<>();
                 for (OmPurchaseReturnOrderDetDto omPurchaseReturnOrderDetDto : purchaseReturnOrderDetDtos) {
                     WmsOutPlanDeliveryOrderDetDto wmsOutPlanDeliveryOrderDetDto = new WmsOutPlanDeliveryOrderDetDto();
-                    wmsOutPlanDeliveryOrderDetDto.setCoreSourceOrderCode(omPurchaseReturnOrderDetDto.getCoreSourceOrderCode());
+                    wmsOutPlanDeliveryOrderDetDto.setCoreSourceOrderCode(omPurchaseReturnOrderDetDto.getPurchaseReturnOrderCode());
                     wmsOutPlanDeliveryOrderDetDto.setSourceOrderCode(omPurchaseReturnOrderDetDto.getPurchaseReturnOrderCode());
-                    wmsOutPlanDeliveryOrderDetDto.setCoreSourceId(omPurchaseReturnOrderDetDto.getCoreSourceId());
+                    wmsOutPlanDeliveryOrderDetDto.setCoreSourceId(omPurchaseReturnOrderDetDto.getPurchaseReturnOrderDetId());
                     wmsOutPlanDeliveryOrderDetDto.setSourceId(omPurchaseReturnOrderDetDto.getPurchaseReturnOrderDetId());
                     wmsOutPlanDeliveryOrderDetDto.setMaterialId(omPurchaseReturnOrderDetDto.getMaterialId());
                     wmsOutPlanDeliveryOrderDetDto.setOrderQty(omPurchaseReturnOrderDetDto.getIssueQty());
@@ -187,9 +187,9 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
                 List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();
                 for (OmPurchaseReturnOrderDetDto omPurchaseReturnOrderDetDto : purchaseReturnOrderDetDtos) {
                     WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
-                    wmsInnerJobOrderDet.setCoreSourceOrderCode(omPurchaseReturnOrderDetDto.getCoreSourceOrderCode());
+                    wmsInnerJobOrderDet.setCoreSourceOrderCode(omPurchaseReturnOrderDetDto.getPurchaseReturnOrderCode());
                     wmsInnerJobOrderDet.setSourceOrderCode(omPurchaseReturnOrderDetDto.getPurchaseReturnOrderCode());
-                    wmsInnerJobOrderDet.setCoreSourceId(omPurchaseReturnOrderDetDto.getCoreSourceId());
+                    wmsInnerJobOrderDet.setCoreSourceId(omPurchaseReturnOrderDetDto.getPurchaseReturnOrderDetId());
                     wmsInnerJobOrderDet.setSourceId(omPurchaseReturnOrderDetDto.getPurchaseReturnOrderDetId());
                     wmsInnerJobOrderDet.setLineNumber(lineNumber + "");
                     lineNumber++;

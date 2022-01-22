@@ -228,6 +228,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                     wmsInInPlanOrderDet.setCoreSourceOrderCode(qmsIncomingInspectionOrder.getCoreSourceOrderCode());
                     wmsInInPlanOrderDet.setSourceOrderCode(qmsIncomingInspectionOrder.getIncomingInspectionOrderCode());
                     wmsInInPlanOrderDet.setLineNumber(lineNumber + "");
+                    wmsInInPlanOrderDet.setCoreSourceId(qmsIncomingInspectionOrder.getCoreSourceId());
                     wmsInInPlanOrderDet.setSourceId(qmsIncomingInspectionOrder.getIncomingInspectionOrderId());
                     wmsInInPlanOrderDet.setMaterialId(qmsIncomingInspectionOrder.getMaterialId());
                     wmsInInPlanOrderDet.setPlanQty(qmsIncomingInspectionOrder.getOrderQty());
