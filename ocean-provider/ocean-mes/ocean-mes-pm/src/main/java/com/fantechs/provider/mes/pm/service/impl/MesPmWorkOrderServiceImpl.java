@@ -499,6 +499,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                     wmsOutPlanStockListOrderDetDto.setCoreSourceId(mesPmWorkOrderBomDto.getWorkOrderBomId());
                     wmsOutPlanStockListOrderDetDto.setSourceId(mesPmWorkOrderBomDto.getWorkOrderBomId());
                     wmsOutPlanStockListOrderDetDto.setWorkOrderId(mesPmWorkOrderBomDto.getWorkOrderId());
+                    wmsOutPlanStockListOrderDetDto.setWorkOrderCode(mesPmWorkOrderBomDto.getWorkOrderCode());
                     wmsOutPlanStockListOrderDetDto.setMaterialId(mesPmWorkOrderBomDto.getPartMaterialId());
                     wmsOutPlanStockListOrderDetDto.setOrderQty(mesPmWorkOrderBomDto.getIssueQty());
                     wmsOutPlanStockListOrderDetDto.setLineStatus((byte) 1);

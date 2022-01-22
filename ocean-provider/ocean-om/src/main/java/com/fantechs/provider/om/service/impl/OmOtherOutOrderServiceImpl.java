@@ -145,7 +145,7 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
                     WmsOutDeliveryReqOrderDetDto wmsOutDeliveryReqOrderDetDto = new WmsOutDeliveryReqOrderDetDto();
                     wmsOutDeliveryReqOrderDetDto.setCoreSourceOrderCode(omOtherOutOrderDetDto.getCoreSourceOrderCode());
                     wmsOutDeliveryReqOrderDetDto.setSourceOrderCode(omOtherOutOrderDetDto.getOtherOutOrderCode());
-                    wmsOutDeliveryReqOrderDetDto.setCoreSourceId(omOtherOutOrderDetDto.getCoreSourceId());
+                    wmsOutDeliveryReqOrderDetDto.setCoreSourceId(omOtherOutOrderDetDto.getOtherOutOrderDetId());
                     wmsOutDeliveryReqOrderDetDto.setSourceId(omOtherOutOrderDetDto.getOtherOutOrderDetId());
                     wmsOutDeliveryReqOrderDetDto.setMaterialId(omOtherOutOrderDetDto.getMaterialId());
                     wmsOutDeliveryReqOrderDetDto.setOrderQty(omOtherOutOrderDetDto.getIssueQty());
@@ -170,9 +170,9 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
                 List<WmsOutPlanDeliveryOrderDetDto> wmsOutPlanDeliveryOrderDetDtos = new LinkedList<>();
                 for (OmOtherOutOrderDetDto omOtherOutOrderDetDto : omOtherOutOrderDetDtos) {
                     WmsOutPlanDeliveryOrderDetDto wmsOutPlanDeliveryOrderDetDto = new WmsOutPlanDeliveryOrderDetDto();
-                    wmsOutPlanDeliveryOrderDetDto.setCoreSourceOrderCode(omOtherOutOrderDetDto.getCoreSourceOrderCode());
+                    wmsOutPlanDeliveryOrderDetDto.setCoreSourceOrderCode(omOtherOutOrderDetDto.getOtherOutOrderCode());
                     wmsOutPlanDeliveryOrderDetDto.setSourceOrderCode(omOtherOutOrderDetDto.getOtherOutOrderCode());
-                    wmsOutPlanDeliveryOrderDetDto.setCoreSourceId(omOtherOutOrderDetDto.getCoreSourceId());
+                    wmsOutPlanDeliveryOrderDetDto.setCoreSourceId(omOtherOutOrderDetDto.getOtherOutOrderDetId());
                     wmsOutPlanDeliveryOrderDetDto.setSourceId(omOtherOutOrderDetDto.getOtherOutOrderDetId());
                     wmsOutPlanDeliveryOrderDetDto.setMaterialId(omOtherOutOrderDetDto.getMaterialId());
                     wmsOutPlanDeliveryOrderDetDto.setOrderQty(omOtherOutOrderDetDto.getIssueQty());
@@ -209,9 +209,9 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
                 List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();
                 for (OmOtherOutOrderDetDto omOtherOutOrderDetDto : omOtherOutOrderDetDtos) {
                     WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
-                    wmsInnerJobOrderDet.setCoreSourceOrderCode(omOtherOutOrderDetDto.getCoreSourceOrderCode());
+                    wmsInnerJobOrderDet.setCoreSourceOrderCode(omOtherOutOrderDetDto.getOtherOutOrderCode());
                     wmsInnerJobOrderDet.setSourceOrderCode(omOtherOutOrderDetDto.getOtherOutOrderCode());
-                    wmsInnerJobOrderDet.setCoreSourceId(omOtherOutOrderDetDto.getCoreSourceId());
+                    wmsInnerJobOrderDet.setCoreSourceId(omOtherOutOrderDetDto.getOtherOutOrderDetId());
                     wmsInnerJobOrderDet.setSourceId(omOtherOutOrderDetDto.getOtherOutOrderDetId());
                     wmsInnerJobOrderDet.setLineNumber(lineNumber + "");
                     lineNumber++;

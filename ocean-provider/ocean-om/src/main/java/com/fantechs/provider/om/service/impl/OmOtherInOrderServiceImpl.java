@@ -437,6 +437,9 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                         omOtherInOrderDet.setIfAllIssued((byte) 0);
                         order.setOrderStatus((byte)2);
                     }
+                    //更新表头实收数量、累计下发数量
+                    updateOmOtherinOrder(order, omOtherInOrderDet);
+
                     list.add(omOtherInOrderDet);
                     orderList.add(order);
                 }
@@ -492,6 +495,8 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                         omOtherInOrderDet.setIfAllIssued((byte) 0);
                         order.setOrderStatus((byte)2);
                     }
+                    //更新表头实收数量、累计下发数量
+                    updateOmOtherinOrder(order, omOtherInOrderDet);
                     list.add(omOtherInOrderDet);
                     orderList.add(order);
                 }
@@ -552,6 +557,8 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                         omOtherInOrderDet.setIfAllIssued((byte) 0);
                         order.setOrderStatus((byte)2);
                     }
+                    //更新表头实收数量、累计下发数量
+                    updateOmOtherinOrder(order, omOtherInOrderDet);
                     list.add(omOtherInOrderDet);
                     orderList.add(order);
                 }
@@ -601,6 +608,8 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                         omOtherInOrderDet.setIfAllIssued((byte) 0);
                         order.setOrderStatus((byte)2);
                     }
+                    //更新表头实收数量、累计下发数量
+                    updateOmOtherinOrder(order, omOtherInOrderDet);
                     list.add(omOtherInOrderDet);
                     orderList.add(order);
                 }
@@ -664,6 +673,8 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                         omOtherInOrderDet.setIfAllIssued((byte) 0);
                         order.setOrderStatus((byte)2);
                     }
+                    //更新表头实收数量、累计下发数量
+                    updateOmOtherinOrder(order, omOtherInOrderDet);
                     list.add(omOtherInOrderDet);
                     orderList.add(order);
                 }
@@ -749,4 +760,15 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         return num;
     }
 
+    private void updateOmOtherinOrder(OmOtherInOrderDto order, OmOtherInOrderDet omOtherInOrderDet){
+        if(StringUtils.isEmpty(order.getTotalIssueQty()))
+            order.setTotalIssueQty(omOtherInOrderDet.getQty());
+        else
+            order.setTotalIssueQty(order.getTotalIssueQty().add(omOtherInOrderDet.getQty()));
+        if(StringUtils.isEmpty(order.getTotalReceivingQty()))
+            order.setTotalReceivingQty(omOtherInOrderDet.getReceivingQty());
+        else
+            order.setTotalReceivingQty(order.getTotalReceivingQty().add(omOtherInOrderDet.getReceivingQty()));
+        omOtherInOrderMapper.updateByPrimaryKeySelective(order);
+    }
 }
