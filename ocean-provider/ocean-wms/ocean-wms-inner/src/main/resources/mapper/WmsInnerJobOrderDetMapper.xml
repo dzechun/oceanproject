@@ -122,6 +122,9 @@
         left join wms_inner_material_barcode wimb on wimb.material_barcode_id = wimbro.material_barcode_id and wimb.material_id = wipod.material_id
         and wimb.barcode_type = 1
         <where>
+            <if test="jobOrderType !=null and jobOrderType!= ''">
+                and wijo.job_order_type =#{jobOrderType}
+            </if>
             <if test="jobOrderId!=null and jobOrderId!=''">
                 and wipod.job_order_id = #{jobOrderId}
             </if>

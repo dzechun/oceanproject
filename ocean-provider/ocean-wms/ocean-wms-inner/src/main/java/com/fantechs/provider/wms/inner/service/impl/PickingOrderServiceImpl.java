@@ -534,6 +534,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                         newWmsInnerJobOrderDet.setCoreSourceOrderCode(innerJobOrderDet.getCoreSourceOrderCode());
                         newWmsInnerJobOrderDet.setSourceOrderCode(wmsInnerJobOrder.getJobOrderCode());
                         newWmsInnerJobOrderDet.setSourceId(innerJobOrderDet.getJobOrderDetId());
+                        newWmsInnerJobOrderDet.setCoreSourceId(innerJobOrderDet.getCoreSourceId());
                         newWmsInnerJobOrderDet.setLineNumber(lineNumber+"");
                         newWmsInnerJobOrderDet.setMaterialId(innerJobOrderDet.getMaterialId());
                         newWmsInnerJobOrderDet.setPlanQty(innerJobOrderDet.getPlanQty());
@@ -545,6 +546,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     WmsInnerJobOrder innerJobOrder = new WmsInnerJobOrder();
                     innerJobOrder.setSourceSysOrderTypeCode("OUT-IWK");
                     innerJobOrder.setCoreSourceSysOrderTypeCode(wmsInnerJobOrder.getCoreSourceSysOrderTypeCode());
+                    innerJobOrder.setSourceBigType((byte) 1);
                     innerJobOrder.setJobOrderType((byte)1);
                     innerJobOrder.setOrderStatus((byte)1);
                     innerJobOrder.setWarehouseId(omTransferOrderDetDto.getInWarehouseId());

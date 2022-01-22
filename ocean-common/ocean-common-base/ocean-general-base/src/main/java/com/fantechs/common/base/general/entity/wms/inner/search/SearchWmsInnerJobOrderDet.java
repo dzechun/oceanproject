@@ -12,6 +12,13 @@ import java.util.List;
 
 @Data
 public class SearchWmsInnerJobOrderDet extends BaseQuery implements Serializable {
+
+    /**
+     * 作业类型(1-上架 2-拣货 3-移位)
+     */
+    @ApiModelProperty("作业类型(1-上架 2-拣货 3-移位)")
+    private Byte jobOrderType;
+
     /**
      * 上架单ID
      */
