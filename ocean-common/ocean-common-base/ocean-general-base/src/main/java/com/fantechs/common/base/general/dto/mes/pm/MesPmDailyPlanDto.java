@@ -5,10 +5,8 @@ import com.fantechs.common.base.general.entity.mes.pm.MesPmDailyPlan;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -19,7 +17,7 @@ public class MesPmDailyPlanDto extends MesPmDailyPlan implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="proName" ,value="线别名称")
-    @Excel(name = "线别名称", height = 20, width = 30)
+    @Excel(name = "线别名称", height = 20, width = 30,orderNum = "3")
     private String proName;
 
     /**
@@ -34,7 +32,7 @@ public class MesPmDailyPlanDto extends MesPmDailyPlan implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="createUserName",value = "创建人")
-    @Excel(name = "创建人", height = 20, width = 30)
+    @Excel(name = "创建人", height = 20, width = 30,orderNum = "6")
     private String createUserName;
 
     /**
@@ -42,7 +40,7 @@ public class MesPmDailyPlanDto extends MesPmDailyPlan implements Serializable {
      */
     @Transient
     @ApiModelProperty(name="modifiedUserName",value = "修改人")
-    @Excel(name = "修改人", height = 20, width = 30)
+    @Excel(name = "修改人", height = 20, width = 30,orderNum = "8")
     private String modifiedUserName;
 
     /**
