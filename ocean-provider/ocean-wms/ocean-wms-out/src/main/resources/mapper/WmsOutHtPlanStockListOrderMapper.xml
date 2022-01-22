@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.wms.out.mapper.WmsOutPlanStockListOrderMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.out.WmsOutPlanStockListOrder">
+<mapper namespace="com.fantechs.provider.wms.out.mapper.WmsOutHtPlanStockListOrderMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtPlanStockListOrder">
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="plan_stock_list_order_id" jdbcType="BIGINT" property="planStockListOrderId" />
+    <id column="ht_plan_stock_list_order_id" jdbcType="BIGINT" property="htPlanStockListOrderId" />
+    <result column="plan_stock_list_order_id" jdbcType="BIGINT" property="planStockListOrderId" />
     <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="coreSourceSysOrderTypeCode" />
     <result column="source_sys_order_type_code" jdbcType="VARCHAR" property="sourceSysOrderTypeCode" />
     <result column="source_big_type" jdbcType="TINYINT" property="sourceBigType" />
@@ -24,18 +25,15 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
-  </resultMap>
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap"
-             type="com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDto">
+
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
-    <collection property="wmsOutPlanStockListOrderDetDtos" ofType="com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDetDto"
-                column="{planStockListOrderId=plan_stock_list_order_id}" select="com.fantechs.provider.wms.out.mapper.WmsOutPlanStockListOrderDetMapper.findList">
-    </collection>
   </resultMap>
+
   <sql id="Base_Column_List">
+    wopslo.ht_plan_stock_list_order_id,
     wopslo.plan_stock_list_order_id,
     wopslo.core_source_sys_order_type_code,
     wopslo.source_sys_order_type_code,
@@ -56,13 +54,13 @@
     wopslo.option2,
     wopslo.option3
   </sql>
-  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+  <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
     select<include refid="Base_Column_List"/>,
     bw.warehouse_name,
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,
     bo.organization_name
-    FROM wms_out_plan_stock_list_order wopslo
+    FROM wms_out_ht_plan_stock_list_order wopslo
     LEFT JOIN base_warehouse bw ON wopslo.warehouse_id = bw.warehouse_id
     LEFT JOIN sys_user su ON wopslo.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON wopslo.modified_user_id = sus.user_id

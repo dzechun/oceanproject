@@ -6,21 +6,16 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDetDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutPlanStockListOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutPlanStockListOrderDet;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.out.mapper.WmsOutPlanStockListOrderDetMapper;
 import com.fantechs.provider.wms.out.service.WmsOutPlanStockListOrderDetService;
-import io.micrometer.core.instrument.search.Search;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -38,7 +33,7 @@ public class WmsOutPlanStockListOrderDetServiceImpl extends BaseService<WmsOutPl
             SysUser user=currentUser();
             searchWmsOutPlanStockListOrderDet.setOrgId(user.getOrganizationId());
         }
-        return wmsOutPlanStockListOrderDetMapper.findList(searchWmsOutPlanStockListOrderDet);
+        return wmsOutPlanStockListOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutPlanStockListOrderDet));
     }
 
     /**
