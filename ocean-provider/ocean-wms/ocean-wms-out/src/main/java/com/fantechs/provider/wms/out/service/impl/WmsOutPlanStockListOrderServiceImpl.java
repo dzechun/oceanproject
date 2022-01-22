@@ -4,7 +4,10 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrderFlowDto;
-import com.fantechs.common.base.general.dto.wms.out.*;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
@@ -29,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -348,6 +352,45 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
 
 
         return num;
+    }
+
+    @Override
+    public int updateActualQty(Long planStockListOrderDetId, BigDecimal actualQty) {
+        Example detExample = new Example(WmsOutPlanStockListOrderDet.class);
+        Example example = new Example(WmsOutPlanStockListOrder.class);
+
+        detExample.createCriteria().andEqualTo("planStockListOrderDetId",planStockListOrderDetId);
+        List<WmsOutPlanStockListOrderDet> wmsOutPlanStockListOrderDets = wmsOutPlanStockListOrderDetMapper.selectByExample(detExample);
+        if (StringUtils.isEmpty(wmsOutPlanStockListOrderDets)) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未找到备料计划明细数据");
+        }
+        WmsOutPlanStockListOrderDet wmsOutPlanStockListOrderDet = wmsOutPlanStockListOrderDets.get(0);
+        BigDecimal qty = wmsOutPlanStockListOrderDet.getActualQty();
+        qty = StringUtils.isNotEmpty(qty)?qty:new BigDecimal(0);
+        wmsOutPlanStockListOrderDet.setActualQty(qty.add(actualQty));
+        wmsOutPlanStockListOrderDet.setLineStatus((byte) 3);
+        wmsOutPlanStockListOrderDetMapper.updateByPrimaryKeySelective(wmsOutPlanStockListOrderDet);
+
+        detExample.clear();
+        detExample.createCriteria().andEqualTo("planStockListOrderId",wmsOutPlanStockListOrderDet.getPlanStockListOrderId())
+                .andNotEqualTo("lineStatus",3);
+        wmsOutPlanStockListOrderDets = wmsOutPlanStockListOrderDetMapper.selectByExample(detExample);
+
+
+        example.createCriteria().andEqualTo("planStockListOrderId",wmsOutPlanStockListOrderDet.getPlanStockListOrderId());
+        List<WmsOutPlanStockListOrder> wmsOutPlanStockListOrders = wmsOutPlanStockListOrderMapper.selectByExample(example);
+
+        if (StringUtils.isNotEmpty(wmsOutPlanStockListOrders)) {
+            WmsOutPlanStockListOrder wmsOutPlanStockListOrder = wmsOutPlanStockListOrders.get(0);
+            if (StringUtils.isEmpty(wmsOutPlanStockListOrderDets)) {
+                wmsOutPlanStockListOrder.setOrderStatus((byte) 3);
+            }else {
+                wmsOutPlanStockListOrder.setOrderStatus((byte) 2);
+            }
+            return wmsOutPlanStockListOrderMapper.updateByPrimaryKeySelective(wmsOutPlanStockListOrder);
+        }else {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未找到备料计划数据");
+        }
     }
 
     /**

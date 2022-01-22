@@ -7,6 +7,7 @@ import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutPlanSt
 import com.fantechs.common.base.support.IService;
 
 
+import java.math.BigDecimal;
 import java.util.List;
 /**
  *
@@ -22,6 +23,7 @@ public interface WmsOutPlanStockListOrderService extends IService<WmsOutPlanStoc
 
     int pushDown(List<WmsOutPlanStockListOrderDetDto> wmsOutPlanStockListOrderDetDtos);
 
+    int updateActualQty(Long planStockListOrderDetId, BigDecimal actualQty);
 
 
     //Map<String, Object> importExcel(List<WmsOutPlanStockListOrder> list);

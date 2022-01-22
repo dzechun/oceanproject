@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -44,6 +45,13 @@ public class WmsOutPlanStockListOrderController {
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsOutPlanStockListOrderDto wmsOutPlanStockListOrderDto) {
         return ControllerUtil.returnCRUD(wmsOutPlanStockListOrderService.save(wmsOutPlanStockListOrderDto));
+    }
+
+    @ApiOperation(value = "新增",notes = "新增")
+    @PostMapping("/updateActualQty")
+    public ResponseEntity updateActualQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long planStockListOrderDetId,
+                                          @ApiParam(value = "必传拣货架数量",required = true)@RequestParam BigDecimal actualQty) {
+        return ControllerUtil.returnCRUD(wmsOutPlanStockListOrderService.updateActualQty(planStockListOrderDetId,actualQty));
     }
 
     @ApiOperation("删除")

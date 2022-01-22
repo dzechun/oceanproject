@@ -569,6 +569,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
             }
+        }else if("OUT-PSLO".equals(wmsInnerJobOrder.getCoreSourceSysOrderTypeCode())){
+            outFeignApi.updatePlanStockListOrderActualQty(wmsInnerJobOrderDet.getSourceId(),wmsInnerPdaJobOrderDet.getActualQty());
         }
         wmsInnerJobOrder.setWorkerId(sysUser.getUserId());
         return wmsInnerJobOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
