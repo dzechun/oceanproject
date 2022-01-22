@@ -352,13 +352,13 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
 
                     WmsInPlanReceivingOrderDetDto wmsInPlanReceivingOrderDetDto = new WmsInPlanReceivingOrderDetDto();
                     wmsInPlanReceivingOrderDetDto.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
+                    wmsInPlanReceivingOrderDetDto.setCoreSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
                     wmsInPlanReceivingOrderDetDto.setSourceOrderCode(order.getSalesReturnOrderCode());
                     wmsInPlanReceivingOrderDetDto.setLineNumber(lineNumber + "");
                     wmsInPlanReceivingOrderDetDto.setSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
                     wmsInPlanReceivingOrderDetDto.setMaterialId(omSalesReturnOrderDet.getMaterialId());
                     wmsInPlanReceivingOrderDetDto.setPlanQty(omSalesReturnOrderDet.getQty());
                     wmsInPlanReceivingOrderDetDto.setLineStatus((byte) 1);
-                    wmsInPlanReceivingOrderDetDto.setActualQty(omSalesReturnOrderDet.getReceivingQty());
                     wmsInPlanReceivingOrderDetDto.setOperatorUserId(user.getUserId());
                     detList.add(wmsInPlanReceivingOrderDetDto);
                     omSalesReturnOrderDet.setTotalIssueQty(omSalesReturnOrderDet.getTotalIssueQty().add(omSalesReturnOrderDet.getQty()));
@@ -408,13 +408,13 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
 
                     WmsInReceivingOrderDetDto wmsInReceivingOrderDetDto = new WmsInReceivingOrderDetDto();
                     wmsInReceivingOrderDetDto.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
+                    wmsInReceivingOrderDetDto.setCoreSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
                     wmsInReceivingOrderDetDto.setSourceOrderCode(order.getSalesReturnOrderCode());
                     wmsInReceivingOrderDetDto.setLineNumber(lineNumber + "");
                     wmsInReceivingOrderDetDto.setSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
                     wmsInReceivingOrderDetDto.setMaterialId(omSalesReturnOrderDet.getMaterialId());
                     wmsInReceivingOrderDetDto.setPlanQty(omSalesReturnOrderDet.getQty());
                     wmsInReceivingOrderDetDto.setLineStatus((byte) 1);
-                    wmsInReceivingOrderDetDto.setActualQty(omSalesReturnOrderDet.getReceivingQty());
                     wmsInReceivingOrderDetDto.setOperatorUserId(user.getUserId());
                     detList.add(wmsInReceivingOrderDetDto);
                     omSalesReturnOrderDet.setTotalIssueQty(omSalesReturnOrderDet.getTotalIssueQty().add(omSalesReturnOrderDet.getQty()));
@@ -464,6 +464,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
 
                     QmsIncomingInspectionOrderDto qmsIncomingInspectionOrderDto = new QmsIncomingInspectionOrderDto();
                     qmsIncomingInspectionOrderDto.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
+                    qmsIncomingInspectionOrderDto.setCoreSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
                     qmsIncomingInspectionOrderDto.setSourceOrderCode(order.getSalesReturnOrderCode());
                     qmsIncomingInspectionOrderDto.setSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
                     qmsIncomingInspectionOrderDto.setMaterialId(omSalesReturnOrderDet.getMaterialId());
@@ -523,6 +524,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
 
                     WmsInInPlanOrderDetDto wmsInInPlanOrderDet = new WmsInInPlanOrderDetDto();
                     wmsInInPlanOrderDet.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
+                    wmsInInPlanOrderDet.setCoreSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
                     wmsInInPlanOrderDet.setSourceOrderCode(order.getSalesReturnOrderCode());
                     wmsInInPlanOrderDet.setLineNumber(lineNumber + "");
                     wmsInInPlanOrderDet.setSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
@@ -580,6 +582,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
 
                     WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
                     wmsInnerJobOrderDet.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
+                    wmsInnerJobOrderDet.setCoreSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
                     wmsInnerJobOrderDet.setSourceOrderCode(order.getSalesReturnOrderCode());
                     wmsInnerJobOrderDet.setSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
                     wmsInnerJobOrderDet.setLineNumber(lineNumber + "");

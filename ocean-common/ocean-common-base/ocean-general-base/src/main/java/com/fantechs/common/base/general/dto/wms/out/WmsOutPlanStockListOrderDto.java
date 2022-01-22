@@ -1,7 +1,6 @@
 package com.fantechs.common.base.general.dto.wms.out;
 
-import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDetDto;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmDailyPlan;
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutPlanStockListOrder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -18,6 +17,7 @@ public class WmsOutPlanStockListOrderDto extends WmsOutPlanStockListOrder implem
      */
     @Transient
     @ApiModelProperty(name="warehouseName" ,value="仓库名称")
+    @Excel(name = "仓库名称", height = 20, width = 30,orderNum="2")
     private String warehouseName;
 
     /**
@@ -32,6 +32,7 @@ public class WmsOutPlanStockListOrderDto extends WmsOutPlanStockListOrder implem
      */
     @Transient
     @ApiModelProperty(name="createUserName",value = "创建人")
+    @Excel(name = "创建人", height = 20, width = 30,orderNum="6")
     private String createUserName;
 
     /**
@@ -39,6 +40,7 @@ public class WmsOutPlanStockListOrderDto extends WmsOutPlanStockListOrder implem
      */
     @Transient
     @ApiModelProperty(name="modifiedUserName",value = "修改人")
+    @Excel(name = "修改人", height = 20, width = 30,orderNum="8")
     private String modifiedUserName;
 
     /**

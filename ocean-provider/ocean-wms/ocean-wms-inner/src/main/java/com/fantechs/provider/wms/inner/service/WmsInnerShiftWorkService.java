@@ -51,24 +51,6 @@ public interface WmsInnerShiftWorkService extends IService<WmsInnerJobOrder> {
      */
     int closeWmsInnerJobOrder(String ids);
 
-    /**
-     * 指定工作人员
-     * @return
-     */
-    int distributionWorker(Long jobOrderId, Long workerId);
-
-    /**
-     * 整单确认
-     * @param ids
-     * @return
-     */
-    int allReceiving(String ids);
-
-    /**
-     * 单一确认
-     * @return
-     */
-    int singleReceiving(List<WmsInnerJobOrderDet> wmsInPutawayOrderDets);
 
     /**
      * 按条码单一确认

@@ -1,30 +1,45 @@
-package com.fantechs.common.base.general.entity.wms.out;
+package com.fantechs.common.base.general.entity.wms.out.history;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.fantechs.common.base.support.ValidGroup;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.*;
-import lombok.Data;
+
+;
+;
 
 /**
- * 备料计划单明细
- * wms_out_plan_stock_list_order_det
- * @author Dylan
- * @date 2021-12-22 19:17:47
+ * 备料计划单明细履历表
+ * wms_out_ht_plan_stock_list_order_det
+ * @author admin
+ * @date 2022-01-21 17:03:40
  */
 @Data
-@Table(name = "wms_out_plan_stock_list_order_det")
-public class WmsOutPlanStockListOrderDet extends ValidGroup implements Serializable {
+@Table(name = "wms_out_ht_plan_stock_list_order_det")
+public class WmsOutHtPlanStockListOrderDet extends ValidGroup implements Serializable {
+    /**
+     * 备料计划单明细履历ID
+     */
+    @ApiModelProperty(name="htPlanStockListOrderDetId",value = "备料计划单明细履历ID")
+    @Excel(name = "备料计划单明细履历ID", height = 20, width = 30,orderNum="") 
+    @Id
+    @Column(name = "ht_plan_stock_list_order_det_id")
+    private Long htPlanStockListOrderDetId;
+
     /**
      * 备料计划单明细ID
      */
     @ApiModelProperty(name="planStockListOrderDetId",value = "备料计划单明细ID")
     @Excel(name = "备料计划单明细ID", height = 20, width = 30,orderNum="") 
-    @Id
     @Column(name = "plan_stock_list_order_det_id")
     private Long planStockListOrderDetId;
 
@@ -61,26 +76,20 @@ public class WmsOutPlanStockListOrderDet extends ValidGroup implements Serializa
     private Long sourceId;
 
     /**
+     * 生产订单ID
+     */
+    @ApiModelProperty(name="workOrderId",value = "生产订单ID")
+    @Excel(name = "生产订单ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "work_order_id")
+    private Long workOrderId;
+
+    /**
      * 备料计划单ID
      */
     @ApiModelProperty(name="planStockListOrderId",value = "备料计划单ID")
     @Excel(name = "备料计划单ID", height = 20, width = 30,orderNum="") 
     @Column(name = "plan_stock_list_order_id")
     private Long planStockListOrderId;
-
-    /**
-     * 生产订单ID
-     */
-    @ApiModelProperty(name="workOrderId",value = "生产订单ID")
-    @Column(name = "work_order_id")
-    private Long workOrderId;
-
-    /**
-     * 生产订单号
-     */
-    @Column(name = "work_order_code")
-    @ApiModelProperty(name="workOrderCode",value = "生产订单号")
-    private String workOrderCode;
 
     /**
      * 物料ID
@@ -176,7 +185,8 @@ public class WmsOutPlanStockListOrderDet extends ValidGroup implements Serializa
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
     @Excel(name = "创建时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "create_time")
     private Date createTime;
 
@@ -193,7 +203,8 @@ public class WmsOutPlanStockListOrderDet extends ValidGroup implements Serializa
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
     @Excel(name = "修改时间", height = 20, width = 30,orderNum="",exportFormat ="yyyy-MM-dd HH:mm:ss") 
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "modified_time")
     private Date modifiedTime;
 

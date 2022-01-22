@@ -314,13 +314,13 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
                     WmsInPlanReceivingOrderDetDto wmsInPlanReceivingOrderDetDto = new WmsInPlanReceivingOrderDetDto();
                     wmsInPlanReceivingOrderDetDto.setCoreSourceOrderCode(order.getPurchaseOrderCode());
+                    wmsInPlanReceivingOrderDetDto.setCoreSourceId(omPurchaseOrderDet.getPurchaseOrderDetId());
                     wmsInPlanReceivingOrderDetDto.setSourceOrderCode(order.getPurchaseOrderCode());
                     wmsInPlanReceivingOrderDetDto.setLineNumber(lineNumber + "");
                     wmsInPlanReceivingOrderDetDto.setSourceId(omPurchaseOrderDet.getPurchaseOrderDetId());
                     wmsInPlanReceivingOrderDetDto.setMaterialId(omPurchaseOrderDet.getMaterialId());
                     wmsInPlanReceivingOrderDetDto.setPlanQty(omPurchaseOrderDet.getQty());
                     wmsInPlanReceivingOrderDetDto.setLineStatus((byte) 1);
-                    wmsInPlanReceivingOrderDetDto.setActualQty(omPurchaseOrderDet.getActualQty());
                     wmsInPlanReceivingOrderDetDto.setOperatorUserId(user.getUserId());
                     detList.add(wmsInPlanReceivingOrderDetDto);
                     omPurchaseOrderDet.setTotalIssueQty(omPurchaseOrderDet.getTotalIssueQty().add(omPurchaseOrderDet.getQty()));
@@ -375,13 +375,13 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
                     WmsInReceivingOrderDetDto wmsInReceivingOrderDetDto = new WmsInReceivingOrderDetDto();
                     wmsInReceivingOrderDetDto.setCoreSourceOrderCode(order.getPurchaseOrderCode());
+                    wmsInReceivingOrderDetDto.setCoreSourceId(omPurchaseOrderDet.getPurchaseOrderDetId());
                     wmsInReceivingOrderDetDto.setSourceOrderCode(order.getPurchaseOrderCode());
                     wmsInReceivingOrderDetDto.setLineNumber(lineNumber + "");
                     wmsInReceivingOrderDetDto.setSourceId(omPurchaseOrderDet.getPurchaseOrderDetId());
                     wmsInReceivingOrderDetDto.setMaterialId(omPurchaseOrderDet.getMaterialId());
                     wmsInReceivingOrderDetDto.setPlanQty(omPurchaseOrderDet.getQty());
                     wmsInReceivingOrderDetDto.setLineStatus((byte) 1);
-                    wmsInReceivingOrderDetDto.setActualQty(omPurchaseOrderDet.getActualQty());
                     wmsInReceivingOrderDetDto.setOperatorUserId(user.getUserId());
                     detList.add(wmsInReceivingOrderDetDto);
                     omPurchaseOrderDet.setTotalIssueQty(omPurchaseOrderDet.getTotalIssueQty().add(omPurchaseOrderDet.getQty()));
@@ -435,6 +435,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
                     QmsIncomingInspectionOrderDto qmsIncomingInspectionOrderDto = new QmsIncomingInspectionOrderDto();
                     qmsIncomingInspectionOrderDto.setCoreSourceOrderCode(order.getPurchaseOrderCode());
+                    qmsIncomingInspectionOrderDto.setCoreSourceId(omPurchaseOrderDet.getPurchaseOrderDetId());
                     qmsIncomingInspectionOrderDto.setSourceOrderCode(order.getPurchaseOrderCode());
                     qmsIncomingInspectionOrderDto.setSourceId(omPurchaseOrderDet.getPurchaseOrderDetId());
                     qmsIncomingInspectionOrderDto.setMaterialId(omPurchaseOrderDet.getMaterialId());
@@ -494,6 +495,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
                     WmsInInPlanOrderDetDto wmsInInPlanOrderDet = new WmsInInPlanOrderDetDto();
                     wmsInInPlanOrderDet.setCoreSourceOrderCode(order.getPurchaseOrderCode());
+                    wmsInInPlanOrderDet.setCoreSourceId(omPurchaseOrderDet.getPurchaseOrderDetId());
                     wmsInInPlanOrderDet.setSourceOrderCode(order.getPurchaseOrderCode());
                     wmsInInPlanOrderDet.setLineNumber(lineNumber + "");
                     wmsInInPlanOrderDet.setSourceId(omPurchaseOrderDet.getPurchaseOrderDetId());

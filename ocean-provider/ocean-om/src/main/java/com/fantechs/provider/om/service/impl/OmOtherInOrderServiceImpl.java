@@ -16,7 +16,6 @@ import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInPlanReceivingOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
@@ -24,7 +23,6 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.om.*;
 import com.fantechs.common.base.general.entity.wms.in.WmsInPlanReceivingOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrder;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -53,7 +51,6 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by leifengzhi on 2021/06/21.
@@ -362,9 +359,14 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             }
             if(StringUtils.isEmpty(order.getTotalIssueQty()))
                 order.setTotalIssueQty(BigDecimal.ZERO);
-            if (order.getOrderQty().compareTo(order.getTotalIssueQty().add(order.getQty())) == -1) {
+            BigDecimal add = order.getTotalIssueQty().add(order.getQty());
+            order.setTotalIssueQty(add);
+            if (order.getOrderQty().compareTo(add) == -1) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "累计下发数量大于包装总数");
+            }else if(order.getOrderQty().compareTo(add) == 0){
+                order.setIfAllIssued((byte)1);
             }
+            omOtherInOrderDetMapper.updateByPrimaryKeySelective(order);
             set.add(order.getWarehouseId());
         }
 
@@ -418,15 +420,13 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
                     WmsInPlanReceivingOrderDetDto wmsInPlanReceivingOrderDetDto = new WmsInPlanReceivingOrderDetDto();
                     wmsInPlanReceivingOrderDetDto.setCoreSourceOrderCode(order.getOtherInOrderCode());
-                    wmsInPlanReceivingOrderDetDto.setSourceOrderCode(order.getOtherInOrderCode());
-                    wmsInPlanReceivingOrderDetDto.setLineNumber(lineNumber + "");
-                    wmsInPlanReceivingOrderDetDto.setSourceId(omOtherInOrderDet.getOtherInOrderDetId());
-                    //核心单据ID赋值 2022-01-22
                     wmsInPlanReceivingOrderDetDto.setCoreSourceId(omOtherInOrderDet.getOtherInOrderDetId());
+                    wmsInPlanReceivingOrderDetDto.setSourceOrderCode(order.getOtherInOrderCode());
+                    wmsInPlanReceivingOrderDetDto.setSourceId(omOtherInOrderDet.getOtherInOrderDetId());
+                    wmsInPlanReceivingOrderDetDto.setLineNumber(lineNumber + "");
                     wmsInPlanReceivingOrderDetDto.setMaterialId(omOtherInOrderDet.getMaterialId());
                     wmsInPlanReceivingOrderDetDto.setPlanQty(omOtherInOrderDet.getQty());
                     wmsInPlanReceivingOrderDetDto.setLineStatus((byte) 1);
-                    wmsInPlanReceivingOrderDetDto.setActualQty(omOtherInOrderDet.getReceivingQty());
                     wmsInPlanReceivingOrderDetDto.setOperatorUserId(user.getUserId());
                     detList.add(wmsInPlanReceivingOrderDetDto);
                     omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().add(omOtherInOrderDet.getQty()));
@@ -442,8 +442,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 }
 
                 WmsInPlanReceivingOrder wmsInPlanReceivingOrder = new WmsInPlanReceivingOrder();
-                //设置来源大类 下推
-                wmsInPlanReceivingOrder.setSourceBigType((byte)1);
                 wmsInPlanReceivingOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInPlanReceivingOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInPlanReceivingOrder.setOrderStatus((byte) 1);
@@ -477,15 +475,13 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
                     WmsInReceivingOrderDetDto wmsInReceivingOrderDetDto = new WmsInReceivingOrderDetDto();
                     wmsInReceivingOrderDetDto.setCoreSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
+                    wmsInReceivingOrderDetDto.setCoreSourceId(omOtherInOrderDet.getOtherInOrderDetId());
                     wmsInReceivingOrderDetDto.setSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
                     wmsInReceivingOrderDetDto.setLineNumber(lineNumber + "");
                     wmsInReceivingOrderDetDto.setSourceId(omOtherInOrderDet.getOtherInOrderDetId());
-                    //设置核心单据ID 2022-01-22
-                    wmsInReceivingOrderDetDto.setCoreSourceId(omOtherInOrderDet.getOtherInOrderDetId());
                     wmsInReceivingOrderDetDto.setMaterialId(omOtherInOrderDet.getMaterialId());
                     wmsInReceivingOrderDetDto.setPlanQty(omOtherInOrderDet.getQty());
                     wmsInReceivingOrderDetDto.setLineStatus((byte) 1);
-                    wmsInReceivingOrderDetDto.setActualQty(omOtherInOrderDet.getReceivingQty());
                     wmsInReceivingOrderDetDto.setOperatorUserId(user.getUserId());
                     detList.add(wmsInReceivingOrderDetDto);
                     omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().add(omOtherInOrderDet.getQty()));
@@ -500,8 +496,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     orderList.add(order);
                 }
                 WmsInReceivingOrder wmsInReceivingOrder = new WmsInReceivingOrder();
-                //设置来源大类 2022-01-22
-                wmsInReceivingOrder.setSourceBigType((byte)1);
                 wmsInReceivingOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInReceivingOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInReceivingOrder.setOrderStatus((byte) 1);
@@ -535,12 +529,9 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
                     QmsIncomingInspectionOrderDto qmsIncomingInspectionOrderDto = new QmsIncomingInspectionOrderDto();
                     qmsIncomingInspectionOrderDto.setCoreSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
+                    qmsIncomingInspectionOrderDto.setCoreSourceId(omOtherInOrderDet.getOtherInOrderDetId());
                     qmsIncomingInspectionOrderDto.setSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
                     qmsIncomingInspectionOrderDto.setSourceId(omOtherInOrderDet.getOtherInOrderDetId());
-                    //设置核心单据ID 2022-01-22
-                    qmsIncomingInspectionOrderDto.setCoreSourceId(omOtherInOrderDet.getOtherInOrderDetId());
-                    //设置来源大类 2022-01-22
-                    qmsIncomingInspectionOrderDto.setSourceBigType((byte)1);
                     qmsIncomingInspectionOrderDto.setMaterialId(omOtherInOrderDet.getMaterialId());
                     qmsIncomingInspectionOrderDto.setWarehouseId(omOtherInOrderDet.getWarehouseId());
                     qmsIncomingInspectionOrderDto.setOrderQty(omOtherInOrderDet.getQty());
@@ -596,11 +587,10 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
                     WmsInInPlanOrderDetDto wmsInInPlanOrderDet = new WmsInInPlanOrderDetDto();
                     wmsInInPlanOrderDet.setCoreSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
+                    wmsInInPlanOrderDet.setCoreSourceId(omOtherInOrderDet.getOtherInOrderDetId());
                     wmsInInPlanOrderDet.setSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
                     wmsInInPlanOrderDet.setLineNumber(lineNumber + "");
                     wmsInInPlanOrderDet.setSourceId(omOtherInOrderDet.getOtherInOrderDetId());
-                    //设置核心单据ID 2022-01-22
-                    wmsInInPlanOrderDet.setCoreSourceId(omOtherInOrderDet.getOtherInOrderDetId());
                     wmsInInPlanOrderDet.setMaterialId(omOtherInOrderDet.getMaterialId());
                     wmsInInPlanOrderDet.setPlanQty(omOtherInOrderDet.getQty());
                     wmsInInPlanOrderDet.setLineStatus((byte) 1);
@@ -658,10 +648,9 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
                     WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
                     wmsInnerJobOrderDet.setCoreSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
+                    wmsInnerJobOrderDet.setCoreSourceId(omOtherInOrderDet.getOtherInOrderDetId());
                     wmsInnerJobOrderDet.setSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
                     wmsInnerJobOrderDet.setSourceId(omOtherInOrderDet.getOtherInOrderDetId());
-                    //设置核心单据ID 2022-01-22
-                    wmsInnerJobOrderDet.setCoreSourceId(omOtherInOrderDet.getOtherInOrderDetId());
                     wmsInnerJobOrderDet.setLineNumber(lineNumber + "");
                     wmsInnerJobOrderDet.setMaterialId(omOtherInOrderDet.getMaterialId());
                     wmsInnerJobOrderDet.setPlanQty(omOtherInOrderDet.getQty());
@@ -758,24 +747,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             omOtherInOrderDet.setReceivingQty(omOtherInOrderDet.getReceivingQty().add(putawayQty));
             omOtherInOrderDet.setModifiedUserId(sysUser.getUserId());
             omOtherInOrderDet.setModifiedTime(new Date());
-
             num+=omOtherInOrderDetMapper.updateByPrimaryKeySelective(omOtherInOrderDet);
-
-            //订单状态(1-打开 2-下发中  3-已下发 4-完成)
-            Example example = new Example(OmOtherInOrderDet.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("otherInOrderId", omOtherInOrderDet.getOtherInOrderId())
-                    .andEqualTo("orgId",sysUser.getOrganizationId());
-            List<OmOtherInOrderDet> inOrderDetList=omOtherInOrderDetMapper.selectByExample(example);
-            List<OmOtherInOrderDet> detList = inOrderDetList.stream().filter(u -> (u.getOrderQty()!=u.getReceivingQty())).collect(Collectors.toList());
-            if(detList.size()<=0 || StringUtils.isEmpty(detList)){
-                OmOtherInOrder omOtherInOrder=new OmOtherInOrder();
-                omOtherInOrder.setOtherInOrderId(omOtherInOrderDet.getOtherInOrderId());
-                omOtherInOrder.setOrderStatus((byte)4);
-                omOtherInOrder.setModifiedUserId(sysUser.getUserId());
-                omOtherInOrder.setModifiedTime(new Date());
-                num+=omOtherInOrderMapper.updateByPrimaryKeySelective(omOtherInOrder);
-            }
         }
         return num;
     }

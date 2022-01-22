@@ -157,9 +157,9 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
                 List<WmsOutPlanDeliveryOrderDetDto> wmsOutPlanDeliveryOrderDetDtos = new LinkedList<>();
                 for (OmSalesOrderDetDto omSalesOrderDetDto : omSalesOrderDetDtos) {
                     WmsOutPlanDeliveryOrderDetDto wmsOutPlanDeliveryOrderDetDto = new WmsOutPlanDeliveryOrderDetDto();
-                    wmsOutPlanDeliveryOrderDetDto.setCoreSourceOrderCode(omSalesOrderDetDto.getCoreSourceOrderCode());
+                    wmsOutPlanDeliveryOrderDetDto.setCoreSourceOrderCode(omSalesOrderDetDto.getSalesOrderCode());
                     wmsOutPlanDeliveryOrderDetDto.setSourceOrderCode(omSalesOrderDetDto.getSalesOrderCode());
-                    wmsOutPlanDeliveryOrderDetDto.setCoreSourceId(omSalesOrderDetDto.getCoreSourceId());
+                    wmsOutPlanDeliveryOrderDetDto.setCoreSourceId(omSalesOrderDetDto.getSalesOrderDetId());
                     wmsOutPlanDeliveryOrderDetDto.setSourceId(omSalesOrderDetDto.getSalesOrderDetId());
                     wmsOutPlanDeliveryOrderDetDto.setMaterialId(omSalesOrderDetDto.getMaterialId());
                     wmsOutPlanDeliveryOrderDetDto.setOrderQty(omSalesOrderDetDto.getIssueQty());
@@ -195,9 +195,9 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
                 List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();
                 for (OmSalesOrderDetDto omSalesOrderDetDto : omSalesOrderDetDtos) {
                     WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
-                    wmsInnerJobOrderDet.setCoreSourceOrderCode(omSalesOrderDetDto.getCoreSourceOrderCode());
+                    wmsInnerJobOrderDet.setCoreSourceOrderCode(omSalesOrderDetDto.getSalesOrderCode());
                     wmsInnerJobOrderDet.setSourceOrderCode(omSalesOrderDetDto.getSalesOrderCode());
-                    wmsInnerJobOrderDet.setCoreSourceId(omSalesOrderDetDto.getCoreSourceId());
+                    wmsInnerJobOrderDet.setCoreSourceId(omSalesOrderDetDto.getSalesOrderDetId());
                     wmsInnerJobOrderDet.setSourceId(omSalesOrderDetDto.getSalesOrderDetId());
                     wmsInnerJobOrderDet.setLineNumber(lineNumber + "");
                     lineNumber++;

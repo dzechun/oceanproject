@@ -346,15 +346,15 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             barcodeMap.put("barcode",barcode);
             return wmsInnerMaterialBarcodeMapper.findList(barcodeMap);
         }else if (barcodeType == 2) {
-            barcodeMap.put("barcodeType",2);
+            barcodeMap.put("barcodeType",1);
             barcodeMap.put("colorBoxCode",barcode);
             return wmsInnerMaterialBarcodeMapper.findList(barcodeMap);
         }else if (barcodeType == 3) {
-            barcodeMap.put("barcodeType",3);
+            barcodeMap.put("barcodeType",1);
             barcodeMap.put("cartonCode",barcode);
             return wmsInnerMaterialBarcodeMapper.findList(barcodeMap);
         }else if (barcodeType == 4) {
-            barcodeMap.put("barcodeType",4);
+            barcodeMap.put("barcodeType",1);
             barcodeMap.put("palletCode",barcode);
             return wmsInnerMaterialBarcodeMapper.findList(barcodeMap);
         }
@@ -469,6 +469,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     wmsInnerInventoryDet.setStorageId(wmsInnerJobOrderDet.getInStorageId());
                     wmsInnerInventoryDet.setBarcodeStatus((byte) 2);
                     inventoryDetList.add(wmsInnerInventoryDet);
+                    wmsInnerMaterialBarcodeDto.setBarcodeStatus((byte) 6);
                 }
 
             }
@@ -533,6 +534,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                         newWmsInnerJobOrderDet.setCoreSourceOrderCode(innerJobOrderDet.getCoreSourceOrderCode());
                         newWmsInnerJobOrderDet.setSourceOrderCode(wmsInnerJobOrder.getJobOrderCode());
                         newWmsInnerJobOrderDet.setSourceId(innerJobOrderDet.getJobOrderDetId());
+                        newWmsInnerJobOrderDet.setCoreSourceId(innerJobOrderDet.getCoreSourceId());
                         newWmsInnerJobOrderDet.setLineNumber(lineNumber+"");
                         newWmsInnerJobOrderDet.setMaterialId(innerJobOrderDet.getMaterialId());
                         newWmsInnerJobOrderDet.setPlanQty(innerJobOrderDet.getPlanQty());
@@ -544,6 +546,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     WmsInnerJobOrder innerJobOrder = new WmsInnerJobOrder();
                     innerJobOrder.setSourceSysOrderTypeCode("OUT-IWK");
                     innerJobOrder.setCoreSourceSysOrderTypeCode(wmsInnerJobOrder.getCoreSourceSysOrderTypeCode());
+                    innerJobOrder.setSourceBigType((byte) 1);
                     innerJobOrder.setJobOrderType((byte)1);
                     innerJobOrder.setOrderStatus((byte)1);
                     innerJobOrder.setWarehouseId(omTransferOrderDetDto.getInWarehouseId());
@@ -568,6 +571,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
             }
+        }else if("OUT-PSLO".equals(wmsInnerJobOrder.getCoreSourceSysOrderTypeCode())){
+            outFeignApi.updatePlanStockListOrderActualQty(wmsInnerJobOrderDet.getSourceId(),wmsInnerPdaJobOrderDet.getActualQty());
         }
         wmsInnerJobOrder.setWorkerId(sysUser.getUserId());
         return wmsInnerJobOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);

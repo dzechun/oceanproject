@@ -499,6 +499,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                     wmsOutPlanStockListOrderDetDto.setCoreSourceId(mesPmWorkOrderBomDto.getWorkOrderBomId());
                     wmsOutPlanStockListOrderDetDto.setSourceId(mesPmWorkOrderBomDto.getWorkOrderBomId());
                     wmsOutPlanStockListOrderDetDto.setWorkOrderId(mesPmWorkOrderBomDto.getWorkOrderId());
+                    wmsOutPlanStockListOrderDetDto.setWorkOrderCode(mesPmWorkOrderBomDto.getWorkOrderCode());
                     wmsOutPlanStockListOrderDetDto.setMaterialId(mesPmWorkOrderBomDto.getPartMaterialId());
                     wmsOutPlanStockListOrderDetDto.setOrderQty(mesPmWorkOrderBomDto.getIssueQty());
                     wmsOutPlanStockListOrderDetDto.setLineStatus((byte) 1);
@@ -658,6 +659,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
 
                     WmsInPlanReceivingOrderDetDto wmsInPlanReceivingOrderDetDto = new WmsInPlanReceivingOrderDetDto();
                     wmsInPlanReceivingOrderDetDto.setCoreSourceOrderCode(mesPmWorkOrder.getWorkOrderCode());
+                    wmsInPlanReceivingOrderDetDto.setCoreSourceId(mesPmWorkOrder.getWorkOrderId());
                     wmsInPlanReceivingOrderDetDto.setSourceOrderCode(mesPmWorkOrder.getWorkOrderCode());
                     wmsInPlanReceivingOrderDetDto.setLineNumber(lineNumber + "");
                     wmsInPlanReceivingOrderDetDto.setSourceId(mesPmWorkOrder.getWorkOrderId());
@@ -704,6 +706,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
 
                     WmsInReceivingOrderDetDto wmsInReceivingOrderDetDto = new WmsInReceivingOrderDetDto();
                     wmsInReceivingOrderDetDto.setCoreSourceOrderCode(mesPmWorkOrder.getWorkOrderCode());
+                    wmsInReceivingOrderDetDto.setCoreSourceId(mesPmWorkOrder.getWorkOrderId());
                     wmsInReceivingOrderDetDto.setSourceOrderCode(mesPmWorkOrder.getWorkOrderCode());
                     wmsInReceivingOrderDetDto.setLineNumber(lineNumber + "");
                     wmsInReceivingOrderDetDto.setSourceId(mesPmWorkOrder.getWorkOrderId());
@@ -749,6 +752,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
 
                     QmsIncomingInspectionOrderDto qmsIncomingInspectionOrderDto = new QmsIncomingInspectionOrderDto();
                     qmsIncomingInspectionOrderDto.setCoreSourceOrderCode(mesPmWorkOrder.getWorkOrderCode());
+                    qmsIncomingInspectionOrderDto.setCoreSourceId(mesPmWorkOrder.getWorkOrderId());
                     qmsIncomingInspectionOrderDto.setSourceOrderCode(mesPmWorkOrder.getWorkOrderCode());
                     qmsIncomingInspectionOrderDto.setSourceId(mesPmWorkOrder.getWorkOrderId());
                     qmsIncomingInspectionOrderDto.setMaterialId(mesPmWorkOrder.getMaterialId());
@@ -796,6 +800,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
 
                     WmsInInPlanOrderDetDto wmsInInPlanOrderDet = new WmsInInPlanOrderDetDto();
                     wmsInInPlanOrderDet.setCoreSourceOrderCode(mesPmWorkOrder.getWorkOrderCode());
+                    wmsInInPlanOrderDet.setCoreSourceId(mesPmWorkOrder.getWorkOrderId());
                     wmsInInPlanOrderDet.setSourceOrderCode(mesPmWorkOrder.getWorkOrderCode());
                     wmsInInPlanOrderDet.setLineNumber(lineNumber + "");
                     wmsInInPlanOrderDet.setSourceId(mesPmWorkOrder.getWorkOrderId());
@@ -841,6 +846,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
 
                     WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
                     wmsInnerJobOrderDet.setCoreSourceOrderCode(mesPmWorkOrder.getWorkOrderCode());
+                    wmsInnerJobOrderDet.setCoreSourceId(mesPmWorkOrder.getWorkOrderId());
                     wmsInnerJobOrderDet.setSourceOrderCode(mesPmWorkOrder.getWorkOrderCode());
                     wmsInnerJobOrderDet.setSourceId(mesPmWorkOrder.getWorkOrderId());
                     wmsInnerJobOrderDet.setLineNumber(lineNumber + "");

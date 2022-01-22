@@ -696,6 +696,21 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                         barcodeExample.clear();
                         if (StringUtils.isNotEmpty(parentMaterialBarcodeList)) {
                             cartonCode = parentMaterialBarcodeList.get(0);
+
+                            barcodeExample.createCriteria().andEqualTo("cartonCode",wmsInnerMaterialBarcodeImport.getCartonCode())
+                                    .andEqualTo("barcodeType",1);
+                            parentMaterialBarcodeList = wmsInnerMaterialBarcodeMapper.selectByExample(barcodeExample);
+                            barcodeExample.clear();
+                            if (StringUtils.isNotEmpty(parentMaterialBarcodeList)) {
+                                WmsInnerMaterialBarcode wmsInnerMaterialBarcode = parentMaterialBarcodeList.get(0);
+                                if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeImport.getPalletCode())
+                                        && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getPalletCode())
+                                        && !wmsInnerMaterialBarcode.getPalletCode().equals(wmsInnerMaterialBarcodeImport.getPalletCode())) {
+                                    fail.add(i + 1);
+                                    continue;
+                                }
+                            }
+
                             cartonCode.setMaterialQty(cartonCode.getMaterialQty().add(new BigDecimal(1)));
                             wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(cartonCode);
                         }else {

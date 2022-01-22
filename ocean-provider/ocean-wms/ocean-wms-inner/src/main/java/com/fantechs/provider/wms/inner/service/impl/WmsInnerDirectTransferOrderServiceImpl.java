@@ -94,6 +94,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
             if (dto.getInStorageId().equals(dto.getOutStorageId())) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(), "移入库位不能与移出库位相同");
             }
+
             WmsInnerDirectTransferOrder order = new WmsInnerDirectTransferOrder();
             order.setDirectTransferOrderCode(CodeUtils.getId("INNER-DTO"));
             order.setWorkerUserId(dto.getWorkerUserId());
@@ -132,6 +133,9 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                 Example example1 = new Example(WmsInnerInventory.class);
                 Example.Criteria criteria1 = example1.createCriteria();
                 criteria1.andEqualTo("storageId", dto.getOutStorageId())
+                        .andEqualTo("jobStatus", (byte) 1)
+                        .andEqualTo("stockLock", 0)
+                        .andEqualTo("lockStatus", 0)
                         .andEqualTo("materialId", dto.getMaterialId());
                 if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodes.get(0).getBatchCode())) {
                     criteria1.andEqualTo("batchCode", wmsInnerMaterialBarcodes.get(0).getBatchCode());
@@ -141,8 +145,22 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未查询到移出库位");
                 }
                 WmsInnerInventory wmsInnerInventory = wmsInnerInventorys.get(0);
-                if (StringUtils.isEmpty(wmsInnerInventory.getPackingQty()) || wmsInnerInventory.getPackingQty().compareTo(BigDecimal.ZERO) <= 0)
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "移出库位物料数量不存在或小于等于0");
+                BigDecimal qty =BigDecimal.ZERO;
+                for(WmsInnerInventory w : wmsInnerInventorys){
+                    if(StringUtils.isEmpty(w.getPackingQty()))
+                        w.setPackingQty(BigDecimal.ZERO);
+                    qty = qty.add(w.getPackingQty());
+                }
+                if (qty.compareTo(BigDecimal.ZERO) <= 0)
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "移出库位物料数量小于等于0");
+
+                SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                searchBaseStorage.setStorageId(dto.getInStorageId());
+                List<BaseStorage> baseStorage = baseFeignApi.findList(searchBaseStorage).getData();
+                if (StringUtils.isEmpty(baseStorage))
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未查询到移入库位");
+                if (baseStorage.get(0).getStorageType() != 1)
+                    throw new BizErrorException(ErrorCodeEnum.PDA40012037.getCode(), "库位类型错误，移入库位必须是存货库位");
 
                 //保存明细表
                 WmsInnerDirectTransferOrderDet orderDet = new WmsInnerDirectTransferOrderDet();
@@ -195,7 +213,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                     wmsInnerMaterialBarcodeReOrder.setModifiedTime(new Date());
                     list.add(wmsInnerMaterialBarcodeReOrder);
 
-                    //库存更新
+                    //库存原更新
                     wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(barcode.getMaterialQty()));
                     wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
 
@@ -209,11 +227,6 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                     if (StringUtils.isEmpty(inWmsInnerInventorys)) {
                         BeanUtils.copyProperties(wmsInnerInventory, inWmsInnerInventory, new String[]{"inventoryId"});
                         inWmsInnerInventory.setStorageId(dto.getInStorageId());
-                        SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
-                        searchBaseStorage.setStorageId(dto.getInStorageId());
-                        List<BaseStorage> baseStorage = baseFeignApi.findList(searchBaseStorage).getData();
-                        if (StringUtils.isEmpty(baseStorage))
-                            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未查询到移出库位");
                         inWmsInnerInventory.setWarehouseId(baseStorage.get(0).getWarehouseId());
                         inWmsInnerInventory.setJobStatus((byte) 1);
                         inWmsInnerInventory.setLockStatus((byte) 0);
