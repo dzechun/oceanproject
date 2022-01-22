@@ -58,7 +58,7 @@
         create_user_name,sus.user_name as modified_user_name,bo.organization_name,
         (SELECT SUM(oiod.order_qty) FROM om_other_in_order_det oiod where oiod.other_in_order_id =
         oio.other_in_order_id) as totalQty,
-        (SELECT SUM(oiod.issue_qty) FROM om_other_in_order_det oiod where oiod.other_in_order_id =
+        (SELECT SUM(oiod.total_issue_qty) FROM om_other_in_order_det oiod where oiod.other_in_order_id =
         oio.other_in_order_id) as totalIssueQty,
         (SELECT SUM(oiod.receiving_qty) FROM om_other_in_order_det oiod where oiod.other_in_order_id =
         oio.other_in_order_id) as totalReceivingQty,

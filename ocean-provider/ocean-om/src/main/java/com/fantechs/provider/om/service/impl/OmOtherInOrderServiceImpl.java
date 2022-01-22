@@ -420,9 +420,10 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
                     WmsInPlanReceivingOrderDetDto wmsInPlanReceivingOrderDetDto = new WmsInPlanReceivingOrderDetDto();
                     wmsInPlanReceivingOrderDetDto.setCoreSourceOrderCode(order.getOtherInOrderCode());
+                    wmsInPlanReceivingOrderDetDto.setCoreSourceId(omOtherInOrderDet.getOtherInOrderDetId());
                     wmsInPlanReceivingOrderDetDto.setSourceOrderCode(order.getOtherInOrderCode());
-                    wmsInPlanReceivingOrderDetDto.setLineNumber(lineNumber + "");
                     wmsInPlanReceivingOrderDetDto.setSourceId(omOtherInOrderDet.getOtherInOrderDetId());
+                    wmsInPlanReceivingOrderDetDto.setLineNumber(lineNumber + "");
                     wmsInPlanReceivingOrderDetDto.setMaterialId(omOtherInOrderDet.getMaterialId());
                     wmsInPlanReceivingOrderDetDto.setPlanQty(omOtherInOrderDet.getQty());
                     wmsInPlanReceivingOrderDetDto.setLineStatus((byte) 1);
@@ -437,9 +438,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                         omOtherInOrderDet.setIfAllIssued((byte) 0);
                         order.setOrderStatus((byte)2);
                     }
-                    //更新表头实收数量、累计下发数量
-                    updateOmOtherinOrder(order, omOtherInOrderDet);
-
                     list.add(omOtherInOrderDet);
                     orderList.add(order);
                 }
@@ -478,6 +476,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
                     WmsInReceivingOrderDetDto wmsInReceivingOrderDetDto = new WmsInReceivingOrderDetDto();
                     wmsInReceivingOrderDetDto.setCoreSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
+                    wmsInReceivingOrderDetDto.setCoreSourceId(omOtherInOrderDet.getOtherInOrderDetId());
                     wmsInReceivingOrderDetDto.setSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
                     wmsInReceivingOrderDetDto.setLineNumber(lineNumber + "");
                     wmsInReceivingOrderDetDto.setSourceId(omOtherInOrderDet.getOtherInOrderDetId());
@@ -495,8 +494,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                         omOtherInOrderDet.setIfAllIssued((byte) 0);
                         order.setOrderStatus((byte)2);
                     }
-                    //更新表头实收数量、累计下发数量
-                    updateOmOtherinOrder(order, omOtherInOrderDet);
                     list.add(omOtherInOrderDet);
                     orderList.add(order);
                 }
@@ -534,6 +531,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
                     QmsIncomingInspectionOrderDto qmsIncomingInspectionOrderDto = new QmsIncomingInspectionOrderDto();
                     qmsIncomingInspectionOrderDto.setCoreSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
+                    qmsIncomingInspectionOrderDto.setCoreSourceId(omOtherInOrderDet.getOtherInOrderDetId());
                     qmsIncomingInspectionOrderDto.setSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
                     qmsIncomingInspectionOrderDto.setSourceId(omOtherInOrderDet.getOtherInOrderDetId());
                     qmsIncomingInspectionOrderDto.setMaterialId(omOtherInOrderDet.getMaterialId());
@@ -557,8 +555,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                         omOtherInOrderDet.setIfAllIssued((byte) 0);
                         order.setOrderStatus((byte)2);
                     }
-                    //更新表头实收数量、累计下发数量
-                    updateOmOtherinOrder(order, omOtherInOrderDet);
                     list.add(omOtherInOrderDet);
                     orderList.add(order);
                 }
@@ -593,6 +589,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
                     WmsInInPlanOrderDetDto wmsInInPlanOrderDet = new WmsInInPlanOrderDetDto();
                     wmsInInPlanOrderDet.setCoreSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
+                    wmsInInPlanOrderDet.setCoreSourceId(omOtherInOrderDet.getOtherInOrderDetId());
                     wmsInInPlanOrderDet.setSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
                     wmsInInPlanOrderDet.setLineNumber(lineNumber + "");
                     wmsInInPlanOrderDet.setSourceId(omOtherInOrderDet.getOtherInOrderDetId());
@@ -608,8 +605,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                         omOtherInOrderDet.setIfAllIssued((byte) 0);
                         order.setOrderStatus((byte)2);
                     }
-                    //更新表头实收数量、累计下发数量
-                    updateOmOtherinOrder(order, omOtherInOrderDet);
                     list.add(omOtherInOrderDet);
                     orderList.add(order);
                 }
@@ -655,6 +650,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
                     WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
                     wmsInnerJobOrderDet.setCoreSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
+                    wmsInnerJobOrderDet.setCoreSourceId(omOtherInOrderDet.getOtherInOrderDetId());
                     wmsInnerJobOrderDet.setSourceOrderCode(omOtherInOrderDto.get(0).getOtherInOrderCode());
                     wmsInnerJobOrderDet.setSourceId(omOtherInOrderDet.getOtherInOrderDetId());
                     wmsInnerJobOrderDet.setLineNumber(lineNumber + "");
@@ -673,8 +669,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                         omOtherInOrderDet.setIfAllIssued((byte) 0);
                         order.setOrderStatus((byte)2);
                     }
-                    //更新表头实收数量、累计下发数量
-                    updateOmOtherinOrder(order, omOtherInOrderDet);
                     list.add(omOtherInOrderDet);
                     orderList.add(order);
                 }
@@ -760,15 +754,4 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         return num;
     }
 
-    private void updateOmOtherinOrder(OmOtherInOrderDto order, OmOtherInOrderDet omOtherInOrderDet){
-        if(StringUtils.isEmpty(order.getTotalIssueQty()))
-            order.setTotalIssueQty(omOtherInOrderDet.getQty());
-        else
-            order.setTotalIssueQty(order.getTotalIssueQty().add(omOtherInOrderDet.getQty()));
-        if(StringUtils.isEmpty(order.getTotalReceivingQty()))
-            order.setTotalReceivingQty(omOtherInOrderDet.getReceivingQty());
-        else
-            order.setTotalReceivingQty(order.getTotalReceivingQty().add(omOtherInOrderDet.getReceivingQty()));
-        omOtherInOrderMapper.updateByPrimaryKeySelective(order);
-    }
 }
