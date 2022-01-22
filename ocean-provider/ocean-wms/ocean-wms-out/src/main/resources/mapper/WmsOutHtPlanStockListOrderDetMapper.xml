@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.wms.out.mapper.WmsOutPlanStockListOrderDetMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.out.WmsOutPlanStockListOrderDet">
+<mapper namespace="com.fantechs.provider.wms.out.mapper.WmsOutHtPlanStockListOrderDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtPlanStockListOrderDet">
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="plan_stock_list_order_det_id" jdbcType="BIGINT" property="planStockListOrderDetId" />
+    <id column="ht_plan_stock_list_order_det_id" jdbcType="BIGINT" property="htPlanStockListOrderDetId" />
+    <result column="plan_stock_list_order_det_id" jdbcType="BIGINT" property="planStockListOrderDetId" />
     <result column="core_source_order_code" jdbcType="VARCHAR" property="coreSourceOrderCode" />
     <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode" />
     <result column="core_source_id" jdbcType="BIGINT" property="coreSourceId" />
     <result column="source_id" jdbcType="BIGINT" property="sourceId" />
-    <result column="plan_stock_list_order_id" jdbcType="BIGINT" property="planStockListOrderId" />
     <result column="work_order_id" jdbcType="BIGINT" property="workOrderId" />
-    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+    <result column="plan_stock_list_order_id" jdbcType="BIGINT" property="planStockListOrderId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="order_qty" jdbcType="DECIMAL" property="orderQty" />
     <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
@@ -32,25 +32,9 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap"
-             type="com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDetDto">
-    <result column="daily_plan_code" jdbcType="VARCHAR" property="dailyPlanCode"/>
-    <result column="plan_stock_list_order_code" jdbcType="VARCHAR" property="planStockListOrderCode"/>
-    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
-    <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="coreSourceSysOrderTypeCode"/>
-    <result column="material_code_product" jdbcType="VARCHAR" property="materialCodeProduct"/>
-    <result column="material_name_product" jdbcType="VARCHAR" property="materialNameProduct"/>
-    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
-    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
-    <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
-    <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
-    <result column="delivery_user_name" jdbcType="VARCHAR" property="deliveryUserName"/>
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
 
-  </resultMap>
   <sql id="Base_Column_List">
+    wopslod.ht_plan_stock_list_order_det_id,
     wopslod.plan_stock_list_order_det_id,
     wopslod.core_source_order_code,
     wopslod.source_order_code,
@@ -78,7 +62,7 @@
     wopslod.option2,
     wopslod.option3
   </sql>
-  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+  <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
     select<include refid="Base_Column_List"/>,
     mpdp.daily_plan_code,
     wopslo.plan_stock_list_order_code,
@@ -93,7 +77,7 @@
     su.user_name AS create_user_name,
     sus.user_name AS modified_user_name,
     bo.organization_name
-    FROM wms_out_plan_stock_list_order_det wopslod
+    FROM wms_out_ht_plan_stock_list_order_det wopslod
     LEFT JOIN wms_out_plan_stock_list_order wopslo ON wopslod.plan_stock_list_order_id=wopslo.plan_stock_list_order_id
     LEFT JOIN mes_pm_daily_plan_stock_list mpdplist ON wopslod.source_id=mpdplist.daily_plan_stock_list_id
     LEFT JOIN mes_pm_daily_plan_det mpdpd ON mpdplist.daily_plan_det_id=mpdpd.daily_plan_det_id
@@ -142,12 +126,4 @@
     </where>
     order by wopslod.create_time desc
   </select>
-  <update id="batchUpdate" parameterType="java.util.List">
-    <foreach collection="list" item="item" separator=";">
-      update wms_out_plan_stock_list_order_det wodrod set
-      wodrod.total_issue_qty = #{item.totalIssueQty},
-      wodrod.if_all_issued = #{item.ifAllIssued}
-      where wodrod.plan_stock_list_order_det_id = #{item.planStockListOrderDetId}
-    </foreach>
-  </update>
 </mapper>

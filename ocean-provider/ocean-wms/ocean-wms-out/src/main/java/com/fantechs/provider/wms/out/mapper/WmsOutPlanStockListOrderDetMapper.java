@@ -8,10 +8,11 @@ import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface WmsOutPlanStockListOrderDetMapper extends MyMapper<WmsOutPlanStockListOrderDet> {
-    List<WmsOutPlanStockListOrderDetDto> findList(SearchWmsOutPlanStockListOrderDet searchWmsOutPlanStockListOrderDet);
+    List<WmsOutPlanStockListOrderDetDto> findList(Map<String, Object> map);
 
     int batchUpdate(List<WmsOutPlanStockListOrderDetDto> wmsOutPlanStockListOrderDetDtos);
 }

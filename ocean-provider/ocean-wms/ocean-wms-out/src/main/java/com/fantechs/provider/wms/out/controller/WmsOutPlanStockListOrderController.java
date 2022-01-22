@@ -1,12 +1,11 @@
 package com.fantechs.provider.wms.out.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutPlanStockListOrder;
+import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtPlanStockListOrder;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutPlanStockListOrder;
-
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
@@ -14,9 +13,9 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.out.service.WmsOutPlanStockListOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -77,14 +76,22 @@ public class WmsOutPlanStockListOrderController {
     @PostMapping("/findList")
     public ResponseEntity<List<WmsOutPlanStockListOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWmsOutPlanStockListOrder searchWmsOutPlanStockListOrder) {
         Page<Object> page = PageHelper.startPage(searchWmsOutPlanStockListOrder.getStartPage(),searchWmsOutPlanStockListOrder.getPageSize());
-        List<WmsOutPlanStockListOrderDto> list = wmsOutPlanStockListOrderService.findList(searchWmsOutPlanStockListOrder);
+        List<WmsOutPlanStockListOrderDto> list = wmsOutPlanStockListOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutPlanStockListOrder));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("履历")
+    @PostMapping("/findHtList")
+    public ResponseEntity<List<WmsOutHtPlanStockListOrder>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchWmsOutPlanStockListOrder searchWmsOutPlanStockListOrder) {
+        Page<Object> page = PageHelper.startPage(searchWmsOutPlanStockListOrder.getStartPage(),searchWmsOutPlanStockListOrder.getPageSize());
+        List<WmsOutHtPlanStockListOrder> list = wmsOutPlanStockListOrderService.findHtList(ControllerUtil.dynamicConditionByEntity(searchWmsOutPlanStockListOrder));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
     @ApiOperation("列表(不分页)")
     @PostMapping("/findAll")
     public ResponseEntity<List<WmsOutPlanStockListOrderDto>> findAll(@ApiParam(value = "查询对象") @RequestBody SearchWmsOutPlanStockListOrder searchWmsOutPlanStockListOrder) {
-        List<WmsOutPlanStockListOrderDto> list = wmsOutPlanStockListOrderService.findList(searchWmsOutPlanStockListOrder);
+        List<WmsOutPlanStockListOrderDto> list = wmsOutPlanStockListOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutPlanStockListOrder));
         return ControllerUtil.returnDataSuccess(list, list.size());
     }
 
@@ -98,7 +105,7 @@ public class WmsOutPlanStockListOrderController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchWmsOutPlanStockListOrder searchWmsOutPlanStockListOrder){
-    List<WmsOutPlanStockListOrderDto> list = wmsOutPlanStockListOrderService.findList(searchWmsOutPlanStockListOrder);
+    List<WmsOutPlanStockListOrderDto> list = wmsOutPlanStockListOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutPlanStockListOrder));
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出信息", "WmsOutPlanStockListOrder信息", WmsOutPlanStockListOrderDto.class, "WmsOutPlanStockListOrder.xls", response);
