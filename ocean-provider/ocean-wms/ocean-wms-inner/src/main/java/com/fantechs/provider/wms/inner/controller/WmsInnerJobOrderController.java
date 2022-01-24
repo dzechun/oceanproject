@@ -74,6 +74,12 @@ public class WmsInnerJobOrderController {
         return ControllerUtil.returnCRUD(wmsInPutawayOrderService.distributionWorker(jobOrderId,workerId));
     }
 
+    @ApiOperation("更新条码扫描状态")
+    @PostMapping("/updateBarcodeStatus")
+    public ResponseEntity updateBarcodeStatus(@ApiParam(value = "条码ID",required = true) @RequestParam @NotBlank(message="materialBarcodeId 不能为空") Long materialBarcodeId) {
+        return ControllerUtil.returnCRUD(wmsInPutawayOrderService.updateBarcodeStatus(materialBarcodeId));
+    }
+
     @ApiOperation("整单确认")
     @PostMapping("/allReceiving")
     public ResponseEntity allReceiving(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids){
