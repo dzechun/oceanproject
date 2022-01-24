@@ -400,7 +400,8 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
 
 
                         //找上游单据条码
-                        SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
+                        //不用把条码一起下推 2022-01-24
+                        /*SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
                         searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode(wmsInPlanReceivingOrder.getSourceSysOrderTypeCode());//单据类型
                         searchWmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInPlanReceivingOrderDet.getSourceId());//明细ID
                         ResponseEntity<List<WmsInnerMaterialBarcodeReOrderDto>> listResponseEntity = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder);
@@ -414,7 +415,7 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
                             wmsInReceivingOrderBarcode.setMaterialBarcodeId(datum.getMaterialBarcodeId());
                             barcodeList.add(wmsInReceivingOrderBarcode);
                         }
-                        wmsInReceivingOrderDet.setWmsInReceivingOrderBarcodeList(barcodeList);
+                        wmsInReceivingOrderDet.setWmsInReceivingOrderBarcodeList(barcodeList);*/
 
                         //更新表头为执行中
                         wmsInPlanReceivingOrder.setOrderStatus((byte)2);
