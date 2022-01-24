@@ -1,8 +1,8 @@
 package com.fantechs.provider.guest.wanbao.service;
 
 import com.fantechs.common.base.support.IService;
-import com.fantechs.provider.guest.wanbao.dto.WanbaoReadHeadDto;
-import com.fantechs.provider.guest.wanbao.model.WanbaoReadHead;
+import com.fantechs.common.base.general.dto.wanbao.WanbaoReadHeadDto;
+import com.fantechs.common.base.general.entity.wanbao.WanbaoReadHead;
 
 import java.util.List;
 import java.util.Map;

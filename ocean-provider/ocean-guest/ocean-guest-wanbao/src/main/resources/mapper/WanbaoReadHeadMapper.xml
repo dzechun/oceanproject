@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.guest.wanbao.mapper.WanbaoReadHeadMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.provider.guest.wanbao.model.WanbaoReadHead">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wanbao.WanbaoReadHead">
     <!--
       WARNING - @mbg.generated
     -->
@@ -21,7 +21,7 @@
     <result column="option3" jdbcType="VARCHAR" property="option3" />
   </resultMap>
 
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.provider.guest.wanbao.dto.WanbaoReadHeadDto">
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wanbao.WanbaoReadHeadDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />

@@ -30,6 +30,10 @@
   <resultMap id="BaseResultDtoMap" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDto">
   </resultMap>
 
+  <resultMap id="ResultBySalesCodeGroup" type="com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletBySalesOrderDto">
+    <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode" />
+  </resultMap>
+
   <sql id="BaseColumnList">
     mspp.product_pallet_id,
     mspp.pallet_code,
@@ -79,5 +83,20 @@
         and mspp.org_id = #{orgId}
       </if>
     </where>
+  </select>
+
+  <select id="findBySalesCodeGroup" resultMap="ResultBySalesCodeGroup" parameterType="map">
+    SELECT
+    oso.sales_order_code
+    FROM
+    mes_sfc_product_pallet mspp
+    LEFT JOIN mes_pm_work_order mpwo ON mspp.work_order_id = mpwo.work_order_id
+    LEFT JOIN om_sales_order oso ON mpwo.sales_order_id = oso.sales_order_id
+    <where>
+      <if test="palletCode != null">
+        and mspp.pallet_code = #{palletCode}
+      </if>
+    </where>
+    GROUP BY oso.sales_order_code
   </select>
 </mapper>

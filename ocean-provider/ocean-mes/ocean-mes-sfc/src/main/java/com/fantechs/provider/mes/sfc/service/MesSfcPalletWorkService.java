@@ -1,14 +1,30 @@
 package com.fantechs.provider.mes.sfc.service;
 
+import com.fantechs.common.base.general.dto.mes.sfc.PalletWorkByManualOperationDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PalletWorkScanDto;
 import com.fantechs.common.base.general.dto.mes.sfc.RequestPalletWorkScanDto;
+import com.fantechs.common.base.general.dto.mes.sfc.ScanByManualOperationDto;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public interface MesSfcPalletWorkService {
 
     PalletWorkScanDto palletWorkScanBarcode(RequestPalletWorkScanDto requestPalletWorkScanDto) throws Exception;
+
+    /**
+     * 万宝-栈板作业（人工）
+     * @param dto
+     * @return
+     * @throws Exception
+     */
+    int workByManualOperation(PalletWorkByManualOperationDto dto) throws Exception;
+
+    /**
+     * 万宝-栈板扫码（人工）
+     * @param barcode
+     * @return
+     */
+    ScanByManualOperationDto scanByManualOperation(String barcode, Long proLineId);
 
     List<PalletWorkScanDto> palletWorkScan(Long stationId);
 

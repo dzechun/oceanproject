@@ -1,7 +1,9 @@
 package com.fantechs.provider.mes.sfc.controller;
 
+import com.fantechs.common.base.general.dto.mes.sfc.PalletWorkByManualOperationDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PalletWorkScanDto;
 import com.fantechs.common.base.general.dto.mes.sfc.RequestPalletWorkScanDto;
+import com.fantechs.common.base.general.dto.mes.sfc.ScanByManualOperationDto;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.mes.sfc.service.MesSfcPalletWorkService;
@@ -28,6 +30,22 @@ public class MesSfcPalletWorkController {
 
         PalletWorkScanDto palletWorkScanDto = mesSfcPalletWorkService.palletWorkScanBarcode(requestPalletWorkScanDto);
         return ControllerUtil.returnDataSuccess(palletWorkScanDto, 1);
+    }
+
+    @PostMapping("/scanByManualOperation")
+    @ApiOperation("栈板作业扫码(人工), 提供给万宝定制化包使用")
+    public ResponseEntity<ScanByManualOperationDto> scanByManualOperation(
+            @ApiParam(value = "条码", required = true) @RequestParam String barcode, Long proLineId) {
+        ScanByManualOperationDto scanByManualOperation = mesSfcPalletWorkService.scanByManualOperation(barcode, proLineId);
+        return ControllerUtil.returnDataSuccess(scanByManualOperation, 1);
+    }
+
+    @PostMapping("/workByManualOperation")
+    @ApiOperation("栈板作业提交(人工), 提供给万宝定制化包使用")
+    public ResponseEntity<Integer> workByManualOperation(
+            @ApiParam(value = "条码", required = true) @RequestBody PalletWorkByManualOperationDto dto) throws Exception {
+        int i = mesSfcPalletWorkService.workByManualOperation(dto);
+        return ControllerUtil.returnCRUD(i);
     }
 
     @GetMapping("/palletWorkScan")

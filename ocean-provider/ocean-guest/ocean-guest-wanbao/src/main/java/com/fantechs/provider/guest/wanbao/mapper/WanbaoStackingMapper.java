@@ -1,8 +1,8 @@
 package com.fantechs.provider.guest.wanbao.mapper;
 
 import com.fantechs.common.base.mybatis.MyMapper;
-import com.fantechs.provider.guest.wanbao.dto.WanbaoStackingDto;
-import com.fantechs.provider.guest.wanbao.model.WanbaoStacking;
+import com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDto;
+import com.fantechs.common.base.general.entity.wanbao.WanbaoStacking;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

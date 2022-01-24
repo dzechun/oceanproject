@@ -88,4 +88,12 @@ public interface SFCFeignApi {
     @ApiOperation("更新产品条码过站表")
     @PostMapping("/mesSfcBarcodeProcess/update")
     ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody MesSfcBarcodeProcess mesSfcBarcodeProcess);
+
+    @PostMapping("/mesSfcPalletWork/scanByManualOperation")
+    @ApiOperation("栈板作业扫码(人工)")
+    ResponseEntity<ScanByManualOperationDto> scanByManualOperation(@ApiParam(value = "条码", required = true) @RequestParam String barcode, Long proLineId);
+
+    @PostMapping("/mesSfcPalletWork/workByManualOperation")
+    @ApiOperation("栈板作业提交(人工)")
+    ResponseEntity<Integer> workByManualOperation(@ApiParam(value = "条码", required = true) @RequestBody PalletWorkByManualOperationDto dto);
 }

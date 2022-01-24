@@ -1,6 +1,7 @@
 package com.fantechs.provider.mes.sfc.service;
 
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcPalletReportDto;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletBySalesOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDto;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
 import com.fantechs.common.base.support.IService;
@@ -20,4 +21,6 @@ public interface MesSfcProductPalletService extends IService<MesSfcProductPallet
      * @return
      */
     List<MesSfcPalletReportDto> getPalletReport();
+
+    List<MesSfcProductPalletBySalesOrderDto> findBySalesCodeGroup(Map<String, Object> map);
 }

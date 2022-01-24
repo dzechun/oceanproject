@@ -1,7 +1,8 @@
-package com.fantechs.provider.guest.wanbao.model;
+package com.fantechs.common.base.general.entity.wanbao;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDetDto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -12,6 +13,7 @@ import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 ;
 ;
@@ -122,6 +124,9 @@ public class WanbaoStacking extends ValidGroup implements Serializable {
     private String option2;
 
     private String option3;
+
+    @ApiModelProperty(name="list",value = "条码")
+    private List<WanbaoStackingDetDto> list;
 
     private static final long serialVersionUID = 1L;
 }

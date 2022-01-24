@@ -2,6 +2,7 @@ package com.fantechs.provider.mes.sfc.service.impl;
 
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcPalletReportDto;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletBySalesOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDetDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDto;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
@@ -74,5 +75,10 @@ public class MesSfcProductPalletServiceImpl extends BaseService<MesSfcProductPal
             list.add(reportDto);
         }
         return list;
+    }
+
+    @Override
+    public List<MesSfcProductPalletBySalesOrderDto> findBySalesCodeGroup(Map<String, Object> map) {
+        return mesSfcProductPalletMapper.findBySalesCodeGroup(map);
     }
 }

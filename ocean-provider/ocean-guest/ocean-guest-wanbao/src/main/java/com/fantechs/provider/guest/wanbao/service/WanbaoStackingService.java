@@ -1,8 +1,8 @@
 package com.fantechs.provider.guest.wanbao.service;
 
 import com.fantechs.common.base.support.IService;
-import com.fantechs.provider.guest.wanbao.dto.WanbaoStackingDto;
-import com.fantechs.provider.guest.wanbao.model.WanbaoStacking;
+import com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDto;
+import com.fantechs.common.base.general.entity.wanbao.WanbaoStacking;
 
 import java.util.List;
 import java.util.Map;

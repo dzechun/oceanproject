@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.guest.wanbao.mapper.WanbaoStackingDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wanbao.WanbaoStackingDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="stacking_det_id" jdbcType="BIGINT" property="stackingDetId" />
+    <result column="stacking_id" jdbcType="BIGINT" property="stackingId" />
+    <result column="barcode" jdbcType="VARCHAR" property="barcode" />
+    <result column="customer_barcode" jdbcType="VARCHAR" property="customerBarcode" />
+    <result column="sales_barcode" jdbcType="VARCHAR" property="salesBarcode" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    wsd.stacking_det_id,
+    wsd.stacking_id,
+    wsd.barcode,
+    wsd.customer_barcode,
+    wsd.sales_barcode,
+    wsd.status,
+    wsd.remark,
+    wsd.org_id,
+    wsd.create_user_id,
+    wsd.create_time,
+    wsd.modified_user_id,
+    wsd.modified_time,
+    wsd.option1,
+    wsd.option2,
+    wsd.option3
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"></include>
+    FROM wanbao_stacking_det wsd
+    <where>
+      <if test="stackingId != null">
+        AND wsd.stacking_id = #{stackingId}
+      </if>
+    </where>
+    order by wsd.create_time desc
+  </select>
+</mapper>

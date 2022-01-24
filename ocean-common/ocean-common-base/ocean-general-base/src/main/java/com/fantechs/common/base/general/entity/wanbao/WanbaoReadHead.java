@@ -1,4 +1,4 @@
-package com.fantechs.provider.guest.wanbao.model;
+package com.fantechs.common.base.general.entity.wanbao;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;

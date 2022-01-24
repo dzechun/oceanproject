@@ -1,4 +1,4 @@
-package com.fantechs.provider.guest.wanbao.dto.search;
+package com.fantechs.common.base.general.entity.wanbao.search;
 
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;

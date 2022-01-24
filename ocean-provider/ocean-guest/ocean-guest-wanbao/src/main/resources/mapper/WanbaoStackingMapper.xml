@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.guest.wanbao.mapper.WanbaoStackingMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.provider.guest.wanbao.model.WanbaoStacking">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wanbao.WanbaoStacking">
     <!--
       WARNING - @mbg.generated
     -->
@@ -20,9 +20,11 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <collection property="list" ofType="com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDetDto"
+                column="stacking_id" select="com.fantechs.provider.guest.wanbao.mapper.WanbaoStackingDetMapper.findList"></collection>
   </resultMap>
 
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.provider.guest.wanbao.dto.WanbaoStackingDto">
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDto">
     <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />

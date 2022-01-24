@@ -1,5 +1,6 @@
 package com.fantechs.provider.mes.sfc.mapper;
 
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletBySalesOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDto;
 import com.fantechs.common.base.general.dto.mes.sfc.RequestPalletWorkScanDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPallet;
@@ -17,4 +18,6 @@ public interface MesSfcProductPalletMapper extends MyMapper<MesSfcProductPallet>
     List<MesSfcProductPalletDto> findList(Map<String, Object> map);
 
     PalletAutoAsnDto findPalletByRequest(RequestPalletWorkScanDto requestPalletWorkScanDto);
+
+    List<MesSfcProductPalletBySalesOrderDto> findBySalesCodeGroup(Map<String, Object> map);
 }

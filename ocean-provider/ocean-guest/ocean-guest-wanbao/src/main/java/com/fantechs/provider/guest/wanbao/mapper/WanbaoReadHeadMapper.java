@@ -1,8 +1,8 @@
 package com.fantechs.provider.guest.wanbao.mapper;
 
 import com.fantechs.common.base.mybatis.MyMapper;
-import com.fantechs.provider.guest.wanbao.dto.WanbaoReadHeadDto;
-import com.fantechs.provider.guest.wanbao.model.WanbaoReadHead;
+import com.fantechs.common.base.general.dto.wanbao.WanbaoReadHeadDto;
+import com.fantechs.common.base.general.entity.wanbao.WanbaoReadHead;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
