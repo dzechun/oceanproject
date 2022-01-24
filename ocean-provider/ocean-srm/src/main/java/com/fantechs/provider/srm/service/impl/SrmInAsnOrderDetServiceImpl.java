@@ -14,14 +14,8 @@ import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInPlanReceivingOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDetDto;
-import com.fantechs.common.base.general.entity.basic.BaseMaterial;
-import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
-import com.fantechs.common.base.general.entity.basic.BaseStorage;
-import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
+import com.fantechs.common.base.general.entity.basic.*;
+import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrderDet;
 import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrderDet;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrder;
@@ -31,6 +25,7 @@ import com.fantechs.common.base.general.entity.wms.in.WmsInPlanReceivingOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -42,7 +37,6 @@ import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.srm.mapper.SrmInAsnOrderDetMapper;
 import com.fantechs.provider.srm.mapper.SrmInAsnOrderMapper;
-import com.fantechs.provider.srm.mapper.SrmInHtAsnOrderDetMapper;
 import com.fantechs.provider.srm.service.SrmInAsnOrderDetService;
 import com.fantechs.provider.srm.util.OrderFlowUtil;
 import org.springframework.beans.BeanUtils;
@@ -66,8 +60,6 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
     @Resource
     private SrmInAsnOrderMapper srmInAsnOrderMapper;
     @Resource
-    private SrmInHtAsnOrderDetMapper srmInHtAsnOrderDetMapper;
-    @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
     private OMFeignApi oMFeignApi;
@@ -82,6 +74,17 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
 
     @Override
     public List<SrmInAsnOrderDetDto> findList(Map<String, Object> map) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(map.get("orgId"))){
+            map.put("orgId",sysUser.getOrganizationId());
+        }
+        SearchBaseSupplierReUser searchBaseSupplierReUser = new SearchBaseSupplierReUser();
+        searchBaseSupplierReUser.setUserId(sysUser.getUserId());
+        ResponseEntity<List<BaseSupplierReUser>> list = baseFeignApi.findList(searchBaseSupplierReUser);
+        if (StringUtils.isNotEmpty(list.getData())){
+            map.put("supplierIdList", list.getData());
+        }
+        map.put("orderTypeCode", "YSHTZD");
         return srmInAsnOrderDetMapper.findList(map);
     }
 

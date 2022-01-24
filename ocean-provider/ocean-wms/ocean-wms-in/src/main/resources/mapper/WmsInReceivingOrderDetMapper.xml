@@ -1,129 +1,147 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.wms.in.mapper.WmsInReceivingOrderDetMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrderDet">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="receiving_order_det_id" jdbcType="BIGINT" property="receivingOrderDetId" />
-    <result column="core_source_order_code" jdbcType="VARCHAR" property="coreSourceOrderCode" />
-    <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode" />
-    <result column="core_source_id" jdbcType="BIGINT" property="coreSourceId" />
-    <result column="source_id" jdbcType="BIGINT" property="sourceId" />
-    <result column="receiving_order_id" jdbcType="BIGINT" property="receivingOrderId" />
-    <result column="line_number" jdbcType="VARCHAR" property="lineNumber" />
-    <result column="material_id" jdbcType="BIGINT" property="materialId" />
-    <result column="batch_code" jdbcType="VARCHAR" property="batchCode" />
-    <result column="production_time" jdbcType="TIMESTAMP" property="productionTime" />
-    <result column="plan_qty" jdbcType="DECIMAL" property="planQty" />
-    <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
-    <result column="operator_user_id" jdbcType="BIGINT" property="operatorUserId" />
-    <result column="line_status" jdbcType="TINYINT" property="lineStatus" />
-    <result column="if_all_issued" jdbcType="TINYINT" property="ifAllIssued" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="org_id" jdbcType="BIGINT" property="orgId" />
-    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
-    <result column="option1" jdbcType="VARCHAR" property="option1" />
-    <result column="option2" jdbcType="VARCHAR" property="option2" />
-    <result column="option3" jdbcType="VARCHAR" property="option3" />
-  </resultMap>
-  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDetDto">
-    <result column="receiving_order_code" jdbcType="VARCHAR" property="receivingOrderCode"/>
-    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
-    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
-    <result column="materialDesc" jdbcType="VARCHAR" property="materialDesc"/>
-    <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
-    <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
-    <result column="operator_user_name" jdbcType="VARCHAR" property="operatorUserName"/>
-    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
-    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
-    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
-    <result column="total_material_qty" jdbcType="DECIMAL" property="totalMaterialQty"/>
-  </resultMap>
-  <sql id="base_column_list">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrderDet">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="receiving_order_det_id" jdbcType="BIGINT" property="receivingOrderDetId"/>
+        <result column="core_source_order_code" jdbcType="VARCHAR" property="coreSourceOrderCode"/>
+        <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode"/>
+        <result column="core_source_id" jdbcType="BIGINT" property="coreSourceId"/>
+        <result column="source_id" jdbcType="BIGINT" property="sourceId"/>
+        <result column="receiving_order_id" jdbcType="BIGINT" property="receivingOrderId"/>
+        <result column="line_number" jdbcType="VARCHAR" property="lineNumber"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
+        <result column="production_time" jdbcType="TIMESTAMP" property="productionTime"/>
+        <result column="plan_qty" jdbcType="DECIMAL" property="planQty"/>
+        <result column="actual_qty" jdbcType="DECIMAL" property="actualQty"/>
+        <result column="operator_user_id" jdbcType="BIGINT" property="operatorUserId"/>
+        <result column="line_status" jdbcType="TINYINT" property="lineStatus"/>
+        <result column="if_all_issued" jdbcType="TINYINT" property="ifAllIssued"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+    </resultMap>
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDetDto">
+        <result column="receiving_order_code" jdbcType="VARCHAR" property="receivingOrderCode"/>
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="materialDesc" jdbcType="VARCHAR" property="materialDesc"/>
+        <result column="main_unit" jdbcType="VARCHAR" property="mainUnit"/>
+        <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
+        <result column="operator_user_name" jdbcType="VARCHAR" property="operatorUserName"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="total_material_qty" jdbcType="DECIMAL" property="totalMaterialQty"/>
+    </resultMap>
+    <sql id="base_column_list">
     wirod.receiving_order_det_id,
     wirod.core_source_order_code,
-wirod.source_order_code,
-wirod.core_source_id,
-wirod.source_id,
-wirod.receiving_order_id,
-wirod.line_number,
-wirod.material_id,
-wirod.batch_code,
-wirod.production_time,
-wirod.plan_qty,
-wirod.actual_qty,
-wirod.operator_user_id,
-wirod.line_status,
-wirod.if_all_issued,
-wirod.status,
-wirod.remark,
-wirod.org_id,
-wirod.create_user_id,
-wirod.create_time,
-wirod.modified_user_id,
-wirod.modified_time,
-wirod.is_delete,
-wirod.option1,
-wirod.option2,
-wirod.option3
+    wirod.source_order_code,
+    wirod.core_source_id,
+    wirod.source_id,
+    wirod.receiving_order_id,
+    wirod.line_number,
+    wirod.material_id,
+    wirod.batch_code,
+    wirod.production_time,
+    wirod.plan_qty,
+    wirod.actual_qty,
+    wirod.operator_user_id,
+    wirod.line_status,
+    wirod.if_all_issued,
+    wirod.status,
+    wirod.remark,
+    wirod.org_id,
+    wirod.create_user_id,
+    wirod.create_time,
+    wirod.modified_user_id,
+    wirod.modified_time,
+    wirod.is_delete,
+    wirod.option1,
+    wirod.option2,
+    wirod.option3
   </sql>
-  <select id="findList" resultMap="BaseResultMapDto">
-    select * from (
-    select <include refid="base_column_list"/>,wiro.receiving_order_code,sum(wimb.material_qty) as total_material_qty,bm.material_code,bm.material_name,bm.material_desc,bm.material_version,u.user_name as operator_user_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name
-    ,bmt.main_unit
-    FROM wms_in_receiving_order_det wirod
-    left join wms_in_receiving_order wiro on wiro.receiving_order_id = wirod.receiving_order_id
-    LEFT JOIN base_material bm ON wirod.material_id = bm.material_id
-    LEFT JOIN base_material_tab bmt ON bmt.material_id = bm.material_id
-    LEFT JOIN sys_user u ON u.user_id = wirod.operator_user_id
-    LEFT JOIN sys_user su ON wirod.create_user_id = su.user_id
-    LEFT JOIN sys_user sus ON wirod.modified_user_id = sus.user_id
-    LEFT JOIN base_organization bo ON wirod.org_id = bo.organization_id
-    left join wms_inner_material_barcode_re_order wimbro on wimbro.order_code = wiro.receiving_order_code and wimbro.order_det_id = wirod.receiving_order_det_id
-    left join wms_inner_material_barcode wimb on wimb.material_barcode_id = wimbro.material_barcode_id and wimb.material_id = wirod.material_id
-    and wimb.barcode_type = 1
-    <where>
-        <if test="receivingOrderId!=null and receivingOrderId!=''">
-          and wirod.receiving_order_id = #{receivingOrderId}
-        </if>
-        <if test="receivingOrderCode != null and receivingOrderCode!=''">
-          and wiro.receiving_order_code like CONCAT('%', #{receivingOrderCode}, '%')
-        </if>
-        <if test="lineStatusList!=null and lineStatusList.size > 0">
-          and wirod.line_status in
-          <foreach collection="lineStatusList" item="item" separator="," open="(" close=")">
-            #{item}
-          </foreach>
-        </if>
-        <if test="materialCode != null and materialCode!=''">
-          and bm.material_code like CONCAT('%', #{materialCode}, '%')
-        </if>
-        <if test="materialName != null and materialName!=''">
-          and bm.material_name like CONCAT('%', #{materialName}, '%')
-        </if>
-        <if test="materialDesc != null and materialDesc!=''">
-          and bm.material_desc like CONCAT('%', #{materialDesc}, '%')
-        </if>
-        <if test="materialVersion != null and materialVersion!=''">
-          and bm.material_version like CONCAT('%', #{materialVersion}, '%')
-        </if>
-        <if test="receivingOrderCode!=null and receivingOrderCode!=''">
-          and wiro.receiving_order_code like CONCAT('%',#{receivingOrderCode},'%')
-        </if>
-    </where>
-    GROUP BY wirod.receiving_order_det_id
-    order by wiro.create_time desc
-    ) d
-    <where>
-      <if test="ifFiltrate!=null and ifFiltrate == 1">
-        (d.total_material_qty &lt; d.plan_qty || d.total_material_qty is null)
-      </if>
-    </where>
-  </select>
+    <select id="findList" resultMap="BaseResultMapDto">
+        select * from (
+        select<include refid="base_column_list"/>,wiro.receiving_order_code,sum(wimb.material_qty) as
+        total_material_qty,bm.material_code,bm.material_name,bm.material_desc,bm.material_version,u.user_name as
+        operator_user_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name
+        ,bmt.main_unit
+        FROM wms_in_receiving_order_det wirod
+        left join wms_in_receiving_order wiro on wiro.receiving_order_id = wirod.receiving_order_id
+        LEFT JOIN base_material bm ON wirod.material_id = bm.material_id
+        LEFT JOIN base_material_tab bmt ON bmt.material_id = bm.material_id
+        LEFT JOIN om_purchase_order_det opod ON wirod.core_source_id = opod.purchase_order_det_id
+        LEFT JOIN om_purchase_order opo ON opo.purchase_order_id = opod.purchase_order_id
+        LEFT JOIN sys_user u ON u.user_id = wirod.operator_user_id
+        LEFT JOIN sys_user su ON wirod.create_user_id = su.user_id
+        LEFT JOIN sys_user sus ON wirod.modified_user_id = sus.user_id
+        LEFT JOIN base_organization bo ON wirod.org_id = bo.organization_id
+        left join wms_inner_material_barcode_re_order wimbro on wimbro.order_code = wiro.receiving_order_code and
+        wimbro.order_det_id = wirod.receiving_order_det_id
+        left join wms_inner_material_barcode wimb on wimb.material_barcode_id = wimbro.material_barcode_id and
+        wimb.material_id = wirod.material_id
+        and wimb.barcode_type = 1
+        <where>
+            <if test="receivingOrderId!=null and receivingOrderId!=''">
+                and wirod.receiving_order_id = #{receivingOrderId}
+            </if>
+            <if test="receivingOrderCode != null and receivingOrderCode!=''">
+                and wiro.receiving_order_code like CONCAT('%', #{receivingOrderCode}, '%')
+            </if>
+            <if test="lineStatusList!=null and lineStatusList.size > 0">
+                and wirod.line_status in
+                <foreach collection="lineStatusList" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="materialCode != null and materialCode!=''">
+                and bm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="materialName != null and materialName!=''">
+                and bm.material_name like CONCAT('%', #{materialName}, '%')
+            </if>
+            <if test="materialDesc != null and materialDesc!=''">
+                and bm.material_desc like CONCAT('%', #{materialDesc}, '%')
+            </if>
+            <if test="materialVersion != null and materialVersion!=''">
+                and bm.material_version like CONCAT('%', #{materialVersion}, '%')
+            </if>
+            <if test="receivingOrderCode!=null and receivingOrderCode!=''">
+                and wiro.receiving_order_code like CONCAT('%',#{receivingOrderCode},'%')
+            </if>
+            <if test="supplierId!=null and supplierId!=''">
+                and opo.supplier_id = #{supplierId}
+            </if>
+            <choose>
+                <when test="supplierIdList!=null and supplierIdList.size > 0">
+                    and opo.supplier_id in
+                    <foreach collection="supplierIdList" item="item" separator="," open="(" close=")">
+                        #{item.supplierId,jdbcType=BIGINT}
+                    </foreach>
+                </when>
+            </choose>
+        </where>
+        GROUP BY wirod.receiving_order_det_id
+        order by wiro.create_time desc
+        ) d
+        <where>
+            <if test="ifFiltrate!=null and ifFiltrate == 1">
+                (d.total_material_qty &lt; d.plan_qty || d.total_material_qty is null)
+            </if>
+        </where>
+    </select>
 </mapper>

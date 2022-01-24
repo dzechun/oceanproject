@@ -126,6 +126,9 @@
             <if test="asnOrderDetId !=null and asnOrderDetId!=''">
                 and wiaod.asn_order_det_id = #{asnOrderDetId}
             </if>
+            <if test="orgId!=null and orgId!=''">
+                and wiaod.org_id = #{orgId}
+            </if>
             <if test="asnCode != null and asnCode!=''">
                 and wiao.asn_code like CONCAT('%', #{asnCode}, '%')
             </if>
@@ -147,6 +150,14 @@
             <if test="ifAllIssued !=null and ifAllIssued!=''">
                 and wiaod.if_all_issued = #{ifAllIssued}
             </if>
+            <choose>
+                <when test="supplierIdList!=null and supplierIdList.size > 0">
+                    and wiao.supplier_id in
+                    <foreach collection="supplierIdList" item="item" separator="," open="(" close=")">
+                        #{item.supplierId,jdbcType=BIGINT}
+                    </foreach>
+                </when>
+            </choose>
         </where>
         group by wiaod.asn_order_det_id
         order by wiao.create_time desc
