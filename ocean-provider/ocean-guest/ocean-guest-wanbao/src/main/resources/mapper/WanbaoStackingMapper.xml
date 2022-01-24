@@ -21,7 +21,7 @@
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
     <collection property="list" ofType="com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDetDto"
-                column="stacking_id" select="com.fantechs.provider.guest.wanbao.mapper.WanbaoStackingDetMapper.findList"></collection>
+                column="{stackingId=stacking_id}" select="com.fantechs.provider.guest.wanbao.mapper.WanbaoStackingDetMapper.findList"></collection>
   </resultMap>
 
   <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDto">
