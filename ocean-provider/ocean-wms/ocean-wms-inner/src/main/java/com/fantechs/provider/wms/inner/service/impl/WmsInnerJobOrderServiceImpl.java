@@ -2669,22 +2669,35 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      * @return
      */
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int updateBarcodeStatus(Long materialBarcodeId) {
-        int num=0;
-        SysUser sysUser=currentUser();
-        SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
-        sBarcodeReOrder.setMaterialBarcodeId(materialBarcodeId);
-        sBarcodeReOrder.setOrderTypeCode("IN-IWK");//上架作业单类型
-        List<WmsInnerMaterialBarcodeReOrderDto> reOrderList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
-        if(reOrderList.size()<=0){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"上架单未找到此条码数据");
+        int num=1;
+        Example example = new Example(WmsInnerMaterialBarcode.class);
+        example.createCriteria().andEqualTo("materialBarcodeId",materialBarcodeId);
+        WmsInnerMaterialBarcode materialBarcode = wmsInnerMaterialBarcodeMapper.selectOneByExample(example);
+        if(StringUtils.isNotEmpty(materialBarcode)){
+            SysUser sysUser=currentUser();
+            SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
+            sBarcodeReOrder.setMaterialBarcodeId(materialBarcodeId);
+            sBarcodeReOrder.setOrderTypeCode("IN-IWK");//上架作业单类型
+            List<WmsInnerMaterialBarcodeReOrderDto> reOrderList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
+            if(reOrderList.size()<=0){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"上架单未找到此条码数据");
+            }
+            WmsInnerMaterialBarcodeReOrder upBarcodeReOrder=new WmsInnerMaterialBarcodeReOrder();
+            upBarcodeReOrder.setMaterialBarcodeReOrderId(reOrderList.get(0).getMaterialBarcodeReOrderId());
+            upBarcodeReOrder.setScanStatus((byte)1);
+            upBarcodeReOrder.setModifiedUserId(sysUser.getUserId());
+            upBarcodeReOrder.setModifiedTime(new Date());
+            num+=wmsInnerMaterialBarcodeReOrderMapper.updateByPrimaryKeySelective(upBarcodeReOrder);
+
+            WmsInnerMaterialBarcode upBarcode=new WmsInnerMaterialBarcode();
+            upBarcode.setMaterialBarcodeId(materialBarcodeId);
+            upBarcode.setIfScan((byte) 0);
+            upBarcode.setModifiedUserId(sysUser.getUserId());
+            upBarcode.setModifiedTime(new Date());
+            num+=wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(upBarcode);
         }
-        WmsInnerMaterialBarcodeReOrder upBarcodeReOrder=new WmsInnerMaterialBarcodeReOrder();
-        upBarcodeReOrder.setMaterialBarcodeReOrderId(reOrderList.get(0).getMaterialBarcodeReOrderId());
-        upBarcodeReOrder.setScanStatus((byte)1);
-        upBarcodeReOrder.setModifiedUserId(sysUser.getUserId());
-        upBarcodeReOrder.setModifiedTime(new Date());
-        num+=wmsInnerMaterialBarcodeReOrderMapper.updateByPrimaryKeySelective(upBarcodeReOrder);
 
         return num;
     }
