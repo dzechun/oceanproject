@@ -743,7 +743,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     WmsInnerMaterialBarcode wmsInnerMaterialBarcode = new WmsInnerMaterialBarcode();
                     wmsInnerMaterialBarcode.setMaterialBarcodeId(reOrderDto.getMaterialBarcodeId());
                     wmsInnerMaterialBarcode.setBarcodeStatus((byte) 5);
-                    wmsInnerMaterialBarcode.setIfScan((byte)0);
+                    //wmsInnerMaterialBarcode.setIfScan((byte)0);
                     num += wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(wmsInnerMaterialBarcode);
 
                     //库存条码明细集合
@@ -2543,12 +2543,36 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             List<WmsInnerMaterialBarcodeDto> barcodeList=resultDto.getMaterialBarcodeDtoList();
             if(StringUtils.isNotEmpty(barcodeList) && barcodeList.size()>0) {
                 for (WmsInnerMaterialBarcodeDto materialBarcodeDto : barcodeList) {
-                    WmsInnerMaterialBarcode upMaterialBarcode = new WmsInnerMaterialBarcode();
-                    upMaterialBarcode.setMaterialBarcodeId(materialBarcodeDto.getMaterialBarcodeId());
-                    upMaterialBarcode.setIfScan((byte) 1);
-                    upMaterialBarcode.setModifiedTime(new Date());
-                    upMaterialBarcode.setModifiedUserId(sysUser.getUserId());
-                    wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(upMaterialBarcode);
+//                    WmsInnerMaterialBarcode upMaterialBarcode = new WmsInnerMaterialBarcode();
+//                    upMaterialBarcode.setMaterialBarcodeId(materialBarcodeDto.getMaterialBarcodeId());
+//                    upMaterialBarcode.setIfScan((byte) 1);
+//                    upMaterialBarcode.setModifiedTime(new Date());
+//                    upMaterialBarcode.setModifiedUserId(sysUser.getUserId());
+//                    wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(upMaterialBarcode);
+
+                    Example example = new Example(WmsInnerMaterialBarcodeReOrder.class);
+                    example.createCriteria().andEqualTo("orderTypeCode","IN-IWK")
+                            .andEqualTo("orderId",orderId)
+                            .andEqualTo("materialBarcodeId",materialBarcodeDto.getMaterialBarcodeId());
+                    WmsInnerMaterialBarcodeReOrder barcodeReOrder=wmsInnerMaterialBarcodeReOrderMapper.selectOneByExample(example);
+                    if(StringUtils.isNotEmpty(barcodeReOrder)){
+                        if(StringUtils.isNotEmpty(barcodeReOrder.getIfScan()) && barcodeReOrder.getIfScan()==(byte)1){
+                            if(resultDto.getBarcodeType()==(byte)1){
+                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"SN条码已扫描 请勿重复扫描");
+                            }else if(resultDto.getBarcodeType()==(byte)2){
+                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"SN条码已扫描 请勿再扫描彩盒码");
+                            }else if(resultDto.getBarcodeType()==(byte)3){
+                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"SN条码已扫描 请勿再扫描箱码");
+                            }else if(resultDto.getBarcodeType()==(byte)4){
+                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"SN条码已扫描 请勿再扫描栈板码");
+                            }
+                        }
+                    }
+
+                    barcodeReOrder.setIfScan((byte) 1);
+                    barcodeReOrder.setModifiedTime(new Date());
+                    barcodeReOrder.setModifiedUserId(sysUser.getUserId());
+                    wmsInnerMaterialBarcodeReOrderMapper.updateByPrimaryKeySelective(barcodeReOrder);
                 }
             }
         }
@@ -2631,12 +2655,35 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             List<WmsInnerMaterialBarcodeDto> barcodeList=resultDto.getMaterialBarcodeDtoList();
             if(StringUtils.isNotEmpty(barcodeList) && barcodeList.size()>0) {
                 for (WmsInnerMaterialBarcodeDto materialBarcodeDto : barcodeList) {
-                    WmsInnerMaterialBarcode upMaterialBarcode = new WmsInnerMaterialBarcode();
-                    upMaterialBarcode.setMaterialBarcodeId(materialBarcodeDto.getMaterialBarcodeId());
-                    upMaterialBarcode.setIfScan((byte) 1);
-                    upMaterialBarcode.setModifiedTime(new Date());
-                    upMaterialBarcode.setModifiedUserId(sysUser.getUserId());
-                    wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(upMaterialBarcode);
+//                    WmsInnerMaterialBarcode upMaterialBarcode = new WmsInnerMaterialBarcode();
+//                    upMaterialBarcode.setMaterialBarcodeId(materialBarcodeDto.getMaterialBarcodeId());
+//                    upMaterialBarcode.setIfScan((byte) 1);
+//                    upMaterialBarcode.setModifiedTime(new Date());
+//                    upMaterialBarcode.setModifiedUserId(sysUser.getUserId());
+//                    wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(upMaterialBarcode);
+                    Example example = new Example(WmsInnerMaterialBarcodeReOrder.class);
+                    example.createCriteria().andEqualTo("orderTypeCode","IN-IWK")
+                            .andEqualTo("orderId",barcodeReOrderDtoLast.get().getOrderId())
+                            .andEqualTo("materialBarcodeId",materialBarcodeDto.getMaterialBarcodeId());
+                    WmsInnerMaterialBarcodeReOrder barcodeReOrder=wmsInnerMaterialBarcodeReOrderMapper.selectOneByExample(example);
+                    if(StringUtils.isNotEmpty(barcodeReOrder)){
+                        if(StringUtils.isNotEmpty(barcodeReOrder.getIfScan()) && barcodeReOrder.getIfScan()==(byte)1){
+                            if(resultDto.getBarcodeType()==(byte)1){
+                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"SN条码已扫描 请勿重复扫描");
+                            }else if(resultDto.getBarcodeType()==(byte)2){
+                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"SN条码已扫描 请勿再扫描彩盒码");
+                            }else if(resultDto.getBarcodeType()==(byte)3){
+                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"SN条码已扫描 请勿再扫描箱码");
+                            }else if(resultDto.getBarcodeType()==(byte)4){
+                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"SN条码已扫描 请勿再扫描栈板码");
+                            }
+                        }
+                    }
+
+                    barcodeReOrder.setIfScan((byte) 1);
+                    barcodeReOrder.setModifiedTime(new Date());
+                    barcodeReOrder.setModifiedUserId(sysUser.getUserId());
+                    wmsInnerMaterialBarcodeReOrderMapper.updateByPrimaryKeySelective(barcodeReOrder);
                 }
             }
         }
@@ -2687,16 +2734,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             WmsInnerMaterialBarcodeReOrder upBarcodeReOrder=new WmsInnerMaterialBarcodeReOrder();
             upBarcodeReOrder.setMaterialBarcodeReOrderId(reOrderList.get(0).getMaterialBarcodeReOrderId());
             upBarcodeReOrder.setScanStatus((byte)1);
+            upBarcodeReOrder.setIfScan((byte)0);
             upBarcodeReOrder.setModifiedUserId(sysUser.getUserId());
             upBarcodeReOrder.setModifiedTime(new Date());
             num+=wmsInnerMaterialBarcodeReOrderMapper.updateByPrimaryKeySelective(upBarcodeReOrder);
 
-            WmsInnerMaterialBarcode upBarcode=new WmsInnerMaterialBarcode();
-            upBarcode.setMaterialBarcodeId(materialBarcodeId);
-            upBarcode.setIfScan((byte) 0);
-            upBarcode.setModifiedUserId(sysUser.getUserId());
-            upBarcode.setModifiedTime(new Date());
-            num+=wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(upBarcode);
         }
 
         return num;
@@ -2782,12 +2824,29 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             List<WmsInnerMaterialBarcodeDto> barcodeList=resultDto.getMaterialBarcodeDtoList();
             if(StringUtils.isNotEmpty(barcodeList) && barcodeList.size()>0) {
                 for (WmsInnerMaterialBarcodeDto materialBarcodeDto : barcodeList) {
-                    WmsInnerMaterialBarcode upMaterialBarcode = new WmsInnerMaterialBarcode();
-                    upMaterialBarcode.setMaterialBarcodeId(materialBarcodeDto.getMaterialBarcodeId());
-                    upMaterialBarcode.setIfScan((byte) 1);
-                    upMaterialBarcode.setModifiedTime(new Date());
-                    upMaterialBarcode.setModifiedUserId(sysUser.getUserId());
-                    wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(upMaterialBarcode);
+                    Example example = new Example(WmsInnerMaterialBarcodeReOrder.class);
+                    example.createCriteria().andEqualTo("orderTypeCode","IN-IWK")
+                            .andEqualTo("orderId",orderId)
+                            .andEqualTo("materialBarcodeId",materialBarcodeDto.getMaterialBarcodeId());
+                    WmsInnerMaterialBarcodeReOrder barcodeReOrder=wmsInnerMaterialBarcodeReOrderMapper.selectOneByExample(example);
+                    if(StringUtils.isNotEmpty(barcodeReOrder)){
+                        if(StringUtils.isNotEmpty(barcodeReOrder.getIfScan()) && barcodeReOrder.getIfScan()==(byte)1){
+                            if(resultDto.getBarcodeType()==(byte)1){
+                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"SN条码已扫描 请勿重复扫描");
+                            }else if(resultDto.getBarcodeType()==(byte)2){
+                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"SN条码已扫描 请勿再扫描彩盒码");
+                            }else if(resultDto.getBarcodeType()==(byte)3){
+                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"SN条码已扫描 请勿再扫描箱码");
+                            }else if(resultDto.getBarcodeType()==(byte)4){
+                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"SN条码已扫描 请勿再扫描栈板码");
+                            }
+                        }
+                    }
+
+                    barcodeReOrder.setIfScan((byte) 1);
+                    barcodeReOrder.setModifiedTime(new Date());
+                    barcodeReOrder.setModifiedUserId(sysUser.getUserId());
+                    wmsInnerMaterialBarcodeReOrderMapper.updateByPrimaryKeySelective(barcodeReOrder);
                 }
             }
 
@@ -3094,7 +3153,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     WmsInnerMaterialBarcode upBarcode=new WmsInnerMaterialBarcode();
                     upBarcode.setMaterialBarcodeId(materialBarcodeDto.getMaterialBarcodeId());
                     upBarcode.setBarcodeStatus((byte)5);
-                    upBarcode.setIfScan((byte)0);//解锁
+                    //upBarcode.setIfScan((byte)0);//解锁
                     upBarcode.setModifiedUserId(sysUser.getUserId());
                     upBarcode.setModifiedTime(new Date());
                     wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(upBarcode);
@@ -3516,7 +3575,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     WmsInnerMaterialBarcode upBarcode=new WmsInnerMaterialBarcode();
                     upBarcode.setMaterialBarcodeId(materialBarcodeDto.getMaterialBarcodeId());
                     upBarcode.setBarcodeStatus((byte)5);
-                    upBarcode.setIfScan((byte)0);
+                    //upBarcode.setIfScan((byte)0);
                     upBarcode.setModifiedUserId(sysUser.getUserId());
                     upBarcode.setModifiedTime(new Date());
                     wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(upBarcode);

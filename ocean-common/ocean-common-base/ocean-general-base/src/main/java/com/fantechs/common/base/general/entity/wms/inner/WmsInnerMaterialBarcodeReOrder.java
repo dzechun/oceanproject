@@ -83,6 +83,13 @@ public class WmsInnerMaterialBarcodeReOrder extends ValidGroup implements Serial
     private Byte scanStatus;
 
     /**
+     * 扫描标志
+     */
+    @ApiModelProperty(name="ifScan",value = "扫描标志")
+    @Column(name = "if_scan")
+    private Byte ifScan;
+
+    /**
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
