@@ -635,7 +635,13 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                 throw new BizErrorException("单据未完成收货，下推失败");
             }
             sysOrderTypeCode = wmsInReceivingOrder.getSysOrderTypeCode();
-            coreSourceSysOrderTypeCode = wmsInReceivingOrder.getCoreSourceSysOrderTypeCode();
+
+            if(StringUtils.isNotEmpty(wmsInReceivingOrder.getCoreSourceSysOrderTypeCode())){
+                coreSourceSysOrderTypeCode = wmsInReceivingOrder.getCoreSourceSysOrderTypeCode();
+            }
+            if(StringUtils.isEmpty(coreSourceSysOrderTypeCode)){
+                coreSourceSysOrderTypeCode="IN-SWK";
+            }
             switch (s){
                 case "QMS-MIIO":
                     //来料检验
@@ -647,6 +653,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                         qmsIncomingInspectionOrder.setSourceOrderCode(wmsInReceivingOrder.getReceivingOrderCode());
                         qmsIncomingInspectionOrder.setWarehouseId(wmsInReceivingOrder.getWarehouseId());
                         qmsIncomingInspectionOrder.setSourceId(wmsInReceivingOrderDet.getReceivingOrderDetId());
+                        qmsIncomingInspectionOrder.setCoreSourceId(wmsInReceivingOrderDet.getCoreSourceId());
                         qmsIncomingInspectionOrder.setMaterialId(wmsInReceivingOrderDet.getMaterialId());
                         qmsIncomingInspectionOrder.setOrderQty(wmsInReceivingOrderDet.getPlanQty());
                         qmsIncomingInspectionOrder.setInspectionStatus((byte)1);
@@ -678,6 +685,16 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                         wmsInnerJobOrderDet.setCoreSourceOrderCode(wmsInReceivingOrderDet.getCoreSourceOrderCode());
                         wmsInnerJobOrderDet.setSourceOrderCode(wmsInReceivingOrder.getReceivingOrderCode());
                         wmsInnerJobOrderDet.setSourceId(wmsInReceivingOrderDet.getReceivingOrderDetId());
+
+                        Long coreSourceId=null;
+                        if(StringUtils.isNotEmpty(wmsInReceivingOrderDet.getCoreSourceId())){
+                            coreSourceId=wmsInReceivingOrderDet.getCoreSourceId();
+                        }
+                        if(StringUtils.isEmpty(coreSourceId)){
+                            coreSourceId=wmsInReceivingOrderDet.getReceivingOrderDetId();
+                        }
+                        wmsInnerJobOrderDet.setCoreSourceId(coreSourceId);
+
                         wmsInnerJobOrderDet.setLineNumber(lineNumber+"");
                         wmsInnerJobOrderDet.setMaterialId(wmsInReceivingOrderDet.getMaterialId());
                         wmsInnerJobOrderDet.setPlanQty(wmsInReceivingOrderDet.getPlanQty());
@@ -724,6 +741,16 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                         wmsInInPlanOrderDetDto.setSourceOrderCode(wmsInReceivingOrder.getReceivingOrderCode());
                         wmsInInPlanOrderDetDto.setMaterialId(wmsInReceivingOrderDet.getMaterialId());
                         wmsInInPlanOrderDetDto.setSourceId(wmsInReceivingOrderDet.getReceivingOrderDetId());
+
+                        Long coreSourceId=null;
+                        if(StringUtils.isNotEmpty(wmsInReceivingOrderDet.getCoreSourceId())){
+                            coreSourceId=wmsInReceivingOrderDet.getCoreSourceId();
+                        }
+                        if(StringUtils.isEmpty(coreSourceId)){
+                            coreSourceId=wmsInReceivingOrderDet.getReceivingOrderDetId();
+                        }
+                        wmsInInPlanOrderDetDto.setCoreSourceId(coreSourceId);
+
                         wmsInInPlanOrderDetDto.setBatchCode(wmsInReceivingOrderDet.getBatchCode());
                         wmsInInPlanOrderDetDto.setPlanQty(wmsInReceivingOrderDet.getActualQty());
                         wmsInInPlanOrderDetDto.setLineNumber(wmsInReceivingOrderDet.getLineNumber());
