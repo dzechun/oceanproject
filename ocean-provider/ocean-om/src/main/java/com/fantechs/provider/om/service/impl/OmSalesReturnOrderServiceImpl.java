@@ -387,7 +387,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
 
                 ResponseEntity responseEntity = inFeignApi.add(wmsInPlanReceivingOrder);
                 if (responseEntity.getCode() != 0) {
-                    throw new BizErrorException("下推生成收货计划单失败");
+                    throw new BizErrorException("下推生成收货计划单失败,"+ responseEntity.getMessage());
                 } else {
                     i++;
                 }
@@ -443,7 +443,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
 
                 ResponseEntity responseEntity = inFeignApi.add(wmsInReceivingOrder);
                 if (responseEntity.getCode() != 0) {
-                    throw new BizErrorException("下推生成收货作业单失败");
+                    throw new BizErrorException("下推生成收货作业单失败,"+ responseEntity.getMessage());
                 } else {
                     i++;
                 }
@@ -494,7 +494,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                 ResponseEntity responseEntity = qmsFeignApi.batchAdd(detList);
 
                 if (responseEntity.getCode() != 0) {
-                    throw new BizErrorException("下推生成来料检验单失败");
+                    throw new BizErrorException("下推生成来料检验单失败,"+ responseEntity.getMessage());
                 } else {
                     i++;
                 }
@@ -560,7 +560,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
 
                 ResponseEntity responseEntity = inFeignApi.add(wmsInInPlanOrder);
                 if (responseEntity.getCode() != 0) {
-                    throw new BizErrorException("下推生成入库计划单失败");
+                    throw new BizErrorException("下推生成入库计划单失败,"+ responseEntity.getMessage());
                 } else {
 
                     i++;
@@ -619,7 +619,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
 
                 ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
                 if (responseEntity.getCode() != 0) {
-                    throw new BizErrorException("下推生成上架作业单失败");
+                    throw new BizErrorException("下推生成上架作业单失败,"+ responseEntity.getMessage());
                 } else {
                     i++;
                 }
