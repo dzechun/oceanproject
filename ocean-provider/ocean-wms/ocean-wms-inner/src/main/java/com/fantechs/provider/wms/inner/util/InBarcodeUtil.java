@@ -183,9 +183,9 @@ public class InBarcodeUtil {
             if(barcodeDtos.get(0).getBarcodeStatus()==(byte)5){
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
             }
-            if(StringUtils.isNotEmpty(barcodeDtos.get(0).getIfScan()) && barcodeDtos.get(0).getIfScan()==(byte)1){
-                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
-            }
+//            if(StringUtils.isNotEmpty(barcodeDtos.get(0).getIfScan()) && barcodeDtos.get(0).getIfScan()==(byte)1){
+//                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
+//            }
             barcodeResultDto.setBarcodeType((byte)1);
             barcodeResultDto.setMaterialQty(barcodeDtos.get(0).getMaterialQty());
             barcodeResultDto.setBarcode(barcode);
@@ -211,11 +211,11 @@ public class InBarcodeUtil {
                 }
                 List<WmsInnerMaterialBarcodeDto> barcodeListColorBox = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
                 List<WmsInnerMaterialBarcodeDto> barcodeListSn = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
-                if(StringUtils.isNotEmpty(barcodeListSn) && barcodeListSn.size()>0){
-                    if(StringUtils.isNotEmpty(barcodeListSn.get(0).getIfScan()) && barcodeListSn.get(0).getIfScan()==(byte)1){
-                        throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"SN条码已扫描 请勿再扫描彩盒号-->"+barcode);
-                    }
-                }
+//                if(StringUtils.isNotEmpty(barcodeListSn) && barcodeListSn.size()>0){
+//                    if(StringUtils.isNotEmpty(barcodeListSn.get(0).getIfScan()) && barcodeListSn.get(0).getIfScan()==(byte)1){
+//                        throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"SN条码已扫描 请勿再扫描彩盒号-->"+barcode);
+//                    }
+//                }
                 barcodeResultDto.setBarcodeType((byte)2);
                 barcodeResultDto.setMaterialQty(barcodeDtos.get(0).getMaterialQty());
                 barcodeResultDto.setBarcode(barcode);
@@ -243,14 +243,14 @@ public class InBarcodeUtil {
                     List<WmsInnerMaterialBarcodeDto> barcodeList = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
                     List<WmsInnerMaterialBarcodeDto> barcodeListCarton = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
                     BigDecimal totalQty=barcodeList.stream().map(WmsInnerMaterialBarcodeDto::getMaterialQty).reduce(BigDecimal.ZERO,BigDecimal::add);
-                    if(StringUtils.isNotEmpty(barcodeList) && barcodeList.size()>0){
-                        for (WmsInnerMaterialBarcodeDto item : barcodeList) {
-                            if(StringUtils.isNotEmpty(item.getIfScan()) && item.getIfScan()==(byte)1){
-                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"SN条码已扫描 请勿再扫描箱码-->"+barcode);
-                            }
-                        }
-
-                    }
+//                    if(StringUtils.isNotEmpty(barcodeList) && barcodeList.size()>0){
+//                        for (WmsInnerMaterialBarcodeDto item : barcodeList) {
+//                            if(StringUtils.isNotEmpty(item.getIfScan()) && item.getIfScan()==(byte)1){
+//                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"SN条码已扫描 请勿再扫描箱码-->"+barcode);
+//                            }
+//                        }
+//
+//                    }
                     barcodeResultDto.setBarcodeType((byte)3);
                     barcodeResultDto.setMaterialQty(totalQty);
                     barcodeResultDto.setBarcode(barcode);
@@ -278,13 +278,13 @@ public class InBarcodeUtil {
                         }
                         List<WmsInnerMaterialBarcodeDto> barcodeList = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
                         List<WmsInnerMaterialBarcodeDto> barcodeListPallet = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
-                        if(StringUtils.isNotEmpty(barcodeList) && barcodeList.size()>0){
-                            for (WmsInnerMaterialBarcodeDto item : barcodeList) {
-                                if(StringUtils.isNotEmpty(item.getIfScan()) && item.getIfScan()==(byte)1){
-                                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"SN条码已扫描 请勿再扫描栈板码-->"+barcode);
-                                }
-                            }
-                        }
+//                        if(StringUtils.isNotEmpty(barcodeList) && barcodeList.size()>0){
+//                            for (WmsInnerMaterialBarcodeDto item : barcodeList) {
+//                                if(StringUtils.isNotEmpty(item.getIfScan()) && item.getIfScan()==(byte)1){
+//                                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"SN条码已扫描 请勿再扫描栈板码-->"+barcode);
+//                                }
+//                            }
+//                        }
                         BigDecimal totalQty=barcodeList.stream().map(WmsInnerMaterialBarcodeDto::getMaterialQty).reduce(BigDecimal.ZERO,BigDecimal::add);
                         barcodeResultDto.setBarcodeType((byte)4);
                         barcodeResultDto.setMaterialQty(totalQty);

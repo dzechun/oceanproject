@@ -13,6 +13,7 @@
         <result column="order_det_id" jdbcType="BIGINT" property="orderDetId"/>
         <result column="material_barcode_id" jdbcType="BIGINT" property="materialBarcodeId"/>
         <result column="scan_status" jdbcType="TINYINT" property="scanStatus"/>
+        <result column="if_scan" jdbcType="TINYINT" property="ifScan"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="org_id" jdbcType="BIGINT" property="orgId"/>
@@ -48,6 +49,7 @@
     wimbro.order_id,
     wimbro.order_det_id,
     wimbro.material_barcode_id,
+    wimbro.if_scan,
     wimbro.scan_status,
     wimbro.org_id,
     wimbro.create_user_id,
