@@ -11,6 +11,7 @@
         <result column="source_order_code" jdbcType="VARCHAR" property="sourceOrderCode"/>
         <result column="line_number" jdbcType="VARCHAR" property="lineNumber"/>
         <result column="source_id" jdbcType="BIGINT" property="sourceId"/>
+        <result column="core_source_id" jdbcType="BIGINT" property="coreSourceId"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="plan_qty" jdbcType="DECIMAL" property="planQty"/>
         <result column="putaway_qty" jdbcType="DECIMAL" property="putawayQty"/>
@@ -52,6 +53,7 @@
         wiipod.core_source_order_code,
         wiipod.source_order_code,
         wiipod.line_number,
+        wiipod.core_source_id,
         wiipod.source_id,
         wiipod.material_id,
         wiipod.plan_qty,
