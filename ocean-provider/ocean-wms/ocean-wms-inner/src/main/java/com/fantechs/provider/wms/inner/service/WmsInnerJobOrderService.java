@@ -104,10 +104,10 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
 
     /**
      * PDA删除条码
-     * @param materialBarcodeId 来料条码ID
+     * @param barcode 来料条码
      * @return
      */
-    int updateBarcodeStatus(Long materialBarcodeId);
+    int updateBarcodeStatus(String barcode);
 
     /**
      * Web端单一确认作业 扫描条码

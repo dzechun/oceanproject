@@ -2717,28 +2717,31 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int updateBarcodeStatus(Long materialBarcodeId) {
+    public int updateBarcodeStatus(String barcode) {
         int num=1;
-        Example example = new Example(WmsInnerMaterialBarcode.class);
-        example.createCriteria().andEqualTo("materialBarcodeId",materialBarcodeId);
-        WmsInnerMaterialBarcode materialBarcode = wmsInnerMaterialBarcodeMapper.selectOneByExample(example);
-        if(StringUtils.isNotEmpty(materialBarcode)){
+        BarcodeResultDto resultDto=InBarcodeUtil.scanBarcode(barcode);
+        if(StringUtils.isEmpty(resultDto)){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码无效");
+        }
+        List<WmsInnerMaterialBarcodeDto> list=resultDto.getMaterialBarcodeDtoList();
+        if(list.size()>0){
             SysUser sysUser=currentUser();
-            SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
-            sBarcodeReOrder.setMaterialBarcodeId(materialBarcodeId);
-            sBarcodeReOrder.setOrderTypeCode("IN-IWK");//上架作业单类型
-            List<WmsInnerMaterialBarcodeReOrderDto> reOrderList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
-            if(reOrderList.size()<=0){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"上架单未找到此条码数据");
+            for (WmsInnerMaterialBarcodeDto materialBarcodeDto : list) {
+                SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
+                sBarcodeReOrder.setMaterialBarcodeId(materialBarcodeDto.getMaterialBarcodeId());
+                sBarcodeReOrder.setOrderTypeCode("IN-IWK");//上架作业单类型
+                List<WmsInnerMaterialBarcodeReOrderDto> reOrderList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
+                if(reOrderList.size()<=0){
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"上架单未找到此条码数据");
+                }
+                WmsInnerMaterialBarcodeReOrder upBarcodeReOrder=new WmsInnerMaterialBarcodeReOrder();
+                upBarcodeReOrder.setMaterialBarcodeReOrderId(reOrderList.get(0).getMaterialBarcodeReOrderId());
+                upBarcodeReOrder.setScanStatus((byte)1);
+                upBarcodeReOrder.setIfScan((byte)0);
+                upBarcodeReOrder.setModifiedUserId(sysUser.getUserId());
+                upBarcodeReOrder.setModifiedTime(new Date());
+                num+=wmsInnerMaterialBarcodeReOrderMapper.updateByPrimaryKeySelective(upBarcodeReOrder);
             }
-            WmsInnerMaterialBarcodeReOrder upBarcodeReOrder=new WmsInnerMaterialBarcodeReOrder();
-            upBarcodeReOrder.setMaterialBarcodeReOrderId(reOrderList.get(0).getMaterialBarcodeReOrderId());
-            upBarcodeReOrder.setScanStatus((byte)1);
-            upBarcodeReOrder.setIfScan((byte)0);
-            upBarcodeReOrder.setModifiedUserId(sysUser.getUserId());
-            upBarcodeReOrder.setModifiedTime(new Date());
-            num+=wmsInnerMaterialBarcodeReOrderMapper.updateByPrimaryKeySelective(upBarcodeReOrder);
-
         }
 
         return num;

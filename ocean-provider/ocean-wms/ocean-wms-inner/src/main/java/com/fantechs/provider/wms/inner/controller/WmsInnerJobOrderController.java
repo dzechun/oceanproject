@@ -76,8 +76,8 @@ public class WmsInnerJobOrderController {
 
     @ApiOperation("更新条码扫描状态")
     @PostMapping("/updateBarcodeStatus")
-    public ResponseEntity updateBarcodeStatus(@ApiParam(value = "条码ID",required = true) @RequestParam @NotBlank(message="materialBarcodeId 不能为空") Long materialBarcodeId) {
-        return ControllerUtil.returnCRUD(wmsInPutawayOrderService.updateBarcodeStatus(materialBarcodeId));
+    public ResponseEntity updateBarcodeStatus(@ApiParam(value = "条码",required = true) @RequestParam @NotBlank(message="barcode 不能为空") String barcode) {
+        return ControllerUtil.returnCRUD(wmsInPutawayOrderService.updateBarcodeStatus(barcode));
     }
 
     @ApiOperation("整单确认")
