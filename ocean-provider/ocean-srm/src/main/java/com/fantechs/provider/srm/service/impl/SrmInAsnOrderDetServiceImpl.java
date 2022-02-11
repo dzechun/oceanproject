@@ -14,23 +14,20 @@ import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInPlanReceivingOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDetDto;
-import com.fantechs.common.base.general.entity.basic.BaseMaterial;
-import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
-import com.fantechs.common.base.general.entity.basic.BaseStorage;
-import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
+import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrderDet;
 import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrderDet;
-import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrder;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrderDet;
 import com.fantechs.common.base.general.entity.srm.history.SrmInHtAsnOrderDet;
-import com.fantechs.common.base.general.entity.wms.in.*;
+import com.fantechs.common.base.general.entity.wms.in.WmsInPlanReceivingOrder;
+import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.provider.srm.util.OrderFlowUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
@@ -40,8 +37,8 @@ import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.srm.mapper.SrmInAsnOrderDetMapper;
 import com.fantechs.provider.srm.mapper.SrmInAsnOrderMapper;
-import com.fantechs.provider.srm.mapper.SrmInHtAsnOrderDetMapper;
 import com.fantechs.provider.srm.service.SrmInAsnOrderDetService;
+import com.fantechs.provider.srm.util.OrderFlowUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,8 +60,6 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
     @Resource
     private SrmInAsnOrderMapper srmInAsnOrderMapper;
     @Resource
-    private SrmInHtAsnOrderDetMapper srmInHtAsnOrderDetMapper;
-    @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
     private OMFeignApi oMFeignApi;
@@ -79,6 +74,17 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
 
     @Override
     public List<SrmInAsnOrderDetDto> findList(Map<String, Object> map) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(StringUtils.isEmpty(map.get("orgId"))){
+            map.put("orgId",sysUser.getOrganizationId());
+        }
+        SearchBaseSupplierReUser searchBaseSupplierReUser = new SearchBaseSupplierReUser();
+        searchBaseSupplierReUser.setUserId(sysUser.getUserId());
+        ResponseEntity<List<BaseSupplierReUser>> list = baseFeignApi.findList(searchBaseSupplierReUser);
+        if (StringUtils.isNotEmpty(list.getData())){
+            map.put("supplierIdList", list.getData());
+        }
+        map.put("orderTypeCode", "YSHTZD");
         return srmInAsnOrderDetMapper.findList(map);
     }
 
@@ -140,14 +146,15 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
                     //判断下推数量是否满足
                     BigDecimal totalIssueQty = StringUtils.isEmpty(srmInAsnOrderDetDto.getTotalIssueQty())?new BigDecimal(0):srmInAsnOrderDetDto.getTotalIssueQty();
                     BigDecimal total = totalIssueQty.add(srmInAsnOrderDetDto.getIssueQty());
-                    if (srmInAsnOrderDetDto.getOrderQty().compareTo(total) == -1) {
-                        throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"下推失败，下推数量超出采购数量");
-                    } else if (srmInAsnOrderDetDto.getOrderQty().compareTo(total) == 0) {
+                    if (srmInAsnOrderDetDto.getDeliveryQty().compareTo(total) == -1) {
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"下推失败，下推数量超出本次交货数量");
+                    } else if (srmInAsnOrderDetDto.getDeliveryQty().compareTo(total) == 0) {
                         srmInAsnOrderDetDto.setIfAllIssued((byte) 1);
                     }else {
                         srmInAsnOrderDetDto.setIfAllIssued((byte) 0);
                     }
                     srmInAsnOrderDetDto.setTotalIssueQty(total);
+                    srmInAsnOrderDetMapper.updateByPrimaryKeySelective(srmInAsnOrderDetDto);
 
                     //获取单据流配置
                     BaseOrderFlow baseOrderFlowDto = OrderFlowUtil.getOrderFlow(data,srmInAsnOrderDetDto.getMaterialId(),srmInAsnOrderDetDto.getSupplierId());

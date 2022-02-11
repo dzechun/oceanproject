@@ -120,7 +120,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             //获取发货库位
             SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
             searchBaseStorage.setWarehouseId(omOtherInOrderDet.getWarehouseId());
-            searchBaseStorage.setStorageType((byte)2);
+            searchBaseStorage.setStorageType((byte) 2);
             List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
             if (StringUtils.isEmpty(baseStorages)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未获取到该仓库的发货库位");
@@ -240,7 +240,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(OmOtherInOrder entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        int i =0;
+        int i = 0;
         if (entity.getOrderStatus() > 1) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "单据已被操作，无法修改");
         }
@@ -259,10 +259,10 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         //更新原有明细
         ArrayList<Long> idList = new ArrayList<>();
         List<OmOtherInOrderDet> list = entity.getOmOtherInOrderDets();
-        if(StringUtils.isNotEmpty(list)) {
+        if (StringUtils.isNotEmpty(list)) {
             for (OmOtherInOrderDet det : list) {
-                if(StringUtils.isEmpty(det.getOrderQty()) || det.getOrderQty().compareTo(BigDecimal.ZERO) == -1)
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"计划数量需大于0");
+                if (StringUtils.isEmpty(det.getOrderQty()) || det.getOrderQty().compareTo(BigDecimal.ZERO) == -1)
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "计划数量需大于0");
 
                 if (StringUtils.isNotEmpty(det.getOtherInOrderId())) {
                     omOtherInOrderDetMapper.updateByPrimaryKey(det);
@@ -281,9 +281,9 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         omOtherInOrderDetMapper.deleteByExample(example1);
 
         //新增剩余的明细
-        if(StringUtils.isNotEmpty(list)){
+        if (StringUtils.isNotEmpty(list)) {
             List<OmOtherInOrderDet> addlist = new ArrayList<>();
-            for (OmOtherInOrderDet det  : list){
+            for (OmOtherInOrderDet det : list) {
                 if (idList.contains(det.getOtherInOrderDetId())) {
                     continue;
                 }
@@ -292,7 +292,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 det.setCreateTime(new Date());
                 det.setModifiedUserId(user.getUserId());
                 det.setModifiedTime(new Date());
-                det.setStatus(StringUtils.isEmpty(det.getStatus())?1: det.getStatus());
+                det.setStatus(StringUtils.isEmpty(det.getStatus()) ? 1 : det.getStatus());
                 det.setOrgId(user.getOrganizationId());
                 addlist.add(det);
             }
@@ -357,16 +357,13 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
             if (order.getIfAllIssued() != null && order.getIfAllIssued() == (byte) 1) {
                 throw new BizErrorException("订单已下推，无法再次下推");
             }
-            if(StringUtils.isEmpty(order.getTotalIssueQty()))
+            if (StringUtils.isEmpty(order.getTotalIssueQty()))
                 order.setTotalIssueQty(BigDecimal.ZERO);
             BigDecimal add = order.getTotalIssueQty().add(order.getQty());
             order.setTotalIssueQty(add);
             if (order.getOrderQty().compareTo(add) == -1) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "累计下发数量大于包装总数");
-            }else if(order.getOrderQty().compareTo(add) == 0){
-                order.setIfAllIssued((byte)1);
             }
-            omOtherInOrderDetMapper.updateByPrimaryKeySelective(order);
             set.add(order.getWarehouseId());
         }
 
@@ -376,7 +373,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
         //查当前单据的下游单据
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
         searchBaseOrderFlow.setOrderTypeCode("IN-OIO");
-        searchBaseOrderFlow.setStatus((byte)1);
+        searchBaseOrderFlow.setStatus((byte) 1);
         List<BaseOrderFlowDto> baseOrderFlowDtos = baseFeignApi.findAll(searchBaseOrderFlow).getData();
         if (StringUtils.isEmpty(baseOrderFlowDtos)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未找到当前单据配置的下游单据");
@@ -432,10 +429,10 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().add(omOtherInOrderDet.getQty()));
                     if (omOtherInOrderDet.getTotalIssueQty().compareTo(omOtherInOrderDet.getOrderQty()) == 0) {
                         omOtherInOrderDet.setIfAllIssued((byte) 1);
-                        order.setOrderStatus((byte)3);
+                        order.setOrderStatus((byte) 3);
                     } else {
                         omOtherInOrderDet.setIfAllIssued((byte) 0);
-                        order.setOrderStatus((byte)2);
+                        order.setOrderStatus((byte) 2);
                     }
                     list.add(omOtherInOrderDet);
                     orderList.add(order);
@@ -456,7 +453,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
                 ResponseEntity responseEntity = inFeignApi.add(wmsInPlanReceivingOrder);
                 if (responseEntity.getCode() != 0) {
-                    throw new BizErrorException("下推生成收货计划单失败,"+ responseEntity.getMessage());
+                    throw new BizErrorException("下推生成收货计划单失败," + responseEntity.getMessage());
                 } else {
                     i++;
                 }
@@ -487,10 +484,10 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().add(omOtherInOrderDet.getQty()));
                     if (omOtherInOrderDet.getTotalIssueQty().compareTo(omOtherInOrderDet.getOrderQty()) == 0) {
                         omOtherInOrderDet.setIfAllIssued((byte) 1);
-                        order.setOrderStatus((byte)3);
+                        order.setOrderStatus((byte) 3);
                     } else {
                         omOtherInOrderDet.setIfAllIssued((byte) 0);
-                        order.setOrderStatus((byte)2);
+                        order.setOrderStatus((byte) 2);
                     }
                     list.add(omOtherInOrderDet);
                     orderList.add(order);
@@ -510,7 +507,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
                 ResponseEntity responseEntity = inFeignApi.add(wmsInReceivingOrder);
                 if (responseEntity.getCode() != 0) {
-                    throw new BizErrorException("下推生成收货作业单失败,"+ responseEntity.getMessage());
+                    throw new BizErrorException("下推生成收货作业单失败," + responseEntity.getMessage());
                 } else {
                     i++;
                 }
@@ -548,10 +545,10 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().add(omOtherInOrderDet.getQty()));
                     if (omOtherInOrderDet.getTotalIssueQty().compareTo(omOtherInOrderDet.getOrderQty()) == 0) {
                         omOtherInOrderDet.setIfAllIssued((byte) 1);
-                        order.setOrderStatus((byte)3);
+                        order.setOrderStatus((byte) 3);
                     } else {
                         omOtherInOrderDet.setIfAllIssued((byte) 0);
-                        order.setOrderStatus((byte)2);
+                        order.setOrderStatus((byte) 2);
                     }
                     list.add(omOtherInOrderDet);
                     orderList.add(order);
@@ -559,7 +556,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 ResponseEntity responseEntity = qmsFeignApi.batchAdd(detList);
 
                 if (responseEntity.getCode() != 0) {
-                    throw new BizErrorException("下推生成来料检验单失败,"+ responseEntity.getMessage());
+                    throw new BizErrorException("下推生成来料检验单失败," + responseEntity.getMessage());
                 } else {
                     i++;
                 }
@@ -598,10 +595,10 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().add(omOtherInOrderDet.getQty()));
                     if (omOtherInOrderDet.getTotalIssueQty().compareTo(omOtherInOrderDet.getOrderQty()) == 0) {
                         omOtherInOrderDet.setIfAllIssued((byte) 1);
-                        order.setOrderStatus((byte)3);
+                        order.setOrderStatus((byte) 3);
                     } else {
                         omOtherInOrderDet.setIfAllIssued((byte) 0);
-                        order.setOrderStatus((byte)2);
+                        order.setOrderStatus((byte) 2);
                     }
                     list.add(omOtherInOrderDet);
                     orderList.add(order);
@@ -622,7 +619,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
                 ResponseEntity responseEntity = inFeignApi.add(wmsInInPlanOrder);
                 if (responseEntity.getCode() != 0) {
-                    throw new BizErrorException("下推生成入库计划单失败,"+ responseEntity.getMessage());
+                    throw new BizErrorException("下推生成入库计划单失败," + responseEntity.getMessage());
                 } else {
 
                     i++;
@@ -643,7 +640,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     //查询默认收货库位
                     SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
                     searchBaseStorage.setWarehouseId(omOtherInOrderDet.getWarehouseId());
-                    searchBaseStorage.setStorageType((byte)2);
+                    searchBaseStorage.setStorageType((byte) 2);
                     List<BaseStorage> data = baseFeignApi.findList(searchBaseStorage).getData();
 
                     WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
@@ -655,17 +652,17 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     wmsInnerJobOrderDet.setMaterialId(omOtherInOrderDet.getMaterialId());
                     wmsInnerJobOrderDet.setPlanQty(omOtherInOrderDet.getQty());
                     wmsInnerJobOrderDet.setLineStatus((byte) 1);
-                    if(StringUtils.isNotEmpty(data))
+                    if (StringUtils.isNotEmpty(data))
                         wmsInnerJobOrderDet.setOutStorageId(data.get(0).getStorageId());
 
                     detList.add(wmsInnerJobOrderDet);
                     omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().add(omOtherInOrderDet.getQty()));
                     if (omOtherInOrderDet.getTotalIssueQty().compareTo(omOtherInOrderDet.getOrderQty()) == 0) {
                         omOtherInOrderDet.setIfAllIssued((byte) 1);
-                        order.setOrderStatus((byte)3);
+                        order.setOrderStatus((byte) 3);
                     } else {
                         omOtherInOrderDet.setIfAllIssued((byte) 0);
-                        order.setOrderStatus((byte)2);
+                        order.setOrderStatus((byte) 2);
                     }
                     list.add(omOtherInOrderDet);
                     orderList.add(order);
@@ -673,7 +670,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
                 wmsInnerJobOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
-                wmsInnerJobOrder.setSourceBigType((byte)1);
+                wmsInnerJobOrder.setSourceBigType((byte) 1);
                 wmsInnerJobOrder.setJobOrderType((byte) 1);
                 wmsInnerJobOrder.setOrderStatus((byte) 1);
                 wmsInnerJobOrder.setWarehouseId(omOtherInOrderDets.get(0).getWarehouseId());
@@ -687,7 +684,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
                 ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
                 if (responseEntity.getCode() != 0) {
-                    throw new BizErrorException("下推生成上架作业单失败,"+ responseEntity.getMessage());
+                    throw new BizErrorException("下推生成上架作业单失败," + responseEntity.getMessage());
                 } else {
                     i++;
                 }
@@ -716,19 +713,19 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateOtherInPutDownQty(Long otherInOrderDetId, BigDecimal putawayQty) {
-        int num=1;
+        int num = 1;
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        OmOtherInOrderDet omOtherInOrderDet=omOtherInOrderDetMapper.selectByPrimaryKey(otherInOrderDetId);
-        if(StringUtils.isNotEmpty(omOtherInOrderDet)){
-            if(StringUtils.isEmpty(omOtherInOrderDet.getTotalIssueQty())){
+        OmOtherInOrderDet omOtherInOrderDet = omOtherInOrderDetMapper.selectByPrimaryKey(otherInOrderDetId);
+        if (StringUtils.isNotEmpty(omOtherInOrderDet)) {
+            if (StringUtils.isEmpty(omOtherInOrderDet.getTotalIssueQty())) {
                 omOtherInOrderDet.setTotalIssueQty(new BigDecimal(0));
             }
 
             omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().subtract(putawayQty));
-            omOtherInOrderDet.setIfAllIssued((byte)0);
+            omOtherInOrderDet.setIfAllIssued((byte) 0);
             omOtherInOrderDet.setModifiedUserId(sysUser.getUserId());
             omOtherInOrderDet.setModifiedTime(new Date());
-            num+=omOtherInOrderDetMapper.updateByPrimaryKeySelective(omOtherInOrderDet);
+            num += omOtherInOrderDetMapper.updateByPrimaryKeySelective(omOtherInOrderDet);
         }
         return num;
     }
@@ -736,18 +733,18 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateOtherInPutQty(Long otherInOrderDetId, BigDecimal putawayQty) {
-        int num=1;
+        int num = 1;
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        OmOtherInOrderDet omOtherInOrderDet=omOtherInOrderDetMapper.selectByPrimaryKey(otherInOrderDetId);
-        if(StringUtils.isNotEmpty(omOtherInOrderDet)){
-            if(StringUtils.isEmpty(omOtherInOrderDet.getReceivingQty())){
+        OmOtherInOrderDet omOtherInOrderDet = omOtherInOrderDetMapper.selectByPrimaryKey(otherInOrderDetId);
+        if (StringUtils.isNotEmpty(omOtherInOrderDet)) {
+            if (StringUtils.isEmpty(omOtherInOrderDet.getReceivingQty())) {
                 omOtherInOrderDet.setReceivingQty(new BigDecimal(0));
             }
 
             omOtherInOrderDet.setReceivingQty(omOtherInOrderDet.getReceivingQty().add(putawayQty));
             omOtherInOrderDet.setModifiedUserId(sysUser.getUserId());
             omOtherInOrderDet.setModifiedTime(new Date());
-            num+=omOtherInOrderDetMapper.updateByPrimaryKeySelective(omOtherInOrderDet);
+            num += omOtherInOrderDetMapper.updateByPrimaryKeySelective(omOtherInOrderDet);
         }
         return num;
     }

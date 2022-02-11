@@ -1,6 +1,7 @@
 package com.fantechs.common.base.general.entity.wms.in.search;
 
 import com.fantechs.common.base.dto.BaseQuery;
+import com.fantechs.common.base.general.entity.basic.BaseSupplierReUser;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -35,4 +36,13 @@ public class SearchWmsInReceivingOrderDet extends BaseQuery implements Serializa
 
     @ApiModelProperty(name="receivingOrderCode",value = "收货作业单号")
     private String receivingOrderCode;
+
+    /**
+     * 供应商
+     */
+    @ApiModelProperty(name = "supplierId",value = "供应商")
+    private String supplierId;
+
+    List<BaseSupplierReUser> baseSupplierReUsers;
+
 }
