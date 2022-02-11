@@ -41,7 +41,7 @@ public class SearchWmsInPlanReceivingOrder extends BaseQuery implements Serializ
      * 仓库名称
      */
     @ApiModelProperty(name="warehouseName",value = "仓库名称")
-    private Long warehouseName;
+    private String warehouseName;
 
     /**
      * 单据状态(1-待执行 2-执行中 3-收货完成)

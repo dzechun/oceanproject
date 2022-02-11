@@ -7,10 +7,8 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.QmsIncomingInspectionOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInPlanReceivingOrderDto;
-import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderBarcode;
 import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.imports.WmsInPlanReceivingOrderImport;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
@@ -22,7 +20,6 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.general.entity.wms.in.*;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcodeReOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -141,6 +138,9 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
     public int update(WmsInPlanReceivingOrder entity) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
 
+        if(entity.getOrderStatus()>1){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012004.getCode(),"已作业单据，无法修改");
+        }
         if(entity.getSourceBigType()==1){
             throw new BizErrorException(ErrorCodeEnum.OPT20012004.getCode(),"下推单据,无法修改");
         }
