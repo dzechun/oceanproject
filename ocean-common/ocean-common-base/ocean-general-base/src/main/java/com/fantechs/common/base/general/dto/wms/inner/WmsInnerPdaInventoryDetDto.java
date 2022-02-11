@@ -54,6 +54,24 @@ public class WmsInnerPdaInventoryDetDto  implements Serializable {
     private String barcode;
 
     /**
+     * 彩盒码
+     */
+    @ApiModelProperty(name="colorBoxCode",value = "彩盒码")
+    private String colorBoxCode;
+
+    /**
+     * 箱码
+     */
+    @ApiModelProperty(name="cartonCode",value = "条码")
+    private String cartonCode;
+
+    /**
+     * 栈板码
+     */
+    @ApiModelProperty(name="palletCode",value = "栈板码")
+    private String palletCode;
+
+    /**
      * 物料数量
      */
     @ApiModelProperty(name="materialQty",value = "物料数量")
