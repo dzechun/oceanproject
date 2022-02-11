@@ -188,35 +188,10 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                                             wmsInnerMaterialBarcode.setModifiedUserId(sysUser.getUserId());
                                             wmsInnerMaterialBarcode.setModifiedTime(new Date());
                                             wmsInnerMaterialBarcodeList.add(wmsInnerMaterialBarcode);
-
-//                                            //更新条码关系表条码状态
-//                                            SearchWmsInnerMaterialBarcodeReOrder sReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
-//                                            sReOrder.setOrderTypeCode("IN-IWK");
-//                                            sReOrder.setOrderId(wmsInnerJobOrder.getJobOrderId());
-//                                            sReOrder.setMaterialBarcodeId(materialBarcodeDto.getMaterialBarcodeId());
-//                                            List<WmsInnerMaterialBarcodeReOrderDto> reOrderDtoList=wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sReOrder));
-//                                            if(reOrderDtoList.size()<=0){
-//                                                throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"条码关系表找不到此条码数据 条码ID-->"+item.getMaterialBarcodeId().toString());
-//                                            }
-//                                            //更新条码关系表扫描状态
-//                                            WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder=new WmsInnerMaterialBarcodeReOrder();
-//                                            wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeReOrderId(barcodeDto.getMaterialBarcodeId());
-//                                            wmsInnerMaterialBarcodeReOrder.setScanStatus((byte)3);
-//                                            wmsInnerMaterialBarcodeReOrder.setModifiedUserId(sysUser.getUserId());
-//                                            wmsInnerMaterialBarcodeReOrder.setModifiedTime(new Date());
-//                                            innerFeignApi.update(wmsInnerMaterialBarcodeReOrder);
                                         }
                                     }else {
                                         throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未获取到sn条码信息");
                                     }
-//                                }else {
-//                                    WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcode = new WmsInnerMaterialBarcodeDto();
-//                                    wmsInnerMaterialBarcode.setMaterialBarcodeId(wmsInReceivingOrderBarcode.getMaterialBarcodeId());
-//                                    wmsInnerMaterialBarcode.setBarcodeStatus((byte) 3);
-//                                    wmsInnerMaterialBarcode.setModifiedUserId(sysUser.getUserId());
-//                                    wmsInnerMaterialBarcode.setModifiedTime(new Date());
-//                                    wmsInnerMaterialBarcodeList.add(wmsInnerMaterialBarcode);
-//                                }
                             }
                     }
                     //更新条码状态
