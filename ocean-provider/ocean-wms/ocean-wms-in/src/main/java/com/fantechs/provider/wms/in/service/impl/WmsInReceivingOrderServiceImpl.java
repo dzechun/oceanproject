@@ -228,23 +228,23 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                     wmsInReceivingOrderDetMapper.insertUseGeneratedKeys(wmsInReceivingOrderDet);
                     //获取条码记录
                     if(StringUtils.isNotEmpty(wmsInReceivingOrderDet.getWmsInReceivingOrderBarcodeList())) {
-//                        List<WmsInnerMaterialBarcodeReOrder> wmsInnerMaterialBarcodeReOrders = new ArrayList<>();
-//                        for (WmsInReceivingOrderBarcode wmsInReceivingOrderBarcode : wmsInReceivingOrderDet.getWmsInReceivingOrderBarcodeList()) {
-//                            WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
-//                            wmsInnerMaterialBarcodeReOrder.setOrderId(record.getReceivingOrderId());
-//                            wmsInnerMaterialBarcodeReOrder.setOrderCode(record.getReceivingOrderCode());
-//                            wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(wmsInReceivingOrderBarcode.getMaterialBarcodeId());
-//                            wmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInReceivingOrderDet.getReceivingOrderDetId());
-//                            wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("IN-SWK");
-//                            wmsInnerMaterialBarcodeReOrder.setScanStatus((byte) 1);
-//                            wmsInnerMaterialBarcodeReOrders.add(wmsInnerMaterialBarcodeReOrder);
-//                        }
-//                        if (!wmsInnerMaterialBarcodeReOrders.isEmpty()) {
-//                            ResponseEntity responseEntity = innerFeignApi.batchAdd(wmsInnerMaterialBarcodeReOrders);
-//                            if (responseEntity.getCode() != 0) {
-//                                throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
-//                            }
-//                        }
+                        List<WmsInnerMaterialBarcodeReOrder> wmsInnerMaterialBarcodeReOrders = new ArrayList<>();
+                        for (WmsInReceivingOrderBarcode wmsInReceivingOrderBarcode : wmsInReceivingOrderDet.getWmsInReceivingOrderBarcodeList()) {
+                            WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
+                            wmsInnerMaterialBarcodeReOrder.setOrderId(record.getReceivingOrderId());
+                            wmsInnerMaterialBarcodeReOrder.setOrderCode(record.getReceivingOrderCode());
+                            wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(wmsInReceivingOrderBarcode.getMaterialBarcodeId());
+                            wmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInReceivingOrderDet.getReceivingOrderDetId());
+                            wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("IN-SWK");
+                            wmsInnerMaterialBarcodeReOrder.setScanStatus((byte) 1);
+                            wmsInnerMaterialBarcodeReOrders.add(wmsInnerMaterialBarcodeReOrder);
+                        }
+                        if (!wmsInnerMaterialBarcodeReOrders.isEmpty()) {
+                            ResponseEntity responseEntity = innerFeignApi.batchAdd(wmsInnerMaterialBarcodeReOrders);
+                            if (responseEntity.getCode() != 0) {
+                                throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
+                            }
+                        }
                     }else {
                         if (record.getSourceBigType() != 2) {
                             List<WmsInnerMaterialBarcodeReOrder> barcodeReOrderList = new ArrayList<>();
