@@ -106,7 +106,7 @@ public class PDAWmsInnerJobOrderController {
 
     @ApiOperation(" PDA删除已扫描条码")
     @PostMapping("/updateBarcodeStatus")
-    public ResponseEntity updateBarcodeStatus(@ApiParam(value = "来料条码",required = true) String barcode){
+    public ResponseEntity updateBarcodeStatus(@ApiParam(value = "条码",required = true) @RequestParam @NotBlank(message="barcode 不能为空") String barcode){
         return ControllerUtil.returnCRUD(wmsInnerJobOrderService.updateBarcodeStatus(barcode));
     }
 
