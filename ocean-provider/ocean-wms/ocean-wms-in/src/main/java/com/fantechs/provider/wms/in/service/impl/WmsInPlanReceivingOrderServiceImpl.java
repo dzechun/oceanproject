@@ -7,8 +7,10 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.qms.QmsIncomingInspectionOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInPlanReceivingOrderDto;
+import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderBarcode;
 import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.imports.WmsInPlanReceivingOrderImport;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeReOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
@@ -20,6 +22,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.general.entity.wms.in.*;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcodeReOrder;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -398,25 +401,24 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
                         wmsInReceivingOrderDet.setOrgId(sysUser.getOrganizationId());
                         wmsInReceivingOrderDet.setIfAllIssued((byte)0);
 
-
-                        //找上游单据条码
-                        //不用把条码一起下推 2022-01-24
-                        /*SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
-                        searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode(wmsInPlanReceivingOrder.getSourceSysOrderTypeCode());//单据类型
-                        searchWmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInPlanReceivingOrderDet.getSourceId());//明细ID
-                        ResponseEntity<List<WmsInnerMaterialBarcodeReOrderDto>> listResponseEntity = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder);
-                        if(listResponseEntity.getCode()!=0){
-                            throw new BizErrorException(listResponseEntity.getCode(),listResponseEntity.getMessage());
+                        if(wmsInPlanReceivingOrder.getSourceBigType()!=2 && StringUtils.isNotEmpty(wmsInPlanReceivingOrderDet.getSourceId())){
+                            //找上游单据条码
+                            SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
+                            searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode(wmsInPlanReceivingOrder.getSourceSysOrderTypeCode());//单据类型
+                            searchWmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInPlanReceivingOrderDet.getSourceId());//明细ID
+                            ResponseEntity<List<WmsInnerMaterialBarcodeReOrderDto>> listResponseEntity = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder);
+                            if(listResponseEntity.getCode()!=0){
+                                throw new BizErrorException(listResponseEntity.getCode(),listResponseEntity.getMessage());
+                            }
+                            List<WmsInReceivingOrderBarcode> barcodeList = new ArrayList<>();
+                            for (WmsInnerMaterialBarcodeReOrderDto datum : listResponseEntity.getData()) {
+                                WmsInReceivingOrderBarcode wmsInReceivingOrderBarcode = new WmsInReceivingOrderBarcode();
+                                wmsInReceivingOrderBarcode.setMaterialBarcodeReOrderId(datum.getMaterialBarcodeReOrderId());
+                                wmsInReceivingOrderBarcode.setMaterialBarcodeId(datum.getMaterialBarcodeId());
+                                barcodeList.add(wmsInReceivingOrderBarcode);
+                            }
+                            wmsInReceivingOrderDet.setWmsInReceivingOrderBarcodeList(barcodeList);
                         }
-                        List<WmsInReceivingOrderBarcode> barcodeList = new ArrayList<>();
-                        for (WmsInnerMaterialBarcodeReOrderDto datum : listResponseEntity.getData()) {
-                            WmsInReceivingOrderBarcode wmsInReceivingOrderBarcode = new WmsInReceivingOrderBarcode();
-                            wmsInReceivingOrderBarcode.setMaterialBarcodeReOrderId(datum.getMaterialBarcodeReOrderId());
-                            wmsInReceivingOrderBarcode.setMaterialBarcodeId(datum.getMaterialBarcodeId());
-                            barcodeList.add(wmsInReceivingOrderBarcode);
-                        }
-                        wmsInReceivingOrderDet.setWmsInReceivingOrderBarcodeList(barcodeList);*/
-
                         //更新表头为执行中
                         wmsInPlanReceivingOrder.setOrderStatus((byte)2);
 
