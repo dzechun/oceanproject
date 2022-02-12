@@ -84,8 +84,8 @@
         left join wms_in_receiving_order wiro on wiro.receiving_order_id = wirod.receiving_order_id
         LEFT JOIN base_material bm ON wirod.material_id = bm.material_id
         LEFT JOIN base_material_tab bmt ON bmt.material_id = bm.material_id
-        LEFT JOIN om_purchase_order_det opod ON wirod.core_source_id = opod.purchase_order_det_id
-        LEFT JOIN om_purchase_order opo ON opo.purchase_order_id = opod.purchase_order_id
+--         LEFT JOIN om_purchase_order_det opod ON wirod.core_source_id = opod.purchase_order_det_id
+--         LEFT JOIN om_purchase_order opo ON opo.purchase_order_id = opod.purchase_order_id
         LEFT JOIN sys_user u ON u.user_id = wirod.operator_user_id
         LEFT JOIN sys_user su ON wirod.create_user_id = su.user_id
         LEFT JOIN sys_user sus ON wirod.modified_user_id = sus.user_id
@@ -98,6 +98,9 @@
         <where>
             <if test="receivingOrderId!=null and receivingOrderId!=''">
                 and wirod.receiving_order_id = #{receivingOrderId}
+            </if>
+            <if test="orgId!=null and orgId!=''">
+                and wirod.org_id = #{orgId}
             </if>
             <if test="receivingOrderCode != null and receivingOrderCode!=''">
                 and wiro.receiving_order_code like CONCAT('%', #{receivingOrderCode}, '%')
@@ -123,17 +126,17 @@
             <if test="receivingOrderCode!=null and receivingOrderCode!=''">
                 and wiro.receiving_order_code like CONCAT('%',#{receivingOrderCode},'%')
             </if>
-            <if test="supplierId!=null and supplierId!=''">
-                and opo.supplier_id = #{supplierId}
-            </if>
-            <choose>
-                <when test="supplierIdList!=null and supplierIdList.size > 0">
-                    and opo.supplier_id in
-                    <foreach collection="supplierIdList" item="item" separator="," open="(" close=")">
-                        #{item.supplierId,jdbcType=BIGINT}
-                    </foreach>
-                </when>
-            </choose>
+<!--            <if test="supplierId!=null and supplierId!=''">-->
+<!--                and opo.supplier_id = #{supplierId}-->
+<!--            </if>-->
+<!--            <choose>-->
+<!--                <when test="supplierIdList!=null and supplierIdList.size > 0">-->
+<!--                    and opo.supplier_id in-->
+<!--                    <foreach collection="supplierIdList" item="item" separator="," open="(" close=")">-->
+<!--                        #{item.supplierId,jdbcType=BIGINT}-->
+<!--                    </foreach>-->
+<!--                </when>-->
+<!--            </choose>-->
         </where>
         GROUP BY wirod.receiving_order_det_id
         order by wiro.create_time desc
