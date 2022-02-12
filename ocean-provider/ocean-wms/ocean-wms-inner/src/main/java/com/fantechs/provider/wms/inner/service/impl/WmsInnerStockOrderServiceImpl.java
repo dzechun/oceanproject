@@ -689,6 +689,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             return num;
         }
         List<WmsInnerStockOrderDetBarcodeDto> detBarcodeDtos=new ArrayList<>();
+        List<WmsInnerStockOrderDetBarcode> detBarcodes=new ArrayList<>();
 
         WmsInnerStockOrder wmsInnerStockOrder=wmsInventoryVerificationMapper.selectByPrimaryKey(stockOrderDet.getStockOrderId());
         if(StringUtils.isEmpty(wmsInnerStockOrder)){
@@ -700,9 +701,12 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         List<WmsInnerMaterialBarcodeReOrder> materialBarcodeReOrderList=new ArrayList<>();
         //盘点条码集合
         List<WmsInnerStockOrderDetBarcode> stockOrderDetBarcodeList=new ArrayList<>();
-        SearchWmsInnerStockOrderDetBarcode searchOrderDetBarcode=new SearchWmsInnerStockOrderDetBarcode();
+
+        //提交条码相应盘点明细条码ID集合
+        List<Long> detBarcodeIDList=new ArrayList<>();
 
         //更新盘点条码状态为已提交
+        SearchWmsInnerStockOrderDetBarcode searchOrderDetBarcode=new SearchWmsInnerStockOrderDetBarcode();
         for (CommitInnerStockBarcodeDto item : barcodeList) {
             if(StringUtils.isEmpty(item.getBarcodeType())){
                 item.setBarcodeType((byte)0);
@@ -718,11 +722,14 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
                     orderDetBarcode.setStockOrderDetBarcodeId(detBarcodeDtos.get(0).getStockOrderDetBarcodeId());
                     orderDetBarcode.setScanStatus((byte)3);
+                    orderDetBarcode.setStockResult((byte)2);
                     orderDetBarcode.setModifiedUserId(sysUser.getUserId());
                     orderDetBarcode.setModifiedTime(new Date());
                     num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);
 
                     totalQty=totalQty.add(detBarcodeDtos.get(0).getMaterialQty());
+
+                    detBarcodeIDList.add(orderDetBarcode.getStockOrderDetBarcodeId());
                 }
             }
             else if(barcodeType==(byte)2){
@@ -735,9 +742,12 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                         WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
                         orderDetBarcode.setStockOrderDetBarcodeId(detBarcodeDto.getStockOrderDetBarcodeId());
                         orderDetBarcode.setScanStatus((byte)3);
+                        orderDetBarcode.setStockResult((byte)2);
                         orderDetBarcode.setModifiedUserId(sysUser.getUserId());
                         orderDetBarcode.setModifiedTime(new Date());
                         num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);
+
+                        detBarcodeIDList.add(orderDetBarcode.getStockOrderDetBarcodeId());
                     }
 
                     totalQty=totalQty.add(detBarcodeDtos.get(0).getMaterialQty());
@@ -754,9 +764,12 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                         WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
                         orderDetBarcode.setStockOrderDetBarcodeId(detBarcodeDto.getStockOrderDetBarcodeId());
                         orderDetBarcode.setScanStatus((byte)3);
+                        orderDetBarcode.setStockResult((byte)2);
                         orderDetBarcode.setModifiedUserId(sysUser.getUserId());
                         orderDetBarcode.setModifiedTime(new Date());
                         num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);
+
+                        detBarcodeIDList.add(orderDetBarcode.getStockOrderDetBarcodeId());
                     }
 
                     List<WmsInnerStockOrderDetBarcodeDto> detBarcodeList = detBarcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
@@ -774,9 +787,12 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                         WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
                         orderDetBarcode.setStockOrderDetBarcodeId(detBarcodeDto.getStockOrderDetBarcodeId());
                         orderDetBarcode.setScanStatus((byte)3);
+                        orderDetBarcode.setStockResult((byte)2);
                         orderDetBarcode.setModifiedUserId(sysUser.getUserId());
                         orderDetBarcode.setModifiedTime(new Date());
                         num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);
+
+                        detBarcodeIDList.add(orderDetBarcode.getStockOrderDetBarcodeId());
                     }
 
                     List<WmsInnerStockOrderDetBarcodeDto> detBarcodeList = detBarcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());

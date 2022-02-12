@@ -1,8 +1,11 @@
 package com.fantechs.provider.mes.pm.controller;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanStockListDto;
+import com.fantechs.common.base.general.dto.mes.pm.imports.MesPmDailyPlanImport;
+import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmDailyPlan;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmHtDailyPlan;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmDailyPlan;
@@ -17,8 +20,10 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +31,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -35,6 +41,7 @@ import java.util.List;
 @Api(tags = "工单日计划")
 @RequestMapping("/mesPmDailyPlan")
 @Validated
+@Slf4j
 public class MesPmDailyPlanController {
 
     @Resource
@@ -97,6 +104,32 @@ public class MesPmDailyPlanController {
         EasyPoiUtils.exportExcel(list, "导出信息", "MesPmDailyPlan信息", MesPmDailyPlanDto.class, "MesPmDailyPlan.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
+        }
+    }
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入信息",notes = "从excel导入信息")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file,
+                                      @RequestParam Long stockOrderId){
+        try {
+            // 导入操作
+            List<MesPmDailyPlanImport> mesPmDailyPlanImports = EasyPoiUtils.importExcel(file, 0, 1, MesPmDailyPlanImport.class);
+            Map<String, Object> resultMap = mesPmDailyPlanService.importExcel(mesPmDailyPlanImports);
+            return ControllerUtil.returnDataSuccess("操作结果集", resultMap);
+        }catch (RuntimeException e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail("文件格式错误", ErrorCodeEnum.OPT20012002.getCode());
+        }catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
 
