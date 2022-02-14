@@ -158,6 +158,11 @@ public interface OMFeignApi {
     @PostMapping("/omTransferOrderDet/updatePutDownQty")
     ResponseEntity updateTransferOrderPutDownQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long detId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty);
 
+    @ApiOperation(value = "更新调拨订单上架数量",notes = "更新调拨订单上架数量")
+    @PostMapping("/omTransferOrderDet/updatePutQty")
+    ResponseEntity updateTransferOrderPutQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long detId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty);
+
+
     @ApiOperation(value = "更新采退订单下推数量",notes = "更新采退订单下推数量")
     @PostMapping("/omPurchaseReturnOrderDet/updatePutDownQty")
     ResponseEntity updatePurchaseReturnOrderPutDownQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long detId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty) ;

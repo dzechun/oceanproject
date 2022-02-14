@@ -710,7 +710,8 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
 
         List<WmsInnerStockOrderDetBarcode> detBarcodeAllIDList=new ArrayList<>();
         Example example = new Example(WmsInnerStockOrderDetBarcode.class);
-        example.createCriteria().andEqualTo("stockOrderDetId",stockOrderDetId);
+        example.createCriteria().andEqualTo("stockOrderDetId",stockOrderDetId)
+                                .andEqualTo("stockResult",(byte)1);
         detBarcodeAllIDList=wmsInnerStockOrderDetBarcodeMapper.selectByExample(example);
 
         //更新盘点条码状态为已提交
