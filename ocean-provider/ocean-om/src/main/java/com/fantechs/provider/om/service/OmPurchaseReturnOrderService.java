@@ -7,6 +7,7 @@ import com.fantechs.common.base.general.entity.om.OmHtPurchaseReturnOrder;
 import com.fantechs.common.base.general.entity.om.OmPurchaseReturnOrder;
 import com.fantechs.common.base.support.IService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -22,4 +23,6 @@ public interface OmPurchaseReturnOrderService extends IService<OmPurchaseReturnO
     int save(OmPurchaseReturnOrderDto record);
     int update(OmPurchaseReturnOrderDto entity);
     Map<String, Object> importExcel(List<OmPurchaseReturnOrderImport> omPurchaseReturnOrderImports);
+
+    int purchaseUpdatePickingQty(Long purchaseReturnOrderDetId, BigDecimal actualQty);
 }

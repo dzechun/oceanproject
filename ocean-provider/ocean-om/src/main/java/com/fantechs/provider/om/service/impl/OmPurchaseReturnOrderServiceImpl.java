@@ -83,6 +83,22 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
     }
 
     @Override
+    public int purchaseUpdatePickingQty(Long purchaseReturnOrderDetId, BigDecimal actualQty) {
+        Example example = new Example(OmPurchaseReturnOrderDet.class);
+        example.createCriteria().andEqualTo("purchaseReturnOrderDetId",purchaseReturnOrderDetId);
+        List<OmPurchaseReturnOrderDet> omPurchaseReturnOrderDets = omPurchaseReturnOrderDetMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(omPurchaseReturnOrderDets) && omPurchaseReturnOrderDets.size() == 1) {
+            OmPurchaseReturnOrderDet omPurchaseReturnOrderDet = omPurchaseReturnOrderDets.get(0);
+            BigDecimal qty = omPurchaseReturnOrderDet.getActualQty();
+            actualQty = actualQty.add((StringUtils.isNotEmpty(qty)?qty:new BigDecimal(0)));
+            omPurchaseReturnOrderDet.setActualQty(actualQty);
+            omPurchaseReturnOrderDetMapper.updateByPrimaryKeySelective(omPurchaseReturnOrderDet);
+        }
+
+        return 1;
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
     public int pushDown(List<OmPurchaseReturnOrderDetDto> omPurchaseReturnOrderDetDtos) {
@@ -183,6 +199,17 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
                 }
             } else if ("OUT-IWK".equals(code)) {
                 //拣货作业
+
+                //查询发货库位
+                SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                searchBaseStorage.setWarehouseId(omPurchaseReturnOrderDetDtos.get(0).getWarehouseId());
+                searchBaseStorage.setStorageType((byte)3);
+                List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+                if(StringUtils.isEmpty(baseStorages)){
+                    throw new BizErrorException("该仓库未找到发货库位");
+                }
+                Long inStorageId = baseStorages.get(0).getStorageId();
+
                 int lineNumber = 1;
                 List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();
                 for (OmPurchaseReturnOrderDetDto omPurchaseReturnOrderDetDto : purchaseReturnOrderDetDtos) {
@@ -197,6 +224,7 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
                     wmsInnerJobOrderDet.setBatchCode(omPurchaseReturnOrderDetDto.getBatchCode());
                     wmsInnerJobOrderDet.setPlanQty(omPurchaseReturnOrderDetDto.getIssueQty());
                     wmsInnerJobOrderDet.setLineStatus((byte) 1);
+                    wmsInnerJobOrderDet.setInStorageId(inStorageId);
                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
                 }
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();

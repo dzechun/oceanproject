@@ -51,9 +51,6 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
     private QmsHtIncomingInspectionOrderDetSampleMapper qmsHtIncomingInspectionOrderDetSampleMapper;
 
     @Resource
-    private QmsHtIncomingInspectionOrderMapper qmsHtIncomingInspectionOrderMapper;
-
-    @Resource
     private QmsIncomingInspectionOrderService qmsIncomingInspectionOrderService;
 
     @Resource
@@ -77,6 +74,9 @@ public class QmsIncomingInspectionOrderDetSampleServiceImpl extends BaseService<
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchAdd(List<QmsIncomingInspectionOrderDetSample> qmsIncomingInspectionOrderDetSampleList) {
+        if(StringUtils.isEmpty(qmsIncomingInspectionOrderDetSampleList)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"样本信息不能为空");
+        }
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         //原数据删除
         Long incomingInspectionOrderDetId = qmsIncomingInspectionOrderDetSampleList.get(0).getIncomingInspectionOrderDetId();
