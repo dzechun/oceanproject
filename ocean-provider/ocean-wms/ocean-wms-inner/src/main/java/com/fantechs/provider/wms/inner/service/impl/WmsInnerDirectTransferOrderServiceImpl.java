@@ -129,7 +129,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                 List<WmsInnerMaterialBarcode> wmsInnerMaterialBarcodes = wmsInnerMaterialBarcodeMapper.selectByExample(example2);*/
                 WmsInnerMaterialBarcode wmsInnerMaterialBarcode = wmsInnerMaterialBarcodeMapper.selectByPrimaryKey(det.getMaterialBarcodeId());
                 if (StringUtils.isEmpty(wmsInnerMaterialBarcode)) {
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未查询到对应的物料条码，条码为：" + det.getBarcode());
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未再条码表中查询到对应的条码");
                 }
 
                 //查询库存
