@@ -199,6 +199,17 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
                 }
             } else if ("OUT-IWK".equals(code)) {
                 //拣货作业
+
+                //查询发货库位
+                SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                searchBaseStorage.setWarehouseId(omPurchaseReturnOrderDetDtos.get(0).getWarehouseId());
+                searchBaseStorage.setStorageType((byte)3);
+                List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+                if(StringUtils.isEmpty(baseStorages)){
+                    throw new BizErrorException("该仓库未找到发货库位");
+                }
+                Long inStorageId = baseStorages.get(0).getStorageId();
+
                 int lineNumber = 1;
                 List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();
                 for (OmPurchaseReturnOrderDetDto omPurchaseReturnOrderDetDto : purchaseReturnOrderDetDtos) {
@@ -213,6 +224,7 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
                     wmsInnerJobOrderDet.setBatchCode(omPurchaseReturnOrderDetDto.getBatchCode());
                     wmsInnerJobOrderDet.setPlanQty(omPurchaseReturnOrderDetDto.getIssueQty());
                     wmsInnerJobOrderDet.setLineStatus((byte) 1);
+                    wmsInnerJobOrderDet.setInStorageId(inStorageId);
                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
                 }
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
