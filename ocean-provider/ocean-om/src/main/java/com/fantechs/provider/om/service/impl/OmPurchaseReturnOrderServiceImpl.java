@@ -83,6 +83,22 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
     }
 
     @Override
+    public int purchaseUpdatePickingQty(Long purchaseReturnOrderDetId, BigDecimal actualQty) {
+        Example example = new Example(OmPurchaseReturnOrderDet.class);
+        example.createCriteria().andEqualTo("purchaseReturnOrderDetId",purchaseReturnOrderDetId);
+        List<OmPurchaseReturnOrderDet> omPurchaseReturnOrderDets = omPurchaseReturnOrderDetMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(omPurchaseReturnOrderDets) && omPurchaseReturnOrderDets.size() == 1) {
+            OmPurchaseReturnOrderDet omPurchaseReturnOrderDet = omPurchaseReturnOrderDets.get(0);
+            BigDecimal qty = omPurchaseReturnOrderDet.getActualQty();
+            actualQty = actualQty.add((StringUtils.isNotEmpty(qty)?qty:new BigDecimal(0)));
+            omPurchaseReturnOrderDet.setActualQty(actualQty);
+            omPurchaseReturnOrderDetMapper.updateByPrimaryKeySelective(omPurchaseReturnOrderDet);
+        }
+
+        return 1;
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
     public int pushDown(List<OmPurchaseReturnOrderDetDto> omPurchaseReturnOrderDetDtos) {

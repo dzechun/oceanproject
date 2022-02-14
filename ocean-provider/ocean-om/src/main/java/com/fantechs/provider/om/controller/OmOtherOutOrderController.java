@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -84,6 +85,13 @@ public class OmOtherOutOrderController {
         Page<Object> page = PageHelper.startPage(searchOmOtherOutOrder.getStartPage(),searchOmOtherOutOrder.getPageSize());
         List<OmHtOtherOutOrderDto> list = omOtherOutOrderService.findHtList(ControllerUtil.dynamicConditionByEntity(searchOmOtherOutOrder));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("拣货数量反写")
+    @PostMapping("/otherUpdatePickingQty")
+    ResponseEntity otherUpdatePickingQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long otherOutOrderDetId,
+                                    @ApiParam(value = "必传拣货架数量",required = true)@RequestParam BigDecimal actualQty){
+        return ControllerUtil.returnCRUD(omOtherOutOrderService.otherUpdatePickingQty(otherOutOrderDetId,actualQty));
     }
 
     @PostMapping(value = "/export")

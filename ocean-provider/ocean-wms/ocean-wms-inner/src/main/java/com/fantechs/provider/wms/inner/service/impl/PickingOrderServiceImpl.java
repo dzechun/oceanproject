@@ -504,17 +504,20 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         }
 
         //反写上游单据数量
-        if ("OUT-SO".equals(wmsInnerJobOrder.getSourceSysOrderTypeCode())) {
-            SearchOmSalesOrderDetDto searchOmSalesOrderDetDto = new SearchOmSalesOrderDetDto();
-            searchOmSalesOrderDetDto.setSalesOrderDetId(wmsInnerJobOrderDet.getCoreSourceId());
-            List<OmSalesOrderDetDto> list = omFeignApi.findList(searchOmSalesOrderDetDto).getData();
-            if (StringUtils.isNotEmpty(list)) {
-                OmSalesOrderDetDto omSalesOrderDetDto = list.get(0);
-                BigDecimal actualQty = StringUtils.isNotEmpty(omSalesOrderDetDto.getActualQty())?omSalesOrderDetDto.getActualQty():new BigDecimal(0);
-                omSalesOrderDetDto.setActualQty(actualQty.add(wmsInnerPdaJobOrderDet.getActualQty()));
-                omFeignApi.update(omSalesOrderDetDto);
-            }
-        }else if ("INNER-TO".equals(wmsInnerJobOrder.getSourceSysOrderTypeCode())) {
+
+        upstreamRetrography(wmsInnerJobOrder,wmsInnerJobOrderDet,wmsInnerPdaJobOrderDet);
+        if (!wmsInnerJobOrder.getCoreSourceSysOrderTypeCode().equals(wmsInnerJobOrder.getSourceSysOrderTypeCode())) {
+            nucleusRetrography(wmsInnerJobOrder,wmsInnerJobOrderDet,wmsInnerPdaJobOrderDet);
+        }
+
+        wmsInnerJobOrder.setWorkerId(sysUser.getUserId());
+        return wmsInnerJobOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
+    }
+
+    //上游单据反写
+    private void upstreamRetrography(WmsInnerJobOrder wmsInnerJobOrder,WmsInnerJobOrderDet wmsInnerJobOrderDet,WmsInnerPdaJobOrderDet wmsInnerPdaJobOrderDet) {
+        SysUser sysUser = currentUser();
+        if ("INNER-TO".equals(wmsInnerJobOrder.getSourceSysOrderTypeCode())) {
             SearchOmTransferOrderDet searchOmTransferOrderDet = new SearchOmTransferOrderDet();
             searchOmTransferOrderDet.setTransferOrderDetId(wmsInnerJobOrderDet.getCoreSourceId());
             List<OmTransferOrderDetDto> list = omFeignApi.findList(searchOmTransferOrderDet).getData();
@@ -534,9 +537,9 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     }
 
                     List<WmsInnerJobOrderDet> detList = new LinkedList<>();
-                    jobDetExample.clear();
+                    Example jobDetExample = new Example(WmsInnerJobOrderDet.class);
                     jobDetExample.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrder.getJobOrderId());
-                    wmsInnerJobOrderDetList = wmsInnerJobOrderDetMapper.selectByExample(jobDetExample);
+                    List<WmsInnerJobOrderDet> wmsInnerJobOrderDetList = wmsInnerJobOrderDetMapper.selectByExample(jobDetExample);
 
                     int lineNumber = 1;
                     for (WmsInnerJobOrderDet innerJobOrderDet : wmsInnerJobOrderDetList) {
@@ -581,11 +584,149 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
             }
-        }else if("OUT-PSLO".equals(wmsInnerJobOrder.getCoreSourceSysOrderTypeCode())){
+        }else if ("OUT-SO".equals(wmsInnerJobOrder.getSourceSysOrderTypeCode())) {
+            SearchOmSalesOrderDetDto searchOmSalesOrderDetDto = new SearchOmSalesOrderDetDto();
+            searchOmSalesOrderDetDto.setSalesOrderDetId(wmsInnerJobOrderDet.getSourceId());
+            List<OmSalesOrderDetDto> list = omFeignApi.findList(searchOmSalesOrderDetDto).getData();
+            if (StringUtils.isNotEmpty(list)) {
+                OmSalesOrderDetDto omSalesOrderDetDto = list.get(0);
+                BigDecimal actualQty = StringUtils.isNotEmpty(omSalesOrderDetDto.getActualQty())?omSalesOrderDetDto.getActualQty():new BigDecimal(0);
+                omSalesOrderDetDto.setActualQty(actualQty.add(wmsInnerPdaJobOrderDet.getActualQty()));
+                omFeignApi.update(omSalesOrderDetDto);
+            }
+        }else if("OUT-PSLO".equals(wmsInnerJobOrder.getSourceSysOrderTypeCode())){
             outFeignApi.updatePlanStockListOrderActualQty(wmsInnerJobOrderDet.getSourceId(),wmsInnerPdaJobOrderDet.getActualQty());
+        }else if ("OUT-OOO".equals(wmsInnerJobOrder.getSourceSysOrderTypeCode())) {
+            omFeignApi.otherUpdatePickingQty(wmsInnerJobOrderDet.getSourceId(),wmsInnerPdaJobOrderDet.getActualQty());
+        }else if ("OUT-PRO".equals(wmsInnerJobOrder.getSourceSysOrderTypeCode())) {
+            omFeignApi.purchaseUpdatePickingQty(wmsInnerJobOrderDet.getSourceId(),wmsInnerPdaJobOrderDet.getActualQty());
         }
-        wmsInnerJobOrder.setWorkerId(sysUser.getUserId());
-        return wmsInnerJobOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
+    }
+
+    //核心单据反写
+    private void nucleusRetrography(WmsInnerJobOrder wmsInnerJobOrder,WmsInnerJobOrderDet wmsInnerJobOrderDet,WmsInnerPdaJobOrderDet wmsInnerPdaJobOrderDet) {
+        SysUser sysUser = currentUser();
+        if ("INNER-TO".equals(wmsInnerJobOrder.getCoreSourceSysOrderTypeCode())) {
+            SearchOmTransferOrderDet searchOmTransferOrderDet = new SearchOmTransferOrderDet();
+            searchOmTransferOrderDet.setTransferOrderDetId(wmsInnerJobOrderDet.getCoreSourceId());
+            List<OmTransferOrderDetDto> list = omFeignApi.findList(searchOmTransferOrderDet).getData();
+            if (StringUtils.isNotEmpty(list)) {
+                OmTransferOrderDetDto omTransferOrderDetDto = list.get(0);
+                BigDecimal actualQty = StringUtils.isNotEmpty(omTransferOrderDetDto.getActualInQty())?omTransferOrderDetDto.getActualInQty():new BigDecimal(0);
+                omTransferOrderDetDto.setActualOutQty(actualQty.add(wmsInnerPdaJobOrderDet.getActualQty()));
+                omFeignApi.update(omTransferOrderDetDto);
+
+                if (wmsInnerJobOrder.getOrderStatus() == 5) {
+                    SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                    searchBaseStorage.setWarehouseId(wmsInnerJobOrder.getWarehouseId());
+                    searchBaseStorage.setStorageType((byte)2);
+                    List<BaseStorage> storageList = baseFeignApi.findList(searchBaseStorage).getData();
+                    if(storageList.size()<1){
+                        throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"未维护仓库收货库位");
+                    }
+
+                    List<WmsInnerJobOrderDet> detList = new LinkedList<>();
+                    Example jobDetExample = new Example(WmsInnerJobOrderDet.class);
+                    jobDetExample.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrder.getJobOrderId());
+                    List<WmsInnerJobOrderDet> wmsInnerJobOrderDetList = wmsInnerJobOrderDetMapper.selectByExample(jobDetExample);
+
+                    int lineNumber = 1;
+                    for (WmsInnerJobOrderDet innerJobOrderDet : wmsInnerJobOrderDetList) {
+                        WmsInnerJobOrderDet newWmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                        newWmsInnerJobOrderDet.setCoreSourceOrderCode(innerJobOrderDet.getCoreSourceOrderCode());
+                        newWmsInnerJobOrderDet.setSourceOrderCode(wmsInnerJobOrder.getJobOrderCode());
+                        newWmsInnerJobOrderDet.setSourceId(innerJobOrderDet.getJobOrderDetId());
+                        newWmsInnerJobOrderDet.setCoreSourceId(innerJobOrderDet.getCoreSourceId());
+                        newWmsInnerJobOrderDet.setLineNumber(lineNumber+"");
+                        newWmsInnerJobOrderDet.setMaterialId(innerJobOrderDet.getMaterialId());
+                        newWmsInnerJobOrderDet.setPlanQty(innerJobOrderDet.getPlanQty());
+                        newWmsInnerJobOrderDet.setLineStatus((byte)1);
+                        newWmsInnerJobOrderDet.setOutStorageId(storageList.get(0).getStorageId());
+                        detList.add(newWmsInnerJobOrderDet);
+                        lineNumber++;
+                    }
+                    WmsInnerJobOrder innerJobOrder = new WmsInnerJobOrder();
+                    innerJobOrder.setSourceSysOrderTypeCode("OUT-IWK");
+                    innerJobOrder.setCoreSourceSysOrderTypeCode(wmsInnerJobOrder.getCoreSourceSysOrderTypeCode());
+                    innerJobOrder.setSourceBigType((byte) 1);
+                    innerJobOrder.setJobOrderType((byte)1);
+                    innerJobOrder.setOrderStatus((byte)1);
+                    innerJobOrder.setWarehouseId(omTransferOrderDetDto.getInWarehouseId());
+                    innerJobOrder.setCreateUserId(sysUser.getUserId());
+                    innerJobOrder.setCreateTime(new Date());
+                    innerJobOrder.setModifiedUserId(sysUser.getUserId());
+                    innerJobOrder.setModifiedTime(new Date());
+                    innerJobOrder.setStatus((byte)1);
+                    innerJobOrder.setOrgId(sysUser.getOrganizationId());
+                    innerJobOrder.setWmsInPutawayOrderDets(detList);
+                    innerJobOrder.setSourceBigType((byte)1);
+                    wmsInnerJobOrderService.save(innerJobOrder);
+                }
+            }
+        }else if("OUT-PDO".equals(wmsInnerJobOrder.getCoreSourceSysOrderTypeCode())){
+            ResponseEntity responseEntity = outFeignApi.updatePlanDeliveryOrderPutawayQty(wmsInnerJobOrderDet.getCoreSourceId(), wmsInnerPdaJobOrderDet.getActualQty());
+            if(responseEntity.getCode()!=0){
+                throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+            }
+        }else if("OUT-DRO".equals(wmsInnerJobOrder.getCoreSourceSysOrderTypeCode())){
+            ResponseEntity responseEntity = outFeignApi.updateDeliveryReqOrderPutawayQty(wmsInnerJobOrderDet.getCoreSourceId(), wmsInnerPdaJobOrderDet.getActualQty());
+            if(responseEntity.getCode()!=0){
+                throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+            }
+        }else if ("OUT-SO".equals(wmsInnerJobOrder.getCoreSourceSysOrderTypeCode())) {
+            SearchOmSalesOrderDetDto searchOmSalesOrderDetDto = new SearchOmSalesOrderDetDto();
+            searchOmSalesOrderDetDto.setSalesOrderDetId(wmsInnerJobOrderDet.getCoreSourceId());
+            List<OmSalesOrderDetDto> list = omFeignApi.findList(searchOmSalesOrderDetDto).getData();
+            if (StringUtils.isNotEmpty(list)) {
+                OmSalesOrderDetDto omSalesOrderDetDto = list.get(0);
+                BigDecimal actualQty = StringUtils.isNotEmpty(omSalesOrderDetDto.getActualQty())?omSalesOrderDetDto.getActualQty():new BigDecimal(0);
+                omSalesOrderDetDto.setActualQty(actualQty.add(wmsInnerPdaJobOrderDet.getActualQty()));
+                omFeignApi.update(omSalesOrderDetDto);
+            }
+        }else if("OUT-PSLO".equals(wmsInnerJobOrder.getCoreSourceSysOrderTypeCode())){
+            outFeignApi.updatePlanStockListOrderActualQty(wmsInnerJobOrderDet.getCoreSourceId(),wmsInnerPdaJobOrderDet.getActualQty());
+        }else if ("OUT-OOO".equals(wmsInnerJobOrder.getCoreSourceSysOrderTypeCode())) {
+            omFeignApi.otherUpdatePickingQty(wmsInnerJobOrderDet.getCoreSourceId(),wmsInnerPdaJobOrderDet.getActualQty());
+        }else if ("OUT-PRO".equals(wmsInnerJobOrder.getCoreSourceSysOrderTypeCode())) {
+            omFeignApi.purchaseUpdatePickingQty(wmsInnerJobOrderDet.getCoreSourceId(),wmsInnerPdaJobOrderDet.getActualQty());
+        }
+    }
+
+    private void verify (List<WmsInnerPdaInventoryDetDto> list){
+        if (StringUtils.isEmpty(list)) {
+            return;
+        }
+        WmsInnerPdaInventoryDetDto wmsInnerPdaInventoryDetDto = list.get(0);
+        Example example = new Example(WmsInnerMaterialBarcode.class);
+        for (WmsInnerPdaInventoryDetDto innerPdaInventoryDetDto : list) {
+            List<WmsInnerMaterialBarcode> wmsInnerMaterialBarcodes = null;
+            if (wmsInnerPdaInventoryDetDto.getBarcodeType() == 1) {
+                example.createCriteria().andEqualTo("barcode",innerPdaInventoryDetDto.getBarcode())
+                        .andEqualTo("barcodeType",1);
+            }else if (wmsInnerPdaInventoryDetDto.getBarcodeType() == 2) {
+                example.createCriteria().andEqualTo("colorBoxCode",innerPdaInventoryDetDto.getColorBoxCode())
+                        .andEqualTo("barcodeType",1);
+            }else if (wmsInnerPdaInventoryDetDto.getBarcodeType() == 3) {
+                example.createCriteria().andEqualTo("cartonCode",innerPdaInventoryDetDto.getCartonCode())
+                        .andEqualTo("barcodeType",1);
+            }
+            wmsInnerMaterialBarcodes = wmsInnerMaterialBarcodeMapper.selectByExample(example);
+            example.clear();
+            if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodes)) {
+                for (WmsInnerMaterialBarcode wmsInnerMaterialBarcode : wmsInnerMaterialBarcodes) {
+                    if (wmsInnerPdaInventoryDetDto.getBarcodeType() == 1 && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getCartonCode())
+                            && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getBarcode()) && !wmsInnerMaterialBarcode.getBarcode().equals(wmsInnerPdaInventoryDetDto.getBarcode())) {
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "拣货出库需以最大单位进行，如需单独移动，请先进行拆分操作");
+                    }else if (wmsInnerPdaInventoryDetDto.getBarcodeType() == 2 && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getCartonCode())
+                            && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getColorBoxCode())  && !wmsInnerMaterialBarcode.getColorBoxCode().equals(wmsInnerPdaInventoryDetDto.getColorBoxCode())) {
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "拣货出库需以最大单位进行，如需单独移动，请先进行拆分操作");
+                    }else if (wmsInnerPdaInventoryDetDto.getBarcodeType() == 3 && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getPalletCode())
+                            && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getCartonCode()) && !wmsInnerMaterialBarcode.getCartonCode().equals(wmsInnerPdaInventoryDetDto.getCartonCode())) {
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "拣货出库需以最大单位进行，如需单独移动，请先进行拆分操作");
+                    }
+                }
+            }
+        }
     }
 
     private void log (WmsInnerPdaJobOrderDet wmsInnerPdaJobOrderDet,WmsInnerJobOrder wmsInnerJobOrder,WmsInnerJobOrderDet wmsInnerJobOrderDet,Integer status) {
