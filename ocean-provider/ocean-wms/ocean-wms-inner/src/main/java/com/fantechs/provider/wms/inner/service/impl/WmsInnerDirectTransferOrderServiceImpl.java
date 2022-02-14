@@ -173,6 +173,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                 orderDet.setMaterialId(dto.getMaterialId());
                 orderDet.setActualQty(det.getQty());
                 orderDet.setStatus((byte) 1);
+                orderDet.setLineStatus((byte)3);
                 orderDet.setOrgId(user.getOrganizationId());
                 orderDet.setCreateUserId(user.getUserId());
                 orderDet.setCreateTime(new Date());
