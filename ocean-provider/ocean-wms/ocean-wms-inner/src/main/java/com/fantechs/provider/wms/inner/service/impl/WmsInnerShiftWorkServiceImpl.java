@@ -643,8 +643,15 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
             det.setOrgId(sysUser.getOrganizationId());
             List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtoList = wmsInnerInventoryDetMapper.findList(ControllerUtil.dynamicConditionByEntity(det));
             if(wmsInnerInventoryDetDtoList.size()>0) {
-                totalQty = totalQty.add((StringUtils.isEmpty(wmsInnerInventoryDetDtoList.get(0).getMaterialQty()) ? new BigDecimal(0) : wmsInnerInventoryDetDtoList.get(0).getMaterialQty()));
-                newInventoryDetDtoList.add(wmsInnerInventoryDetDtoList.get(0));
+                WmsInnerInventoryDetDto innerInventoryDetDto = wmsInnerInventoryDetDtoList.get(0);
+                totalQty = totalQty.add((StringUtils.isEmpty(innerInventoryDetDto.getMaterialQty()) ? new BigDecimal(0) : innerInventoryDetDto.getMaterialQty()));
+                //更新库存明细，移位作业只能库内调拨，所以不用更改仓库
+                innerInventoryDetDto.setStorageId(wmsInPutawayOrderDet.getInStorageId());
+                innerInventoryDetDto.setBarcodeStatus((byte) 1);
+                innerInventoryDetDto.setModifiedTime(new Date());
+                innerInventoryDetDto.setModifiedUserId(sysUser.getUserId());
+                wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(innerInventoryDetDto);
+                newInventoryDetDtoList.add(innerInventoryDetDto);
             }
         }
 
@@ -785,9 +792,6 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
             }
             num += wmsInnerJobOrderMapper.updateByPrimaryKeySelective(ws);
         }
-
-
-        //返写领料出库单
 
         return num;
     }
