@@ -705,6 +705,14 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         //提交条码相应盘点明细条码ID集合
         List<Long> detBarcodeIDList=new ArrayList<>();
 
+        //明细条码ID集合
+        List<Long> detBarcodeBesidIDList=new ArrayList<>();
+
+        List<WmsInnerStockOrderDetBarcode> detBarcodeAllIDList=new ArrayList<>();
+        Example example = new Example(WmsInnerStockOrderDetBarcode.class);
+        example.createCriteria().andEqualTo("stockOrderDetId",stockOrderDetId);
+        detBarcodeAllIDList=wmsInnerStockOrderDetBarcodeMapper.selectByExample(example);
+
         //更新盘点条码状态为已提交
         SearchWmsInnerStockOrderDetBarcode searchOrderDetBarcode=new SearchWmsInnerStockOrderDetBarcode();
         for (CommitInnerStockBarcodeDto item : barcodeList) {
@@ -848,7 +856,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 wmsInnerStockOrderDetBarcode.setStockOrderDetId(stockOrderDetId);
                 wmsInnerStockOrderDetBarcode.setMaterialBarcodeId(wmsInnerMaterialBarcode.getMaterialBarcodeId());
                 wmsInnerStockOrderDetBarcode.setScanStatus((byte)3);
-                wmsInnerStockOrderDetBarcode.setStockResult((byte)2);
+                wmsInnerStockOrderDetBarcode.setStockResult((byte)3);
                 wmsInnerStockOrderDetBarcode.setCreateUserId(sysUser.getUserId());
                 wmsInnerStockOrderDetBarcode.setCreateTime(new Date());
                 wmsInnerStockOrderDetBarcode.setOrgId(sysUser.getOrganizationId());
@@ -878,6 +886,26 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         //非系统条码增加到盘点条码明细
         if(stockOrderDetBarcodeList.size()>0){
             num+=wmsInnerStockOrderDetBarcodeMapper.insertList(stockOrderDetBarcodeList);
+        }
+
+        //条码状态盘亏
+        List<Long> tempList=new ArrayList<>();
+        if(detBarcodeIDList.size()>0 && detBarcodeAllIDList.size()>0){
+            
+            for (WmsInnerStockOrderDetBarcode detBarcode : detBarcodeAllIDList) {
+                tempList.add(detBarcode.getStockOrderDetBarcodeId());
+            }
+            tempList.removeAll(detBarcodeIDList);
+        }
+        if(tempList.size()>0){
+            for (Long aLong : tempList) {
+                WmsInnerStockOrderDetBarcode upStockOrderDetBarcode=new WmsInnerStockOrderDetBarcode();
+                upStockOrderDetBarcode.setStockOrderDetBarcodeId(aLong);
+                upStockOrderDetBarcode.setStockResult((byte)4);
+                upStockOrderDetBarcode.setModifiedUserId(sysUser.getUserId());
+                upStockOrderDetBarcode.setModifiedTime(new Date());
+                wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(upStockOrderDetBarcode);
+            }
         }
 
         Long stockOrderId=stockOrderDet.getStockOrderId();
