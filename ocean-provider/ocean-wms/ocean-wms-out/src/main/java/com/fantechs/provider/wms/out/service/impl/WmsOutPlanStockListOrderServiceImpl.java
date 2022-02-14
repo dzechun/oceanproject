@@ -401,7 +401,7 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
                 }
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
                 wmsInnerJobOrder.setSourceBigType((byte) 1);
-                wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                wmsInnerJobOrder.setCoreSourceSysOrderTypeCode(StringUtils.isEmpty(coreSourceSysOrderTypeCode)?"OUT-PSLO":coreSourceSysOrderTypeCode);
                 wmsInnerJobOrder.setSourceSysOrderTypeCode("OUT-PSLO");
                 wmsInnerJobOrder.setWarehouseId(warehouseId);
                 wmsInnerJobOrder.setJobOrderType((byte) 2);
@@ -431,7 +431,11 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
         BigDecimal qty = wmsOutPlanStockListOrderDet.getActualQty();
         qty = StringUtils.isNotEmpty(qty)?qty:new BigDecimal(0);
         wmsOutPlanStockListOrderDet.setActualQty(qty.add(actualQty));
-        wmsOutPlanStockListOrderDet.setLineStatus((byte) 3);
+        if (wmsOutPlanStockListOrderDet.getOrderQty().compareTo(wmsOutPlanStockListOrderDet.getActualQty()) == 0) {
+            wmsOutPlanStockListOrderDet.setLineStatus((byte) 3);
+        }else {
+            wmsOutPlanStockListOrderDet.setLineStatus((byte) 2);
+        }
         wmsOutPlanStockListOrderDetMapper.updateByPrimaryKeySelective(wmsOutPlanStockListOrderDet);
 
         detExample.clear();

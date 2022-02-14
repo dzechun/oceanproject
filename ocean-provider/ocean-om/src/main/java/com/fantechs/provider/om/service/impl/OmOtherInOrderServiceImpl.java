@@ -426,7 +426,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     wmsInPlanReceivingOrderDetDto.setLineStatus((byte) 1);
                     wmsInPlanReceivingOrderDetDto.setOperatorUserId(user.getUserId());
                     detList.add(wmsInPlanReceivingOrderDetDto);
-                    omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().add(omOtherInOrderDet.getQty()));
                     if (omOtherInOrderDet.getTotalIssueQty().compareTo(omOtherInOrderDet.getOrderQty()) == 0) {
                         omOtherInOrderDet.setIfAllIssued((byte) 1);
                         order.setOrderStatus((byte) 3);
@@ -481,7 +480,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     wmsInReceivingOrderDetDto.setLineStatus((byte) 1);
                     wmsInReceivingOrderDetDto.setOperatorUserId(user.getUserId());
                     detList.add(wmsInReceivingOrderDetDto);
-                    omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().add(omOtherInOrderDet.getQty()));
                     if (omOtherInOrderDet.getTotalIssueQty().compareTo(omOtherInOrderDet.getOrderQty()) == 0) {
                         omOtherInOrderDet.setIfAllIssued((byte) 1);
                         order.setOrderStatus((byte) 3);
@@ -542,7 +540,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     qmsIncomingInspectionOrderDto.setStatus((byte) 1);
                     qmsIncomingInspectionOrderDto.setOrgId(user.getOrganizationId());
                     detList.add(qmsIncomingInspectionOrderDto);
-                    omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().add(omOtherInOrderDet.getQty()));
                     if (omOtherInOrderDet.getTotalIssueQty().compareTo(omOtherInOrderDet.getOrderQty()) == 0) {
                         omOtherInOrderDet.setIfAllIssued((byte) 1);
                         order.setOrderStatus((byte) 3);
@@ -592,7 +589,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                     wmsInInPlanOrderDet.setPlanQty(omOtherInOrderDet.getQty());
                     wmsInInPlanOrderDet.setLineStatus((byte) 1);
                     detList.add(wmsInInPlanOrderDet);
-                    omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().add(omOtherInOrderDet.getQty()));
                     if (omOtherInOrderDet.getTotalIssueQty().compareTo(omOtherInOrderDet.getOrderQty()) == 0) {
                         omOtherInOrderDet.setIfAllIssued((byte) 1);
                         order.setOrderStatus((byte) 3);
@@ -656,7 +652,6 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
                         wmsInnerJobOrderDet.setOutStorageId(data.get(0).getStorageId());
 
                     detList.add(wmsInnerJobOrderDet);
-                    omOtherInOrderDet.setTotalIssueQty(omOtherInOrderDet.getTotalIssueQty().add(omOtherInOrderDet.getQty()));
                     if (omOtherInOrderDet.getTotalIssueQty().compareTo(omOtherInOrderDet.getOrderQty()) == 0) {
                         omOtherInOrderDet.setIfAllIssued((byte) 1);
                         order.setOrderStatus((byte) 3);
