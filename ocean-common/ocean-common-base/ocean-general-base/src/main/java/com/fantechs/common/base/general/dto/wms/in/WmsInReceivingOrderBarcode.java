@@ -1,10 +1,12 @@
 package com.fantechs.common.base.general.dto.wms.in;
 
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @Author mr.lei
@@ -33,4 +35,7 @@ public class WmsInReceivingOrderBarcode implements Serializable {
 
     @ApiModelProperty(name = "materialCode",value = "物料编码")
     private String materialCode;
+
+    @ApiModelProperty(name="materialBarcodeDtoList",value = "条码集合")
+    private List<WmsInnerMaterialBarcodeDto> materialBarcodeDtoList;
 }
