@@ -780,6 +780,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
             wmsInReceivingOrderBarcode.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
             wmsInReceivingOrderBarcode.setMaterialId(barcodeDtos.get(0).getMaterialId());
             wmsInReceivingOrderBarcode.setMaterialCode(barcodeDtos.get(0).getMaterialCode());
+            wmsInReceivingOrderBarcode.setMaterialBarcodeDtoList(barcodeDtos);
         }else {
             //彩盒
             searchWmsInnerMaterialBarcode.setBarcode(null);
@@ -787,6 +788,9 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
             barcodeDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcode).getData();
             if(barcodeDtos.size()>0){
                 List<WmsInnerMaterialBarcodeDto> barcodeListOne = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
+                if(StringUtils.isEmpty(barcodeListOne) || barcodeListOne.size()<=0){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未找到彩盒码 请确认-->"+barcode);
+                }
                 if(barcodeListOne.get(0).getBarcodeStatus()>=(byte)3){
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
                 }
@@ -796,6 +800,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                 wmsInReceivingOrderBarcode.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
                 wmsInReceivingOrderBarcode.setMaterialId(barcodeDtos.get(0).getMaterialId());
                 wmsInReceivingOrderBarcode.setMaterialCode(barcodeDtos.get(0).getMaterialCode());
+                wmsInReceivingOrderBarcode.setMaterialBarcodeDtoList(barcodeListOne);
             }else {
                 //箱码
                 searchWmsInnerMaterialBarcode.setBarcode(null);
@@ -804,6 +809,9 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                 barcodeDtos=innerFeignApi.findList(searchWmsInnerMaterialBarcode).getData();
                 if(barcodeDtos.size()>0){
                     List<WmsInnerMaterialBarcodeDto> barcodeListOne = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
+                    if(StringUtils.isEmpty(barcodeListOne) || barcodeListOne.size()<=0){
+                        throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未找到箱码 请确认-->"+barcode);
+                    }
                     if(barcodeListOne.get(0).getBarcodeStatus()>=(byte)3){
                         throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
                     }
@@ -815,6 +823,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                     wmsInReceivingOrderBarcode.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
                     wmsInReceivingOrderBarcode.setMaterialId(barcodeDtos.get(0).getMaterialId());
                     wmsInReceivingOrderBarcode.setMaterialCode(barcodeDtos.get(0).getMaterialCode());
+                    wmsInReceivingOrderBarcode.setMaterialBarcodeDtoList(barcodeListOne);
                 }else {
                     //栈板
                     searchWmsInnerMaterialBarcode.setBarcode(null);
@@ -824,6 +833,9 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                     barcodeDtos=innerFeignApi.findList(searchWmsInnerMaterialBarcode).getData();
                     if(barcodeDtos.size()>0){
                         List<WmsInnerMaterialBarcodeDto> barcodeListOne = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
+                        if(StringUtils.isEmpty(barcodeListOne) || barcodeListOne.size()<=0){
+                            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未找到栈板 请确认-->"+barcode);
+                        }
                         if(barcodeListOne.get(0).getBarcodeStatus()>=(byte)3){
                             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
                         }
@@ -835,12 +847,56 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                         wmsInReceivingOrderBarcode.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
                         wmsInReceivingOrderBarcode.setMaterialId(barcodeDtos.get(0).getMaterialId());
                         wmsInReceivingOrderBarcode.setMaterialCode(barcodeDtos.get(0).getMaterialCode());
+                        wmsInReceivingOrderBarcode.setMaterialBarcodeDtoList(barcodeListOne);
                     }else {
                         throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"条码不存在");
                     }
                 }
             }
         }
+
+        SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
+        sBarcodeReOrder.setMaterialBarcodeId(wmsInReceivingOrderBarcode.getMaterialBarcodeId());
+        List<WmsInnerMaterialBarcodeReOrderDto> reOrderList=innerFeignApi.findList(sBarcodeReOrder).getData();
+        if(reOrderList.size()<=0){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"条码关系未找到此条码数据-->"+barcode);
+        }
+
+        Optional<WmsInnerMaterialBarcodeReOrderDto> barcodeReOrderDtoLast = reOrderList.stream()
+                .sorted(Comparator.comparing(WmsInnerMaterialBarcodeReOrderDto::getCreateTime).reversed())
+                .findFirst();
+        if (barcodeReOrderDtoLast.isPresent()) {
+            WmsInnerMaterialBarcodeReOrderDto reOrderDtoLast = barcodeReOrderDtoLast.get();
+            if(reOrderDtoLast.getScanStatus()>(byte)1){
+                throw new BizErrorException(ErrorCodeEnum.PDA40012001.getCode(),"条码已扫描-->"+barcode);
+            }
+
+        }
+
+        //校验子级是否已经扫描
+        List<WmsInnerMaterialBarcodeDto> barcodeList=wmsInReceivingOrderBarcode.getMaterialBarcodeDtoList();
+        if(StringUtils.isNotEmpty(barcodeList) && barcodeList.size()>0) {
+            for (WmsInnerMaterialBarcodeDto materialBarcodeDto : barcodeList) {
+                sBarcodeReOrder=new SearchWmsInnerMaterialBarcodeReOrder();
+                sBarcodeReOrder.setOrderTypeCode("IN-SWK");
+                sBarcodeReOrder.setMaterialBarcodeId(materialBarcodeDto.getMaterialBarcodeId());
+                List<WmsInnerMaterialBarcodeReOrderDto> barcodeReOrder=innerFeignApi.findList(sBarcodeReOrder).getData();
+                if(StringUtils.isNotEmpty(barcodeReOrder)){
+                    if(StringUtils.isNotEmpty(barcodeReOrder.get(0).getIfScan()) && barcodeReOrder.get(0).getIfScan()==(byte)1){
+                        if(wmsInReceivingOrderBarcode.getBarcodeType()==(byte)1){
+                            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"SN条码已扫描 请勿重复扫描");
+                        }else if(wmsInReceivingOrderBarcode.getBarcodeType()==(byte)2){
+                            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"SN条码已扫描 请勿再扫描彩盒码");
+                        }else if(wmsInReceivingOrderBarcode.getBarcodeType()==(byte)3){
+                            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"SN条码已扫描 请勿再扫描箱码");
+                        }else if(wmsInReceivingOrderBarcode.getBarcodeType()==(byte)4){
+                            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"SN条码已扫描 请勿再扫描栈板码");
+                        }
+                    }
+                }
+            }
+        }
+
         List<WmsInReceivingOrderBarcode> list = new ArrayList<>();
         list.add(wmsInReceivingOrderBarcode);
         return list;
