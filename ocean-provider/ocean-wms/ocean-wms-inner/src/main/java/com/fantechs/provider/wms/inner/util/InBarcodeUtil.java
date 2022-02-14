@@ -307,4 +307,125 @@ public class InBarcodeUtil {
 
         return barcodeResultDto;
     }
+
+    /**
+     * 扫描条码返回条码类型 最少包装单位数量
+     * @param barcode
+     * @return BarcodeResultDto 条码信息
+     */
+    public static BarcodeResultDto scanJugeBarcode(String barcode) {
+        BarcodeResultDto barcodeResultDto=new BarcodeResultDto();
+        if(StringUtils.isEmpty(barcode)){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码不能为空");
+        }
+
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+
+        //条码判断
+        List<WmsInnerMaterialBarcodeDto> barcodeDtos=new ArrayList<>();
+        SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode=new SearchWmsInnerMaterialBarcode();
+        searchWmsInnerMaterialBarcode.setBarcode(barcode);
+        searchWmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
+        searchWmsInnerMaterialBarcode.setCodeQueryMark(1);
+        barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
+        if(barcodeDtos.size()>0){
+
+            barcodeResultDto.setBarcodeType((byte)1);
+            barcodeResultDto.setMaterialQty(barcodeDtos.get(0).getMaterialQty());
+            barcodeResultDto.setBarcode(barcode);
+            barcodeResultDto.setMaterialBarcodeId(barcodeDtos.get(0).getMaterialBarcodeId());
+            barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
+            barcodeResultDto.setBatchCode(barcodeDtos.get(0).getBatchCode());
+            barcodeResultDto.setProductionDate(barcodeDtos.get(0).getProductionDate());
+            barcodeResultDto.setMaterialBarcodeDtoList(barcodeDtos);
+        }
+        else {
+            //彩盒
+            searchWmsInnerMaterialBarcode.setBarcode(null);
+            searchWmsInnerMaterialBarcode.setColorBoxCode(barcode);
+            searchWmsInnerMaterialBarcode.setCodeQueryMark(1);
+            barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
+            if(barcodeDtos.size()>0){
+                List<WmsInnerMaterialBarcodeDto> barcodeListOne = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
+                if(StringUtils.isEmpty(barcodeListOne) || barcodeListOne.size()<=0){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未找到彩盒码 请确认-->"+barcode);
+                }
+
+                List<WmsInnerMaterialBarcodeDto> barcodeListColorBox = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
+                List<WmsInnerMaterialBarcodeDto> barcodeListSn = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
+
+                barcodeResultDto.setBarcodeType((byte)2);
+                barcodeResultDto.setMaterialQty(barcodeDtos.get(0).getMaterialQty());
+                barcodeResultDto.setBarcode(barcode);
+                barcodeResultDto.setMaterialBarcodeId(barcodeListColorBox.get(0).getMaterialBarcodeId());
+                barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
+                barcodeResultDto.setBatchCode(barcodeListSn.get(0).getBatchCode());
+                barcodeResultDto.setProductionDate(barcodeListSn.get(0).getProductionTime());
+                barcodeResultDto.setMaterialBarcodeDtoList(barcodeListSn);
+            }
+            else {
+                //箱码
+                searchWmsInnerMaterialBarcode.setBarcode(null);
+                searchWmsInnerMaterialBarcode.setColorBoxCode(null);
+                searchWmsInnerMaterialBarcode.setCartonCode(barcode);
+                searchWmsInnerMaterialBarcode.setCodeQueryMark(1);
+                barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
+                if(barcodeDtos.size()>0){
+                    List<WmsInnerMaterialBarcodeDto> barcodeListOne = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
+                    if(StringUtils.isEmpty(barcodeListOne) || barcodeListOne.size()<=0){
+                        throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未找到箱码 请确认-->"+barcode);
+                    }
+
+                    List<WmsInnerMaterialBarcodeDto> barcodeList = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
+                    List<WmsInnerMaterialBarcodeDto> barcodeListCarton = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
+                    BigDecimal totalQty=barcodeList.stream().map(WmsInnerMaterialBarcodeDto::getMaterialQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+
+                    barcodeResultDto.setBarcodeType((byte)3);
+                    barcodeResultDto.setMaterialQty(totalQty);
+                    barcodeResultDto.setBarcode(barcode);
+                    barcodeResultDto.setMaterialBarcodeId(barcodeListCarton.get(0).getMaterialBarcodeId());
+                    barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
+                    barcodeResultDto.setBatchCode(barcodeList.get(0).getBatchCode());
+                    barcodeResultDto.setProductionDate(barcodeList.get(0).getProductionTime());
+                    barcodeResultDto.setMaterialBarcodeDtoList(barcodeList);
+                }
+                else {
+                    //栈板
+                    searchWmsInnerMaterialBarcode.setBarcode(null);
+                    searchWmsInnerMaterialBarcode.setColorBoxCode(null);
+                    searchWmsInnerMaterialBarcode.setCartonCode(null);
+                    searchWmsInnerMaterialBarcode.setPalletCode(barcode);
+                    searchWmsInnerMaterialBarcode.setCodeQueryMark(1);
+                    barcodeDtos=inBarcodeUtil.wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
+                    if(barcodeDtos.size()>0){
+                        List<WmsInnerMaterialBarcodeDto> barcodeListOne = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
+                        if(StringUtils.isEmpty(barcodeListOne) || barcodeListOne.size()<=0){
+                            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未找到栈板码 请确认-->"+barcode);
+                        }
+
+                        List<WmsInnerMaterialBarcodeDto> barcodeList = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
+                        List<WmsInnerMaterialBarcodeDto> barcodeListPallet = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
+
+                        BigDecimal totalQty=barcodeList.stream().map(WmsInnerMaterialBarcodeDto::getMaterialQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+                        barcodeResultDto.setBarcodeType((byte)4);
+                        barcodeResultDto.setMaterialQty(totalQty);
+                        barcodeResultDto.setBarcode(barcode);
+                        barcodeResultDto.setMaterialBarcodeId(barcodeListPallet.get(0).getMaterialBarcodeId());
+                        barcodeResultDto.setMaterialId(barcodeDtos.get(0).getMaterialId());
+                        barcodeResultDto.setBatchCode(barcodeList.get(0).getBatchCode());
+                        barcodeResultDto.setProductionDate(barcodeList.get(0).getProductionTime());
+                        barcodeResultDto.setMaterialBarcodeDtoList(barcodeList);
+                    }
+                }
+            }
+        }
+
+        if(StringUtils.isEmpty(barcodeResultDto.getBarcodeType())){
+            barcodeResultDto.setBarcodeType((byte)5);
+            barcodeResultDto.setBarcode("");
+            barcodeResultDto.setMaterialQty(new BigDecimal(0));
+        }
+
+        return barcodeResultDto;
+    }
 }

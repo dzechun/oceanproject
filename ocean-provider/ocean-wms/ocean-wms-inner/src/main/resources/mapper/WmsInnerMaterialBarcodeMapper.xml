@@ -217,11 +217,30 @@
     </select>
 
     <select id="getTotalMaterialQty" resultType="int" parameterType="com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode">
+<!--        SELECT sum(wimb.material_qty)-->
+<!--        FROM wms_inner_material_barcode wimb-->
+<!--        LEFT JOIN base_material bm on bm.material_id = wimb.material_id-->
+<!--        <where>-->
+<!--            wimb.barcode_type = 1-->
+<!--            <if test="orgId!=null and orgId!=''">-->
+<!--                and wimb.org_id = #{orgId}-->
+<!--            </if>-->
+<!--            <if test="printOrderTypeCode!=null and printOrderTypeCode!=''">-->
+<!--                and wimb.print_order_type_code = #{printOrderTypeCode}-->
+<!--            </if>-->
+<!--            <if test="printOrderDetId !=null and printOrderDetId!=''">-->
+<!--                and wimb.print_order_det_id = #{printOrderDetId}-->
+<!--            </if>-->
+
+<!--            <if test="materialId!=null and materialId!=''">-->
+<!--                and wimb.material_id = #{materialId}-->
+<!--            </if>-->
+<!--        </where>-->
         SELECT sum(wimb.material_qty)
-        FROM wms_inner_material_barcode wimb
-        LEFT JOIN base_material bm on bm.material_id = wimb.material_id
+        FROM wms_inner_material_barcode_re_order wimbro
+        left join wms_inner_material_barcode wimb on wimb.material_barcode_id = wimbro.material_barcode_id and wimb.material_id = #{materialId}
+        and wimb.barcode_type = 1
         <where>
-            wimb.barcode_type = 1
             <if test="orgId!=null and orgId!=''">
                 and wimb.org_id = #{orgId}
             </if>
@@ -229,11 +248,7 @@
                 and wimb.print_order_type_code = #{printOrderTypeCode}
             </if>
             <if test="printOrderDetId !=null and printOrderDetId!=''">
-                and wimb.print_order_det_id = #{printOrderDetId}
-            </if>
-
-            <if test="materialId!=null and materialId!=''">
-                and wimb.material_id = #{materialId}
+                and wimbro.order_det_id = #{printOrderDetId}
             </if>
         </where>
     </select>

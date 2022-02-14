@@ -7,6 +7,7 @@ import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrder;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrderDet;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -104,6 +105,5 @@ public interface OutFeignApi {
     @ApiOperation(value = "更新备料计划拣货数量",notes = "更新备料计划拣货数量")
     @PostMapping("/wmsOutPlanStockListOrder/updateActualQty")
     ResponseEntity updatePlanStockListOrderActualQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long planStockListOrderDetId,
-                       @ApiParam(value = "必传拣货架数量",required = true)@RequestParam BigDecimal putawayQty);
-
+                                          @ApiParam(value = "必传拣货架数量",required = true)@RequestParam BigDecimal actualQty);
 }

@@ -2719,8 +2719,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     @Transactional(rollbackFor = RuntimeException.class)
     public int updateBarcodeStatus(String barcode) {
         int num=1;
-        BarcodeResultDto resultDto=InBarcodeUtil.scanBarcode(barcode);
+        BarcodeResultDto resultDto=InBarcodeUtil.scanJugeBarcode(barcode);
         if(StringUtils.isEmpty(resultDto)){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码无效");
+        }
+        if(resultDto.getBarcodeType()==(byte)5){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码无效");
         }
         List<WmsInnerMaterialBarcodeDto> list=resultDto.getMaterialBarcodeDtoList();

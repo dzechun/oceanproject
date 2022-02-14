@@ -122,9 +122,6 @@
         left join base_supplier_re_user bsru on bsru.supplier_id = bs.supplier_id
         left join base_address ba on ba.address_id = bs.address_id
         <where>
-            <if test="userId != null">
-                and bsru.user_id = #{userId}
-            </if>
             <if test="supplierId != null">
                 and opo.supplier_id = #{supplierId}
             </if>
