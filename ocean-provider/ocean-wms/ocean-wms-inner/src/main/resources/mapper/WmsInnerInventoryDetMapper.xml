@@ -219,6 +219,12 @@
                 <if test="item.barcodeStatus != null">
                     wiid.barcode_status = #{item.barcodeStatus},
                 </if>
+                <if test="item.deliverDate != null">
+                    wiid.deliver_date = #{item.deliverDate},
+                </if>
+                <if test="item.deliveryOrderCode != null">
+                    wiid.delivery_order_code = #{item.deliveryOrderCode},
+                </if>
             </set>
             where wiid.inventory_det_id = #{item.inventoryDetId}
         </foreach>

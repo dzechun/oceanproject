@@ -478,6 +478,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     wmsInnerInventoryDet.setInventoryDetId(wmsInnerInventoryDetList.get(0).getInventoryDetId());
                     wmsInnerInventoryDet.setStorageId(wmsInnerJobOrderDet.getInStorageId());
                     wmsInnerInventoryDet.setBarcodeStatus((byte) 2);
+                    wmsInnerInventoryDet.setDeliverDate(new Date());
+                    wmsInnerInventoryDet.setDeliveryOrderCode(wmsInnerJobOrder.getJobOrderCode());
                     inventoryDetList.add(wmsInnerInventoryDet);
                     wmsInnerMaterialBarcodeDto.setBarcodeStatus((byte) 6);
                 }
@@ -523,7 +525,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             List<OmTransferOrderDetDto> list = omFeignApi.findList(searchOmTransferOrderDet).getData();
             if (StringUtils.isNotEmpty(list)) {
                 OmTransferOrderDetDto omTransferOrderDetDto = list.get(0);
-                BigDecimal actualQty = StringUtils.isNotEmpty(omTransferOrderDetDto.getActualInQty())?omTransferOrderDetDto.getActualInQty():new BigDecimal(0);
+                BigDecimal actualQty = StringUtils.isNotEmpty(omTransferOrderDetDto.getActualOutQty())?omTransferOrderDetDto.getActualOutQty():new BigDecimal(0);
                 omTransferOrderDetDto.setActualOutQty(actualQty.add(wmsInnerPdaJobOrderDet.getActualQty()));
                 omFeignApi.update(omTransferOrderDetDto);
 
