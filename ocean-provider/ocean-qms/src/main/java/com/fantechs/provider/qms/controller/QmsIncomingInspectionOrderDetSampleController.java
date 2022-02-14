@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -44,7 +43,7 @@ public class QmsIncomingInspectionOrderDetSampleController {
 
     @ApiOperation(value = "批量保存",notes = "批量保存")
     @PostMapping("/batchAdd")
-    public ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated @NotEmpty List<QmsIncomingInspectionOrderDetSample> qmsIncomingInspectionOrderDetSampleList) {
+    public ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<QmsIncomingInspectionOrderDetSample> qmsIncomingInspectionOrderDetSampleList) {
         return ControllerUtil.returnCRUD(qmsIncomingInspectionOrderDetSampleService.batchAdd(qmsIncomingInspectionOrderDetSampleList));
     }
 
