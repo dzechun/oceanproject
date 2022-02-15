@@ -193,6 +193,7 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         record.setPlanDeliveryOrderCode(CodeUtils.getId("OUT-PDO"));
+        record.setCoreSourceSysOrderTypeCode(record.getSourceSysOrderTypeCode());
         record.setOrderStatus(StringUtils.isEmpty(record.getOrderStatus())?(byte)1:record.getOrderStatus());
         record.setOrgId(user.getOrganizationId());
         record.setCreateTime(new DateTime());
