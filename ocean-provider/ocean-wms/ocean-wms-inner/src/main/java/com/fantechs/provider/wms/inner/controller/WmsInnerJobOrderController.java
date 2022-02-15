@@ -199,8 +199,7 @@ public class WmsInnerJobOrderController {
     @PostMapping(value = "/import")
     @ApiOperation(value = "从excel导入信息",notes = "从excel导入信息")
     public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
-                                      @RequestPart(value="file") MultipartFile file,
-                                      @RequestParam Long stockOrderId){
+                                      @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
             List<WmsInnerJobOrderImport> wmsInnerJobOrderImports = EasyPoiUtils.importExcel(file, 0, 1, WmsInnerJobOrderImport.class);

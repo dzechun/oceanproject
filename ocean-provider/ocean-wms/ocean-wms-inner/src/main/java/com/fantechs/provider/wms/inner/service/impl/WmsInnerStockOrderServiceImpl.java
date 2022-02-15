@@ -1679,7 +1679,23 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory1);
             wmsInnerInventoryMapper.deleteByPrimaryKey(wmsInnerInventory.getInventoryId());
         }
-                //盘点数大于库存数 原有数量新增
+
+        //条码解锁
+        Example exampleDet = new Example(WmsInnerStockOrderDetBarcode.class);
+        Example.Criteria criteriaDet = exampleDet.createCriteria();
+        criteriaDet.andEqualTo("stockOrderDetId",wmsInnerStockOrderDet.getStockOrderDetId());
+        List<WmsInnerStockOrderDetBarcode> detBarcodeList=wmsInnerStockOrderDetBarcodeMapper.selectByExample(exampleDet);
+        if(StringUtils.isNotEmpty(detBarcodeList) && detBarcodeList.size()>0){
+            for (WmsInnerStockOrderDetBarcode detBarcode : detBarcodeList) {
+                WmsInnerInventoryDet inventoryDet=new WmsInnerInventoryDet();
+                inventoryDet.setInventoryDetId(detBarcode.getSourceDetId());
+                inventoryDet.setIfStockLock((byte)0);
+                inventoryDet.setModifiedTime(new Date());
+                wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(inventoryDet);
+            }
+        }
+
+        //盘点数大于库存数 原有数量新增
 //        Byte addOrSubtract = null;
 //        if(StringUtils.isEmpty(wmsInnerInventory)){
 //            wmsInnerInventory = new WmsInnerInventory();
