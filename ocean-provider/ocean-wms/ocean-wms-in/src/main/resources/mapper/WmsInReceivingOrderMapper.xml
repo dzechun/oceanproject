@@ -87,6 +87,9 @@ wiro.option1
           #{item}
         </foreach>
       </if>
+      <if test="orderStatus!=null and orderStatus!=''">
+        and wiro.order_status = #{orderStatus}
+      </if>
     <if test="orgId!=null and orgId!=''">
       and wiro.org_id=#{orgId}
     </if>

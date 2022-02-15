@@ -4,10 +4,7 @@ import com.fantechs.common.base.general.dto.basic.*;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -593,4 +590,12 @@ public interface BaseFeignApi {
     @ApiOperation("单据流列表(不分页)")
     @PostMapping("/baseOrderFlow/findAll")
     ResponseEntity<List<BaseOrderFlowDto>> findAll(@ApiParam(value = "查询对象") @RequestBody SearchBaseOrderFlow searchBaseOrderFlow);
+
+    @ApiOperation("入库规则")
+    @PostMapping("/baseInAndOutRule/inRule")
+    ResponseEntity<Long> inRule(@RequestParam Long warehouseId, @RequestParam Long materialId, @RequestParam BigDecimal qty);
+
+    @ApiOperation("出库规则")
+    @PostMapping("/baseInAndOutRule/outRule")
+    ResponseEntity<List<String>> outRule(@RequestParam Long warehouseId,@RequestParam Long storageId, @RequestParam Long materialId, @RequestParam BigDecimal qty);
 }

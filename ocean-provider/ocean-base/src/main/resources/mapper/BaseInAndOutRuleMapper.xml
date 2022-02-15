@@ -72,9 +72,17 @@ biaor.option3
     order by biaor.create_time desc
   </select>
   <select id="findInOutParamMode" resultType="com.fantechs.common.base.general.dto.basic.InOutParamsDto">
-    SELECT parameter_mode,parameter_name FROM information_schema.PARAMETERS WHERE specific_name=#{specificName}
+    SELECT parameter_mode,parameter_name FROM information_schema.PARAMETERS WHERE SPECIFIC_SCHEMA='fantech_imes_v2_1' AND ROUTINE_TYPE='PROCEDURE' specific_name=#{specificName}
   </select>
   <select id="findView" resultType="java.lang.String">
-    SELECT TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_SCHEMA= 'fantech_imes_v2_1'
+    SELECT ROUTINE_NAME FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_SCHEMA='fantech_imes_v2_1' AND ROUTINE_TYPE='PROCEDURE' AND ROUTINE_NAME LIKE CONCAT(#{category},'%')
+  </select>
+
+  <select id="inRuleExecute" resultType="java.lang.Long">
+    CALL ${procName}(#{warehouseId},#{materialId},#{qty},@res);
+    SELECT @res
+  </select>
+  <select id="outRuleExecute" resultType="java.lang.String">
+    CALL ${procName}(#{warehouseId},#{storageId},#{materialId},#{qty});
   </select>
 </mapper>

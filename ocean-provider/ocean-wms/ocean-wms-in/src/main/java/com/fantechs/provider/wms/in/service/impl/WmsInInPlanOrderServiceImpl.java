@@ -111,6 +111,8 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
         wmsInInPlanOrderDto.setOrgId(user.getOrganizationId());
         wmsInInPlanOrderDto.setIsDelete((byte)1);
         wmsInInPlanOrderDto.setOrderStatus((byte)1);
+        if(StringUtils.isEmpty(wmsInInPlanOrderDto.getSourceBigType()))
+            wmsInInPlanOrderDto.setSourceBigType((byte)2);
         int i =wmsInInPlanOrderMapper.insertUseGeneratedKeys(wmsInInPlanOrderDto);
 
         //保存履历表
