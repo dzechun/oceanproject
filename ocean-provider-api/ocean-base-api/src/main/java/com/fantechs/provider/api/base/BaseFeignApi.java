@@ -597,5 +597,5 @@ public interface BaseFeignApi {
 
     @ApiOperation("出库规则")
     @PostMapping("/baseInAndOutRule/outRule")
-    ResponseEntity<List<String>> inRule(@RequestParam Long warehouseId,@RequestParam Long storageId, @RequestParam Long materialId, @RequestParam BigDecimal qty);
+    ResponseEntity<List<String>> outRule(@RequestParam Long warehouseId,@RequestParam Long storageId, @RequestParam Long materialId, @RequestParam BigDecimal qty);
 }
