@@ -111,22 +111,6 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
             for (PDAWmsInnerDirectTransferOrderDetDto det : dto.getPdaWmsInnerDirectTransferOrderDetDtos()) {
 
                 //查询条码
-/*                Example example2 = new Example(WmsInnerMaterialBarcode.class);
-                Example.Criteria criteria2 = example2.createCriteria();
-                criteria2.andEqualTo("materialId", dto.getMaterialId());
-                //    criteria2.andEqualTo("materialBarcodeId", det.getMaterialBarcodeId());
-                if (det.getBarcodeType() == 1) {
-                    criteria2.andEqualTo("barcode", det.getBarcode());
-                } else if (det.getBarcodeType() == 2) {
-                    criteria2.andEqualTo("colorBoxCode", det.getBarcode());
-                } else if (det.getBarcodeType() == 3) {
-                    criteria2.andEqualTo("cartonCode", det.getBarcode());
-                } else if (det.getBarcodeType() == 4) {
-                    criteria2.andEqualTo("palletCode", det.getBarcode());
-                } else {
-                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "未上传条码类型条码类型不正确");
-                }
-                List<WmsInnerMaterialBarcode> wmsInnerMaterialBarcodes = wmsInnerMaterialBarcodeMapper.selectByExample(example2);*/
                 WmsInnerMaterialBarcode wmsInnerMaterialBarcode = wmsInnerMaterialBarcodeMapper.selectByPrimaryKey(det.getMaterialBarcodeId());
                 if (StringUtils.isEmpty(wmsInnerMaterialBarcode)) {
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未再条码表中查询到对应的条码");
@@ -173,7 +157,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                 orderDet.setMaterialId(dto.getMaterialId());
                 orderDet.setActualQty(det.getQty());
                 orderDet.setStatus((byte) 1);
-                orderDet.setLineStatus((byte)3);
+                orderDet.setLineStatus((byte) 3);
                 orderDet.setOrgId(user.getOrganizationId());
                 orderDet.setCreateUserId(user.getUserId());
                 orderDet.setCreateTime(new Date());
@@ -181,37 +165,23 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                 orderDet.setModifiedTime(new Date());
                 wmsInnerDirectTransferOrderDetMapper.insertUseGeneratedKeys(orderDet);
 
-                //     for (WmsInnerMaterialBarcode barcode : wmsInnerMaterialBarcodes) {
-                if (det.getBarcodeType() == 1 && (StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getColorBoxCode()) || StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getCartonCode()) || StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getPalletCode())))
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "调拨出库需以最大单位进行，如需单独移动SN码，请先进行拆分操作");
-                if (det.getBarcodeType() == 2 && (StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getCartonCode()) || StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getPalletCode())))
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "调拨出库需以最大单位进行，如需单独移动彩盒码，请先进行拆分操作");
-                if (det.getBarcodeType() == 3 && (StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getPalletCode())))
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "调拨出库需以最大单位进行，如需单独移动箱码，请先进行拆分操作");
-
                 //查询该条码下所有sn条码,更新所属库存
-/*                Example example = new Example(WmsInnerInventoryDet.class);
-                Example.Criteria criteria = example.createCriteria();
-                criteria.andEqualTo("storageId", dto.getOutStorageId());
-                criteria.andEqualTo("barcode", det.getBarcode());
-                List<WmsInnerInventoryDet> wmsInnerInventoryDets = wmsInnerInventoryDetMapper.selectByExample(example);
-                */
                 SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
                 searchWmsInnerInventoryDet.setStorageId(dto.getOutStorageId());
-                if(det.getBarcodeType() == 1)
+                if (det.getBarcodeType() == 1)
                     searchWmsInnerInventoryDet.setBarcode(wmsInnerMaterialBarcode.getBarcode());
-                else if(det.getBarcodeType() == 2)
+                else if (det.getBarcodeType() == 2)
                     searchWmsInnerInventoryDet.setColorBoxCode(wmsInnerMaterialBarcode.getColorBoxCode());
-                else if(det.getBarcodeType() == 3)
+                else if (det.getBarcodeType() == 3)
                     searchWmsInnerInventoryDet.setCartonCode(wmsInnerMaterialBarcode.getCartonCode());
-                else if(det.getBarcodeType() == 4)
+                else if (det.getBarcodeType() == 4)
                     searchWmsInnerInventoryDet.setPalletCode(wmsInnerMaterialBarcode.getPalletCode());
                 List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos = wmsInnerInventoryDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerInventoryDet));
 
                 if (StringUtils.isEmpty(wmsInnerInventoryDetDtos)) {
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未查询到移出库位的物料条码，条码为：" + det.getBarcode());
                 }
-                for(WmsInnerInventoryDet wmsInnerInventoryDet : wmsInnerInventoryDetDtos) {
+                for (WmsInnerInventoryDet wmsInnerInventoryDet : wmsInnerInventoryDetDtos) {
                     wmsInnerInventoryDet.setStorageId(dto.getInStorageId());
                     wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
                 }
@@ -268,7 +238,6 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                 wmsInnerMaterialBarcodeDto.setModifiedUserId(user.getUserId());
                 wmsInnerMaterialBarcodeDto.setModifiedTime(new Date());
                 wmsInnerMaterialBarcodeDtoList.add(wmsInnerMaterialBarcodeDto);
-                //     }
             }
         }
         if (StringUtils.isNotEmpty(list))
@@ -276,6 +245,25 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
         if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeDtoList))
             wmsInnerMaterialBarcodeService.batchUpdate(wmsInnerMaterialBarcodeDtoList);
         return i;
+    }
+
+
+    @Override
+    public int check(List<PDAWmsInnerDirectTransferOrderDetDto> pdaWmsInnerDirectTransferOrderDetDtos) {
+        for (PDAWmsInnerDirectTransferOrderDetDto det : pdaWmsInnerDirectTransferOrderDetDtos) {
+            WmsInnerMaterialBarcode wmsInnerMaterialBarcode = wmsInnerMaterialBarcodeMapper.selectByPrimaryKey(det.getMaterialBarcodeId());
+            if (StringUtils.isEmpty(wmsInnerMaterialBarcode)) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未再条码表中查询到对应的条码");
+            }
+            if (det.getBarcodeType() == 1 && (StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getColorBoxCode()) || StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getCartonCode()) || StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getPalletCode())))
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "调拨出库需以最大单位进行，如需单独移动SN码，请先进行拆分操作");
+            if (det.getBarcodeType() == 2 && (StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getCartonCode()) || StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getPalletCode())))
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "调拨出库需以最大单位进行，如需单独移动彩盒码，请先进行拆分操作");
+            if (det.getBarcodeType() == 3 && (StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getPalletCode())))
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "调拨出库需以最大单位进行，如需单独移动箱码，请先进行拆分操作");
+
+        }
+        return 1;
     }
 
 }
