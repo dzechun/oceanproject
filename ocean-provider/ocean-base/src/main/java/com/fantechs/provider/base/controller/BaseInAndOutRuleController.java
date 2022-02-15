@@ -133,7 +133,7 @@ public class BaseInAndOutRuleController {
         return ControllerUtil.returnDataSuccess(baseInAndOutRuleService.inRule(warehouseId, materialId, qty),1);
     }
 
-    @ApiOperation("入库规则")
+    @ApiOperation("出库规则")
     @PostMapping("/outRule")
     public ResponseEntity<List<String>> outRule(@RequestParam Long warehouseId,@RequestParam Long storageId, @RequestParam Long materialId, @RequestParam BigDecimal qty) {
         return ControllerUtil.returnDataSuccess(baseInAndOutRuleService.outRule(warehouseId,storageId, materialId, qty),1);
