@@ -16,7 +16,7 @@ public class WmsInInPlanOrderImport implements Serializable {
      * 入库计划标识
      */
     @ApiModelProperty(name="id",value = "入库计划标识")
-    @Excel(name = "送货计划标识", height = 20, width = 30)
+    @Excel(name = "入库计划标识", height = 20, width = 30)
     private String id;
 
     /**
@@ -31,14 +31,14 @@ public class WmsInInPlanOrderImport implements Serializable {
      * 计划开始时间
      */
     @ApiModelProperty(name="planStartTime",value = "计划开始时间")
-    @Excel(name = "计划开始时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "计划开始时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd")
     private Date planStartTime;
 
     /**
      * 计划完成时间
      */
     @ApiModelProperty(name="planEndTime",value = "计划完成时间")
-    @Excel(name = "计划完成时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "计划完成时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd")
     private Date planEndTime;
 
     /**
@@ -66,7 +66,7 @@ public class WmsInInPlanOrderImport implements Serializable {
      * 生产日期(生产时间)
      */
     @ApiModelProperty(name="productionTime",value = "生产日期(生产时间)")
-    @Excel(name = "生产日期(生产时间)", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "生产日期(生产时间)", height = 20, width = 30,exportFormat ="yyyy-MM-dd")
     private Date productionTime;
 
     /**
@@ -76,4 +76,17 @@ public class WmsInInPlanOrderImport implements Serializable {
     @Excel(name = "批次号", height = 20, width = 30)
     private String batchCode;
 
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    @Excel(name = "备注", height = 20, width = 30)
+    private String remark;
+
+    /**
+     * 制单人员账号
+     */
+    @ApiModelProperty(name="userName",value = "制单人员账号")
+    @Excel(name = "制单人员账号", height = 20, width = 30)
+    private String userName;
 }
