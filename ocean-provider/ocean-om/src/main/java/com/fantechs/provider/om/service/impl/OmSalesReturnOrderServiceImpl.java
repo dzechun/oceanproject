@@ -672,11 +672,11 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         OmSalesReturnOrderDet omSalesReturnOrderDet=omSalesReturnOrderDetMapper.selectByPrimaryKey(salesReturnOrderDetId);
         if(StringUtils.isNotEmpty(omSalesReturnOrderDet)){
-            if(StringUtils.isEmpty(omSalesReturnOrderDet.getIssueQty())){
-                omSalesReturnOrderDet.setIssueQty(new BigDecimal(0));
+            if(StringUtils.isEmpty(omSalesReturnOrderDet.getReceivingQty())){
+                omSalesReturnOrderDet.setReceivingQty(new BigDecimal(0));
             }
 
-            omSalesReturnOrderDet.setIssueQty(omSalesReturnOrderDet.getIssueQty().add(putawayQty));
+            omSalesReturnOrderDet.setReceivingQty(omSalesReturnOrderDet.getReceivingQty().add(putawayQty));
             omSalesReturnOrderDet.setModifiedUserId(sysUser.getUserId());
             omSalesReturnOrderDet.setModifiedTime(new Date());
             num+=omSalesReturnOrderDetMapper.updateByPrimaryKeySelective(omSalesReturnOrderDet);
