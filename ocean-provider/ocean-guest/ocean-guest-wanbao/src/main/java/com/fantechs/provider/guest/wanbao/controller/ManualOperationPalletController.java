@@ -35,7 +35,7 @@ public class ManualOperationPalletController {
     @PostMapping("/scanStackingCode")
     @ApiOperation("栈板作业扫堆垛编码(人工)")
     public ResponseEntity<List<WanbaoStackingDto>> scanStackingCode(
-            @ApiParam(value = "堆垛", required = true) @RequestParam String stackingCode, @ApiParam(value = "产线ID", required = true) @RequestParam Long proLineId) {
+            @ApiParam(value = "堆垛") @RequestParam(required = false) String stackingCode, @ApiParam(value = "产线ID", required = true) @RequestParam Long proLineId) {
         List<WanbaoStackingDto> list = palletService.scanStackingCode(stackingCode, proLineId);
         return ControllerUtil.returnDataSuccess(list, list.size());
     }

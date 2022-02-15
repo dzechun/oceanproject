@@ -7,17 +7,16 @@ import com.fantechs.common.base.general.dto.mes.sfc.ScanByManualOperationDto;
 import com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDto;
 import com.fantechs.common.base.general.entity.wanbao.WanbaoStacking;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.guest.wanbao.service.ManualOperationPalletService;
 import com.fantechs.provider.guest.wanbao.service.WanbaoStackingService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class ManualOperationPalletServiceImpl implements ManualOperationPalletService {
@@ -29,6 +28,8 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
 
     @Override
     public int workByManualOperation(PalletWorkByManualOperationDto dto) {
+        this.scanStackingCode(dto.getStackingCode(), dto.getProLineId());
+
         ResponseEntity<Integer> responseEntity = sfcFeignApi.workByManualOperation(dto);
         if (responseEntity.getCode() != 0){
             throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
@@ -50,17 +51,14 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
     @Override
     public List<WanbaoStackingDto> scanStackingCode(String stackingCode, Long proLineId) {
         Map<String, Object> map = new HashMap<>();
-        map.put("stackingCode", stackingCode);
+        if (StringUtils.isNotEmpty(stackingCode)){
+            map.put("stackingCode", stackingCode);
+        }
+        map.put("proLineId", proLineId);
         List<WanbaoStackingDto> stackingDtos = stackingService.findList(map);
         if (stackingDtos.isEmpty()){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛编码在平台中不存在或已被删除");
         }
-        List<WanbaoStackingDto> list = new ArrayList<>();
-        for (WanbaoStackingDto dto : stackingDtos){
-            if (dto.getProLineId().equals(proLineId)){
-                list.add(dto);
-            }
-        }
-        return list;
+        return stackingDtos;
     }
 }

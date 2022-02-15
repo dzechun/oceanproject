@@ -33,7 +33,7 @@ public class PalletWorkByManualOperationDto implements Serializable {
     @ApiModelProperty(name = "printName", value = "打印机名称")
     private String printName;
 
-    @ApiModelProperty(name="stackingId",value = "堆垛ID")
-    private Long stackingId;
+    @ApiModelProperty(name="stackingCode",value = "堆垛编码")
+    private String stackingCode;
 
 }
