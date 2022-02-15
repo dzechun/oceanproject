@@ -10,7 +10,6 @@ import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmTransferOrderDetDto;
-import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
@@ -19,6 +18,7 @@ import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
+import com.fantechs.common.base.general.entity.om.search.SearchOmSalesOrderDet;
 import com.fantechs.common.base.general.entity.om.search.SearchOmTransferOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
@@ -590,7 +590,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
             }
         }else if ("OUT-SO".equals(wmsInnerJobOrder.getSourceSysOrderTypeCode())) {
-            SearchOmSalesOrderDetDto searchOmSalesOrderDetDto = new SearchOmSalesOrderDetDto();
+            SearchOmSalesOrderDet searchOmSalesOrderDetDto = new SearchOmSalesOrderDet();
             searchOmSalesOrderDetDto.setSalesOrderDetId(wmsInnerJobOrderDet.getSourceId());
             List<OmSalesOrderDetDto> list = omFeignApi.findList(searchOmSalesOrderDetDto).getData();
             if (StringUtils.isNotEmpty(list)) {
@@ -679,7 +679,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
             }
         }else if ("OUT-SO".equals(wmsInnerJobOrder.getCoreSourceSysOrderTypeCode())) {
-            SearchOmSalesOrderDetDto searchOmSalesOrderDetDto = new SearchOmSalesOrderDetDto();
+            SearchOmSalesOrderDet searchOmSalesOrderDetDto = new SearchOmSalesOrderDet();
             searchOmSalesOrderDetDto.setSalesOrderDetId(wmsInnerJobOrderDet.getCoreSourceId());
             List<OmSalesOrderDetDto> list = omFeignApi.findList(searchOmSalesOrderDetDto).getData();
             if (StringUtils.isNotEmpty(list)) {
