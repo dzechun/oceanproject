@@ -173,6 +173,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         SysUser sysUser = currentUser();
         List<WmsInnerJobOrderDetDto> jobOrderDetList = new ArrayList<>();
         if (StringUtils.isNotEmpty(list)) {
+            verify(list);
             Map<Long, List<WmsInnerPdaInventoryDetDto>> collect = list.stream().collect(Collectors.groupingBy(WmsInnerPdaInventoryDetDto::getWarehouseId));
             if (collect.size() > 1) {
                 throw new BizErrorException("当前扫描条码存在不在同一个仓库的条码");
@@ -419,7 +420,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         }
 
         if (StringUtils.isNotEmpty(wmsInnerPdaJobOrderDet.getInventoryDetList())) {
-
+            verify(wmsInnerPdaJobOrderDet.getInventoryDetList());
             List<WmsInnerMaterialBarcodeReOrder> barcodeReOrderList = new ArrayList<>();
             List<WmsInnerInventoryDet> inventoryDetList = new ArrayList<>();
 //            Example example = new Example(WmsInnerMaterialBarcode.class);
@@ -508,7 +509,9 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         //反写上游单据数量
 
         upstreamRetrography(wmsInnerJobOrder,wmsInnerJobOrderDet,wmsInnerPdaJobOrderDet);
-        if (!wmsInnerJobOrder.getCoreSourceSysOrderTypeCode().equals(wmsInnerJobOrder.getSourceSysOrderTypeCode())) {
+        if (StringUtils.isNotEmpty(wmsInnerJobOrder.getCoreSourceSysOrderTypeCode())
+                && StringUtils.isNotEmpty(wmsInnerJobOrder.getSourceSysOrderTypeCode())
+                && !wmsInnerJobOrder.getCoreSourceSysOrderTypeCode().equals(wmsInnerJobOrder.getSourceSysOrderTypeCode())) {
             nucleusRetrography(wmsInnerJobOrder,wmsInnerJobOrderDet,wmsInnerPdaJobOrderDet);
         }
 
@@ -716,13 +719,15 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             example.clear();
             if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodes)) {
                 for (WmsInnerMaterialBarcode wmsInnerMaterialBarcode : wmsInnerMaterialBarcodes) {
-                    if (wmsInnerPdaInventoryDetDto.getBarcodeType() == 1 && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getCartonCode())
+                    if (wmsInnerPdaInventoryDetDto.getBarcodeType() == 1 && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getColorBoxCode())
                             && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getBarcode()) && !wmsInnerMaterialBarcode.getBarcode().equals(wmsInnerPdaInventoryDetDto.getBarcode())) {
                         throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "拣货出库需以最大单位进行，如需单独移动，请先进行拆分操作");
-                    }else if (wmsInnerPdaInventoryDetDto.getBarcodeType() == 2 && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getCartonCode())
+                    }
+                    if (wmsInnerPdaInventoryDetDto.getBarcodeType() <= 2 && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getCartonCode())
                             && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getColorBoxCode())  && !wmsInnerMaterialBarcode.getColorBoxCode().equals(wmsInnerPdaInventoryDetDto.getColorBoxCode())) {
                         throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "拣货出库需以最大单位进行，如需单独移动，请先进行拆分操作");
-                    }else if (wmsInnerPdaInventoryDetDto.getBarcodeType() == 3 && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getPalletCode())
+                    }
+                    if (wmsInnerPdaInventoryDetDto.getBarcodeType() <= 3 && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getPalletCode())
                             && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getCartonCode()) && !wmsInnerMaterialBarcode.getCartonCode().equals(wmsInnerPdaInventoryDetDto.getCartonCode())) {
                         throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "拣货出库需以最大单位进行，如需单独移动，请先进行拆分操作");
                     }
