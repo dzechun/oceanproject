@@ -8,6 +8,7 @@ import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrderFlowDto;
 import com.fantechs.common.base.general.dto.om.OmHtSalesReturnOrderDto;
+import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmSalesReturnOrderDto;
 import com.fantechs.common.base.general.dto.qms.QmsIncomingInspectionOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInInPlanOrderDetDto;
@@ -16,7 +17,10 @@ import com.fantechs.common.base.general.dto.wms.in.WmsInPlanReceivingOrderDetDto
 import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
-import com.fantechs.common.base.general.entity.om.*;
+import com.fantechs.common.base.general.entity.om.OmHtSalesReturnOrder;
+import com.fantechs.common.base.general.entity.om.OmHtSalesReturnOrderDet;
+import com.fantechs.common.base.general.entity.om.OmSalesReturnOrder;
+import com.fantechs.common.base.general.entity.om.OmSalesReturnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInPlanReceivingOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
@@ -31,6 +35,7 @@ import com.fantechs.provider.api.qms.QmsFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
+import com.fantechs.provider.om.mapper.OmSalesOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmSalesReturnOrderDetMapper;
 import com.fantechs.provider.om.mapper.OmSalesReturnOrderMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtSalesReturnOrderDetMapper;
@@ -71,6 +76,8 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
     private InnerFeignApi innerFeignApi;
     @Resource
     private QmsFeignApi qmsFeignApi;
+    @Resource
+    private OmSalesOrderDetMapper omSalesOrderDetMapper;
 
     @Override
     public List<OmSalesReturnOrderDto> findList(Map<String, Object> map) {
@@ -135,6 +142,14 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
         record.setOrgId(sysUser.getOrganizationId());
         int num = omSalesReturnOrderMapper.insertUseGeneratedKeys(record);
         for (OmSalesReturnOrderDet omSalesReturnOrderDet : record.getOmSalesReturnOrderDets()) {
+            //校验
+            Map map = new HashMap();
+            map.put("salesOrderId",omSalesReturnOrderDet.getSalesOrderId());
+            map.put("materialId",omSalesReturnOrderDet.getMaterialId());
+            map.put("orgId",sysUser.getOrganizationId());
+            List<OmSalesOrderDetDto> list = omSalesOrderDetMapper.findList(map);
+            if(omSalesReturnOrderDet.getOrderQty().compareTo(list.get(0).getOrderQty()) == 1)
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"销退订单数量不能大于销售订单数量");
             omSalesReturnOrderDet.setTotalIssueQty(BigDecimal.ZERO);
             omSalesReturnOrderDet.setSalesReturnOrderId(record.getSalesReturnOrderId());
             omSalesReturnOrderDet.setCreateTime(new Date());
@@ -166,7 +181,17 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
         OmHtSalesReturnOrder omHtSalesReturnOrder = new OmHtSalesReturnOrder();
         BeanUtils.copyProperties(entity, omHtSalesReturnOrder);
         omHtSalesReturnOrderMapper.insertSelective(omHtSalesReturnOrder);
-        
+
+        //校验
+        for (OmSalesReturnOrderDet omSalesReturnOrderDet : entity.getOmSalesReturnOrderDets()) {
+            Map map = new HashMap();
+            map.put("salesOrderId",omSalesReturnOrderDet.getSalesOrderId());
+            map.put("materialId",omSalesReturnOrderDet.getMaterialId());
+            map.put("orgId",user.getOrganizationId());
+            List<OmSalesOrderDetDto> list = omSalesOrderDetMapper.findList(map);
+            if(omSalesReturnOrderDet.getOrderQty().compareTo(list.get(0).getOrderQty()) == 1)
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"销退订单数量不能大于销售订单数量");
+        }
         
         //保存详情表
         //更新原有明细

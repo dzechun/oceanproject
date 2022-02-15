@@ -5,8 +5,8 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmHtSalesOrderDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
-import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDto;
 import com.fantechs.common.base.general.entity.om.OmSalesOrder;
+import com.fantechs.common.base.general.entity.om.search.SearchOmSalesOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
@@ -101,9 +101,9 @@ public class OmSalesOrderController {
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<OmSalesOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrderDto searchOmSalesOrderDto) {
-        Page<Object> page = PageHelper.startPage(searchOmSalesOrderDto.getStartPage(),searchOmSalesOrderDto.getPageSize());
-        List<OmSalesOrderDto> list = omSalesOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchOmSalesOrderDto));
+    public ResponseEntity<List<OmSalesOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrder searchOmSalesOrder) {
+        Page<Object> page = PageHelper.startPage(searchOmSalesOrder.getStartPage(),searchOmSalesOrder.getPageSize());
+        List<OmSalesOrderDto> list = omSalesOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchOmSalesOrder));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
@@ -116,7 +116,7 @@ public class OmSalesOrderController {
 
     @ApiOperation("历史列表")
     @PostMapping("/findHtList")
-    public ResponseEntity<List<OmHtSalesOrderDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrderDto searchOmSalesOrder) {
+    public ResponseEntity<List<OmHtSalesOrderDto>> findHtList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrder searchOmSalesOrder) {
         Page<Object> page = PageHelper.startPage(searchOmSalesOrder.getStartPage(),searchOmSalesOrder.getPageSize());
         List<OmHtSalesOrderDto> list = omHtSalesOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchOmSalesOrder));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
@@ -125,7 +125,7 @@ public class OmSalesOrderController {
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
-    @RequestBody(required = false) SearchOmSalesOrderDto searchOmSalesOrder){
+    @RequestBody(required = false) SearchOmSalesOrder searchOmSalesOrder){
     List<OmSalesOrderDto> list = omSalesOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchOmSalesOrder));
     try {
         // 导出操作

@@ -1,15 +1,13 @@
-package com.fantechs.common.base.general.dto.om;
+package com.fantechs.common.base.general.entity.om.search;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 
 @Data
-public class SearchOmSalesOrderDto extends BaseQuery implements Serializable {
+public class SearchOmSalesOrder extends BaseQuery implements Serializable {
     /**
      * 销售订单号
      */
