@@ -7,6 +7,7 @@
     -->
     <id column="stacking_id" jdbcType="BIGINT" property="stackingId" />
     <result column="stacking_code" jdbcType="VARCHAR" property="stackingCode" />
+    <result column="stacking_name" jdbcType="VARCHAR" property="stackingName" />
     <result column="pro_line_id" jdbcType="BIGINT" property="proLineId" />
     <result column="max_capacity" jdbcType="DECIMAL" property="maxCapacity" />
     <result column="usage_status" jdbcType="TINYINT" property="usageStatus" />
@@ -35,6 +36,7 @@
   <sql id="Base_Column_List">
     ws.stacking_id,
     ws.stacking_code,
+    ws.stacking_name,
     ws.pro_line_id,
     ws.max_capacity,
     ws.usage_status,
