@@ -16,4 +16,6 @@ public interface OmTransferOrderDetService extends IService<OmTransferOrderDet> 
     List<OmTransferOrderDetDto> findList(Map<String, Object> map);
 
     int updatePutDownQty(Long detId, BigDecimal putawayQty);
+
+    int updatePutQty(Long detId, BigDecimal putawayQty);
 }

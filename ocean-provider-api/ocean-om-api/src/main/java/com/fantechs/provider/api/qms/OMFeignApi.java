@@ -2,11 +2,7 @@ package com.fantechs.provider.api.qms;
 
 import com.fantechs.common.base.general.dto.om.*;
 import com.fantechs.common.base.general.entity.om.*;
-import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrder;
-import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrderDet;
-import com.fantechs.common.base.general.entity.om.search.SearchOmSalesCodeReSpc;
-import com.fantechs.common.base.general.entity.om.search.SearchOmTransferOrderDet;
-import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.general.entity.om.search.*;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -87,7 +83,7 @@ public interface OMFeignApi {
 
     @ApiOperation("销售列表")
     @PostMapping("/omSalesOrder/findList")
-    ResponseEntity<List<OmSalesOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrderDto searchOmSalesOrderDto);
+    ResponseEntity<List<OmSalesOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrder searchOmSalesOrder);
 
     @ApiOperation(value = "销售新增",notes = "新增")
     @PostMapping("/omSalesOrder/add")
@@ -127,7 +123,7 @@ public interface OMFeignApi {
 
     @ApiOperation("销售订单明细列表")
     @PostMapping("/omSalesOrderDet/findList")
-    ResponseEntity<List<OmSalesOrderDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrderDetDto searchOmSalesOrderDetDto);
+    ResponseEntity<List<OmSalesOrderDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrderDet searchOmSalesOrderDet);
 
     @ApiOperation(value = "更新采购订单上架数量",notes = "更新采购订单上架数量")
     @PostMapping("/omPurchaseOrder/updatePutawayQty")
@@ -157,6 +153,11 @@ public interface OMFeignApi {
     @ApiOperation(value = "更新调拨订单下推数量",notes = "更新调拨订单下推数量")
     @PostMapping("/omTransferOrderDet/updatePutDownQty")
     ResponseEntity updateTransferOrderPutDownQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long detId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty);
+
+    @ApiOperation(value = "更新调拨订单上架数量",notes = "更新调拨订单上架数量")
+    @PostMapping("/omTransferOrderDet/updatePutQty")
+    ResponseEntity updateTransferOrderPutQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long detId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty);
+
 
     @ApiOperation(value = "更新采退订单下推数量",notes = "更新采退订单下推数量")
     @PostMapping("/omPurchaseReturnOrderDet/updatePutDownQty")

@@ -1,5 +1,6 @@
-package com.fantechs.common.base.general.dto.om;
+package com.fantechs.common.base.general.entity.om.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -8,7 +9,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class SearchOmSalesOrderDetDto extends BaseQuery implements Serializable {
+public class SearchOmSalesOrderDet extends BaseQuery implements Serializable {
     /**
      * 销售订单ID
      */
@@ -20,6 +21,13 @@ public class SearchOmSalesOrderDetDto extends BaseQuery implements Serializable 
 
     @ApiModelProperty(name = "materialCode", value = "物料编码")
     private String materialCode;
+
+    /**
+     * 物料ID
+     */
+    @ApiModelProperty(name="materialId",value = "物料ID")
+    @Excel(name = "物料ID", height = 20, width = 30,orderNum="")
+    private Long materialId;
 
     @ApiModelProperty(name="salesOrderCode",value = "销售订单编码")
     private String salesOrderCode;

@@ -300,10 +300,12 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
 
             //判断非空
             String warehouseName = wmsInInPlanOrderImportList.get(0).getWarehouseName();
+            String materialCode = wmsInInPlanOrderImportList.get(0).getMaterialCode();
+            BigDecimal planQty = wmsInInPlanOrderImportList.get(0).getPlanQty();
             if (StringUtils.isEmpty(
-                    warehouseName
+                    warehouseName,materialCode,planQty
             )){
-                map.put(s,"仓库名称、计划入库单号不鞥呢为空");
+                map.put(s,"仓库名称、计划入库单号不能为空");
                 failMap.add(map);
                 fail.add(s);
                 continue;
@@ -331,6 +333,9 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
             wmsInInPlanOrder.setWarehouseId(baseWarehouses.get(0).getWarehouseId());
             wmsInInPlanOrder.setMakeOrderUserId(user.getUserId());
             wmsInInPlanOrder.setOrderStatus((byte) 1);
+            wmsInInPlanOrder.setSysOrderTypeCode("IN-IPO");
+            wmsInInPlanOrder.setPlanStartTime(wmsInInPlanOrderImportList.get(0).getPlanStartTime());
+            wmsInInPlanOrder.setPlanEndTime(wmsInInPlanOrderImportList.get(0).getPlanEndTime());
             wmsInInPlanOrderMapper.insertUseGeneratedKeys(wmsInInPlanOrder);
 
             for (int i = 0; i < wmsInInPlanOrderImportList.size(); i++) {
@@ -348,7 +353,7 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
                     fail.add(s);
                     continue;
                 }
-                SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
+/*                SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
                 searchBaseInventoryStatus.setInventoryStatusName("合格");
                 List<BaseInventoryStatus> baseInventoryStatuss = baseFeignApi.findList(searchBaseInventoryStatus).getData();
                 if (StringUtils.isEmpty(baseInventoryStatuss)) {
@@ -356,7 +361,7 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
                     failMap.add(map);
                     fail.add(s);
                     continue;
-                }
+                }*/
                 if(StringUtils.isEmpty(wmsInInPlanOrderImport.getPlanQty()) || wmsInInPlanOrderImport.getPlanQty().compareTo(BigDecimal.ZERO) == -1) {
                     map.put(s,"计划数量需大于0");
                     failMap.add(map);
@@ -367,7 +372,7 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
                 WmsInInPlanOrderDet wmsInInPlanOrderDet = new WmsInInPlanOrderDet();
                 BeanUtils.copyProperties(wmsInInPlanOrderImport, wmsInInPlanOrderDet);
                 wmsInInPlanOrderDet.setInPlanOrderId(wmsInInPlanOrder.getInPlanOrderId());
-                wmsInInPlanOrderDet.setInventoryStatusId(baseInventoryStatuss.get(0).getInventoryStatusId());
+            //    wmsInInPlanOrderDet.setInventoryStatusId(baseInventoryStatuss.get(0).getInventoryStatusId());
                 wmsInInPlanOrderDet.setMaterialId(baseMaterials.get(0).getMaterialId());
                 wmsInInPlanOrderDet.setCreateUserId(user.getUserId());
                 wmsInInPlanOrderDet.setCreateTime(new Date());
@@ -376,7 +381,7 @@ public class WmsInInPlanOrderServiceImpl extends BaseService<WmsInInPlanOrder> i
                 wmsInInPlanOrderDet.setStatus((byte) 1);
                 wmsInInPlanOrderDet.setPutawayQty(BigDecimal.ZERO);
                 wmsInInPlanOrderDet.setOrgId(user.getOrganizationId());
-
+                wmsInInPlanOrderDet.setLineStatus((byte)1);
                 detList.add(wmsInInPlanOrderDet);
                 success++;
             }

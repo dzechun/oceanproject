@@ -95,6 +95,12 @@ public class SearchWmsInnerStockOrderDetBarcode extends BaseQuery implements Ser
     private Byte scanStatus;
 
     /**
+     *查询类型( 1 SN 2 彩盒 3 箱号 4 栈板 )
+     */
+    @ApiModelProperty(name = "queryType",value = "查询类型( 1 SN 2 彩盒 3 箱号 4 栈板 )")
+    private int queryType;
+
+    /**
      * 盘点结果(1-盘点、2-已盘点、3-盘盈、4-盘亏)
      */
     @ApiModelProperty(name="stockResult",value = "盘点结果(1-盘点、2-已盘点、3-盘盈、4-盘亏)")

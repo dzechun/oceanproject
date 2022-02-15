@@ -532,6 +532,7 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
             if(StringUtils.isEmpty(dailyPlanId)){
                 MesPmDailyPlan mesPmDailyPlan=new MesPmDailyPlan();
                 mesPmDailyPlan.setDailyPlanCode(code);
+                mesPmDailyPlan.setSourceBigType((byte)2);
                 mesPmDailyPlan.setProLineId(mesPmDailyPlanImport1.get(0).getProLineId());
                 mesPmDailyPlan.setWorkOrderType(mesPmDailyPlanImport1.get(0).getWorkOrderType());
                 mesPmDailyPlan.setPlanStartTime(mesPmDailyPlanImport1.get(0).getPlanStartTime());
@@ -540,6 +541,8 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
                 mesPmDailyPlan.setOrgId(currentUser.getOrganizationId());
                 mesPmDailyPlan.setCreateUserId(currentUser.getUserId());
                 mesPmDailyPlan.setCreateTime(new Date());
+                mesPmDailyPlan.setModifiedUserId(currentUser.getUserId());
+                mesPmDailyPlan.setModifiedTime(new Date());
                 mesPmDailyPlanMapper.insertUseGeneratedKeys(mesPmDailyPlan);
                 dailyPlanId=mesPmDailyPlan.getDailyPlanId();
             }

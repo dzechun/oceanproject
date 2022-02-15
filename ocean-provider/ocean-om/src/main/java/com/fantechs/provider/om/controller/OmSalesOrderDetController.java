@@ -1,8 +1,8 @@
 package com.fantechs.provider.om.controller;
 
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
-import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDetDto;
 import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
+import com.fantechs.common.base.general.entity.om.search.SearchOmSalesOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.om.service.OmSalesOrderDetService;
@@ -58,9 +58,9 @@ public class OmSalesOrderDetController {
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<OmSalesOrderDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrderDetDto searchOmSalesOrderDetDto) {
-        Page<Object> page = PageHelper.startPage(searchOmSalesOrderDetDto.getStartPage(), searchOmSalesOrderDetDto.getPageSize());
-        List<OmSalesOrderDetDto> list = omSalesOrderDetService.findList(ControllerUtil.dynamicConditionByEntity(searchOmSalesOrderDetDto));
+    public ResponseEntity<List<OmSalesOrderDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrderDet searchOmSalesOrderDet) {
+        Page<Object> page = PageHelper.startPage(searchOmSalesOrderDet.getStartPage(), searchOmSalesOrderDet.getPageSize());
+        List<OmSalesOrderDetDto> list = omSalesOrderDetService.findList(ControllerUtil.dynamicConditionByEntity(searchOmSalesOrderDet));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

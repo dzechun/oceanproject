@@ -1517,6 +1517,10 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         //其它入库订单
                         omFeignApi.updateOtherInPutQty(coreSourceId, actualQty);
                         break;
+                    case "INNER-TO":
+                        //调拨单
+                        omFeignApi.updateTransferOrderPutQty(coreSourceId, actualQty);
+                        break;
                     case "IN-SWK":
                         //收货作业
 

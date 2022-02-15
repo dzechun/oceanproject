@@ -82,7 +82,7 @@
       bm.material_desc,
       opod.unit_name,
       opod.order_qty,
-      opod.total_receiving_qty,
+      opod.actual_qty as total_receiving_qty,
       opod.total_plan_delivery_qty
     from srm_plan_delivery_order_det spdod
     left join srm_plan_delivery_order spdo on spdo.plan_delivery_order_id = spdod.plan_delivery_order_id
