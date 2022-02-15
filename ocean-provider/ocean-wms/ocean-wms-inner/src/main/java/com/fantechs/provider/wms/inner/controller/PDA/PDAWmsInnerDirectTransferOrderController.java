@@ -1,5 +1,6 @@
 package com.fantechs.provider.wms.inner.controller.PDA;
 
+import com.fantechs.common.base.general.dto.wms.inner.PDAWmsInnerDirectTransferOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.PDAWmsInnerDirectTransferOrderDto;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -33,6 +34,12 @@ public class PDAWmsInnerDirectTransferOrderController {
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<PDAWmsInnerDirectTransferOrderDto> pdaWmsInnerDirectTransferOrderDtos) {
         return ControllerUtil.returnCRUD(wmsInnerDirectTransferOrderService.save(pdaWmsInnerDirectTransferOrderDtos));
+    }
+
+    @ApiOperation(value = "PDA校验",notes = "PDA校验")
+    @PostMapping("/check")
+    public ResponseEntity check(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<PDAWmsInnerDirectTransferOrderDetDto> pdaWmsInnerDirectTransferOrderDetDtos) {
+        return ControllerUtil.returnCRUD(wmsInnerDirectTransferOrderService.check(pdaWmsInnerDirectTransferOrderDetDtos));
     }
 
 /*    @ApiOperation("删除")

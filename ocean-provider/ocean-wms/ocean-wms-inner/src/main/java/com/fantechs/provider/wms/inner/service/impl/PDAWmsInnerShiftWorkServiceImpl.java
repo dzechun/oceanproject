@@ -352,11 +352,11 @@ public class PDAWmsInnerShiftWorkServiceImpl implements PDAWmsInnerShiftWorkServ
                 for (WmsInnerMaterialBarcode barcode : wmsInnerMaterialBarcodes) {
 
                     if (det.getBarcodeType() == 1 && (StringUtils.isNotEmpty(barcode.getColorBoxCode()) || StringUtils.isNotEmpty(barcode.getCartonCode()) || StringUtils.isNotEmpty(barcode.getPalletCode())))
-                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "调拨出库需以最大单位进行，如需单独移动SN码，请先进行拆分操作");
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "移位调拨出库需以最大单位进行，如需单独移动SN码，请先进行拆分操作");
                     if (det.getBarcodeType() == 2 && (StringUtils.isNotEmpty(barcode.getCartonCode()) || StringUtils.isNotEmpty(barcode.getPalletCode())))
-                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "调拨出库需以最大单位进行，如需单独移动彩盒码，请先进行拆分操作");
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "移位调拨出库需以最大单位进行，如需单独移动彩盒码，请先进行拆分操作");
                     if (det.getBarcodeType() == 3 && (StringUtils.isNotEmpty(barcode.getPalletCode())))
-                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "调拨出库需以最大单位进行，如需单独移动箱码，请先进行拆分操作");
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "移位调拨出库需以最大单位进行，如需单独移动箱码，请先进行拆分操作");
 
                     //查询条码是否在库,更新库存明细状态
                     Example example3 = new Example(WmsInnerInventoryDet.class);

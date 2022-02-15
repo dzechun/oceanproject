@@ -64,7 +64,7 @@
         create_user_name,sus.user_name as modified_user_name,bo.organization_name,
         (SELECT SUM(osrod.order_qty) FROM om_sales_return_order_det osrod where osrod.sales_return_order_id =
         osro.sales_return_order_id) as total_qty,
-        (SELECT SUM(osrod.issue_qty) FROM om_sales_return_order_det osrod where osrod.sales_return_order_id =
+        (SELECT SUM(osrod.total_issue_qty) FROM om_sales_return_order_det osrod where osrod.sales_return_order_id =
         osro.sales_return_order_id) as total_issue_qty,
         (SELECT SUM(osrod.receiving_qty) FROM om_sales_return_order_det osrod where osrod.sales_return_order_id =
         osro.sales_return_order_id) as total_receiving_qty,
