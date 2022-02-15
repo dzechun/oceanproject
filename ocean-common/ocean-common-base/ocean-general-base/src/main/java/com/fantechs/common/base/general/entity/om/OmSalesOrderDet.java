@@ -365,5 +365,19 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
     @Transient
     private Integer isWriteQty;
 
+
+    // ========== 2022-01-24 万宝项目增加字段 ==========
+    @ApiModelProperty(name="fixedValue",value = "固定值")
+    @Column(name = "fixed_value")
+    private String fixedValue;
+
+    @ApiModelProperty(name="initialValue",value = "初始值")
+    @Column(name = "initial_value")
+    private String initialValue;
+
+    @ApiModelProperty(name="finalValue",value = "最终值")
+    @Column(name = "final_value")
+    private String finalValue;
+
     private static final long serialVersionUID = 1L;
 }

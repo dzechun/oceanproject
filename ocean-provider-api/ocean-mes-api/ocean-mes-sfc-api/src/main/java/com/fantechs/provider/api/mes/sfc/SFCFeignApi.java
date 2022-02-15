@@ -91,7 +91,7 @@ public interface SFCFeignApi {
 
     @PostMapping("/mesSfcPalletWork/scanByManualOperation")
     @ApiOperation("栈板作业扫码(人工)")
-    ResponseEntity<ScanByManualOperationDto> scanByManualOperation(@ApiParam(value = "条码", required = true) @RequestParam String barcode, Long proLineId);
+    ResponseEntity<ScanByManualOperationDto> scanByManualOperation(@ApiParam(value = "条码", required = true) @RequestParam String barcode, @ApiParam(value = "产线ID", required = true) @RequestParam Long proLineId);
 
     @PostMapping("/mesSfcPalletWork/workByManualOperation")
     @ApiOperation("栈板作业提交(人工)")

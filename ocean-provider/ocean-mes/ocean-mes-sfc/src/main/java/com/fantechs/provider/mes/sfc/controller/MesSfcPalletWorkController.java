@@ -35,7 +35,7 @@ public class MesSfcPalletWorkController {
     @PostMapping("/scanByManualOperation")
     @ApiOperation("栈板作业扫码(人工), 提供给万宝定制化包使用")
     public ResponseEntity<ScanByManualOperationDto> scanByManualOperation(
-            @ApiParam(value = "条码", required = true) @RequestParam String barcode, Long proLineId) {
+            @ApiParam(value = "条码", required = true) @RequestParam String barcode, @ApiParam(value = "产线ID", required = true) @RequestParam Long proLineId) {
         ScanByManualOperationDto scanByManualOperation = mesSfcPalletWorkService.scanByManualOperation(barcode, proLineId);
         return ControllerUtil.returnDataSuccess(scanByManualOperation, 1);
     }

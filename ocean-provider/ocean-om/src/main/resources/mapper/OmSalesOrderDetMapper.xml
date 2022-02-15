@@ -43,6 +43,10 @@
         <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
         <result column="sales_code" jdbcType="VARCHAR" property="salesCode" />
+
+        <result column="fixed_value" jdbcType="VARCHAR" property="fixedValue" />
+        <result column="initial_value" jdbcType="VARCHAR" property="initialValue" />
+        <result column="final_value" jdbcType="VARCHAR" property="finalValue" />
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto">
@@ -67,7 +71,7 @@
         sod.total_return_qty, sod.order_goods_qty, sod.not_order_goods_qty, sod.total_return_need_supply_qty,
         sod.total_production_qty, sod.total_not_production_qty, sod.return_arrange_dispatch_qty,sod.sales_code,
         sod.status, sod.is_delete, sod.remark, sod.org_id, sod.create_user_id, sod.create_time,
-        sod.modified_user_id, sod.modified_time
+        sod.modified_user_id, sod.modified_time, sod.fixed_value, sod.initial_value, sod.final_value
     </sql>
 
     <select id="findList" parameterType="map" resultMap="BaseResultMapDto">

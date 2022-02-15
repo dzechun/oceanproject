@@ -4,6 +4,8 @@ import com.fantechs.common.base.general.dto.mes.sfc.PalletWorkByManualOperationD
 import com.fantechs.common.base.general.dto.mes.sfc.ScanByManualOperationDto;
 import com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDto;
 
+import java.util.List;
+
 public interface ManualOperationPalletService {
 
     /**
@@ -12,7 +14,7 @@ public interface ManualOperationPalletService {
      * @return
      * @throws Exception
      */
-    int workByManualOperation(PalletWorkByManualOperationDto dto) throws Exception;
+    int workByManualOperation(PalletWorkByManualOperationDto dto);
 
     /**
      * 万宝-栈板扫码（人工）
@@ -28,5 +30,5 @@ public interface ManualOperationPalletService {
      * @param proLineId
      * @return
      */
-    WanbaoStackingDto scanStackingCode(String stackingCode, Long proLineId);
+    List<WanbaoStackingDto> scanStackingCode(String stackingCode, Long proLineId);
 }

@@ -27,6 +27,7 @@ import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 //import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcodeReprint;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcodeReprint;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
+import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
@@ -87,7 +88,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     @Override
     public List<MesSfcWorkOrderBarcodeDto> findList(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode) {
         if(StringUtils.isEmpty(searchMesSfcWorkOrderBarcode.getOrgId())) {
-            SysUser sysUser = currentUser();
+            SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
             searchMesSfcWorkOrderBarcode.setOrgId(sysUser.getOrganizationId());
         }
         return mesSfcWorkOrderBarcodeMapper.findList(searchMesSfcWorkOrderBarcode);
@@ -225,7 +226,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             entity.setModifiedTime(new Date());
         }
         else {
-            SysUser sysUser = currentUser();
+            SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
             entity.setModifiedUserId(sysUser.getUserId());
             entity.setModifiedTime(new Date());
             entity.setOrgId(sysUser.getOrganizationId());
@@ -336,7 +337,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public List<MesSfcWorkOrderBarcode> add(MesSfcWorkOrderBarcode record) {
-        SysUser sysUser = currentUser();
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
 //        if(record.getBarcodeType()==(byte)4){
 //            MesPmWorkOrder mesPmWorkOrder = pmFeignApi.workOrderDetail(record.getWorkOrderId()).getData();
 //            record.setWorkOrderId(mesPmWorkOrder.getSalesOrderId());
@@ -537,17 +538,81 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         return mesSfcWorkOrderBarcodeMapper.findListByCartonDet(map);
     }
 
-    /**
-     * 获取当前登录用户
-     * @return
-     */
-    private SysUser currentUser(){
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
+    @Override
+    public List<String> wanbaoAddCustomerBarcode(Long salesOrderDetId, String fixedValue, String initialValue, String finalValue) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        // 保存固定值/初始值/最终值
+        Example example = new Example(MesSfcWorkOrderBarcode.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("option3", salesOrderDetId);
+        List<MesSfcWorkOrderBarcode> list = this.selectByExample(example);
+        if (!list.isEmpty()){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012004.getCode(), "该销售明细单下的客户条码还未删除，不能保存");
         }
-        return user;
+        OmSalesOrderDet salesOrderDet = new OmSalesOrderDet();
+        salesOrderDet.setSalesOrderDetId(salesOrderDetId);
+        salesOrderDet.setFixedValue(fixedValue);
+        salesOrderDet.setInitialValue(initialValue);
+        salesOrderDet.setFinalValue(finalValue);
+        omFeignApi.update(salesOrderDet).getData();
+
+        // 生成条码
+        Integer start = Integer.valueOf(initialValue);
+        Integer end = Integer.valueOf(finalValue);
+        int length = finalValue.length();
+        List<MesSfcWorkOrderBarcode> workOrderBarcodes = new ArrayList<>();
+        List<String> barcodeList = new ArrayList<>();
+        for (int i = start; i <= end; i++){
+            String code = String.valueOf(i);
+            while(true){
+                if (length == code.length()){
+                    break;
+                }
+                code = "0" + code;
+            }
+            MesSfcWorkOrderBarcode record = new MesSfcWorkOrderBarcode();
+            record.setOption3(salesOrderDetId.toString());
+            record.setWorkOrderId(salesOrderDetId);
+            record.setLabelCategoryId(mesSfcWorkOrderBarcodeMapper.finByTypeId("客户条码"));
+            record.setBarcode(fixedValue + code);
+            record.setBarcodeStatus((byte) 0);
+            record.setCreateTime(new Date());
+            record.setCreateUserId(sysUser.getUserId());
+            record.setModifiedTime(new Date());
+            record.setModifiedUserId(sysUser.getUserId());
+            record.setOrgId(sysUser.getOrganizationId());
+            record.setCreateBarcodeTime(new Date());
+            workOrderBarcodes.add(record);
+            barcodeList.add(fixedValue + code);
+        }
+        mesSfcWorkOrderBarcodeMapper.insertList(workOrderBarcodes);
+        return barcodeList;
     }
+
+    @Override
+    public int wanbaoDeleteCustomerBarcode(Long salesOrderDetId, String fixedValue) {
+        // 查找销售明细行下所有客户条码，判断条码状态是否为待投产
+        Example example = new Example(MesSfcWorkOrderBarcode.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("option3", salesOrderDetId);
+        List<MesSfcWorkOrderBarcode> workOrderBarcodes = this.selectByExample(example);
+        long count = workOrderBarcodes.stream().filter(item -> !item.getBarcodeStatus().equals((byte) 0)).count();
+        if (count > 0){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012004.getCode(), "存在被使用的客户条码，不可删除");
+        }
+        criteria.andLike("barcode", fixedValue + "%");
+        return this.deleteByExample(example);
+    }
+
+    @Override
+    public List<MesSfcWorkOrderBarcode> wanbaoFindCustomerBarcode(Long salesOrderDetId){
+        Example example = new Example(MesSfcWorkOrderBarcode.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("option3", salesOrderDetId);
+        List<MesSfcWorkOrderBarcode> workOrderBarcodes = this.selectByExample(example);
+        return workOrderBarcodes;
+    }
+
 
     public String sub(List<BaseBarcodeRuleSpec> list){
         StringBuffer sb = new StringBuffer();

@@ -856,7 +856,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 searchBasePackageSpecification.setProcessId(dto.getProcessId());
                 List<BasePackageSpecificationDto> basePackageSpecificationDtoList = baseFeignApi.findBasePackageSpecificationList(searchBasePackageSpecification).getData();
                 if (basePackageSpecificationDtoList.isEmpty() || basePackageSpecificationDtoList.get(0).getBaseMaterialPackages().isEmpty()) {
-                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该产品条码没有设置在该工序的包装规格");
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该工序没有配置包装规格基础数据");
                 }
                 // 获取该条码规则对应的最大条码数
                 String maxCode = null;
@@ -1057,6 +1057,9 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
         searchMesSfcWorkOrderBarcode.setBarcode(barcode);
         List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtoList = mesSfcWorkOrderBarcodeService.findList(searchMesSfcWorkOrderBarcode);
+        if (mesSfcWorkOrderBarcodeDtoList.isEmpty()){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该条码不存在系统或已被删除");
+        }
         BaseLabelCategory labelCategory = baseFeignApi.findLabelCategoryDetail(mesSfcWorkOrderBarcodeDtoList.get(0).getLabelCategoryId()).getData();
         if (labelCategory.getLabelCategoryCode().equals("01")) {
             // 产品条码

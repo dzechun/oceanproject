@@ -85,16 +85,28 @@ public class MesSfcWorkOrderBarcodeController {
         return ControllerUtil.returnDataSuccess(mesSfcWorkOrderBarcode,StringUtils.isEmpty(mesSfcWorkOrderBarcode)?0:1);
     }
 
-//    @PostMapping(value = "/export")
-//    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
-//    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
-//    @RequestBody(required = false) SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode){
-//    List<MesSfcWorkOrderBarcodeDto> list = mesSfcWorkOrderBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchMesSfcWorkOrderBarcode));
-//    try {
-//        // 导出操作
-//        EasyPoiUtils.exportExcel(list, "导出信息", "MesSfcWorkOrderBarcode信息", MesSfcWorkOrderBarcodeDto.class, "MesSfcWorkOrderBarcode.xls", response);
-//        } catch (Exception e) {
-//        throw new BizErrorException(e);
-//        }
-//    }
+    @ApiOperation("万宝-销售订单明细生成客户条码")
+    @PostMapping("/wanbaoAddCustomerBarcode")
+    public ResponseEntity<List<String>> wanbaoAddCustomerBarcode(@ApiParam(value = "销售订单明细ID",required = true) @RequestParam Long salesOrderDetId,
+                                                                 @ApiParam(value = "固定值",required = true) @RequestParam String fixedValue,
+                                                                 @ApiParam(value = "初始值",required = true) @RequestParam String initialValue,
+                                                                 @ApiParam(value = "最终值",required = true) @RequestParam String finalValue){
+        List<String> list = mesSfcWorkOrderBarcodeService.wanbaoAddCustomerBarcode(salesOrderDetId, fixedValue, initialValue, finalValue);
+        return ControllerUtil.returnDataSuccess(list, list.size());
+    }
+
+    @ApiOperation("万宝-销售订单明细删除客户条码")
+    @PostMapping("/wanbaoDeleteCustomerBarcode")
+    public ResponseEntity<List<String>> wanbaoDeleteCustomerBarcode(@ApiParam(value = "销售订单明细ID",required = true) @RequestParam Long salesOrderDetId,
+                                                                 @ApiParam(value = "固定值",required = true) @RequestParam String fixedValue){
+        return ControllerUtil.returnCRUD(mesSfcWorkOrderBarcodeService.wanbaoDeleteCustomerBarcode(salesOrderDetId, fixedValue));
+    }
+
+    @ApiOperation("万宝-按销售订单明细查询客户条码")
+    @PostMapping("/wanbaoFindCustomerBarcode")
+    public ResponseEntity<List<MesSfcWorkOrderBarcode>> wanbaoFindCustomerBarcode(@ApiParam(value = "销售订单明细ID",required = true) @RequestParam Long salesOrderDetId){
+        List<MesSfcWorkOrderBarcode> barcodes = mesSfcWorkOrderBarcodeService.wanbaoFindCustomerBarcode(salesOrderDetId);
+        return ControllerUtil.returnDataSuccess(barcodes, barcodes.size());
+    }
+
 }

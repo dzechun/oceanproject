@@ -419,7 +419,7 @@ public class BarcodeUtils {
                      * 如果有附件码，变更销售订单条码状态
                      */
                     Map<String, Object> map = new HashMap<>();
-                    map.put("workOrderId", mesPmWorkOrder.getWorkOrderId());
+//                    map.put("workOrderId", mesPmWorkOrder.getWorkOrderId());
                     map.put("workOrderBarcodeId", sfcWorkOrderBarcode.getWorkOrderBarcodeId());
                     List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = barcodeUtils.mesSfcKeyPartRelevanceService.findList(map);
                     if (!keyPartRelevanceDtos.isEmpty() && keyPartRelevanceDtos.size() >0){
@@ -481,7 +481,7 @@ public class BarcodeUtils {
                  * 如果有附件码，变更销售订单条码状态
                  */
                 Map<String, Object> map = new HashMap<>();
-                map.put("workOrderId", mesPmWorkOrder.getWorkOrderId());
+//                map.put("workOrderId", mesPmWorkOrder.getWorkOrderId());
                 map.put("workOrderBarcodeId", sfcWorkOrderBarcode.getWorkOrderBarcodeId());
                 List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = barcodeUtils.mesSfcKeyPartRelevanceService.findList(map);
                 if (!keyPartRelevanceDtos.isEmpty() && keyPartRelevanceDtos.size() >0){

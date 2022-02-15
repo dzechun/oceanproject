@@ -45,4 +45,29 @@ public interface MesSfcWorkOrderBarcodeService extends IService<MesSfcWorkOrderB
 
     List<MesSfcWorkOrderBarcodeDto> findListByCartonDet(Map<String, Object> map);
 
+    /**
+     * 万宝项目新增客户条码
+     * @param salesOrderDetId
+     * @param fixedValue
+     * @param initialValue
+     * @param finalValue
+     * @return
+     */
+    List<String> wanbaoAddCustomerBarcode(Long salesOrderDetId, String fixedValue, String initialValue, String finalValue);
+
+    /**
+     * 万宝项目删除客户条码
+     * @param salesOrderDetId
+     * @param fixedValue
+     * @return
+     */
+    int wanbaoDeleteCustomerBarcode(Long salesOrderDetId, String fixedValue);
+
+    /**
+     * 万宝项目按销售订单明细查询客户条码
+     * @param salesOrderDetId
+     * @return
+     */
+    List<MesSfcWorkOrderBarcode> wanbaoFindCustomerBarcode(Long salesOrderDetId);
+
 }

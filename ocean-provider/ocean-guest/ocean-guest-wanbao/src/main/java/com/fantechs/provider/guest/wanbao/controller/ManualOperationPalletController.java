@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 @Api(tags = "万宝-栈板作业（人工堆垛）控制器")
@@ -26,23 +27,23 @@ public class ManualOperationPalletController {
     @PostMapping("/scanByManualOperation")
     @ApiOperation("栈板作业扫码(人工)")
     public ResponseEntity<ScanByManualOperationDto> scanByManualOperation(
-            @ApiParam(value = "条码", required = true) @RequestParam String barcode, Long proLineId) {
+            @ApiParam(value = "条码", required = true) @RequestParam String barcode, @ApiParam(value = "条码", required = true) @RequestParam Long proLineId) {
         ScanByManualOperationDto scanByManualOperation = palletService.scanByManualOperation(barcode, proLineId);
         return ControllerUtil.returnDataSuccess(scanByManualOperation, 1);
     }
 
     @PostMapping("/scanStackingCode")
     @ApiOperation("栈板作业扫堆垛编码(人工)")
-    public ResponseEntity<WanbaoStackingDto> scanStackingCode(
-            @ApiParam(value = "堆垛", required = true) @RequestParam String stackingCode, Long proLineId) {
-        WanbaoStackingDto stackingDto = palletService.scanStackingCode(stackingCode, proLineId);
-        return ControllerUtil.returnDataSuccess(stackingDto, 1);
+    public ResponseEntity<List<WanbaoStackingDto>> scanStackingCode(
+            @ApiParam(value = "堆垛", required = true) @RequestParam String stackingCode, @ApiParam(value = "产线ID", required = true) @RequestParam Long proLineId) {
+        List<WanbaoStackingDto> list = palletService.scanStackingCode(stackingCode, proLineId);
+        return ControllerUtil.returnDataSuccess(list, list.size());
     }
 
     @PostMapping("/workByManualOperation")
     @ApiOperation("栈板作业提交(人工)")
     public ResponseEntity workByManualOperation(
-            @ApiParam(value = "条码", required = true) @RequestBody PalletWorkByManualOperationDto dto) throws Exception {
+            @ApiParam(value = "条码", required = true) @RequestBody PalletWorkByManualOperationDto dto) {
         int i = palletService.workByManualOperation(dto);
         return ControllerUtil.returnCRUD(i);
     }

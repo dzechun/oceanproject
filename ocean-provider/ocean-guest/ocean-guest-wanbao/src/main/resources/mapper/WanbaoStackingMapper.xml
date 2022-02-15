@@ -29,6 +29,7 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName" />
     <result column="pro_name" jdbcType="VARCHAR" property="proName" />
+    <result column="pro_code" jdbcType="VARCHAR" property="proCode" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -54,7 +55,8 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name,
-    bpl.pro_name
+    bpl.pro_name,
+    bpl.pro_code
     FROM wanbao_stacking ws
     LEFT JOIN ocean_v2.sys_user u on ws.create_user_id=u.user_id
     LEFT JOIN ocean_v2.sys_user s on ws.modified_user_id=s.user_id
