@@ -382,64 +382,32 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         jobExample.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrderDet.getJobOrderId());
         WmsInnerJobOrder wmsInnerJobOrder = wmsInnerJobOrderMapper.selectOneByExample(jobExample);
 
-        //判断拣货数量是否等于分配数量
-        if (wmsInnerJobOrderDet.getDistributionQty().compareTo(wmsInnerPdaJobOrderDet.getActualQty()) == 0) {
-
-            log(wmsInnerPdaJobOrderDet,wmsInnerJobOrder,wmsInnerJobOrderDet,1);
-
-            wmsInnerJobOrderDet.setLineStatus((byte) 3);
-            wmsInnerJobOrderDet.setActualQty(wmsInnerPdaJobOrderDet.getActualQty());
-            wmsInnerJobOrderDet.setWorkStartTime(new Date());
-            wmsInnerJobOrderDet.setWorkEndTime(new Date());
-            wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInnerJobOrderDet);
-
-        }else if (wmsInnerJobOrderDet.getDistributionQty().compareTo(wmsInnerPdaJobOrderDet.getActualQty()) == 1) {
-            //拣货数量小于分配数量
-            WmsInnerJobOrderDet wms = new WmsInnerJobOrderDet();
-            BeanUtil.copyProperties(wmsInnerJobOrderDet,wms);
-            wms.setJobOrderDetId(null);
-            wms.setPlanQty(wmsInnerPdaJobOrderDet.getActualQty());
-            wms.setDistributionQty(wmsInnerPdaJobOrderDet.getActualQty());
-            wms.setActualQty(wmsInnerPdaJobOrderDet.getActualQty());
-            wms.setLineStatus((byte)3);
-            wms.setWorkStartTime(new Date());
-            wms.setWorkEndTime(new Date());
-            wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wms);
-
-
-            wmsInnerJobOrderDet.setDistributionQty(wmsInnerJobOrderDet.getDistributionQty().subtract(wmsInnerPdaJobOrderDet.getActualQty()));
-            wmsInnerJobOrderDet.setPlanQty(wmsInnerJobOrderDet.getPlanQty().subtract(wmsInnerPdaJobOrderDet.getActualQty()));
-            wmsInnerJobOrderDet.setModifiedUserId(sysUser.getUserId());
-            wmsInnerJobOrderDet.setModifiedTime(new Date());
-            wmsInnerJobOrderDet.setLineStatus((byte) 2);
-            wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInnerJobOrderDet);
-
-            log(wmsInnerPdaJobOrderDet,wmsInnerJobOrder,wmsInnerJobOrderDet,2);
-        }else if (wmsInnerJobOrderDet.getDistributionQty().compareTo(wmsInnerPdaJobOrderDet.getActualQty()) == -1)  {
-            throw new BizErrorException("拣货数量大于实际分配数量");
-        }
-
         if (StringUtils.isNotEmpty(wmsInnerPdaJobOrderDet.getInventoryDetList())) {
             verify(wmsInnerPdaJobOrderDet.getInventoryDetList());
+            BigDecimal materialTotalQty = new BigDecimal(0);
             List<WmsInnerMaterialBarcodeReOrder> barcodeReOrderList = new ArrayList<>();
             List<WmsInnerInventoryDet> inventoryDetList = new ArrayList<>();
 //            Example example = new Example(WmsInnerMaterialBarcode.class);
             Example inventoryDetExample = new Example(WmsInnerInventoryDet.class);
             Map<String,Object> map = new HashMap<>();
             for (WmsInnerPdaInventoryDetDto wmsInnerPdaInventoryDetDto : wmsInnerPdaJobOrderDet.getInventoryDetList()) {
-
+                String barcode = "";
                 if (StringUtils.isNotEmpty(wmsInnerPdaInventoryDetDto.getInventoryDetId())) {
 
                     if (wmsInnerPdaInventoryDetDto.getBarcodeType() == 1) {
                         map.put("barcode",wmsInnerPdaInventoryDetDto.getBarcode());
+                        barcode = wmsInnerPdaInventoryDetDto.getBarcode();
                     }else if (wmsInnerPdaInventoryDetDto.getBarcodeType() == 2) {
                         map.put("colorBoxCode",wmsInnerPdaInventoryDetDto.getColorBoxCode());
+                        barcode = wmsInnerPdaInventoryDetDto.getColorBoxCode();
                     }else if (wmsInnerPdaInventoryDetDto.getBarcodeType() == 3) {
                         map.put("cartonCode",wmsInnerPdaInventoryDetDto.getCartonCode());
+                        barcode = wmsInnerPdaInventoryDetDto.getCartonCode();
                     }else if (wmsInnerPdaInventoryDetDto.getBarcodeType() == 4) {
                         map.put("palletCode",wmsInnerPdaInventoryDetDto.getPalletCode());
+                        barcode = wmsInnerPdaInventoryDetDto.getPalletCode();
                     }
-
+                    map.put("barcodeType",wmsInnerPdaInventoryDetDto.getBarcodeType());
                     map.put("orgId",sysUser.getOrganizationId());
                     List<WmsInnerInventoryDetDto> list = wmsInnerInventoryDetMapper.findList(map);
                     if (StringUtils.isEmpty(list)) {
@@ -452,19 +420,19 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     BeanUtil.copyProperties(list.get(0),wmsInnerPdaInventoryDetDto);
                 }
 
-                WmsInnerInventoryDetDto scan = this.scan(null, null, wmsInnerPdaInventoryDetDto.getBarcode());
+//                WmsInnerInventoryDetDto scan = this.scan(null, null, wmsInnerPdaInventoryDetDto.getBarcode());
 
-                List<WmsInnerMaterialBarcodeDto> sn = this.getSn(scan.getBarcodeType(), scan.getBarcode());
+                List<WmsInnerMaterialBarcodeDto> sn = this.getSn(wmsInnerPdaInventoryDetDto.getBarcodeType(), barcode);
 
                 for (WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto : sn) {
 
                     inventoryDetExample.createCriteria().andEqualTo("materialBarcodeId",wmsInnerMaterialBarcodeDto.getMaterialBarcodeId());
                     List<WmsInnerInventoryDet> wmsInnerInventoryDetList = wmsInnerInventoryDetMapper.selectByExample(inventoryDetExample);
                     inventoryDetExample.clear();
-                    if (StringUtils.isEmpty(wmsInnerInventoryDetList)) {
+                    if (StringUtils.isEmpty(wmsInnerInventoryDetList) || wmsInnerInventoryDetList.get(0).getBarcodeStatus() != 1) {
                         throw new BizErrorException("条码不存在库存内,或者该条码下的子条码不在库存内");
                     }
-
+                    materialTotalQty = materialTotalQty.add(wmsInnerMaterialBarcodeDto.getMaterialQty());
                     if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeDto)) {
                         WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
                         wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(wmsInnerMaterialBarcodeDto.getMaterialBarcodeId());
@@ -489,6 +457,44 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             wmsInnerInventoryDetMapper.updateStroage(inventoryDetList);
             if (StringUtils.isNotEmpty(barcodeReOrderList)) {
                 wmsInnerMaterialBarcodeReOrderMapper.insertList(barcodeReOrderList);
+            }
+
+            wmsInnerPdaJobOrderDet.setActualQty(materialTotalQty);
+            //判断拣货数量是否等于分配数量
+            if (wmsInnerJobOrderDet.getDistributionQty().compareTo(wmsInnerPdaJobOrderDet.getActualQty()) == 0) {
+
+                log(wmsInnerPdaJobOrderDet,wmsInnerJobOrder,wmsInnerJobOrderDet,1);
+
+                wmsInnerJobOrderDet.setLineStatus((byte) 3);
+                wmsInnerJobOrderDet.setActualQty(wmsInnerPdaJobOrderDet.getActualQty());
+                wmsInnerJobOrderDet.setWorkStartTime(new Date());
+                wmsInnerJobOrderDet.setWorkEndTime(new Date());
+                wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInnerJobOrderDet);
+
+            }else if (wmsInnerJobOrderDet.getDistributionQty().compareTo(wmsInnerPdaJobOrderDet.getActualQty()) == 1) {
+                //拣货数量小于分配数量
+                WmsInnerJobOrderDet wms = new WmsInnerJobOrderDet();
+                BeanUtil.copyProperties(wmsInnerJobOrderDet,wms);
+                wms.setJobOrderDetId(null);
+                wms.setPlanQty(wmsInnerPdaJobOrderDet.getActualQty());
+                wms.setDistributionQty(wmsInnerPdaJobOrderDet.getActualQty());
+                wms.setActualQty(wmsInnerPdaJobOrderDet.getActualQty());
+                wms.setLineStatus((byte)3);
+                wms.setWorkStartTime(new Date());
+                wms.setWorkEndTime(new Date());
+                wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wms);
+
+
+                wmsInnerJobOrderDet.setDistributionQty(wmsInnerJobOrderDet.getDistributionQty().subtract(wmsInnerPdaJobOrderDet.getActualQty()));
+                wmsInnerJobOrderDet.setPlanQty(wmsInnerJobOrderDet.getPlanQty().subtract(wmsInnerPdaJobOrderDet.getActualQty()));
+                wmsInnerJobOrderDet.setModifiedUserId(sysUser.getUserId());
+                wmsInnerJobOrderDet.setModifiedTime(new Date());
+                wmsInnerJobOrderDet.setLineStatus((byte) 2);
+                wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInnerJobOrderDet);
+
+                log(wmsInnerPdaJobOrderDet,wmsInnerJobOrder,wmsInnerJobOrderDet,2);
+            }else if (wmsInnerJobOrderDet.getDistributionQty().compareTo(wmsInnerPdaJobOrderDet.getActualQty()) == -1)  {
+                throw new BizErrorException("拣货数量大于实际分配数量");
             }
         }
 
@@ -723,12 +729,10 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                             && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getBarcode()) && !wmsInnerMaterialBarcode.getBarcode().equals(wmsInnerPdaInventoryDetDto.getBarcode())) {
                         throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "拣货出库需以最大单位进行，如需单独移动，请先进行拆分操作");
                     }
-                    if (wmsInnerPdaInventoryDetDto.getBarcodeType() <= 2 && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getCartonCode())
-                            && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getColorBoxCode())  && !wmsInnerMaterialBarcode.getColorBoxCode().equals(wmsInnerPdaInventoryDetDto.getColorBoxCode())) {
+                    if (wmsInnerPdaInventoryDetDto.getBarcodeType() <= 2 && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getCartonCode())) {
                         throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "拣货出库需以最大单位进行，如需单独移动，请先进行拆分操作");
                     }
-                    if (wmsInnerPdaInventoryDetDto.getBarcodeType() <= 3 && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getPalletCode())
-                            && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getCartonCode()) && !wmsInnerMaterialBarcode.getCartonCode().equals(wmsInnerPdaInventoryDetDto.getCartonCode())) {
+                    if (wmsInnerPdaInventoryDetDto.getBarcodeType() <= 3 && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getPalletCode())) {
                         throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "拣货出库需以最大单位进行，如需单独移动，请先进行拆分操作");
                     }
                 }
