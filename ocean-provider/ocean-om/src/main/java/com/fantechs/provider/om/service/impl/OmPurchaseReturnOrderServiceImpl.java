@@ -290,6 +290,18 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
         List<OmPurchaseReturnOrderDetDto> omPurchaseReturnOrderDetDtos = record.getOmPurchaseReturnOrderDetDtos();
         if(StringUtils.isNotEmpty(omPurchaseReturnOrderDetDtos)){
             for (OmPurchaseReturnOrderDetDto omPurchaseReturnOrderDetDto : omPurchaseReturnOrderDetDtos){
+                Example example = new Example(OmPurchaseReturnOrderDet.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("purchaseOrderDetId",omPurchaseReturnOrderDetDto.getPurchaseOrderDetId());
+                List<OmPurchaseReturnOrderDet> omPurchaseReturnOrderDets = omPurchaseReturnOrderDetMapper.selectByExample(example);
+                if(StringUtils.isNotEmpty(omPurchaseReturnOrderDets)) {
+                    BigDecimal totalActualQty = omPurchaseReturnOrderDets.stream().filter(item -> item.getActualQty()!=null).map(OmPurchaseReturnOrderDet::getActualQty).reduce(BigDecimal.ZERO, BigDecimal::add);
+                    BigDecimal totalOrderQty = omPurchaseReturnOrderDets.stream().map(OmPurchaseReturnOrderDet::getOrderQty).reduce(BigDecimal.ZERO, BigDecimal::add);
+                    if (totalActualQty.compareTo(totalOrderQty) == -1) {
+                        throw new BizErrorException("该采购订单对应的采退订单未完成，不可新增");
+                    }
+                }
+
                 BigDecimal totalSalesReturnQty = omPurchaseReturnOrderDetDto.getTotalSalesReturnQty()==null?BigDecimal.ZERO:omPurchaseReturnOrderDetDto.getTotalSalesReturnQty();
                 BigDecimal add = totalSalesReturnQty.add(omPurchaseReturnOrderDetDto.getOrderQty());
                 OmPurchaseOrderDet omPurchaseOrderDet = omPurchaseOrderDetMapper.selectByPrimaryKey(omPurchaseReturnOrderDetDto.getPurchaseOrderDetId());
@@ -359,6 +371,18 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
                 OmHtPurchaseReturnOrderDet omHtPurchaseReturnOrderDet = new OmHtPurchaseReturnOrderDet();
                 org.springframework.beans.BeanUtils.copyProperties(omPurchaseReturnOrderDetDto, omHtPurchaseReturnOrderDet);
                 htList.add(omHtPurchaseReturnOrderDet);
+
+                example.clear();
+                Example.Criteria criteria1 = example.createCriteria();
+                criteria1.andEqualTo("purchaseOrderDetId",omPurchaseReturnOrderDetDto.getPurchaseOrderDetId());
+                List<OmPurchaseReturnOrderDet> omPurchaseReturnOrderDets = omPurchaseReturnOrderDetMapper.selectByExample(example);
+                if(StringUtils.isNotEmpty(omPurchaseReturnOrderDets)) {
+                    BigDecimal totalActualQty = omPurchaseReturnOrderDets.stream().filter(item -> item.getActualQty()!=null).map(OmPurchaseReturnOrderDet::getActualQty).reduce(BigDecimal.ZERO, BigDecimal::add);
+                    BigDecimal totalOrderQty = omPurchaseReturnOrderDets.stream().map(OmPurchaseReturnOrderDet::getOrderQty).reduce(BigDecimal.ZERO, BigDecimal::add);
+                    if (totalActualQty.compareTo(totalOrderQty) == -1) {
+                        throw new BizErrorException("该采购订单对应的采退订单未完成，不可新增");
+                    }
+                }
 
                 BigDecimal totalSalesReturnQty = omPurchaseReturnOrderDetDto.getTotalSalesReturnQty()==null?BigDecimal.ZERO:omPurchaseReturnOrderDetDto.getTotalSalesReturnQty();
                 BigDecimal add = totalSalesReturnQty.add(omPurchaseReturnOrderDetDto.getOrderQty());
