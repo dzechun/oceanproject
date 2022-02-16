@@ -31,7 +31,7 @@ import java.util.Map;
  * Created by leifengzhi on 2022/01/21.
  */
 @RestController
-@Api(tags = "wanbaoStackingDet控制器")
+@Api(tags = "堆垛明细控制器")
 @RequestMapping("/wanbaoStackingDet")
 @Validated
 public class WanbaoStackingDetController {

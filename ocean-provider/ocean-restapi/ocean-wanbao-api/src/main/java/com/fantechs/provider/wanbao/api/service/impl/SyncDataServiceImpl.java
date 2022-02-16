@@ -351,13 +351,13 @@ public class SyncDataServiceImpl implements SyncDataService {
                 // 欢欢确定万宝同步工单时，工艺路线按产线匹配，产线由工单编码前缀确定
                 Long routeId = 0L;
                 for (BaseRoute route : baseRoutes){
-                    if (route.getRouteCode().equals("A1") && order.getWorkOrderCode().contains("ZA")){
+                    if (route.getRouteCode().equals("A1") && order.getWorkOrderCode().startsWith("ZA")){
                         routeId = route.getRouteId();
                         break;
-                    }else if (route.getRouteCode().equals("A2") && (order.getWorkOrderCode().contains("ZC") || order.getWorkOrderCode().contains("ZD"))){
+                    }else if (route.getRouteCode().equals("A2") && (order.getWorkOrderCode().startsWith("ZC") || order.getWorkOrderCode().startsWith("ZD"))){
                         routeId = route.getRouteId();
                         break;
-                    }else if (route.getRouteCode().equals("A16") && order.getWorkOrderCode().contains("ZL")){
+                    }else if (route.getRouteCode().equals("A16") && order.getWorkOrderCode().startsWith("ZL")){
                         routeId = route.getRouteId();
                         break;
                     }
@@ -413,7 +413,7 @@ public class SyncDataServiceImpl implements SyncDataService {
 
                 // 产线
                 for (BaseProLine item : proLines) {
-                    if (order.getWorkOrderCode().contains("ZL")){
+                    if (order.getWorkOrderCode().startsWith("ZL")){
                         if (!item.getProCode().equals("A16")){
                             continue;
                         }

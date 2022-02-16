@@ -1,11 +1,17 @@
 package com.fantechs.provider.mes.sfc.controller;
 
+import cn.hutool.core.bean.BeanUtil;
+import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.mes.sfc.ExportCustomerBarcodeDto;
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcReworkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcReworkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import com.github.pagehelper.Page;
@@ -20,6 +26,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -104,9 +111,32 @@ public class MesSfcWorkOrderBarcodeController {
 
     @ApiOperation("万宝-按销售订单明细查询客户条码")
     @PostMapping("/wanbaoFindCustomerBarcode")
-    public ResponseEntity<List<MesSfcWorkOrderBarcode>> wanbaoFindCustomerBarcode(@ApiParam(value = "销售订单明细ID",required = true) @RequestParam Long salesOrderDetId){
+    public ResponseEntity<List<MesSfcWorkOrderBarcode>> wanbaoFindCustomerBarcode(@ApiParam(value = "销售订单明细ID",required = true) @RequestParam Long salesOrderDetId,
+                                                                                  @ApiParam(value = "当前页",required = true, defaultValue = "1") @RequestParam Integer startPage,
+                                                                                  @ApiParam(value = "显示数量",required = true, defaultValue = "10") @RequestParam Integer pageSize){
+        Page<Object> page = PageHelper.startPage(startPage, pageSize);
         List<MesSfcWorkOrderBarcode> barcodes = mesSfcWorkOrderBarcodeService.wanbaoFindCustomerBarcode(salesOrderDetId);
-        return ControllerUtil.returnDataSuccess(barcodes, barcodes.size());
+        return ControllerUtil.returnDataSuccess(barcodes,(int)page.getTotal());
+    }
+
+    @PostMapping(value = "/exportCustomerBarcode")
+    @ApiOperation(value = "导出客户条码",notes = "导出excel",produces = "application/octet-stream")
+    public void exportExcel(HttpServletResponse response, @ApiParam(value = "销售订单明细ID",required = true) @RequestParam Long salesOrderDetId){
+        List<MesSfcWorkOrderBarcode> barcodes = mesSfcWorkOrderBarcodeService.wanbaoFindCustomerBarcode(salesOrderDetId);
+        List<ExportCustomerBarcodeDto> list = new ArrayList<>();
+        if (!barcodes.isEmpty()){
+            for (MesSfcWorkOrderBarcode barcode : barcodes){
+                ExportCustomerBarcodeDto dto = new ExportCustomerBarcodeDto();
+                BeanUtil.copyProperties(barcode, dto);
+                list.add(dto);
+            }
+        }
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(list, "客户条码信息", "客户条码信息", ExportCustomerBarcodeDto.class, "客户条码信息.xls", response);
+        } catch (Exception e) {
+            throw new BizErrorException(e);
+        }
     }
 
 }
