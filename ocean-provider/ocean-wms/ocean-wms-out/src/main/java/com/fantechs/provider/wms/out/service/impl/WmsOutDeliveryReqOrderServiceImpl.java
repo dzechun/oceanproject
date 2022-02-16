@@ -280,11 +280,15 @@ public class WmsOutDeliveryReqOrderServiceImpl extends BaseService<WmsOutDeliver
                 wmsOutDeliveryReqOrderDetDto.setModifiedTime(new Date());
                 wmsOutDeliveryReqOrderDetDto.setOrgId(user.getOrganizationId());
 
+                wmsOutDeliveryReqOrderDetMapper.insertUseGeneratedKeys(wmsOutDeliveryReqOrderDetDto);
+                wmsOutDeliveryReqOrderDetDto.setCoreSourceId(wmsOutDeliveryReqOrderDetDto.getDeliveryReqOrderDetId());
+                wmsOutDeliveryReqOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryReqOrderDetDto);
+
                 WmsOutHtDeliveryReqOrderDet wmsOutHtDeliveryReqOrderDet = new WmsOutHtDeliveryReqOrderDet();
                 org.springframework.beans.BeanUtils.copyProperties(wmsOutDeliveryReqOrderDetDto, wmsOutHtDeliveryReqOrderDet);
                 htList.add(wmsOutHtDeliveryReqOrderDet);
             }
-            wmsOutDeliveryReqOrderDetMapper.insertList(wmsOutDeliveryReqOrderDetDtos);
+            //wmsOutDeliveryReqOrderDetMapper.insertList(wmsOutDeliveryReqOrderDetDtos);
             wmsOutHtDeliveryReqOrderDetMapper.insertList(htList);
         }
 
@@ -343,11 +347,16 @@ public class WmsOutDeliveryReqOrderServiceImpl extends BaseService<WmsOutDeliver
                 wmsOutDeliveryReqOrderDetDto.setModifiedUserId(user.getUserId());
                 wmsOutDeliveryReqOrderDetDto.setModifiedTime(new Date());
                 wmsOutDeliveryReqOrderDetDto.setOrgId(user.getOrganizationId());
+
+                wmsOutDeliveryReqOrderDetMapper.insertUseGeneratedKeys(wmsOutDeliveryReqOrderDetDto);
+                wmsOutDeliveryReqOrderDetDto.setCoreSourceId(wmsOutDeliveryReqOrderDetDto.getDeliveryReqOrderDetId());
+                wmsOutDeliveryReqOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryReqOrderDetDto);
+
                 addDetList.add(wmsOutDeliveryReqOrderDetDto);
             }
-            if(StringUtils.isNotEmpty(addDetList)) {
+            /*if(StringUtils.isNotEmpty(addDetList)) {
                 wmsOutDeliveryReqOrderDetMapper.insertList(addDetList);
-            }
+            }*/
             if(StringUtils.isNotEmpty(htList)) {
                 wmsOutHtDeliveryReqOrderDetMapper.insertList(htList);
             }

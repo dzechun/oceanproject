@@ -214,11 +214,15 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
                 wmsOutPlanDeliveryOrderDetDto.setModifiedTime(new Date());
                 wmsOutPlanDeliveryOrderDetDto.setOrgId(user.getOrganizationId());
 
+                wmsOutPlanDeliveryOrderDetMapper.insertUseGeneratedKeys(wmsOutPlanDeliveryOrderDetDto);
+                wmsOutPlanDeliveryOrderDetDto.setCoreSourceId(wmsOutPlanDeliveryOrderDetDto.getPlanDeliveryOrderDetId());
+                wmsOutPlanDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutPlanDeliveryOrderDetDto);
+
                 WmsOutHtPlanDeliveryOrderDet wmsOutHtPlanDeliveryOrderDet = new WmsOutHtPlanDeliveryOrderDet();
                 org.springframework.beans.BeanUtils.copyProperties(wmsOutPlanDeliveryOrderDetDto, wmsOutHtPlanDeliveryOrderDet);
                 htList.add(wmsOutHtPlanDeliveryOrderDet);
             }
-            wmsOutPlanDeliveryOrderDetMapper.insertList(wmsOutPlanDeliveryOrderDetDtos);
+            //wmsOutPlanDeliveryOrderDetMapper.insertList(wmsOutPlanDeliveryOrderDetDtos);
             wmsOutHtPlanDeliveryOrderDetMapper.insertList(htList);
         }
 
@@ -277,11 +281,16 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
                 wmsOutPlanDeliveryOrderDetDto.setModifiedUserId(user.getUserId());
                 wmsOutPlanDeliveryOrderDetDto.setModifiedTime(new Date());
                 wmsOutPlanDeliveryOrderDetDto.setOrgId(user.getOrganizationId());
+
+                wmsOutPlanDeliveryOrderDetMapper.insertUseGeneratedKeys(wmsOutPlanDeliveryOrderDetDto);
+                wmsOutPlanDeliveryOrderDetDto.setCoreSourceId(wmsOutPlanDeliveryOrderDetDto.getPlanDeliveryOrderDetId());
+                wmsOutPlanDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutPlanDeliveryOrderDetDto);
+
                 addDetList.add(wmsOutPlanDeliveryOrderDetDto);
             }
-            if(StringUtils.isNotEmpty(addDetList)) {
+            /*if(StringUtils.isNotEmpty(addDetList)) {
                 wmsOutPlanDeliveryOrderDetMapper.insertList(addDetList);
-            }
+            }*/
             if(StringUtils.isNotEmpty(htList)) {
                 wmsOutHtPlanDeliveryOrderDetMapper.insertList(htList);
             }
