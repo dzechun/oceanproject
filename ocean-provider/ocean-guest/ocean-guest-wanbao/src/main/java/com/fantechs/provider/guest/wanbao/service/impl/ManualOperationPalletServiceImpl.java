@@ -11,6 +11,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.guest.wanbao.service.ManualOperationPalletService;
 import com.fantechs.provider.guest.wanbao.service.WanbaoStackingService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class ManualOperationPalletServiceImpl implements ManualOperationPalletService {
 
     @Resource
@@ -28,14 +30,20 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
 
     @Override
     public int workByManualOperation(PalletWorkByManualOperationDto dto) {
-        this.scanStackingCode(dto.getStackingCode(), dto.getProLineId());
-
+        Map<String, Object> map = new HashMap<>();
+        map.put("stackingCodeNotLike", dto.getStackingCode());
+        List<WanbaoStackingDto> stackingDtos = stackingService.findList(map);
+        if (stackingDtos.isEmpty()){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛编码在平台中不存在或已被删除");
+        }
+        if (!stackingDtos.get(0).getProLineId().equals(dto.getProLineId())){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛编码跟配置产线不匹配");
+        }
         ResponseEntity<Integer> responseEntity = sfcFeignApi.workByManualOperation(dto);
         if (responseEntity.getCode() != 0){
             throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
         }
-        Integer i = responseEntity.getData();
-        return i;
+        return 1;
     }
 
     @Override

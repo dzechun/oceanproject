@@ -68,6 +68,9 @@
       <if test="stackingCode != null">
         AND ws.stacking_code like CONCAT('%', #{stackingCode}, '%')
       </if>
+      <if test="stackingCodeNotLike != null">
+        AND ws.stacking_code = #{stackingCodeNotLike}
+      </if>
       <if test="usageStatus != null">
         AND ws.usage_status = #{usageStatus}
       </if>
