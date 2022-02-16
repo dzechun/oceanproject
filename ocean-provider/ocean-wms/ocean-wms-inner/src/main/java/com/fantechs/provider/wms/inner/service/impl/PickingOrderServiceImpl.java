@@ -737,8 +737,10 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         }
         WmsInnerPdaInventoryDetDto wmsInnerPdaInventoryDetDto = list.get(0);
         Example example = new Example(WmsInnerMaterialBarcode.class);
+        Map<String,Integer> barcodeMap = new HashMap<>();
         for (WmsInnerPdaInventoryDetDto innerPdaInventoryDetDto : list) {
             List<WmsInnerMaterialBarcode> wmsInnerMaterialBarcodes = null;
+            //按照条码类型组合查询对应的所有sn码查询条件
             if (wmsInnerPdaInventoryDetDto.getBarcodeType() == 1) {
                 example.createCriteria().andEqualTo("barcode",innerPdaInventoryDetDto.getBarcode())
                         .andEqualTo("barcodeType",1);
@@ -748,22 +750,78 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             }else if (wmsInnerPdaInventoryDetDto.getBarcodeType() == 3) {
                 example.createCriteria().andEqualTo("cartonCode",innerPdaInventoryDetDto.getCartonCode())
                         .andEqualTo("barcodeType",1);
+            }else if (wmsInnerPdaInventoryDetDto.getBarcodeType() == 4) {
+                continue;
             }
+            //查询当前条码类型下的所有sn码
             wmsInnerMaterialBarcodes = wmsInnerMaterialBarcodeMapper.selectByExample(example);
             example.clear();
             if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodes)) {
-                for (WmsInnerMaterialBarcode wmsInnerMaterialBarcode : wmsInnerMaterialBarcodes) {
-                    if (wmsInnerPdaInventoryDetDto.getBarcodeType() == 1 && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getColorBoxCode())
-                            && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getBarcode()) && !wmsInnerMaterialBarcode.getBarcode().equals(wmsInnerPdaInventoryDetDto.getBarcode())) {
-                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "拣货出库需以最大单位进行，如需单独移动，请先进行拆分操作");
-                    }
-                    if (wmsInnerPdaInventoryDetDto.getBarcodeType() <= 2 && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getCartonCode())) {
-                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "拣货出库需以最大单位进行，如需单独移动，请先进行拆分操作");
-                    }
-                    if (wmsInnerPdaInventoryDetDto.getBarcodeType() <= 3 && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getPalletCode())) {
+                WmsInnerMaterialBarcode wmsInnerMaterialBarcode = wmsInnerMaterialBarcodes.get(0);
+                String barcode = "";
+                Integer barcodeType = 1;
+                //判断对应单位的条码是否有值，获取最大单位的条码
+                if (StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getPalletCode())) {
+                    barcode = wmsInnerMaterialBarcode.getPalletCode();
+                    barcodeType = 4;
+                }else if (StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getCartonCode())) {
+                    barcode = wmsInnerMaterialBarcode.getCartonCode();
+                    barcodeType = 3;
+                }else if (StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getColorBoxCode())) {
+                    barcode = wmsInnerMaterialBarcode.getColorBoxCode();
+                    barcodeType = 2;
+                }
+                //按照最大条码单位进行分组，累计最大条码相同的sn码数量
+                Integer qty = barcodeMap.get(barcodeType+","+barcode);
+                if (StringUtils.isNotEmpty(qty)) {
+                    barcodeMap.put(barcodeType+","+barcode,qty.intValue() + wmsInnerMaterialBarcodes.size());
+                }else {
+                    barcodeMap.put(barcodeType+","+barcode,wmsInnerMaterialBarcodes.size());
+                }
+
+//                for (WmsInnerMaterialBarcode wmsInnerMaterialBarcode : wmsInnerMaterialBarcodes) {
+//                    if (wmsInnerPdaInventoryDetDto.getBarcodeType() == 1 && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getColorBoxCode())
+//                            && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getBarcode()) && !wmsInnerMaterialBarcode.getBarcode().equals(wmsInnerPdaInventoryDetDto.getBarcode())) {
+//                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "拣货出库需以最大单位进行，如需单独移动，请先进行拆分操作");
+//                    }
+//                    if (wmsInnerPdaInventoryDetDto.getBarcodeType() <= 2 && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getCartonCode())) {
+//                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "拣货出库需以最大单位进行，如需单独移动，请先进行拆分操作");
+//                    }
+//                    if (wmsInnerPdaInventoryDetDto.getBarcodeType() <= 3 && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getPalletCode())) {
+//                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "拣货出库需以最大单位进行，如需单独移动，请先进行拆分操作");
+//                    }
+//                }
+            }
+        }
+        if (StringUtils.isNotEmpty(barcodeMap)) {
+            //选循环最大条码集合
+            for (String barcode : barcodeMap.keySet()) {
+                String[] split = barcode.split(",");
+                barcode = split[1];
+                //组合按照最大条码单位查询所有的sn码的查询条件
+                if (1 == Integer.valueOf(split[0])) {
+                    example.createCriteria().andEqualTo("barcode",barcode)
+                            .andEqualTo("barcodeType",1);
+                }else if (2 == Integer.valueOf(split[0])) {
+                    example.createCriteria().andEqualTo("colorBoxCode",barcode)
+                            .andEqualTo("barcodeType",1);
+                }else if (3 == Integer.valueOf(split[0])) {
+                    example.createCriteria().andEqualTo("cartonCode",barcode)
+                            .andEqualTo("barcodeType",1);
+                }else if (4 == Integer.valueOf(split[0])) {
+                    example.createCriteria().andEqualTo("palletCode",barcode)
+                            .andEqualTo("barcodeType",1);
+                }
+                List<WmsInnerMaterialBarcode> wmsInnerMaterialBarcodes = wmsInnerMaterialBarcodeMapper.selectByExample(example);
+                example.clear();
+                if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodes)) {
+                    //判断
+                    barcode = split[0]+","+split[1];
+                    if (wmsInnerMaterialBarcodes.size() != barcodeMap.get(barcode)) {
                         throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "拣货出库需以最大单位进行，如需单独移动，请先进行拆分操作");
                     }
                 }
+
             }
         }
     }
