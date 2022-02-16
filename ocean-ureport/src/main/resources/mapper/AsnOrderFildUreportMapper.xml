@@ -54,8 +54,8 @@
         LEFT JOIN wms_inner_material_barcode_re_order wimbro ON wimbro.order_id = wiao.asn_order_id and wimbro.order_type_code = 'SRM-ASN'
         LEFT JOIN wms_inner_material_barcode wiaodb on wiaodb.material_barcode_id = wimbro.material_barcode_id
         left join base_order_type bot on bot.order_type_id = wiao.order_type_id
-        left join om_purchase_order opo on opo.purchase_order_id = wiaod.source_order_id
-        left join om_purchase_order_det opod on opod.purchase_order_id = opo.purchase_order_id  and opod.material_id = wiaod.material_id
+        LEFT JOIN om_purchase_order_det opod ON opod.purchase_order_det_id = wiaod.source_order_id
+        LEFT JOIN om_purchase_order opo ON opo.purchase_order_id = opod.purchase_order_id
         left join base_warehouse bw on bw.warehouse_id = opo.warehouse_id
         left join base_material bm on bm.material_id = opod.material_id
         <where>
@@ -64,7 +64,7 @@
                 and  wiao.asn_code like CONCAT('%', #{asnOrderCode}, '%')
             </if>
             <if test="purchaseOrderCode!=null and purchaseOrderCode!=''">
-                and opo.purchase_order_code like CONCAT('%', #{purchaseOrderCode}, '%')
+
             </if>
             <if test="warehouseName!=null and warehouseName!=''">
                 and bw.warehouse_name like CONCAT('%', #{warehouseName}, '%')

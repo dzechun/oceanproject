@@ -2,10 +2,7 @@ package com.fantechs.provider.wms.inner.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
-import com.fantechs.common.base.general.dto.wms.inner.SaveHaveInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.dto.wms.inner.export.WmsInnerJobOrderExport;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
@@ -25,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -48,12 +44,6 @@ public class WmsInnerShiftWorkController {
     @Resource
     private WmsInnerShiftWorkService wmsInnerShiftWorkService;
 
-    @ApiOperation("自动分配")
-    @PostMapping("/autoDistribution")
-    public ResponseEntity autoDistribution(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids){
-        return ControllerUtil.returnCRUD(wmsInnerShiftWorkService.autoDistribution(ids));
-    }
-
     @ApiOperation("手动分配")
     @PostMapping("/handDistribution")
     public ResponseEntity handDistribution(@RequestBody List<WmsInnerJobOrderDet> list){
@@ -67,7 +57,7 @@ public class WmsInnerShiftWorkController {
     }
 
 
-    @ApiOperation("按条码单一确认")
+    @ApiOperation("移位按条码单一确认")
     @PostMapping("/singleReceivingByBarcode")
     public ResponseEntity singleReceivingByBarcode(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerJobOrderDet wmsInPutawayOrderDet,
                                                    @ApiParam(value = "条码ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids,
@@ -75,33 +65,10 @@ public class WmsInnerShiftWorkController {
         return ControllerUtil.returnCRUD(wmsInnerShiftWorkService.singleReceivingByBarcode(wmsInPutawayOrderDet,ids,orderType));
     }
 
-    @ApiOperation("Web端单一确认作业 扫描条码")
-    @PostMapping("/checkBarcodeOrderWeb")
-    public ResponseEntity<WmsInnerMaterialBarcodeDto> checkBarcodeOrderWeb(@ApiParam(value = "是否系统条码(0 否 1 是)")@RequestParam @NotBlank(message = "是否系统条码不能为空") String ifSysBarcode,
-                                                                    @ApiParam(value = "作业单主表id")@RequestParam Long orderId,
-                                                                    @ApiParam(value = "明细ID")@RequestParam Long orderDetId,
-                                                                    @ApiParam(value = "条码")@RequestParam String barCode){
-        WmsInnerMaterialBarcodeDto materialBarcodeDto = wmsInnerShiftWorkService.checkBarcodeOrderWeb(ifSysBarcode,orderId,orderDetId,barCode);
-        return ControllerUtil.returnDataSuccess(materialBarcodeDto,StringUtils.isEmpty(materialBarcodeDto)?0:1);
-    }
-
-    @ApiOperation("上架作业Web端扫描条码提交")
-    @PostMapping("/saveHaveInnerJobOrder")
-    public ResponseEntity<WmsInnerJobOrderDet> saveHaveInnerJobOrder(@RequestBody(required = true) List<SaveHaveInnerJobOrderDto> list){
-        WmsInnerJobOrderDet wmsInnerJobOrderDet=wmsInnerShiftWorkService.saveHaveInnerJobOrder(list);
-        return ControllerUtil.returnDataSuccess(wmsInnerJobOrderDet,StringUtils.isEmpty(wmsInnerJobOrderDet)?0:1);
-    }
-
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerJobOrder wmsInPutawayOrder) {
         return ControllerUtil.returnCRUD(wmsInnerShiftWorkService.save(wmsInPutawayOrder));
-    }
-
-    @ApiOperation(value = "栈板作业新增上架作业",notes = "栈板作业新增上架作业")
-    @PostMapping("/packageAutoAdd")
-    public ResponseEntity<WmsInnerJobOrder> packageAutoAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerJobOrder wmsInnerJobOrder) {
-        return ControllerUtil.returnDataSuccess(wmsInnerShiftWorkService.packageAutoAdd(wmsInnerJobOrder),1);
     }
 
     @ApiOperation("删除")
@@ -189,17 +156,4 @@ public class WmsInnerShiftWorkController {
             return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
         }
     }
-
-    @ApiIgnore
-    @PostMapping("/addList")
-    public ResponseEntity addList(@RequestBody List<WmsInnerJobOrder> list){
-        return ControllerUtil.returnCRUD(wmsInnerShiftWorkService.addList(list));
-    }
-
-    @ApiIgnore
-    @PostMapping("/cancelJobOrder")
-    public ResponseEntity cancelJobOrder(@RequestBody List<EngPackingOrderTakeCancel> engPackingOrderTakeCancels){
-        return ControllerUtil.returnCRUD(wmsInnerShiftWorkService.cancelJobOrder(engPackingOrderTakeCancels));
-    }
-
 }

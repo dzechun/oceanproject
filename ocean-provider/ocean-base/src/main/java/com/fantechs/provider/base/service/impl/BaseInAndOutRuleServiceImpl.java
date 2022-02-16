@@ -328,7 +328,7 @@ public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> i
         baseInAndOutRuleDetDtos = baseInAndOutRuleDetDtos.stream().sorted(Comparator.comparing(BaseInAndOutRuleDetDto::getPriority)).collect(Collectors.toList());
         Long storageId = null;
         for (BaseInAndOutRuleDetDto baseInAndOutRuleDetDto : baseInAndOutRuleDetDtos) {
-            storageId = baseInAndOutRuleMapper.inRuleExecute(warehouseId, materialId, qty);
+            storageId = baseInAndOutRuleMapper.inRuleExecute(baseInAndOutRuleDetDto.getStoredProcedureName(),warehouseId, materialId, qty);
 
             //后续逻辑 计算库容
         }
@@ -350,7 +350,7 @@ public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> i
         baseInAndOutRuleDetDtos = baseInAndOutRuleDetDtos.stream().sorted(Comparator.comparing(BaseInAndOutRuleDetDto::getPriority)).collect(Collectors.toList());
         List<String>  barcodeList = new ArrayList<>();
         for (BaseInAndOutRuleDetDto baseInAndOutRuleDetDto : baseInAndOutRuleDetDtos) {
-            barcodeList = baseInAndOutRuleMapper.outRuleExecute(warehouseId, storageId, materialId, qty.intValue());
+            barcodeList = baseInAndOutRuleMapper.outRuleExecute(baseInAndOutRuleDetDto.getStoredProcedureName(),warehouseId, storageId, materialId, qty.intValue());
             //后续逻辑 计算库容
         }
         return barcodeList;
