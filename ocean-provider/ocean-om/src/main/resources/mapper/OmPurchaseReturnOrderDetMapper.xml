@@ -86,7 +86,7 @@
     bm.material_code,bm.material_name,bm.material_version,bm.material_desc,
     bmb.volume,bmb.net_weight,bmb.gross_weight,
     bw.warehouse_name,opro.purchase_return_order_code,opro.supplier_id,
-    opod.total_sales_return_qty,opod.total_receiving_qty,
+    opod.total_sales_return_qty,opod.actual_qty as total_receiving_qty,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
