@@ -19,7 +19,7 @@ public interface BaseInAndOutRuleMapper extends MyMapper<BaseInAndOutRule> {
 
     List<String> findView(String category);
 
-    Long inRuleExecute(Long warehouseId, Long materialId, BigDecimal qty);
+    Long inRuleExecute(String procName,Long warehouseId, Long materialId, BigDecimal qty);
 
-    List<String> outRuleExecute(Long warehouseId,Long storageId, Long materialId, int qty);
+    List<String> outRuleExecute(String procName,Long warehouseId,Long storageId, Long materialId, int qty);
 }
