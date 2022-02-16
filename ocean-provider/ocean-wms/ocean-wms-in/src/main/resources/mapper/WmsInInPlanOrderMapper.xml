@@ -8,6 +8,7 @@
         <id column="in_plan_order_id" jdbcType="BIGINT" property="inPlanOrderId"/>
         <result column="core_source_sys_order_type_code" jdbcType="VARCHAR" property="coreSourceSysOrderTypeCode"/>
         <result column="source_sys_order_type_code" jdbcType="VARCHAR" property="sourceSysOrderTypeCode"/>
+        <result column="source_big_type" jdbcType="TINYINT" property="sourceBigType"/>
         <result column="sys_order_type_code" jdbcType="VARCHAR" property="sysOrderTypeCode"/>
         <result column="in_plan_order_code" jdbcType="VARCHAR" property="inPlanOrderCode"/>
         <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
@@ -51,6 +52,7 @@
         wiipo.in_plan_order_id,
         wiipo.core_source_sys_order_type_code,
         wiipo.source_sys_order_type_code,
+        wiipo.source_big_type,
         wiipo.sys_order_type_code,
         wiipo.in_plan_order_code,
         wiipo.warehouse_id,

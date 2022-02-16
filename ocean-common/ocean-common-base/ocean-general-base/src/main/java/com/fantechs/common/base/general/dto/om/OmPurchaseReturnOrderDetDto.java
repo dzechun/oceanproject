@@ -5,7 +5,6 @@ import com.fantechs.common.base.general.entity.om.OmPurchaseReturnOrderDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -117,11 +116,26 @@ public class OmPurchaseReturnOrderDetDto extends OmPurchaseReturnOrderDet implem
     private BigDecimal totalSalesReturnQty;
 
     /**
+     * 累计收货数量
+     */
+    @ApiModelProperty(name="totalReceivingQty",value = "累计收货数量")
+    //@Excel(name = "累计收货数量", height = 20, width = 30,orderNum="")
+    @Transient
+    private BigDecimal totalReceivingQty;
+
+    /**
      * 下发数量
      */
     @ApiModelProperty(name="issueQty",value = "下发数量")
     @Transient
     private BigDecimal issueQty;
+
+    /**
+     * 采退完成状态（0、未完成 1、已完成）
+     */
+    @ApiModelProperty(name="finishStatus",value = "采退完成状态（0、未完成 1、已完成）")
+    @Transient
+    private Byte finishStatus;
 
     /**
      * 供应商id
