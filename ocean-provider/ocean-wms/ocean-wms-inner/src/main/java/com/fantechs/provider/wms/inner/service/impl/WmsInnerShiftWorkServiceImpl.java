@@ -636,7 +636,7 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
         BigDecimal totalQty=new BigDecimal(0);
         BigDecimal distributionQty=StringUtils.isEmpty(wmsInPutawayOrderDet.getDistributionQty())?new BigDecimal(0):wmsInPutawayOrderDet.getDistributionQty();
         String[] arrId = ids.split(",");
-        Map<String,String> map = new HashMap();
+        Map<String,Byte> map = new HashMap();
         Set<String> set = new HashSet<>();
         for (String item : arrId) {
             //单一确认的条码为库存明细中的条码
@@ -654,15 +654,15 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
                 innerInventoryDetDto.setModifiedUserId(sysUser.getUserId());
                 wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(innerInventoryDetDto);
                 if(StringUtils.isNotEmpty(innerInventoryDetDto.getColorBoxCode())) {
-                    map.put(innerInventoryDetDto.getColorBoxCode(),"2");
+                    map.put(innerInventoryDetDto.getColorBoxCode(),(byte)2);
                     set.add(innerInventoryDetDto.getColorBoxCode());
                 }
                 if(StringUtils.isNotEmpty(innerInventoryDetDto.getCartonCode())) {
-                    map.put(innerInventoryDetDto.getCartonCode(),"3");
+                    map.put(innerInventoryDetDto.getCartonCode(),(byte)3);
                     set.add(innerInventoryDetDto.getCartonCode());
                 }
                 if(StringUtils.isNotEmpty(innerInventoryDetDto.getPalletCode())) {
-                    map.put(innerInventoryDetDto.getPalletCode(),"4");
+                    map.put(innerInventoryDetDto.getPalletCode(),(byte)4);
                     set.add(innerInventoryDetDto.getPalletCode());
                 }
                 newInventoryDetDtoList.add(innerInventoryDetDto);
@@ -672,18 +672,18 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
         Iterator<String> iterator = set.iterator();
         while (iterator.hasNext()) {
             String code = iterator.next();
-            String type = map.get(code);
+            Byte type = map.get(code);
             SearchWmsInnerInventoryDet searchWmsInnerInventoryDet =new SearchWmsInnerInventoryDet();
-            if("2".equals(type)){
+            if(2 == type){
                 searchWmsInnerInventoryDet.setColorBoxCode(code);
-            }else if("3".equals(type)){
+            }else if(3 == type){
                 searchWmsInnerInventoryDet.setCartonCode(code);
-            }else if("4".equals(type)){
+            }else if(4 == type){
                 searchWmsInnerInventoryDet.setPalletCode(code);
             }else{
                 continue;
             }
-            searchWmsInnerInventoryDet.setQueryType(type);
+            searchWmsInnerInventoryDet.setBarcodeType((byte)type);
             searchWmsInnerInventoryDet.setOrgId(sysUser.getOrganizationId());
             List<WmsInnerInventoryDetDto> list = wmsInnerInventoryDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerInventoryDet));
             WmsInnerInventoryDetDto innerInventoryDetDto = list.get(0);
@@ -692,7 +692,6 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
             innerInventoryDetDto.setModifiedTime(new Date());
             innerInventoryDetDto.setModifiedUserId(sysUser.getUserId());
             wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(innerInventoryDetDto);
-
             iterator.remove();
         }
 
