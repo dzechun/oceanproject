@@ -44,6 +44,7 @@ import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeReprintService;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import com.fantechs.provider.mes.sfc.util.RabbitProducer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,6 +65,7 @@ import java.util.*;
  * Created by Mr.Lei on 2021/04/07.
  */
 @Service
+@Slf4j
 public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrderBarcode> implements MesSfcWorkOrderBarcodeService {
 
     @Resource
@@ -393,7 +395,25 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         List<BaseBarcodeRuleDto> barcodeRulList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule).getData();
         if(StringUtils.isEmpty(barcodeRulList)) throw new BizErrorException("未查询到编码规则");
 
+        SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+        searchMesPmWorkOrder.setWorkOrderId(record.getWorkOrderId());
+        MesPmWorkOrderDto mesPmWorkOrderDto = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData().get(0);
+
+        if(StringUtils.isEmpty(mesPmWorkOrderDto.getRouteId())){
+            throw new BizErrorException("工单未选择工艺路线");
+        }
+        //查询工艺路线
+        ResponseEntity<List<BaseRouteProcess>> res = baseFeignApi.findConfigureRout(mesPmWorkOrderDto.getRouteId());
+        if(res.getCode()!=0){
+            throw new BizErrorException(res.getCode(),res.getMessage());
+        }
+        if(res.getData().isEmpty()){
+            throw new BizErrorException("请检查工单工艺路线");
+        }
+
+        List<MesSfcBarcodeProcess> processList = new ArrayList<>();
         for (Integer i = 0; i < record.getQty(); i++) {
+            long start00 = System.currentTimeMillis();
             record.setWorkOrderBarcodeId(null);
             //Integer max = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getBarcodeType(),record.getWorkOrderId())
 
@@ -462,11 +482,6 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 mesSfcBarcodeProcess.setWorkOrderBarcodeId(mesSfcWorkOrderBarcode.getWorkOrderBarcodeId());
                 mesSfcBarcodeProcess.setBarcodeType((byte)2);
                 mesSfcBarcodeProcess.setBarcode(mesSfcWorkOrderBarcode.getBarcode());
-
-                SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
-                searchMesPmWorkOrder.setWorkOrderId(mesSfcWorkOrderBarcode.getWorkOrderId());
-                MesPmWorkOrderDto mesPmWorkOrderDto = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData().get(0);
-
                 mesSfcBarcodeProcess.setProLineId(mesPmWorkOrderDto.getProLineId());
                 mesSfcBarcodeProcess.setProcessCode(mesPmWorkOrderDto.getProCode());
                 mesSfcBarcodeProcess.setMaterialId(mesPmWorkOrderDto.getMaterialId());
@@ -476,32 +491,21 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 mesSfcBarcodeProcess.setRouteId(mesPmWorkOrderDto.getRouteId());
                 mesSfcBarcodeProcess.setRouteCode(mesPmWorkOrderDto.getRouteCode());
                 mesSfcBarcodeProcess.setRouteName(mesPmWorkOrderDto.getRouteName());
-
-                if(StringUtils.isEmpty(mesPmWorkOrderDto.getRouteId())){
-                    throw new BizErrorException("工单未选择工艺路线");
-                }
-                //查询工艺路线
-                ResponseEntity<List<BaseRouteProcess>> res = baseFeignApi.findConfigureRout(mesPmWorkOrderDto.getRouteId());
-                if(res.getCode()!=0){
-                    throw new BizErrorException(res.getCode(),res.getMessage());
-                }
-                if(res.getData().isEmpty()){
-                    throw new BizErrorException("请检查工单工艺路线");
-                }
                 mesSfcBarcodeProcess.setProcessId(res.getData().get(0).getProcessId());
                 mesSfcBarcodeProcess.setProcessName(res.getData().get(0).getProcessName());
                 mesSfcBarcodeProcess.setNextProcessId(res.getData().get(0).getProcessId());
                 mesSfcBarcodeProcess.setNextProcessName(res.getData().get(0).getProcessName());
                 mesSfcBarcodeProcess.setSectionId(res.getData().get(0).getSectionId());
                 mesSfcBarcodeProcess.setSectionName(res.getData().get(0).getSectionName());
-                if(mesSfcBarcodeProcessMapper.insertSelective(mesSfcBarcodeProcess)<1){
-                    throw new BizErrorException(ErrorCodeEnum.GL99990005.getCode(),"条码过站失败");
-                }
+                processList.add(mesSfcBarcodeProcess);
             }
 
             mesSfcWorkOrderBarcodeList.add(mesSfcWorkOrderBarcode);
         }
-
+        // 批量保存条码过站表
+        if (!processList.isEmpty()){
+            mesSfcBarcodeProcessMapper.insertList(processList);
+        }
         return mesSfcWorkOrderBarcodeList;
     }
 
