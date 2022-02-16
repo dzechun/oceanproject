@@ -770,6 +770,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 }else if (StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getColorBoxCode())) {
                     barcode = wmsInnerMaterialBarcode.getColorBoxCode();
                     barcodeType = 2;
+                }else {
+                    barcode = wmsInnerMaterialBarcode.getBarcode();
                 }
                 //按照最大条码单位进行分组，累计最大条码相同的sn码数量
                 Integer qty = barcodeMap.get(barcodeType+","+barcode);
