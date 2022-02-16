@@ -309,6 +309,10 @@ public interface BaseFeignApi {
             @ApiParam(value = "产品料号、生产线别、客户料号") @RequestParam(required = false) String code,
             @ApiParam(value = "执行函数参数") @RequestParam(required = false) String params);
 
+    @ApiOperation(value = "批量生成条码")
+    @PostMapping("/baseBarcodeRule/batchGenerateCode")
+    ResponseEntity<List<String>> batchGenerateCode(@RequestBody BatchGenerateCodeDto dto);
+
     @ApiOperation("获取检验项目列表")
     @PostMapping("/baseInspectionItem/findList")
     ResponseEntity<List<BaseInspectionItemDto>> findInspectionItemList(@ApiParam(value = "查询对象") @RequestBody SearchQmsInspectionItem searchQmsInspectionItem);

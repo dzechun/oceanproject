@@ -2,6 +2,7 @@ package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
+import com.fantechs.common.base.general.dto.basic.BatchGenerateCodeDto;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRule;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule;
@@ -119,6 +120,13 @@ public class BaseBarcodeRuleController {
             @ApiParam(value = "执行函数参数")@RequestParam (required = false)String params){
         String analysisCode = BarcodeRuleUtils.analysisCode(list, maxCode, code,params,null);
         return ControllerUtil.returnDataSuccess(analysisCode,1);
+    }
+
+    @ApiOperation(value = "批量生成条码")
+    @PostMapping("/batchGenerateCode")
+    public ResponseEntity<List<String>> batchGenerateCode(@RequestBody BatchGenerateCodeDto dto){
+        List<String> barcodeList = BarcodeRuleUtils.batchAnalysisCode(dto.getList(), dto.getCode(), dto.getParams(), null, dto.getQty(), dto.getKey());
+        return ControllerUtil.returnDataSuccess(barcodeList, barcodeList.size());
     }
 
     @ApiOperation(value = "生成条码-Map")

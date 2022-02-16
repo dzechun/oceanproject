@@ -8,6 +8,7 @@ import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
 import com.fantechs.common.base.general.dto.basic.BaseLabelMaterialDto;
+import com.fantechs.common.base.general.dto.basic.BatchGenerateCodeDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
@@ -48,6 +49,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -411,43 +413,33 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             throw new BizErrorException("请检查工单工艺路线");
         }
 
+        //boolean hasKey = redisUtil.hasKey(barcodeRulList.get(0).getBarcodeRule());
+        // 不同组织使用同一个编码规则可能产生相同的条码 key值在原有基础上加组织ID作为键值 huangshuijun 2021-10-08
+        String orgIDStr=sysUser.getOrganizationId().toString();
+
+        String key = barcodeRulList.get(0).getBarcodeRule()+orgIDStr;
+        //万宝销售条码打印 按销售订单更新流水号
+        if(StringUtils.isNotEmpty(record.getOption1()) && record.getOption1().equals("5")){
+            key = barcodeRulList.get(0).getBarcodeRule()+orgIDStr+":"+record.getSalesOrderId().toString();
+        }
+        //生成条码
+        BatchGenerateCodeDto dto = new BatchGenerateCodeDto();
+        dto.setList(list);
+        dto.setQty(record.getQty());
+        dto.setKey(key);
+        dto.setCode(record.getMaterialCode());
+        dto.setParams(record.getWorkOrderId().toString());
+        ResponseEntity<List<String>> rs = baseFeignApi.batchGenerateCode(dto);
+        if(rs.getCode()!=0){
+            throw new BizErrorException(rs.getMessage());
+        }
+
         List<MesSfcBarcodeProcess> processList = new ArrayList<>();
-        for (Integer i = 0; i < record.getQty(); i++) {
-            long start00 = System.currentTimeMillis();
+        for (String barcode : rs.getData()){
             record.setWorkOrderBarcodeId(null);
             //Integer max = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getBarcodeType(),record.getWorkOrderId())
-
-            String lastBarCode = null;
-            //boolean hasKey = redisUtil.hasKey(barcodeRulList.get(0).getBarcodeRule());
-            // 不同组织使用同一个编码规则可能产生相同的条码 key值在原有基础上加组织ID作为键值 huangshuijun 2021-10-08
-            String orgIDStr=sysUser.getOrganizationId().toString();
-
-            String key = barcodeRulList.get(0).getBarcodeRule()+orgIDStr;
-            //万宝销售条码打印 按销售订单更新流水号
-            if(StringUtils.isNotEmpty(record.getOption1()) && record.getOption1().equals("5")){
-                key = barcodeRulList.get(0).getBarcodeRule()+orgIDStr+":"+record.getSalesOrderId().toString();
-            }
-            boolean hasKey = redisUtil.hasKey(key);
-
-            if(hasKey){
-                // 从redis获取上次生成条码
-                //Object redisRuleData = redisUtil.get(barcodeRulList.get(0).getBarcodeRule());
-                // 不同组织使用同一个编码规则可能产生相同的条码 key值在原有基础上加组织ID作为键值 huangshuijun 2021-10-08
-                Object redisRuleData = redisUtil.get(key);
-                lastBarCode = String.valueOf(redisRuleData);
-            }
-            //获取最大流水号
-            String maxCode = baseFeignApi.generateMaxCode(list, lastBarCode).getData();
-            //生成条码
-            ResponseEntity<String> rs = baseFeignApi.generateCode(list,maxCode,record.getMaterialCode(),record.getWorkOrderId().toString());
-            if(rs.getCode()!=0){
-                throw new BizErrorException(rs.getMessage());
-            }
-            record.setBarcode(rs.getData());
-
+            record.setBarcode(barcode);
             // 更新redis最新条码
-            // 不同组织使用同一个编码规则可能产生相同的条码 key值在原有基础上加组织ID作为键值 huangshuijun 2021-10-08
-            //redisUtil.set(barcodeRulList.get(0).getBarcodeRule(), rs.getData());
             redisUtil.set(key, rs.getData());
 
             if(StringUtils.isNotEmpty(record.getOption1()) && record.getOption1().equals("5")){

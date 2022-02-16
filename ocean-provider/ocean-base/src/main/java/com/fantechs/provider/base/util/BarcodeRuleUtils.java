@@ -8,6 +8,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.JsonUtils;
+import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.service.BaseBarcodeRuleSpecService;
 import com.sun.org.apache.xpath.internal.operations.Bool;
@@ -30,6 +31,8 @@ public class BarcodeRuleUtils {
 
     @Autowired
     private BaseBarcodeRuleSpecService baseBarcodeRuleSpecService;
+    @Resource
+    private RedisUtil redisUtil;
 
     // 声明对象
     private static BarcodeRuleUtils barcodeRuleUtils;
@@ -38,6 +41,7 @@ public class BarcodeRuleUtils {
     public void init(){
         barcodeRuleUtils = this;
         barcodeRuleUtils.baseBarcodeRuleSpecService = this.baseBarcodeRuleSpecService;
+        barcodeRuleUtils.redisUtil = this.redisUtil;
     }
 
     /**
@@ -195,6 +199,177 @@ public class BarcodeRuleUtils {
         }
 
         return sb.toString();
+    }
+
+    /**
+     *
+     * @param list 条码规则配置
+     * @param code 产品料号、生产线别、客户料号
+     * @param params 执行函数参数
+     * @param qty 生成数量
+     * @param key redis key
+     * @return
+     */
+    public static List<String> batchAnalysisCode(List<BaseBarcodeRuleSpec> list, String code,String params,Map<String,Object> map, Integer qty, String key){
+        List<String> barcodeList = new ArrayList<>();
+        for (Integer item = 0; item < qty; item++) {
+            String lastBarCode = null;
+            boolean hasKey = barcodeRuleUtils.redisUtil.hasKey(key);
+            if(hasKey){
+                Object redisRuleData = barcodeRuleUtils.redisUtil.get(key);
+                lastBarCode = String.valueOf(redisRuleData);
+            }
+            //获取最大流水号
+            String maxCode = getMaxSerialNumber(list, lastBarCode);
+
+            StringBuilder sb=new StringBuilder();
+            Calendar cal= Calendar.getInstance();
+            if(StringUtils.isNotEmpty(list)){
+                for (BaseBarcodeRuleSpec baseBarcodeRuleSpec : list) {
+                    //格式
+                    String specification = baseBarcodeRuleSpec.getSpecification();
+                    //长度
+                    Integer barcodeLength = baseBarcodeRuleSpec.getBarcodeLength();
+                    //步长
+                    Integer step = baseBarcodeRuleSpec.getStep();
+                    //自定义参数值
+                    String customizeValue = baseBarcodeRuleSpec.getCustomizeValue();
+                    //补位方向(0.前  1.后)
+                    Byte fillDirection = baseBarcodeRuleSpec.getFillDirection();
+                    //补位符
+                    String fillOperator = baseBarcodeRuleSpec.getFillOperator();
+                    //截取方向(0.前  1.后)
+                    Byte interceptDirection = baseBarcodeRuleSpec.getInterceptDirection();
+                    //截取位置
+                    Integer interceptPosition = baseBarcodeRuleSpec.getInterceptPosition();
+                    //初始值
+                    Integer initialValue = baseBarcodeRuleSpec.getInitialValue();
+                    //自定义函数名称
+                    String functionName = baseBarcodeRuleSpec.getCustomizeName();
+
+
+                    if("[G]".equals(specification)){
+                        sb.append(customizeValue);
+                    }else if("[Y]".equals(specification)){
+                        if(barcodeLength==1){
+                            int value= cal.get(Calendar.YEAR);
+                            String str = String.valueOf(value);
+                            String year = str.substring(str.length() - 1);
+                            sb.append(year);
+                        }else if(barcodeLength==2){
+                            SimpleDateFormat sdf=new SimpleDateFormat("yy");
+                            String year = sdf.format(new Date());
+                            sb.append(year);
+                        }else {
+                            SimpleDateFormat sdf=new SimpleDateFormat("yyyy");
+                            String year = sdf.format(new Date());
+                            sb.append(year);
+                        }
+                    }else if("[P]".equals(specification)||"[L]".equals(specification)||"[C]".equals(specification)){
+                        if(map!=null && !map.isEmpty()){
+                            switch (specification){
+                                case "[P]":
+                                    code = map.get("[P]").toString();
+                                    break;
+                                case "[L]":
+                                    code = map.get("[L]").toString();
+                                    break;
+                                case "[C]":
+                                    code = map.get("[C]").toString();
+                                    break;
+                            }
+                        }
+                        //产品料号的长度
+                        int length = code.length();
+                        //长度不足需要补位
+                        if(barcodeLength>length){
+                            if(StringUtils.isNotEmpty(fillOperator)){
+                                if(0==fillDirection){
+                                    for (int i=0;i<barcodeLength-length;i++){
+                                        sb.append(fillOperator);
+                                    }
+                                    sb.append(code);
+                                }else {
+                                    sb.append(code);
+                                    for (int i=0;i<barcodeLength-length;i++){
+                                        sb.append(fillOperator);
+                                    }
+                                }
+                            }else {
+                                throw new BizErrorException("产品料号/生产线别/客户料号的长度不够，不能没有补位符");
+                            }
+                            //长度超过需要截取
+                        }else if(barcodeLength<length){
+                            //截取位置从1开始
+                            if(StringUtils.isNotEmpty(interceptPosition)){
+                                if(0==interceptDirection){
+                                    if(interceptPosition>=barcodeLength){
+                                        code.substring(interceptPosition-barcodeLength,interceptPosition);
+                                    }else {
+                                        throw new BizErrorException("产品料号/生产线别/客户料号从该截取位置截取长度不够");
+                                    }
+                                }else {
+                                    if(interceptDirection+barcodeLength-1<=length){
+                                        code.substring(interceptPosition-1,interceptDirection+barcodeLength-1);
+                                    }else {
+                                        throw new BizErrorException("产品料号/生产线别/客户料号从该截取位置截取长度不够");
+                                    }
+                                }
+                            }else {
+                                throw new BizErrorException("产品料号/生产线别/客户料号需要截取是必须有截取位置");
+                            }
+                        }else {
+                            sb.append(code);
+                        }
+                    }else if("[S]".equals(specification)){
+                        String customizeCode="0123456789";
+                        maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeCode, String.valueOf(step));
+                    }else if("[F]".equals(specification)){
+                        String customizeCode="0123456789ABCDEF";
+                        maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeCode, getStep(step, customizeCode));
+                    }else if("[b]".equals(specification)){
+                        customizeValue="0123456789ABCDEFGHJKLMNPQRSTVWXYZ";
+                        maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeValue, getStep(step, customizeValue));
+                    }else if("[c]".equals(specification)) {
+                        customizeValue = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                        maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeValue, getStep(step, customizeValue));
+                    }else if("[f]".equals(specification)){
+                        //执行函数获取解析码
+
+
+                        String param = barcodeRuleUtils.baseBarcodeRuleSpecService.executeFunction(functionName,params);
+                        if(StringUtils.isEmpty(param)){
+                            throw new BizErrorException("条码规则执行函数失败，请检查执行函数");
+                        }
+                        Map<String,Object> paramMap = JSON.parseObject(param,Map.class);
+                        if(Integer.parseInt(paramMap.get("mesCode").toString())!=200){
+                            throw new BizErrorException(paramMap.get("message").toString());
+                        }else {
+                            param = paramMap.get("param").toString();
+                        }
+
+
+                        if(param.length()<barcodeLength){
+                            while (param.length()<barcodeLength){
+                                StringBuffer s = new StringBuffer();
+                                s.append(param).append("0");
+                                param = s.toString();
+                            }
+                        }
+                        if(param.length()>barcodeLength){
+                            throw new BizErrorException("执行函数返回值超出设定长度");
+                        }
+                        sb.append(param);
+                    }else {  //月、周、日、周的日、年的日、自定义年、月、日、周
+                        String typeCode = CodeUtils.getTypeCode(specification,customizeValue);
+                        sb.append(typeCode);
+                    }
+                }
+            }
+            barcodeList.add(sb.toString());
+        }
+
+        return barcodeList;
     }
 
     private static synchronized String generateStreamCode(String maxCode, StringBuilder sb, Integer barcodeLength, Integer initialValue, String customizeCode, String step) {
