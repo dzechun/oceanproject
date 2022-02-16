@@ -81,7 +81,7 @@ public class WmsInnerInventoryDetController {
     }
 
 
-    @ApiOperation("直接调拨查询库位列表")
+    @ApiOperation("pda查询条码接口")
     @PostMapping("/findListByBarCode")
     public ResponseEntity<List<WmsInnerInventoryDetDto>> findListByBarCode(@ApiParam(value = "查询对象")@RequestBody List<String> codes) {
         List<WmsInnerInventoryDetDto> list = wmsInnerInventoryDetService.findListByBarCode(codes);

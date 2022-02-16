@@ -1,12 +1,9 @@
 package com.fantechs.common.base.general.entity.wms.inner.search;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
 import java.io.Serializable;
 
 /**
@@ -112,4 +109,9 @@ public class SearchWmsInnerStockOrderDetBarcode extends BaseQuery implements Ser
     @ApiModelProperty(name="remark",value = "备注")
     private String remark;
 
+    /**
+     * 条码类型(1-SN码 2-彩盒号 3-箱号 4-栈板号)
+     */
+    @ApiModelProperty(name="barcodeType",value = "条码类型(1-SN码 2-彩盒号 3-箱号 4-栈板号)")
+    private Byte barcodeType;
 }

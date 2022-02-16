@@ -127,7 +127,9 @@
       <if test="queryType!=null and queryType!='' and queryType ==4">
         and IFNULL(wimb.pallet_code,'') != '' and IFNULL(wimb.barcode,'')=''
       </if>
-
+      <if test="barcodeType!=null and barcodeType!=''">
+        and wimb.barcode_type = #{barcodeType}
+      </if>
     </where>
   </select>
 </mapper>

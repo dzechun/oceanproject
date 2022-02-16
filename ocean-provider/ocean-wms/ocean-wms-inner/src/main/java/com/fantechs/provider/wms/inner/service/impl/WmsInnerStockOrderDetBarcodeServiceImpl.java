@@ -4,14 +4,10 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDetBarcodeDto;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmDailyPlan;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmDailyPlanDet;
-import com.fantechs.common.base.general.entity.mes.pm.MesPmDailyPlanStockList;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerMaterialBarcode;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrderDetBarcode;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerMaterialBarcodeMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerStockOrderDetBarcodeMapper;
@@ -21,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -38,6 +36,9 @@ public class WmsInnerStockOrderDetBarcodeServiceImpl extends BaseService<WmsInne
 
     @Override
     public List<WmsInnerStockOrderDetBarcodeDto> findList(Map<String, Object> map) {
+        SysUser sysUser=CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId",sysUser.getOrganizationId());
+        map.put("barcodeType",(byte)1); //只查询条码
         return wmsInnerStockOrderDetBarcodeMapper.findList(map);
     }
 
