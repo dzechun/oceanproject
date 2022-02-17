@@ -250,18 +250,33 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
 
     @Override
     public int check(List<PDAWmsInnerDirectTransferOrderDetDto> pdaWmsInnerDirectTransferOrderDetDtos) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         for (PDAWmsInnerDirectTransferOrderDetDto det : pdaWmsInnerDirectTransferOrderDetDtos) {
             WmsInnerMaterialBarcode wmsInnerMaterialBarcode = wmsInnerMaterialBarcodeMapper.selectByPrimaryKey(det.getMaterialBarcodeId());
             if (StringUtils.isEmpty(wmsInnerMaterialBarcode)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未再条码表中查询到对应的条码");
             }
+            Map map = new HashMap();
+            map.put("orgId",user.getOrganizationId());
             if (det.getBarcodeType() == 1 && (StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getColorBoxCode()) || StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getCartonCode()) || StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getPalletCode())))
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "调拨出库需以最大单位进行，如需单独移动SN码，请先进行拆分操作");
-            if (det.getBarcodeType() == 2 && (StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getCartonCode()) || StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getPalletCode())))
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "调拨出库需以最大单位进行，如需单独移动彩盒码，请先进行拆分操作");
-            if (det.getBarcodeType() == 3 && (StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getPalletCode())))
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "调拨出库需以最大单位进行，如需单独移动箱码，请先进行拆分操作");
+            if (det.getBarcodeType() == 2) {
+                map.put("colorBoxCode", wmsInnerMaterialBarcode.getColorBoxCode());
+                List<WmsInnerMaterialBarcodeDto> list = wmsInnerMaterialBarcodeMapper.findList(map);
+                for (WmsInnerMaterialBarcodeDto dto : list) {
+                    if (StringUtils.isNotEmpty(dto.getCartonCode()) || StringUtils.isNotEmpty(dto.getPalletCode()))
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "调拨出库需以最大单位进行，如需单独移动彩盒码，请先进行拆分操作");
+                }
+            }
+            if (det.getBarcodeType() == 3) {
+                map.put("cartonCode",wmsInnerMaterialBarcode.getCartonCode());
+                List<WmsInnerMaterialBarcodeDto> list = wmsInnerMaterialBarcodeMapper.findList(map);
+                for(WmsInnerMaterialBarcodeDto dto : list ){
+                    if(StringUtils.isNotEmpty(dto.getPalletCode()))
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "调拨出库需以最大单位进行，如需单独移动箱码，请先进行拆分操作");
+                }
 
+            }
         }
         return 1;
     }
