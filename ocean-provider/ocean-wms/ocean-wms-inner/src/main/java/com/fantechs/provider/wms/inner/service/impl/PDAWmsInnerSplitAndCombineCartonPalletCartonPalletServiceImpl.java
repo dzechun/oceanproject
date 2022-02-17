@@ -209,7 +209,7 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
     }
 
     @Override
-    public BaseStorage checkStorageCode(String storageCode){
+    public BaseStorage checkStorageCode(String storageCode,Long warehouseId){
         SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
         searchBaseStorage.setStorageCode(storageCode);
         List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
@@ -219,6 +219,9 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
         BaseStorage baseStorage = baseStorages.get(0);
         if(baseStorage.getStorageType()!=(byte)1){
             throw new BizErrorException("该库位非存货库位");
+        }
+        if(!warehouseId.equals(baseStorage.getWarehouseId())){
+            throw new BizErrorException("该库位不属于包箱/栈板所在仓库");
         }
 
         return baseStorage;
