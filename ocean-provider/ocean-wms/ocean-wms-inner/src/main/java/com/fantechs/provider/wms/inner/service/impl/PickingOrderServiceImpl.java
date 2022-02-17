@@ -485,7 +485,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                                 wmsInnerMaterialBarcode.setBarcodeStatus((byte)6);
                                 barcodeList.add(wmsInnerMaterialBarcode);
                                 inventoryDetExample.clear();
-                                inventoryDetExample.createCriteria().andEqualTo("materialBarcodeId",wmsInnerMaterialBarcodeDto.getMaterialBarcodeId());
+                                inventoryDetExample.createCriteria().andEqualTo("materialBarcodeId",wmsInnerMaterialBarcode.getMaterialBarcodeId());
                                 wmsInnerInventoryDetList = wmsInnerInventoryDetMapper.selectByExample(inventoryDetExample);
                                 if (StringUtils.isEmpty(wmsInnerInventoryDetList) || wmsInnerInventoryDetList.get(0).getBarcodeStatus() != 1) {
                                     throw new BizErrorException(wmsInnerMaterialBarcodeDto.getColorBoxCode()+":彩盒码不存在库存内,或当前彩盒码库存内存在重复数据:"+wmsInnerMaterialBarcodeDto.getMaterialBarcodeId());
@@ -512,7 +512,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                                 wmsInnerMaterialBarcode.setBarcodeStatus((byte)6);
                                 barcodeList.add(wmsInnerMaterialBarcode);
                                 inventoryDetExample.clear();
-                                inventoryDetExample.createCriteria().andEqualTo("materialBarcodeId",wmsInnerMaterialBarcodeDto.getMaterialBarcodeId());
+                                inventoryDetExample.createCriteria().andEqualTo("materialBarcodeId",wmsInnerMaterialBarcode.getMaterialBarcodeId());
                                 wmsInnerInventoryDetList = wmsInnerInventoryDetMapper.selectByExample(inventoryDetExample);
 
                                 if (StringUtils.isEmpty(wmsInnerInventoryDetList) || wmsInnerInventoryDetList.get(0).getBarcodeStatus() != 1) {
@@ -540,7 +540,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                                 wmsInnerMaterialBarcode.setBarcodeStatus((byte)6);
                                 barcodeList.add(wmsInnerMaterialBarcode);
                                 inventoryDetExample.clear();
-                                inventoryDetExample.createCriteria().andEqualTo("materialBarcodeId",wmsInnerMaterialBarcodeDto.getMaterialBarcodeId());
+                                inventoryDetExample.createCriteria().andEqualTo("materialBarcodeId",wmsInnerMaterialBarcode.getMaterialBarcodeId());
                                 wmsInnerInventoryDetList = wmsInnerInventoryDetMapper.selectByExample(inventoryDetExample);
 
                                 if (StringUtils.isEmpty(wmsInnerInventoryDetList) || wmsInnerInventoryDetList.get(0).getBarcodeStatus() != 1) {

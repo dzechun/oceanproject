@@ -696,7 +696,7 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
         }
 
         //校验是否整单发货
-        wmsInnerInventoryDetService.isAllOutInventory(newInventoryDetDtoList);
+        WmsInnerInventoryUtil.isAllOutInventory(newInventoryDetDtoList);
 
         //判断是否大于分配数
         if(totalQty.compareTo(distributionQty)==1){
