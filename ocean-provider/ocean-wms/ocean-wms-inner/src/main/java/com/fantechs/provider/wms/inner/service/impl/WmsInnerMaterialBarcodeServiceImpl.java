@@ -756,15 +756,15 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                     fail.add(i + 1);
                     continue;
                 }
+                if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeReOrderList)) {
+                    wmsInnerMaterialBarcodeReOrderService.batchSave(wmsInnerMaterialBarcodeReOrderList);
+                    wmsInnerMaterialBarcodeReOrderList.clear();
+                }
             }
         }
         if (StringUtils.isNotEmpty(htList)) {
             wmsInnerHtMaterialBarcodeMapper.insertList(htList);
         }
-        if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeReOrderList)) {
-            wmsInnerMaterialBarcodeReOrderService.batchSave(wmsInnerMaterialBarcodeReOrderList);
-        }
-
         resultMap.put("操作成功总数",success);
         resultMap.put("操作失败行数",fail);
         return resultMap;
