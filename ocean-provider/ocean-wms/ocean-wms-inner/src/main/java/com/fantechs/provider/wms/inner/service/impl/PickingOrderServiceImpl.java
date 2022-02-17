@@ -1314,7 +1314,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                         .jobOrderId(wmsInnerJobOrder.getJobOrderId())
                         .orderStatus((byte)3)
                         .build());
-            }else if(dto.stream().filter(li->li.getLineStatus()==(byte)1).collect(Collectors.toList()).size()!=0) {
+            }else if(dto.stream().filter(li->li.getLineStatus()==(byte)1).collect(Collectors.toList()).size()!=0
+                    && dto.stream().filter(li->li.getLineStatus()==(byte)1).collect(Collectors.toList()).size() != dto.size()) {
                 wmsInnerJobOrderMapper.updateByPrimaryKeySelective(WmsInnerJobOrder.builder()
                         .jobOrderId(wmsInnerJobOrder.getJobOrderId())
                         .orderStatus((byte)2)

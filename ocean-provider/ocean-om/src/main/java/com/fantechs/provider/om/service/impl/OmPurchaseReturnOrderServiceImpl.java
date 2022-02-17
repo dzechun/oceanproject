@@ -298,7 +298,7 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
                     BigDecimal totalActualQty = omPurchaseReturnOrderDets.stream().filter(item -> item.getActualQty()!=null).map(OmPurchaseReturnOrderDet::getActualQty).reduce(BigDecimal.ZERO, BigDecimal::add);
                     BigDecimal totalOrderQty = omPurchaseReturnOrderDets.stream().map(OmPurchaseReturnOrderDet::getOrderQty).reduce(BigDecimal.ZERO, BigDecimal::add);
                     if (totalActualQty.compareTo(totalOrderQty) == -1) {
-                        throw new BizErrorException("该采购订单对应的采退订单未完成，不可新增");
+                        throw new BizErrorException("采购订单"+omPurchaseReturnOrderDetDto.getPurchaseOrderCode()+"对应的采退订单未完成，不可新增");
                     }
                 }
 
@@ -307,7 +307,7 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
                 OmPurchaseOrderDet omPurchaseOrderDet = omPurchaseOrderDetMapper.selectByPrimaryKey(omPurchaseReturnOrderDetDto.getPurchaseOrderDetId());
                 BigDecimal totalReceivingQty = omPurchaseOrderDet.getActualQty()==null?BigDecimal.ZERO:omPurchaseOrderDet.getActualQty();
                 if(add.compareTo(totalReceivingQty) == 1){
-                    throw new BizErrorException("累计退货数量不能大于采购订单的实收数量");
+                    throw new BizErrorException("采购订单"+omPurchaseReturnOrderDetDto.getPurchaseOrderCode()+"累计退货数量不能大于采购订单的实收数量");
                 }
 
                 omPurchaseReturnOrderDetDto.setPurchaseReturnOrderId(record.getPurchaseReturnOrderId());
@@ -372,6 +372,18 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
                 org.springframework.beans.BeanUtils.copyProperties(omPurchaseReturnOrderDetDto, omHtPurchaseReturnOrderDet);
                 htList.add(omHtPurchaseReturnOrderDet);
 
+                BigDecimal totalSalesReturnQty = omPurchaseReturnOrderDetDto.getTotalSalesReturnQty()==null?BigDecimal.ZERO:omPurchaseReturnOrderDetDto.getTotalSalesReturnQty();
+                BigDecimal add = totalSalesReturnQty.add(omPurchaseReturnOrderDetDto.getOrderQty());
+                OmPurchaseOrderDet omPurchaseOrderDet = omPurchaseOrderDetMapper.selectByPrimaryKey(omPurchaseReturnOrderDetDto.getPurchaseOrderDetId());
+                BigDecimal totalReceivingQty = omPurchaseOrderDet.getActualQty()==null?BigDecimal.ZERO:omPurchaseOrderDet.getActualQty();
+                if(add.compareTo(totalReceivingQty) == 1){
+                    throw new BizErrorException("采购订单"+omPurchaseReturnOrderDetDto.getPurchaseOrderCode()+"累计退货数量不能大于采购订单的实收数量");
+                }
+
+                if (idList.contains(omPurchaseReturnOrderDetDto.getPurchaseReturnOrderDetId())) {
+                    continue;
+                }
+
                 example.clear();
                 Example.Criteria criteria1 = example.createCriteria();
                 criteria1.andEqualTo("purchaseOrderDetId",omPurchaseReturnOrderDetDto.getPurchaseOrderDetId());
@@ -380,21 +392,10 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
                     BigDecimal totalActualQty = omPurchaseReturnOrderDets.stream().filter(item -> item.getActualQty()!=null).map(OmPurchaseReturnOrderDet::getActualQty).reduce(BigDecimal.ZERO, BigDecimal::add);
                     BigDecimal totalOrderQty = omPurchaseReturnOrderDets.stream().map(OmPurchaseReturnOrderDet::getOrderQty).reduce(BigDecimal.ZERO, BigDecimal::add);
                     if (totalActualQty.compareTo(totalOrderQty) == -1) {
-                        throw new BizErrorException("该采购订单对应的采退订单未完成，不可新增");
+                        throw new BizErrorException("采购订单"+omPurchaseReturnOrderDetDto.getPurchaseOrderCode()+"对应的采退订单未完成，不可新增");
                     }
                 }
 
-                BigDecimal totalSalesReturnQty = omPurchaseReturnOrderDetDto.getTotalSalesReturnQty()==null?BigDecimal.ZERO:omPurchaseReturnOrderDetDto.getTotalSalesReturnQty();
-                BigDecimal add = totalSalesReturnQty.add(omPurchaseReturnOrderDetDto.getOrderQty());
-                OmPurchaseOrderDet omPurchaseOrderDet = omPurchaseOrderDetMapper.selectByPrimaryKey(omPurchaseReturnOrderDetDto.getPurchaseOrderDetId());
-                BigDecimal totalReceivingQty = omPurchaseOrderDet.getActualQty()==null?BigDecimal.ZERO:omPurchaseOrderDet.getActualQty();
-                if(add.compareTo(totalReceivingQty) == 1){
-                    throw new BizErrorException("累计退货数量不能大于采购订单的实收数量");
-                }
-
-                if (idList.contains(omPurchaseReturnOrderDetDto.getPurchaseReturnOrderDetId())) {
-                    continue;
-                }
                 omPurchaseReturnOrderDetDto.setPurchaseReturnOrderId(entity.getPurchaseReturnOrderId());
                 omPurchaseReturnOrderDetDto.setCreateUserId(user.getUserId());
                 omPurchaseReturnOrderDetDto.setCreateTime(new Date());
