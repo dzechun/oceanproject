@@ -12,6 +12,7 @@ import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.service.BaseBarcodeRuleSpecService;
 import com.sun.org.apache.xpath.internal.operations.Bool;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,7 @@ import java.util.*;
  * @author wcz
  */
 @Component
+@Slf4j
 public class BarcodeRuleUtils {
 
     @Autowired
@@ -212,6 +214,16 @@ public class BarcodeRuleUtils {
      */
     public static List<String> batchAnalysisCode(List<BaseBarcodeRuleSpec> list, String code,String params,Map<String,Object> map, Integer qty, String key){
         List<String> barcodeList = new ArrayList<>();
+
+        Map<String, String> functionResultMap = new HashMap<>();
+        for (BaseBarcodeRuleSpec baseBarcodeRuleSpec : list) {
+            //自定义函数名称
+            String functionName = baseBarcodeRuleSpec.getCustomizeName();
+            if (StringUtils.isNotEmpty(functionName)){
+                String param = barcodeRuleUtils.baseBarcodeRuleSpecService.executeFunction(functionName,params);
+                functionResultMap.put(functionName, param);
+            }
+        }
         for (Integer item = 0; item < qty; item++) {
             String lastBarCode = null;
             boolean hasKey = barcodeRuleUtils.redisUtil.hasKey(key);
@@ -335,9 +347,8 @@ public class BarcodeRuleUtils {
                         maxCode = generateStreamCode(maxCode, sb, barcodeLength, initialValue, customizeValue, getStep(step, customizeValue));
                     }else if("[f]".equals(specification)){
                         //执行函数获取解析码
-
-
-                        String param = barcodeRuleUtils.baseBarcodeRuleSpecService.executeFunction(functionName,params);
+                        String param = functionResultMap.get(functionName);
+                        log.info("====== functionName:" + functionName + "====== param:" + param);
                         if(StringUtils.isEmpty(param)){
                             throw new BizErrorException("条码规则执行函数失败，请检查执行函数");
                         }
@@ -366,6 +377,8 @@ public class BarcodeRuleUtils {
                     }
                 }
             }
+            // 更新redis最新条码
+            barcodeRuleUtils.redisUtil.set(key, sb.toString());
             barcodeList.add(sb.toString());
         }
 

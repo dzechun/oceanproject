@@ -433,14 +433,11 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         if(rs.getCode()!=0){
             throw new BizErrorException(rs.getMessage());
         }
-
         List<MesSfcBarcodeProcess> processList = new ArrayList<>();
         for (String barcode : rs.getData()){
             record.setWorkOrderBarcodeId(null);
             //Integer max = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getBarcodeType(),record.getWorkOrderId())
             record.setBarcode(barcode);
-            // 更新redis最新条码
-            redisUtil.set(key, rs.getData());
 
             if(StringUtils.isNotEmpty(record.getOption1()) && record.getOption1().equals("5")){
                 //判断是否已经打完
