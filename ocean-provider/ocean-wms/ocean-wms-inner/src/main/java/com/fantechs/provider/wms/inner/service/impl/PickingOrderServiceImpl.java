@@ -930,7 +930,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         Example inventoryExample = new Example(WmsInnerInventory.class);
         //查询发货库位库存
         inventoryExample.createCriteria().andEqualTo("storageId",wmsInnerPdaJobOrderDet.getInStorageId())
-                .andEqualTo("materialId",wmsInnerPdaJobOrderDet.getMaterialId());
+                .andEqualTo("materialId",wmsInnerPdaJobOrderDet.getMaterialId())
+                .andEqualTo("relevanceOrderCode",wmsInnerJobOrder.getJobOrderCode());
         List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(inventoryExample);
         inventoryExample.clear();
 
@@ -982,6 +983,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             wmsInnerInventory.setJobStatus((byte) 1);
             wmsInnerInventory.setJobOrderDetId(null);
             wmsInnerInventory.setStorageId(wmsInnerPdaJobOrderDet.getInStorageId());
+            wmsInnerInventory.setRelevanceOrderCode(wmsInnerJobOrder.getJobOrderCode());
             wmsInnerInventoryMapper.insertUseGeneratedKeys(wmsInnerInventory);
 
             //拣货数量等于分配数量(1,相等 2,少于)
