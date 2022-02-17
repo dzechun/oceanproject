@@ -70,7 +70,7 @@ public interface PickingOrderService {
 
     int closeDocuments(String id);
 
-    WmsInnerInventoryDetDto scan(Long storageId, Long materialId, String barcode);
+    WmsInnerInventoryDetDto scan(Long storageId, Long materialId, String barcode,Integer ifPda);
 
     int pdaSubmit(WmsInnerPdaJobOrderDet wmsInnerPdaJobOrderDet);
 

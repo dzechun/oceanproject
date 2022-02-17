@@ -91,7 +91,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
     private String REDIS_KEY = "PICKINGID:";
 
     @Override
-    public WmsInnerInventoryDetDto scan(Long storageId, Long materialId, String barcode) {
+    public WmsInnerInventoryDetDto scan(Long storageId, Long materialId, String barcode,Integer ifPda) {
         SysUser sysUser = currentUser();
         Map<String,Object> barcodeMap = new HashMap<>();
         barcodeMap.put("codeQueryMark",1);
@@ -164,6 +164,16 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         }
         list.get(0).setMaterialTotalQty(materialTotalQty);
         list.get(0).setBarcodeType(type);
+        if (StringUtils.isNotEmpty(ifPda) && ifPda == 1) {
+            if (type == 2) {
+                list.get(0).setBarcode(list.get(0).getColorBoxCode());
+            }else if (type == 3) {
+                list.get(0).setBarcode(list.get(0).getCartonCode());
+            }else if (type == 4) {
+                list.get(0).setBarcode(list.get(0).getPalletCode());
+            }
+        }
+
         return list.get(0);
     }
 
@@ -244,7 +254,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
 
                     List<WmsInnerPdaInventoryDetDto> wmsInnerPdaInventoryDetDtos = detMap.get(storageId).get(materialId);
                     for (WmsInnerPdaInventoryDetDto wmsInnerPdaInventoryDetDto : wmsInnerPdaInventoryDetDtos) {
-                        WmsInnerInventoryDetDto scan = this.scan(null, null, wmsInnerPdaInventoryDetDto.getBarcode());
+                        WmsInnerInventoryDetDto scan = this.scan(null, null, wmsInnerPdaInventoryDetDto.getBarcode(),null);
                         if (scan.getBarcodeType() == 1) {
                             WmsInnerInventoryDet wmsInnerInventoryDet = new WmsInnerInventoryDet();
                             wmsInnerInventoryDet.setInventoryDetId(scan.getInventoryDetId());
@@ -445,9 +455,10 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 if (StringUtils.isNotEmpty(sn)) {
 
                     for (WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto : sn) {
+                        inventoryDetExample.clear();
                         inventoryDetExample.createCriteria().andEqualTo("materialBarcodeId",wmsInnerMaterialBarcodeDto.getMaterialBarcodeId());
                         List<WmsInnerInventoryDet> wmsInnerInventoryDetList = wmsInnerInventoryDetMapper.selectByExample(inventoryDetExample);
-                        inventoryDetExample.clear();
+
                         if (StringUtils.isEmpty(wmsInnerInventoryDetList) || wmsInnerInventoryDetList.get(0).getBarcodeStatus() != 1) {
                             throw new BizErrorException("条码不存在库存内,或者该条码下的子条码不在库存内");
                         }
