@@ -86,15 +86,14 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
     public int purchaseUpdatePickingQty(Long purchaseReturnOrderDetId, BigDecimal actualQty) {
-        Example example = new Example(OmPurchaseReturnOrderDet.class);
-        example.createCriteria().andEqualTo("purchaseReturnOrderDetId",purchaseReturnOrderDetId);
-        List<OmPurchaseReturnOrderDet> omPurchaseReturnOrderDets = omPurchaseReturnOrderDetMapper.selectByExample(example);
-        if (StringUtils.isNotEmpty(omPurchaseReturnOrderDets) && omPurchaseReturnOrderDets.size() == 1) {
-            OmPurchaseReturnOrderDet omPurchaseReturnOrderDet = omPurchaseReturnOrderDets.get(0);
-            BigDecimal qty = omPurchaseReturnOrderDet.getActualQty();
-            actualQty = actualQty.add((StringUtils.isNotEmpty(qty)?qty:new BigDecimal(0)));
-            omPurchaseReturnOrderDet.setActualQty(actualQty);
+        OmPurchaseReturnOrderDet omPurchaseReturnOrderDet = omPurchaseReturnOrderDetMapper.selectByPrimaryKey(purchaseReturnOrderDetId);
+        if (StringUtils.isNotEmpty(omPurchaseReturnOrderDet)) {
+            BigDecimal oldActualQty = omPurchaseReturnOrderDet.getActualQty() == null ? BigDecimal.ZERO : omPurchaseReturnOrderDet.getActualQty();
+            BigDecimal newActualQty = oldActualQty.add(actualQty);
+            omPurchaseReturnOrderDet.setActualQty(newActualQty);
             omPurchaseReturnOrderDetMapper.updateByPrimaryKeySelective(omPurchaseReturnOrderDet);
 
             //修改采购订单累计退货数量
