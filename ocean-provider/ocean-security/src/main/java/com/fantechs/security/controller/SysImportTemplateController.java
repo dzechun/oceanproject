@@ -67,10 +67,12 @@ public class SysImportTemplateController {
     @ApiOperation("列表")
     @PostMapping("/findList")
     public ResponseEntity<List<SysImportTemplate>> findList(@ApiParam(value = "查询对象")@RequestBody SearchSysImportTemplate searchSysImportTemplate) {
-        List<Long> menuIds = sysMenuInfoService.getMenu(searchSysImportTemplate.getMenuId());
         Page<Object> page = PageHelper.startPage(searchSysImportTemplate.getStartPage(),searchSysImportTemplate.getPageSize());
         Map<String, Object> map = ControllerUtil.dynamicConditionByEntity(searchSysImportTemplate);
-        map.put("menuIds",menuIds);
+        if(StringUtils.isNotEmpty(searchSysImportTemplate.getMenuId())) {
+            List<Long> menuIds = sysMenuInfoService.getMenu(searchSysImportTemplate.getMenuId());
+            map.put("menuIds", menuIds);
+        }
         List<SysImportTemplate> list = sysImportTemplateService.findList(map);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
