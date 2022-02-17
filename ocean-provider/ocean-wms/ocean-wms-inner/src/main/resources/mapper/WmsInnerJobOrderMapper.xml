@@ -108,7 +108,7 @@
                 and wipo.source_sys_order_type_code = #{sourceSysOrderTypeCode}
             </if>
 
-            <if test="sourceBigType!=null and sourceBigType!=''">
+            <if test="sourceBigType!=null">
                 and wipo.source_big_type = #{sourceBigType}
             </if>
 
@@ -118,13 +118,13 @@
             <if test="workerId!=null and workerId!=''">
                 and (wipo.worker_id =#{workerId} OR wipo.worker_id IS NULL)
             </if>
-            <if test="jobOrderType !=null and jobOrderType!= ''">
+            <if test="jobOrderType !=null ">
                 and wipo.job_order_type =#{jobOrderType}
             </if>
             <if test="jobOrderId !=null and jobOrderId !=''">
                 and wipo.job_order_id = #{jobOrderId}
             </if>
-            <if test="orderStatus!=null and orderStatus!=''">
+            <if test="orderStatus!=null ">
                 and wipo.order_status =#{orderStatus}
             </if>
             <if test="orderStatusList !=null and orderStatusList.size()!=0">

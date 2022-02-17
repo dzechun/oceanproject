@@ -2596,7 +2596,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
             else{
                 BarcodeResultDto resultDto=InBarcodeUtil.scanBarcode(barCode);
-                if(StringUtils.isNotEmpty(resultDto.getBarcodeType()) && !resultDto.getBarcodeType().equals("5")){
+                if(StringUtils.isNotEmpty(resultDto.getBarcodeType()) && resultDto.getBarcodeType()!=(byte)5){
                     throw new BizErrorException(ErrorCodeEnum.PDA5001006.getCode(),"扫描的条码是系统条码 请到系统条码操作页面扫码-->"+barCode);
                 }
             }
