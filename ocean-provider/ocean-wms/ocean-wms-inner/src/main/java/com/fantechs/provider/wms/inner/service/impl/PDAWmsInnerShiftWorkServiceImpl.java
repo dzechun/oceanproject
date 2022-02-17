@@ -366,7 +366,7 @@ public class PDAWmsInnerShiftWorkServiceImpl implements PDAWmsInnerShiftWorkServ
                             .andEqualTo("barcodeStatus", 1);
                     List<WmsInnerInventoryDet> wmsInnerInventoryDets = wmsInnerInventoryDetMapper.selectByExample(example3);
                     if (StringUtils.isEmpty(wmsInnerInventoryDets)) {
-                        throw new BizErrorException(ErrorCodeEnum.PDA5001009);
+                        throw new BizErrorException(ErrorCodeEnum.PDA5001009.getCode(),"未在库存明细的移出库位中查到对应的条码");
                     }
                     WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDets.get(0);
                     wmsInnerInventoryDet.setBarcodeStatus((byte) 2);

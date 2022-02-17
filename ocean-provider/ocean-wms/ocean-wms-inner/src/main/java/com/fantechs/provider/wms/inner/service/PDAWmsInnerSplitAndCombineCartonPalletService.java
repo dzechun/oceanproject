@@ -16,7 +16,7 @@ public interface PDAWmsInnerSplitAndCombineCartonPalletService {
 
     WmsInnerInventoryDetDto checkBarcode(PDAWmsInnerSplitAndCombineCheckBarcodeDto pdaWmsInnerSplitAndCombineCheckBarcodeDto);
 
-    BaseStorage checkStorageCode(String storageCode);
+    BaseStorage checkStorageCode(String storageCode,Long warehouseId);
 
     String print(PDAWmsInnerSplitAndCombinePrintDto pdaWmsInnerSplitAndCombinePrintDto);
 }
