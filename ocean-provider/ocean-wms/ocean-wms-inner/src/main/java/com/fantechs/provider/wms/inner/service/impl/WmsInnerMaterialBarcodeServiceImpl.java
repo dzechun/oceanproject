@@ -648,12 +648,6 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
 //                            }
                             fail.add(i + 1);
                             continue;
-                        }else {
-                            parentBarcode.setBarcodeType((byte) 1);
-                            wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(parentBarcode);
-
-                            //添加导入条码履历与单据中间表数据
-                            addHt(parentBarcode,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
                         }
                     }
 
@@ -675,6 +669,12 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                             fail.add(i + 1);
                             continue;
                         }else {
+                            parentBarcode.setBarcodeType((byte) 1);
+                            wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(parentBarcode);
+
+                            //添加导入条码履历与单据中间表数据
+                            addHt(parentBarcode,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
+
                             BeanUtil.copyProperties(parentBarcode,colorBoxCode);
                             colorBoxCode.setBarcodeType((byte) 2);
                             colorBoxCode.setPalletCode(null);
