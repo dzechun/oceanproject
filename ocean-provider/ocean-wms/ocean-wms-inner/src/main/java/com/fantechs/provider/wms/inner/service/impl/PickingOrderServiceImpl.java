@@ -94,6 +94,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
     public WmsInnerInventoryDetDto scan(Long storageId, Long materialId, String barcode) {
         SysUser sysUser = currentUser();
         Map<String,Object> barcodeMap = new HashMap<>();
+        barcodeMap.put("codeQueryMark",1);
         barcodeMap.put("barcode",barcode);
         barcodeMap.put("barcodeType",1);
         barcodeMap.put("orgId",sysUser.getOrganizationId());
@@ -402,10 +403,12 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             BigDecimal materialTotalQty = new BigDecimal(0);
             List<WmsInnerMaterialBarcodeReOrder> barcodeReOrderList = new ArrayList<>();
             List<WmsInnerInventoryDet> inventoryDetList = new ArrayList<>();
-//            Example example = new Example(WmsInnerMaterialBarcode.class);
+            List<WmsInnerMaterialBarcode> barcodeList = new ArrayList<>();
+            Example example = new Example(WmsInnerMaterialBarcode.class);
             Example inventoryDetExample = new Example(WmsInnerInventoryDet.class);
             Map<String,Object> map = new HashMap<>();
             List<String> outBarcodeList = new ArrayList<>();
+
             for (WmsInnerPdaInventoryDetDto wmsInnerPdaInventoryDetDto : wmsInnerPdaJobOrderDet.getInventoryDetList()) {
                 String barcode = "";
                 if (StringUtils.isNotEmpty(wmsInnerPdaInventoryDetDto.getInventoryDetId())) {
@@ -468,21 +471,116 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                         wmsInnerInventoryDet.setDeliveryOrderCode(wmsInnerJobOrder.getJobOrderCode());
                         inventoryDetList.add(wmsInnerInventoryDet);
                         wmsInnerMaterialBarcodeDto.setBarcodeStatus((byte) 6);
+
+                        barcodeList.add(wmsInnerMaterialBarcodeDto);
+                        //改变sn对应的彩盒、包箱、栈板码状态，包括条码在库存内的状态
+                        //彩盒码
+                        if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeDto.getColorBoxCode())) {
+                            example.createCriteria().andEqualTo("colorBoxCode",wmsInnerMaterialBarcodeDto.getColorBoxCode())
+                                    .andEqualTo("barcodeType",2);
+                            List<WmsInnerMaterialBarcode> colorBoxCodeList = wmsInnerMaterialBarcodeMapper.selectByExample(example);
+                            example.clear();
+                            if (StringUtils.isNotEmpty(colorBoxCodeList) && colorBoxCodeList.size() == 1) {
+                                WmsInnerMaterialBarcode wmsInnerMaterialBarcode = colorBoxCodeList.get(0);
+                                wmsInnerMaterialBarcode.setBarcodeStatus((byte)6);
+                                barcodeList.add(wmsInnerMaterialBarcode);
+
+                                inventoryDetExample.createCriteria().andEqualTo("materialBarcodeId",wmsInnerMaterialBarcodeDto.getMaterialBarcodeId());
+                                wmsInnerInventoryDetList = wmsInnerInventoryDetMapper.selectByExample(inventoryDetExample);
+                                inventoryDetExample.clear();
+                                if (StringUtils.isEmpty(wmsInnerInventoryDetList) || wmsInnerInventoryDetList.get(0).getBarcodeStatus() != 1) {
+                                    throw new BizErrorException(wmsInnerMaterialBarcodeDto.getColorBoxCode()+":彩盒码不存在库存内,或当前彩盒码库存内存在重复数据:"+wmsInnerMaterialBarcodeDto.getMaterialBarcodeId());
+                                }
+                                WmsInnerInventoryDet colorBoxCodeInventoryDet = new WmsInnerInventoryDet();
+                                colorBoxCodeInventoryDet.setInventoryDetId(wmsInnerInventoryDetList.get(0).getInventoryDetId());
+                                colorBoxCodeInventoryDet.setStorageId(wmsInnerJobOrderDet.getInStorageId());
+                                colorBoxCodeInventoryDet.setBarcodeStatus((byte) 2);
+                                colorBoxCodeInventoryDet.setDeliverDate(new Date());
+                                colorBoxCodeInventoryDet.setDeliveryOrderCode(wmsInnerJobOrder.getJobOrderCode());
+                                inventoryDetList.add(colorBoxCodeInventoryDet);
+                            }else {
+                                throw new BizErrorException(wmsInnerMaterialBarcodeDto.getColorBoxCode()+"：彩盒码不存在系统条码内");
+                            }
+                        }
+                        //包箱
+                        if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeDto.getCartonCode())) {
+                            example.createCriteria().andEqualTo("cartonCode",wmsInnerMaterialBarcodeDto.getCartonCode())
+                                    .andEqualTo("barcodeType",3);
+                            List<WmsInnerMaterialBarcode> cartonCodeList = wmsInnerMaterialBarcodeMapper.selectByExample(example);
+                            example.clear();
+                            if (StringUtils.isNotEmpty(cartonCodeList) && cartonCodeList.size() == 1) {
+                                WmsInnerMaterialBarcode wmsInnerMaterialBarcode = cartonCodeList.get(0);
+                                wmsInnerMaterialBarcode.setBarcodeStatus((byte)6);
+                                barcodeList.add(wmsInnerMaterialBarcode);
+
+                                inventoryDetExample.createCriteria().andEqualTo("materialBarcodeId",wmsInnerMaterialBarcodeDto.getMaterialBarcodeId());
+                                wmsInnerInventoryDetList = wmsInnerInventoryDetMapper.selectByExample(inventoryDetExample);
+                                inventoryDetExample.clear();
+                                if (StringUtils.isEmpty(wmsInnerInventoryDetList) || wmsInnerInventoryDetList.get(0).getBarcodeStatus() != 1) {
+                                    throw new BizErrorException(wmsInnerMaterialBarcodeDto.getColorBoxCode()+":包箱不存在库存内,或当前包箱库存内存在重复数据:"+wmsInnerMaterialBarcodeDto.getMaterialBarcodeId());
+                                }
+                                WmsInnerInventoryDet cartonCodeInventoryDet = new WmsInnerInventoryDet();
+                                cartonCodeInventoryDet.setInventoryDetId(wmsInnerInventoryDetList.get(0).getInventoryDetId());
+                                cartonCodeInventoryDet.setStorageId(wmsInnerJobOrderDet.getInStorageId());
+                                cartonCodeInventoryDet.setBarcodeStatus((byte) 2);
+                                cartonCodeInventoryDet.setDeliverDate(new Date());
+                                cartonCodeInventoryDet.setDeliveryOrderCode(wmsInnerJobOrder.getJobOrderCode());
+                                inventoryDetList.add(cartonCodeInventoryDet);
+                            }else {
+                                throw new BizErrorException(wmsInnerMaterialBarcodeDto.getCartonCode()+"：包箱不存在系统条码内");
+                            }
+                        }
+                        //栈板
+                        if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeDto.getPalletCode())) {
+                            example.createCriteria().andEqualTo("palletCode",wmsInnerMaterialBarcodeDto.getPalletCode())
+                                    .andEqualTo("barcodeType",4);
+                            List<WmsInnerMaterialBarcode> palletCodeList = wmsInnerMaterialBarcodeMapper.selectByExample(example);
+                            example.clear();
+                            if (StringUtils.isNotEmpty(palletCodeList) && palletCodeList.size() == 1) {
+                                WmsInnerMaterialBarcode wmsInnerMaterialBarcode = palletCodeList.get(0);
+                                wmsInnerMaterialBarcode.setBarcodeStatus((byte)6);
+                                barcodeList.add(wmsInnerMaterialBarcode);
+
+                                inventoryDetExample.createCriteria().andEqualTo("materialBarcodeId",wmsInnerMaterialBarcodeDto.getMaterialBarcodeId());
+                                wmsInnerInventoryDetList = wmsInnerInventoryDetMapper.selectByExample(inventoryDetExample);
+                                inventoryDetExample.clear();
+                                if (StringUtils.isEmpty(wmsInnerInventoryDetList) || wmsInnerInventoryDetList.get(0).getBarcodeStatus() != 1) {
+                                    throw new BizErrorException(wmsInnerMaterialBarcodeDto.getColorBoxCode()+":栈板不存在库存内,或当前栈板库存内存在重复数据:"+wmsInnerMaterialBarcodeDto.getMaterialBarcodeId());
+                                }
+                                WmsInnerInventoryDet palletCodeInventoryDet = new WmsInnerInventoryDet();
+                                palletCodeInventoryDet.setInventoryDetId(wmsInnerInventoryDetList.get(0).getInventoryDetId());
+                                palletCodeInventoryDet.setStorageId(wmsInnerJobOrderDet.getInStorageId());
+                                palletCodeInventoryDet.setBarcodeStatus((byte) 2);
+                                palletCodeInventoryDet.setDeliverDate(new Date());
+                                palletCodeInventoryDet.setDeliveryOrderCode(wmsInnerJobOrder.getJobOrderCode());
+                                inventoryDetList.add(palletCodeInventoryDet);
+                            }else {
+                                throw new BizErrorException(wmsInnerMaterialBarcodeDto.getPalletCode()+"：栈板不存在系统条码内");
+                            }
+                        }
+
                     }
+
+
                 }
             }
             if (StringUtils.isNotEmpty(outBarcodeList)) {
-                List<String> barcodeList = baseFeignApi.outRule(wmsInnerJobOrder.getWarehouseId(), wmsInnerJobOrderDet.getOutStorageId(), wmsInnerJobOrderDet.getMaterialId(), new BigDecimal(outBarcodeList.size())).getData();
-                if (StringUtils.isNotEmpty(barcodeList)) {
-                    outBarcodeList.removeAll(barcodeList);
+                List<String> barcodeCodeList = baseFeignApi.outRule(wmsInnerJobOrder.getWarehouseId(), wmsInnerJobOrderDet.getOutStorageId(), wmsInnerJobOrderDet.getMaterialId(), new BigDecimal(outBarcodeList.size())).getData();
+                if (StringUtils.isNotEmpty(barcodeCodeList)) {
+                    outBarcodeList.removeAll(barcodeCodeList);
                     if (StringUtils.isNotEmpty(outBarcodeList)) {
                         throw new BizErrorException("拣货条码存在不在出库规则的条码");
                     }
                 }
 
             }
+            if (StringUtils.isNotEmpty(barcodeList)) {
+                wmsInnerMaterialBarcodeMapper.batchUpdate(barcodeList);
+            }
+            if (StringUtils.isNotEmpty(inventoryDetList)) {
+                wmsInnerInventoryDetMapper.updateStroage(inventoryDetList);
+            }
 
-            wmsInnerInventoryDetMapper.updateStroage(inventoryDetList);
             if (StringUtils.isNotEmpty(barcodeReOrderList)) {
                 wmsInnerMaterialBarcodeReOrderMapper.insertList(barcodeReOrderList);
             }
