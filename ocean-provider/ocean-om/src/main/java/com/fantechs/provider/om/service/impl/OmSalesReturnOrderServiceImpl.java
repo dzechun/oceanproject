@@ -677,12 +677,6 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         OmSalesReturnOrderDet omSalesReturnOrderDet=omSalesReturnOrderDetMapper.selectByPrimaryKey(salesReturnOrderDetId);
         if(StringUtils.isNotEmpty(omSalesReturnOrderDet)){
-            if(StringUtils.isEmpty(omSalesReturnOrderDet.getTotalIssueQty())){
-                omSalesReturnOrderDet.setTotalIssueQty(new BigDecimal(0));
-            }
-
-            omSalesReturnOrderDet.setTotalIssueQty(omSalesReturnOrderDet.getTotalIssueQty().subtract(putawayQty));
-            omSalesReturnOrderDet.setIfAllIssued((byte)0);
             omSalesReturnOrderDet.setModifiedUserId(sysUser.getUserId());
             omSalesReturnOrderDet.setModifiedTime(new Date());
             num+=omSalesReturnOrderDetMapper.updateByPrimaryKeySelective(omSalesReturnOrderDet);
