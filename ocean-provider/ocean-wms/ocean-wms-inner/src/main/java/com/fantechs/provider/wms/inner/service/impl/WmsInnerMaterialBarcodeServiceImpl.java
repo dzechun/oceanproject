@@ -565,8 +565,9 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
 
         Example barcodeExample = new Example(WmsInnerMaterialBarcode.class);
 
-        for (WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto : list) {
-            for (int i = 0; i < importList.size(); i++) {
+        for (int i = 0; i < importList.size(); i++) {
+            boolean b = true;
+            for (WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto : list) {
                 //导入的实体
                 WmsInnerMaterialBarcodeImport wmsInnerMaterialBarcodeImport = importList.get(i);
                 //获取导入条码的物料是否存在
@@ -574,7 +575,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                 searchBaseMaterial.setCodeQueryMark(1);
                 List<BaseMaterial> baseMaterialList = baseFeignApi.findList(searchBaseMaterial).getData();
                 if (StringUtils.isEmpty(baseMaterialList)) {
-                    fail.add(i + 1);
+//                    fail.add(i + 1);
                     continue;
                 }
 
@@ -583,7 +584,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                 List<WmsInnerMaterialBarcode> wmsInnerMaterialBarcodes = wmsInnerMaterialBarcodeMapper.selectByExample(example);
                 example.clear();
                 if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodes)) {
-                    fail.add(i + 1);
+//                    fail.add(i + 1);
                     continue;
                 }
 
@@ -603,10 +604,10 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                     Integer totalMaterialQty = wmsInnerMaterialBarcodeMapper.getTotalMaterialQty(searchWmsInnerMaterialBarcode);
                     wmsInnerMaterialBarcodeDto.setTotalMaterialQty(new BigDecimal(StringUtils.isNotEmpty(totalMaterialQty)?totalMaterialQty:0));
                     if (StringUtils.isEmpty(addWmsInnerMaterialBarcode.getMaterialQty())) {
-                        fail.add(i + 1);
+//                        fail.add(i + 1);
                         continue;
                     } else if (wmsInnerMaterialBarcodeDto.getOrderQty().compareTo((addWmsInnerMaterialBarcode.getMaterialQty().add(StringUtils.isNotEmpty(wmsInnerMaterialBarcodeDto.getTotalMaterialQty())?wmsInnerMaterialBarcodeDto.getTotalMaterialQty():new BigDecimal(0)))) == -1) {
-                        fail.add(i + 1);
+//                        fail.add(i + 1);
                         continue;
                     }
                     //按照最大的条码维度确定导入条码类型
@@ -646,7 +647,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
 //                                colorBoxCode.setMaterialQty(colorBoxCode.getMaterialQty().subtract(new BigDecimal(1)));
 //                                wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(colorBoxCode);
 //                            }
-                            fail.add(i + 1);
+//                            fail.add(i + 1);
                             continue;
                         }
                     }
@@ -666,9 +667,10 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
 //                                cartonCode.setMaterialQty(cartonCode.getMaterialQty().subtract(new BigDecimal(1)));
 //                                wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(cartonCode);
 //                            }
-                            fail.add(i + 1);
+//                            fail.add(i + 1);
                             continue;
                         }else {
+                            b = false;
                             parentBarcode.setBarcodeType((byte) 1);
                             wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(parentBarcode);
 
@@ -686,6 +688,13 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                             addHt(colorBoxCode,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
 
                         }
+                    }else {
+                        b = false;
+                        parentBarcode.setBarcodeType((byte) 1);
+                        wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(parentBarcode);
+
+                        //添加导入条码履历与单据中间表数据
+                        addHt(parentBarcode,printOrderTypeCode,wmsInnerMaterialBarcodeReOrderList,wmsInnerMaterialBarcodeDto,user);
                     }
                     boolean ifAdd =false;
                     //箱码添加
@@ -706,7 +715,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                                 if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeImport.getPalletCode())
                                         && StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getPalletCode())
                                         && !wmsInnerMaterialBarcode.getPalletCode().equals(wmsInnerMaterialBarcodeImport.getPalletCode())) {
-                                    fail.add(i + 1);
+//                                    fail.add(i + 1);
                                     continue;
                                 }
                             }
@@ -753,13 +762,16 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
                     }
                     success++;
                 }else {
-                    fail.add(i + 1);
+//                    fail.add(i + 1);
                     continue;
                 }
                 if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodeReOrderList)) {
                     wmsInnerMaterialBarcodeReOrderService.batchSave(wmsInnerMaterialBarcodeReOrderList);
                     wmsInnerMaterialBarcodeReOrderList.clear();
                 }
+            }
+            if (b) {
+                fail.add(i + 1);
             }
         }
         if (StringUtils.isNotEmpty(htList)) {
