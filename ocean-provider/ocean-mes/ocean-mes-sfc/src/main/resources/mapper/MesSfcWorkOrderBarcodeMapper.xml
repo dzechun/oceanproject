@@ -137,7 +137,7 @@
             </if>
         </where>
         GROUP BY mswob.work_order_barcode_id
-        order by mswob.create_time desc
+        order by mpwo.work_order_code desc, mswob.barcode desc
     </select>
     <select id="findMaxCode" resultType="java.lang.String">
         select barcode
