@@ -17,12 +17,14 @@ import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPallet;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
 import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDto;
+import com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDto;
 import com.fantechs.common.base.general.dto.wms.in.BarPODto;
 import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.*;
+import com.fantechs.common.base.general.entity.wanbao.WanbaoStacking;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.BeanUtils;
@@ -1234,7 +1236,18 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
         log.info("程序配置项autoWipCompletion值："+ specItems.get(0).getParaValue());
         if (!specItems.isEmpty() && specItems.size() > 0 && specItems.get(0).getParaValue().equals("1")){
+
+            /**
+             * 2022-02-17 bgkun 完工入库增加堆垛编码，上架作业堆垛编码
+             */
             Map<String, Object> map = new HashMap<>();
+//            map.put("stackingCode", stackingCode);
+//            List<WanbaoStackingDto> stackingList = this.mesSfcProductPalletService.findStackingList(map);
+//            if (stackingList.isEmpty()){
+//                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛编码不存在");
+//            }
+
+            map.clear();
             map.put("list", palletIds);
             map.put("orgId", orgId);
             List<PalletAutoAsnDto> autoAsnDtos = mesSfcProductPalletDetService.findListGroupByWorkOrder(map);

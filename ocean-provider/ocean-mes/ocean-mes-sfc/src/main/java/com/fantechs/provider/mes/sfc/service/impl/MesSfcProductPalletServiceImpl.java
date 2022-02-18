@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.dto.mes.sfc.MesSfcPalletReportDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletBySalesOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDetDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDto;
+import com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDto;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -80,5 +81,10 @@ public class MesSfcProductPalletServiceImpl extends BaseService<MesSfcProductPal
     @Override
     public List<MesSfcProductPalletBySalesOrderDto> findBySalesCodeGroup(Map<String, Object> map) {
         return mesSfcProductPalletMapper.findBySalesCodeGroup(map);
+    }
+
+    @Override
+    public List<WanbaoStackingDto> findStackingList(Map<String, Object> map) {
+        return mesSfcProductPalletMapper.findStackingList(map);
     }
 }

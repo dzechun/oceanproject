@@ -3,6 +3,7 @@ package com.fantechs.provider.mes.sfc.service;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcPalletReportDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletBySalesOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDto;
+import com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDto;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
 import com.fantechs.common.base.support.IService;
 
@@ -23,4 +24,11 @@ public interface MesSfcProductPalletService extends IService<MesSfcProductPallet
     List<MesSfcPalletReportDto> getPalletReport();
 
     List<MesSfcProductPalletBySalesOrderDto> findBySalesCodeGroup(Map<String, Object> map);
+
+    /**
+     * 获取堆垛
+     * @param map
+     * @return
+     */
+    List<WanbaoStackingDto> findStackingList(Map<String, Object> map);
 }
