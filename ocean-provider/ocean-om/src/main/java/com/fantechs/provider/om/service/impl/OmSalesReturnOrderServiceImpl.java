@@ -398,6 +398,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     orderList.add(order);
                 }
                 WmsInPlanReceivingOrder wmsInPlanReceivingOrder = new WmsInPlanReceivingOrder();
+                wmsInPlanReceivingOrder.setSourceBigType((byte)1);
                 wmsInPlanReceivingOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInPlanReceivingOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInPlanReceivingOrder.setOrderStatus((byte) 1);
@@ -454,6 +455,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     orderList.add(order);
                 }
                 WmsInReceivingOrder wmsInReceivingOrder = new WmsInReceivingOrder();
+                wmsInReceivingOrder.setSourceBigType((byte)1);
                 wmsInReceivingOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInReceivingOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInReceivingOrder.setOrderStatus((byte) 1);
@@ -488,6 +490,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                         coreSourceSysOrderTypeCode="IN-SRO";
 
                     QmsIncomingInspectionOrderDto qmsIncomingInspectionOrderDto = new QmsIncomingInspectionOrderDto();
+                    qmsIncomingInspectionOrderDto.setSourceBigType((byte)1);
                     qmsIncomingInspectionOrderDto.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
                     qmsIncomingInspectionOrderDto.setCoreSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
                     qmsIncomingInspectionOrderDto.setSourceOrderCode(order.getSalesReturnOrderCode());
@@ -570,6 +573,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                 }
 
                 WmsInInPlanOrderDto wmsInInPlanOrder = new WmsInInPlanOrderDto();
+                wmsInInPlanOrder.setSourceBigType((byte)1);
                 wmsInInPlanOrder.setMakeOrderUserId(user.getUserId());
                 wmsInInPlanOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInInPlanOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);

@@ -2498,6 +2498,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         if(ifSysBarcode.equals("1")){
             //map=checkBarcodeType(barCode);
             BarcodeResultDto resultDto=InBarcodeUtil.scanBarcode(barCode);
+            if(StringUtils.isNotEmpty(resultDto.getBarcodeType()) && resultDto.getBarcodeType()==(byte)5){
+                throw new BizErrorException(ErrorCodeEnum.PDA5001006.getCode(),"扫描的条码是非系统条码 请到非系统条码操作页面扫码-->"+barCode);
+            }
             String dateString=DateUtils.getDateString(resultDto.getProductionDate());
 
             map.put("barcodeType",resultDto.getBarcodeType());
@@ -2507,9 +2510,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             map.put("productionDate",dateString);
             map.put("qty",resultDto.getMaterialQty());
 
-            if(StringUtils.isNotEmpty(map.get("barcodeType")) && map.get("barcodeType").toString().equals("5")){
-                throw new BizErrorException(ErrorCodeEnum.PDA5001006.getCode(),"扫描的条码无效-->"+barCode);
-            }
+//            if(StringUtils.isNotEmpty(map.get("barcodeType")) && map.get("barcodeType").toString().equals("5")){
+//                throw new BizErrorException(ErrorCodeEnum.PDA5001006.getCode(),"扫描的条码无效-->"+barCode);
+//            }
 
             //来料条码ID
             Long materialBarcodeId=Long.parseLong(map.get("materialBarcodeId").toString());
