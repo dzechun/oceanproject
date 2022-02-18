@@ -20,6 +20,6 @@ public interface WmsInnerInventoryDetService extends IService<WmsInnerInventoryD
 
     WmsInnerInventoryDet findByOne(String barCode);
 
-    List<WmsInnerInventoryDetDto> findListByBarCode(List<String> codes);
+    List<WmsInnerInventoryDetDto> findListByBarCode(List<String> codes,Long storageId);
 
 }
