@@ -35,4 +35,6 @@ public class SearchBaseSupplier extends BaseQuery implements Serializable {
     private Byte ifAppointDeliver;
     @ApiModelProperty("用户id")
     private Long userId;
+    @ApiModelProperty("是否查询所有供应商（0、否 1、是）")
+    private Byte ifFindAll;
 }
