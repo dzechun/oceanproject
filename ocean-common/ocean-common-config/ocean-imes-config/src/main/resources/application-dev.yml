@@ -65,6 +65,23 @@ spring:
       max-request-size: 500MB
   main:
     allow-bean-definition-overriding: true
+  rabbitmq:
+    #host: 192.168.61.55
+    host: 192.168.204.164
+    #host: 172.16.60.35
+    #    host: 192.168.5.85
+    port: 5672
+    username: admin
+    #password: admin
+    password: StrongPassword
+    # 消息发送至exchange callback
+    publisher-confirms: true
+    # 消息发送至queue 失败才callback
+    publisher-returns: true
+    # 消费消息手动删除
+    listener:
+      simple:
+        acknowledge-mode: manual
 mybatis:
   config-location: classpath:myBatis-config.xml
   mapper-locations: classpath:mapper/*.xml
