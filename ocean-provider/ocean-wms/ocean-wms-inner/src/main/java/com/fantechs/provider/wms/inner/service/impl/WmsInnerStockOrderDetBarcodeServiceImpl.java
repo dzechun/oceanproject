@@ -38,7 +38,9 @@ public class WmsInnerStockOrderDetBarcodeServiceImpl extends BaseService<WmsInne
     public List<WmsInnerStockOrderDetBarcodeDto> findList(Map<String, Object> map) {
         SysUser sysUser=CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId",sysUser.getOrganizationId());
-        map.put("barcodeType",(byte)1); //只查询条码
+        if(StringUtils.isEmpty(map.get("queryAll")))//queryAll
+            map.put("barcodeType",(byte)1); //只查询条码
+
         return wmsInnerStockOrderDetBarcodeMapper.findList(map);
     }
 
