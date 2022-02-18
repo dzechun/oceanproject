@@ -25,6 +25,7 @@ import com.fantechs.provider.wms.inner.service.WmsInnerInventoryDetService;
 import com.fantechs.provider.wms.inner.service.WmsInnerMaterialBarcodeReOrderService;
 import com.fantechs.provider.wms.inner.service.WmsInnerStockOrderDetBarcodeService;
 import com.fantechs.provider.wms.inner.service.WmsInnerStockOrderService;
+import com.fantechs.provider.wms.inner.util.InBarcodeUtil;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
 import com.fantechs.provider.wms.inner.util.WmsInnerInventoryUtil;
 import org.springframework.beans.BeanUtils;
@@ -1412,15 +1413,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         }
 
         if(StringUtils.isEmpty(barcodeResultDto.getBarcodeType())){
-            Example example = new Example(WmsInnerMaterialBarcode.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("barcode", barcode)
-                    .andEqualTo("barcodeType",(byte)1)
-                    .andEqualTo("ifSysBarcode", (byte)0)
-                    .andEqualTo("orgId", sysUser.getOrganizationId());
-            WmsInnerMaterialBarcode wmsInnerMaterialBarcode=wmsInnerMaterialBarcodeMapper.selectOneByExample(example);
-            if(StringUtils.isNotEmpty(wmsInnerMaterialBarcode)){
-                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"非系统条码已存在 请勿重复扫码-->"+barcode);
+            //是否扫的是其他的系统条码
+            BarcodeResultDto resultDto1= InBarcodeUtil.scanJugeBarcode(barcode);
+            if(resultDto1.getBarcodeType()!=(byte)5){
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"扫描的是系统其他条码 请重新扫码-->"+barcode);
             }
 
             barcodeResultDto.setBarcodeType((byte)5);
@@ -1502,15 +1498,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         }
 
         if(StringUtils.isEmpty(resultDto.getBarcodeType())){
-            Example example = new Example(WmsInnerMaterialBarcode.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("barcode", barcode)
-                    .andEqualTo("barcodeType",(byte)1)
-                    .andEqualTo("ifSysBarcode", (byte)0)
-                    .andEqualTo("orgId", sysUser.getOrganizationId());
-            WmsInnerMaterialBarcode wmsInnerMaterialBarcode=wmsInnerMaterialBarcodeMapper.selectOneByExample(example);
-            if(StringUtils.isNotEmpty(wmsInnerMaterialBarcode)){
-                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"非系统条码已存在 请勿重复扫码-->"+barcode);
+            //是否扫的是其他的系统条码
+            BarcodeResultDto resultDto1= InBarcodeUtil.scanJugeBarcode(barcode);
+            if(resultDto1.getBarcodeType()!=(byte)5){
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"扫描的是系统其他条码 请重新扫码-->"+barcode);
             }
 
             resultDto.setBarcodeType((byte)5);
