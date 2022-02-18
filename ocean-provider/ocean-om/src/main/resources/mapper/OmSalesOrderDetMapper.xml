@@ -29,6 +29,8 @@
         <result column="delivery_address" jdbcType="VARCHAR" property="deliveryAddress"/>
         <result column="total_inform_deliver_qty" jdbcType="DECIMAL" property="totalInformDeliverQty"/>
         <result column="arrange_dispatch_qty" jdbcType="DECIMAL" property="arrangeDispatchQty"/>
+
+        <result column="total_order_return_qty" jdbcType="DECIMAL" property="totalOrderReturnQty"/>
         <result column="total_outbound_qty" jdbcType="DECIMAL" property="totalOutboundQty"/>
         <result column="total_sales_return_apply_qty" jdbcType="DECIMAL" property="totalSalesReturnApplyQty"/>
         <result column="total_return_qty" jdbcType="DECIMAL" property="totalReturnQty"/>
@@ -92,6 +94,7 @@
         sod.delivery_address,
         sod.total_inform_deliver_qty,
         sod.arrange_dispatch_qty,
+        sod.total_order_return_qty,
         sod.total_outbound_qty,
         sod.total_sales_return_apply_qty,
         sod.total_return_qty,
@@ -140,6 +143,12 @@
             </if>
             <if test="status != null">
                 and sod.status = #{status}
+            </if>
+            <if test="notNullActualQty != null and notNullActualQty==1 ">
+                and  sod.actual_qty is not null
+            </if>
+            <if test="ifAllReturn != null and ifAllReturn == 1 ">
+                and  sod.actual_qty > sod.total_order_return_qty
             </if>
             <if test="ifAllIssued != null">
                 and sod.if_all_issued = #{ifAllIssued}
