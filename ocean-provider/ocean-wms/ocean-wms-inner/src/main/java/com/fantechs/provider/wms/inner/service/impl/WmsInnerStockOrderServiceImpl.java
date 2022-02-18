@@ -684,6 +684,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             stockOrderDet.setVarianceQty(stockOrderDet.getStockQty().subtract(stockOrderDet.getOriginalQty()));
             stockOrderDet.setIfRegister((byte)1);
             stockOrderDet.setStockUserId(sysUser.getUserId());
+            stockOrderDet.setWorkerId(sysUser.getUserId());
             stockOrderDet.setModifiedTime(new Date());
             stockOrderDet.setModifiedUserId(sysUser.getUserId());
             num += wmsInventoryVerificationDetMapper.updateByPrimaryKeySelective(stockOrderDet);
@@ -903,6 +904,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         stockOrderDet.setVarianceQty(stockOrderDet.getStockQty().subtract(stockOrderDet.getOriginalQty()));
         stockOrderDet.setIfRegister((byte)1);
         stockOrderDet.setStockUserId(sysUser.getUserId());
+        stockOrderDet.setWorkerId(sysUser.getUserId());
         stockOrderDet.setModifiedTime(new Date());
         stockOrderDet.setModifiedUserId(sysUser.getUserId());
         num += wmsInventoryVerificationDetMapper.updateByPrimaryKeySelective(stockOrderDet);
@@ -984,6 +986,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             wmsInnerStockOrderDet.setVarianceQty(wmsInnerStockOrderDet.getStockQty().subtract(wmsInnerStockOrderDet.getOriginalQty()));
             wmsInnerStockOrderDet.setIfRegister((byte)1);
             wmsInnerStockOrderDet.setStockUserId(sysUser.getUserId());
+            wmsInnerStockOrderDet.setWorkerId(sysUser.getUserId());
             wmsInnerStockOrderDet.setModifiedTime(new Date());
             wmsInnerStockOrderDet.setModifiedUserId(sysUser.getUserId());
             num += wmsInventoryVerificationDetMapper.updateByPrimaryKeySelective(wmsInnerStockOrderDet);
@@ -1208,6 +1211,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         wmsInnerStockOrderDet.setVarianceQty(wmsInnerStockOrderDet.getStockQty().subtract(wmsInnerStockOrderDet.getOriginalQty()));
         wmsInnerStockOrderDet.setIfRegister((byte)1);
         wmsInnerStockOrderDet.setStockUserId(sysUser.getUserId());
+        wmsInnerStockOrderDet.setWorkerId(sysUser.getUserId());
         wmsInnerStockOrderDet.setModifiedTime(new Date());
         wmsInnerStockOrderDet.setModifiedUserId(sysUser.getUserId());
         num += wmsInventoryVerificationDetMapper.updateByPrimaryKeySelective(wmsInnerStockOrderDet);
