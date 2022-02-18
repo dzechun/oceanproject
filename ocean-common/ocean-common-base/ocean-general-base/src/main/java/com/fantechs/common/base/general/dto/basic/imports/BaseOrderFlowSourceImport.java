@@ -17,6 +17,13 @@ public class BaseOrderFlowSourceImport implements Serializable {
     private Integer operationModule;
 
     /**
+     * 业务类型(1-采购入库 2-完工入库 3-销退入库 4-其它入库 5-销售出库 6-生产出库 7-采退出库 8-其它出库)(必填)
+     */
+    @ApiModelProperty(name="businessType" ,value="业务类型(1-采购入库 2-完工入库 3-销退入库 4-其它入库 5-销售出库 6-生产出库 7-采退出库 8-其它出库)(必填)")
+    @Excel(name = "业务类型(1-采购入库 2-完工入库 3-销退入库 4-其它入库 5-销售出库 6-生产出库 7-采退出库 8-其它出库)(必填)", height = 20, width = 30)
+    private Integer businessType;
+
+    /**
      * 单据节点编码(必填)
      */
     @ApiModelProperty(name="orderTypeCode" ,value="单据节点编码(必填)")

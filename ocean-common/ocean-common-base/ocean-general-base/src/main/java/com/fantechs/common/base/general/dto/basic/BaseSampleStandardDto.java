@@ -32,6 +32,6 @@ public class BaseSampleStandardDto extends BaseSampleStandard implements Seriali
      */
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="8")
+    @Excel(name = "组织名称", height = 20, width = 30,orderNum="9")
     private String organizationName;
 }

@@ -1,13 +1,19 @@
 package com.fantechs.common.base.general.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
-import lombok.Data;
+
+;
+;
 
 /**
  * 抽样标准
@@ -47,13 +53,14 @@ public class BaseSampleStandard extends ValidGroup implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="3",replace = {"无效_0","有效_1"})
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,orderNum="4",replace = {"无效_0","有效_1"})
     private Byte status;
 
     /**
      * 备注
      */
     @ApiModelProperty(name="remark",value = "备注")
+    @Excel(name = "备注", height = 20, width = 30,orderNum="3")
     private String remark;
 
     /**
@@ -74,7 +81,7 @@ public class BaseSampleStandard extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="4",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="6",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -90,7 +97,7 @@ public class BaseSampleStandard extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="6",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="8",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
