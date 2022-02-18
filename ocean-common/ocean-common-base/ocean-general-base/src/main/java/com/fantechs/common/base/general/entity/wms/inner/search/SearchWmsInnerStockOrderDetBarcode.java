@@ -98,6 +98,12 @@ public class SearchWmsInnerStockOrderDetBarcode extends BaseQuery implements Ser
     private int queryType;
 
     /**
+     *是否查所有类型条码
+     */
+    @ApiModelProperty(name = "queryAll",value = "是否查所有类型条码")
+    private String queryAll;
+
+    /**
      * 盘点结果(1-盘点、2-已盘点、3-盘盈、4-盘亏)
      */
     @ApiModelProperty(name="stockResult",value = "盘点结果(1-盘点、2-已盘点、3-盘盈、4-盘亏)")
