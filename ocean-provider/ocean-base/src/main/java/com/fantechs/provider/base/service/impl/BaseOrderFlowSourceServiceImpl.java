@@ -48,10 +48,11 @@ public class BaseOrderFlowSourceServiceImpl extends BaseService<BaseOrderFlowSou
         Example example = new Example(BaseOrderFlowSource.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("orgId", currentUser.getOrganizationId());
+        criteria.andEqualTo("businessType", record.getBusinessType());//业务类型
         criteria.andEqualTo("orderTypeCode", record.getOrderTypeCode());//单据节点编码
         List<BaseOrderFlowSource> baseOrderFlowSources = baseOrderFlowSourceMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(baseOrderFlowSources)) {
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"单据节点的单据流维度已存在");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"相同的业务类型单据节点的单据流数据源已存在");
         }
 
         record.setCreateUserId(currentUser.getUserId());
@@ -88,10 +89,11 @@ public class BaseOrderFlowSourceServiceImpl extends BaseService<BaseOrderFlowSou
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("orgId", currentUser.getOrganizationId());
         criteria.andEqualTo("orderTypeCode", entity.getOrderTypeCode());//单据节点编码
+        criteria.andEqualTo("businessType", entity.getBusinessType());//业务类型
         criteria.andNotEqualTo("orderFlowSourceId", entity.getOrderFlowSourceId());//单据节点编码
         List<BaseOrderFlowSource> baseOrderFlowSources = baseOrderFlowSourceMapper.selectByExample(example);
         if (StringUtils.isNotEmpty(baseOrderFlowSources)) {
-            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"单据节点的单据流维度已存在");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"相同的业务类型单据节点的单据流数据源已存在");
         }
 
         entity.setModifiedTime(new Date());
@@ -147,6 +149,7 @@ public class BaseOrderFlowSourceServiceImpl extends BaseService<BaseOrderFlowSou
             BaseOrderFlowSourceImport baseOrderFlowSourceImport = baseOrderFlowSourceImports.get(i);
             Integer operationModule = baseOrderFlowSourceImport.getOperationModule();
             String orderTypeCode = baseOrderFlowSourceImport.getOrderTypeCode();
+            Integer businessType = baseOrderFlowSourceImport.getBusinessType();
             String nextOrderTypeCode = baseOrderFlowSourceImport.getNextOrderTypeCode();
 
             if (StringUtils.isEmpty(operationModule,orderTypeCode,nextOrderTypeCode)){
@@ -157,6 +160,7 @@ public class BaseOrderFlowSourceServiceImpl extends BaseService<BaseOrderFlowSou
             Example example = new Example(BaseOrderFlowSource.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria.andEqualTo("businessType", businessType);//业务类型
             criteria.andEqualTo("orderTypeCode", orderTypeCode);//单据节点编码
             List<BaseOrderFlowSource> baseOrderFlowSources = baseOrderFlowSourceMapper.selectByExample(example);
             if (StringUtils.isNotEmpty(baseOrderFlowSources)) {
@@ -168,7 +172,7 @@ public class BaseOrderFlowSourceServiceImpl extends BaseService<BaseOrderFlowSou
         }
 
         //对合格数据进行分组
-        HashMap<String, List<BaseOrderFlowSourceImport>> map = orderFlowSourceImports.stream().collect(Collectors.groupingBy(BaseOrderFlowSourceImport::getOrderTypeCode, HashMap::new, Collectors.toList()));
+        Map<String, List<BaseOrderFlowSourceImport>> map = orderFlowSourceImports.stream().collect(Collectors.groupingBy(o -> o.getBusinessType()+"_"+o.getOrderTypeCode()));
         Set<String> codeList = map.keySet();
         for (String code : codeList) {
             List<BaseOrderFlowSourceImport> baseOrderFlowSourceImports1 = map.get(code);
@@ -177,12 +181,15 @@ public class BaseOrderFlowSourceServiceImpl extends BaseService<BaseOrderFlowSou
             Example example5 = new Example(BaseOrderFlowSource.class);
             Example.Criteria criteria5 = example5.createCriteria();
             criteria5.andEqualTo("orderTypeCode",baseOrderFlowSourceImports1.get(0).getOrderTypeCode());
+            criteria5.andEqualTo("businessType",baseOrderFlowSourceImports1.get(0).getBusinessType());
             BaseOrderFlowSource baseOrderFlowSource = baseOrderFlowSourceMapper.selectOneByExample(example5);
 
             if(StringUtils.isEmpty(baseOrderFlowSource)){
                 //新增父表
                 baseOrderFlowSource = new BaseOrderFlowSource();
                 BeanUtils.copyProperties(baseOrderFlowSourceImports1.get(0),baseOrderFlowSource);
+                baseOrderFlowSource.setBusinessType(baseOrderFlowSourceImports1.get(0).getBusinessType().byteValue());
+                baseOrderFlowSource.setOperationModule(baseOrderFlowSourceImports1.get(0).getOperationModule().byteValue());
                 baseOrderFlowSource.setCreateTime(new Date());
                 baseOrderFlowSource.setCreateUserId(currentUser.getUserId());
                 baseOrderFlowSource.setModifiedTime(new Date());

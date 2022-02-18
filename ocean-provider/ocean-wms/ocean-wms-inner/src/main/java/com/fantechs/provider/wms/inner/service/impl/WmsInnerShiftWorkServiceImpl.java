@@ -504,6 +504,7 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int cancelDistribution(String ids) {
         SysUser sysUser = currentUser();
         String[] arrId = ids.split(",");
@@ -526,11 +527,7 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
             // 键值=来源单据编码 sourceOrderCode+来源明细ID sourceId+核心明细ID coreSourceId
             Map<String, List<WmsInnerJobOrderDet>> map = new HashMap<>();
             for (WmsInnerJobOrderDet wmsInnerJobOrderDet : list) {
-                String sourceOrderCode=wmsInnerJobOrderDet.getSourceOrderCode();
-                String sourceIdS=StringUtils.isEmpty(wmsInnerJobOrderDet.getSourceId())?"":wmsInnerJobOrderDet.getSourceId().toString();
-                String coreSourceIdS=StringUtils.isEmpty(wmsInnerJobOrderDet.getCoreSourceId())?"":wmsInnerJobOrderDet.getCoreSourceId().toString();
-                String keyS=sourceOrderCode+sourceIdS+coreSourceIdS;
-
+                String keyS= wmsInnerJobOrderDet.getJobOrderDetId().toString();
                 if (map.containsKey(keyS)) {
                     List<WmsInnerJobOrderDet> nm = new ArrayList<>();
                     for (WmsInnerJobOrderDet innerJobOrderDet : map.get(keyS)) {
@@ -546,7 +543,9 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
                 if (wmsInnerJobOrder.getJobOrderType() != (byte) 3) {
                     //原逻辑 JobOrderType=2 是移位作业 现在 JobOrderType=3 是移位作业
                     Example exampleInventory = new Example(WmsInnerInventory.class);
-                    exampleInventory.createCriteria().andEqualTo("jobOrderDetId", wmsInnerJobOrderDet.getJobOrderDetId()).andEqualTo("jobStatus", (byte) 2).andEqualTo("relevanceOrderCode", wmsInnerJobOrder.getJobOrderCode());
+                    exampleInventory.createCriteria().andEqualTo("jobOrderDetId", wmsInnerJobOrderDet.getJobOrderDetId())
+                            .andEqualTo("jobStatus", (byte) 2)
+                            .andEqualTo("relevanceOrderCode", wmsInnerJobOrder.getJobOrderCode());
                     wmsInnerInventoryMapper.deleteByExample(exampleInventory);
                 }else {
                     // JobOrderType=3 是移位作业 移位作业取消分配逻辑
