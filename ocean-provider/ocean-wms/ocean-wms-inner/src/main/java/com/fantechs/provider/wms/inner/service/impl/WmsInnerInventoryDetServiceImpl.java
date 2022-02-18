@@ -132,7 +132,7 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
      * @return
      */
     @Override
-    public List<WmsInnerInventoryDetDto> findListByBarCode(List<String> codes) {
+    public List<WmsInnerInventoryDetDto> findListByBarCode(List<String> codes ,Long storageId) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<WmsInnerMaterialBarcodeDto> list = wmsInnerMaterialBarcodeService.findListByCode(codes);
         List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos = new ArrayList<>();
@@ -145,8 +145,10 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
                     if(StringUtils.isNotEmpty(dto.getIfScan()) && dto.getIfScan() == 1) throw new BizErrorException(ErrorCodeEnum.OPT20012001,"该条码或该条码下的其他条码已经被扫描");
                     m.clear();
                     m.put("materialBarcodeId",dto.getMaterialBarcodeId());
+                    if(StringUtils.isNotEmpty(storageId) && storageId != 0 )
+                        m.put("storageId",storageId);
                     List<WmsInnerInventoryDetDto> det = wmsInnerInventoryDetMapper.findList(m);
-                    if(StringUtils.isEmpty(det))  throw new BizErrorException("未在库存中查询到该条码");
+                    if(StringUtils.isEmpty(det))  throw new BizErrorException("未在指定库存中查询到该条码");
 
                     if (code.equals(dto.getBarcode())) {
                         WmsInnerInventoryDetDto wmsInnerInventoryDetDto = det.get(0);

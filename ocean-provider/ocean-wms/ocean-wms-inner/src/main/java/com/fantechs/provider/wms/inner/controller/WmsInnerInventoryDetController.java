@@ -83,8 +83,9 @@ public class WmsInnerInventoryDetController {
 
     @ApiOperation("pda查询条码接口")
     @PostMapping("/findListByBarCode")
-    public ResponseEntity<List<WmsInnerInventoryDetDto>> findListByBarCode(@ApiParam(value = "查询对象")@RequestBody List<String> codes) {
-        List<WmsInnerInventoryDetDto> list = wmsInnerInventoryDetService.findListByBarCode(codes);
+    public ResponseEntity<List<WmsInnerInventoryDetDto>> findListByBarCode(@ApiParam(value = "条码集合")@RequestBody List<String> codes,
+                                                                           @ApiParam(value = "条码库存id,不指定库存则值为0")@RequestParam Long storageId) {
+        List<WmsInnerInventoryDetDto> list = wmsInnerInventoryDetService.findListByBarCode(codes,storageId);
         return ControllerUtil.returnDataSuccess(list,list.size());
     }
 }
