@@ -508,6 +508,16 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                                 colorBoxCodeInventoryDet.setDeliverDate(new Date());
                                 colorBoxCodeInventoryDet.setDeliveryOrderCode(wmsInnerJobOrder.getJobOrderCode());
                                 inventoryDetList.add(colorBoxCodeInventoryDet);
+
+                                WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
+                                wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(wmsInnerMaterialBarcode.getMaterialBarcodeId());
+                                wmsInnerMaterialBarcodeReOrder.setOrderId(wmsInnerJobOrder.getJobOrderId());
+                                wmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
+                                wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("OUT-IWK");
+                                wmsInnerMaterialBarcodeReOrder.setOrderCode(wmsInnerJobOrder.getJobOrderCode());
+                                wmsInnerMaterialBarcodeReOrder.setScanStatus((byte) 3);
+                                barcodeReOrderList.add(wmsInnerMaterialBarcodeReOrder);
+
                             }else {
                                 throw new BizErrorException(wmsInnerMaterialBarcodeDto.getColorBoxCode()+"：彩盒码不存在系统条码内");
                             }
@@ -536,6 +546,15 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                                 cartonCodeInventoryDet.setDeliverDate(new Date());
                                 cartonCodeInventoryDet.setDeliveryOrderCode(wmsInnerJobOrder.getJobOrderCode());
                                 inventoryDetList.add(cartonCodeInventoryDet);
+
+                                WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
+                                wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(wmsInnerMaterialBarcode.getMaterialBarcodeId());
+                                wmsInnerMaterialBarcodeReOrder.setOrderId(wmsInnerJobOrder.getJobOrderId());
+                                wmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
+                                wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("OUT-IWK");
+                                wmsInnerMaterialBarcodeReOrder.setOrderCode(wmsInnerJobOrder.getJobOrderCode());
+                                wmsInnerMaterialBarcodeReOrder.setScanStatus((byte) 3);
+                                barcodeReOrderList.add(wmsInnerMaterialBarcodeReOrder);
                             }else {
                                 throw new BizErrorException(wmsInnerMaterialBarcodeDto.getCartonCode()+"：包箱不存在系统条码内");
                             }
@@ -564,6 +583,15 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                                 palletCodeInventoryDet.setDeliverDate(new Date());
                                 palletCodeInventoryDet.setDeliveryOrderCode(wmsInnerJobOrder.getJobOrderCode());
                                 inventoryDetList.add(palletCodeInventoryDet);
+
+                                WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
+                                wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(wmsInnerMaterialBarcode.getMaterialBarcodeId());
+                                wmsInnerMaterialBarcodeReOrder.setOrderId(wmsInnerJobOrder.getJobOrderId());
+                                wmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
+                                wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("OUT-IWK");
+                                wmsInnerMaterialBarcodeReOrder.setOrderCode(wmsInnerJobOrder.getJobOrderCode());
+                                wmsInnerMaterialBarcodeReOrder.setScanStatus((byte) 3);
+                                barcodeReOrderList.add(wmsInnerMaterialBarcodeReOrder);
                             }else {
                                 throw new BizErrorException(wmsInnerMaterialBarcodeDto.getPalletCode()+"：栈板不存在系统条码内");
                             }
