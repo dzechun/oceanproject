@@ -34,4 +34,10 @@ public class SearchOmPurchaseOrderDet extends BaseQuery implements Serializable 
     @ApiModelProperty(name="supplierId",value = "供应商ID")
     private Long supplierId;
 
+    /**
+     * 交货数量是否大于0(0-否 1-是)
+     */
+    @ApiModelProperty(name = "ifActualQtyNotNull",value = "交货数量是否大于0(0-否 1-是)")
+    private Integer ifActualQtyNotNull;
+
 }

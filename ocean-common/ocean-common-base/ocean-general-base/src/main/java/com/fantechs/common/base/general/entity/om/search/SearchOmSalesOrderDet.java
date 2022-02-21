@@ -43,4 +43,16 @@ public class SearchOmSalesOrderDet extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name="ifAllIssued",value = "是否已全部下发(0-否 1-是)")
     private Integer ifAllIssued;
+
+    /**
+     * 已发货订单(1为已发货)
+     * */
+    @ApiModelProperty(name = "notNullActualQty", value = "已发货订单(0为未发货 1为已发货)")
+    private Integer notNullActualQty;
+
+    /**
+     * 是否已全部退货(0-否 1-是)
+     * */
+    @ApiModelProperty(name="ifAllReturn",value = "是否已全部退货(0-否 1-是)")
+    private Integer ifAllReturn;
 }

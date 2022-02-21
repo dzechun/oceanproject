@@ -174,7 +174,6 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
                 wmsOutDeliveryReqOrderDto.setSourceBigType((byte)1);
                 wmsOutDeliveryReqOrderDto.setCoreSourceSysOrderTypeCode("OUT-OOO");
                 wmsOutDeliveryReqOrderDto.setSourceSysOrderTypeCode("OUT-OOO");
-                wmsOutDeliveryReqOrderDto.setSourceBigType((byte)1);
                 wmsOutDeliveryReqOrderDto.setWarehouseId(omOtherOutOrderDetDtos.get(0).getWarehouseId());
                 wmsOutDeliveryReqOrderDto.setWmsOutDeliveryReqOrderDetDtos(wmsOutDeliveryReqOrderDetDtos);
                 ResponseEntity responseEntity = outFeignApi.add(wmsOutDeliveryReqOrderDto);
@@ -201,7 +200,6 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
                 wmsOutPlanDeliveryOrderDto.setSourceBigType((byte)1);
                 wmsOutPlanDeliveryOrderDto.setCoreSourceSysOrderTypeCode("OUT-OOO");
                 wmsOutPlanDeliveryOrderDto.setSourceSysOrderTypeCode("OUT-OOO");
-                wmsOutPlanDeliveryOrderDto.setSourceBigType((byte)1);
                 wmsOutPlanDeliveryOrderDto.setWarehouseId(omOtherOutOrderDetDtos.get(0).getWarehouseId());
                 wmsOutPlanDeliveryOrderDto.setWmsOutPlanDeliveryOrderDetDtos(wmsOutPlanDeliveryOrderDetDtos);
                 ResponseEntity responseEntity = outFeignApi.add(wmsOutPlanDeliveryOrderDto);

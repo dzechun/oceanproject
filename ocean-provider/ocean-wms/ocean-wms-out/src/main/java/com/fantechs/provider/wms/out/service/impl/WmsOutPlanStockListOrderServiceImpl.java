@@ -12,9 +12,11 @@ import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.imports.WmsOutPlanStockListOrderImport;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -382,6 +384,14 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
             }
             else if ("OUT-IWK".equals(code)) {
                 //拣货作业
+                Long inStorageId=null;
+                SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                searchBaseStorage.setWarehouseId(warehouseId);
+                searchBaseStorage.setStorageType((byte)3);//库位类型（1-存货 2-收货 3-发货）
+                List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
+                if(baseStorages.size()>0)
+                    inStorageId=baseStorages.get(0).getStorageId();
+
                 String coreSourceSysOrderTypeCode = listOrderDetDtos.get(0).getCoreSourceSysOrderTypeCode();
                 int lineNumber = 1;
                 List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new LinkedList<>();
@@ -396,7 +406,7 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
                     wmsInnerJobOrderDet.setMaterialId(wmsOutPlanStockListOrderDetDto.getMaterialId());
                     wmsInnerJobOrderDet.setPlanQty(wmsOutPlanStockListOrderDetDto.getOrderQty());
                     wmsInnerJobOrderDet.setLineStatus((byte) 1);
-                    //wmsInnerJobOrderDet.setInStorageId(inStorageId);
+                    wmsInnerJobOrderDet.setInStorageId(inStorageId);
                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
                 }
                 WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();

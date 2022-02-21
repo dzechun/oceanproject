@@ -164,5 +164,5 @@ public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializabl
      *条码类型( 1 SN 2 彩盒 3 箱号 4 栈板 )
      */
     @ApiModelProperty(name = "barcodeType",value = "条码类型( 1 SN 2 彩盒 3 箱号 4 栈板 )")
-    private String barcodeType;
+    private Byte barcodeType;
 }

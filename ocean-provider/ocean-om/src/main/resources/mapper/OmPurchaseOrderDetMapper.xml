@@ -109,6 +109,9 @@
         left join sys_user s on opod.modified_user_id=s.user_id
         left join base_organization bo on opod.org_id = bo.organization_id
         <where>
+            <if test="ifActualQtyNotNull == 1">
+                and opod.actual_qty > 0
+            </if>
             <if test="supplierId != null">
                 and opo.supplier_id = #{supplierId}
             </if>

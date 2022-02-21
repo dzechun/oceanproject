@@ -220,6 +220,7 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
                         qmsIncomingInspectionOrderList.add(qmsIncomingInspectionOrderDto);
                     }else if ("IN-IPO".equals(baseOrderFlowDto.getNextOrderTypeCode())) {
                         wmsInInPlanOrder.setWarehouseId(srmInAsnOrderDetDto.getWarehouseId());
+                        wmsInInPlanOrder.setSourceBigType((byte)1);
                         wmsInInPlanOrder.setOrderStatus((byte) 1);
                         wmsInInPlanOrder.setCoreSourceSysOrderTypeCode(srmInAsnOrder.getSourceSysOrderTypeCode());
                         wmsInInPlanOrder.setSourceSysOrderTypeCode(srmInAsnOrder.getSourceSysOrderTypeCode());

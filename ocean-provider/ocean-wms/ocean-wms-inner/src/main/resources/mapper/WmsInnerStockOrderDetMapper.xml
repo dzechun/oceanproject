@@ -134,7 +134,7 @@
           and wr.user_name = #{workName}
         </if>
 
-      <if test="ifRegister!=null and ifRegister!=''">
+      <if test="ifRegister !=null">
         and wivd.if_register = #{ifRegister}
       </if>
       <if test="stockIds !=null and stockIds.size()!=0">

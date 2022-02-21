@@ -339,6 +339,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "请选择相同仓库的进行下发操作");
 
                 WmsInPlanReceivingOrderDto wmsInPlanReceivingOrderDto = new WmsInPlanReceivingOrderDto();
+                wmsInPlanReceivingOrderDto.setSourceBigType((byte)1);
                 wmsInPlanReceivingOrderDto.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInPlanReceivingOrderDto.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInPlanReceivingOrderDto.setOrderStatus((byte) 1);
@@ -400,6 +401,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "请选择相同仓库的进行下发操作");
 
                 WmsInReceivingOrder wmsInReceivingOrder = new WmsInReceivingOrder();
+                wmsInReceivingOrder.setSourceBigType((byte)1);
                 wmsInReceivingOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInReceivingOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInReceivingOrder.setOrderStatus((byte) 1);
@@ -434,6 +436,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                     coreSourceSysOrderTypeCode = order.getSysOrderTypeCode();
 
                     QmsIncomingInspectionOrderDto qmsIncomingInspectionOrderDto = new QmsIncomingInspectionOrderDto();
+                    qmsIncomingInspectionOrderDto.setSourceBigType((byte)1);
                     qmsIncomingInspectionOrderDto.setCoreSourceOrderCode(order.getPurchaseOrderCode());
                     qmsIncomingInspectionOrderDto.setCoreSourceId(omPurchaseOrderDet.getPurchaseOrderDetId());
                     qmsIncomingInspectionOrderDto.setSourceOrderCode(order.getPurchaseOrderCode());
@@ -518,6 +521,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "请选择相同仓库的进行下发操作");
 
                 WmsInInPlanOrderDto wmsInInPlanOrder = new WmsInInPlanOrderDto();
+                wmsInInPlanOrder.setSourceBigType((byte)1);
                 wmsInInPlanOrder.setMakeOrderUserId(user.getUserId());
                 wmsInInPlanOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInInPlanOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);

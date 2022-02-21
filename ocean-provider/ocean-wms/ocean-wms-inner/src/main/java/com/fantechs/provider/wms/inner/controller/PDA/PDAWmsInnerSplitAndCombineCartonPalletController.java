@@ -49,8 +49,9 @@ public class PDAWmsInnerSplitAndCombineCartonPalletController {
 
     @ApiOperation(value = "校验库位",notes = "校验库位")
     @PostMapping("/checkStorageCode")
-    public ResponseEntity<BaseStorage> checkStorageCode(@ApiParam(value = "库位编码",required = true)@RequestParam @NotBlank(message="库位编码不能为空") String storageCode) {
-        BaseStorage baseStorage = pdaWmsInnerSplitAndCombineCartonPalletService.checkStorageCode(storageCode);
+    public ResponseEntity<BaseStorage> checkStorageCode(@ApiParam(value = "库位编码",required = true)@RequestParam @NotBlank(message="库位编码不能为空") String storageCode,
+                                                        @ApiParam(value = "仓库id",required = true)@RequestParam @NotNull(message="仓库id不能为空") Long warehouseId) {
+        BaseStorage baseStorage = pdaWmsInnerSplitAndCombineCartonPalletService.checkStorageCode(storageCode,warehouseId);
         return ControllerUtil.returnDataSuccess(baseStorage, StringUtils.isEmpty(baseStorage)?0:1);
     }
 

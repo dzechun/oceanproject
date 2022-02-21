@@ -17,10 +17,7 @@ import com.fantechs.common.base.general.dto.wms.in.WmsInPlanReceivingOrderDetDto
 import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlow;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlow;
-import com.fantechs.common.base.general.entity.om.OmHtSalesReturnOrder;
-import com.fantechs.common.base.general.entity.om.OmHtSalesReturnOrderDet;
-import com.fantechs.common.base.general.entity.om.OmSalesReturnOrder;
-import com.fantechs.common.base.general.entity.om.OmSalesReturnOrderDet;
+import com.fantechs.common.base.general.entity.om.*;
 import com.fantechs.common.base.general.entity.wms.in.WmsInPlanReceivingOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
@@ -364,6 +361,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                 //生成收货计划
                 List<WmsInPlanReceivingOrderDetDto> detList = new LinkedList<>();
 
+
                 for (OmSalesReturnOrderDet omSalesReturnOrderDet : detMap.get(nextOrderTypeCode)) {
                     int lineNumber = 1;
 
@@ -390,6 +388,8 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     if (omSalesReturnOrderDet.getTotalIssueQty().compareTo(omSalesReturnOrderDet.getOrderQty()) == 0) {
                         omSalesReturnOrderDet.setIfAllIssued((byte) 1);
                         order.setOrderStatus((byte)3);
+                        //明细全部下发后返写销售订单累计销退数量
+                        writeReturnSalesOrder(omSalesReturnOrderDet);
                     } else {
                         omSalesReturnOrderDet.setIfAllIssued((byte) 0);
                         order.setOrderStatus((byte)2);
@@ -398,6 +398,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     orderList.add(order);
                 }
                 WmsInPlanReceivingOrder wmsInPlanReceivingOrder = new WmsInPlanReceivingOrder();
+                wmsInPlanReceivingOrder.setSourceBigType((byte)1);
                 wmsInPlanReceivingOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInPlanReceivingOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInPlanReceivingOrder.setOrderStatus((byte) 1);
@@ -446,6 +447,8 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     if (omSalesReturnOrderDet.getTotalIssueQty().compareTo(omSalesReturnOrderDet.getOrderQty()) == 0) {
                         omSalesReturnOrderDet.setIfAllIssued((byte) 1);
                         order.setOrderStatus((byte)3);
+                        //明细全部下发后返写销售订单累计销退数量
+                        writeReturnSalesOrder(omSalesReturnOrderDet);
                     } else {
                         omSalesReturnOrderDet.setIfAllIssued((byte) 0);
                         order.setOrderStatus((byte)2);
@@ -454,6 +457,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     orderList.add(order);
                 }
                 WmsInReceivingOrder wmsInReceivingOrder = new WmsInReceivingOrder();
+                wmsInReceivingOrder.setSourceBigType((byte)1);
                 wmsInReceivingOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInReceivingOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInReceivingOrder.setOrderStatus((byte) 1);
@@ -488,6 +492,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                         coreSourceSysOrderTypeCode="IN-SRO";
 
                     QmsIncomingInspectionOrderDto qmsIncomingInspectionOrderDto = new QmsIncomingInspectionOrderDto();
+                    qmsIncomingInspectionOrderDto.setSourceBigType((byte)1);
                     qmsIncomingInspectionOrderDto.setCoreSourceOrderCode(order.getSalesReturnOrderCode());
                     qmsIncomingInspectionOrderDto.setCoreSourceId(omSalesReturnOrderDet.getSalesReturnOrderDetId());
                     qmsIncomingInspectionOrderDto.setSourceOrderCode(order.getSalesReturnOrderCode());
@@ -509,6 +514,8 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     if (omSalesReturnOrderDet.getTotalIssueQty().compareTo(omSalesReturnOrderDet.getOrderQty()) == 0) {
                         omSalesReturnOrderDet.setIfAllIssued((byte) 1);
                         order.setOrderStatus((byte)3);
+                        //明细全部下发后返写销售订单累计销退数量
+                        writeReturnSalesOrder(omSalesReturnOrderDet);
                     } else {
                         omSalesReturnOrderDet.setIfAllIssued((byte) 0);
                         order.setOrderStatus((byte)2);
@@ -561,6 +568,8 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     if (omSalesReturnOrderDet.getTotalIssueQty().compareTo(omSalesReturnOrderDet.getOrderQty()) == 0) {
                         omSalesReturnOrderDet.setIfAllIssued((byte) 1);
                         order.setOrderStatus((byte)3);
+                        //明细全部下发后返写销售订单累计销退数量
+                        writeReturnSalesOrder(omSalesReturnOrderDet);
                     } else {
                         omSalesReturnOrderDet.setIfAllIssued((byte) 0);
                         order.setOrderStatus((byte)2);
@@ -570,6 +579,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                 }
 
                 WmsInInPlanOrderDto wmsInInPlanOrder = new WmsInInPlanOrderDto();
+                wmsInInPlanOrder.setSourceBigType((byte)1);
                 wmsInInPlanOrder.setMakeOrderUserId(user.getUserId());
                 wmsInInPlanOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInInPlanOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
@@ -619,6 +629,8 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
                     if (omSalesReturnOrderDet.getTotalIssueQty().compareTo(omSalesReturnOrderDet.getOrderQty()) == 0) {
                         omSalesReturnOrderDet.setIfAllIssued((byte) 1);
                         order.setOrderStatus((byte)3);
+                        //明细全部下发后返写销售订单累计销退数量
+                        writeReturnSalesOrder(omSalesReturnOrderDet);
                     } else {
                         omSalesReturnOrderDet.setIfAllIssued((byte) 0);
                         order.setOrderStatus((byte)2);
@@ -677,12 +689,6 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         OmSalesReturnOrderDet omSalesReturnOrderDet=omSalesReturnOrderDetMapper.selectByPrimaryKey(salesReturnOrderDetId);
         if(StringUtils.isNotEmpty(omSalesReturnOrderDet)){
-            if(StringUtils.isEmpty(omSalesReturnOrderDet.getTotalIssueQty())){
-                omSalesReturnOrderDet.setTotalIssueQty(new BigDecimal(0));
-            }
-
-            omSalesReturnOrderDet.setTotalIssueQty(omSalesReturnOrderDet.getTotalIssueQty().subtract(putawayQty));
-            omSalesReturnOrderDet.setIfAllIssued((byte)0);
             omSalesReturnOrderDet.setModifiedUserId(sysUser.getUserId());
             omSalesReturnOrderDet.setModifiedTime(new Date());
             num+=omSalesReturnOrderDetMapper.updateByPrimaryKeySelective(omSalesReturnOrderDet);
@@ -707,6 +713,25 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
             num+=omSalesReturnOrderDetMapper.updateByPrimaryKeySelective(omSalesReturnOrderDet);
         }
         return num;
+    }
+
+    /**
+     * 明细全部下发后返写销售订单累计销退数量
+     * */
+    public void writeReturnSalesOrder(OmSalesReturnOrderDet omSalesReturnOrderDet) {
+        Example example = new Example(OmSalesOrderDet.class);
+        example.createCriteria().andEqualTo("salesOrderId", omSalesReturnOrderDet.getSalesOrderId())
+                .andEqualTo("materialId", omSalesReturnOrderDet.getMaterialId());
+        List<OmSalesOrderDet> omSalesOrderDets = omSalesOrderDetMapper.selectByExample(example);
+        if(StringUtils.isEmpty(omSalesOrderDets))
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未查询到对应的销售订单明细");
+        OmSalesOrderDet omSalesOrderDet = omSalesOrderDets.get(0);
+        if(StringUtils.isEmpty(omSalesOrderDet.getTotalSalesReturnApplyQty()))
+            omSalesOrderDet.setTotalOrderReturnQty(omSalesReturnOrderDet.getTotalIssueQty());
+        else
+            omSalesOrderDet.setTotalOrderReturnQty(omSalesOrderDet.getTotalSalesReturnApplyQty().add(omSalesReturnOrderDet.getTotalIssueQty()));
+        omSalesOrderDetMapper.updateByPrimaryKeySelective(omSalesOrderDet);
+
     }
 
 }

@@ -83,6 +83,15 @@
             <if test="orgId!=null and orgId!=''">
                 and sda.org_id = #{orgId}
             </if>
+            <if test="deliveryWarehouseId!=null">
+                and sda.delivery_warehouse_id = #{deliveryWarehouseId}
+            </if>
+            <if test="appointStartTime!=null">
+                and sda.appoint_start_time between  #{appointStartTime} and #{appointStartTime}
+            </if>
+            <if test="appointDate!=null">
+                and sda.appoint_date between #{appointDate} and #{appointDate}
+            </if>
             <if test="carLicenseCode!=null and carLicenseCode!=''">
                 and sda.car_license_code like CONCAT('%', #{carLicenseCode}, '%')
             </if>

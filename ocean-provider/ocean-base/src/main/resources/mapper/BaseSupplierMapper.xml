@@ -71,7 +71,7 @@
             LEFT JOIN base_address sa ON sa.address_id = ssa.address_id
         </if>
         <where>
-            <if test="userId!=null and orgId!=null and supplierType==1">
+            <if test="ifFindAll!=1 and userId!=null and orgId!=null and supplierType==1">
                 IF ((SELECT supplier_id FROM base_supplier_re_user WHERE user_id = #{userId} AND organization_id = #{orgId} LIMIT 1) IS NULL,
                 1=1,ss.supplier_id =(SELECT supplier_id FROM base_supplier_re_user WHERE user_id = #{userId} AND organization_id = #{orgId} LIMIT 1))
             </if>
