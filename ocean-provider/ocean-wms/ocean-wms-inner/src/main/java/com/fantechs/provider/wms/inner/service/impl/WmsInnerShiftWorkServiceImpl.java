@@ -704,6 +704,7 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
         SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
         searchWmsInnerJobOrderDet.setJobOrderDetId(wmsInPutawayOrderDet.getJobOrderDetId());
         WmsInnerJobOrderDetDto oldDto = wmsInnerJobOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
+        BaseStorage inBaseStorage = baseFeignApi.detail(wmsInPutawayOrderDet.getInStorageId()).getData();
 
         Long jobOrderDetId = null;
         if (totalQty.compareTo(wmsInPutawayOrderDet.getDistributionQty()) == -1) {
@@ -744,7 +745,7 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
         SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
         searchWmsInnerJobOrder.setJobOrderId(oldDto.getJobOrderId());
         WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder).get(0);
-        BaseStorage baseStorage = baseFeignApi.detail(wmsInPutawayOrderDet.getInStorageId()).getData();
+
 
         Example example = new Example(WmsInnerInventory.class);
         Example.Criteria criteria = example.createCriteria();
@@ -761,7 +762,7 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
         example.clear();
         Example.Criteria criteria1 = example.createCriteria().andEqualTo("materialId", oldDto.getMaterialId())
 //                .andEqualTo("warehouseId", oldDto.getWarehouseId())
-                .andEqualTo("storageId", baseStorage.getStorageId())
+                .andEqualTo("storageId", inBaseStorage.getStorageId())
                 .andEqualTo("jobStatus", (byte) 1)
                 .andEqualTo("stockLock", 0)
                 .andEqualTo("lockStatus", 0)
@@ -779,13 +780,13 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
             }
             initQty = innerInventory.getPackingQty().add(wmsInnerInventory.getPackingQty());
         }
-        oldDto.setInStorageId(baseStorage.getStorageId());
+        oldDto.setInStorageId(inBaseStorage.getStorageId());
         if (StringUtils.isEmpty(wmsInnerInventory_olds)) {
             if (StringUtils.isEmpty(wmsInnerInventory)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
             wmsInnerInventory.setJobStatus((byte) 1);
-            wmsInnerInventory.setStorageId(baseStorage.getStorageId());
+            wmsInnerInventory.setStorageId(inBaseStorage.getStorageId());
             wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory);
 
 
