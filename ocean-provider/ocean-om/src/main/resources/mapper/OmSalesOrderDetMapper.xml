@@ -147,7 +147,7 @@
             <if test="notNullActualQty != null and notNullActualQty==1 ">
                 and  sod.actual_qty is not null
             </if>
-            <if test="ifAllReturn != null and ifAllReturn == 1 ">
+            <if test="ifAllReturn != null and ifAllReturn == 0 ">
                 and  sod.actual_qty > sod.total_order_return_qty
             </if>
             <if test="ifAllIssued != null">
