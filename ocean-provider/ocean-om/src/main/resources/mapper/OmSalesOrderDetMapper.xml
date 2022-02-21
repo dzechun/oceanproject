@@ -156,13 +156,13 @@
             <if test="salesOrderId != null">
                 and sod.sales_order_id = #{salesOrderId}
             </if>
-            <if test="materialCode != null">
+            <if test="materialCode != null and materialCode != ''">
                 and bm.material_code = #{materialCode}
             </if>
             <if test="materialId != null">
                 and bm.material_id = #{materialId}
             </if>
-            <if test="salesOrderCode != null">
+            <if test="salesOrderCode != null and salesOrderCode != ''">
                 and oso.sales_order_code = #{salesOrderCode}
             </if>
             <if test="salesOrderDetId!=null and salesOrderDetId!=''">
