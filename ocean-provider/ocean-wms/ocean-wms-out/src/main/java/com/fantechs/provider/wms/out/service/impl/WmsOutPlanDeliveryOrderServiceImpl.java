@@ -186,10 +186,10 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
         if("OUT-DRO".equals(wmsOutPlanDeliveryOrder.getSourceSysOrderTypeCode())){
             wmsOutDeliveryReqOrderService.updatePutawayQty(wmsOutPlanDeliveryOrderDet.getSourceId(),putawayQty);
         }
-        else if("OUT-PSLO".equals(wmsOutPlanDeliveryOrder.getSourceSysOrderTypeCode())){
+        /*else if("OUT-PSLO".equals(wmsOutPlanDeliveryOrder.getSourceSysOrderTypeCode())){
             //如果出库计划的上游单据是备料计划单，也需返写
             wmsOutPlanStockListOrderService.updateActualQty(wmsOutPlanDeliveryOrderDet.getSourceId(),putawayQty);
-        }
+        }*/
 
         return i;
     }
