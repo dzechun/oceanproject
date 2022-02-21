@@ -34,6 +34,7 @@ import com.fantechs.provider.wms.out.mapper.WmsOutPlanDeliveryOrderDetMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutPlanDeliveryOrderMapper;
 import com.fantechs.provider.wms.out.service.WmsOutDeliveryReqOrderService;
 import com.fantechs.provider.wms.out.service.WmsOutPlanDeliveryOrderService;
+import com.fantechs.provider.wms.out.service.WmsOutPlanStockListOrderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,6 +68,8 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
     private InnerFeignApi innerFeignApi;
     @Resource
     private WmsOutDeliveryReqOrderService wmsOutDeliveryReqOrderService;
+    @Resource
+    private WmsOutPlanStockListOrderService wmsOutPlanStockListOrderService;
 
     @Override
     public List<WmsOutPlanDeliveryOrderDto> findList(Map<String, Object> map) {
@@ -182,6 +185,10 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
         //如果出库计划的上游单据是出库通知单，也需返写
         if("OUT-DRO".equals(wmsOutPlanDeliveryOrder.getSourceSysOrderTypeCode())){
             wmsOutDeliveryReqOrderService.updatePutawayQty(wmsOutPlanDeliveryOrderDet.getSourceId(),putawayQty);
+        }
+        else if("OUT-PSLO".equals(wmsOutPlanDeliveryOrder.getSourceSysOrderTypeCode())){
+            //如果出库计划的上游单据是备料计划单，也需返写
+            wmsOutPlanStockListOrderService.updateActualQty(wmsOutPlanDeliveryOrderDet.getSourceId(),putawayQty);
         }
 
         return i;
