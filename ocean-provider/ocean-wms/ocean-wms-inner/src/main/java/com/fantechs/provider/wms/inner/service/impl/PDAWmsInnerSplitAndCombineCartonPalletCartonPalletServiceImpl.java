@@ -33,6 +33,7 @@ import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
+import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerMaterialBarcodeMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerSplitAndCombineLogMapper;
 import com.fantechs.provider.wms.inner.service.PDAWmsInnerSplitAndCombineCartonPalletService;
@@ -54,6 +55,8 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
 
     @Resource
     private WmsInnerInventoryDetMapper wmsInnerInventoryDetMapper;
+    @Resource
+    private WmsInnerInventoryMapper wmsInnerInventoryMapper;
     @Resource
     private WmsInnerMaterialBarcodeMapper wmsInnerMaterialBarcodeMapper;
     @Resource
@@ -97,6 +100,21 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
                 }else {
                     detDtos.add(wmsInnerInventoryDetDto);
                 }
+            }
+        }
+
+        //判断库存是否被锁定
+        WmsInnerInventoryDetDto cartonPalletInventoryDetDto = cartonPalletInfoDto.getCartonPalletInventoryDetDto();
+        Map<String,Object> inventoryMap = new HashMap<>();
+        inventoryMap.put("storageId",cartonPalletInventoryDetDto.getStorageId());
+        inventoryMap.put("warehouseId",cartonPalletInventoryDetDto.getWarehouseId());
+        inventoryMap.put("relevanceOrderCode",cartonPalletInventoryDetDto.getAsnCode());
+        inventoryMap.put("jobStatus",1);
+        List<WmsInnerInventoryDto> inventoryDtos = wmsInnerInventoryMapper.findList(inventoryMap);
+        if(StringUtils.isNotEmpty(inventoryDtos)){
+            WmsInnerInventoryDto wmsInnerInventoryDto = inventoryDtos.get(0);
+            if(wmsInnerInventoryDto.getLockStatus() == (byte)1){
+                throw new BizErrorException("库存被锁定");
             }
         }
 
