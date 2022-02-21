@@ -766,6 +766,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
         SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode=new SearchWmsInnerMaterialBarcode();
         searchWmsInnerMaterialBarcode.setBarcode(barcode);
         searchWmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
+        searchWmsInnerMaterialBarcode.setCodeQueryMark(1);
         List<WmsInnerMaterialBarcodeDto> barcodeDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcode).getData();
         WmsInReceivingOrderBarcode wmsInReceivingOrderBarcode = new WmsInReceivingOrderBarcode();
         if(barcodeDtos.size()>0){
