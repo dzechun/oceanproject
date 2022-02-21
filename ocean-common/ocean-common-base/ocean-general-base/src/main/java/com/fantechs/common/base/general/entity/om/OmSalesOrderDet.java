@@ -235,6 +235,16 @@ public class OmSalesOrderDet extends ValidGroup implements Serializable {
     private BigDecimal totalInformDeliverQty;
 
     /**
+     * 累计订单退货数量(销退订单选择下发数量)
+     */
+    @ApiModelProperty(name="totalOrderReturnQty",value = "累计订单退货数量")
+    @Excel(name = "累计订单退货数量", height = 20, width = 30)
+    @Column(name = "total_order_return_qty")
+    private BigDecimal totalOrderReturnQty;
+
+
+
+    /**
      * 安排发运数量
      */
     @ApiModelProperty(name="arrangeDispatchQty",value = "安排发运数量")
