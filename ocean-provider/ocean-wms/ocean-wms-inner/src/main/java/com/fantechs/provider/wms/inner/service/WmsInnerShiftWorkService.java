@@ -1,6 +1,5 @@
 package com.fantechs.provider.wms.inner.service;
 
-import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.export.WmsInnerJobOrderExport;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
@@ -9,7 +8,6 @@ import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.support.IService;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
@@ -52,18 +50,6 @@ public interface WmsInnerShiftWorkService extends IService<WmsInnerJobOrder> {
 
     Map<String,Object> checkBarcode(String barCode, Long jobOrderDetId);
 
-    WmsInnerJobOrderDet scanStorageBackQty(String storageCode, Long jobOrderDetId, BigDecimal qty, String barcode);
-
-    WmsInnerJobOrder packageAutoAdd(WmsInnerJobOrder wmsInnerJobOrder);
-
-
-    /**
-     * PDA删除条码
-     * @param materialBarcodeId 来料条码ID
-     * @return
-     */
-    int updateBarcodeStatus(Long materialBarcodeId);
-
     /**
      * PDA激活关闭栈板
      * @param jobOrderId
@@ -84,16 +70,6 @@ public interface WmsInnerShiftWorkService extends IService<WmsInnerJobOrder> {
      * @return
      */
     int batchDeleteByShiftWork(String ids);
-
-    /**
-     * 批量新增
-     * @param list
-     * @return
-     */
-    int addList(List<WmsInnerJobOrder> list);
-
-    int cancelJobOrder(List<EngPackingOrderTakeCancel> engPackingOrderTakeCancels);
-
 
     Map<String, Object> importExcel(List<WmsInnerJobOrderImport> wmsInnerJobOrderImportList) throws ParseException;
 
