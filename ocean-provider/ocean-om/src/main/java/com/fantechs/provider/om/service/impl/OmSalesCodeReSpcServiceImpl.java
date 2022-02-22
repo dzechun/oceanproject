@@ -63,8 +63,6 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
 
         // 获取物料编码集合
         List<BaseMaterial> baseMaterials = baseFeignApi.findMaterialAll().getData();
-        // 获取客户型号集合
-        List<BaseProductModel> productModels = baseFeignApi.findProductModelAll().getData();
         // 获取所有PO号
         List<OmSalesCodeReSpcDto> reSpcDtos = omSalesCodeReSpcMapper.findList(new HashMap<>());
         // 循环便利数据
@@ -90,18 +88,6 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
                 }
             }
             if (StringUtils.isEmpty(item.getMaterialId())){
-                fail.add(i + 1);
-                continue;
-            }
-
-            // 判断客户型号
-            for (BaseProductModel productModel : productModels){
-                if (productModel.getProductModelCode().equals(item.getProductModelCode())){
-                    item.setProductModelId(productModel.getProductModelId());
-                    break;
-                }
-            }
-            if (StringUtils.isEmpty(item.getProductModelId())){
                 fail.add(i + 1);
                 continue;
             }
