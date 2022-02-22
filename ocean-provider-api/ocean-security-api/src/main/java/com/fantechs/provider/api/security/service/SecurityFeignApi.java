@@ -59,6 +59,10 @@ public interface SecurityFeignApi {
     @PostMapping("/sysApiLog/add")
     ResponseEntity add(@ApiParam(value = "必传",required = true) @RequestBody  SysApiLog sysApiLog);
 
+    @ApiOperation(value = "批量新增接口日志",notes = "新增接口日志(组织、创建人、创建时间已有)")
+    @PostMapping("/sysApiLog/batchAdd")
+    ResponseEntity batchAdd(@ApiParam(value = "必传",required = true) @RequestBody List<SysApiLog> logList);
+
     @ApiOperation("获取用户角色信息")
     @PostMapping("/sysRole/findUserRoleList")
     ResponseEntity<List<SysUserRole>> findUserRoleList(@ApiParam(value = "必传：userId", required = true) @RequestParam @Validated @NotNull(message = "userId不能为空") Long userId);

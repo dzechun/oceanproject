@@ -48,7 +48,11 @@
             AND wjs.LOOKUP_CODE = WDJ.STATUS_TYPE
             AND wjs.meaning = '已发放'
             AND wdj.job_type = 1
-            AND wdj.scheduled_start_date >= TO_DATE ( '2021-10-01', 'YYYY-MM-DD' )
+--             AND wdj.scheduled_start_date >= TO_DATE ( '2021-10-01', 'YYYY-MM-DD' )
+            AND (we.wip_entity_name LIKE 'ZL%'
+            OR we.wip_entity_name LIKE 'ZA%'
+            OR we.wip_entity_name LIKE 'ZC%'
+            OR we.wip_entity_name LIKE 'ZD%')
             <if test="date != null and date != ''">
                 AND wdj.scheduled_start_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
             </if>

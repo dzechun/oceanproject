@@ -107,8 +107,8 @@ public class MesPmWorkOrderController {
 
     @ApiOperation("工单列表")
     @PostMapping("/findAll")
-    public ResponseEntity<List<MesPmWorkOrderDto>> findAll() {
-        List<MesPmWorkOrderDto> list = mesPmWorkOrderService.findList(new SearchMesPmWorkOrder());
+    public ResponseEntity<List<MesPmWorkOrder>> findAll() {
+        List<MesPmWorkOrder> list = mesPmWorkOrderService.findAll();
         return ControllerUtil.returnDataSuccess(list, list.size());
     }
 

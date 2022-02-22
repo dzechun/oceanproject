@@ -44,6 +44,12 @@ public class SysApiLogController {
         return ControllerUtil.returnCRUD(sysApiLogService.save(sysApiLog));
     }
 
+    @ApiOperation(value = "批量新增",notes = "批量新增")
+    @PostMapping("/batchAdd")
+    public ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody List<SysApiLog> logList) {
+        return ControllerUtil.returnCRUD(sysApiLogService.batchAdd(logList));
+    }
+
     @ApiOperation("删除")
     @PostMapping("/delete")
     public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {

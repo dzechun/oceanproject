@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface BaseRouteProcessMapper extends MyMapper<BaseRouteProcess> {
 
-    List<BaseRouteProcess> findList(@Param(value="routeId")Long routeId);
+    List<BaseRouteProcess> findList(Map<String, Object> map);
 
     int configureProcess(Map<String, Object> map);
 }

@@ -207,6 +207,45 @@
         order by swo.modified_time desc
     </select>
 
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT
+        swo.work_order_id,
+        swo.work_order_code,
+        swo.parent_id,
+        swo.sales_order_id,
+        swo.material_id,
+        swo.work_order_qty,
+        swo.production_qty,
+        swo.output_qty,
+        swo.scheduled_qty,
+        swo.work_order_status,
+        swo.pro_line_id,
+        swo.barcode_rule_set_id,
+        swo.route_id,
+        swo.work_order_type,
+        swo.schedule_date,
+        swo.plan_start_time,
+        swo.plan_end_time,
+        swo.actual_start_time,
+        swo.actual_end_time,
+        swo.create_user_id,
+        swo.create_time,
+        swo.modified_user_id,
+        swo.modified_time,
+        swo.is_delete,
+        swo.org_id,
+        swo.put_into_process_id,
+        swo.output_process_id,
+        swo.scrap_qty,
+        swo.inventory_qty,
+        swo.remark,
+        swo.contract_no,
+        swo.batch_code
+        FROM
+        mes_pm_work_order swo
+        order by swo.modified_time desc
+    </select>
+
     <select id="selectByWorkOrderId" parameterType="java.lang.Long" resultMap="BaseResultMapDto">
         SELECT swo.work_order_id,
                swo.work_order_code,

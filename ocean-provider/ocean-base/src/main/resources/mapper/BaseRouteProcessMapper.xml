@@ -48,7 +48,7 @@
         srp.org_id
     </sql>
 
-    <select id="findList" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <select id="findList" parameterType="map" resultMap="BaseResultMap">
         select <include refid="Base_Column_List"></include>,
         bpc.process_category_code,
         sps.process_name as next_route_name,

@@ -11,6 +11,7 @@ import java.util.List;
 
 public interface MesPmWorkOrderMapper extends MyMapper<MesPmWorkOrder> {
     List<MesPmWorkOrderDto> findList(SearchMesPmWorkOrder searchMesPmWorkOrder);
+    List<MesPmWorkOrder> findAll();
 
     MesPmWorkOrderDto selectByWorkOrderId(@Param(value = "workOrderId")Long workOrderId);
 

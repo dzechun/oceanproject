@@ -16,6 +16,7 @@ import java.util.List;
 public interface MesPmWorkOrderService extends IService<MesPmWorkOrder> {
 
     List<MesPmWorkOrderDto> findList(SearchMesPmWorkOrder searchMesPmWorkOrder);
+    List<MesPmWorkOrder> findAll();
 
     List<MesPmWorkOrderDto> pdaFindList(SearchMesPmWorkOrder searchMesPmWorkOrder);
 

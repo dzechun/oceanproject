@@ -596,4 +596,9 @@ public interface BaseFeignApi {
     @ApiOperation("月台列表(不分页)")
     @PostMapping("/basePlatform/findAll")
     ResponseEntity<List<BasePlatform>> findPlatformAll(@ApiParam(value = "查询对象") @RequestBody SearchBasePlatform searchBasePlatform);
+
+
+    @ApiOperation("同步工单查询基础数据汇总")
+    @PostMapping("/wanbaoBase/findBySyncOrder")
+    ResponseEntity<WanbaoBaseBySyncOrderDto> findBySyncOrder();
 }

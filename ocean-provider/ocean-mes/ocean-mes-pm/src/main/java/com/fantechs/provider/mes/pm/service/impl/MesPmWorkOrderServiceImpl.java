@@ -235,6 +235,11 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
     }
 
     @Override
+    public List<MesPmWorkOrder> findAll() {
+        return mesPmWorkOrderMapper.findAll();
+    }
+
+    @Override
     public List<MesPmWorkOrderDto> pdaFindList(SearchMesPmWorkOrder searchMesPmWorkOrder) {
         return mesPmWorkOrderMapper.pdaFindList(searchMesPmWorkOrder);
     }

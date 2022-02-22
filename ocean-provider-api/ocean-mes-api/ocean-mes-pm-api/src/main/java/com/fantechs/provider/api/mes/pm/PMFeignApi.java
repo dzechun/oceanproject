@@ -31,7 +31,7 @@ public interface PMFeignApi {
 
     @ApiOperation("工单列表")
     @PostMapping("/mesPmWorkOrder/findAll")
-    ResponseEntity<List<MesPmWorkOrderDto>> findWorkOrderAll();
+    ResponseEntity<List<MesPmWorkOrder>> findWorkOrderAll();
 
     @ApiOperation("工单列表")
     @PostMapping("/mesPmWorkOrder/getWorkOrderList")

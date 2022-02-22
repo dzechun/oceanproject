@@ -20,6 +20,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -82,8 +83,15 @@ public class BaseRouteProcessServiceImpl extends BaseService<BaseRouteProcess> i
 
         @Override
         public List<BaseRouteProcess> findConfigureRout(Long routeId) {
-            return baseRouteProcessMapper.findList(routeId);
+            Map<String, Object> map = new HashMap<>();
+            map.put("routeId", routeId);
+            return baseRouteProcessMapper.findList(map);
         }
+
+    @Override
+    public List<BaseRouteProcess> findList(Map<String, Object> map) {
+        return baseRouteProcessMapper.findList(map);
+    }
 
 
 }

@@ -13,4 +13,11 @@ import java.util.Map;
 
 public interface SysApiLogService extends IService<SysApiLog> {
     List<SysApiLogDto> findList(Map<String, Object> map);
+
+    /**
+     * 批量插入接口日志
+     * @param logList
+     * @return
+     */
+    int batchAdd(List<SysApiLog> logList);
 }

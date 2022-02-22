@@ -37,6 +37,14 @@ public class SysApiLogServiceImpl extends BaseService<SysApiLog> implements SysA
     }
 
     @Override
+    public int batchAdd(List<SysApiLog> logList) {
+        for (SysApiLog log : logList){
+            log.setCreateTime(new Date());
+        }
+        return sysApiLogMapper.insertList(logList);
+    }
+
+    @Override
     public int save(SysApiLog sysApiLog){
         //接口无登录用户
      //  SysUser sysUser = currentUser();

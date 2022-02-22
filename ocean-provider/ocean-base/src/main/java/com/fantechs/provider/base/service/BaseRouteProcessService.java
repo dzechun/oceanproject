@@ -17,6 +17,8 @@ public interface BaseRouteProcessService extends IService<BaseRouteProcess> {
 
     List<BaseRouteProcess> findConfigureRout(Long routeId);
 
+    List<BaseRouteProcess> findList(Map<String, Object> map);
+
 
     int configureProcess(Map<String, Object> map);
 }
