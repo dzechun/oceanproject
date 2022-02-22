@@ -87,6 +87,10 @@
             <if test="salesReturnOrderId !=null and salesReturnOrderId!=''">
                 and osrod.sales_return_order_id = #{salesReturnOrderId}
             </if>
+            <if test="salesReturnOrderDetId !=null and salesReturnOrderDetId!=''">
+                and osrod.sales_return_order_det_id = #{salesReturnOrderDetId}
+            </if>
+
             <if test="salesReturnOrderCode !=null and salesReturnOrderCode!=''">
                 and osro.sales_return_order_code = #{salesReturnOrderCode}
             </if>
