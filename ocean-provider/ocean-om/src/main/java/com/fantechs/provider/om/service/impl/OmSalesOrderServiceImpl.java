@@ -131,9 +131,9 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
                 List<WmsOutDeliveryReqOrderDetDto> wmsOutDeliveryReqOrderDetDtos = new LinkedList<>();
                 for (OmSalesOrderDetDto omSalesOrderDetDto : omSalesOrderDetDtos) {
                     WmsOutDeliveryReqOrderDetDto wmsOutDeliveryReqOrderDetDto = new WmsOutDeliveryReqOrderDetDto();
-                    wmsOutDeliveryReqOrderDetDto.setCoreSourceOrderCode(omSalesOrderDetDto.getCoreSourceOrderCode());
+                    wmsOutDeliveryReqOrderDetDto.setCoreSourceOrderCode(omSalesOrderDetDto.getSalesOrderCode());
                     wmsOutDeliveryReqOrderDetDto.setSourceOrderCode(omSalesOrderDetDto.getSalesOrderCode());
-                    wmsOutDeliveryReqOrderDetDto.setCoreSourceId(omSalesOrderDetDto.getCoreSourceId());
+                    wmsOutDeliveryReqOrderDetDto.setCoreSourceId(omSalesOrderDetDto.getSalesOrderDetId());
                     wmsOutDeliveryReqOrderDetDto.setSourceId(omSalesOrderDetDto.getSalesOrderDetId());
                     wmsOutDeliveryReqOrderDetDto.setMaterialId(omSalesOrderDetDto.getMaterialId());
                     wmsOutDeliveryReqOrderDetDto.setOrderQty(omSalesOrderDetDto.getIssueQty());
