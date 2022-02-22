@@ -267,7 +267,7 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
                 omSalesOrderDetDto.setModifiedUserId(user.getUserId());
                 omSalesOrderDetDto.setModifiedTime(new Date());
                 omSalesOrderDetDto.setOrgId(user.getOrganizationId());
-
+                omSalesOrderDetDto.setTotalOrderReturnQty(BigDecimal.ZERO);
                 OmHtSalesOrderDetDto omHtSalesOrderDetDto = new OmHtSalesOrderDetDto();
                 org.springframework.beans.BeanUtils.copyProperties(omSalesOrderDetDto, omHtSalesOrderDetDto);
                 htList.add(omHtSalesOrderDetDto);
