@@ -1,16 +1,21 @@
 package com.fantechs.common.base.general.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
-import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.*;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.Date;
 
-import lombok.Data;
+;
+;
 
 /**
  * 收货人信息
@@ -63,7 +68,6 @@ public class BaseConsignee extends ValidGroup implements Serializable {
     @ApiModelProperty(name="materialOwnerId",value = "货主ID")
     @Excel(name = "货主ID", height = 20, width = 30)
     @Column(name = "material_owner_id")
-    @NotNull(message = "货主ID不能为空")
     private Long materialOwnerId;
 
     /**
