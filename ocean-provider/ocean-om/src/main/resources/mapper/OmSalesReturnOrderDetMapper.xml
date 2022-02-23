@@ -8,6 +8,7 @@
         <id column="sales_return_order_det_id" jdbcType="BIGINT" property="salesReturnOrderDetId"/>
         <result column="sales_return_order_id" jdbcType="BIGINT" property="salesReturnOrderId"/>
         <result column="sales_order_id" jdbcType="BIGINT" property="salesOrderId"/>
+        <result column="sales_order_det_id" jdbcType="BIGINT" property="salesOrderDetId"/>
         <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="unit_name" jdbcType="VARCHAR" property="unitName"/>
@@ -48,6 +49,7 @@
         osrod.sales_return_order_det_id,
         osrod.sales_return_order_id,
         osrod.sales_order_id,
+        osrod.sales_order_det_id,
         osrod.warehouse_id,
         osrod.material_id,
         osrod.unit_name,
@@ -90,7 +92,9 @@
             <if test="salesReturnOrderDetId !=null and salesReturnOrderDetId!=''">
                 and osrod.sales_return_order_det_id = #{salesReturnOrderDetId}
             </if>
-
+            <if test="salesOrderDetId !=null and salesOrderDetId!=''">
+                and osrod.sales_order_det_id = #{salesOrderDetId}
+            </if>
             <if test="salesReturnOrderCode !=null and salesReturnOrderCode!=''">
                 and osro.sales_return_order_code = #{salesReturnOrderCode}
             </if>
