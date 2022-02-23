@@ -1516,9 +1516,12 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     if(barcodeListOne.get(0).getScanStatus()==(byte)3){
                         throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
                     }
-                    //List<WmsInnerStockOrderDetBarcodeDto> barcodeList = detBarcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
+                    List<WmsInnerStockOrderDetBarcodeDto> barcodeList = detBarcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
+                    BigDecimal totalQty=barcodeList.stream().map(WmsInnerStockOrderDetBarcodeDto::getMaterialQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+
                     BeanUtil.copyProperties(barcodeListOne.get(0),resultDto);
                     resultDto.setBarcodeType((byte)3);
+                    resultDto.setMaterialQty(totalQty);
                 }
                 else {
                     searchOrderDetBarcode.setBarcode(null);
@@ -1534,10 +1537,11 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                         if(barcodeListOne.get(0).getScanStatus()==(byte)3){
                             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描 请勿重复扫码-->"+barcode);
                         }
-                        //List<WmsInnerStockOrderDetBarcodeDto> barcodeList = detBarcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
-                        //BigDecimal totalQty=barcodeList.stream().map(WmsInnerStockOrderDetBarcodeDto::getMaterialQty).reduce(BigDecimal.ZERO,BigDecimal::add);
+                        List<WmsInnerStockOrderDetBarcodeDto> barcodeList = detBarcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
+                        BigDecimal totalQty=barcodeList.stream().map(WmsInnerStockOrderDetBarcodeDto::getMaterialQty).reduce(BigDecimal.ZERO,BigDecimal::add);
                         BeanUtil.copyProperties(barcodeListOne.get(0),resultDto);
                         resultDto.setBarcodeType((byte)4);
+                        resultDto.setMaterialQty(totalQty);
                     }
                 }
             }
