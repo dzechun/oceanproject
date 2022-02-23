@@ -247,6 +247,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 wmsInInPlanOrder.setWarehouseId(orders.get(0).getWarehouseId());
                 wmsInInPlanOrder.setOrderStatus((byte) 1);
                 wmsInInPlanOrder.setStatus((byte) 1);
+                wmsInInPlanOrder.setSourceBigType((byte) 1);
                 wmsInInPlanOrder.setOrgId(user.getOrganizationId());
                 wmsInInPlanOrder.setWmsInInPlanOrderDetDtos(detList);
 
