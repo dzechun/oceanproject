@@ -33,4 +33,10 @@ public class SearchOmSalesReturnOrderDet extends BaseQuery implements Serializab
      */
     @ApiModelProperty(name="salesOrderId",value = "销售订单ID")
     private Long salesOrderId;
+
+    /**
+     * 销售订单明细ID
+     */
+    @ApiModelProperty(name="salesOrderDetId",value = "销售订单明细id")
+    private Long salesOrderDetId;
 }

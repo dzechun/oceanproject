@@ -52,7 +52,7 @@ public class OmSalesReturnOrderDet extends ValidGroup implements Serializable {
     private Long salesOrderId;
 
     /**
-     * 销售订单ID
+     * 销售订单明细ID
      */
     @ApiModelProperty(name="salesOrderDetId",value = "销售订单明细id")
     @Excel(name = "销售订单明细id", height = 20, width = 30,orderNum="")
