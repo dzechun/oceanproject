@@ -2147,9 +2147,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
             wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInPutawayOrderDet);
             //非自建单据新增条码关系表数据
+            String sourceTypeCode=record.getSourceSysOrderTypeCode();
+            String coreSourceTypeCode=record.getCoreSourceSysOrderTypeCode();
             if(record.getSourceBigType()!=((byte)2) && StringUtils.isNotEmpty(record.getSourceBigType())) {
                 SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
-                sBarcodeReOrder.setOrderTypeCode(record.getSourceSysOrderTypeCode());//单据类型
+                sBarcodeReOrder.setOrderTypeCode(sourceTypeCode);//单据类型
                 sBarcodeReOrder.setOrderDetId(wmsInPutawayOrderDet.getSourceId());//明细ID
                 List<WmsInnerMaterialBarcodeReOrderDto> reOrderList = wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
                 if (reOrderList.size() > 0) {
@@ -2168,6 +2170,13 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                         barcodeReOrder.setMaterialBarcodeReOrderId(null);
                         barcodeReOrderList.add(barcodeReOrder);
                     }
+                }
+                else{
+                    //销退订单下推的
+                    if("IN-SRO".equals(sourceTypeCode) || "IN-SRO".equals(coreSourceTypeCode)){
+
+                    }
+
                 }
             }
 
