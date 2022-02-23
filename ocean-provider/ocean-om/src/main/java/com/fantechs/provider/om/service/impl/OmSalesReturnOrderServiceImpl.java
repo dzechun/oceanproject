@@ -721,7 +721,7 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
      * 明细全部下发后返写销售订单累计销退数量
      * */
     public void writeReturnSalesOrder(OmSalesReturnOrderDet omSalesReturnOrderDet) {
-        OmSalesOrderDet omSalesOrderDet = omSalesOrderDetMapper.selectByPrimaryKey(omSalesReturnOrderDet.getSalesReturnOrderDetId());
+        OmSalesOrderDet omSalesOrderDet = omSalesOrderDetMapper.selectByPrimaryKey(omSalesReturnOrderDet.getSalesOrderDetId());
         if(StringUtils.isEmpty(omSalesOrderDet))
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未查询到对应的销售订单明细");
         if(StringUtils.isEmpty(omSalesOrderDet.getTotalSalesReturnApplyQty()))
