@@ -132,6 +132,9 @@
             <if test="batchCode!=null and batchCode!=''">
                 and wimb.batch_code = #{batchCode}
             </if>
+            <if test="supplierId!=null and supplierId!=''">
+                and wiid.supplier_id = #{supplierId}
+            </if>
             <if test="materialId!=null and materialId!='' and notEqualMark==1">
                 and bm.material_id != #{materialId}
             </if>

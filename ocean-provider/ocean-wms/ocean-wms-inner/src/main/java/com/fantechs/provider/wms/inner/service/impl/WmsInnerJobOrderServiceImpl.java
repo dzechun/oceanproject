@@ -635,6 +635,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         String[] arrId = ids.split(",");
         int num = 0;
         for (String id : arrId) {
+            List<WmsInnerJobOrderDet> orderDetList=new ArrayList<>();
             WmsInnerJobOrder wmsInnerJobOrder = wmsInnerJobOrderMapper.selectByPrimaryKey(id);
             if(StringUtils.isEmpty(wmsInnerJobOrder)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
@@ -794,7 +795,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 //回写上游单据上架数量
                 if(wmsInnerJobOrder.getSourceBigType()==(byte)1) {
                     wmsInnerJobOrderDet.setActualQty(totalQty);
-                    num += updateLastOrderNode((byte)1,wmsInnerJobOrder, wmsInnerJobOrderDet);
+                    orderDetList.add(wmsInnerJobOrderDet);
+                    //num += updateLastOrderNode((byte)1,wmsInnerJobOrder, wmsInnerJobOrderDet);
                 }
 
                 //更改库存为正常状态
@@ -991,6 +993,13 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
             //更改表头为作业完成状态
             wmsInnerJobOrderMapper.updateByPrimaryKeySelective(innerJobOrder);
+
+            //回写上游单据
+            if(orderDetList.size()>0){
+                for (WmsInnerJobOrderDet item : orderDetList) {
+                    num += updateLastOrderNode((byte)1,wmsInnerJobOrder, item);
+                }
+            }
 
         }
         return num;
@@ -2903,6 +2912,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     @Transactional(rollbackFor = RuntimeException.class)
     public WmsInnerJobOrderDet saveHaveInnerJobOrder(List<SaveHaveInnerJobOrderDto> list) {
         SysUser sysUser = currentUser();
+        int num = 0;
         if(StringUtils.isEmpty(list)){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"提交参数不能为空");
         }
@@ -2910,6 +2920,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         if(collet.size()>1){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"系统条码和非系统条码不能一起提交");
         }
+        WmsInnerJobOrderDet jobOrderDet=new WmsInnerJobOrderDet();
         //yyyy-MM-dd
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         //是否系统条码(0-否 1-是)
@@ -2973,7 +2984,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         if(StringUtils.isNotEmpty(coreSourceSysOrderTypeCode) && StringUtils.isNotEmpty(coreSourceOrderCode)){
             supplierId=this.getSupplierId(coreSourceSysOrderTypeCode,coreSourceOrderCode,sysUser);
         }
-        int num = 0;
+
         if (wmsInnerJobOrderDet.getActualQty().add(qty).compareTo(wmsInnerJobOrderDet.getDistributionQty()) == -1) {
             //部分上架
             WmsInnerJobOrderDet wmss = new WmsInnerJobOrderDet();
@@ -2998,7 +3009,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
             //回写上游单据上架数量
             if(wmsInnerJobOrder.getSourceBigType()==(byte)1) {
-                num += updateLastOrderNode((byte)1,wmsInnerJobOrder, wmss);
+                jobOrderDet=wmss;
+                //num += updateLastOrderNode((byte)1,wmsInnerJobOrder, wmss);
             }
 
             wmsInnerJobOrderDet.setLineStatus((byte) 2);
@@ -3029,7 +3041,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
             //回写上游单据上架数量
             if(wmsInnerJobOrder.getSourceBigType()==(byte)1) {
-                num += updateLastOrderNode((byte)1,wmsInnerJobOrder, wmsInnerJobOrderDet);
+                jobOrderDet=wmsInnerJobOrderDet;
+                //num += updateLastOrderNode((byte)1,wmsInnerJobOrder, wmsInnerJobOrderDet);
             }
         }
         if (num == 0) {
@@ -3351,6 +3364,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
             num += wmsInnerJobOrderMapper.updateByPrimaryKeySelective(ws);
         }
+
+        //回写上游单据
+        num += updateLastOrderNode((byte)1,wmsInnerJobOrder, jobOrderDet);
 
         return wmsInnerJobOrderDet;
 

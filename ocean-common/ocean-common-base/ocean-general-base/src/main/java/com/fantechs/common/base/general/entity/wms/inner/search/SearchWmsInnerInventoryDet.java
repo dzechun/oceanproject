@@ -83,6 +83,9 @@ public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializabl
     @ApiModelProperty("物料编码")
     private String materialCode;
 
+    @ApiModelProperty("供应商Id")
+    private Long supplierId;
+
     @ApiModelProperty("供应商名称")
     private String supplierName;
 
