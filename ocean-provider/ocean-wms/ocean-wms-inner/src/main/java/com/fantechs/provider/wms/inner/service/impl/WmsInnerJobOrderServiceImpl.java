@@ -10,12 +10,16 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
 import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDto;
+import com.fantechs.common.base.general.dto.om.OmSalesReturnOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.dto.wms.inner.export.WmsInnerJobOrderExport;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
+import com.fantechs.common.base.general.entity.om.OmSalesReturnOrderDet;
 import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrder;
+import com.fantechs.common.base.general.entity.om.search.SearchOmSalesOrderDet;
+import com.fantechs.common.base.general.entity.om.search.SearchOmSalesReturnOrderDet;
 import com.fantechs.common.base.general.entity.qms.QmsIncomingInspectionOrder;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.*;
@@ -74,6 +78,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     WmsInnerInventoryService wmsInnerInventoryService;
     @Resource
     WmsInnerJobOrderDetBarcodeService wmsInnerJobOrderDetBarcodeService;
+    @Resource
+    WmsInnerJobOrderDetService wmsInnerJobOrderDetService;
     @Resource
     private SecurityFeignApi securityFeignApi;
     @Resource
@@ -2172,9 +2178,48 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                     }
                 }
                 else{
-                    //销退订单下推的
+                    //销退订单下推的 找销售订单对应的拣货单条码
                     if("IN-SRO".equals(sourceTypeCode) || "IN-SRO".equals(coreSourceTypeCode)){
+                        Long salesReturnOrderDetId=wmsInPutawayOrderDet.getCoreSourceId();
+                        SearchOmSalesReturnOrderDet searchOmSalesReturnOrderDet=new SearchOmSalesReturnOrderDet();
+                        searchOmSalesReturnOrderDet.setSalesReturnOrderDetId(salesReturnOrderDetId);
+                        List<OmSalesReturnOrderDetDto> returnOrderDetList=omFeignApi.findList(searchOmSalesReturnOrderDet).getData();
+                        if(StringUtils.isNotEmpty(returnOrderDetList) && returnOrderDetList.size()>0){
+                            //销售订单明细ID
+                            Long salesOrderDetId=returnOrderDetList.get(0).getSalesOrderDetId();
+                            //找销售订单明细ID对应拣货单明细ID
+                            SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet=new SearchWmsInnerJobOrderDet();
+                            searchWmsInnerJobOrderDet.setCoreSourceSysOrderTypeCode("OUT-SO");//销售订单
+                            searchWmsInnerJobOrderDet.setCoreSourceId(salesOrderDetId);
+                            searchWmsInnerJobOrderDet.setJobOrderType((byte)2);
+                            List<WmsInnerJobOrderDetDto> detDtoList=wmsInnerJobOrderDetService.findList(searchWmsInnerJobOrderDet);
+                            if(StringUtils.isNotEmpty(detDtoList) && detDtoList.size()>0){
+                                for (WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto : detDtoList) {
+                                    Long jobOrderDetId=wmsInnerJobOrderDetDto.getJobOrderDetId();
+                                    sBarcodeReOrder.setOrderTypeCode("OUT-IWK");//单据类型 拣货作业
+                                    sBarcodeReOrder.setOrderDetId(jobOrderDetId);//明细ID
+                                    reOrderList = wmsInnerMaterialBarcodeReOrderService.findList(ControllerUtil.dynamicConditionByEntity(sBarcodeReOrder));
+                                    if (reOrderList.size() > 0) {
+                                        for (WmsInnerMaterialBarcodeReOrderDto item : reOrderList) {
+                                            WmsInnerMaterialBarcodeReOrder barcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
+                                            BeanUtil.copyProperties(item, barcodeReOrder);
+                                            barcodeReOrder.setOrderTypeCode(orderTypeCode);
+                                            barcodeReOrder.setOrderCode(record.getJobOrderCode());
+                                            barcodeReOrder.setOrderId(record.getJobOrderId());
+                                            barcodeReOrder.setOrderDetId(wmsInPutawayOrderDet.getJobOrderDetId());
+                                            barcodeReOrder.setScanStatus((byte) 1);
+                                            barcodeReOrder.setCreateUserId(sysUser.getUserId());
+                                            barcodeReOrder.setCreateTime(new Date());
+                                            barcodeReOrder.setModifiedUserId(sysUser.getUserId());
+                                            barcodeReOrder.setModifiedTime(new Date());
+                                            barcodeReOrder.setMaterialBarcodeReOrderId(null);
+                                            barcodeReOrderList.add(barcodeReOrder);
+                                        }
+                                    }
+                                }
+                            }
 
+                        }
                     }
 
                 }

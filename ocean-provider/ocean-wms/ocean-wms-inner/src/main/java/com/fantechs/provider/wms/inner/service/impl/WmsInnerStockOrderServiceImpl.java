@@ -394,17 +394,36 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             Example example = new Example(WmsInnerStockOrderDet.class);
             example.createCriteria().andEqualTo("stockOrderId",wmsInventoryVerification.getStockOrderId());
             List<WmsInnerStockOrderDet> list = wmsInventoryVerificationDetMapper.selectByExample(example);
+            List<Long> materialList=new ArrayList<>();
+            for (WmsInnerStockOrderDet stockOrderDet : list) {
+                materialList.add(stockOrderDet.getMaterialId());
+            }
+
             //库位盘点将盘点单的所有库位下库存更改上锁状态及基础信息库位上锁 货品盘点将
             //btnType 按钮类型 1-激活 2作废
             if(btnType ==1){
                 if(wmsInventoryVerification.getOrderStatus()>1){
                     throw new BizErrorException("盘点单已激活 请勿重复操作");
                 }
+
+                //激活重新生成盘点明细 开始
+                //删除原来明细
+                Example exampleDet = new Example(WmsInnerStockOrderDet.class);
+                exampleDet.createCriteria().andEqualTo("stockOrderId",wmsInventoryVerification.getStockOrderId());
+                wmsInventoryVerificationDetMapper.deleteByExample(exampleDet);
+
+                List<WmsInnerStockOrderDet> listNew = this.MaterialfindInvGoofs(wmsInventoryVerification.getStockOrderId(),materialList,wmsInventoryVerification.getWarehouseId(),sysUser);
+                int res = wmsInventoryVerificationDetMapper.insertList(listNew);
+                if(res<0){
+                    throw new BizErrorException("新增盘点单失败");
+                }
+                //激活重新生成盘点明细 结束
+
                 //打开
-                num += this.unlockOrLock((byte) 2,list,wmsInventoryVerification);
+                num += this.unlockOrLock((byte) 2,listNew,wmsInventoryVerification);
                 wmsInventoryVerification.setOrderStatus((byte)2);
                 //对应条码新增到盘点条码明细 锁定
-                num+=addStockOrderDetBarcode((byte)1,(byte)1,list,sysUser);
+                num+=addStockOrderDetBarcode((byte)1,(byte)1,listNew,sysUser);
 
             }else if(btnType ==2){
                 if(wmsInventoryVerification.getOrderStatus()>=5){
