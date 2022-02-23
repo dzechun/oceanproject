@@ -32,7 +32,7 @@ public class WanbaoBarcodeRultDataDto extends WanbaoBarcodeRultData implements S
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "物料名称", height = 20, width = 30,orderNum="7")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="7")
     private String createUserName;
 
     /**
@@ -40,7 +40,7 @@ public class WanbaoBarcodeRultDataDto extends WanbaoBarcodeRultData implements S
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "物料名称", height = 20, width = 30,orderNum="9")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="9")
     private String modifiedUserName;
 
     /**
