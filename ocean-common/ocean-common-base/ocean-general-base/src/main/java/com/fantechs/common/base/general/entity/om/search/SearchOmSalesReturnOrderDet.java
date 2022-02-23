@@ -13,8 +13,11 @@ import java.io.Serializable;
 @Data
 public class SearchOmSalesReturnOrderDet extends BaseQuery implements Serializable {
 
-    @ApiModelProperty(name = "salesReturnOrderId",value = "id")
+    @ApiModelProperty(name = "salesReturnOrderId",value = "销退订单id")
     private Long salesReturnOrderId;
+
+    @ApiModelProperty(name = "salesReturnOrderDetId",value = "销退订单明细id")
+    private Long salesReturnOrderDetId;
 
     @ApiModelProperty(name = "salesReturnOrderCode",value = "销退单号")
     private String salesReturnOrderCode;
@@ -30,4 +33,10 @@ public class SearchOmSalesReturnOrderDet extends BaseQuery implements Serializab
      */
     @ApiModelProperty(name="salesOrderId",value = "销售订单ID")
     private Long salesOrderId;
+
+    /**
+     * 销售订单明细ID
+     */
+    @ApiModelProperty(name="salesOrderDetId",value = "销售订单明细id")
+    private Long salesOrderDetId;
 }
