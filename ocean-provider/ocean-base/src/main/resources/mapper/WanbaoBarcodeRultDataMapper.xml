@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.WanbaoBarcodeRultDataMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.WanbaoBarcodeRultData">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="barcode_rult_data_id" jdbcType="BIGINT" property="barcodeRultDataId" />
+    <result column="material_id" jdbcType="VARCHAR" property="materialId" />
+    <result column="voltage" jdbcType="VARCHAR" property="voltage" />
+    <result column="identification_code" jdbcType="VARCHAR" property="identificationCode" />
+    <result column="year" jdbcType="VARCHAR" property="year" />
+    <result column="month" jdbcType="VARCHAR" property="month" />
+    <result column="serial_number" jdbcType="VARCHAR" property="serialNumber" />
+    <result column="placeholder" jdbcType="VARCHAR" property="placeholder" />
+    <result column="customer_model" jdbcType="VARCHAR" property="customerModel" />
+    <result column="product_code" jdbcType="VARCHAR" property="productCode" />
+    <result column="data_status" jdbcType="TINYINT" property="dataStatus" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.WanbaoBarcodeRultDataDto">
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+    <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    wbrd.barcode_rult_data_id,
+    wbrd.material_id,
+--     wbrd.voltage,
+    wbrd.identification_code,
+    wbrd.year,
+    wbrd.month,
+    wbrd.serial_number,
+--     wbrd.product_code,
+    wbrd.data_status,
+    wbrd.create_user_id,
+    wbrd.create_time,
+    wbrd.modified_user_id,
+    wbrd.modified_time,
+    wbrd.status,
+    wbrd.option1,
+    wbrd.option2,
+    wbrd.option3,
+    wbrd.org_id,
+    wbrd.remark
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    select
+    <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
+    spm.product_model_code AS product_code, bmt.voltage, sm.material_code, sm.material_name
+    from wanbao_barcode_rult_data wbrd
+    LEFT JOIN ocean_v2.sys_user su ON wbrd.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON wbrd.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON wbrd.org_id = bo.organization_id
+    LEFT JOIN base_material sm ON wbrd.material_id = sm.material_id
+    LEFT JOIN base_material_tab bmt on sm.material_id = bmt.material_id
+    LEFT JOIN base_product_model spm ON bmt.product_model_id = spm.product_model_id
+    <where>
+      <if test="materialCode!=null and materialCode!='' and codeQueryMark!=1">
+        and sm.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
+      <if test="materialName!=null and materialName!=''">
+        and sm.material_name like CONCAT('%', #{materialName}, '%')
+      </if>
+      <if test="identificationCode!=null and identificationCode!=''">
+        and wbrd.identification_code like CONCAT('%', #{identificationCode}, '%')
+      </if>
+      <if test="voltage!=null and voltage!=''">
+        and bmt.voltage like CONCAT('%', #{voltage}, '%')
+      </if>
+      <if test="productModelCode!=null and productModelCode!=''">
+        and spm.product_model_code like CONCAT('%', #{productModelCode}, '%')
+      </if>
+      <if test="status!=null">
+        and wbrd.status=#{status}
+      </if>
+      <if test="orgId!=null">
+        and wbrd.org_id=#{orgId}
+      </if>
+    </where>
+    order by wbrd.identification_code
+  </select>
+
+  <update id="batchUpdate" parameterType="java.util.List">
+    <foreach collection="list" item="item" separator=";">
+      update wanbao_barcode_rult_data wbrd
+        <if test="item.materialId != null">
+            wbrd.material_id = #{item.materialId},
+        </if>
+--       wbrd.voltage = #{item.provinceCode},
+      wbrd.identification_code = #{item.identificationCode},
+--       wbrd.year = #{item.provinceCode},
+--       wbrd.month = #{item.provinceCode},
+--       wbrd.serial_number = #{item.provinceCode},
+--       wbrd.product_code = #{item.provinceCode},
+      wbrd.data_status = #{item.dataStatus},
+      wbrd.create_user_id = #{item.createUserId},
+      wbrd.create_time = #{item.createTime},
+      wbrd.modified_user_id = #{item.modifiedUserId},
+      wbrd.modified_time = #{item.modifiedTime},
+      wbrd.status = #{item.status},
+      wbrd.org_id = #{item.orgId}
+      where wbrd.barcode_rult_data_id = #{item.barcodeRultDataId}
+    </foreach>
+  </update>
+</mapper>
