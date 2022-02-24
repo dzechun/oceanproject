@@ -60,6 +60,12 @@ public class OmPurchaseOrderController {
         return ControllerUtil.returnCRUD(omPurchaseOrderService.update(omPurchaseOrder));
     }
 
+    @ApiOperation("批量更新累计下发数量")
+    @PostMapping("/batchUpdateIssueQty")
+    public ResponseEntity updateIssueQty(@ApiParam(value = "对象，Id必传",required = true)@RequestBody List<OmPurchaseOrderDet> list) {
+        return ControllerUtil.returnCRUD(omPurchaseOrderService.batchUpdateIssueQty(list));
+    }
+
     @ApiOperation("获取详情")
     @PostMapping("/detail")
     public ResponseEntity<OmPurchaseOrder> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
