@@ -135,6 +135,8 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
             //明细
             List<WmsInInPlanOrderDetDto> wmsInInPlanOrderDetList = new ArrayList<>();
 
+            List<OmPurchaseOrderDet> omPurchaseOrderDetList = new ArrayList<>();
+
             if (StringUtils.isNotEmpty(list)) {
                 SrmInAsnOrderDetDto srmInAsnOrderDet = list.get(0);
                 Example example = new Example(SrmInAsnOrder.class);
@@ -161,6 +163,11 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
                     if (StringUtils.isEmpty(baseOrderFlowDto)) {
                         throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"请配置单据流设置");
                     }
+
+                    OmPurchaseOrderDet omPurchaseOrderDet = new OmPurchaseOrderDet();
+                    omPurchaseOrderDet.setPurchaseOrderDetId(srmInAsnOrderDetDto.getSourceOrderId());
+                    omPurchaseOrderDet.setTotalIssueQty(srmInAsnOrderDetDto.getIssueQty());
+                    omPurchaseOrderDetList.add(omPurchaseOrderDet);
 
                     //判断下推单据
                     if ("IN-SPO".equals(baseOrderFlowDto.getNextOrderTypeCode())) {
@@ -269,7 +276,9 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
                     }
                 }
 
-
+                if (StringUtils.isNotEmpty(omPurchaseOrderDetList)) {
+                    oMFeignApi.batchUpdateIssueQty(omPurchaseOrderDetList);
+                }
                 if (StringUtils.isNotEmpty(wmsInPlanReceivingOrderDetList)) {
                     wmsInPlanReceivingOrder.setInPlanReceivingOrderDets(wmsInPlanReceivingOrderDetList);
                     inFeignApi.add(wmsInPlanReceivingOrder);

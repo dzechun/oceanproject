@@ -258,7 +258,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "累计下发数量与采购退货数量之和大于包装总数");
             }
         }
-        
+
         //查当前单据的下游单据
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
         searchBaseOrderFlow.setOrderTypeCode("IN-PO");
@@ -696,5 +696,13 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
         }
         return num;
+    }
+
+    @Override
+    public int batchUpdateIssueQty(List<OmPurchaseOrderDet> list) {
+        for (OmPurchaseOrderDet omPurchaseOrderDet : list) {
+            updatePutDownQty(omPurchaseOrderDet.getPurchaseOrderDetId(),omPurchaseOrderDet.getTotalIssueQty());
+        }
+        return 1;
     }
 }

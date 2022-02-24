@@ -3,6 +3,7 @@ package com.fantechs.provider.api.qms;
 import com.fantechs.common.base.general.dto.om.*;
 import com.fantechs.common.base.general.entity.om.*;
 import com.fantechs.common.base.general.entity.om.search.*;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -184,4 +185,9 @@ public interface OMFeignApi {
     @PostMapping("/omPurchaseReturnOrder/purchaseUpdatePickingQty")
     ResponseEntity purchaseUpdatePickingQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long purchaseReturnOrderDetId,
                                     @ApiParam(value = "必传拣货架数量",required = true)@RequestParam BigDecimal actualQty);
+
+    @ApiOperation("批量更新累计下发数量")
+    @PostMapping("/omPurchaseOrder/batchUpdateIssueQty")
+    ResponseEntity batchUpdateIssueQty(@ApiParam(value = "对象，Id必传",required = true)@RequestBody List<OmPurchaseOrderDet> list);
+
 }
