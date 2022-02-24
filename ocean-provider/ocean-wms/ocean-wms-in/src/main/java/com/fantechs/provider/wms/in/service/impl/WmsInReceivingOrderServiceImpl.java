@@ -740,6 +740,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                     wmsInInPlanOrder.setSourceSysOrderTypeCode(sysOrderTypeCode);
                     wmsInInPlanOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                     wmsInInPlanOrder.setOrderStatus((byte)1);
+                    wmsInInPlanOrder.setSourceBigType((byte)1);
                     wmsInInPlanOrder.setMakeOrderUserId(sysUser.getUserId());
                     wmsInInPlanOrder.setStorageId(baseStorages.get(0).getStorageId());
                     wmsInInPlanOrder.setWmsInInPlanOrderDetDtos(wmsInInPlanOrderDetDtos);

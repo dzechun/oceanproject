@@ -147,6 +147,8 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
             List<OmSalesOrderDetDto> list = omSalesOrderDetMapper.findList(map);
             if(omSalesReturnOrderDet.getOrderQty().compareTo(list.get(0).getOrderQty()) == 1)
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"销退订单数量不能大于销售订单数量");
+            if(StringUtils.isEmpty(omSalesReturnOrderDet.getSalesOrderDetId()))
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"销售订单明细id不能为空");
             omSalesReturnOrderDet.setTotalIssueQty(BigDecimal.ZERO);
             omSalesReturnOrderDet.setSalesReturnOrderId(record.getSalesReturnOrderId());
             omSalesReturnOrderDet.setCreateTime(new Date());
@@ -719,13 +721,9 @@ public class OmSalesReturnOrderServiceImpl extends BaseService<OmSalesReturnOrde
      * 明细全部下发后返写销售订单累计销退数量
      * */
     public void writeReturnSalesOrder(OmSalesReturnOrderDet omSalesReturnOrderDet) {
-        Example example = new Example(OmSalesOrderDet.class);
-        example.createCriteria().andEqualTo("salesOrderId", omSalesReturnOrderDet.getSalesOrderId())
-                .andEqualTo("materialId", omSalesReturnOrderDet.getMaterialId());
-        List<OmSalesOrderDet> omSalesOrderDets = omSalesOrderDetMapper.selectByExample(example);
-        if(StringUtils.isEmpty(omSalesOrderDets))
+        OmSalesOrderDet omSalesOrderDet = omSalesOrderDetMapper.selectByPrimaryKey(omSalesReturnOrderDet.getSalesOrderDetId());
+        if(StringUtils.isEmpty(omSalesOrderDet))
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未查询到对应的销售订单明细");
-        OmSalesOrderDet omSalesOrderDet = omSalesOrderDets.get(0);
         if(StringUtils.isEmpty(omSalesOrderDet.getTotalSalesReturnApplyQty()))
             omSalesOrderDet.setTotalOrderReturnQty(omSalesReturnOrderDet.getTotalIssueQty());
         else
