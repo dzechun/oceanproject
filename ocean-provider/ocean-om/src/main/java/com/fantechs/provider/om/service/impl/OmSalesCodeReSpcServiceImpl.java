@@ -71,7 +71,6 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
             if (StringUtils.isEmpty(
                     item.getSalesCode(),
                     item.getSamePackageCode(),
-                    item.getProductModelCode(),
                     item.getMaterialCode(),
                     item.getSamePackageCodeQty(),
                     item.getSamePackageCodeStatus())
