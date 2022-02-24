@@ -545,7 +545,8 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
         if (StringUtils.isEmpty(wmsInnerInventory))
             throw new BizErrorException("未查询到移出库存");
         example.clear();
-        Example.Criteria criteria1 = example.createCriteria().andEqualTo("materialId", oldDto.getMaterialId())
+        Example.Criteria criteria1 = example.createCriteria()
+                .andEqualTo("materialId", oldDto.getMaterialId())
 //                .andEqualTo("warehouseId", oldDto.getWarehouseId())
                 .andEqualTo("storageId", inBaseStorage.getStorageId())
                 .andEqualTo("jobStatus", (byte) 1)
