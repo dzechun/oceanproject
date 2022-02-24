@@ -700,9 +700,6 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
     @Override
     public int batchUpdateIssueQty(List<OmPurchaseOrderDet> list) {
-        for (OmPurchaseOrderDet omPurchaseOrderDet : list) {
-            updatePutDownQty(omPurchaseOrderDet.getPurchaseOrderDetId(),omPurchaseOrderDet.getTotalIssueQty());
-        }
-        return 1;
+        return  omPurchaseOrderDetMapper.batchUpdate(list);
     }
 }

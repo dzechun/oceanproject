@@ -148,4 +148,15 @@
         </where>
         order by opod.modified_time desc
     </select>
+
+    <update id="batchUpdate">
+        <foreach collection="list" item="item" index="index" separator=";">
+            update om_purchase_order_det
+            <set>
+                if_all_issued = IF ( ( total_issue_qty + #{item.totalIssueQty} ) = order_qty, 1, 0 ),
+                total_issue_qty =  IFNULL(total_issue_qty,0)+#{item.totalIssueQty}
+            </set>
+            WHERE purchase_order_det_id = #{item.purchaseOrderDetId}
+        </foreach>
+    </update>
 </mapper>

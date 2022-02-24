@@ -115,7 +115,7 @@
                 and wimb.pallet_code = #{palletCode}
             </if>
             <if test="queryType!=null and queryType!='' and queryType =='1'">
-                and IFNULL(wimb.barcode,'') != '' and wiid.barcode_status !=3
+                and IFNULL(wimb.barcode,'') != '' and wiid.barcode_status =1
             </if>
             <if test="queryType!=null and queryType!='' and queryType =='2'">
                 and IFNULL(wimb.color_box_code,'') != '' and IFNULL(wimb.barcode,'')=''
