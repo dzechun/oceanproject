@@ -186,10 +186,6 @@ public interface OMFeignApi {
     ResponseEntity purchaseUpdatePickingQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long purchaseReturnOrderDetId,
                                     @ApiParam(value = "必传拣货架数量",required = true)@RequestParam BigDecimal actualQty);
 
-    @ApiOperation("销退明细查询")
-    @PostMapping("/omSalesReturnOrderDet/findList")
-    ResponseEntity<List<OmSalesReturnOrderDetDto>> findList(@RequestBody SearchOmSalesReturnOrderDet searchOmSalesReturnOrderDet);
-
     @ApiOperation("批量更新累计下发数量")
     @PostMapping("/omPurchaseOrder/batchUpdateIssueQty")
     ResponseEntity batchUpdateIssueQty(@ApiParam(value = "对象，Id必传",required = true)@RequestBody List<OmPurchaseOrderDet> list);
