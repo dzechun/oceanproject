@@ -1693,6 +1693,28 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     inventoryDet.setModifiedTime(new Date());
                     num+=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(inventoryDet);
                 }
+                //盘赢条码新增到复盘单条码明细
+                Example example = new Example(WmsInnerStockOrderDetBarcode.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("stockOrderDetId",wmsInnerStockOrderDet.getStockOrderDetId());
+                criteria.andEqualTo("stockResult",(byte)3);
+                List<WmsInnerStockOrderDetBarcode> stockOrderDetBarcodes=wmsInnerStockOrderDetBarcodeMapper.selectByExample(example);
+                if(StringUtils.isNotEmpty(stockOrderDetBarcodes) && stockOrderDetBarcodes.size()>0){
+                    for (WmsInnerStockOrderDetBarcode item : stockOrderDetBarcodes) {
+                        WmsInnerStockOrderDetBarcode stockOrderDetBarcode=new WmsInnerStockOrderDetBarcode();
+                        stockOrderDetBarcode.setStockOrderDetBarcodeId(null);
+                        stockOrderDetBarcode.setStockOrderDetId(wmsInnerStockOrderDet.getStockOrderDetId());
+                        stockOrderDetBarcode.setMaterialBarcodeId(item.getMaterialBarcodeId());
+                        stockOrderDetBarcode.setScanStatus((byte)1);
+                        stockOrderDetBarcode.setStockResult((byte)1);
+                        stockOrderDetBarcode.setStatus((byte)1);
+                        stockOrderDetBarcode.setCreateUserId(sysUser.getUserId());
+                        stockOrderDetBarcode.setCreateTime(new Date());
+                        stockOrderDetBarcode.setOrgId(sysUser.getOrganizationId());
+                        stockOrderDetBarcodeList.add(stockOrderDetBarcode);
+                    }
+
+                }
             }
             else {
                 Example example = new Example(WmsInnerStockOrderDetBarcode.class);
