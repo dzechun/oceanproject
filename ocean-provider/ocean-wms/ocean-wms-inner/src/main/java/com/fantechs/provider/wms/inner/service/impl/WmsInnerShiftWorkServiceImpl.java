@@ -431,27 +431,22 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
             if (wmsInnerInventoryDetDtoList.size() > 0) {
                 WmsInnerInventoryDetDto innerInventoryDetDto = wmsInnerInventoryDetDtoList.get(0);
                 totalQty = totalQty.add((StringUtils.isEmpty(innerInventoryDetDto.getMaterialQty()) ? new BigDecimal(0) : innerInventoryDetDto.getMaterialQty()));
-                innerInventoryDetDto.setStorageId(wmsInPutawayOrderDet.getInStorageId());
-                innerInventoryDetDto.setBarcodeStatus((byte) 1);
-                innerInventoryDetDto.setModifiedTime(new Date());
-                innerInventoryDetDto.setModifiedUserId(sysUser.getUserId());
-                wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(innerInventoryDetDto);
-                if (StringUtils.isNotEmpty(innerInventoryDetDto.getColorBoxCode())) {
-                    map.put(innerInventoryDetDto.getColorBoxCode(), (byte) 2);
-                    set.add(innerInventoryDetDto.getColorBoxCode());
+                if (StringUtils.isNotEmpty(innerInventoryDetDto.getPalletCode())) {
+                    map.put(innerInventoryDetDto.getPalletCode(), (byte) 4);
+                    set.add(innerInventoryDetDto.getPalletCode());
                 }
                 if (StringUtils.isNotEmpty(innerInventoryDetDto.getCartonCode())) {
                     map.put(innerInventoryDetDto.getCartonCode(), (byte) 3);
                     set.add(innerInventoryDetDto.getCartonCode());
                 }
-                if (StringUtils.isNotEmpty(innerInventoryDetDto.getPalletCode())) {
-                    map.put(innerInventoryDetDto.getPalletCode(), (byte) 4);
-                    set.add(innerInventoryDetDto.getPalletCode());
+                if (StringUtils.isNotEmpty(innerInventoryDetDto.getColorBoxCode())) {
+                    map.put(innerInventoryDetDto.getColorBoxCode(), (byte) 2);
+                    set.add(innerInventoryDetDto.getColorBoxCode());
                 }
                 newInventoryDetDtoList.add(innerInventoryDetDto);
             }
         }
-        //更新库存明细中单独箱码、栈板码
+        //更新库存明细
         Iterator<String> iterator = set.iterator();
         while (iterator.hasNext()) {
             String code = iterator.next();
@@ -466,15 +461,27 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
             } else {
                 continue;
             }
-            searchWmsInnerInventoryDet.setBarcodeType((byte) type);
             searchWmsInnerInventoryDet.setOrgId(sysUser.getOrganizationId());
             List<WmsInnerInventoryDetDto> list = wmsInnerInventoryDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerInventoryDet));
-            WmsInnerInventoryDetDto innerInventoryDetDto = list.get(0);
-            innerInventoryDetDto.setStorageId(wmsInPutawayOrderDet.getInStorageId());
-            innerInventoryDetDto.setBarcodeStatus((byte) 1);
-            innerInventoryDetDto.setModifiedTime(new Date());
-            innerInventoryDetDto.setModifiedUserId(sysUser.getUserId());
-            wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(innerInventoryDetDto);
+            for(WmsInnerInventoryDetDto innerInventoryDetDto : list) {
+                innerInventoryDetDto.setStorageId(wmsInPutawayOrderDet.getInStorageId());
+                innerInventoryDetDto.setBarcodeStatus((byte) 1);
+                innerInventoryDetDto.setModifiedTime(new Date());
+                innerInventoryDetDto.setModifiedUserId(sysUser.getUserId());
+                wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(innerInventoryDetDto);
+            }
+
+            //更新单独存在的彩盒码、箱码、栈板码
+            searchWmsInnerInventoryDet.setBarcodeType(type);
+            List<WmsInnerInventoryDetDto> list1 = wmsInnerInventoryDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerInventoryDet));
+            if(StringUtils.isNotEmpty(list1)){
+                WmsInnerInventoryDetDto innerInventoryDetDto1 = list1.get(0);
+                innerInventoryDetDto1.setStorageId(wmsInPutawayOrderDet.getInStorageId());
+                innerInventoryDetDto1.setBarcodeStatus((byte) 1);
+                innerInventoryDetDto1.setModifiedTime(new Date());
+                innerInventoryDetDto1.setModifiedUserId(sysUser.getUserId());
+                wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(innerInventoryDetDto1);
+            }
             iterator.remove();
         }
 

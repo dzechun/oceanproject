@@ -164,10 +164,13 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
                         throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"请配置单据流设置");
                     }
 
-                    OmPurchaseOrderDet omPurchaseOrderDet = new OmPurchaseOrderDet();
-                    omPurchaseOrderDet.setPurchaseOrderDetId(srmInAsnOrderDetDto.getSourceOrderId());
-                    omPurchaseOrderDet.setTotalIssueQty(srmInAsnOrderDetDto.getIssueQty());
-                    omPurchaseOrderDetList.add(omPurchaseOrderDet);
+                    if (StringUtils.isNotEmpty(srmInAsnOrderDetDto.getTotalDeliveryQty()) || srmInAsnOrderDetDto.getTotalMaterialQty().compareTo(new BigDecimal(0)) == 0) {
+                        OmPurchaseOrderDet omPurchaseOrderDet = new OmPurchaseOrderDet();
+                        omPurchaseOrderDet.setPurchaseOrderDetId(srmInAsnOrderDetDto.getSourceOrderId());
+                        omPurchaseOrderDet.setTotalIssueQty(srmInAsnOrderDetDto.getDeliveryQty());
+                        omPurchaseOrderDetList.add(omPurchaseOrderDet);
+                    }
+
 
                     //判断下推单据
                     if ("IN-SPO".equals(baseOrderFlowDto.getNextOrderTypeCode())) {
