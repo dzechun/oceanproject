@@ -681,14 +681,16 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             //库存条码明细集合
             List<WmsInnerInventoryDet> wmsInnerInventoryDets=new ArrayList<>();
 
-            List<String> colorCodeList=new ArrayList<>();
-            List<String> cartonCodeList=new ArrayList<>();
-            List<String> palletCodeList=new ArrayList<>();
+
 
             //Map<String, List<WmsInnerJobOrderDet>> collect = wmsInnerJobOrderDets.stream().collect(Collectors.groupingBy(e->e.getMaterialId().toString()+e.getInStorageId().toString()));
             //核心单据类型
             String coreSourceSysOrderTypeCode=wmsInnerJobOrder.getCoreSourceSysOrderTypeCode();
             for (WmsInnerJobOrderDet wmsInnerJobOrderDet : wmsInnerJobOrderDets) {
+                List<String> colorCodeList=new ArrayList<>();
+                List<String> cartonCodeList=new ArrayList<>();
+                List<String> palletCodeList=new ArrayList<>();
+
                 Iterator<WmsInnerMaterialBarcodeReOrderDto> iterator = barcodeList.iterator();
                 List<WmsInnerMaterialBarcodeReOrderDto> barcodeList1=new ArrayList<>();
                 BigDecimal actQty=wmsInnerJobOrderDet.getDistributionQty();

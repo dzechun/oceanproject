@@ -28,4 +28,6 @@ public interface OmPurchaseOrderService extends IService<OmPurchaseOrder> {
     int updatePutawayQty(Byte opType, Long purchaseOrderDetId, BigDecimal putawayQty);
 
     int updatePutDownQty(Long purchaseOrderDetId, BigDecimal putawayQty);
+
+    int batchUpdateIssueQty(List<OmPurchaseOrderDet> list);
 }
