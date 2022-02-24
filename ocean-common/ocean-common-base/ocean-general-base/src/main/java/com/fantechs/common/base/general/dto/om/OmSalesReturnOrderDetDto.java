@@ -1,6 +1,5 @@
 package com.fantechs.common.base.general.dto.om;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.general.entity.om.OmSalesReturnOrderDet;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -108,6 +107,11 @@ public class OmSalesReturnOrderDetDto extends OmSalesReturnOrderDet implements S
      * 销售订单数量
      */
     @ApiModelProperty(name="salesOrderQty",value = "销售订单数量")
-    @Excel(name = "销售订单数量", height = 20, width = 30)
     private BigDecimal salesOrderQty;
+
+    /**
+     * 累计订单退货数量(销退订单选择下发数量)
+     */
+    @ApiModelProperty(name="totalOrderReturnQty",value = "累计订单退货数量")
+    private BigDecimal totalOrderReturnQty;
 }

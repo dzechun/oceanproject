@@ -118,6 +118,10 @@
             <if test="status != null">
                 and opod.status = #{status}
             </if>
+            <if test="ifAllIssued != null and ifAllIssue != ''">
+                and opod.if_all_issued = #{ifAllIssued}
+            </if>
+
             <if test="orgId != null">
                 and opod.org_id = #{orgId}
             </if>
