@@ -401,8 +401,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             List<Long> materialList=new ArrayList<>();
             List<Long> storageList=new ArrayList<>();
             for (WmsInnerStockOrderDet stockOrderDet : list) {
-                materialList.add(stockOrderDet.getMaterialId());
-                storageList.add(stockOrderDet.getStorageId());
+                if(!materialList.contains(stockOrderDet.getMaterialId()))
+                    materialList.add(stockOrderDet.getMaterialId());
+                if(!storageList.contains(stockOrderDet.getStorageId()))
+                    storageList.add(stockOrderDet.getStorageId());
             }
 
             //库位盘点将盘点单的所有库位下库存更改上锁状态及基础信息库位上锁 货品盘点将
