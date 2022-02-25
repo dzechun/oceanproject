@@ -73,7 +73,7 @@
     <select id="findList" resultMap="BaseResultMapDto">
         SELECT<include refid="Base_Column_List"/>,
         oso.sales_order_code,bw.warehouse_name,bm.material_code,bm.material_name,bmb.main_unit,bmb.volume,bmb.net_weight,bmb.gross_weight,
-        bm.material_desc,bm.material_version,osod.order_qty as salesOrderQty,osod.total_order_return_qty as totalOrderReturnQty
+        bm.material_desc,bm.material_version,osod.order_qty as salesOrderQty,osod.total_order_return_qty as totalOrderReturnQty,
         su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name
         FROM om_sales_return_order_det osrod
         LEFT JOIN om_sales_return_order osro ON osro.sales_return_order_id = osrod.sales_return_order_id
