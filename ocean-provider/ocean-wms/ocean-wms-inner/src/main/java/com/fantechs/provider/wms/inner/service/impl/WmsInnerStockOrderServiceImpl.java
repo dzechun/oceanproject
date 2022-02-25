@@ -396,8 +396,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             example.createCriteria().andEqualTo("stockOrderId",wmsInventoryVerification.getStockOrderId());
             List<WmsInnerStockOrderDet> list = wmsInventoryVerificationDetMapper.selectByExample(example);
             List<Long> materialList=new ArrayList<>();
+            List<Long> storageList=new ArrayList<>();
             for (WmsInnerStockOrderDet stockOrderDet : list) {
                 materialList.add(stockOrderDet.getMaterialId());
+                storageList.add(stockOrderDet.getStorageId());
             }
 
             //库位盘点将盘点单的所有库位下库存更改上锁状态及基础信息库位上锁 货品盘点将
@@ -413,10 +415,22 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 exampleDet.createCriteria().andEqualTo("stockOrderId",wmsInventoryVerification.getStockOrderId());
                 wmsInventoryVerificationDetMapper.deleteByExample(exampleDet);
 
-                List<WmsInnerStockOrderDet> listNew = this.MaterialfindInvGoofs(wmsInventoryVerification.getStockOrderId(),materialList,wmsInventoryVerification.getWarehouseId(),sysUser);
-                int res = wmsInventoryVerificationDetMapper.insertList(listNew);
-                if(res<0){
-                    throw new BizErrorException("新增盘点单失败");
+                List<WmsInnerStockOrderDet> listNew=new ArrayList<>();
+                if(wmsInventoryVerification.getStockType()==(byte)1) {
+                    listNew = this.MaterialfindInvGoofs(wmsInventoryVerification.getStockOrderId(), materialList, wmsInventoryVerification.getWarehouseId(), sysUser);
+                    int res = wmsInventoryVerificationDetMapper.insertList(listNew);
+                    if (res < 0) {
+                        throw new BizErrorException("新增盘点单失败");
+                    }
+                }
+                else{
+                    listNew = this.findInvGoods(wmsInventoryVerification.getStockType(),
+                            wmsInventoryVerification.getStockOrderId(),
+                            storageList,wmsInventoryVerification.getWarehouseId(),sysUser);
+                    int res = wmsInventoryVerificationDetMapper.insertList(listNew);
+                    if(res<0){
+                        throw new BizErrorException("新增盘点单失败");
+                    }
                 }
                 //激活重新生成盘点明细 结束
 
