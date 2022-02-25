@@ -113,7 +113,7 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
         List<WmsInnerInventoryDto> inventoryDtos = wmsInnerInventoryMapper.findList(inventoryMap);
         if(StringUtils.isNotEmpty(inventoryDtos)){
             WmsInnerInventoryDto wmsInnerInventoryDto = inventoryDtos.get(0);
-            if(wmsInnerInventoryDto.getLockStatus() == (byte)1){
+            if(wmsInnerInventoryDto.getLockStatus() == (byte)1||wmsInnerInventoryDto.getStockLock() == (byte)1){
                 throw new BizErrorException("库存被锁定");
             }
         }
