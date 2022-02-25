@@ -77,6 +77,10 @@ public class WanbaoBarcodeRultDataServiceImpl extends BaseService<WanbaoBarcodeR
                 fail.add(i+1);
                 continue;
             }
+            if (importDto.getIdentificationCode().length() != 3){
+                fail.add(i+1);
+                continue;
+            }
 
             // 对比识别码
             for (WanbaoBarcodeRultDataDto dataDto : rultDataDtos){

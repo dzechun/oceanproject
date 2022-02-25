@@ -82,8 +82,8 @@
       <if test="voltage!=null and voltage!=''">
         and bmt.voltage like CONCAT('%', #{voltage}, '%')
       </if>
-      <if test="productModelCode!=null and productModelCode!=''">
-        and spm.product_model_code like CONCAT('%', #{productModelCode}, '%')
+      <if test="customerModel!=null and customerModel!=''">
+        and spm.product_model_code like CONCAT('%', #{customerModel}, '%')
       </if>
       <if test="status!=null">
         and wbrd.status=#{status}
