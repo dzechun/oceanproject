@@ -1904,7 +1904,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 //盘赢条码新增到复盘单条码明细
                 Example example = new Example(WmsInnerStockOrderDetBarcode.class);
                 Example.Criteria criteria = example.createCriteria();
-                criteria.andEqualTo("stockOrderDetId",wmsInnerStockOrderDet.getStockOrderDetId());
+                criteria.andEqualTo("stockOrderDetId",wmsInnerStockOrderDet.getSourceDetId());
                 criteria.andEqualTo("stockResult",(byte)3);
                 List<WmsInnerStockOrderDetBarcode> stockOrderDetBarcodes=wmsInnerStockOrderDetBarcodeMapper.selectByExample(example);
                 if(StringUtils.isNotEmpty(stockOrderDetBarcodes) && stockOrderDetBarcodes.size()>0){
@@ -1936,20 +1936,15 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     inventoryDet.setIfStockLock((byte)0);
                     inventoryDet.setModifiedUserId(sysUser.getUserId());
                     inventoryDet.setModifiedTime(new Date());
+                    wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(inventoryDet);
 
-                    int countResult=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(inventoryDet);
-                    if(countResult>0) {
-                        //已盘点
-                        stockOrderDetBarcode.setStockResult((byte) 2);
-                    }else {
-                        //盘盈
-                        stockOrderDetBarcode.setStockResult((byte) 3);
+                    //盘盈 新增到库存条码明细 盘亏更新为已出库
+                    if(stockOrderDetBarcode.getStockResult()==(byte)3){
+
                     }
+                    else if(stockOrderDetBarcode.getStockResult()==(byte)4){
 
-                    //更新盘点条码明细状态为已盘点,盘盈或盘亏
-                    stockOrderDetBarcode.setModifiedUserId(sysUser.getUserId());
-                    stockOrderDetBarcode.setModifiedTime(new Date());
-                    num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(stockOrderDetBarcode);
+                    }
 
                 }
 
