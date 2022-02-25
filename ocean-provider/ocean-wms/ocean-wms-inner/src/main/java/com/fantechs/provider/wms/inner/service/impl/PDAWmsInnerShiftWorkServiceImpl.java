@@ -360,29 +360,6 @@ public class PDAWmsInnerShiftWorkServiceImpl implements PDAWmsInnerShiftWorkServ
                     }
                     newInventoryDetDtoList.add(innerInventoryDetDto);
                 }
-
-                // 创建条码移位单明细关系
-                WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
-                wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("INNER-SSO");
-                wmsInnerMaterialBarcodeReOrder.setOrderCode(innerJobOrder.getJobOrderCode());
-                wmsInnerMaterialBarcodeReOrder.setOrderId(innerJobOrder.getJobOrderId());
-                wmsInnerMaterialBarcodeReOrder.setOrderDetId(jobOrderDet.getJobOrderDetId());
-                wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(innerInventoryDetDto.getMaterialBarcodeId());
-                wmsInnerMaterialBarcodeReOrder.setStatus((byte) 1);
-                wmsInnerMaterialBarcodeReOrder.setOrgId(user.getOrganizationId());
-                wmsInnerMaterialBarcodeReOrder.setCreateUserId(user.getUserId());
-                wmsInnerMaterialBarcodeReOrder.setCreateTime(new Date());
-                wmsInnerMaterialBarcodeReOrder.setModifiedUserId(user.getUserId());
-                wmsInnerMaterialBarcodeReOrder.setModifiedTime(new Date());
-                wmsInnerMaterialBarcodeReOrders.add(wmsInnerMaterialBarcodeReOrder);
-
-                //还原被标记的条码状态
-                WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto = new WmsInnerMaterialBarcodeDto();
-                BeanUtils.copyProperties(innerInventoryDetDto, wmsInnerMaterialBarcodeDto);
-                wmsInnerMaterialBarcodeDto.setIfScan((byte) 0);
-                wmsInnerMaterialBarcodeDto.setModifiedUserId(user.getUserId());
-                wmsInnerMaterialBarcodeDto.setModifiedTime(new Date());
-                wmsInnerMaterialBarcodeDtoList.add(wmsInnerMaterialBarcodeDto);
             }
 
             //校验整单发货
@@ -407,11 +384,35 @@ public class PDAWmsInnerShiftWorkServiceImpl implements PDAWmsInnerShiftWorkServ
                 searchWmsInnerInventoryDet.setOrgId(user.getOrganizationId());
                 List<WmsInnerInventoryDetDto> list = wmsInnerInventoryDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerInventoryDet));
                 for(WmsInnerInventoryDetDto innerInventoryDetDto : list) {
-               //     innerInventoryDetDto.setStorageId(dto.getInStorageId());
                     innerInventoryDetDto.setBarcodeStatus((byte) 2);
                     innerInventoryDetDto.setModifiedTime(new Date());
                     innerInventoryDetDto.setModifiedUserId(user.getUserId());
                     wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(innerInventoryDetDto);
+
+                    if(StringUtils.isNotEmpty(innerInventoryDetDto.getBarcode())) {
+                        // 创建条码移位单明细关系
+                        WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
+                        wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("INNER-SSO");
+                        wmsInnerMaterialBarcodeReOrder.setOrderCode(innerJobOrder.getJobOrderCode());
+                        wmsInnerMaterialBarcodeReOrder.setOrderId(innerJobOrder.getJobOrderId());
+                        wmsInnerMaterialBarcodeReOrder.setOrderDetId(jobOrderDet.getJobOrderDetId());
+                        wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(innerInventoryDetDto.getMaterialBarcodeId());
+                        wmsInnerMaterialBarcodeReOrder.setStatus((byte) 1);
+                        wmsInnerMaterialBarcodeReOrder.setOrgId(user.getOrganizationId());
+                        wmsInnerMaterialBarcodeReOrder.setCreateUserId(user.getUserId());
+                        wmsInnerMaterialBarcodeReOrder.setCreateTime(new Date());
+                        wmsInnerMaterialBarcodeReOrder.setModifiedUserId(user.getUserId());
+                        wmsInnerMaterialBarcodeReOrder.setModifiedTime(new Date());
+                        wmsInnerMaterialBarcodeReOrders.add(wmsInnerMaterialBarcodeReOrder);
+
+                        //还原被标记的条码状态
+                        WmsInnerMaterialBarcodeDto wmsInnerMaterialBarcodeDto = new WmsInnerMaterialBarcodeDto();
+                        BeanUtils.copyProperties(innerInventoryDetDto, wmsInnerMaterialBarcodeDto);
+                        wmsInnerMaterialBarcodeDto.setIfScan((byte) 0);
+                        wmsInnerMaterialBarcodeDto.setModifiedUserId(user.getUserId());
+                        wmsInnerMaterialBarcodeDto.setModifiedTime(new Date());
+                        wmsInnerMaterialBarcodeDtoList.add(wmsInnerMaterialBarcodeDto);
+                    }
                 }
 
                 //更新单独存在的彩盒码、箱码、栈板码

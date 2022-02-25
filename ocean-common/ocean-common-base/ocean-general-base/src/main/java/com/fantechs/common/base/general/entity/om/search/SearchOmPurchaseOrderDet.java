@@ -40,4 +40,9 @@ public class SearchOmPurchaseOrderDet extends BaseQuery implements Serializable 
     @ApiModelProperty(name = "ifActualQtyNotNull",value = "交货数量是否大于0(0-否 1-是)")
     private Integer ifActualQtyNotNull;
 
+    /**
+     * 是否已全部下发(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifAllIssued",value = "是否已全部下发(0-否 1-是)")
+    private String ifAllIssued;
 }
