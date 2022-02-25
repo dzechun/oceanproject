@@ -18,4 +18,11 @@ public interface WmsInnerShiftWorkDetService extends IService<WmsInnerJobOrderDe
     int batchUpdate(List<WmsInnerJobOrderDet> list);
 
     int pickDisQty(List<WmsInnerJobOrderDet> wmsInnerJobOrderDets);
+
+    /**
+     * 移位单明细批量删除
+     * @param ids
+     * @return
+     */
+    int batchDeleteByShiftWork(String ids);
 }
