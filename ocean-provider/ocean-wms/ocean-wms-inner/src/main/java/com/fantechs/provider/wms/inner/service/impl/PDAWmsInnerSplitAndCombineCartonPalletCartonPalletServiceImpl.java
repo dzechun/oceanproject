@@ -105,17 +105,8 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
 
         //判断库存是否被锁定
         WmsInnerInventoryDetDto cartonPalletInventoryDetDto = cartonPalletInfoDto.getCartonPalletInventoryDetDto();
-        Map<String,Object> inventoryMap = new HashMap<>();
-        inventoryMap.put("storageId",cartonPalletInventoryDetDto.getStorageId());
-        inventoryMap.put("warehouseId",cartonPalletInventoryDetDto.getWarehouseId());
-        inventoryMap.put("relevanceOrderCode",cartonPalletInventoryDetDto.getAsnCode());
-        inventoryMap.put("jobStatus",1);
-        List<WmsInnerInventoryDto> inventoryDtos = wmsInnerInventoryMapper.findList(inventoryMap);
-        if(StringUtils.isNotEmpty(inventoryDtos)){
-            WmsInnerInventoryDto wmsInnerInventoryDto = inventoryDtos.get(0);
-            if(wmsInnerInventoryDto.getLockStatus() == (byte)1||wmsInnerInventoryDto.getStockLock() == (byte)1){
-                throw new BizErrorException("库存被锁定");
-            }
+        if (cartonPalletInventoryDetDto.getIfStockLock() == (byte)1) {
+            throw new BizErrorException("库存被锁定");
         }
 
         //二级条码信息
