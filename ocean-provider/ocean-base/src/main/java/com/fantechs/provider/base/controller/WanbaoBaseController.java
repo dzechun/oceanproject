@@ -1,23 +1,15 @@
 package com.fantechs.provider.base.controller;
 
-import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleSetDto;
-import com.fantechs.common.base.general.dto.basic.BaseMaterialDto;
-import com.fantechs.common.base.general.dto.basic.WanbaoBaseBySyncOrderDto;
-import com.fantechs.common.base.general.entity.basic.BaseProLine;
-import com.fantechs.common.base.general.entity.basic.BaseRoute;
-import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine;
+import com.fantechs.common.base.general.dto.basic.*;
+import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.base.service.*;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,6 +28,8 @@ import java.util.List;
 @Validated
 public class WanbaoBaseController {
 
+    // region Service注入
+
     @Resource
     BaseProLineService proLineService;
     @Resource
@@ -46,22 +40,76 @@ public class WanbaoBaseController {
     BaseBarcodeRuleSetService barcodeRuleSetService;
     @Resource
     BaseRouteProcessService routeProcessService;
+    @Resource
+    BaseTabService tabService;
+    @Resource
+    BaseProductModelService productModelService;
+    @Resource
+    BaseSupplierService supplierService;
+    @Resource
+    BaseMaterialOwnerService materialOwnerService;
+
+    // endregion
 
     @ApiOperation("同步工单查询基础数据汇总")
     @PostMapping("/findBySyncOrder")
-    public ResponseEntity<WanbaoBaseBySyncOrderDto> findBySyncOrder(){
+    public ResponseEntity<WanbaoBaseBySyncDto> findBySyncOrder(){
         List<BaseProLine> proLineList = proLineService.findList(new HashMap<>());
         List<BaseMaterialDto> materialDtoList = materialService.findAll(new HashMap<>());
         List<BaseRoute> routeList = routeService.findList(new HashMap<>());
         List<BaseBarcodeRuleSetDto> barcodeRuleSetDtoList = barcodeRuleSetService.findList(new HashMap<>());
         List<BaseRouteProcess> routeProcessList = routeProcessService.findList(new HashMap<>());
 
-        WanbaoBaseBySyncOrderDto dto = new WanbaoBaseBySyncOrderDto();
+        WanbaoBaseBySyncDto dto = new WanbaoBaseBySyncDto();
         dto.setMaterialDtoList(materialDtoList);
         dto.setBarcodeRuleSetDtoList(barcodeRuleSetDtoList);
         dto.setProLineList(proLineList);
         dto.setRouteList(routeList);
         dto.setRouteProcessList(routeProcessList);
+        return ControllerUtil.returnDataSuccess(dto, 1);
+    }
+
+    @ApiOperation("同步物料查询基础数据汇总")
+    @PostMapping("/findBySyncMaterial")
+    public ResponseEntity<WanbaoBaseBySyncDto> findBySyncMaterial(){
+        List<BaseMaterialDto> materialDtos = materialService.findAll(new HashMap<>());
+        List<BaseTabDto> tabDtos = tabService.findList(new HashMap<>());
+        List<BaseBarcodeRuleSetDto> barcodeRuleSetDtos = barcodeRuleSetService.findList(new HashMap<>());
+        List<BaseProductModel> productModels = productModelService.selectProductModels(new HashMap<>());
+
+        WanbaoBaseBySyncDto dto = new WanbaoBaseBySyncDto();
+        dto.setMaterialDtoList(materialDtos);
+        dto.setBaseTabDtoList(tabDtos);
+        dto.setProductModelList(productModels);
+        dto.setBarcodeRuleSetDtoList(barcodeRuleSetDtos);
+        return ControllerUtil.returnDataSuccess(dto, 1);
+    }
+
+    @ApiOperation("同步销售订单查询基础数据汇总")
+    @PostMapping("/findBySyncSaleOrder")
+    public ResponseEntity<WanbaoBaseBySyncDto> findBySyncSaleOrder(){
+        List<BaseMaterialDto> materialDtos = materialService.findAll(new HashMap<>());
+        List<BaseBarcodeRuleSetDto> barcodeRuleSetDtos = barcodeRuleSetService.findList(new HashMap<>());
+        List<BaseSupplier> baseSuppliers = supplierService.findAll(new HashMap<>());
+
+        WanbaoBaseBySyncDto dto = new WanbaoBaseBySyncDto();
+        dto.setMaterialDtoList(materialDtos);
+        dto.setBarcodeRuleSetDtoList(barcodeRuleSetDtos);
+        dto.setBaseSupplierList(baseSuppliers);
+        return ControllerUtil.returnDataSuccess(dto, 1);
+    }
+
+    @ApiOperation("同步销售订单查询基础数据汇总")
+    @PostMapping("/findBySyncOutDelivery")
+    public ResponseEntity<WanbaoBaseBySyncDto> findBySyncOutDelivery(){
+        List<BaseMaterialDto> materialDtos = materialService.findAll(new HashMap<>());
+        List<BaseSupplier> baseSuppliers = supplierService.findAll(new HashMap<>());
+        List<BaseMaterialOwnerDto> materialOwnerDtos = materialOwnerService.findAll();
+
+        WanbaoBaseBySyncDto dto = new WanbaoBaseBySyncDto();
+        dto.setMaterialDtoList(materialDtos);
+        dto.setBaseSupplierList(baseSuppliers);
+        dto.setMaterialOwnerDtoList(materialOwnerDtos);
         return ControllerUtil.returnDataSuccess(dto, 1);
     }
 }

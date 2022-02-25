@@ -65,10 +65,12 @@
             we.wip_entity_name
     </select>
 
-    <insert id="save" parameterType="com.fantechs.provider.wanbao.api.entity.MiddleOrder">
-        INSERT INTO "K3WMS"."middle_order" ( "work_order_id", "work_order_code", "work_order_status", "work_order_type", "sales_order_code", "pro_name", "plan_start_time", "plan_end_time", "work_order_qty", "output_qty", "material_code", "material_name", "modified_time" )
-        VALUES
-            ( #{workOrderId},
+    <insert id="save" parameterType="java.util.List" useGeneratedKeys="false">
+        INSERT INTO "K3WMS"."middle_order" ( "work_order_id", "work_order_code", "work_order_status", "work_order_type", "sales_order_code", "pro_name", "plan_start_time", "plan_end_time", "work_order_qty", "output_qty", "material_code", "material_name", "modified_time", "sales_code" )
+        <foreach item="item" index="index" collection="list" separator="union all">
+            (
+            SELECT
+            #{workOrderId},
             #{workOrderCode},
             #{workOrderStatus},
             #{workOrderType},
@@ -80,7 +82,11 @@
             #{materialName} ,
             #{workOrderQty} ,
             #{outputQty} ,
-            #{modifiedTime} )
+            #{modifiedTime},
+            #{salesCode}
+            FROM DUAL
+            )
+        </foreach>
     </insert>
 
 </mapper>

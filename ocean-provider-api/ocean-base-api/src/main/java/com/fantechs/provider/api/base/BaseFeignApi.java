@@ -600,5 +600,17 @@ public interface BaseFeignApi {
 
     @ApiOperation("同步工单查询基础数据汇总")
     @PostMapping("/wanbaoBase/findBySyncOrder")
-    ResponseEntity<WanbaoBaseBySyncOrderDto> findBySyncOrder();
+    ResponseEntity<WanbaoBaseBySyncDto> findBySyncOrder();
+
+    @ApiOperation("同步物料查询基础数据汇总")
+    @PostMapping("/wanbaoBase/findBySyncMaterial")
+    ResponseEntity<WanbaoBaseBySyncDto> findBySyncMaterial();
+
+    @ApiOperation("同步销售订单查询基础数据汇总")
+    @PostMapping("/wanbaoBase/findBySyncSaleOrder")
+    ResponseEntity<WanbaoBaseBySyncDto> findBySyncSaleOrder();
+
+    @ApiOperation("同步出库单查询基础数据汇总")
+    @PostMapping("/wanbaoBase/findBySyncOutDelivery")
+    ResponseEntity<WanbaoBaseBySyncDto> findBySyncOutDelivery();
 }

@@ -30,8 +30,8 @@ public class SearchWanbaoBarcodeRultData extends BaseQuery implements Serializab
     /**
      * 客户型号编码
      */
-    @ApiModelProperty(name = "productModelCode", value = "客户型号编码")
-    private String productModelCode;
+    @ApiModelProperty(name = "customerModel", value = "客户型号编码")
+    private String customerModel;
 
     /**
      * 识别码

@@ -5,14 +5,11 @@ import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysApiLog;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.*;
-import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
@@ -20,8 +17,6 @@ import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSet;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductProcessRoute;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseRoute;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
@@ -130,17 +125,15 @@ public class SyncDataServiceImpl implements SyncDataService {
             });
 
             // 1、保存平台库
+            WanbaoBaseBySyncDto wanbaoBaseBySyncDto = baseFeignApi.findBySyncMaterial().getData();
             // 产品型号集合
-            List<BaseProductModel> productModels = baseFeignApi.findProductModelAll().getData();
+            List<BaseProductModel> productModels = wanbaoBaseBySyncDto.getProductModelList();
             // 物料集合
-            List<BaseMaterial> baseMaterials = baseFeignApi.findMaterialAll().getData();
+            List<BaseMaterialDto> baseMaterials = wanbaoBaseBySyncDto.getMaterialDtoList();
             // 物料页签集合
-            List<BaseTabDto> baseTabDtos = baseFeignApi.findTabAll().getData();
-
+            List<BaseTabDto> baseTabDtos = wanbaoBaseBySyncDto.getBaseTabDtoList();
             // 条码规则集合
-            SearchBaseBarcodeRuleSet barcodeRuleSet = new SearchBaseBarcodeRuleSet();
-            barcodeRuleSet.setPageSize(9999);
-            List<BaseBarcodeRuleSetDto> ruleSetDtos = baseFeignApi.findBarcodeRuleSetList(barcodeRuleSet).getData();
+            List<BaseBarcodeRuleSetDto> ruleSetDtos = wanbaoBaseBySyncDto.getBarcodeRuleSetDtoList();
             if(ruleSetDtos.isEmpty()){
                 // 记录日志
                 apiLog.setResponseData("平台默认条码规则集合不存在，不同步工单数据");
@@ -288,13 +281,13 @@ public class SyncDataServiceImpl implements SyncDataService {
             // 记录日志
             long start = System.currentTimeMillis();
 
-            WanbaoBaseBySyncOrderDto wanbaoBaseBySyncOrderDto = baseFeignApi.findBySyncOrder().getData();
+            WanbaoBaseBySyncDto wanbaoBaseBySyncDto = baseFeignApi.findBySyncOrder().getData();
             // 物料集合
-            List<BaseMaterialDto> baseMaterials = wanbaoBaseBySyncOrderDto.getMaterialDtoList();
+            List<BaseMaterialDto> baseMaterials = wanbaoBaseBySyncDto.getMaterialDtoList();
             // 产线集合
-            List<BaseProLine> proLines = wanbaoBaseBySyncOrderDto.getProLineList();
+            List<BaseProLine> proLines = wanbaoBaseBySyncDto.getProLineList();
             // 工艺路线
-            List<BaseRoute> baseRoutes = wanbaoBaseBySyncOrderDto.getRouteList();
+            List<BaseRoute> baseRoutes = wanbaoBaseBySyncDto.getRouteList();
             if(baseRoutes.isEmpty()){
                 // 记录日志
                 apiLog.setResponseData("平台默认工艺路线不存在，不同步工单数据");
@@ -302,7 +295,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                 return;
             }
             // 条码规则集合
-            List<BaseBarcodeRuleSetDto> ruleSetDtos = wanbaoBaseBySyncOrderDto.getBarcodeRuleSetDtoList();
+            List<BaseBarcodeRuleSetDto> ruleSetDtos = wanbaoBaseBySyncDto.getBarcodeRuleSetDtoList();
             if(ruleSetDtos.isEmpty()){
                 // 记录日志
                 apiLog.setResponseData("平台默认条码规则集合不存在，不同步工单数据");
@@ -310,7 +303,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                 return;
             }
             // 工艺路线工序关系
-            List<BaseRouteProcess> routeProcessList = wanbaoBaseBySyncOrderDto.getRouteProcessList();
+            List<BaseRouteProcess> routeProcessList = wanbaoBaseBySyncDto.getRouteProcessList();
             if (routeProcessList.isEmpty()){
                 // 记录日志
                 apiLog.setResponseData("工艺路线工序关系数据不存在，不同步工单数据");
@@ -455,9 +448,9 @@ public class SyncDataServiceImpl implements SyncDataService {
                     // 新增订单
                     addList.add(workOrder);
                     // 保存中间库
-                    DynamicDataSourceHolder.putDataSouce("secondary");
-                    middleOrderMapper.save(order);
-                    DynamicDataSourceHolder.removeDataSource();
+//                    DynamicDataSourceHolder.putDataSouce("secondary");
+//                    middleOrderMapper.save(order);
+//                    DynamicDataSourceHolder.removeDataSource();
                 }
             }
             long current3 = System.currentTimeMillis();
@@ -525,22 +518,21 @@ public class SyncDataServiceImpl implements SyncDataService {
         if (!salesOrders.isEmpty()) {
             // 记录日志
             long start = System.currentTimeMillis();
+            WanbaoBaseBySyncDto wanbaoBaseBySyncDto = baseFeignApi.findBySyncSaleOrder().getData();
             // 客户集合
-            List<BaseSupplier> baseSuppliers = baseFeignApi.findSupplierAll().getData();
+            List<BaseSupplier> baseSuppliers = wanbaoBaseBySyncDto.getBaseSupplierList();
             // 物料集合
-            List<BaseMaterial> baseMaterials = baseFeignApi.findMaterialAll().getData();
-            // 销售订单
-            List<OmSalesOrderDto> salesOrderDtos = omFeignApi.findSalesOrderAll().getData();
+            List<BaseMaterialDto> baseMaterials = wanbaoBaseBySyncDto.getMaterialDtoList();
             // 条码规则集合
-            SearchBaseBarcodeRuleSet barcodeRuleSet = new SearchBaseBarcodeRuleSet();
-            barcodeRuleSet.setPageSize(9999);
-            List<BaseBarcodeRuleSetDto> ruleSetDtos = baseFeignApi.findBarcodeRuleSetList(barcodeRuleSet).getData();
+            List<BaseBarcodeRuleSetDto> ruleSetDtos = wanbaoBaseBySyncDto.getBarcodeRuleSetDtoList();
             if(ruleSetDtos.isEmpty()){
                 // 记录日志
                 apiLog.setResponseData("平台默认条码规则集合不存在，不同步工单数据");
                 logList.add(apiLog);
                 return;
             }
+            // 销售订单
+            List<OmSalesOrderDto> salesOrderDtos = omFeignApi.findSalesOrderAll().getData();
 
             List<MiddleSaleOrder> list = new ArrayList<>();
             Map<String, List<MiddleSaleOrder>> collect = salesOrders.stream().collect(Collectors.groupingBy(MiddleSaleOrder::getSalesOrderCode));
@@ -699,14 +691,13 @@ public class SyncDataServiceImpl implements SyncDataService {
             // 记录日志
             long start = System.currentTimeMillis();
 
-            // 收货人
-//            List<BaseConsignee> baseConsignees = baseFeignApi.findConsigneeAll().getData();
+            WanbaoBaseBySyncDto wanbaoBaseBySyncDto = baseFeignApi.findBySyncOutDelivery().getData();
             // 客户
-            List<BaseSupplier> baseSuppliers = baseFeignApi.findSupplierAll().getData();
+            List<BaseSupplier> baseSuppliers = wanbaoBaseBySyncDto.getBaseSupplierList();
             // 货主
-            List<BaseMaterialOwnerDto> ownerDtos = baseFeignApi.findMaterialOwnerAll().getData();
+            List<BaseMaterialOwnerDto> ownerDtos = wanbaoBaseBySyncDto.getMaterialOwnerDtoList();
             // 物料集合
-            List<BaseMaterial> baseMaterials = baseFeignApi.findMaterialAll().getData();
+            List<BaseMaterialDto> baseMaterials = wanbaoBaseBySyncDto.getMaterialDtoList();
 
             SearchWmsOutDeliveryOrder outDeliveryOrder = new SearchWmsOutDeliveryOrder();
             outDeliveryOrder.setPageSize(999999);
