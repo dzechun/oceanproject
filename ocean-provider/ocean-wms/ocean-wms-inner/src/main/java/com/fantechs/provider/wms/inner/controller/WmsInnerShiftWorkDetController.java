@@ -87,4 +87,10 @@ public class WmsInnerShiftWorkDetController {
     public ResponseEntity pickDisQty(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<WmsInnerJobOrderDet> wmsInPutawayOrderDet) {
         return ControllerUtil.returnCRUD(wmsInnerShiftWorkDetService.pickDisQty(wmsInPutawayOrderDet));
     }
+
+    @ApiOperation("移位单明细批量删除")
+    @PostMapping("/batchDeleteByShiftWork")
+    public ResponseEntity batchDeleteByShiftWork(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
+        return ControllerUtil.returnCRUD(wmsInnerShiftWorkDetService.batchDeleteByShiftWork(ids));
+    }
 }

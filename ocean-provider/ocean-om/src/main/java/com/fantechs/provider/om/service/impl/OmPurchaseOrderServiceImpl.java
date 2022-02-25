@@ -139,6 +139,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
             omPurchaseOrderDet.setPurchaseOrderId(omPurchaseOrder.getPurchaseOrderId());
             omPurchaseOrderDet.setTotalIssueQty(BigDecimal.ZERO);
             omPurchaseOrderDet.setStatus((byte) 1);
+            omPurchaseOrderDet.setIfAllIssued((byte)0);
             omPurchaseOrderDet.setOrgId(user.getOrganizationId());
             omPurchaseOrderDet.setCreateUserId(user.getUserId());
             omPurchaseOrderDet.setCreateTime(new Date());
@@ -189,7 +190,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
                 if (StringUtils.isNotEmpty(det.getPurchaseOrderId())) {
                     omPurchaseOrderDetMapper.updateByPrimaryKey(det);
-                    idList.add(det.getPurchaseOrderId());
+                    idList.add(det.getPurchaseOrderDetId());
                 }
             }
         }

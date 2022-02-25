@@ -305,7 +305,6 @@ public class PDAWmsInnerShiftWorkServiceImpl implements PDAWmsInnerShiftWorkServ
             jobOrderDet = wmsInnerJobOrderDet;
             // 新增待出库存信息
 
-
             WmsInnerInventory newInnerInventory = new WmsInnerInventory();
             BeanUtil.copyProperties(innerInventoryDto, newInnerInventory);
             newInnerInventory.setPackingQty(dto.getMaterialQty());

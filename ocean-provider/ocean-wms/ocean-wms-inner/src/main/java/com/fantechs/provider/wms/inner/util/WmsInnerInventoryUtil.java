@@ -246,7 +246,7 @@ public class WmsInnerInventoryUtil {
             }else if (wmsInnerInventoryDetDto.getBarcodeType() == 4) {
                 continue;
             }
-            //查询当前条码类型下的所有sn码
+            //查询当前条码类型下的所有sn码，查询对应条码最大的条码类型，加入map
             wmsInnerMaterialBarcodes = wmsInnerInventoryUtil.wmsInnerMaterialBarcodeMapper.selectByExample(example);
             example.clear();
             if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodes)) {
@@ -276,7 +276,7 @@ public class WmsInnerInventoryUtil {
             }
         }
         if (StringUtils.isNotEmpty(barcodeMap)) {
-            //选循环最大条码集合
+            //选循环最大条码集合，根据map查询最大包装数量下的sn码
             for (String barcode : barcodeMap.keySet()) {
                 String[] split = barcode.split(",");
                 barcode = split[1];
@@ -295,6 +295,8 @@ public class WmsInnerInventoryUtil {
                             .andEqualTo("barcodeType",1);
                 }
                 List<WmsInnerMaterialBarcode> wmsInnerMaterialBarcodes = wmsInnerInventoryUtil.wmsInnerMaterialBarcodeMapper.selectByExample(example);
+
+
                 example.clear();
                 if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodes)) {
                     //判断
