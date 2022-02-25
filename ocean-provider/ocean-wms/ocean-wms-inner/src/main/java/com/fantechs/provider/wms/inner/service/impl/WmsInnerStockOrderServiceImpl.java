@@ -243,6 +243,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     wmsInventoryVerificationDet.setBatchCode(wmsInnerInventory.getBatchCode());
                     wmsInventoryVerificationDet.setInventoryStatusId(wmsInnerInventory.getInventoryStatusId());
                     wmsInventoryVerificationDet.setSupplierId(wmsInnerInventory.getSupplierId());
+                    wmsInventoryVerificationDet.setProductionTime(wmsInnerInventory.getProductionDate());
                     list.add(wmsInventoryVerificationDet);
                 }
             }else {
@@ -339,6 +340,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     wmsInventoryVerificationDet.setBatchCode(wmsInnerInventory.getBatchCode());
                     wmsInventoryVerificationDet.setInventoryStatusId(wmsInnerInventory.getInventoryStatusId());
                     wmsInventoryVerificationDet.setSupplierId(wmsInnerInventory.getSupplierId());
+                    wmsInventoryVerificationDet.setProductionTime(wmsInnerInventory.getProductionDate());
                     list.add(wmsInventoryVerificationDet);
                 }
             }
@@ -367,6 +369,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 wmsInventoryVerificationDet.setBatchCode(wmsInnerInventory.getBatchCode());
                 wmsInventoryVerificationDet.setInventoryStatusId(wmsInnerInventory.getInventoryStatusId());
                 wmsInventoryVerificationDet.setSupplierId(wmsInnerInventory.getSupplierId());
+                wmsInventoryVerificationDet.setProductionTime(wmsInnerInventory.getProductionDate());
                 list.add(wmsInventoryVerificationDet);
             }
         }
