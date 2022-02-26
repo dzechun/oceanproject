@@ -93,24 +93,26 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
         List<WmsInnerMaterialBarcodeDto> wmsInnerMaterialBarcodeDtoList = new ArrayList<>();
 
         int i = 0;
+
+        WmsInnerDirectTransferOrder order = new WmsInnerDirectTransferOrder();
+        order.setDirectTransferOrderCode(CodeUtils.getId("INNER-DTO"));
+        order.setWorkerUserId(pdaWmsInnerDirectTransferOrderDtos.get(0).getWorkerUserId());
+        order.setOrderStatus((byte) 3);
+        order.setStatus((byte) 1);
+        order.setOrgId(user.getOrganizationId());
+        order.setCreateUserId(user.getUserId());
+        order.setCreateTime(new Date());
+        order.setModifiedUserId(user.getUserId());
+        order.setModifiedTime(new Date());
+        wmsInnerDirectTransferOrderMapper.insertUseGeneratedKeys(order);
+
         for (PDAWmsInnerDirectTransferOrderDto dto : pdaWmsInnerDirectTransferOrderDtos) {
-            if (StringUtils.isEmpty(dto.getPdaWmsInnerDirectTransferOrderDetDtos(), dto.getMaterialId(), dto.getInStorageId(), dto.getOutStorageId()))
+            if (StringUtils.isEmpty(dto.getPdaWmsInnerDirectTransferOrderDetDtos(), dto.getMaterialId(), dto.getInStorageId(), dto.getOutStorageId())) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "物料、移入库位、移出库位不能为空");
+            }
             if (dto.getInStorageId().equals(dto.getOutStorageId())) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(), "移入库位不能与移出库位相同");
             }
-
-            WmsInnerDirectTransferOrder order = new WmsInnerDirectTransferOrder();
-            order.setDirectTransferOrderCode(CodeUtils.getId("INNER-DTO"));
-            order.setWorkerUserId(dto.getWorkerUserId());
-            order.setOrderStatus((byte) 3);
-            order.setStatus((byte) 1);
-            order.setOrgId(user.getOrganizationId());
-            order.setCreateUserId(user.getUserId());
-            order.setCreateTime(new Date());
-            order.setModifiedUserId(user.getUserId());
-            order.setModifiedTime(new Date());
-            wmsInnerDirectTransferOrderMapper.insertUseGeneratedKeys(order);
 
             //查询移入库位
             SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
@@ -167,6 +169,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
             if (qty.compareTo(BigDecimal.ZERO) == -1)
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "移出库位物料数量小于等于0");
 
+            BigDecimal totalQty = BigDecimal.ZERO;
             for (PDAWmsInnerDirectTransferOrderDetDto det : dto.getPdaWmsInnerDirectTransferOrderDetDtos()) {
 
                 //查询条码
@@ -233,7 +236,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                         wmsInnerMaterialBarcodeDto.setModifiedUserId(user.getUserId());
                         wmsInnerMaterialBarcodeDto.setModifiedTime(new Date());
                         wmsInnerMaterialBarcodeDtoList.add(wmsInnerMaterialBarcodeDto);
-
+                        totalQty = totalQty.add(wmsInnerInventoryDetDto.getMaterialQty());
                     }
 
                 }
@@ -307,7 +310,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                 i = wmsInnerInventoryMapper.updateByPrimaryKeySelective(inWmsInnerInventory);
             }
 
-            orderDet.setActualQty(qty);
+            orderDet.setActualQty(totalQty);
             wmsInnerDirectTransferOrderDetMapper.updateByPrimaryKeySelective(orderDet);
         }
         if (StringUtils.isNotEmpty(list))
