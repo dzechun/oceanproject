@@ -555,9 +555,6 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             }else if(wmsInventoryVerification.getProjectType()==(byte)1){
                 //更改盘点状态（已完成）
                 wmsInventoryVerification.setOrderStatus((byte)5);
-            }else if(wmsInventoryVerification.getProjectType()==2 && wmsInventoryVerification.getStockMode()==(byte)1){
-                //PDA 差异处理
-                this.difference(id);
             }
 
             wmsInventoryVerification.setModifiedTime(new Date());
