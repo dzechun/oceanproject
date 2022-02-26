@@ -3,6 +3,7 @@ package com.fantechs.common.base.general.entity.wms.inner;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -178,7 +179,7 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="productionDate",value = "生产日期")
     @Excel(name = "生产日期", height = 20, width = 30,exportFormat = "yyyy-MM-dd",orderNum="15")
-    @JSONField(format ="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "production_date")
     private Date productionDate;
