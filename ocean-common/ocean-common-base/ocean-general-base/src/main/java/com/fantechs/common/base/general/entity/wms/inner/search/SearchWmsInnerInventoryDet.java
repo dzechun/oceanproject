@@ -83,6 +83,9 @@ public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializabl
     @ApiModelProperty("物料编码")
     private String materialCode;
 
+    @ApiModelProperty("供应商Id")
+    private Long supplierId;
+
     @ApiModelProperty("供应商名称")
     private String supplierName;
 
@@ -160,4 +163,9 @@ public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializabl
     @ApiModelProperty(name = "inventoryStatusName",value = "库存状态")
     private String inventoryStatusName;
 
+    /**
+     *条码类型( 1 SN 2 彩盒 3 箱号 4 栈板 )
+     */
+    @ApiModelProperty(name = "barcodeType",value = "条码类型( 1 SN 2 彩盒 3 箱号 4 栈板 )")
+    private Byte barcodeType;
 }

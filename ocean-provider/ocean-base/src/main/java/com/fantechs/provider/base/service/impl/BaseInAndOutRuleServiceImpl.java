@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -294,7 +295,64 @@ public class BaseInAndOutRuleServiceImpl extends BaseService<BaseInAndOutRule> i
     }
 
     @Override
-    public List<String> findView() {
-        return baseInAndOutRuleMapper.findView();
+    public List<String> findView(Byte category) {
+        String type = null;
+        switch (category){
+            case 1:
+                type="IN";
+                break;
+            case 2:
+                type="OUT";
+                break;
+            case 3:
+                type="BA";
+                break;
+            default:
+                type="IN";
+        }
+        return baseInAndOutRuleMapper.findView(type);
+    }
+
+    @Override
+    public Long inRule(Long warehouseId, Long materialId, BigDecimal qty) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        Example example = new Example(BaseInAndOutRule.class);
+        example.createCriteria().andEqualTo("warehouseId",warehouseId);
+        List<BaseInAndOutRule> list = baseInAndOutRuleMapper.selectByExample(example);
+        list = list.stream().filter(x->x.getCategory()==1).collect(Collectors.toList());
+        if(list.size()<1){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到仓库"+warehouseId+"维护的入库规则");
+        }
+        List<BaseInAndOutRuleDetDto> baseInAndOutRuleDetDtos = baseInAndOutRuleDetMapper.findList(ControllerUtil.dynamicCondition("inAndOutRuleId",list.get(0).getInAndOutRuleId()));
+        //按优先级生序排序
+        baseInAndOutRuleDetDtos = baseInAndOutRuleDetDtos.stream().sorted(Comparator.comparing(BaseInAndOutRuleDetDto::getPriority)).collect(Collectors.toList());
+        Long storageId = null;
+        for (BaseInAndOutRuleDetDto baseInAndOutRuleDetDto : baseInAndOutRuleDetDtos) {
+            storageId = baseInAndOutRuleMapper.inRuleExecute(baseInAndOutRuleDetDto.getStoredProcedureName(),warehouseId, materialId, qty);
+
+            //后续逻辑 计算库容
+        }
+        return storageId;
+    }
+
+    @Override
+    public List<String> outRule(Long warehouseId, Long storageId, Long materialId, BigDecimal qty) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        Example example = new Example(BaseInAndOutRule.class);
+        example.createCriteria().andEqualTo("warehouseId",warehouseId);
+        List<BaseInAndOutRule> list = baseInAndOutRuleMapper.selectByExample(example);
+        list = list.stream().filter(x->x.getCategory()==1).collect(Collectors.toList());
+        if(list.size()<1){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未查询到仓库"+warehouseId+"维护的入库规则");
+        }
+        List<BaseInAndOutRuleDetDto> baseInAndOutRuleDetDtos = baseInAndOutRuleDetMapper.findList(ControllerUtil.dynamicCondition("inAndOutRuleId",list.get(0).getInAndOutRuleId()));
+        //按优先级生序排序
+        baseInAndOutRuleDetDtos = baseInAndOutRuleDetDtos.stream().sorted(Comparator.comparing(BaseInAndOutRuleDetDto::getPriority)).collect(Collectors.toList());
+        List<String>  barcodeList = new ArrayList<>();
+        for (BaseInAndOutRuleDetDto baseInAndOutRuleDetDto : baseInAndOutRuleDetDtos) {
+            barcodeList = baseInAndOutRuleMapper.outRuleExecute(baseInAndOutRuleDetDto.getStoredProcedureName(),warehouseId, storageId, materialId, qty.intValue());
+            //后续逻辑 计算库容
+        }
+        return barcodeList;
     }
 }

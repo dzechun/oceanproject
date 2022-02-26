@@ -3,13 +3,12 @@ package com.fantechs.provider.wms.inner.util;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
+import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
+import com.fantechs.provider.wms.inner.mapper.WmsInnerMaterialBarcodeMapper;
 import com.fantechs.provider.wms.inner.service.WmsInnerInventoryDetService;
 import org.springframework.stereotype.Component;
 import tk.mybatis.mapper.entity.Example;
@@ -18,7 +17,9 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author
@@ -34,12 +35,16 @@ public class WmsInnerInventoryUtil {
     private WmsInnerInventoryDetService wmsInnerInventoryDetService;
 
     private static WmsInnerInventoryUtil wmsInnerInventoryUtil;
+    @Resource
+    private WmsInnerMaterialBarcodeMapper wmsInnerMaterialBarcodeMapper;
+
 
     @PostConstruct
     public void init(){
         wmsInnerInventoryUtil = this;
         wmsInnerInventoryUtil.wmsInnerInventoryMapper=wmsInnerInventoryMapper;
         wmsInnerInventoryUtil.wmsInnerInventoryDetService=wmsInnerInventoryDetService;
+        wmsInnerInventoryUtil.wmsInnerMaterialBarcodeMapper=wmsInnerMaterialBarcodeMapper;
     }
 
     /**
@@ -214,5 +219,95 @@ public class WmsInnerInventoryUtil {
         return num;
     }
 
+    /**
+     * 校验条码是否整单发货
+     *
+     * @return
+     */
+    public static void isAllOutInventory(List<WmsInnerInventoryDetDto> list) {
+        if (StringUtils.isEmpty(list)) {
+            return ;
+        }
+        WmsInnerInventoryDetDto wmsInnerInventoryDetDto = list.get(0);
+        Example example = new Example(WmsInnerMaterialBarcode.class);
+        Map<String,Integer> barcodeMap = new HashMap<>();
+        for (WmsInnerInventoryDetDto innerPdaInventoryDetDto : list) {
+            List<WmsInnerMaterialBarcode> wmsInnerMaterialBarcodes = null;
+            //按照条码类型组合查询对应的所有sn码查询条件
+            if (wmsInnerInventoryDetDto.getBarcodeType() == 1) {
+                example.createCriteria().andEqualTo("barcode",innerPdaInventoryDetDto.getBarcode())
+                        .andEqualTo("barcodeType",1);
+            }else if (wmsInnerInventoryDetDto.getBarcodeType() == 2) {
+                example.createCriteria().andEqualTo("colorBoxCode",innerPdaInventoryDetDto.getColorBoxCode())
+                        .andEqualTo("barcodeType",1);
+            }else if (wmsInnerInventoryDetDto.getBarcodeType() == 3) {
+                example.createCriteria().andEqualTo("cartonCode",innerPdaInventoryDetDto.getCartonCode())
+                        .andEqualTo("barcodeType",1);
+            }else if (wmsInnerInventoryDetDto.getBarcodeType() == 4) {
+                continue;
+            }
+            //查询当前条码类型下的所有sn码，查询对应条码最大的条码类型，加入map
+            wmsInnerMaterialBarcodes = wmsInnerInventoryUtil.wmsInnerMaterialBarcodeMapper.selectByExample(example);
+            example.clear();
+            if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodes)) {
+                WmsInnerMaterialBarcode wmsInnerMaterialBarcode = wmsInnerMaterialBarcodes.get(0);
+                String barcode = "";
+                Integer barcodeType = 1;
+                //判断对应单位的条码是否有值，获取最大单位的条码
+                if (StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getPalletCode())) {
+                    barcode = wmsInnerMaterialBarcode.getPalletCode();
+                    barcodeType = 4;
+                }else if (StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getCartonCode())) {
+                    barcode = wmsInnerMaterialBarcode.getCartonCode();
+                    barcodeType = 3;
+                }else if (StringUtils.isNotEmpty(wmsInnerMaterialBarcode.getColorBoxCode())) {
+                    barcode = wmsInnerMaterialBarcode.getColorBoxCode();
+                    barcodeType = 2;
+                }else {
+                    barcode = wmsInnerMaterialBarcode.getBarcode();
+                }
+                //按照最大条码单位进行分组，累计最大条码相同的sn码数量
+                Integer qty = barcodeMap.get(barcodeType+","+barcode);
+                if (StringUtils.isNotEmpty(qty)) {
+                    barcodeMap.put(barcodeType+","+barcode,qty.intValue() + wmsInnerMaterialBarcodes.size());
+                }else {
+                    barcodeMap.put(barcodeType+","+barcode,wmsInnerMaterialBarcodes.size());
+                }
+            }
+        }
+        if (StringUtils.isNotEmpty(barcodeMap)) {
+            //选循环最大条码集合，根据map查询最大包装数量下的sn码
+            for (String barcode : barcodeMap.keySet()) {
+                String[] split = barcode.split(",");
+                barcode = split[1];
+                //组合按照最大条码单位查询所有的sn码的查询条件
+                if (1 == Integer.valueOf(split[0])) {
+                    example.createCriteria().andEqualTo("barcode",barcode)
+                            .andEqualTo("barcodeType",1);
+                }else if (2 == Integer.valueOf(split[0])) {
+                    example.createCriteria().andEqualTo("colorBoxCode",barcode)
+                            .andEqualTo("barcodeType",1);
+                }else if (3 == Integer.valueOf(split[0])) {
+                    example.createCriteria().andEqualTo("cartonCode",barcode)
+                            .andEqualTo("barcodeType",1);
+                }else if (4 == Integer.valueOf(split[0])) {
+                    example.createCriteria().andEqualTo("palletCode",barcode)
+                            .andEqualTo("barcodeType",1);
+                }
+                List<WmsInnerMaterialBarcode> wmsInnerMaterialBarcodes = wmsInnerInventoryUtil.wmsInnerMaterialBarcodeMapper.selectByExample(example);
+
+
+                example.clear();
+                if (StringUtils.isNotEmpty(wmsInnerMaterialBarcodes)) {
+                    //判断
+                    barcode = split[0]+","+split[1];
+                    if (wmsInnerMaterialBarcodes.size() != barcodeMap.get(barcode)) {
+                        throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "出库需以最大单位进行，如需单独移动，请先进行拆分操作");
+                    }
+                }
+
+            }
+        }
+    }
 
 }

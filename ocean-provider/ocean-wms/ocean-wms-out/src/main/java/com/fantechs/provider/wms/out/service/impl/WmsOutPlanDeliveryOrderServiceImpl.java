@@ -34,6 +34,7 @@ import com.fantechs.provider.wms.out.mapper.WmsOutPlanDeliveryOrderDetMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutPlanDeliveryOrderMapper;
 import com.fantechs.provider.wms.out.service.WmsOutDeliveryReqOrderService;
 import com.fantechs.provider.wms.out.service.WmsOutPlanDeliveryOrderService;
+import com.fantechs.provider.wms.out.service.WmsOutPlanStockListOrderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,6 +68,8 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
     private InnerFeignApi innerFeignApi;
     @Resource
     private WmsOutDeliveryReqOrderService wmsOutDeliveryReqOrderService;
+    @Resource
+    private WmsOutPlanStockListOrderService wmsOutPlanStockListOrderService;
 
     @Override
     public List<WmsOutPlanDeliveryOrderDto> findList(Map<String, Object> map) {
@@ -183,6 +186,10 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
         if("OUT-DRO".equals(wmsOutPlanDeliveryOrder.getSourceSysOrderTypeCode())){
             wmsOutDeliveryReqOrderService.updatePutawayQty(wmsOutPlanDeliveryOrderDet.getSourceId(),putawayQty);
         }
+        /*else if("OUT-PSLO".equals(wmsOutPlanDeliveryOrder.getSourceSysOrderTypeCode())){
+            //如果出库计划的上游单据是备料计划单，也需返写
+            wmsOutPlanStockListOrderService.updateActualQty(wmsOutPlanDeliveryOrderDet.getSourceId(),putawayQty);
+        }*/
 
         return i;
     }
@@ -193,6 +200,7 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         record.setPlanDeliveryOrderCode(CodeUtils.getId("OUT-PDO"));
+        record.setCoreSourceSysOrderTypeCode(StringUtils.isEmpty(record.getCoreSourceSysOrderTypeCode())?record.getSourceSysOrderTypeCode():record.getCoreSourceSysOrderTypeCode());
         record.setOrderStatus(StringUtils.isEmpty(record.getOrderStatus())?(byte)1:record.getOrderStatus());
         record.setOrgId(user.getOrganizationId());
         record.setCreateTime(new DateTime());
@@ -213,11 +221,17 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
                 wmsOutPlanDeliveryOrderDetDto.setModifiedTime(new Date());
                 wmsOutPlanDeliveryOrderDetDto.setOrgId(user.getOrganizationId());
 
+                wmsOutPlanDeliveryOrderDetMapper.insertUseGeneratedKeys(wmsOutPlanDeliveryOrderDetDto);
+                if(StringUtils.isEmpty(wmsOutPlanDeliveryOrderDetDto.getCoreSourceId())) {
+                    wmsOutPlanDeliveryOrderDetDto.setCoreSourceId(wmsOutPlanDeliveryOrderDetDto.getPlanDeliveryOrderDetId());
+                    wmsOutPlanDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutPlanDeliveryOrderDetDto);
+                }
+
                 WmsOutHtPlanDeliveryOrderDet wmsOutHtPlanDeliveryOrderDet = new WmsOutHtPlanDeliveryOrderDet();
                 org.springframework.beans.BeanUtils.copyProperties(wmsOutPlanDeliveryOrderDetDto, wmsOutHtPlanDeliveryOrderDet);
                 htList.add(wmsOutHtPlanDeliveryOrderDet);
             }
-            wmsOutPlanDeliveryOrderDetMapper.insertList(wmsOutPlanDeliveryOrderDetDtos);
+            //wmsOutPlanDeliveryOrderDetMapper.insertList(wmsOutPlanDeliveryOrderDetDtos);
             wmsOutHtPlanDeliveryOrderDetMapper.insertList(htList);
         }
 
@@ -276,11 +290,18 @@ public class WmsOutPlanDeliveryOrderServiceImpl extends BaseService<WmsOutPlanDe
                 wmsOutPlanDeliveryOrderDetDto.setModifiedUserId(user.getUserId());
                 wmsOutPlanDeliveryOrderDetDto.setModifiedTime(new Date());
                 wmsOutPlanDeliveryOrderDetDto.setOrgId(user.getOrganizationId());
+
+                wmsOutPlanDeliveryOrderDetMapper.insertUseGeneratedKeys(wmsOutPlanDeliveryOrderDetDto);
+                if(StringUtils.isEmpty(wmsOutPlanDeliveryOrderDetDto.getCoreSourceId())) {
+                    wmsOutPlanDeliveryOrderDetDto.setCoreSourceId(wmsOutPlanDeliveryOrderDetDto.getPlanDeliveryOrderDetId());
+                    wmsOutPlanDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutPlanDeliveryOrderDetDto);
+                }
+
                 addDetList.add(wmsOutPlanDeliveryOrderDetDto);
             }
-            if(StringUtils.isNotEmpty(addDetList)) {
+            /*if(StringUtils.isNotEmpty(addDetList)) {
                 wmsOutPlanDeliveryOrderDetMapper.insertList(addDetList);
-            }
+            }*/
             if(StringUtils.isNotEmpty(htList)) {
                 wmsOutHtPlanDeliveryOrderDetMapper.insertList(htList);
             }

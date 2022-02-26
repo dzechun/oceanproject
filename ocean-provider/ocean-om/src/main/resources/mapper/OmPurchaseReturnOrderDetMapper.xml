@@ -45,6 +45,9 @@
     <result column="gross_weight" jdbcType="VARCHAR" property="grossWeight"/>
     <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
     <result column="purchase_return_order_code" jdbcType="VARCHAR" property="purchaseReturnOrderCode"/>
+    <result column="total_sales_return_qty" jdbcType="DECIMAL" property="totalSalesReturnQty" />
+    <result column="total_receiving_qty" jdbcType="DECIMAL" property="totalReceivingQty" />
+    <result column="finish_status" jdbcType="TINYINT" property="finishStatus" />
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
   </resultMap>
 
@@ -78,14 +81,18 @@
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     select
     <include refid="Base_Column_List"/>,
+    (SELECT if(SUM(oprod1.order_qty)!=ifnull(SUM(oprod1.actual_qty),0),0,1) FROM om_purchase_return_order_det oprod1 where
+    oprod1.purchase_order_det_id = oprod.purchase_order_det_id) as finish_status,
     bm.material_code,bm.material_name,bm.material_version,bm.material_desc,
     bmb.volume,bmb.net_weight,bmb.gross_weight,
     bw.warehouse_name,opro.purchase_return_order_code,opro.supplier_id,
+    opod.total_sales_return_qty,opod.actual_qty as total_receiving_qty,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
     from om_purchase_return_order_det oprod
     left join om_purchase_return_order opro ON oprod.purchase_return_order_id = opro.purchase_return_order_id
+    left join om_purchase_order_det opod ON oprod.purchase_order_det_id = opod.purchase_order_det_id
     left join base_material bm on oprod.material_id = bm.material_id
     left join base_material_tab bmb ON bm.material_id = bmb.material_id
     left join base_warehouse bw on oprod.warehouse_id = bw.warehouse_id

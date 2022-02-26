@@ -32,8 +32,8 @@ public class MesPmDailyPlanImport implements Serializable {
     /**
      * 工单类型(0、量产 1、试产 2、返工 3、维修)
      */
-    @Excel(name = "工单类型(0、量产 1、试产 2、返工 3、维修)", height = 20, width = 30)
-    @ApiModelProperty(name="workOrderTypeName",value = "工单类型(0、量产 1、试产 2、返工 3、维修)")
+    @Excel(name = "工单类型", height = 20, width = 30)
+    @ApiModelProperty(name="workOrderTypeName",value = "工单类型")
     private String workOrderTypeName;
 
     /**
@@ -68,7 +68,7 @@ public class MesPmDailyPlanImport implements Serializable {
     /**
      * 工单编号(必填)
      */
-    @Excel(name = "工单编号", height = 20, width = 30)
+    @Excel(name = "工单编号(必填)", height = 20, width = 30)
     @ApiModelProperty(name="workOrderCode",value = "工单编号")
     private String workOrderCode;
 
@@ -80,10 +80,10 @@ public class MesPmDailyPlanImport implements Serializable {
     private Long workOrderId;
 
     /**
-     * 物料编码
+     * 产品料号
      */
-    @Excel(name = "物料编码",  height = 20, width = 30)
-    @ApiModelProperty(name="materialCode" ,value="物料编码")
+    @Excel(name = "产品料号",  height = 20, width = 30)
+    @ApiModelProperty(name="materialCode" ,value="产品料号")
     private String materialCode;
 
     /**
@@ -94,17 +94,17 @@ public class MesPmDailyPlanImport implements Serializable {
     private Long materialId;
 
     /**
-     * 物料名称
+     * 产品名称
      */
-    @Excel(name = "物料名称",  height = 20, width = 30)
-    @ApiModelProperty(name="materialName" ,value="物料名称")
+    @Excel(name = "产品名称",  height = 20, width = 30)
+    @ApiModelProperty(name="materialName" ,value="产品名称")
     private String materialName;
 
     /**
-     * 物料规格
+     * 产品描述
      */
-    @Excel(name = "物料规格",  height = 20, width = 30)
-    @ApiModelProperty(name="materialSpec" ,value="物料规格")
+    @Excel(name = "产品描述",  height = 20, width = 30)
+    @ApiModelProperty(name="materialSpec" ,value="产品描述")
     private String materialSpec;
 
     /**

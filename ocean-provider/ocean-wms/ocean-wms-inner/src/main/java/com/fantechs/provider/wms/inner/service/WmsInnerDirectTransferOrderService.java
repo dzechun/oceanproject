@@ -1,5 +1,6 @@
 package com.fantechs.provider.wms.inner.service;
 
+import com.fantechs.common.base.general.dto.wms.inner.PDAWmsInnerDirectTransferOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.PDAWmsInnerDirectTransferOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerDirectTransferOrderDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerDirectTransferOrder;
@@ -18,4 +19,7 @@ public interface WmsInnerDirectTransferOrderService extends IService<WmsInnerDir
     WmsInnerDirectTransferOrderDto detail(Long id);
 
     int save(List<PDAWmsInnerDirectTransferOrderDto> pdaWmsInnerDirectTransferOrderDtos);
+
+    int check(List<PDAWmsInnerDirectTransferOrderDetDto> pdaWmsInnerDirectTransferOrderDetDtos);
+
 }

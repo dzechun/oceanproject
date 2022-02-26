@@ -135,6 +135,8 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
             //明细
             List<WmsInInPlanOrderDetDto> wmsInInPlanOrderDetList = new ArrayList<>();
 
+            List<OmPurchaseOrderDet> omPurchaseOrderDetList = new ArrayList<>();
+
             if (StringUtils.isNotEmpty(list)) {
                 SrmInAsnOrderDetDto srmInAsnOrderDet = list.get(0);
                 Example example = new Example(SrmInAsnOrder.class);
@@ -161,6 +163,14 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
                     if (StringUtils.isEmpty(baseOrderFlowDto)) {
                         throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"请配置单据流设置");
                     }
+
+                    if (StringUtils.isNotEmpty(srmInAsnOrderDetDto.getTotalDeliveryQty()) || srmInAsnOrderDetDto.getTotalMaterialQty().compareTo(new BigDecimal(0)) == 0) {
+                        OmPurchaseOrderDet omPurchaseOrderDet = new OmPurchaseOrderDet();
+                        omPurchaseOrderDet.setPurchaseOrderDetId(srmInAsnOrderDetDto.getSourceOrderId());
+                        omPurchaseOrderDet.setTotalIssueQty(srmInAsnOrderDetDto.getDeliveryQty());
+                        omPurchaseOrderDetList.add(omPurchaseOrderDet);
+                    }
+
 
                     //判断下推单据
                     if ("IN-SPO".equals(baseOrderFlowDto.getNextOrderTypeCode())) {
@@ -220,6 +230,7 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
                         qmsIncomingInspectionOrderList.add(qmsIncomingInspectionOrderDto);
                     }else if ("IN-IPO".equals(baseOrderFlowDto.getNextOrderTypeCode())) {
                         wmsInInPlanOrder.setWarehouseId(srmInAsnOrderDetDto.getWarehouseId());
+                        wmsInInPlanOrder.setSourceBigType((byte)1);
                         wmsInInPlanOrder.setOrderStatus((byte) 1);
                         wmsInInPlanOrder.setCoreSourceSysOrderTypeCode(srmInAsnOrder.getSourceSysOrderTypeCode());
                         wmsInInPlanOrder.setSourceSysOrderTypeCode(srmInAsnOrder.getSourceSysOrderTypeCode());
@@ -268,7 +279,9 @@ public class SrmInAsnOrderDetServiceImpl extends BaseService<SrmInAsnOrderDet> i
                     }
                 }
 
-
+                if (StringUtils.isNotEmpty(omPurchaseOrderDetList)) {
+                    oMFeignApi.batchUpdateIssueQty(omPurchaseOrderDetList);
+                }
                 if (StringUtils.isNotEmpty(wmsInPlanReceivingOrderDetList)) {
                     wmsInPlanReceivingOrder.setInPlanReceivingOrderDets(wmsInPlanReceivingOrderDetList);
                     inFeignApi.add(wmsInPlanReceivingOrder);

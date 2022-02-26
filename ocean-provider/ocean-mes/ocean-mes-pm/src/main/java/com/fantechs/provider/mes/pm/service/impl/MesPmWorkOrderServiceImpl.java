@@ -681,6 +681,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                 wmsInPlanReceivingOrder.setSourceSysOrderTypeCode(sourceSysOrderTypeCode);
                 wmsInPlanReceivingOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInPlanReceivingOrder.setOrderStatus((byte) 1);
+                wmsInPlanReceivingOrder.setSourceBigType((byte)1);
                 wmsInPlanReceivingOrder.setCreateUserId(user.getUserId());
                 wmsInPlanReceivingOrder.setCreateTime(new Date());
                 wmsInPlanReceivingOrder.setModifiedUserId(user.getUserId());
@@ -728,6 +729,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                 wmsInReceivingOrder.setSourceSysOrderTypeCode(sourceSysOrderTypeCode);
                 wmsInReceivingOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInReceivingOrder.setOrderStatus((byte) 1);
+                wmsInReceivingOrder.setSourceBigType((byte)1);
                 wmsInReceivingOrder.setCreateUserId(user.getUserId());
                 wmsInReceivingOrder.setCreateTime(new Date());
                 wmsInReceivingOrder.setModifiedUserId(user.getUserId());
@@ -760,6 +762,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                     qmsIncomingInspectionOrderDto.setOrderQty(mesPmWorkOrder.getOutputQty());
                     qmsIncomingInspectionOrderDto.setInspectionStatus((byte) 1);
                     qmsIncomingInspectionOrderDto.setSourceSysOrderTypeCode(sourceSysOrderTypeCode);
+                    qmsIncomingInspectionOrderDto.setSourceBigType((byte)1);
                     qmsIncomingInspectionOrderDto.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                     qmsIncomingInspectionOrderDto.setCreateUserId(user.getUserId());
                     qmsIncomingInspectionOrderDto.setCreateTime(new Date());
@@ -820,6 +823,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
                 wmsInInPlanOrder.setMakeOrderUserId(user.getUserId());
                 wmsInInPlanOrder.setSourceSysOrderTypeCode(sourceSysOrderTypeCode);
                 wmsInInPlanOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
+                wmsInInPlanOrder.setSourceBigType((byte)1);
                 wmsInInPlanOrder.setOrderStatus((byte) 1);
                 wmsInInPlanOrder.setCreateUserId(user.getUserId());
                 wmsInInPlanOrder.setCreateTime(new Date());

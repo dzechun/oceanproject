@@ -6,6 +6,7 @@ import com.fantechs.common.base.general.dto.om.OmOtherOutOrderDto;
 import com.fantechs.common.base.general.entity.om.OmOtherOutOrder;
 import com.fantechs.common.base.support.IService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 /**
@@ -19,4 +20,6 @@ public interface OmOtherOutOrderService extends IService<OmOtherOutOrder> {
     List<OmHtOtherOutOrderDto> findHtList(Map<String ,Object> map);
 
     int pushDown(List<OmOtherOutOrderDetDto> omOtherOutOrderDets);
+
+    int otherUpdatePickingQty(Long otherOutOrderDetId, BigDecimal actualQty);
 }

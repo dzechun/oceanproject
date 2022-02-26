@@ -34,10 +34,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -93,9 +90,11 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         || StringUtils.isEmpty(srmDeliveryAppointDto.getAppointDate()) )
             throw new BizErrorException("预约时间不能为空");
         //拼接时间
+        String start = null;
+        String date = null;
         try {
-            String date = DateUtils.getDateString(srmDeliveryAppointDto.getAppointDate(),"yyyy-MM-dd");
-            String start =  DateUtils.getDateString(srmDeliveryAppointDto.getAppointStartTime(),"HH:mm:ss");
+            date = DateUtils.getDateString(srmDeliveryAppointDto.getAppointDate(),"yyyy-MM-dd");
+            start =  DateUtils.getDateString(srmDeliveryAppointDto.getAppointStartTime(),"HH:mm:ss");
             String end =  DateUtils.getDateString(srmDeliveryAppointDto.getAppointEndTime(),"HH:mm:ss");
 
             srmDeliveryAppointDto.setAppointStartTime(DateUtils.getStrToDate("yyyy-MM-dd HH:mm:ss",date+" "+start));
@@ -105,16 +104,9 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         }
 
         //预约数量校验
-        Example example = new Example(SrmDeliveryAppoint.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("appointStartTime",srmDeliveryAppointDto.getAppointStartTime());
-        criteria.andEqualTo("appointEndTime",srmDeliveryAppointDto.getAppointEndTime());
-        Integer num = srmDeliveryAppointMapper.selectCountByExample(example);
-
         SrmCarportTimeQuantumDto srmCarportTimeQuantumDto = null;
         for(SrmCarportTimeQuantumDto dto :srmCarportTimeQuantumDtos){
             Date startTime = dto.getStartTime();
-            Date endTime = dto.getEndTime();
             String str1 =  DateUtils.getDateString(startTime,"HH:mm");
             String str2 =  DateUtils.getDateString(srmDeliveryAppointDto.getAppointStartTime(),"HH:mm");
             if(str1.equals(str2))
@@ -123,7 +115,14 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         if(StringUtils.isEmpty(srmCarportTimeQuantumDto))
             throw  new  BizErrorException("未查询到对应时间段的仓库信息");
         Integer size = srmCarportTimeQuantumDto.getCarportCount();
-        if(num >= size )
+
+        Map map = new HashMap();
+        map.put("appointStartTime",start);
+        map.put("deliveryWarehouseId",srmDeliveryAppointDto.getDeliveryWarehouseId());
+        map.put("appointDate",date);
+        map.put("orgId",user.getOrganizationId());
+        List<SrmDeliveryAppointDto> srmDeliveryAppointDtos = srmDeliveryAppointMapper.findList(map);
+        if(srmDeliveryAppointDtos.size() >= size )
             throw new BizErrorException("该时间段预约已满");
 
         //保存供应商
@@ -133,7 +132,6 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
         List<BaseSupplier> baseSupplier = baseFeignApi.findSupplierList(searchBaseSupplier).getData();
         if(baseSupplier.get(0).getIfAppointDeliver() == 0)
             throw new BizErrorException("该供应商不需要预约");
-
 
         SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
         searchSysSpecItem.setSpecCode("isOrderCensor");

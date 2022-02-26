@@ -139,6 +139,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
             omPurchaseOrderDet.setPurchaseOrderId(omPurchaseOrder.getPurchaseOrderId());
             omPurchaseOrderDet.setTotalIssueQty(BigDecimal.ZERO);
             omPurchaseOrderDet.setStatus((byte) 1);
+            omPurchaseOrderDet.setIfAllIssued((byte)0);
             omPurchaseOrderDet.setOrgId(user.getOrganizationId());
             omPurchaseOrderDet.setCreateUserId(user.getUserId());
             omPurchaseOrderDet.setCreateTime(new Date());
@@ -189,7 +190,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
                 if (StringUtils.isNotEmpty(det.getPurchaseOrderId())) {
                     omPurchaseOrderDetMapper.updateByPrimaryKey(det);
-                    idList.add(det.getPurchaseOrderId());
+                    idList.add(det.getPurchaseOrderDetId());
                 }
             }
         }
@@ -258,7 +259,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "累计下发数量与采购退货数量之和大于包装总数");
             }
         }
-        
+
         //查当前单据的下游单据
         SearchBaseOrderFlow searchBaseOrderFlow = new SearchBaseOrderFlow();
         searchBaseOrderFlow.setOrderTypeCode("IN-PO");
@@ -339,6 +340,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "请选择相同仓库的进行下发操作");
 
                 WmsInPlanReceivingOrderDto wmsInPlanReceivingOrderDto = new WmsInPlanReceivingOrderDto();
+                wmsInPlanReceivingOrderDto.setSourceBigType((byte)1);
                 wmsInPlanReceivingOrderDto.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInPlanReceivingOrderDto.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInPlanReceivingOrderDto.setOrderStatus((byte) 1);
@@ -400,6 +402,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "请选择相同仓库的进行下发操作");
 
                 WmsInReceivingOrder wmsInReceivingOrder = new WmsInReceivingOrder();
+                wmsInReceivingOrder.setSourceBigType((byte)1);
                 wmsInReceivingOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInReceivingOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInReceivingOrder.setOrderStatus((byte) 1);
@@ -434,6 +437,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                     coreSourceSysOrderTypeCode = order.getSysOrderTypeCode();
 
                     QmsIncomingInspectionOrderDto qmsIncomingInspectionOrderDto = new QmsIncomingInspectionOrderDto();
+                    qmsIncomingInspectionOrderDto.setSourceBigType((byte)1);
                     qmsIncomingInspectionOrderDto.setCoreSourceOrderCode(order.getPurchaseOrderCode());
                     qmsIncomingInspectionOrderDto.setCoreSourceId(omPurchaseOrderDet.getPurchaseOrderDetId());
                     qmsIncomingInspectionOrderDto.setSourceOrderCode(order.getPurchaseOrderCode());
@@ -518,6 +522,7 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "请选择相同仓库的进行下发操作");
 
                 WmsInInPlanOrderDto wmsInInPlanOrder = new WmsInInPlanOrderDto();
+                wmsInInPlanOrder.setSourceBigType((byte)1);
                 wmsInInPlanOrder.setMakeOrderUserId(user.getUserId());
                 wmsInInPlanOrder.setSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
                 wmsInInPlanOrder.setCoreSourceSysOrderTypeCode(coreSourceSysOrderTypeCode);
@@ -692,5 +697,10 @@ public class OmPurchaseOrderServiceImpl extends BaseService<OmPurchaseOrder> imp
 
         }
         return num;
+    }
+
+    @Override
+    public int batchUpdateIssueQty(List<OmPurchaseOrderDet> list) {
+        return  omPurchaseOrderDetMapper.batchUpdate(list);
     }
 }

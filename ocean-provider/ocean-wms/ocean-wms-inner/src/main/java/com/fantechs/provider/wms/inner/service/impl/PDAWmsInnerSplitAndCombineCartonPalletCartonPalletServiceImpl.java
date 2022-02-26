@@ -33,6 +33,7 @@ import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
+import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerMaterialBarcodeMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerSplitAndCombineLogMapper;
 import com.fantechs.provider.wms.inner.service.PDAWmsInnerSplitAndCombineCartonPalletService;
@@ -54,6 +55,8 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
 
     @Resource
     private WmsInnerInventoryDetMapper wmsInnerInventoryDetMapper;
+    @Resource
+    private WmsInnerInventoryMapper wmsInnerInventoryMapper;
     @Resource
     private WmsInnerMaterialBarcodeMapper wmsInnerMaterialBarcodeMapper;
     @Resource
@@ -98,6 +101,12 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
                     detDtos.add(wmsInnerInventoryDetDto);
                 }
             }
+        }
+
+        //判断库存是否被锁定
+        WmsInnerInventoryDetDto cartonPalletInventoryDetDto = cartonPalletInfoDto.getCartonPalletInventoryDetDto();
+        if (cartonPalletInventoryDetDto.getIfStockLock() == (byte)1) {
+            throw new BizErrorException("库存被锁定");
         }
 
         //二级条码信息
@@ -209,7 +218,7 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
     }
 
     @Override
-    public BaseStorage checkStorageCode(String storageCode){
+    public BaseStorage checkStorageCode(String storageCode,Long warehouseId){
         SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
         searchBaseStorage.setStorageCode(storageCode);
         List<BaseStorage> baseStorages = baseFeignApi.findList(searchBaseStorage).getData();
@@ -219,6 +228,9 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
         BaseStorage baseStorage = baseStorages.get(0);
         if(baseStorage.getStorageType()!=(byte)1){
             throw new BizErrorException("该库位非存货库位");
+        }
+        if(!warehouseId.equals(baseStorage.getWarehouseId())){
+            throw new BizErrorException("该库位不属于包箱/栈板所在仓库");
         }
 
         return baseStorage;

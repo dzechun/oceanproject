@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -121,8 +122,20 @@ public class BaseInAndOutRuleController {
 
     @ApiOperation("查询规则视图")
     @PostMapping("/findView")
-    public ResponseEntity<List<String>> findView() {
-        List<String> list = baseInAndOutRuleService.findView();
+    public ResponseEntity<List<String>> findView(@ApiParam("类型(1-入库 2-出库 3-批次)")@RequestParam Byte category) {
+        List<String> list = baseInAndOutRuleService.findView(category);
         return ControllerUtil.returnDataSuccess(list, list.size());
+    }
+
+    @ApiOperation("入库规则")
+    @PostMapping("/inRule")
+    public ResponseEntity<Long> inRule(@RequestParam Long warehouseId, @RequestParam Long materialId, @RequestParam BigDecimal qty) {
+        return ControllerUtil.returnDataSuccess(baseInAndOutRuleService.inRule(warehouseId, materialId, qty),1);
+    }
+
+    @ApiOperation("出库规则")
+    @PostMapping("/outRule")
+    public ResponseEntity<List<String>> outRule(@RequestParam Long warehouseId,@RequestParam Long storageId, @RequestParam Long materialId, @RequestParam BigDecimal qty) {
+        return ControllerUtil.returnDataSuccess(baseInAndOutRuleService.outRule(warehouseId,storageId, materialId, qty),1);
     }
 }

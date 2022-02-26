@@ -115,7 +115,7 @@
         <if test="printOrderTypeCode!=null and printOrderTypeCode!=''">
             and wimb.print_order_type_code = #{printOrderTypeCode}
         </if>
-        <if test="ifSysBarcode!=null and ifSysBarcode!=''">
+        <if test="ifSysBarcode!=null">
             and wimb.if_sys_barcode = #{ifSysBarcode}
         </if>
         <if test="batchCode!=null and batchCode!=''">

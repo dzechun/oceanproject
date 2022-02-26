@@ -247,6 +247,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 wmsInInPlanOrder.setWarehouseId(orders.get(0).getWarehouseId());
                 wmsInInPlanOrder.setOrderStatus((byte) 1);
                 wmsInInPlanOrder.setStatus((byte) 1);
+                wmsInInPlanOrder.setSourceBigType((byte) 1);
                 wmsInInPlanOrder.setOrgId(user.getOrganizationId());
                 wmsInInPlanOrder.setWmsInInPlanOrderDetDtos(detList);
 
@@ -571,11 +572,10 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
                 searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode(qmsIncomingInspectionOrder.getSysOrderTypeCode());
                 searchWmsInnerMaterialBarcodeReOrder.setOrderId(qmsIncomingInspectionOrder.getIncomingInspectionOrderId());
                 List<WmsInnerMaterialBarcodeReOrderDto> materialBarcodeReOrderDtos = innerFeignApi.findAll(searchWmsInnerMaterialBarcodeReOrder).getData();
-                if(StringUtils.isEmpty(materialBarcodeReOrderDtos)){
-                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未找到当前单据对应的条码");
+                if(StringUtils.isNotEmpty(materialBarcodeReOrderDtos)){
+                    List<Long> idList = materialBarcodeReOrderDtos.stream().map(WmsInnerMaterialBarcodeReOrderDto::getMaterialBarcodeId).collect(Collectors.toList());
+                    updateInspectionStatus(idList,inspectionResult);
                 }
-                List<Long> idList = materialBarcodeReOrderDtos.stream().map(WmsInnerMaterialBarcodeReOrderDto::getMaterialBarcodeId).collect(Collectors.toList());
-                updateInspectionStatus(idList,inspectionResult);
             }
             /*if(haveInspectioncount > 0){
                 qmsIncomingInspectionOrder.setInspectionStatus((byte)2);

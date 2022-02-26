@@ -34,4 +34,7 @@ public class SearchWmsInReceivingOrder extends BaseQuery implements Serializable
 
     @ApiModelProperty(name = "orderStatusList",value = "单据状态集合")
     private List<Byte> orderStatusList;
+
+    @ApiModelProperty(name = "orderStatus",value = "单据状态")
+    private Byte orderStatus;
 }

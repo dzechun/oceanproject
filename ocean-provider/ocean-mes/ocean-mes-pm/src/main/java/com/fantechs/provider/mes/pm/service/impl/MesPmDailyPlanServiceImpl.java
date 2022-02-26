@@ -421,9 +421,12 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
             //更新明细
             MesPmDailyPlanStockList planStockList=new MesPmDailyPlanStockList();
             planStockList.setDailyPlanStockListId(planStockListDto.getDailyPlanStockListId());
-            planStockList.setTotalIssueQty(planStockListDto.getTotalIssueQty().add(planStockListDto.getIssueQty()));
-            if(planStockListDto.getDailyPlanUsageQty().compareTo(planStockListDto.getTotalIssueQty().add(planStockListDto.getWorkOrderQty()))==0)
-                planStockList.setIfAllIssued((byte)1);
+            //planStockList.setTotalIssueQty(planStockListDto.getTotalIssueQty().add(planStockListDto.getIssueQty()));
+//            if(planStockListDto.getDailyPlanUsageQty().compareTo(planStockListDto.getTotalIssueQty().add(planStockListDto.getWorkOrderQty()))==0)
+//                planStockList.setIfAllIssued((byte)1);
+            planStockList.setTotalIssueQty(planStockListDto.getDailyPlanUsageQty());
+            planStockList.setIfAllIssued((byte)1);
+
             num=mesPmDailyPlanStockListMapper.updateByPrimaryKeySelective(planStockList);
             if(num<=0){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012006);
@@ -532,6 +535,7 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
             if(StringUtils.isEmpty(dailyPlanId)){
                 MesPmDailyPlan mesPmDailyPlan=new MesPmDailyPlan();
                 mesPmDailyPlan.setDailyPlanCode(code);
+                mesPmDailyPlan.setSourceBigType((byte)2);
                 mesPmDailyPlan.setProLineId(mesPmDailyPlanImport1.get(0).getProLineId());
                 mesPmDailyPlan.setWorkOrderType(mesPmDailyPlanImport1.get(0).getWorkOrderType());
                 mesPmDailyPlan.setPlanStartTime(mesPmDailyPlanImport1.get(0).getPlanStartTime());
@@ -540,6 +544,8 @@ public class MesPmDailyPlanServiceImpl extends BaseService<MesPmDailyPlan> imple
                 mesPmDailyPlan.setOrgId(currentUser.getOrganizationId());
                 mesPmDailyPlan.setCreateUserId(currentUser.getUserId());
                 mesPmDailyPlan.setCreateTime(new Date());
+                mesPmDailyPlan.setModifiedUserId(currentUser.getUserId());
+                mesPmDailyPlan.setModifiedTime(new Date());
                 mesPmDailyPlanMapper.insertUseGeneratedKeys(mesPmDailyPlan);
                 dailyPlanId=mesPmDailyPlan.getDailyPlanId();
             }

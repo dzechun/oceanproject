@@ -115,7 +115,21 @@
       <if test="palletCode !=null and palletCode!=''">
         and wimb.pallet_code = #{palletCode}
       </if>
-
+      <if test="queryType!=null and queryType!='' and queryType ==1">
+        and IFNULL(wimb.barcode,'') != ''
+      </if>
+      <if test="queryType!=null and queryType!='' and queryType ==2">
+        and IFNULL(wimb.color_box_code,'') != '' and IFNULL(wimb.barcode,'')=''
+      </if>
+      <if test="queryType!=null and queryType!='' and queryType ==3">
+        and IFNULL(wimb.carton_code,'') != '' and IFNULL(wimb.barcode,'')=''
+      </if>
+      <if test="queryType!=null and queryType!='' and queryType ==4">
+        and IFNULL(wimb.pallet_code,'') != '' and IFNULL(wimb.barcode,'')=''
+      </if>
+      <if test="barcodeType!=null and barcodeType!=''">
+        and wimb.barcode_type = #{barcodeType}
+      </if>
     </where>
   </select>
 </mapper>

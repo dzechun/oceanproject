@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -74,6 +75,13 @@ public class OmPurchaseReturnOrderController {
     public ResponseEntity<OmPurchaseReturnOrder> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
         OmPurchaseReturnOrder  omPurchaseReturnOrder = omPurchaseReturnOrderService.selectByKey(id);
         return  ControllerUtil.returnDataSuccess(omPurchaseReturnOrder,StringUtils.isEmpty(omPurchaseReturnOrder)?0:1);
+    }
+
+    @ApiOperation("采退订单拣货数量反写")
+    @PostMapping("/purchaseUpdatePickingQty")
+    ResponseEntity purchaseUpdatePickingQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long purchaseReturnOrderDetId,
+                                            @ApiParam(value = "必传拣货架数量",required = true)@RequestParam BigDecimal actualQty){
+        return ControllerUtil.returnCRUD(omPurchaseReturnOrderService.purchaseUpdatePickingQty(purchaseReturnOrderDetId,actualQty));
     }
 
     @ApiOperation("列表")

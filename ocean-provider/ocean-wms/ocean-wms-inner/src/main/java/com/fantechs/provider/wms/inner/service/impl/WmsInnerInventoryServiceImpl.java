@@ -49,29 +49,38 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
     @Transactional(rollbackFor = RuntimeException.class)
     public int lock(Long id, BigDecimal quantity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-
         Example example = new Example(WmsInnerInventory.class);
         example.createCriteria().andEqualTo("inventoryId",id);
         WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
-        if (wmsInnerInventory.getLockStatus() == 0){
-            if (StringUtils.isNotEmpty(wmsInnerInventory) && wmsInnerInventory.getPackingQty().compareTo(quantity) >= 0){
+        int i= 0;
+        if (StringUtils.isNotEmpty(wmsInnerInventory) && wmsInnerInventory.getLockStatus() == 0){
+            if ( wmsInnerInventory.getPackingQty().compareTo(quantity) >= 0){
                 WmsInnerInventory innerInventory = new WmsInnerInventory();
                 BeanUtils.copyProperties(wmsInnerInventory, innerInventory);
                 innerInventory.setPackingQty(quantity);
                 innerInventory.setParentInventoryId(id);
                 innerInventory.setInventoryId(null);
                 innerInventory.setLockStatus((byte) 1);
-                this.save(innerInventory);
+                innerInventory.setCreateTime(new Date());
+                innerInventory.setCreateUserId(user.getUserId());
+                innerInventory.setModifiedTime(new Date());
+                innerInventory.setModifiedUserId(user.getUserId());
+                innerInventory.setOrgId(user.getOrganizationId());
+                i =  wmsInnerInventoryMapper.insertUseGeneratedKeys(innerInventory);
 
                 wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(quantity));
                 this.update(wmsInnerInventory);
+
+                WmsHtInnerInventory wmsHtInnerInventory = new WmsHtInnerInventory();
+                BeanUtils.copyProperties(innerInventory,wmsHtInnerInventory);
+                wmsHtInnerInventoryMapper.insert(wmsHtInnerInventory);
             }else {
                 throw new BizErrorException("库存数量不足");
             }
         }else {
             throw new BizErrorException("当前库存已被锁定");
         }
-        return 1;
+        return i;
     }
 
     @Override
@@ -104,7 +113,6 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
                     wmsInnerInventoryMapper.delete(wmsInnerInventory);
                 } else {
                     wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(quantity));
-                //    wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
                     this.update(wmsInnerInventory);
                 }
                 baseWmsInnerInventorie.setPackingQty(baseWmsInnerInventorie.getPackingQty().add(quantity));
@@ -268,10 +276,6 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(WmsInnerInventory entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(StringUtils.isEmpty(user)){
-            throw new BizErrorException(ErrorCodeEnum.UAC10011039);
-        }
-
         entity.setModifiedUserId(user.getUserId());
         entity.setModifiedTime(new Date());
         entity.setOrgId(user.getOrganizationId());

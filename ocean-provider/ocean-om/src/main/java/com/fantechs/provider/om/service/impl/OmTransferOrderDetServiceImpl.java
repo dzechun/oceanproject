@@ -58,4 +58,28 @@ public class OmTransferOrderDetServiceImpl extends BaseService<OmTransferOrderDe
         return num;
     }
 
+    /**
+     * 更新上架数量
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updatePutQty(Long detId, BigDecimal putawayQty) {
+        int num=1;
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        OmTransferOrderDet omTransferOrderDet = omTransferOrderDetMapper.selectByPrimaryKey(detId);
+        if(StringUtils.isNotEmpty(omTransferOrderDet)){
+            if(StringUtils.isEmpty(omTransferOrderDet.getActualInQty())){
+                omTransferOrderDet.setActualInQty(new BigDecimal(0));
+            }
+
+            omTransferOrderDet.setActualInQty(omTransferOrderDet.getActualInQty().add(putawayQty));
+            omTransferOrderDet.setModifiedUserId(sysUser.getUserId());
+            omTransferOrderDet.setModifiedTime(new Date());
+            num+=omTransferOrderDetMapper.updateByPrimaryKeySelective(omTransferOrderDet);
+
+        }
+        return num;
+    }
+
 }

@@ -115,7 +115,7 @@
                 and wimb.pallet_code = #{palletCode}
             </if>
             <if test="queryType!=null and queryType!='' and queryType =='1'">
-                and IFNULL(wimb.barcode,'') != ''
+                and IFNULL(wimb.barcode,'') != '' and wiid.barcode_status =1
             </if>
             <if test="queryType!=null and queryType!='' and queryType =='2'">
                 and IFNULL(wimb.color_box_code,'') != '' and IFNULL(wimb.barcode,'')=''
@@ -131,6 +131,9 @@
             </if>
             <if test="batchCode!=null and batchCode!=''">
                 and wimb.batch_code = #{batchCode}
+            </if>
+            <if test="supplierId!=null and supplierId!=''">
+                and wimb.supplier_id = #{supplierId}
             </if>
             <if test="materialId!=null and materialId!='' and notEqualMark==1">
                 and bm.material_id != #{materialId}
@@ -218,6 +221,12 @@
                 </if>
                 <if test="item.barcodeStatus != null">
                     wiid.barcode_status = #{item.barcodeStatus},
+                </if>
+                <if test="item.deliverDate != null">
+                    wiid.deliver_date = #{item.deliverDate},
+                </if>
+                <if test="item.deliveryOrderCode != null">
+                    wiid.delivery_order_code = #{item.deliveryOrderCode},
                 </if>
             </set>
             where wiid.inventory_det_id = #{item.inventoryDetId}

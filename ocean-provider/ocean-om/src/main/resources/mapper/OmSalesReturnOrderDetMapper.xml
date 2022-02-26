@@ -8,6 +8,7 @@
         <id column="sales_return_order_det_id" jdbcType="BIGINT" property="salesReturnOrderDetId"/>
         <result column="sales_return_order_id" jdbcType="BIGINT" property="salesReturnOrderId"/>
         <result column="sales_order_id" jdbcType="BIGINT" property="salesOrderId"/>
+        <result column="sales_order_det_id" jdbcType="BIGINT" property="salesOrderDetId"/>
         <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId"/>
         <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="unit_name" jdbcType="VARCHAR" property="unitName"/>
@@ -48,6 +49,7 @@
         osrod.sales_return_order_det_id,
         osrod.sales_return_order_id,
         osrod.sales_order_id,
+        osrod.sales_order_det_id,
         osrod.warehouse_id,
         osrod.material_id,
         osrod.unit_name,
@@ -71,19 +73,36 @@
     <select id="findList" resultMap="BaseResultMapDto">
         SELECT<include refid="Base_Column_List"/>,
         oso.sales_order_code,bw.warehouse_name,bm.material_code,bm.material_name,bmb.main_unit,bmb.volume,bmb.net_weight,bmb.gross_weight,
-        bm.material_desc,bm.material_version,
+        bm.material_desc,bm.material_version,osod.order_qty as salesOrderQty,osod.total_order_return_qty as totalOrderReturnQty,
         su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name
         FROM om_sales_return_order_det osrod
+        LEFT JOIN om_sales_return_order osro ON osro.sales_return_order_id = osrod.sales_return_order_id
         LEFT JOIN om_sales_order oso ON oso.sales_order_id = osrod.sales_order_id
+        LEFT JOIN om_sales_order_det osod ON osod.sales_order_id = oso.sales_order_id AND osod.material_id = osrod.material_id
         LEFT JOIN base_warehouse bw ON bw.warehouse_id = osrod.warehouse_id
         LEFT JOIN base_material bm ON osrod.material_id = bm.material_id
-        left join base_material_tab bmb ON bm.material_id = bmb.material_id
-        left join sys_user su on osrod.create_user_id = su.user_id
-        left join sys_user sus on osrod.modified_user_id = sus.user_id
-        left join base_organization bo on osrod.org_id = bo.organization_id
+        LEFT JOIN base_material_tab bmb ON bm.material_id = bmb.material_id
+        LEFT JOIN sys_user su ON osrod.create_user_id = su.user_id
+        LEFT JOIN sys_user sus ON osrod.modified_user_id = sus.user_id
+        LEFT JOIN base_organization bo ON osrod.org_id = bo.organization_id
         <where>
             <if test="salesReturnOrderId !=null and salesReturnOrderId!=''">
                 and osrod.sales_return_order_id = #{salesReturnOrderId}
+            </if>
+            <if test="salesReturnOrderDetId !=null and salesReturnOrderDetId!=''">
+                and osrod.sales_return_order_det_id = #{salesReturnOrderDetId}
+            </if>
+            <if test="salesOrderDetId !=null and salesOrderDetId!=''">
+                and osrod.sales_order_det_id = #{salesOrderDetId}
+            </if>
+            <if test="salesReturnOrderCode !=null and salesReturnOrderCode!=''">
+                and osro.sales_return_order_code = #{salesReturnOrderCode}
+            </if>
+            <if test="salesOrderCode !=null and salesOrderCode!=''">
+                and oso.sales_order_code = #{salesOrderCode}
+            </if>
+            <if test="salesOrderId !=null">
+                and oso.sales_order_id = #{salesOrderId}
             </if>
         </where>
     </select>

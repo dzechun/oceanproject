@@ -51,4 +51,10 @@ public class SearchWmsInnerJobOrderDet extends BaseQuery implements Serializable
     @ApiModelProperty(name="jobOrderCode",value = "上架单单号")
     private String jobOrderCode;
 
+    @ApiModelProperty(name="coreSourceSysOrderTypeCode",value = "核心系统单据类型编码")
+    private String coreSourceSysOrderTypeCode;
+
+    @ApiModelProperty(name="coreSourceId",value = "核心单据明细ID")
+    private Long coreSourceId;
+
 }

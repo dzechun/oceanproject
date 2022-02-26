@@ -51,6 +51,14 @@ public interface WmsInnerStockOrderService extends IService<WmsInnerStockOrder> 
     BarcodeResultDto scanBarcode(Long stockOrderDetId, String barcode);
 
     /**
+     * PDA增补 扫条码返回数量
+     * @param barcode
+     * @return
+     */
+    BarcodeResultDto scanBarcodeNewDet(Long materialId, String barcode);
+
+
+    /**
      * Web扫条码返回条码信息
      * @param barcode
      * @return

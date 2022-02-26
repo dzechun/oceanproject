@@ -39,12 +39,17 @@ public class AddInnerStockDetDto implements Serializable {
     @ApiModelProperty(name="productionTime",value = "生产日期")
     private String productionTime;
 
-
     /**
      * 条码
      */
     @ApiModelProperty(name="barcode",value = "条码")
     private String barcode;
+
+    /**
+     * 条码类型(1-SN码 2-彩盒号 3-箱号 4-栈板号 5-非系统条码)
+     */
+    @ApiModelProperty(name="barcodeType",value = "条码类型(1-SN码 2-彩盒号 3-箱号 4-栈板号 5-非系统条码)")
+    private Byte barcodeType;
 
     /**
      * 条码物料数量

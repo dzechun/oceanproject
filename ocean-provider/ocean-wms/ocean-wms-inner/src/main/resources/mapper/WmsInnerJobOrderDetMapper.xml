@@ -134,6 +134,12 @@
             <if test="jobOrderCode != null and jobOrderCode!=''">
                 and wijo.job_order_code like CONCAT('%', #{jobOrderCode}, '%')
             </if>
+            <if test="coreSourceSysOrderTypeCode !=null and coreSourceSysOrderTypeCode !=''">
+                and wijo.core_source_sys_order_type_code = #{coreSourceSysOrderTypeCode}
+            </if>
+            <if test="coreSourceId!=null and coreSourceId!=''">
+                and wipod.core_source_id = #{coreSourceId}
+            </if>
             <if test="materialCode != null and materialCode!=''">
                 and bm.material_code like CONCAT('%', #{materialCode}, '%')
             </if>

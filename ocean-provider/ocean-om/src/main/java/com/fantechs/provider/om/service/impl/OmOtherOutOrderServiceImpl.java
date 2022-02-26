@@ -83,6 +83,24 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
     }
 
     @Override
+    public int otherUpdatePickingQty(Long otherOutOrderDetId, BigDecimal actualQty) {
+
+        Example example = new Example(OmOtherOutOrderDet.class);
+        example.createCriteria().andEqualTo("otherOutOrderDetId",otherOutOrderDetId);
+        List<OmOtherOutOrderDet> omOtherOutOrderDets = omOtherOutOrderDetMapper.selectByExample(example);
+
+        if (StringUtils.isNotEmpty(omOtherOutOrderDets) && omOtherOutOrderDets.size() == 1) {
+            OmOtherOutOrderDet omOtherOutOrderDet = omOtherOutOrderDets.get(0);
+            BigDecimal qty = omOtherOutOrderDet.getActualQty();
+            actualQty = actualQty.add((StringUtils.isNotEmpty(qty)?qty:new BigDecimal(0)));
+            omOtherOutOrderDet.setActualQty(actualQty);
+            omOtherOutOrderDetMapper.updateByPrimaryKeySelective(omOtherOutOrderDet);
+        }
+
+        return 1;
+    }
+
+    @Override
     @Transactional(rollbackFor = RuntimeException.class)
     @LcnTransaction
     public int pushDown(List<OmOtherOutOrderDetDto> omOtherOutOrderDets) {
@@ -156,7 +174,6 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
                 wmsOutDeliveryReqOrderDto.setSourceBigType((byte)1);
                 wmsOutDeliveryReqOrderDto.setCoreSourceSysOrderTypeCode("OUT-OOO");
                 wmsOutDeliveryReqOrderDto.setSourceSysOrderTypeCode("OUT-OOO");
-                wmsOutDeliveryReqOrderDto.setSourceBigType((byte)1);
                 wmsOutDeliveryReqOrderDto.setWarehouseId(omOtherOutOrderDetDtos.get(0).getWarehouseId());
                 wmsOutDeliveryReqOrderDto.setWmsOutDeliveryReqOrderDetDtos(wmsOutDeliveryReqOrderDetDtos);
                 ResponseEntity responseEntity = outFeignApi.add(wmsOutDeliveryReqOrderDto);
@@ -183,7 +200,6 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
                 wmsOutPlanDeliveryOrderDto.setSourceBigType((byte)1);
                 wmsOutPlanDeliveryOrderDto.setCoreSourceSysOrderTypeCode("OUT-OOO");
                 wmsOutPlanDeliveryOrderDto.setSourceSysOrderTypeCode("OUT-OOO");
-                wmsOutPlanDeliveryOrderDto.setSourceBigType((byte)1);
                 wmsOutPlanDeliveryOrderDto.setWarehouseId(omOtherOutOrderDetDtos.get(0).getWarehouseId());
                 wmsOutPlanDeliveryOrderDto.setWmsOutPlanDeliveryOrderDetDtos(wmsOutPlanDeliveryOrderDetDtos);
                 ResponseEntity responseEntity = outFeignApi.add(wmsOutPlanDeliveryOrderDto);

@@ -2,10 +2,7 @@ package com.fantechs.provider.api.qms;
 
 import com.fantechs.common.base.general.dto.om.*;
 import com.fantechs.common.base.general.entity.om.*;
-import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrder;
-import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrderDet;
-import com.fantechs.common.base.general.entity.om.search.SearchOmSalesCodeReSpc;
-import com.fantechs.common.base.general.entity.om.search.SearchOmTransferOrderDet;
+import com.fantechs.common.base.general.entity.om.search.*;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
@@ -65,6 +62,10 @@ public interface OMFeignApi {
     @PostMapping("/omPurchaseOrderDet/findList")
     ResponseEntity<List<OmPurchaseOrderDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmPurchaseOrderDet searchOmPurchaseOrderDet);
 
+    @ApiOperation("销退订单明细列表")
+    @PostMapping("/omSalesReturnOrderDet/findList")
+    ResponseEntity<List<OmSalesReturnOrderDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesReturnOrderDet searchOmSalesReturnOrderDet);
+
     @ApiOperation("修改")
     @PostMapping("/omPurchaseOrderDet/update")
     ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=OmPurchaseOrderDet.update.class) OmPurchaseOrderDet omPurchaseOrderDet);
@@ -87,7 +88,7 @@ public interface OMFeignApi {
 
     @ApiOperation("销售列表")
     @PostMapping("/omSalesOrder/findList")
-    ResponseEntity<List<OmSalesOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrderDto searchOmSalesOrderDto);
+    ResponseEntity<List<OmSalesOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrder searchOmSalesOrder);
 
     @ApiOperation(value = "销售新增",notes = "新增")
     @PostMapping("/omSalesOrder/add")
@@ -127,7 +128,7 @@ public interface OMFeignApi {
 
     @ApiOperation("销售订单明细列表")
     @PostMapping("/omSalesOrderDet/findList")
-    ResponseEntity<List<OmSalesOrderDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrderDetDto searchOmSalesOrderDetDto);
+    ResponseEntity<List<OmSalesOrderDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrderDet searchOmSalesOrderDet);
 
     @ApiOperation(value = "更新采购订单上架数量",notes = "更新采购订单上架数量")
     @PostMapping("/omPurchaseOrder/updatePutawayQty")
@@ -158,6 +159,11 @@ public interface OMFeignApi {
     @PostMapping("/omTransferOrderDet/updatePutDownQty")
     ResponseEntity updateTransferOrderPutDownQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long detId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty);
 
+    @ApiOperation(value = "更新调拨订单上架数量",notes = "更新调拨订单上架数量")
+    @PostMapping("/omTransferOrderDet/updatePutQty")
+    ResponseEntity updateTransferOrderPutQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long detId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty);
+
+
     @ApiOperation(value = "更新采退订单下推数量",notes = "更新采退订单下推数量")
     @PostMapping("/omPurchaseReturnOrderDet/updatePutDownQty")
     ResponseEntity updatePurchaseReturnOrderPutDownQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long detId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty) ;
@@ -169,4 +175,19 @@ public interface OMFeignApi {
     @ApiOperation(value = "更新销售订单下推数量",notes = "更新销售订单下推数量")
     @PostMapping("/omSalesOrderDet/updatePutDownQty")
     ResponseEntity updateSalesOrderPutDownQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long detId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty) ;
+
+    @ApiOperation("其他出库订单拣货数量反写")
+    @PostMapping("/omOtherOutOrder/otherUpdatePickingQty")
+    ResponseEntity otherUpdatePickingQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long otherOutOrderDetId,
+                                    @ApiParam(value = "必传拣货架数量",required = true)@RequestParam BigDecimal actualQty);
+
+    @ApiOperation("采退订单拣货数量反写")
+    @PostMapping("/omPurchaseReturnOrder/purchaseUpdatePickingQty")
+    ResponseEntity purchaseUpdatePickingQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long purchaseReturnOrderDetId,
+                                    @ApiParam(value = "必传拣货架数量",required = true)@RequestParam BigDecimal actualQty);
+
+    @ApiOperation("批量更新累计下发数量")
+    @PostMapping("/omPurchaseOrder/batchUpdateIssueQty")
+    ResponseEntity batchUpdateIssueQty(@ApiParam(value = "对象，Id必传",required = true)@RequestBody List<OmPurchaseOrderDet> list);
+
 }

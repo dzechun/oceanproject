@@ -7,6 +7,7 @@ import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -16,5 +17,9 @@ public interface BaseInAndOutRuleMapper extends MyMapper<BaseInAndOutRule> {
 
     List<InOutParamsDto> findInOutParamMode(@Param("specificName")String specificName);
 
-    List<String> findView();
+    List<String> findView(String category);
+
+    Long inRuleExecute(String procName,Long warehouseId, Long materialId, BigDecimal qty);
+
+    List<String> outRuleExecute(String procName,Long warehouseId,Long storageId, Long materialId, int qty);
 }

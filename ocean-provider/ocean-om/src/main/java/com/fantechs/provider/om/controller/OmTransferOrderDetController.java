@@ -60,4 +60,10 @@ public class OmTransferOrderDetController {
         return ControllerUtil.returnCRUD(omTransferOrderDetService.updatePutDownQty(detId,putawayQty));
     }
 
+    @ApiOperation(value = "更新调拨订单上架数量",notes = "更新调拨订单上架数量")
+    @PostMapping("/updatePutQty")
+    public ResponseEntity updatePutQty(@ApiParam(value = "必传明细ID",required = true)@RequestParam Long detId, @ApiParam(value = "必传上架数量",required = true)@RequestParam BigDecimal putawayQty) {
+        return ControllerUtil.returnCRUD(omTransferOrderDetService.updatePutQty(detId,putawayQty));
+    }
+
 }
