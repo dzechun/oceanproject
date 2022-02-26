@@ -5,6 +5,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -177,6 +178,8 @@ public class WmsInnerInventory extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="productionDate",value = "生产日期")
     @Excel(name = "生产日期", height = 20, width = 30,exportFormat = "yyyy-MM-dd",orderNum="15")
+    @JSONField(format ="yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "production_date")
     private Date productionDate;
 
