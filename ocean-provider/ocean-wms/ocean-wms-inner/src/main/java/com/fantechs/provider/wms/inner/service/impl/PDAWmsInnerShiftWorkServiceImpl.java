@@ -445,6 +445,7 @@ public class PDAWmsInnerShiftWorkServiceImpl implements PDAWmsInnerShiftWorkServ
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int saveJobOrder(SaveShiftJobOrderDto dto) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 

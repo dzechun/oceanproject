@@ -44,6 +44,7 @@ public interface WmsInnerShiftWorkService extends IService<WmsInnerJobOrder> {
      * 按条码单一确认
      * @param wmsInnerJobOrderDet 明细
      * @param ids 条码ID 多个条码用逗号隔开
+     * @param orderType 1为选择条码 2为扫描条码
      * @return
      */
     int singleReceivingByBarcode(WmsInnerJobOrderDet wmsInnerJobOrderDet, String ids, Byte orderType);

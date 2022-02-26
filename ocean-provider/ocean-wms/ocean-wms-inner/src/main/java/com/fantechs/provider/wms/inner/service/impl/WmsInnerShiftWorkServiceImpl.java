@@ -434,7 +434,7 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
             //更新库存明细，移位作业只能库内调拨，所以不用更改仓库
             if (wmsInnerInventoryDetDtoList.size() > 0) {
                 WmsInnerInventoryDetDto innerInventoryDetDto = wmsInnerInventoryDetDtoList.get(0);
-                totalQty = totalQty.add((StringUtils.isEmpty(innerInventoryDetDto.getMaterialQty()) ? new BigDecimal(0) : innerInventoryDetDto.getMaterialQty()));
+            //    totalQty = totalQty.add((StringUtils.isEmpty(innerInventoryDetDto.getMaterialQty()) ? new BigDecimal(0) : innerInventoryDetDto.getMaterialQty()));
                 if (StringUtils.isNotEmpty(innerInventoryDetDto.getPalletCode())) {
                     map.put(innerInventoryDetDto.getPalletCode(), (byte) 4);
                     set.add(innerInventoryDetDto.getPalletCode());
@@ -479,6 +479,9 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
                 wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(innerInventoryDetDto);
                 if(!newInventoryDetDtoList.contains(innerInventoryDetDto))
                     newInventoryDetDtoList.add(innerInventoryDetDto);
+                if(StringUtils.isNotEmpty(innerInventoryDetDto.getBarcode()))
+                    totalQty = totalQty.add(innerInventoryDetDto.getMaterialQty());
+
             }
 
             //更新单独存在的彩盒码、箱码、栈板码

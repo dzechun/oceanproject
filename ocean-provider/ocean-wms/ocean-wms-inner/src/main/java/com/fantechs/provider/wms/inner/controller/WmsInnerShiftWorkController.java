@@ -61,7 +61,7 @@ public class WmsInnerShiftWorkController {
     @PostMapping("/singleReceivingByBarcode")
     public ResponseEntity singleReceivingByBarcode(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerJobOrderDet wmsInPutawayOrderDet,
                                                    @ApiParam(value = "条码ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids,
-                                                    @ApiParam(value = "必传，单据类型，1-上架作业, 3-移位作业",required = true) @RequestParam  Byte orderType){
+                                                    @ApiParam(value = "必传，单据类型，1-选择条码, 2-扫描条码",required = true) @RequestParam  Byte orderType){
         return ControllerUtil.returnCRUD(wmsInnerShiftWorkService.singleReceivingByBarcode(wmsInPutawayOrderDet,ids,orderType));
     }
 
