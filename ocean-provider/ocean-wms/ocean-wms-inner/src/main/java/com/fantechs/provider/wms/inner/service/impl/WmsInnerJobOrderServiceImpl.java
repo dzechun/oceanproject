@@ -542,7 +542,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 String sourceOrderCode=wmsInnerJobOrderDet.getSourceOrderCode();
                 String sourceIdS=StringUtils.isEmpty(wmsInnerJobOrderDet.getSourceId())?"":wmsInnerJobOrderDet.getSourceId().toString();
                 String coreSourceIdS=StringUtils.isEmpty(wmsInnerJobOrderDet.getCoreSourceId())?"":wmsInnerJobOrderDet.getCoreSourceId().toString();
-                String keyS=sourceOrderCode+sourceIdS+coreSourceIdS;
+                String materialIdS=wmsInnerJobOrderDet.getMaterialId().toString();
+                String keyS=sourceOrderCode+sourceIdS+coreSourceIdS+materialIdS;
 
                 if (map.containsKey(keyS)) {
                     List<WmsInnerJobOrderDet> nm = new ArrayList<>();
