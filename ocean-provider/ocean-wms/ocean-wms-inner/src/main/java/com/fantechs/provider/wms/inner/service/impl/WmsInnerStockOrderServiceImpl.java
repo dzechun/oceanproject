@@ -1408,6 +1408,16 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码不能为空");
         }
 
+        WmsInnerStockOrderDet stockOrderDet=wmsInventoryVerificationDetMapper.selectByPrimaryKey(stockOrderDetId);
+        if(StringUtils.isEmpty(stockOrderDet)){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未找到相应的盘点明细信息");
+        }
+
+        WmsInnerStockOrder stockOrder=wmsInventoryVerificationMapper.selectByPrimaryKey(stockOrderDet.getStockOrderId());
+        if(StringUtils.isEmpty(stockOrder)){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未找到相应的盘点单信息");
+        }
+
         //条码判断
         if(stockOrderDetId!=0) {
             List<WmsInnerStockOrderDetBarcodeDto> detBarcodeDtos = new ArrayList<>();
@@ -1487,14 +1497,13 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     }
                 }
             }
-
+            //应该盘点是否在库存明细中
             if (StringUtils.isEmpty(barcodeResultDto.getBarcodeType())) {
                 //是否扫的是其他的系统条码
-                BarcodeResultDto resultDto1 = InBarcodeUtil.scanJugeBarcode(barcode);
+                /*BarcodeResultDto resultDto1 = InBarcodeUtil.scanJugeBarcode(barcode);
                 if (resultDto1.getBarcodeType() != (byte) 5) {
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "扫描的是系统其他条码 请重新扫码-->" + barcode);
-                }
-
+                }*/
                 barcodeResultDto.setBarcodeType((byte) 5);
             }
         }
@@ -1944,7 +1953,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     num+=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(inventoryDet);
                 }
                 //盘赢条码新增到复盘单条码明细
-                if(StringUtils.isNotEmpty(wmsInnerStockOrderDet.getSourceDetId())) {
+                /*if(StringUtils.isNotEmpty(wmsInnerStockOrderDet.getSourceDetId())) {
                     Example example = new Example(WmsInnerStockOrderDetBarcode.class);
                     Example.Criteria criteria = example.createCriteria();
                     criteria.andEqualTo("stockOrderDetId", wmsInnerStockOrderDet.getSourceDetId());
@@ -1966,7 +1975,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                         }
 
                     }
-                }
+                }*/
             }
             else {
                 Example example = new Example(WmsInnerStockOrderDetBarcode.class);
