@@ -776,6 +776,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 //SN
                 searchOrderDetBarcode.setStockOrderDetId(stockOrderDetId);
                 searchOrderDetBarcode.setBarcode(barcode);
+                searchOrderDetBarcode.setColorBoxCode(null);
+                searchOrderDetBarcode.setCartonCode(null);
+                searchOrderDetBarcode.setPalletCode(null);
                 detBarcodeDtos=wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
                 if(detBarcodeDtos.size()>0){
                     WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
@@ -795,6 +798,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 //彩盒
                 searchOrderDetBarcode.setStockOrderDetId(stockOrderDetId);
                 searchOrderDetBarcode.setColorBoxCode(barcode);
+                searchOrderDetBarcode.setBarcode(null);
+                searchOrderDetBarcode.setCartonCode(null);
+                searchOrderDetBarcode.setPalletCode(null);
                 detBarcodeDtos=wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
                 if(detBarcodeDtos.size()>0){
                     for (WmsInnerStockOrderDetBarcodeDto detBarcodeDto : detBarcodeDtos) {
@@ -817,6 +823,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 //箱码
                 searchOrderDetBarcode.setStockOrderDetId(stockOrderDetId);
                 searchOrderDetBarcode.setCartonCode(barcode);
+                searchOrderDetBarcode.setBarcode(null);
+                searchOrderDetBarcode.setColorBoxCode(null);
+                searchOrderDetBarcode.setPalletCode(null);
                 detBarcodeDtos=wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
                 if(detBarcodeDtos.size()>0){
                     for (WmsInnerStockOrderDetBarcodeDto detBarcodeDto : detBarcodeDtos) {
@@ -840,6 +849,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 //栈板码
                 searchOrderDetBarcode.setStockOrderDetId(stockOrderDetId);
                 searchOrderDetBarcode.setPalletCode(barcode);
+                searchOrderDetBarcode.setBarcode(null);
+                searchOrderDetBarcode.setColorBoxCode(null);
+                searchOrderDetBarcode.setPalletCode(null);
                 detBarcodeDtos=wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
                 if(detBarcodeDtos.size()>0){
                     for (WmsInnerStockOrderDetBarcodeDto detBarcodeDto : detBarcodeDtos) {
@@ -1079,6 +1091,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 //SN
                 searchOrderDetBarcode.setStockOrderDetId(stockOrderDetId);
                 searchOrderDetBarcode.setBarcode(barcode);
+                searchOrderDetBarcode.setColorBoxCode(null);
+                searchOrderDetBarcode.setCartonCode(null);
+                searchOrderDetBarcode.setPalletCode(null);
                 detBarcodeDtos=wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
                 if(detBarcodeDtos.size()>0){
                     WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
@@ -1099,6 +1114,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 //彩盒
                 searchOrderDetBarcode.setStockOrderDetId(stockOrderDetId);
                 searchOrderDetBarcode.setColorBoxCode(barcode);
+                searchOrderDetBarcode.setBarcode(null);
+                searchOrderDetBarcode.setCartonCode(null);
+                searchOrderDetBarcode.setPalletCode(null);
                 detBarcodeDtos=wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
                 if(detBarcodeDtos.size()>0){
                     for (WmsInnerStockOrderDetBarcodeDto detBarcodeDto : detBarcodeDtos) {
@@ -1121,6 +1139,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 //箱码
                 searchOrderDetBarcode.setStockOrderDetId(stockOrderDetId);
                 searchOrderDetBarcode.setCartonCode(barcode);
+                searchOrderDetBarcode.setBarcode(null);
+                searchOrderDetBarcode.setColorBoxCode(null);
+                searchOrderDetBarcode.setPalletCode(null);
                 detBarcodeDtos=wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
                 if(detBarcodeDtos.size()>0){
                     for (WmsInnerStockOrderDetBarcodeDto detBarcodeDto : detBarcodeDtos) {
@@ -1145,6 +1166,9 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 //栈板码
                 searchOrderDetBarcode.setStockOrderDetId(stockOrderDetId);
                 searchOrderDetBarcode.setPalletCode(barcode);
+                searchOrderDetBarcode.setBarcode(null);
+                searchOrderDetBarcode.setColorBoxCode(null);
+                searchOrderDetBarcode.setCartonCode(null);
                 detBarcodeDtos=wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
                 if(detBarcodeDtos.size()>0){
                     for (WmsInnerStockOrderDetBarcodeDto detBarcodeDto : detBarcodeDtos) {
