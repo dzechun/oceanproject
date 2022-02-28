@@ -877,7 +877,16 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 WmsInnerMaterialBarcode wmsInnerMaterialBarcode = new WmsInnerMaterialBarcode();
                 wmsInnerMaterialBarcode.setMaterialId(stockOrderDet.getMaterialId());
                 wmsInnerMaterialBarcode.setBarcode(item.getBarcode());
-                wmsInnerMaterialBarcode.setBatchCode(item.getBatchCode());
+                if(StringUtils.isEmpty(item.getBatchCode())){
+                    wmsInnerMaterialBarcode.setBatchCode(stockOrderDet.getBatchCode());
+                }
+                else {
+                    wmsInnerMaterialBarcode.setBatchCode(item.getBatchCode());
+                }
+                if(StringUtils.isNotEmpty(stockOrderDet.getSupplierId())){
+                    wmsInnerMaterialBarcode.setSupplierId(stockOrderDet.getSupplierId());
+                }
+
                 wmsInnerMaterialBarcode.setMaterialQty(item.getMaterialQty());
                 wmsInnerMaterialBarcode.setIfSysBarcode((byte) 0);
                 Date productionTime=null;
@@ -1846,12 +1855,23 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 criteria.andEqualTo("warehouseId",wmsInventoryVerification.getWarehouseId())
                         .andEqualTo("storageId",wmsInnerStockOrderDet.getStorageId())
                         .andEqualTo("materialId",wmsInnerStockOrderDet.getMaterialId())
-                        .andEqualTo("batchCode",wmsInnerStockOrderDet.getBatchCode())
+                        //.andEqualTo("batchCode",wmsInnerStockOrderDet.getBatchCode())
                         .andEqualTo("stockLock",lockType==(byte) 2?0:1)
                         .andEqualTo("orgId",sysUser.getOrganizationId())
                         .andEqualTo("jobStatus",1)
                         .andEqualTo("packingQty",wmsInnerStockOrderDet.getOriginalQty())
                         .andEqualTo("lockStatus", 0);
+                if(StringUtils.isNotEmpty(wmsInnerStockOrderDet.getBatchCode())){
+                    criteria.andEqualTo("batchCode",wmsInnerStockOrderDet.getBatchCode());
+                }else {
+                    criteria.andIsNull("batchCode");
+                }
+                if(StringUtils.isNotEmpty(wmsInnerStockOrderDet.getSupplierId())){
+                    criteria.andEqualTo("supplierId",wmsInnerStockOrderDet.getSupplierId());
+                }else {
+                    criteria.andIsNull("supplierId");
+                }
+
                 if(lockType==(byte) 1){
                     criteria.andEqualTo("relevanceOrderCode",wmsInventoryVerification.getPlanStockOrderCode());
                 }
@@ -2067,13 +2087,23 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             criteria.andEqualTo("warehouseId",wmsInnerStockOrder.getWarehouseId())
                     .andEqualTo("storageId",wmsInnerStockOrderDet.getStorageId())
                     .andEqualTo("materialId",wmsInnerStockOrderDet.getMaterialId())
-                    .andEqualTo("batchCode",wmsInnerStockOrderDet.getBatchCode())
+                    //.andEqualTo("batchCode",wmsInnerStockOrderDet.getBatchCode())
                     .andEqualTo("relevanceOrderCode",wmsInnerStockOrder.getRelatedOrderCode())
                     .andEqualTo("stockLock",1)
                     .andEqualTo("orgId",wmsInnerStockOrder.getOrganizationId())
                     .andGreaterThan("packingQty",0)
                     .andEqualTo("jobStatus",1)
                     .andEqualTo("packingQty",wmsInnerStockOrderDet.getOriginalQty());
+            if(StringUtils.isNotEmpty(wmsInnerStockOrderDet.getBatchCode())){
+                criteria.andEqualTo("batchCode",wmsInnerStockOrderDet.getBatchCode());
+            }else {
+                criteria.andIsNull("batchCode");
+            }
+            if(StringUtils.isNotEmpty(wmsInnerStockOrderDet.getSupplierId())){
+                criteria.andEqualTo("supplierId",wmsInnerStockOrderDet.getSupplierId());
+            }else {
+                criteria.andIsNull("supplierId");
+            }
             WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
             if(StringUtils.isEmpty(wmsInnerInventory)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"库存变动 请重新盘点");
