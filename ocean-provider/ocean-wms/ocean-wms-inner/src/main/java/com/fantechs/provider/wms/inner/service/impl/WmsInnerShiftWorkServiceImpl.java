@@ -456,6 +456,7 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
 
         //更新库存明细
         Iterator<String> iterator = set.iterator();
+        List<WmsInnerInventoryDetDto> updateList = new ArrayList<>();
         while (iterator.hasNext()) {
             String code = iterator.next();
             Byte type = map.get(code);
@@ -472,11 +473,14 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
             searchWmsInnerInventoryDet.setOrgId(sysUser.getOrganizationId());
             List<WmsInnerInventoryDetDto> list = wmsInnerInventoryDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerInventoryDet));
             for(WmsInnerInventoryDetDto innerInventoryDetDto : list) {
-                innerInventoryDetDto.setStorageId(wmsInPutawayOrderDet.getInStorageId());
-                innerInventoryDetDto.setBarcodeStatus((byte) 1);
-                innerInventoryDetDto.setModifiedTime(new Date());
-                innerInventoryDetDto.setModifiedUserId(sysUser.getUserId());
-                wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(innerInventoryDetDto);
+                if(!updateList.contains(innerInventoryDetDto)){
+                    innerInventoryDetDto.setStorageId(innerInventoryDetDto.getStorageId());
+                    innerInventoryDetDto.setBarcodeStatus((byte) 1);
+                    innerInventoryDetDto.setModifiedTime(new Date());
+                    innerInventoryDetDto.setModifiedUserId(sysUser.getUserId());
+                    updateList.add(innerInventoryDetDto);
+                }
+                //    wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(innerInventoryDetDto);
                 if(!newInventoryDetDtoList.contains(innerInventoryDetDto))
                     newInventoryDetDtoList.add(innerInventoryDetDto);
                 if(StringUtils.isNotEmpty(innerInventoryDetDto.getBarcode()))
@@ -489,15 +493,21 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
             List<WmsInnerInventoryDetDto> list1 = wmsInnerInventoryDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerInventoryDet));
             if(StringUtils.isNotEmpty(list1)){
                 WmsInnerInventoryDetDto innerInventoryDetDto1 = list1.get(0);
-                innerInventoryDetDto1.setStorageId(wmsInPutawayOrderDet.getInStorageId());
-                innerInventoryDetDto1.setBarcodeStatus((byte) 1);
-                innerInventoryDetDto1.setModifiedTime(new Date());
-                innerInventoryDetDto1.setModifiedUserId(sysUser.getUserId());
-                wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(innerInventoryDetDto1);
+                if(!updateList.contains(innerInventoryDetDto1)) {
+                    innerInventoryDetDto1.setStorageId(wmsInPutawayOrderDet.getInStorageId());
+                    innerInventoryDetDto1.setBarcodeStatus((byte) 1);
+                    innerInventoryDetDto1.setModifiedTime(new Date());
+                    innerInventoryDetDto1.setModifiedUserId(sysUser.getUserId());
+                    updateList.add(innerInventoryDetDto1);
+                }
             }
             iterator.remove();
         }
-
+        if(StringUtils.isNotEmpty(updateList)){
+            for (WmsInnerInventoryDetDto update : updateList){
+                wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(update);
+            }
+        }
 
         //判断是否大于分配数
         if (totalQty.compareTo(distributionQty) == 1) {
