@@ -130,6 +130,8 @@ public class WmsInnerJobOrderDet extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="productionDate",value = "生产日期")
     @Excel(name = "生产日期", height = 20, width = 30,orderNum="")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "production_date")
     private Date productionDate;
 
