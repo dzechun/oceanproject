@@ -406,6 +406,8 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
                             SearchWmsInnerMaterialBarcodeReOrder searchWmsInnerMaterialBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
                             searchWmsInnerMaterialBarcodeReOrder.setOrderTypeCode(wmsInPlanReceivingOrder.getSourceSysOrderTypeCode());//单据类型
                             searchWmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInPlanReceivingOrderDet.getSourceId());//明细ID
+                            searchWmsInnerMaterialBarcodeReOrder.setCodeQueryMark(1);
+                            searchWmsInnerMaterialBarcodeReOrder.setPageSize(999999);
                             ResponseEntity<List<WmsInnerMaterialBarcodeReOrderDto>> listResponseEntity = innerFeignApi.findList(searchWmsInnerMaterialBarcodeReOrder);
                             if(listResponseEntity.getCode()!=0){
                                 throw new BizErrorException(listResponseEntity.getCode(),listResponseEntity.getMessage());
