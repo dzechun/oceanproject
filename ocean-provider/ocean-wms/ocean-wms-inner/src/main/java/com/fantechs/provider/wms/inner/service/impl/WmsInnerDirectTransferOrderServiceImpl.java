@@ -275,7 +275,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
             }
 
             //移出库存状态更新
-            outWmsInnerInventory.setPackingQty(outWmsInnerInventory.getPackingQty().subtract(qty));
+            outWmsInnerInventory.setPackingQty(outWmsInnerInventory.getPackingQty().subtract(totalQty));
             wmsInnerInventoryMapper.updateByPrimaryKeySelective(outWmsInnerInventory);
 
             //新增移入库存状态
@@ -302,11 +302,11 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
                 inWmsInnerInventory.setCreateTime(new Date());
                 inWmsInnerInventory.setModifiedUserId(user.getUserId());
                 inWmsInnerInventory.setModifiedTime(new Date());
-                inWmsInnerInventory.setPackingQty(qty);
+                inWmsInnerInventory.setPackingQty(totalQty);
                 i = wmsInnerInventoryMapper.insertSelective(inWmsInnerInventory);
             } else {
                 inWmsInnerInventory = inWmsInnerInventorys.get(0);
-                inWmsInnerInventory.setPackingQty(inWmsInnerInventory.getPackingQty().add(qty));
+                inWmsInnerInventory.setPackingQty(inWmsInnerInventory.getPackingQty().add(totalQty));
                 i = wmsInnerInventoryMapper.updateByPrimaryKeySelective(inWmsInnerInventory);
             }
 
