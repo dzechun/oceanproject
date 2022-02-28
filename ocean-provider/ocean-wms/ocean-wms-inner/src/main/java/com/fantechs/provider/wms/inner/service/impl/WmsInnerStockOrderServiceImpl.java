@@ -781,17 +781,51 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 searchOrderDetBarcode.setPalletCode(null);
                 detBarcodeDtos=wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
                 if(detBarcodeDtos.size()>0){
-                    WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
+                    /*WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
                     orderDetBarcode.setStockOrderDetBarcodeId(detBarcodeDtos.get(0).getStockOrderDetBarcodeId());
                     orderDetBarcode.setScanStatus((byte)3);
                     orderDetBarcode.setStockResult((byte)2);
                     orderDetBarcode.setModifiedUserId(sysUser.getUserId());
                     orderDetBarcode.setModifiedTime(new Date());
-                    num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);
+                    num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);*/
 
                     totalQty=totalQty.add(detBarcodeDtos.get(0).getMaterialQty());
 
-                    detBarcodeIDList.add(orderDetBarcode.getStockOrderDetBarcodeId());
+                    if(!detBarcodeIDList.contains(detBarcodeDtos.get(0).getStockOrderDetBarcodeId())) {
+                        detBarcodeIDList.add(detBarcodeDtos.get(0).getStockOrderDetBarcodeId());
+                    }
+
+                    if(StringUtils.isNotEmpty(detBarcodeDtos.get(0).getColorBoxCode())
+                            || StringUtils.isNotEmpty(detBarcodeDtos.get(0).getCartonCode())
+                            || StringUtils.isNotEmpty(detBarcodeDtos.get(0).getPalletCode())){
+                        Example exampleBarcode = new Example(WmsInnerMaterialBarcode.class);
+                        Example.Criteria criteriaBarcode = exampleBarcode.createCriteria();
+                        if(StringUtils.isNotEmpty(detBarcodeDtos.get(0).getColorBoxCode())){
+                            criteriaBarcode.orEqualTo("colorBoxCode",detBarcodeDtos.get(0).getColorBoxCode());
+                        }
+                        if(StringUtils.isNotEmpty(detBarcodeDtos.get(0).getCartonCode())){
+                            criteriaBarcode.orEqualTo("cartonCode()",detBarcodeDtos.get(0).getCartonCode());
+                        }
+                        if(StringUtils.isNotEmpty(detBarcodeDtos.get(0).getPalletCode())){
+                            criteriaBarcode.orEqualTo("palletCode()",detBarcodeDtos.get(0).getPalletCode());
+                        }
+                        criteriaBarcode.andIsNull("barcode");
+                        List<WmsInnerMaterialBarcode> listBarcode=wmsInnerMaterialBarcodeMapper.selectByExample(exampleBarcode);
+                        if(StringUtils.isNotEmpty(listBarcode) && listBarcode.size()>0){
+                            for (WmsInnerMaterialBarcode wmsInnerMaterialBarcode : listBarcode) {
+                                Example exampleDetBarcode = new Example(WmsInnerStockOrderDetBarcode.class);
+                                Example.Criteria criteriaDetBarcode = exampleDetBarcode.createCriteria();
+                                criteriaDetBarcode.andEqualTo("stockOrderDetId",stockOrderDetId);
+                                criteriaDetBarcode.andEqualTo("materialBarcodeId",wmsInnerMaterialBarcode.getMaterialBarcodeId());
+                                WmsInnerStockOrderDetBarcode detBarcode=wmsInnerStockOrderDetBarcodeMapper.selectOneByExample(exampleDetBarcode);
+                                if(StringUtils.isNotEmpty(detBarcode)){
+                                    if(!detBarcodeIDList.contains(detBarcode.getStockOrderDetBarcodeId())) {
+                                        detBarcodeIDList.add(detBarcode.getStockOrderDetBarcodeId());
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
             else if(barcodeType==(byte)2){
@@ -804,15 +838,46 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 detBarcodeDtos=wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
                 if(detBarcodeDtos.size()>0){
                     for (WmsInnerStockOrderDetBarcodeDto detBarcodeDto : detBarcodeDtos) {
-                        WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
+                        /*WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
                         orderDetBarcode.setStockOrderDetBarcodeId(detBarcodeDto.getStockOrderDetBarcodeId());
                         orderDetBarcode.setScanStatus((byte)3);
                         orderDetBarcode.setStockResult((byte)2);
                         orderDetBarcode.setModifiedUserId(sysUser.getUserId());
                         orderDetBarcode.setModifiedTime(new Date());
-                        num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);
+                        num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);*/
 
-                        detBarcodeIDList.add(orderDetBarcode.getStockOrderDetBarcodeId());
+                        if(!detBarcodeIDList.contains(detBarcodeDto.getStockOrderDetBarcodeId())) {
+                            detBarcodeIDList.add(detBarcodeDto.getStockOrderDetBarcodeId());
+                        }
+
+                        if(StringUtils.isNotEmpty(detBarcodeDto.getCartonCode())
+                                || StringUtils.isNotEmpty(detBarcodeDto.getPalletCode())){
+                            Example exampleBarcode = new Example(WmsInnerMaterialBarcode.class);
+                            Example.Criteria criteriaBarcode = exampleBarcode.createCriteria();
+                            if(StringUtils.isNotEmpty(detBarcodeDto.getCartonCode())){
+                                criteriaBarcode.orEqualTo("cartonCode()",detBarcodeDto.getCartonCode());
+                            }
+                            if(StringUtils.isNotEmpty(detBarcodeDto.getPalletCode())){
+                                criteriaBarcode.orEqualTo("palletCode()",detBarcodeDto.getPalletCode());
+                            }
+                            criteriaBarcode.andIsNull("barcode");
+                            List<WmsInnerMaterialBarcode> listBarcode=wmsInnerMaterialBarcodeMapper.selectByExample(exampleBarcode);
+                            if(StringUtils.isNotEmpty(listBarcode) && listBarcode.size()>0){
+                                for (WmsInnerMaterialBarcode wmsInnerMaterialBarcode : listBarcode) {
+                                    Example exampleDetBarcode = new Example(WmsInnerStockOrderDetBarcode.class);
+                                    Example.Criteria criteriaDetBarcode = exampleDetBarcode.createCriteria();
+                                    criteriaDetBarcode.andEqualTo("stockOrderDetId",stockOrderDetId);
+                                    criteriaDetBarcode.andEqualTo("materialBarcodeId",wmsInnerMaterialBarcode.getMaterialBarcodeId());
+                                    WmsInnerStockOrderDetBarcode detBarcode=wmsInnerStockOrderDetBarcodeMapper.selectOneByExample(exampleDetBarcode);
+                                    if(StringUtils.isNotEmpty(detBarcode)){
+                                        if(detBarcodeIDList.contains(detBarcode.getStockOrderDetBarcodeId())) {
+                                            detBarcodeIDList.add(detBarcode.getStockOrderDetBarcodeId());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                     }
 
                     totalQty=totalQty.add(detBarcodeDtos.get(0).getMaterialQty());
@@ -829,15 +894,45 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 detBarcodeDtos=wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
                 if(detBarcodeDtos.size()>0){
                     for (WmsInnerStockOrderDetBarcodeDto detBarcodeDto : detBarcodeDtos) {
-                        WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
+                        /*WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
                         orderDetBarcode.setStockOrderDetBarcodeId(detBarcodeDto.getStockOrderDetBarcodeId());
                         orderDetBarcode.setScanStatus((byte)3);
                         orderDetBarcode.setStockResult((byte)2);
                         orderDetBarcode.setModifiedUserId(sysUser.getUserId());
                         orderDetBarcode.setModifiedTime(new Date());
-                        num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);
+                        num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);*/
 
-                        detBarcodeIDList.add(orderDetBarcode.getStockOrderDetBarcodeId());
+                        if(!detBarcodeIDList.contains(detBarcodeDto.getStockOrderDetBarcodeId())) {
+                            detBarcodeIDList.add(detBarcodeDto.getStockOrderDetBarcodeId());
+                        }
+
+                        if(StringUtils.isNotEmpty(detBarcodeDto.getColorBoxCode())
+                                || StringUtils.isNotEmpty(detBarcodeDto.getPalletCode())){
+                            Example exampleBarcode = new Example(WmsInnerMaterialBarcode.class);
+                            Example.Criteria criteriaBarcode = exampleBarcode.createCriteria();
+                            if(StringUtils.isNotEmpty(detBarcodeDto.getColorBoxCode())){
+                                criteriaBarcode.orEqualTo("colorBoxCode()",detBarcodeDto.getColorBoxCode());
+                            }
+                            if(StringUtils.isNotEmpty(detBarcodeDto.getPalletCode())){
+                                criteriaBarcode.orEqualTo("palletCode()",detBarcodeDto.getPalletCode());
+                            }
+                            criteriaBarcode.andIsNull("barcode");
+                            List<WmsInnerMaterialBarcode> listBarcode=wmsInnerMaterialBarcodeMapper.selectByExample(exampleBarcode);
+                            if(StringUtils.isNotEmpty(listBarcode) && listBarcode.size()>0){
+                                for (WmsInnerMaterialBarcode wmsInnerMaterialBarcode : listBarcode) {
+                                    Example exampleDetBarcode = new Example(WmsInnerStockOrderDetBarcode.class);
+                                    Example.Criteria criteriaDetBarcode = exampleDetBarcode.createCriteria();
+                                    criteriaDetBarcode.andEqualTo("stockOrderDetId",stockOrderDetId);
+                                    criteriaDetBarcode.andEqualTo("materialBarcodeId",wmsInnerMaterialBarcode.getMaterialBarcodeId());
+                                    WmsInnerStockOrderDetBarcode detBarcode=wmsInnerStockOrderDetBarcodeMapper.selectOneByExample(exampleDetBarcode);
+                                    if(StringUtils.isNotEmpty(detBarcode)){
+                                        if(!detBarcodeIDList.contains(detBarcode.getStockOrderDetBarcodeId())) {
+                                            detBarcodeIDList.add(detBarcode.getStockOrderDetBarcodeId());
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     List<WmsInnerStockOrderDetBarcodeDto> detBarcodeList = detBarcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
@@ -855,15 +950,45 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 detBarcodeDtos=wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
                 if(detBarcodeDtos.size()>0){
                     for (WmsInnerStockOrderDetBarcodeDto detBarcodeDto : detBarcodeDtos) {
-                        WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
+                        /*WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
                         orderDetBarcode.setStockOrderDetBarcodeId(detBarcodeDto.getStockOrderDetBarcodeId());
                         orderDetBarcode.setScanStatus((byte)3);
                         orderDetBarcode.setStockResult((byte)2);
                         orderDetBarcode.setModifiedUserId(sysUser.getUserId());
                         orderDetBarcode.setModifiedTime(new Date());
-                        num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);
+                        num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);*/
 
-                        detBarcodeIDList.add(orderDetBarcode.getStockOrderDetBarcodeId());
+                        if(!detBarcodeIDList.contains(detBarcodeDto.getStockOrderDetBarcodeId())) {
+                            detBarcodeIDList.add(detBarcodeDto.getStockOrderDetBarcodeId());
+                        }
+
+                        if(StringUtils.isNotEmpty(detBarcodeDto.getColorBoxCode())
+                                || StringUtils.isNotEmpty(detBarcodeDto.getCartonCode())){
+                            Example exampleBarcode = new Example(WmsInnerMaterialBarcode.class);
+                            Example.Criteria criteriaBarcode = exampleBarcode.createCriteria();
+                            if(StringUtils.isNotEmpty(detBarcodeDto.getColorBoxCode())){
+                                criteriaBarcode.orEqualTo("colorBoxCode()",detBarcodeDto.getColorBoxCode());
+                            }
+                            if(StringUtils.isNotEmpty(detBarcodeDto.getCartonCode())){
+                                criteriaBarcode.orEqualTo("cartonCode()",detBarcodeDto.getCartonCode());
+                            }
+                            criteriaBarcode.andIsNull("barcode");
+                            List<WmsInnerMaterialBarcode> listBarcode=wmsInnerMaterialBarcodeMapper.selectByExample(exampleBarcode);
+                            if(StringUtils.isNotEmpty(listBarcode) && listBarcode.size()>0){
+                                for (WmsInnerMaterialBarcode wmsInnerMaterialBarcode : listBarcode) {
+                                    Example exampleDetBarcode = new Example(WmsInnerStockOrderDetBarcode.class);
+                                    Example.Criteria criteriaDetBarcode = exampleDetBarcode.createCriteria();
+                                    criteriaDetBarcode.andEqualTo("stockOrderDetId",stockOrderDetId);
+                                    criteriaDetBarcode.andEqualTo("materialBarcodeId",wmsInnerMaterialBarcode.getMaterialBarcodeId());
+                                    WmsInnerStockOrderDetBarcode detBarcode=wmsInnerStockOrderDetBarcodeMapper.selectOneByExample(exampleDetBarcode);
+                                    if(StringUtils.isNotEmpty(detBarcode)){
+                                        if(!detBarcodeIDList.contains(detBarcode.getStockOrderDetBarcodeId())) {
+                                            detBarcodeIDList.add(detBarcode.getStockOrderDetBarcodeId());
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     List<WmsInnerStockOrderDetBarcodeDto> detBarcodeList = detBarcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
@@ -907,7 +1032,6 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 wmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
                 wmsInnerMaterialBarcode.setCreateTime(new Date());
                 wmsInnerMaterialBarcode.setCreateUserId(sysUser.getUserId());
-
                 num += wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(wmsInnerMaterialBarcode);
 
                 //条码关系
@@ -990,11 +1114,24 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             if(StringUtils.isNotEmpty(detBarcodeIDList) && detBarcodeIDList.size()>0)
                 tempList.removeAll(detBarcodeIDList);
         }
+        //盘亏
         if(tempList.size()>0){
             for (Long aLong : tempList) {
                 WmsInnerStockOrderDetBarcode upStockOrderDetBarcode=new WmsInnerStockOrderDetBarcode();
                 upStockOrderDetBarcode.setStockOrderDetBarcodeId(aLong);
                 upStockOrderDetBarcode.setStockResult((byte)4);
+                upStockOrderDetBarcode.setModifiedUserId(sysUser.getUserId());
+                upStockOrderDetBarcode.setModifiedTime(new Date());
+                wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(upStockOrderDetBarcode);
+            }
+        }
+        //已盘点
+        if(detBarcodeIDList.size()>0){
+            for (Long aLong : detBarcodeIDList) {
+                WmsInnerStockOrderDetBarcode upStockOrderDetBarcode=new WmsInnerStockOrderDetBarcode();
+                upStockOrderDetBarcode.setStockOrderDetBarcodeId(aLong);
+                upStockOrderDetBarcode.setScanStatus((byte)3);
+                upStockOrderDetBarcode.setStockResult((byte)2);
                 upStockOrderDetBarcode.setModifiedUserId(sysUser.getUserId());
                 upStockOrderDetBarcode.setModifiedTime(new Date());
                 wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(upStockOrderDetBarcode);
@@ -1105,17 +1242,51 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 searchOrderDetBarcode.setPalletCode(null);
                 detBarcodeDtos=wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
                 if(detBarcodeDtos.size()>0){
-                    WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
+                    /*WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
                     orderDetBarcode.setStockOrderDetBarcodeId(detBarcodeDtos.get(0).getStockOrderDetBarcodeId());
                     orderDetBarcode.setScanStatus((byte)3);
                     orderDetBarcode.setStockResult((byte)2);
                     orderDetBarcode.setModifiedUserId(sysUser.getUserId());
                     orderDetBarcode.setModifiedTime(new Date());
-                    num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);
+                    num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);*/
 
                     totalQty=totalQty.add(detBarcodeDtos.get(0).getMaterialQty());
 
-                    detBarcodeIDList.add(orderDetBarcode.getStockOrderDetBarcodeId());
+                    if(!detBarcodeIDList.contains(detBarcodeDtos.get(0).getStockOrderDetBarcodeId())) {
+                        detBarcodeIDList.add(detBarcodeDtos.get(0).getStockOrderDetBarcodeId());
+                    }
+
+                    if(StringUtils.isNotEmpty(detBarcodeDtos.get(0).getColorBoxCode())
+                        || StringUtils.isNotEmpty(detBarcodeDtos.get(0).getCartonCode())
+                        || StringUtils.isNotEmpty(detBarcodeDtos.get(0).getPalletCode())){
+                        Example exampleBarcode = new Example(WmsInnerMaterialBarcode.class);
+                        Example.Criteria criteriaBarcode = exampleBarcode.createCriteria();
+                        if(StringUtils.isNotEmpty(detBarcodeDtos.get(0).getColorBoxCode())){
+                            criteriaBarcode.orEqualTo("colorBoxCode",detBarcodeDtos.get(0).getColorBoxCode());
+                        }
+                        if(StringUtils.isNotEmpty(detBarcodeDtos.get(0).getCartonCode())){
+                            criteriaBarcode.orEqualTo("cartonCode()",detBarcodeDtos.get(0).getCartonCode());
+                        }
+                        if(StringUtils.isNotEmpty(detBarcodeDtos.get(0).getPalletCode())){
+                            criteriaBarcode.orEqualTo("palletCode()",detBarcodeDtos.get(0).getPalletCode());
+                        }
+                        criteriaBarcode.andIsNull("barcode");
+                        List<WmsInnerMaterialBarcode> listBarcode=wmsInnerMaterialBarcodeMapper.selectByExample(exampleBarcode);
+                        if(StringUtils.isNotEmpty(listBarcode) && listBarcode.size()>0){
+                            for (WmsInnerMaterialBarcode wmsInnerMaterialBarcode : listBarcode) {
+                                Example exampleDetBarcode = new Example(WmsInnerStockOrderDetBarcode.class);
+                                Example.Criteria criteriaDetBarcode = exampleDetBarcode.createCriteria();
+                                criteriaDetBarcode.andEqualTo("stockOrderDetId",stockOrderDetId);
+                                criteriaDetBarcode.andEqualTo("materialBarcodeId",wmsInnerMaterialBarcode.getMaterialBarcodeId());
+                                WmsInnerStockOrderDetBarcode detBarcode=wmsInnerStockOrderDetBarcodeMapper.selectOneByExample(exampleDetBarcode);
+                                if(StringUtils.isNotEmpty(detBarcode)){
+                                    if(!detBarcodeIDList.contains(detBarcode.getStockOrderDetBarcodeId())) {
+                                        detBarcodeIDList.add(detBarcode.getStockOrderDetBarcodeId());
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
 
             }
@@ -1129,15 +1300,45 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 detBarcodeDtos=wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
                 if(detBarcodeDtos.size()>0){
                     for (WmsInnerStockOrderDetBarcodeDto detBarcodeDto : detBarcodeDtos) {
-                        WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
+                        /*WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
                         orderDetBarcode.setStockOrderDetBarcodeId(detBarcodeDto.getStockOrderDetBarcodeId());
                         orderDetBarcode.setScanStatus((byte)3);
                         orderDetBarcode.setStockResult((byte)2);
                         orderDetBarcode.setModifiedUserId(sysUser.getUserId());
                         orderDetBarcode.setModifiedTime(new Date());
-                        num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);
+                        num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);*/
 
-                        detBarcodeIDList.add(orderDetBarcode.getStockOrderDetBarcodeId());
+                        if(!detBarcodeIDList.contains(detBarcodeDto.getStockOrderDetBarcodeId())) {
+                            detBarcodeIDList.add(detBarcodeDto.getStockOrderDetBarcodeId());
+                        }
+
+                        if(StringUtils.isNotEmpty(detBarcodeDto.getCartonCode())
+                                || StringUtils.isNotEmpty(detBarcodeDto.getPalletCode())){
+                            Example exampleBarcode = new Example(WmsInnerMaterialBarcode.class);
+                            Example.Criteria criteriaBarcode = exampleBarcode.createCriteria();
+                            if(StringUtils.isNotEmpty(detBarcodeDto.getCartonCode())){
+                                criteriaBarcode.orEqualTo("cartonCode()",detBarcodeDto.getCartonCode());
+                            }
+                            if(StringUtils.isNotEmpty(detBarcodeDto.getPalletCode())){
+                                criteriaBarcode.orEqualTo("palletCode()",detBarcodeDto.getPalletCode());
+                            }
+                            criteriaBarcode.andIsNull("barcode");
+                            List<WmsInnerMaterialBarcode> listBarcode=wmsInnerMaterialBarcodeMapper.selectByExample(exampleBarcode);
+                            if(StringUtils.isNotEmpty(listBarcode) && listBarcode.size()>0){
+                                for (WmsInnerMaterialBarcode wmsInnerMaterialBarcode : listBarcode) {
+                                    Example exampleDetBarcode = new Example(WmsInnerStockOrderDetBarcode.class);
+                                    Example.Criteria criteriaDetBarcode = exampleDetBarcode.createCriteria();
+                                    criteriaDetBarcode.andEqualTo("stockOrderDetId",stockOrderDetId);
+                                    criteriaDetBarcode.andEqualTo("materialBarcodeId",wmsInnerMaterialBarcode.getMaterialBarcodeId());
+                                    WmsInnerStockOrderDetBarcode detBarcode=wmsInnerStockOrderDetBarcodeMapper.selectOneByExample(exampleDetBarcode);
+                                    if(StringUtils.isNotEmpty(detBarcode)){
+                                        if(detBarcodeIDList.contains(detBarcode.getStockOrderDetBarcodeId())) {
+                                            detBarcodeIDList.add(detBarcode.getStockOrderDetBarcodeId());
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     totalQty=totalQty.add(detBarcodeDtos.get(0).getMaterialQty());
@@ -1154,15 +1355,45 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 detBarcodeDtos=wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
                 if(detBarcodeDtos.size()>0){
                     for (WmsInnerStockOrderDetBarcodeDto detBarcodeDto : detBarcodeDtos) {
-                        WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
+                        /*WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
                         orderDetBarcode.setStockOrderDetBarcodeId(detBarcodeDto.getStockOrderDetBarcodeId());
                         orderDetBarcode.setScanStatus((byte)3);
                         orderDetBarcode.setStockResult((byte)2);
                         orderDetBarcode.setModifiedUserId(sysUser.getUserId());
                         orderDetBarcode.setModifiedTime(new Date());
-                        num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);
+                        num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);*/
 
-                        detBarcodeIDList.add(orderDetBarcode.getStockOrderDetBarcodeId());
+                        if(!detBarcodeIDList.contains(detBarcodeDto.getStockOrderDetBarcodeId())) {
+                            detBarcodeIDList.add(detBarcodeDto.getStockOrderDetBarcodeId());
+                        }
+
+                        if(StringUtils.isNotEmpty(detBarcodeDto.getColorBoxCode())
+                                || StringUtils.isNotEmpty(detBarcodeDto.getPalletCode())){
+                            Example exampleBarcode = new Example(WmsInnerMaterialBarcode.class);
+                            Example.Criteria criteriaBarcode = exampleBarcode.createCriteria();
+                            if(StringUtils.isNotEmpty(detBarcodeDto.getColorBoxCode())){
+                                criteriaBarcode.orEqualTo("colorBoxCode()",detBarcodeDto.getColorBoxCode());
+                            }
+                            if(StringUtils.isNotEmpty(detBarcodeDto.getPalletCode())){
+                                criteriaBarcode.orEqualTo("palletCode()",detBarcodeDto.getPalletCode());
+                            }
+                            criteriaBarcode.andIsNull("barcode");
+                            List<WmsInnerMaterialBarcode> listBarcode=wmsInnerMaterialBarcodeMapper.selectByExample(exampleBarcode);
+                            if(StringUtils.isNotEmpty(listBarcode) && listBarcode.size()>0){
+                                for (WmsInnerMaterialBarcode wmsInnerMaterialBarcode : listBarcode) {
+                                    Example exampleDetBarcode = new Example(WmsInnerStockOrderDetBarcode.class);
+                                    Example.Criteria criteriaDetBarcode = exampleDetBarcode.createCriteria();
+                                    criteriaDetBarcode.andEqualTo("stockOrderDetId",stockOrderDetId);
+                                    criteriaDetBarcode.andEqualTo("materialBarcodeId",wmsInnerMaterialBarcode.getMaterialBarcodeId());
+                                    WmsInnerStockOrderDetBarcode detBarcode=wmsInnerStockOrderDetBarcodeMapper.selectOneByExample(exampleDetBarcode);
+                                    if(StringUtils.isNotEmpty(detBarcode)){
+                                        if(!detBarcodeIDList.contains(detBarcode.getStockOrderDetBarcodeId())) {
+                                            detBarcodeIDList.add(detBarcode.getStockOrderDetBarcodeId());
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                     //箱号最少包装单位数量
                     List<WmsInnerStockOrderDetBarcodeDto> barcodeDetList = detBarcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
@@ -1181,15 +1412,45 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 detBarcodeDtos=wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
                 if(detBarcodeDtos.size()>0){
                     for (WmsInnerStockOrderDetBarcodeDto detBarcodeDto : detBarcodeDtos) {
-                        WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
+                        /*WmsInnerStockOrderDetBarcode orderDetBarcode=new WmsInnerStockOrderDetBarcode();
                         orderDetBarcode.setStockOrderDetBarcodeId(detBarcodeDto.getStockOrderDetBarcodeId());
                         orderDetBarcode.setScanStatus((byte)3);
                         orderDetBarcode.setStockResult((byte)2);
                         orderDetBarcode.setModifiedUserId(sysUser.getUserId());
                         orderDetBarcode.setModifiedTime(new Date());
-                        num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);
+                        num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(orderDetBarcode);*/
 
-                        detBarcodeIDList.add(orderDetBarcode.getStockOrderDetBarcodeId());
+                        if(!detBarcodeIDList.contains(detBarcodeDto.getStockOrderDetBarcodeId())) {
+                            detBarcodeIDList.add(detBarcodeDto.getStockOrderDetBarcodeId());
+                        }
+
+                        if(StringUtils.isNotEmpty(detBarcodeDto.getColorBoxCode())
+                                || StringUtils.isNotEmpty(detBarcodeDto.getCartonCode())){
+                            Example exampleBarcode = new Example(WmsInnerMaterialBarcode.class);
+                            Example.Criteria criteriaBarcode = exampleBarcode.createCriteria();
+                            if(StringUtils.isNotEmpty(detBarcodeDto.getColorBoxCode())){
+                                criteriaBarcode.orEqualTo("colorBoxCode()",detBarcodeDto.getColorBoxCode());
+                            }
+                            if(StringUtils.isNotEmpty(detBarcodeDto.getCartonCode())){
+                                criteriaBarcode.orEqualTo("cartonCode()",detBarcodeDto.getCartonCode());
+                            }
+                            criteriaBarcode.andIsNull("barcode");
+                            List<WmsInnerMaterialBarcode> listBarcode=wmsInnerMaterialBarcodeMapper.selectByExample(exampleBarcode);
+                            if(StringUtils.isNotEmpty(listBarcode) && listBarcode.size()>0){
+                                for (WmsInnerMaterialBarcode wmsInnerMaterialBarcode : listBarcode) {
+                                    Example exampleDetBarcode = new Example(WmsInnerStockOrderDetBarcode.class);
+                                    Example.Criteria criteriaDetBarcode = exampleDetBarcode.createCriteria();
+                                    criteriaDetBarcode.andEqualTo("stockOrderDetId",stockOrderDetId);
+                                    criteriaDetBarcode.andEqualTo("materialBarcodeId",wmsInnerMaterialBarcode.getMaterialBarcodeId());
+                                    WmsInnerStockOrderDetBarcode detBarcode=wmsInnerStockOrderDetBarcodeMapper.selectOneByExample(exampleDetBarcode);
+                                    if(StringUtils.isNotEmpty(detBarcode)){
+                                        if(!detBarcodeIDList.contains(detBarcode.getStockOrderDetBarcodeId())) {
+                                            detBarcodeIDList.add(detBarcode.getStockOrderDetBarcodeId());
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                     //栈板最少包装单位数量
                     List<WmsInnerStockOrderDetBarcodeDto> barcodeDetList = detBarcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
@@ -1224,7 +1485,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 wmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
                 wmsInnerMaterialBarcode.setCreateTime(new Date());
                 wmsInnerMaterialBarcode.setCreateUserId(sysUser.getUserId());
-
+                wmsInnerMaterialBarcode.setBarcodeType((byte)1);
                 //新增到来料条码表
                 num += wmsInnerMaterialBarcodeMapper.insertUseGeneratedKeys(wmsInnerMaterialBarcode);
                 //设置来料条码ID
@@ -1313,11 +1574,24 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             if(StringUtils.isNotEmpty(detBarcodeIDList) && detBarcodeIDList.size()>0)
                 tempList.removeAll(detBarcodeIDList);
         }
+        //盘亏
         if(tempList.size()>0){
             for (Long aLong : tempList) {
                 WmsInnerStockOrderDetBarcode upStockOrderDetBarcode=new WmsInnerStockOrderDetBarcode();
                 upStockOrderDetBarcode.setStockOrderDetBarcodeId(aLong);
                 upStockOrderDetBarcode.setStockResult((byte)4);
+                upStockOrderDetBarcode.setModifiedUserId(sysUser.getUserId());
+                upStockOrderDetBarcode.setModifiedTime(new Date());
+                num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(upStockOrderDetBarcode);
+            }
+        }
+        //已盘点
+        if(detBarcodeIDList.size()>0){
+            for (Long aLong : detBarcodeIDList) {
+                WmsInnerStockOrderDetBarcode upStockOrderDetBarcode=new WmsInnerStockOrderDetBarcode();
+                upStockOrderDetBarcode.setStockOrderDetBarcodeId(aLong);
+                upStockOrderDetBarcode.setScanStatus((byte)3);
+                upStockOrderDetBarcode.setStockResult((byte)2);
                 upStockOrderDetBarcode.setModifiedUserId(sysUser.getUserId());
                 upStockOrderDetBarcode.setModifiedTime(new Date());
                 num+=wmsInnerStockOrderDetBarcodeMapper.updateByPrimaryKeySelective(upStockOrderDetBarcode);
