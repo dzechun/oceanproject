@@ -1504,6 +1504,16 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 if (resultDto1.getBarcodeType() != (byte) 5) {
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "扫描的是系统其他条码 请重新扫码-->" + barcode);
                 }*/
+
+                SearchWmsInnerStockOrderDetBarcode searchOrderDetBarcode1 = new SearchWmsInnerStockOrderDetBarcode();
+                searchOrderDetBarcode1.setQueryAll("true");
+                searchOrderDetBarcode1.setStockOrderId(stockOrder.getStockOrderId());
+                searchOrderDetBarcode1.setBarcode(barcode);
+                List<WmsInnerStockOrderDetBarcodeDto> detBarcodeDtos1 = wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode1));
+                if(StringUtils.isNotEmpty(detBarcodeDtos1) && detBarcodeDtos1.size()>0){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码已扫描 请重新扫码-->" + barcode);
+                }
+
                 barcodeResultDto.setBarcodeType((byte) 5);
             }
         }
@@ -1715,6 +1725,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "扫描的是系统其他条码 请重新扫码-->" + barcode);
                 }
 
+
                 resultDto.setBarcodeType((byte) 5);
             }
         }
@@ -1800,6 +1811,15 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 BarcodeResultDto resultDto1 = InBarcodeUtil.scanJugeBarcode(barcode);
                 if (resultDto1.getBarcodeType() != (byte) 5) {
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "扫描的是系统其他条码 请重新扫码-->" + barcode);
+                }
+
+                SearchWmsInnerStockOrderDetBarcode searchOrderDetBarcode = new SearchWmsInnerStockOrderDetBarcode();
+                searchOrderDetBarcode.setQueryAll("true");
+                searchOrderDetBarcode.setStockOrderId(wmsInnerStockOrderDet.getStockOrderId());
+                searchOrderDetBarcode.setBarcode(barcode);
+                List<WmsInnerStockOrderDetBarcodeDto> detBarcodeDtos = wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
+                if(StringUtils.isNotEmpty(detBarcodeDtos) && detBarcodeDtos.size()>0){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码已扫描 请重新扫码-->" + barcode);
                 }
 
                 resultDto.setBarcodeType((byte) 5);
@@ -1920,7 +1940,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 searchinventoryDet.setStorageId(wmsInnerStockOrderDet.getStorageId());
                 searchinventoryDet.setNotEqualMark(0);
                 searchinventoryDet.setMaterialId(wmsInnerStockOrderDet.getMaterialId());
-                searchinventoryDet.setQueryType("1");
+                searchinventoryDet.setBarcodeStatus("1");
                 if(StringUtils.isNotEmpty(activeOrAgain) && activeOrAgain==(byte)1)
                     searchinventoryDet.setIfStockLock((byte)0);//盘点锁(0-否 1-是)
                 else if(StringUtils.isNotEmpty(activeOrAgain) && activeOrAgain==(byte)2)
@@ -2171,7 +2191,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                         inventoryDetNew.setAsnCode(wmsInnerStockOrder.getPlanStockOrderCode());//盘点单号
                         inventoryDetNew.setIfStockLock((byte) 0);
                         inventoryDetNew.setInventoryStatusId(wmsInnerStockOrderDet.getInventoryStatusId());
-                        inventoryDetNew.setBarcodeStatus((byte) 3);//在库
+                        inventoryDetNew.setBarcodeStatus((byte) 1);//在库
                         inventoryDetNew.setCreateUserId(sysUser.getUserId());
                         inventoryDetNew.setCreateTime(new Date());
                         inventoryDetNew.setModifiedUserId(sysUser.getUserId());
