@@ -128,7 +128,7 @@ public class WmsInnerShiftWorkDetServiceImpl extends BaseService<WmsInnerJobOrde
             // 修改原库存
             wmsInnerInventoryService.update(sourceInnerInventory);
             // 删除明细库存
-            wmsInnerInventoryService.delete(innerInventory);
+            wmsInnerInventoryMapper.deleteByPrimaryKey(innerInventory);
         }
         return wmsInnerJobOrderDetMapper.deleteByIds(ids);
     }
