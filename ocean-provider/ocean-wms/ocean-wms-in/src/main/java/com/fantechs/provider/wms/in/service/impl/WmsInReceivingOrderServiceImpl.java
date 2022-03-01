@@ -179,6 +179,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                                         searchWmsInnerMaterialBarcode.setPalletCode(wmsInReceivingOrderBarcode.getBarcode());
                                     }
                                     searchWmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
+                                    searchWmsInnerMaterialBarcode.setCodeQueryMark(1);
                                     List<WmsInnerMaterialBarcodeDto> barcodeDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcode).getData();
                                     if(barcodeDtos.size()>0){
                                         for (WmsInnerMaterialBarcodeDto barcodeDto : barcodeDtos) {
@@ -251,6 +252,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                             SearchWmsInnerMaterialBarcodeReOrder sBarcodeReOrder = new SearchWmsInnerMaterialBarcodeReOrder();
                             sBarcodeReOrder.setOrderTypeCode(record.getSourceSysOrderTypeCode());//单据类型
                             sBarcodeReOrder.setOrderDetId(wmsInReceivingOrderDet.getSourceId());//明细ID
+                            sBarcodeReOrder.setCodeQueryMark(1);
                             List<WmsInnerMaterialBarcodeReOrderDto> reOrderList = innerFeignApi.findAll(sBarcodeReOrder).getData();
                             if (reOrderList.size() > 0) {
                                 for (WmsInnerMaterialBarcodeReOrderDto item : reOrderList) {
@@ -357,6 +359,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
                             searchWmsInnerMaterialBarcode.setPalletCode(wmsInReceivingOrderBarcode.getBarcode());
                         }
                         searchWmsInnerMaterialBarcode.setOrgId(sysUser.getOrganizationId());
+                        searchWmsInnerMaterialBarcode.setCodeQueryMark(1);
                         List<WmsInnerMaterialBarcodeDto> barcodeDtos = innerFeignApi.findList(searchWmsInnerMaterialBarcode).getData();
                         if(barcodeDtos.size()>0){
                             for (WmsInnerMaterialBarcodeDto barcodeDto : barcodeDtos) {
