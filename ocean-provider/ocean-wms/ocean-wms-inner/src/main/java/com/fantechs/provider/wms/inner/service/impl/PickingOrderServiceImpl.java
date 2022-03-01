@@ -9,6 +9,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
+import com.fantechs.common.base.general.dto.om.OmSalesReturnOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmTransferOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
@@ -19,6 +20,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouse;
 import com.fantechs.common.base.general.entity.om.search.SearchOmSalesOrderDet;
+import com.fantechs.common.base.general.entity.om.search.SearchOmSalesReturnOrderDet;
 import com.fantechs.common.base.general.entity.om.search.SearchOmTransferOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
@@ -963,6 +965,27 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             }
         }
     }
+
+//    private void pinBackVerify(WmsInnerJobOrder wmsInnerJobOrder,WmsInnerJobOrderDet wmsInnerJobOrderDet,List<WmsInnerPdaInventoryDetDto> list){
+//        //获取拣货销退订单明细信息
+//        SearchOmSalesReturnOrderDet searchOmSalesReturnOrderDet = new SearchOmSalesReturnOrderDet();
+//        searchOmSalesReturnOrderDet.setSalesReturnOrderId();
+//        List<OmSalesReturnOrderDetDto> omSalesReturnOrderDetList = omFeignApi.findList(searchOmSalesReturnOrderDet).getData();
+//        if (StringUtils.isNotEmpty(omSalesReturnOrderDetList)) {
+//            OmSalesReturnOrderDetDto omSalesReturnOrderDetDto = omSalesReturnOrderDetList.get(0);
+//
+//            Example putawayExample = new Example(WmsInnerJobOrder.class);
+//            putawayExample.createCriteria().andEqualTo()
+//                    .andEqualTo();
+//
+//            //根据销退订单的销售订单查询入库的条码
+//            Example barcodeReExample = new Example(WmsInnerMaterialBarcodeReOrder.class);
+//            barcodeReExample.createCriteria().andEqualTo("orderTypeCode","IN-IWK")
+//                    .andEqualTo("orderId");
+//        }else {
+//
+//        }
+//    }
 
     private void log (WmsInnerPdaJobOrderDet wmsInnerPdaJobOrderDet,WmsInnerJobOrder wmsInnerJobOrder,WmsInnerJobOrderDet wmsInnerJobOrderDet,Integer status) {
         Example inventoryExample = new Example(WmsInnerInventory.class);
