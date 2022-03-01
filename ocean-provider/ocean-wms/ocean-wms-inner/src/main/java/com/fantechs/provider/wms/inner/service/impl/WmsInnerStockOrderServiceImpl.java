@@ -2736,6 +2736,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                         inventoryDetUp.setModifiedTime(new Date());
                         inventoryDetUp.setModifiedUserId(sysUser.getUserId());
                         inventoryDetUp.setBarcodeStatus((byte)1);
+                        inventoryDetUp.setStorageId(wmsInnerStockOrderDet.getStorageId());
                         wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(inventoryDetUp);
                     }
                 }
