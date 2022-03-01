@@ -170,6 +170,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
         qmsInspectionOrder.setInspectionStatus((byte)3);
         qmsInspectionOrder.setInspectionResult((byte)1);
+        qmsInspectionOrder.setInspectionUserId(user.getUserId());
         int i = qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);
 
         //处理库存
@@ -228,6 +229,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         }
 
         qmsInspectionOrder.setInspectionStatus((byte)3);
+        qmsInspectionOrder.setInspectionUserId(user.getUserId());
         int i = qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);
 
         //处理库存
@@ -340,6 +342,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     public int audit(QmsInspectionOrder qmsInspectionOrder) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
+        qmsInspectionOrder.setAuditUserId(user.getUserId());
+        qmsInspectionOrder.setAuditDeptId(user.getDeptId());
         qmsInspectionOrder.setModifiedUserId(user.getUserId());
         qmsInspectionOrder.setModifiedTime(new Date());
         return qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);
@@ -354,6 +358,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
         qmsInspectionOrder.setIfThirdInspection(StringUtils.isEmpty(qmsInspectionOrder.getIfThirdInspection()) ? 1 :qmsInspectionOrder.getIfThirdInspection());
         qmsInspectionOrder.setInspectionStatus((byte)3);
+        qmsInspectionOrder.setInspectionUserId(user.getUserId());
         qmsInspectionOrder.setModifiedUserId(user.getUserId());
         qmsInspectionOrder.setModifiedTime(new Date());
         return qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);

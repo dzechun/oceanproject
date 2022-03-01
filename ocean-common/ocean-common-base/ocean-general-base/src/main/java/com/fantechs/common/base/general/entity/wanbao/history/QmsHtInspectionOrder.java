@@ -68,6 +68,30 @@ public class QmsHtInspectionOrder extends ValidGroup implements Serializable {
     private Long customerId;
 
     /**
+     * 销售编码
+     */
+    @ApiModelProperty(name="salesCode",value = "销售编码")
+    @Excel(name = "销售编码", height = 20, width = 30,orderNum="1")
+    @Column(name = "sales_code")
+    private String salesCode;
+
+    /**
+     * PO号
+     */
+    @ApiModelProperty(name="samePackageCode",value = "PO号")
+    @Excel(name = "PO号", height = 20, width = 30,orderNum="1")
+    @Column(name = "same_package_code")
+    private String samePackageCode;
+
+    /**
+     * 已入库数量
+     */
+    @ApiModelProperty(name="inventoryQty",value = "已入库数量")
+    @Excel(name = "已入库数量", height = 20, width = 30,orderNum="6")
+    @Column(name = "inventory_qty")
+    private BigDecimal inventoryQty;
+
+    /**
      * 单据数量
      */
     @ApiModelProperty(name="orderQty",value = "单据数量")
@@ -106,6 +130,13 @@ public class QmsHtInspectionOrder extends ValidGroup implements Serializable {
     @Excel(name = "检验结果(0-不合格 1-合格)", height = 20, width = 30,orderNum="") 
     @Column(name = "inspection_result")
     private Byte inspectionResult;
+
+    /**
+     * 检验用户id
+     */
+    @ApiModelProperty(name="inspectionUserId",value = "检验用户id")
+    @Column(name = "inspection_user_id")
+    private Long inspectionUserId;
 
     /**
      * 审核状态(0-未审核 1-通过 2-不通过)
@@ -290,6 +321,14 @@ public class QmsHtInspectionOrder extends ValidGroup implements Serializable {
     @Transient
     @ApiModelProperty(name = "deptName",value = "审核部门")
     private String deptName;
+
+    /**
+     * 检验人
+     */
+    @Transient
+    @ApiModelProperty(name = "inspectionUserName",value = "检验人")
+    @Excel(name = "检验人", height = 20, width = 30,orderNum="15")
+    private String inspectionUserName;
 
     /**
      * 审核人
