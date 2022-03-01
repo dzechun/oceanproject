@@ -804,10 +804,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                             criteriaBarcode.orEqualTo("colorBoxCode",detBarcodeDtos.get(0).getColorBoxCode());
                         }
                         if(StringUtils.isNotEmpty(detBarcodeDtos.get(0).getCartonCode())){
-                            criteriaBarcode.orEqualTo("cartonCode()",detBarcodeDtos.get(0).getCartonCode());
+                            criteriaBarcode.orEqualTo("cartonCode",detBarcodeDtos.get(0).getCartonCode());
                         }
                         if(StringUtils.isNotEmpty(detBarcodeDtos.get(0).getPalletCode())){
-                            criteriaBarcode.orEqualTo("palletCode()",detBarcodeDtos.get(0).getPalletCode());
+                            criteriaBarcode.orEqualTo("palletCode",detBarcodeDtos.get(0).getPalletCode());
                         }
                         criteriaBarcode.andIsNull("barcode");
                         List<WmsInnerMaterialBarcode> listBarcode=wmsInnerMaterialBarcodeMapper.selectByExample(exampleBarcode);
@@ -855,10 +855,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                             Example exampleBarcode = new Example(WmsInnerMaterialBarcode.class);
                             Example.Criteria criteriaBarcode = exampleBarcode.createCriteria();
                             if(StringUtils.isNotEmpty(detBarcodeDto.getCartonCode())){
-                                criteriaBarcode.orEqualTo("cartonCode()",detBarcodeDto.getCartonCode());
+                                criteriaBarcode.orEqualTo("cartonCode",detBarcodeDto.getCartonCode());
                             }
                             if(StringUtils.isNotEmpty(detBarcodeDto.getPalletCode())){
-                                criteriaBarcode.orEqualTo("palletCode()",detBarcodeDto.getPalletCode());
+                                criteriaBarcode.orEqualTo("palletCode",detBarcodeDto.getPalletCode());
                             }
                             criteriaBarcode.andIsNull("barcode");
                             List<WmsInnerMaterialBarcode> listBarcode=wmsInnerMaterialBarcodeMapper.selectByExample(exampleBarcode);
@@ -911,10 +911,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                             Example exampleBarcode = new Example(WmsInnerMaterialBarcode.class);
                             Example.Criteria criteriaBarcode = exampleBarcode.createCriteria();
                             if(StringUtils.isNotEmpty(detBarcodeDto.getColorBoxCode())){
-                                criteriaBarcode.orEqualTo("colorBoxCode()",detBarcodeDto.getColorBoxCode());
+                                criteriaBarcode.orEqualTo("colorBoxCode",detBarcodeDto.getColorBoxCode());
                             }
                             if(StringUtils.isNotEmpty(detBarcodeDto.getPalletCode())){
-                                criteriaBarcode.orEqualTo("palletCode()",detBarcodeDto.getPalletCode());
+                                criteriaBarcode.orEqualTo("palletCode",detBarcodeDto.getPalletCode());
                             }
                             criteriaBarcode.andIsNull("barcode");
                             List<WmsInnerMaterialBarcode> listBarcode=wmsInnerMaterialBarcodeMapper.selectByExample(exampleBarcode);
@@ -967,10 +967,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                             Example exampleBarcode = new Example(WmsInnerMaterialBarcode.class);
                             Example.Criteria criteriaBarcode = exampleBarcode.createCriteria();
                             if(StringUtils.isNotEmpty(detBarcodeDto.getColorBoxCode())){
-                                criteriaBarcode.orEqualTo("colorBoxCode()",detBarcodeDto.getColorBoxCode());
+                                criteriaBarcode.orEqualTo("colorBoxCode",detBarcodeDto.getColorBoxCode());
                             }
                             if(StringUtils.isNotEmpty(detBarcodeDto.getCartonCode())){
-                                criteriaBarcode.orEqualTo("cartonCode()",detBarcodeDto.getCartonCode());
+                                criteriaBarcode.orEqualTo("cartonCode",detBarcodeDto.getCartonCode());
                             }
                             criteriaBarcode.andIsNull("barcode");
                             List<WmsInnerMaterialBarcode> listBarcode=wmsInnerMaterialBarcodeMapper.selectByExample(exampleBarcode);
@@ -1265,10 +1265,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                             criteriaBarcode.orEqualTo("colorBoxCode",detBarcodeDtos.get(0).getColorBoxCode());
                         }
                         if(StringUtils.isNotEmpty(detBarcodeDtos.get(0).getCartonCode())){
-                            criteriaBarcode.orEqualTo("cartonCode()",detBarcodeDtos.get(0).getCartonCode());
+                            criteriaBarcode.orEqualTo("cartonCode",detBarcodeDtos.get(0).getCartonCode());
                         }
                         if(StringUtils.isNotEmpty(detBarcodeDtos.get(0).getPalletCode())){
-                            criteriaBarcode.orEqualTo("palletCode()",detBarcodeDtos.get(0).getPalletCode());
+                            criteriaBarcode.orEqualTo("palletCode",detBarcodeDtos.get(0).getPalletCode());
                         }
                         criteriaBarcode.andIsNull("barcode");
                         List<WmsInnerMaterialBarcode> listBarcode=wmsInnerMaterialBarcodeMapper.selectByExample(exampleBarcode);
@@ -1317,10 +1317,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                             Example exampleBarcode = new Example(WmsInnerMaterialBarcode.class);
                             Example.Criteria criteriaBarcode = exampleBarcode.createCriteria();
                             if(StringUtils.isNotEmpty(detBarcodeDto.getCartonCode())){
-                                criteriaBarcode.orEqualTo("cartonCode()",detBarcodeDto.getCartonCode());
+                                criteriaBarcode.orEqualTo("cartonCode",detBarcodeDto.getCartonCode());
                             }
                             if(StringUtils.isNotEmpty(detBarcodeDto.getPalletCode())){
-                                criteriaBarcode.orEqualTo("palletCode()",detBarcodeDto.getPalletCode());
+                                criteriaBarcode.orEqualTo("palletCode",detBarcodeDto.getPalletCode());
                             }
                             criteriaBarcode.andIsNull("barcode");
                             List<WmsInnerMaterialBarcode> listBarcode=wmsInnerMaterialBarcodeMapper.selectByExample(exampleBarcode);
@@ -1372,10 +1372,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                             Example exampleBarcode = new Example(WmsInnerMaterialBarcode.class);
                             Example.Criteria criteriaBarcode = exampleBarcode.createCriteria();
                             if(StringUtils.isNotEmpty(detBarcodeDto.getColorBoxCode())){
-                                criteriaBarcode.orEqualTo("colorBoxCode()",detBarcodeDto.getColorBoxCode());
+                                criteriaBarcode.orEqualTo("colorBoxCode",detBarcodeDto.getColorBoxCode());
                             }
                             if(StringUtils.isNotEmpty(detBarcodeDto.getPalletCode())){
-                                criteriaBarcode.orEqualTo("palletCode()",detBarcodeDto.getPalletCode());
+                                criteriaBarcode.orEqualTo("palletCode",detBarcodeDto.getPalletCode());
                             }
                             criteriaBarcode.andIsNull("barcode");
                             List<WmsInnerMaterialBarcode> listBarcode=wmsInnerMaterialBarcodeMapper.selectByExample(exampleBarcode);
@@ -1429,10 +1429,10 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                             Example exampleBarcode = new Example(WmsInnerMaterialBarcode.class);
                             Example.Criteria criteriaBarcode = exampleBarcode.createCriteria();
                             if(StringUtils.isNotEmpty(detBarcodeDto.getColorBoxCode())){
-                                criteriaBarcode.orEqualTo("colorBoxCode()",detBarcodeDto.getColorBoxCode());
+                                criteriaBarcode.orEqualTo("colorBoxCode",detBarcodeDto.getColorBoxCode());
                             }
                             if(StringUtils.isNotEmpty(detBarcodeDto.getCartonCode())){
-                                criteriaBarcode.orEqualTo("cartonCode()",detBarcodeDto.getCartonCode());
+                                criteriaBarcode.orEqualTo("cartonCode",detBarcodeDto.getCartonCode());
                             }
                             criteriaBarcode.andIsNull("barcode");
                             List<WmsInnerMaterialBarcode> listBarcode=wmsInnerMaterialBarcodeMapper.selectByExample(exampleBarcode);
@@ -1780,24 +1780,112 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     }
                 }
             }
-            //应该盘点是否在库存明细中
+            searchOrderDetBarcode.setQueryAll("true");
+            searchOrderDetBarcode.setStockOrderId(stockOrderDet.getStockOrderId());
+            searchOrderDetBarcode.setBarcode(barcode);
+            searchOrderDetBarcode.setColorBoxCode(null);
+            searchOrderDetBarcode.setCartonCode(null);
+            searchOrderDetBarcode.setStockOrderDetId(null);
+            detBarcodeDtos = wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
+            if(StringUtils.isNotEmpty(detBarcodeDtos) && detBarcodeDtos.size()>0){
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码已扫描 请勿重复扫码-->" + barcode);
+            }
+
             if (StringUtils.isEmpty(barcodeResultDto.getBarcodeType())) {
-                //是否扫的是其他的系统条码
-                /*BarcodeResultDto resultDto1 = InBarcodeUtil.scanJugeBarcode(barcode);
-                if (resultDto1.getBarcodeType() != (byte) 5) {
-                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "扫描的是系统其他条码 请重新扫码-->" + barcode);
-                }*/
+                //扫描已取消或已出库条码判断
+                List<WmsInnerInventoryDetDto> inventoryDetDtoList=new ArrayList<>();
+                SearchWmsInnerInventoryDet searchinventoryDet=new SearchWmsInnerInventoryDet();
+                searchinventoryDet.setBarcode(barcode);
+                searchinventoryDet.setNotEqualMark(0);
+                searchinventoryDet.setMaterialId(stockOrderDet.getMaterialId());
+                searchinventoryDet.setOrgId(stockOrderDet.getOrgId());
 
-                SearchWmsInnerStockOrderDetBarcode searchOrderDetBarcode1 = new SearchWmsInnerStockOrderDetBarcode();
-                searchOrderDetBarcode1.setQueryAll("true");
-                searchOrderDetBarcode1.setStockOrderId(stockOrder.getStockOrderId());
-                searchOrderDetBarcode1.setBarcode(barcode);
-                List<WmsInnerStockOrderDetBarcodeDto> detBarcodeDtos1 = wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode1));
-                if(StringUtils.isNotEmpty(detBarcodeDtos1) && detBarcodeDtos1.size()>0){
-                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码已扫描 请重新扫码-->" + barcode);
+                inventoryDetDtoList=wmsInnerInventoryDetService.findList(ControllerUtil.dynamicConditionByEntity(searchinventoryDet));
+                if(inventoryDetDtoList.size()>0){
+                    if(inventoryDetDtoList.get(0).getBarcodeStatus()==(byte)1){
+                        throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"不能扫描在库条码-->"+barcode);
+                    }
+                    barcodeResultDto.setBarcodeType((byte) 1);
+                    barcodeResultDto.setMaterialQty(inventoryDetDtoList.get(0).getMaterialQty());
+                    barcodeResultDto.setBarcode(barcode);
+                    barcodeResultDto.setMaterialId(inventoryDetDtoList.get(0).getMaterialId());
+                    barcodeResultDto.setMaterialBarcodeId(inventoryDetDtoList.get(0).getMaterialBarcodeId());
                 }
+                else {
+                    searchinventoryDet.setBarcode(null);
+                    searchinventoryDet.setColorBoxCode(barcode);
+                    inventoryDetDtoList=wmsInnerInventoryDetService.findList(ControllerUtil.dynamicConditionByEntity(searchinventoryDet));
+                    if(inventoryDetDtoList.size()>0){
+                        List<WmsInnerInventoryDetDto> barcodeListOne = inventoryDetDtoList.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode()) ? "" : u.getBarcode()) == "")).collect(Collectors.toList());
+                        if (StringUtils.isEmpty(barcodeListOne) || barcodeListOne.size() <= 0) {
+                            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码明细中不存在彩盒码-->" + barcode);
+                        }
+                        if (barcodeListOne.get(0).getBarcodeStatus() == (byte) 1) {
+                            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "不能扫描在库条码-->" + barcode);
+                        }
+                        barcodeResultDto.setBarcodeType((byte) 2);
+                        barcodeResultDto.setMaterialQty(inventoryDetDtoList.get(0).getMaterialQty());
+                        barcodeResultDto.setBarcode(barcode);
+                        barcodeResultDto.setMaterialId(inventoryDetDtoList.get(0).getMaterialId());
+                        barcodeResultDto.setMaterialBarcodeId(inventoryDetDtoList.get(0).getMaterialBarcodeId());
+                    }
+                    else{
+                        searchinventoryDet.setBarcode(null);
+                        searchinventoryDet.setColorBoxCode(null);
+                        searchinventoryDet.setCartonCode(barcode);
+                        inventoryDetDtoList=wmsInnerInventoryDetService.findList(ControllerUtil.dynamicConditionByEntity(searchinventoryDet));
+                        if(inventoryDetDtoList.size()>0){
+                            List<WmsInnerInventoryDetDto> barcodeListOne = inventoryDetDtoList.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode()) ? "" : u.getBarcode()) == "")).collect(Collectors.toList());
+                            if (StringUtils.isEmpty(barcodeListOne) || barcodeListOne.size() <= 0) {
+                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码明细中不存在箱码-->" + barcode);
+                            }
+                            if (barcodeListOne.get(0).getBarcodeStatus() == (byte) 1) {
+                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "不能扫描在库条码-->" + barcode);
+                            }
+                            List<WmsInnerInventoryDetDto> barcodeList = inventoryDetDtoList.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode()) ? "" : u.getBarcode()) != "")).collect(Collectors.toList());
+                            BigDecimal totalQty = barcodeList.stream().map(WmsInnerInventoryDetDto::getMaterialQty).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-                barcodeResultDto.setBarcodeType((byte) 5);
+                            barcodeResultDto.setBarcodeType((byte) 3);
+                            barcodeResultDto.setMaterialQty(totalQty);
+                            barcodeResultDto.setBarcode(barcode);
+                            barcodeResultDto.setMaterialId(barcodeListOne.get(0).getMaterialId());
+                            barcodeResultDto.setMaterialBarcodeId(barcodeListOne.get(0).getMaterialBarcodeId());
+                        }
+                        else {
+                            searchinventoryDet.setBarcode(null);
+                            searchinventoryDet.setColorBoxCode(null);
+                            searchinventoryDet.setCartonCode(null);
+                            searchinventoryDet.setPalletCode(barcode);
+                            inventoryDetDtoList=wmsInnerInventoryDetService.findList(ControllerUtil.dynamicConditionByEntity(searchinventoryDet));
+                            if(inventoryDetDtoList.size()>0){
+                                List<WmsInnerInventoryDetDto> barcodeListOne = inventoryDetDtoList.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode()) ? "" : u.getBarcode()) == "")).collect(Collectors.toList());
+                                if (StringUtils.isEmpty(barcodeListOne) || barcodeListOne.size() <= 0) {
+                                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码明细中不存在箱码-->" + barcode);
+                                }
+                                if (barcodeListOne.get(0).getBarcodeStatus() == (byte) 1) {
+                                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "不能扫描在库条码-->" + barcode);
+                                }
+                                List<WmsInnerInventoryDetDto> barcodeList = inventoryDetDtoList.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode()) ? "" : u.getBarcode()) != "")).collect(Collectors.toList());
+                                BigDecimal totalQty = barcodeList.stream().map(WmsInnerInventoryDetDto::getMaterialQty).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                                barcodeResultDto.setBarcodeType((byte) 4);
+                                barcodeResultDto.setMaterialQty(totalQty);
+                                barcodeResultDto.setBarcode(barcode);
+                                barcodeResultDto.setMaterialId(barcodeListOne.get(0).getMaterialId());
+                                barcodeResultDto.setMaterialBarcodeId(barcodeListOne.get(0).getMaterialBarcodeId());
+                            }
+                        }
+                    }
+                }
+                //是否扫的是其他的系统条码
+                if(StringUtils.isEmpty(barcodeResultDto.getBarcodeType())) {
+                    BarcodeResultDto resultDto1 = InBarcodeUtil.scanJugeBarcode(barcode);
+                    if (resultDto1.getBarcodeType() != (byte) 5) {
+                        throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "扫描的是系统其他条码 请重新扫码-->" + barcode);
+                    }
+
+                    barcodeResultDto.setBarcodeType((byte) 5);
+                }
             }
         }
 
@@ -1927,95 +2015,90 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         if(StringUtils.isEmpty(wmsInnerStockOrderDet)){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未找到对应的盘点明细信息");
         }
-        String ifNew=wmsInnerStockOrderDet.getOption1();
-        SysUser sysUser=currentUser();
 
-        //非增补明细 条码判断
-        if(StringUtils.isEmpty(ifNew)) {
-            List<WmsInnerStockOrderDetBarcodeDto> detBarcodeDtos = new ArrayList<>();
-            SearchWmsInnerStockOrderDetBarcode searchOrderDetBarcode = new SearchWmsInnerStockOrderDetBarcode();
-            searchOrderDetBarcode.setQueryAll("true");
-            searchOrderDetBarcode.setStockOrderDetId(stockOrderDetId);
-            searchOrderDetBarcode.setBarcode(barcode);
+        //条码判断
+        List<WmsInnerStockOrderDetBarcodeDto> detBarcodeDtos = new ArrayList<>();
+        SearchWmsInnerStockOrderDetBarcode searchOrderDetBarcode = new SearchWmsInnerStockOrderDetBarcode();
+        searchOrderDetBarcode.setQueryAll("true");
+        searchOrderDetBarcode.setStockOrderDetId(stockOrderDetId);
+        searchOrderDetBarcode.setBarcode(barcode);
+        detBarcodeDtos = wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
+        if (detBarcodeDtos.size() > 0) {
+            if (detBarcodeDtos.get(0).getScanStatus() == (byte) 3) {
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码已扫描 请勿重复扫码-->" + barcode);
+            }
+            BeanUtil.copyProperties(detBarcodeDtos.get(0), resultDto);
+            resultDto.setBarcodeType((byte) 1);
+        } else {
+            searchOrderDetBarcode.setBarcode(null);
+            searchOrderDetBarcode.setColorBoxCode(barcode);
             detBarcodeDtos = wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
             if (detBarcodeDtos.size() > 0) {
-                if (detBarcodeDtos.get(0).getScanStatus() == (byte) 3) {
+                List<WmsInnerStockOrderDetBarcodeDto> barcodeListOne = detBarcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode()) ? "" : u.getBarcode()) == "")).collect(Collectors.toList());
+                if (StringUtils.isEmpty(barcodeListOne) || barcodeListOne.size() <= 0) {
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码明细中不存在彩盒码-->" + barcode);
+                }
+                if (barcodeListOne.get(0).getScanStatus() == (byte) 3) {
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码已扫描 请勿重复扫码-->" + barcode);
                 }
-                BeanUtil.copyProperties(detBarcodeDtos.get(0), resultDto);
-                resultDto.setBarcodeType((byte) 1);
+                BeanUtil.copyProperties(barcodeListOne.get(0), resultDto);
+                resultDto.setBarcodeType((byte) 2);
             } else {
                 searchOrderDetBarcode.setBarcode(null);
-                searchOrderDetBarcode.setColorBoxCode(barcode);
+                searchOrderDetBarcode.setColorBoxCode(null);
+                searchOrderDetBarcode.setCartonCode(barcode);
                 detBarcodeDtos = wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
                 if (detBarcodeDtos.size() > 0) {
                     List<WmsInnerStockOrderDetBarcodeDto> barcodeListOne = detBarcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode()) ? "" : u.getBarcode()) == "")).collect(Collectors.toList());
                     if (StringUtils.isEmpty(barcodeListOne) || barcodeListOne.size() <= 0) {
-                        throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码明细中不存在彩盒码-->" + barcode);
+                        throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码明细中不存在箱码-->" + barcode);
                     }
                     if (barcodeListOne.get(0).getScanStatus() == (byte) 3) {
                         throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码已扫描 请勿重复扫码-->" + barcode);
                     }
+                    List<WmsInnerStockOrderDetBarcodeDto> barcodeList = detBarcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode()) ? "" : u.getBarcode()) != "")).collect(Collectors.toList());
+                    BigDecimal totalQty = barcodeList.stream().map(WmsInnerStockOrderDetBarcodeDto::getMaterialQty).reduce(BigDecimal.ZERO, BigDecimal::add);
+
                     BeanUtil.copyProperties(barcodeListOne.get(0), resultDto);
-                    resultDto.setBarcodeType((byte) 2);
+                    resultDto.setBarcodeType((byte) 3);
+                    resultDto.setMaterialQty(totalQty);
                 } else {
                     searchOrderDetBarcode.setBarcode(null);
                     searchOrderDetBarcode.setColorBoxCode(null);
-                    searchOrderDetBarcode.setCartonCode(barcode);
+                    searchOrderDetBarcode.setCartonCode(null);
+                    searchOrderDetBarcode.setPalletCode(barcode);
                     detBarcodeDtos = wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
                     if (detBarcodeDtos.size() > 0) {
                         List<WmsInnerStockOrderDetBarcodeDto> barcodeListOne = detBarcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode()) ? "" : u.getBarcode()) == "")).collect(Collectors.toList());
                         if (StringUtils.isEmpty(barcodeListOne) || barcodeListOne.size() <= 0) {
-                            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码明细中不存在箱码-->" + barcode);
+                            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码明细中不存在栈板码-->" + barcode);
                         }
                         if (barcodeListOne.get(0).getScanStatus() == (byte) 3) {
                             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码已扫描 请勿重复扫码-->" + barcode);
                         }
                         List<WmsInnerStockOrderDetBarcodeDto> barcodeList = detBarcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode()) ? "" : u.getBarcode()) != "")).collect(Collectors.toList());
                         BigDecimal totalQty = barcodeList.stream().map(WmsInnerStockOrderDetBarcodeDto::getMaterialQty).reduce(BigDecimal.ZERO, BigDecimal::add);
-
                         BeanUtil.copyProperties(barcodeListOne.get(0), resultDto);
-                        resultDto.setBarcodeType((byte) 3);
+                        resultDto.setBarcodeType((byte) 4);
                         resultDto.setMaterialQty(totalQty);
-                    } else {
-                        searchOrderDetBarcode.setBarcode(null);
-                        searchOrderDetBarcode.setColorBoxCode(null);
-                        searchOrderDetBarcode.setCartonCode(null);
-                        searchOrderDetBarcode.setPalletCode(barcode);
-                        detBarcodeDtos = wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
-                        if (detBarcodeDtos.size() > 0) {
-                            List<WmsInnerStockOrderDetBarcodeDto> barcodeListOne = detBarcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode()) ? "" : u.getBarcode()) == "")).collect(Collectors.toList());
-                            if (StringUtils.isEmpty(barcodeListOne) || barcodeListOne.size() <= 0) {
-                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码明细中不存在栈板码-->" + barcode);
-                            }
-                            if (barcodeListOne.get(0).getScanStatus() == (byte) 3) {
-                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码已扫描 请勿重复扫码-->" + barcode);
-                            }
-                            List<WmsInnerStockOrderDetBarcodeDto> barcodeList = detBarcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode()) ? "" : u.getBarcode()) != "")).collect(Collectors.toList());
-                            BigDecimal totalQty = barcodeList.stream().map(WmsInnerStockOrderDetBarcodeDto::getMaterialQty).reduce(BigDecimal.ZERO, BigDecimal::add);
-                            BeanUtil.copyProperties(barcodeListOne.get(0), resultDto);
-                            resultDto.setBarcodeType((byte) 4);
-                            resultDto.setMaterialQty(totalQty);
-                        }
                     }
                 }
             }
-
-            if (StringUtils.isEmpty(resultDto.getBarcodeType())) {
-                //是否扫的是其他的系统条码
-                BarcodeResultDto resultDto1 = InBarcodeUtil.scanJugeBarcode(barcode);
-                if (resultDto1.getBarcodeType() != (byte) 5) {
-                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "扫描的是系统其他条码 请重新扫码-->" + barcode);
-                }
-
-
-                resultDto.setBarcodeType((byte) 5);
-            }
         }
-        else if("new".equals(ifNew)){
-            //增补明细 条码判断
-            List<WmsInnerInventoryDetDto> inventoryDetDtoList=new ArrayList<>();
+        searchOrderDetBarcode.setQueryAll("true");
+        searchOrderDetBarcode.setStockOrderId(wmsInnerStockOrderDet.getStockOrderId());
+        searchOrderDetBarcode.setBarcode(barcode);
+        searchOrderDetBarcode.setColorBoxCode(null);
+        searchOrderDetBarcode.setCartonCode(null);
+        searchOrderDetBarcode.setStockOrderDetId(null);
+        detBarcodeDtos = wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
+        if(StringUtils.isNotEmpty(detBarcodeDtos) && detBarcodeDtos.size()>0){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码已扫描 请勿重复扫码-->" + barcode);
+        }
 
+        if (StringUtils.isEmpty(resultDto.getBarcodeType())) {
+            //扫描已取消或已出库条码判断
+            List<WmsInnerInventoryDetDto> inventoryDetDtoList=new ArrayList<>();
             SearchWmsInnerInventoryDet searchinventoryDet=new SearchWmsInnerInventoryDet();
             searchinventoryDet.setBarcode(barcode);
             searchinventoryDet.setNotEqualMark(0);
@@ -2025,7 +2108,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             inventoryDetDtoList=wmsInnerInventoryDetService.findList(ControllerUtil.dynamicConditionByEntity(searchinventoryDet));
             if(inventoryDetDtoList.size()>0){
                 if(inventoryDetDtoList.get(0).getBarcodeStatus()==(byte)1){
-                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"盘点增补明细不能扫描在库条码-->"+barcode);
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"不能扫描在库条码-->"+barcode);
                 }
                 BeanUtil.copyProperties(inventoryDetDtoList.get(0), resultDto);
                 resultDto.setBarcodeType((byte) 1);
@@ -2040,7 +2123,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                         throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码明细中不存在彩盒码-->" + barcode);
                     }
                     if (barcodeListOne.get(0).getBarcodeStatus() == (byte) 1) {
-                        throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "盘点增补明细不能扫描在库条码-->" + barcode);
+                        throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "不能扫描在库条码-->" + barcode);
                     }
                     BeanUtil.copyProperties(barcodeListOne.get(0), resultDto);
                     resultDto.setBarcodeType((byte) 2);
@@ -2056,7 +2139,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码明细中不存在箱码-->" + barcode);
                         }
                         if (barcodeListOne.get(0).getBarcodeStatus() == (byte) 1) {
-                            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "盘点增补明细不能扫描在库条码-->" + barcode);
+                            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "不能扫描在库条码-->" + barcode);
                         }
                         List<WmsInnerInventoryDetDto> barcodeList = inventoryDetDtoList.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode()) ? "" : u.getBarcode()) != "")).collect(Collectors.toList());
                         BigDecimal totalQty = barcodeList.stream().map(WmsInnerInventoryDetDto::getMaterialQty).reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -2077,7 +2160,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码明细中不存在箱码-->" + barcode);
                             }
                             if (barcodeListOne.get(0).getBarcodeStatus() == (byte) 1) {
-                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "盘点增补明细不能扫描在库条码-->" + barcode);
+                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "不能扫描在库条码-->" + barcode);
                             }
                             List<WmsInnerInventoryDetDto> barcodeList = inventoryDetDtoList.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode()) ? "" : u.getBarcode()) != "")).collect(Collectors.toList());
                             BigDecimal totalQty = barcodeList.stream().map(WmsInnerInventoryDetDto::getMaterialQty).reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -2089,25 +2172,18 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     }
                 }
             }
-            if (StringUtils.isEmpty(resultDto.getBarcodeType())) {
-                //是否扫的是其他的系统条码
+            //是否扫的是其他的系统条码
+            if(StringUtils.isEmpty(resultDto.getBarcodeType())) {
                 BarcodeResultDto resultDto1 = InBarcodeUtil.scanJugeBarcode(barcode);
                 if (resultDto1.getBarcodeType() != (byte) 5) {
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "扫描的是系统其他条码 请重新扫码-->" + barcode);
                 }
 
-                SearchWmsInnerStockOrderDetBarcode searchOrderDetBarcode = new SearchWmsInnerStockOrderDetBarcode();
-                searchOrderDetBarcode.setQueryAll("true");
-                searchOrderDetBarcode.setStockOrderId(wmsInnerStockOrderDet.getStockOrderId());
-                searchOrderDetBarcode.setBarcode(barcode);
-                List<WmsInnerStockOrderDetBarcodeDto> detBarcodeDtos = wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
-                if(StringUtils.isNotEmpty(detBarcodeDtos) && detBarcodeDtos.size()>0){
-                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码已扫描 请重新扫码-->" + barcode);
-                }
-
                 resultDto.setBarcodeType((byte) 5);
             }
         }
+
+
 
         return resultDto;
     }
