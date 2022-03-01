@@ -2390,7 +2390,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                         inventoryDetNew.setAsnCode(wmsInnerStockOrder.getPlanStockOrderCode());//盘点单号
                         inventoryDetNew.setIfStockLock((byte) 0);
                         inventoryDetNew.setInventoryStatusId(wmsInnerStockOrderDet.getInventoryStatusId());
-                        inventoryDetNew.setBarcodeStatus((byte) 3);//在库
+                        inventoryDetNew.setBarcodeStatus((byte) 1);//在库
                         inventoryDetNew.setCreateUserId(sysUser.getUserId());
                         inventoryDetNew.setCreateTime(new Date());
                         inventoryDetNew.setModifiedUserId(sysUser.getUserId());
@@ -2401,7 +2401,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     else if(stockOrderDetBarcode.getStockResult()==(byte)4){
                         WmsInnerInventoryDet upInnerInventoryDet=new WmsInnerInventoryDet();
                         upInnerInventoryDet.setInventoryDetId(stockOrderDetBarcode.getSourceDetId());
-                        upInnerInventoryDet.setBarcodeStatus((byte)2);
+                        upInnerInventoryDet.setBarcodeStatus((byte)3);
                         upInnerInventoryDet.setModifiedTime(new Date());
                         upInnerInventoryDet.setModifiedUserId(sysUser.getUserId());
                         wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(upInnerInventoryDet);
