@@ -827,6 +827,22 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                         }
                     }
                 }
+                else {
+                    WmsInnerStockOrderDetBarcodeDto result= webScanBarcode(stockOrderDetId,item.getBarcode());
+                    if(StringUtils.isNotEmpty(result.getOption1()) && "out".equals(result.getOption1())){
+                        totalQty=totalQty.add(result.getMaterialQty());
+                        //盘点条码明细
+                        WmsInnerStockOrderDetBarcode detBarcode=new WmsInnerStockOrderDetBarcode();
+                        detBarcode.setStockOrderDetBarcodeId(null);
+                        detBarcode.setStockOrderDetId(stockOrderDetId);
+                        detBarcode.setMaterialBarcodeId(result.getMaterialBarcodeId());
+                        detBarcode.setScanStatus((byte)3);
+                        detBarcode.setStockResult((byte)3);//盘盈
+                        detBarcode.setCreateUserId(sysUser.getUserId());
+                        detBarcode.setCreateTime(new Date());
+                        stockOrderDetBarcodeList.add(detBarcode);
+                    }
+                }
             }
             else if(barcodeType==(byte)2){
                 //彩盒
@@ -881,6 +897,22 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     }
 
                     totalQty=totalQty.add(detBarcodeDtos.get(0).getMaterialQty());
+                }
+                else {
+                    WmsInnerStockOrderDetBarcodeDto result= webScanBarcode(stockOrderDetId,item.getBarcode());
+                    if(StringUtils.isNotEmpty(result.getOption1()) && "out".equals(result.getOption1())){
+                        totalQty=totalQty.add(result.getMaterialQty());
+                        //盘点条码明细
+                        WmsInnerStockOrderDetBarcode detBarcode=new WmsInnerStockOrderDetBarcode();
+                        detBarcode.setStockOrderDetBarcodeId(null);
+                        detBarcode.setStockOrderDetId(stockOrderDetId);
+                        detBarcode.setMaterialBarcodeId(result.getMaterialBarcodeId());
+                        detBarcode.setScanStatus((byte)3);
+                        detBarcode.setStockResult((byte)3);//盘盈
+                        detBarcode.setCreateUserId(sysUser.getUserId());
+                        detBarcode.setCreateTime(new Date());
+                        stockOrderDetBarcodeList.add(detBarcode);
+                    }
                 }
 
             }
@@ -939,6 +971,22 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     BigDecimal totalMaterialQty=detBarcodeList.stream().map(WmsInnerStockOrderDetBarcodeDto::getMaterialQty).reduce(BigDecimal.ZERO,BigDecimal::add);
                     totalQty=totalQty.add(totalMaterialQty);
                 }
+                else {
+                    WmsInnerStockOrderDetBarcodeDto result= webScanBarcode(stockOrderDetId,item.getBarcode());
+                    if(StringUtils.isNotEmpty(result.getOption1()) && "out".equals(result.getOption1())){
+                        totalQty=totalQty.add(result.getMaterialQty());
+                        //盘点条码明细
+                        WmsInnerStockOrderDetBarcode detBarcode=new WmsInnerStockOrderDetBarcode();
+                        detBarcode.setStockOrderDetBarcodeId(null);
+                        detBarcode.setStockOrderDetId(stockOrderDetId);
+                        detBarcode.setMaterialBarcodeId(result.getMaterialBarcodeId());
+                        detBarcode.setScanStatus((byte)3);
+                        detBarcode.setStockResult((byte)3);//盘盈
+                        detBarcode.setCreateUserId(sysUser.getUserId());
+                        detBarcode.setCreateTime(new Date());
+                        stockOrderDetBarcodeList.add(detBarcode);
+                    }
+                }
             }
             else if(barcodeType==(byte)4){
                 //栈板码
@@ -994,6 +1042,22 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     List<WmsInnerStockOrderDetBarcodeDto> detBarcodeList = detBarcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
                     BigDecimal totalMaterialQty=detBarcodeList.stream().map(WmsInnerStockOrderDetBarcodeDto::getMaterialQty).reduce(BigDecimal.ZERO,BigDecimal::add);
                     totalQty=totalQty.add(totalMaterialQty);
+                }
+                else {
+                    WmsInnerStockOrderDetBarcodeDto result= webScanBarcode(stockOrderDetId,item.getBarcode());
+                    if(StringUtils.isNotEmpty(result.getOption1()) && "out".equals(result.getOption1())){
+                        totalQty=totalQty.add(result.getMaterialQty());
+                        //盘点条码明细
+                        WmsInnerStockOrderDetBarcode detBarcode=new WmsInnerStockOrderDetBarcode();
+                        detBarcode.setStockOrderDetBarcodeId(null);
+                        detBarcode.setStockOrderDetId(stockOrderDetId);
+                        detBarcode.setMaterialBarcodeId(result.getMaterialBarcodeId());
+                        detBarcode.setScanStatus((byte)3);
+                        detBarcode.setStockResult((byte)3);//盘盈
+                        detBarcode.setCreateUserId(sysUser.getUserId());
+                        detBarcode.setCreateTime(new Date());
+                        stockOrderDetBarcodeList.add(detBarcode);
+                    }
                 }
             }
             else {
@@ -1288,6 +1352,22 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                         }
                     }
                 }
+                else{
+                    //扫描的是已出库或已取消条码
+                    if(StringUtils.isNotEmpty(result.getOption1()) && "out".equals(result.getOption1())){
+                        totalQty=totalQty.add(result.getMaterialQty());
+                        //盘点条码明细
+                        WmsInnerStockOrderDetBarcode detBarcode=new WmsInnerStockOrderDetBarcode();
+                        detBarcode.setStockOrderDetBarcodeId(null);
+                        detBarcode.setStockOrderDetId(stockOrderDetId);
+                        detBarcode.setMaterialBarcodeId(result.getMaterialBarcodeId());
+                        detBarcode.setScanStatus((byte)3);
+                        detBarcode.setStockResult((byte)3);//盘盈
+                        detBarcode.setCreateUserId(sysUser.getUserId());
+                        detBarcode.setCreateTime(new Date());
+                        orderDetBarcodeList.add(detBarcode);
+                    }
+                }
 
             }
             else if(barcodeType==(byte)2){
@@ -1342,6 +1422,22 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     }
 
                     totalQty=totalQty.add(detBarcodeDtos.get(0).getMaterialQty());
+                }
+                else{
+                    //扫描的是已出库或已取消条码
+                    if(StringUtils.isNotEmpty(result.getOption1()) && "out".equals(result.getOption1())){
+                        totalQty=totalQty.add(result.getMaterialQty());
+                        //盘点条码明细
+                        WmsInnerStockOrderDetBarcode detBarcode=new WmsInnerStockOrderDetBarcode();
+                        detBarcode.setStockOrderDetBarcodeId(null);
+                        detBarcode.setStockOrderDetId(stockOrderDetId);
+                        detBarcode.setMaterialBarcodeId(result.getMaterialBarcodeId());
+                        detBarcode.setScanStatus((byte)3);
+                        detBarcode.setStockResult((byte)3);//盘盈
+                        detBarcode.setCreateUserId(sysUser.getUserId());
+                        detBarcode.setCreateTime(new Date());
+                        orderDetBarcodeList.add(detBarcode);
+                    }
                 }
 
             }
@@ -1401,6 +1497,22 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     totalQty=totalQty.add(totalMaterialQty);
 
                 }
+                else{
+                    //扫描的是已出库或已取消条码
+                    if(StringUtils.isNotEmpty(result.getOption1()) && "out".equals(result.getOption1())){
+                        totalQty=totalQty.add(result.getMaterialQty());
+                        //盘点条码明细
+                        WmsInnerStockOrderDetBarcode detBarcode=new WmsInnerStockOrderDetBarcode();
+                        detBarcode.setStockOrderDetBarcodeId(null);
+                        detBarcode.setStockOrderDetId(stockOrderDetId);
+                        detBarcode.setMaterialBarcodeId(result.getMaterialBarcodeId());
+                        detBarcode.setScanStatus((byte)3);
+                        detBarcode.setStockResult((byte)3);//盘盈
+                        detBarcode.setCreateUserId(sysUser.getUserId());
+                        detBarcode.setCreateTime(new Date());
+                        orderDetBarcodeList.add(detBarcode);
+                    }
+                }
             }
             else if(barcodeType==(byte)4) {
                 //栈板码
@@ -1456,6 +1568,22 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     List<WmsInnerStockOrderDetBarcodeDto> barcodeDetList = detBarcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())!="")).collect(Collectors.toList());
                     BigDecimal totalMaterialQty=barcodeDetList.stream().map(WmsInnerStockOrderDetBarcodeDto::getMaterialQty).reduce(BigDecimal.ZERO,BigDecimal::add);
                     totalQty=totalQty.add(totalMaterialQty);
+                }
+                else{
+                    //扫描的是已出库或已取消条码
+                    if(StringUtils.isNotEmpty(result.getOption1()) && "out".equals(result.getOption1())){
+                        totalQty=totalQty.add(result.getMaterialQty());
+                        //盘点条码明细
+                        WmsInnerStockOrderDetBarcode detBarcode=new WmsInnerStockOrderDetBarcode();
+                        detBarcode.setStockOrderDetBarcodeId(null);
+                        detBarcode.setStockOrderDetId(stockOrderDetId);
+                        detBarcode.setMaterialBarcodeId(result.getMaterialBarcodeId());
+                        detBarcode.setScanStatus((byte)3);
+                        detBarcode.setStockResult((byte)3);//盘盈
+                        detBarcode.setCreateUserId(sysUser.getUserId());
+                        detBarcode.setCreateTime(new Date());
+                        orderDetBarcodeList.add(detBarcode);
+                    }
                 }
             }
             else {
@@ -1882,7 +2010,16 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 if(StringUtils.isEmpty(barcodeResultDto.getBarcodeType())) {
                     BarcodeResultDto resultDto1 = InBarcodeUtil.scanJugeBarcode(barcode);
                     if (resultDto1.getBarcodeType() != (byte) 5) {
-                        throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "扫描的是系统其他条码 请重新扫码-->" + barcode);
+                        if(StringUtils.isNotEmpty(resultDto1.getMaterialBarcodeId())) {
+                            SearchWmsInnerInventoryDet searchinventoryDet1 = new SearchWmsInnerInventoryDet();
+                            searchinventoryDet1.setMaterialBarcodeId(resultDto1.getMaterialBarcodeId());
+                            searchinventoryDet1.setOrgId(stockOrderDet.getOrgId());
+                            inventoryDetDtoList = wmsInnerInventoryDetService.findList(ControllerUtil.dynamicConditionByEntity(searchinventoryDet1));
+                            if(StringUtils.isNotEmpty(inventoryDetDtoList) && inventoryDetDtoList.size()>0){
+                                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "扫描的是系统其他条码 请重新扫码-->" + barcode);
+                            }
+                        }
+
                     }
 
                     barcodeResultDto.setBarcodeType((byte) 5);
@@ -2114,6 +2251,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 }
                 BeanUtil.copyProperties(inventoryDetDtoList.get(0), resultDto);
                 resultDto.setBarcodeType((byte) 1);
+                resultDto.setOption1("out");
             }
             else {
                 searchinventoryDet.setBarcode(null);
@@ -2129,6 +2267,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                     }
                     BeanUtil.copyProperties(barcodeListOne.get(0), resultDto);
                     resultDto.setBarcodeType((byte) 2);
+                    resultDto.setOption1("out");
                 }
                 else{
                     searchinventoryDet.setBarcode(null);
@@ -2149,6 +2288,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                         BeanUtil.copyProperties(barcodeListOne.get(0), resultDto);
                         resultDto.setBarcodeType((byte) 3);
                         resultDto.setMaterialQty(totalQty);
+                        resultDto.setOption1("out");
                     }
                     else {
                         searchinventoryDet.setBarcode(null);
@@ -2170,15 +2310,26 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                             BeanUtil.copyProperties(barcodeListOne.get(0), resultDto);
                             resultDto.setBarcodeType((byte) 4);
                             resultDto.setMaterialQty(totalQty);
+                            resultDto.setOption1("out");
                         }
                     }
                 }
             }
             //是否扫的是其他的系统条码
             if(StringUtils.isEmpty(resultDto.getBarcodeType())) {
+
                 BarcodeResultDto resultDto1 = InBarcodeUtil.scanJugeBarcode(barcode);
                 if (resultDto1.getBarcodeType() != (byte) 5) {
-                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "扫描的是系统其他条码 请重新扫码-->" + barcode);
+                    if(StringUtils.isNotEmpty(resultDto1.getMaterialBarcodeId())) {
+                        SearchWmsInnerInventoryDet searchinventoryDet1 = new SearchWmsInnerInventoryDet();
+                        searchinventoryDet1.setMaterialBarcodeId(resultDto1.getMaterialBarcodeId());
+                        searchinventoryDet1.setOrgId(wmsInnerStockOrderDet.getOrgId());
+                        inventoryDetDtoList = wmsInnerInventoryDetService.findList(ControllerUtil.dynamicConditionByEntity(searchinventoryDet1));
+                        if(StringUtils.isNotEmpty(inventoryDetDtoList) && inventoryDetDtoList.size()>0){
+                            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "扫描的是系统其他条码 请重新扫码-->" + barcode);
+                        }
+                    }
+
                 }
 
                 resultDto.setBarcodeType((byte) 5);
@@ -2578,6 +2729,14 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                         inventoryDetNew.setModifiedTime(new Date());
                         inventoryDetNew.setOrgId(sysUser.getOrganizationId());
                         wmsInnerInventoryDets.add(inventoryDetNew);
+                    }
+                    else{
+                        WmsInnerInventoryDet inventoryDetUp = new WmsInnerInventoryDet();
+                        inventoryDetUp.setInventoryDetId(detList.get(0).getInventoryDetId());
+                        inventoryDetUp.setModifiedTime(new Date());
+                        inventoryDetUp.setModifiedUserId(sysUser.getUserId());
+                        inventoryDetUp.setBarcodeStatus((byte)1);
+                        wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(inventoryDetUp);
                     }
                 }
             }
