@@ -37,7 +37,6 @@ import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.eam.EamFeignApi;
-import com.fantechs.provider.api.guest.leisai.LeisaiFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcBarcodeProcessMapper;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
@@ -95,8 +94,6 @@ public class BarcodeUtils {
     private EamFeignApi eamFeignApi;
     @Resource
     private MesSfcBarcodeProcessMapper mesSfcBarcodeProcessMapper;
-    @Resource
-    private LeisaiFeignApi leisaiFeignApi;
 
     // endregion
 
@@ -119,7 +116,6 @@ public class BarcodeUtils {
         barcodeUtils.eamFeignApi=this.eamFeignApi;
         barcodeUtils.mesSfcKeyPartRelevanceService=this.mesSfcKeyPartRelevanceService;
         barcodeUtils.mesSfcBarcodeProcessMapper=this.mesSfcBarcodeProcessMapper;
-        barcodeUtils.leisaiFeignApi=this.leisaiFeignApi;
     }
 
 

@@ -37,7 +37,6 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.guest.leisai.LeisaiFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
@@ -84,8 +83,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     private SecurityFeignApi securityFeignApi;
     @Resource
     private OMFeignApi omFeignApi;
-    @Resource
-    private LeisaiFeignApi leisaiFeignApi;
     @Resource
     InFeignApi inFeignApi;
 
@@ -725,48 +722,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             this.beforeCartonAutoAsnOrder(cartonIds, user.getOrganizationId(), null);
         }
 
-        //雷赛包箱数据是否同步到WMS开始
-        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-        searchSysSpecItem.setSpecCode("CartonIfToLeisaiWms");
-        List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-        if(specItems.size()>0) {
-            SysSpecItem sysSpecItem = specItems.get(0);
-            if(sysSpecItem.getParaValue().equals("1")){
-                LeisaiWmsCarton leisaiWmsCarton=new LeisaiWmsCarton();
-                List<LeisaiWmsCartonDet> dets=new ArrayList<>();
-
-                leisaiWmsCarton.setBOXID(productCartonDto.getCartonCode());
-                leisaiWmsCarton.setSTATUS("1");
-                leisaiWmsCarton.setCREATEBY("MES");
-                leisaiWmsCarton.setCREATEDATE(DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
-                leisaiWmsCarton.setCLIENT("93");
-                leisaiWmsCarton.setPRINTCOUNT("1");
-                leisaiWmsCarton.setPRINTBY("MES");
-                leisaiWmsCarton.setPRINTDATE(DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
-
-                List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findBarcode(SearchMesSfcBarcodeProcess.builder()
-                        .cartonCode(productCartonDto.getCartonCode())
-                        .build());
-
-                for (MesSfcBarcodeProcess sfcBarcodeProcess : mesSfcBarcodeProcessList) {
-                    LeisaiWmsCartonDet leisaiWmsCartonDet=new LeisaiWmsCartonDet();
-                    leisaiWmsCartonDet.setBOXID(productCartonDto.getCartonCode());
-                    leisaiWmsCartonDet.setBARCODENO(sfcBarcodeProcess.getBarcode());
-                    leisaiWmsCartonDet.setPN(sfcBarcodeProcess.getMaterialCode());
-                    leisaiWmsCartonDet.setORDERNO(sfcBarcodeProcess.getWorkOrderCode());
-                    leisaiWmsCartonDet.setCLIENT("93");
-                    leisaiWmsCartonDet.setCREATEBY("MES");
-                    leisaiWmsCartonDet.setCREATEDATE(DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
-
-                    dets.add(leisaiWmsCartonDet);
-
-                }
-                leisaiWmsCarton.setLeisaiWmsCartonDetList(dets);
-                leisaiFeignApi.syncCartonData(leisaiWmsCarton);
-            }
-        }
-
-        //雷赛包箱数据是否同步到WMS结束
 
         return update;
     }
