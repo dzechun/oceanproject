@@ -1020,7 +1020,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             if (StringUtils.isNotEmpty(detDtos)) {
                 for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : detDtos) {
                     wmsInnerInventoryDetDto.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
-                    innerFeignApi.update(wmsInnerInventoryDetDto);
+                    ResponseEntity update = innerFeignApi.update(wmsInnerInventoryDetDto);
+                    if(StringUtils.isNotEmpty(update) && update.getCode()!=1)
+                        throw new BizErrorException("更新库存明细失败");
                 }
             }
 
@@ -1035,7 +1037,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             if (StringUtils.isNotEmpty(list)) {
                 for(WmsInnerInventoryDto wmsInnerInventoryDto : list){
                     wmsInnerInventoryDto.setQcLock((byte) 1);
-                    innerFeignApi.update(wmsInnerInventoryDto);
+                    ResponseEntity update = innerFeignApi.update(wmsInnerInventoryDto);
+                    if(StringUtils.isNotEmpty(update) && update.getCode()!=1)
+                        throw new BizErrorException("更新库存明细失败");
                 }
             }
 
