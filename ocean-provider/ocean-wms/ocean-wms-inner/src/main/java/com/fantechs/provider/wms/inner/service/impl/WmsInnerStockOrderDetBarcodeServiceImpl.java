@@ -94,11 +94,11 @@ public class WmsInnerStockOrderDetBarcodeServiceImpl extends BaseService<WmsInne
             criteriaDet.andEqualTo("materialBarcodeId", detBarcode.getMaterialBarcodeId());
             List<WmsInnerMaterialBarcode> materialBarcodes=wmsInnerMaterialBarcodeMapper.selectByExample(exampleDet);
             if(materialBarcodes.size()>0){
+                if(StringUtils.isNotEmpty(materialBarcodes.get(0).getMaterialQty())){
+                    qty=materialBarcodes.get(0).getMaterialQty();
+                }
                 if(StringUtils.isEmpty(materialBarcodes.get(0).getIfSysBarcode())){
                     materialBarcodes.get(0).setIfSysBarcode((byte)1);
-                    if(StringUtils.isNotEmpty(materialBarcodes.get(0).getMaterialQty())){
-                        qty=materialBarcodes.get(0).getMaterialQty();
-                    }
                 }
                 if(materialBarcodes.get(0).getIfSysBarcode()==(byte)1){
                     throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"系统条码不能删除");
