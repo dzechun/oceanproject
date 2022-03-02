@@ -977,7 +977,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
                 qmsInspectionOrder.setInventoryQty(new BigDecimal(qualifiedInventoryDetDtos.size()));
                 SearchBaseInspectionWay searchBaseInspectionWay = new SearchBaseInspectionWay();
-                searchBaseInspectionWay.setInspectionWayDesc("正常");
+                searchBaseInspectionWay.setInspectionWayDesc("万宝检验方式");
                 searchBaseInspectionWay.setQueryMark(1);
                 List<BaseInspectionWay> inspectionWays = baseFeignApi.findList(searchBaseInspectionWay).getData();
                 if (StringUtils.isEmpty(inspectionWays)) {
@@ -997,16 +997,23 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 SearchBaseInspectionStandard searchBaseInspectionStandard = new SearchBaseInspectionStandard();
                 searchBaseInspectionStandard.setMaterialId(detDtos.get(0).getMaterialId());
                 searchBaseInspectionStandard.setSupplierId(qmsInspectionOrder.getCustomerId());
+                searchBaseInspectionStandard.setInspectionWayId(inspectionWays.get(0).getInspectionWayId());
                 List<BaseInspectionStandard> inspectionStandardList = baseFeignApi.findList(searchBaseInspectionStandard).getData();
                 if (StringUtils.isEmpty(inspectionStandardList)) {
-                    throw new BizErrorException("未查到检验标准");
+                    //查询通用的检验方式
+                    searchBaseInspectionStandard.setMaterialId((long)0);
+                    searchBaseInspectionStandard.setInspectionType((byte)2);
+                    inspectionStandardList = baseFeignApi.findList(searchBaseInspectionStandard).getData();
+                    if (StringUtils.isEmpty(inspectionStandardList))
+                        throw new BizErrorException("未查到检验标准");
                 }
+
                 qmsInspectionOrder.setInspectionStandardId(inspectionStandardList.get(0).getInspectionStandardId());
 
                 //明细
                 List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetService.showOrderDet(qmsInspectionOrder.getInspectionStandardId(), qmsInspectionOrder.getOrderQty());
                 qmsInspectionOrder.setQmsInspectionOrderDets(qmsInspectionOrderDets);
-                this.save(qmsInspectionOrder);
+                this.add(qmsInspectionOrder);
             }
 
             //对应的库存明细写入质检单号
@@ -1023,14 +1030,15 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             searchWmsInnerInventory.setInventoryStatusId(detDtos.get(0).getInventoryStatusId());
             searchWmsInnerInventory.setMaterialId(detDtos.get(0).getMaterialId());
             searchWmsInnerInventory.setQcLock((byte) 0);
+            searchWmsInnerInventory.setStockLock((byte) 0);
             List<WmsInnerInventoryDto> list = innerFeignApi.findList(searchWmsInnerInventory).getData();
-            if (StringUtils.isEmpty(list)) {
-                throw new BizErrorException("未查询到对应库存");
+            if (StringUtils.isNotEmpty(list)) {
+                for(WmsInnerInventoryDto wmsInnerInventoryDto : list){
+                    wmsInnerInventoryDto.setQcLock((byte) 1);
+                    innerFeignApi.update(wmsInnerInventoryDto);
+                }
             }
-            for(WmsInnerInventoryDto wmsInnerInventoryDto : list){
-                wmsInnerInventoryDto.setQcLock((byte) 1);
-                innerFeignApi.update(wmsInnerInventoryDto);
-            }
+
         }
 
         return 1;
