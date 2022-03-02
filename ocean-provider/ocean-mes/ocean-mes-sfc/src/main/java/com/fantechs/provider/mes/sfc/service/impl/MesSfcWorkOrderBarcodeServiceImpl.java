@@ -397,21 +397,29 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         List<BaseBarcodeRuleDto> barcodeRulList = baseFeignApi.findBarcodeRulList(searchBaseBarcodeRule).getData();
         if(StringUtils.isEmpty(barcodeRulList)) throw new BizErrorException("未查询到编码规则");
 
-        SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
-        searchMesPmWorkOrder.setWorkOrderId(record.getWorkOrderId());
-        MesPmWorkOrderDto mesPmWorkOrderDto = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData().get(0);
+        MesPmWorkOrderDto mesPmWorkOrderDto = new MesPmWorkOrderDto();
+        BaseRouteProcess routeProcess = new BaseRouteProcess();
+        if(labelRuteDto.getBarcodeType()==(byte)1){
+            SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
+            searchMesPmWorkOrder.setWorkOrderId(record.getWorkOrderId());
+            mesPmWorkOrderDto = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData().get(0);
 
-        if(StringUtils.isEmpty(mesPmWorkOrderDto.getRouteId())){
-            throw new BizErrorException("工单未选择工艺路线");
+            if(StringUtils.isEmpty(mesPmWorkOrderDto.getRouteId())){
+                throw new BizErrorException("工单未选择工艺路线");
+            }
+
+            //查询工艺路线
+            ResponseEntity<List<BaseRouteProcess>> res = baseFeignApi.findConfigureRout(mesPmWorkOrderDto.getRouteId());
+            if(res.getCode()!=0){
+                throw new BizErrorException(res.getCode(),res.getMessage());
+            }
+            if(res.getData().isEmpty()){
+                throw new BizErrorException("请检查工单工艺路线");
+            }
+            routeProcess = res.getData().get(0);
         }
-        //查询工艺路线
-        ResponseEntity<List<BaseRouteProcess>> res = baseFeignApi.findConfigureRout(mesPmWorkOrderDto.getRouteId());
-        if(res.getCode()!=0){
-            throw new BizErrorException(res.getCode(),res.getMessage());
-        }
-        if(res.getData().isEmpty()){
-            throw new BizErrorException("请检查工单工艺路线");
-        }
+
+
 
         //boolean hasKey = redisUtil.hasKey(barcodeRulList.get(0).getBarcodeRule());
         // 不同组织使用同一个编码规则可能产生相同的条码 key值在原有基础上加组织ID作为键值 huangshuijun 2021-10-08
@@ -480,12 +488,12 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 mesSfcBarcodeProcess.setRouteId(mesPmWorkOrderDto.getRouteId());
                 mesSfcBarcodeProcess.setRouteCode(mesPmWorkOrderDto.getRouteCode());
                 mesSfcBarcodeProcess.setRouteName(mesPmWorkOrderDto.getRouteName());
-                mesSfcBarcodeProcess.setProcessId(res.getData().get(0).getProcessId());
-                mesSfcBarcodeProcess.setProcessName(res.getData().get(0).getProcessName());
-                mesSfcBarcodeProcess.setNextProcessId(res.getData().get(0).getProcessId());
-                mesSfcBarcodeProcess.setNextProcessName(res.getData().get(0).getProcessName());
-                mesSfcBarcodeProcess.setSectionId(res.getData().get(0).getSectionId());
-                mesSfcBarcodeProcess.setSectionName(res.getData().get(0).getSectionName());
+                mesSfcBarcodeProcess.setProcessId(routeProcess.getProcessId());
+                mesSfcBarcodeProcess.setProcessName(routeProcess.getProcessName());
+                mesSfcBarcodeProcess.setNextProcessId(routeProcess.getProcessId());
+                mesSfcBarcodeProcess.setNextProcessName(routeProcess.getProcessName());
+                mesSfcBarcodeProcess.setSectionId(routeProcess.getSectionId());
+                mesSfcBarcodeProcess.setSectionName(routeProcess.getSectionName());
                 processList.add(mesSfcBarcodeProcess);
             }
 
