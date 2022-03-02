@@ -124,6 +124,8 @@ public class WmsInnerShiftWorkDetServiceImpl extends BaseService<WmsInnerJobOrde
             WmsInnerInventory innerInventory = wmsInnerInventoryMapper.selectOneByExample(exampleInventory);
             // 查询明细库存对应的原库存
             WmsInnerInventory sourceInnerInventory = wmsInnerInventoryMapper.selectByPrimaryKey(innerInventory.getParentInventoryId());
+            if(StringUtils.isEmpty(sourceInnerInventory))
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未找到原库存，无法还原原库存数量");
             sourceInnerInventory.setPackingQty(sourceInnerInventory.getPackingQty().add(innerInventory.getPackingQty()));
             // 修改原库存
             wmsInnerInventoryService.update(sourceInnerInventory);

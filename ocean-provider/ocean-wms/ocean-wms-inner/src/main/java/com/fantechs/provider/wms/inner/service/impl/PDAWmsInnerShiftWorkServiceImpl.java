@@ -218,7 +218,7 @@ public class PDAWmsInnerShiftWorkServiceImpl implements PDAWmsInnerShiftWorkServ
             map.put("lockStatus", (byte) 0);
             map.put("stockLock", (byte) 0);
             List<WmsInnerInventoryDto> innerInventoryDtos = wmsInnerInventoryService.findList(map);
-            if (innerInventoryDtos == null || innerInventoryDtos.size() <= 0) {
+            if (StringUtils.isEmpty(innerInventoryDtos)) {
                 throw new BizErrorException(ErrorCodeEnum.PDA5001009);
             }
             SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
@@ -227,7 +227,8 @@ public class PDAWmsInnerShiftWorkServiceImpl implements PDAWmsInnerShiftWorkServ
             List<WmsInnerInventoryDto> dtos = new ArrayList<>();
             if (specItems.size() > 0 && !innerInventoryDtos.isEmpty() && innerInventoryDtos.size() > 0) {
                 for (WmsInnerInventoryDto inventoryDto : innerInventoryDtos) {
-                    if (StringUtils.isNotEmpty(inventoryDto.getInventoryStatusName()) && inventoryDto.getInventoryStatusName().equals(specItems.get(0).getParaValue())) {
+                    if (StringUtils.isNotEmpty(inventoryDto.getInventoryStatusName()) && inventoryDto.getInventoryStatusName().equals(specItems.get(0).getParaValue())
+                        && inventoryDto.getPackingQty().compareTo(BigDecimal.ZERO) == 1) {
                         dtos.add(inventoryDto);
                     }
                 }
