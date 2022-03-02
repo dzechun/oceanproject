@@ -995,7 +995,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 searchOrderDetBarcode.setPalletCode(barcode);
                 searchOrderDetBarcode.setBarcode(null);
                 searchOrderDetBarcode.setColorBoxCode(null);
-                searchOrderDetBarcode.setPalletCode(null);
+                searchOrderDetBarcode.setCartonCode(null);
                 detBarcodeDtos=wmsInnerStockOrderDetBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchOrderDetBarcode));
                 if(detBarcodeDtos.size()>0){
                     for (WmsInnerStockOrderDetBarcodeDto detBarcodeDto : detBarcodeDtos) {
