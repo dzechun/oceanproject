@@ -549,7 +549,8 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             }
 
             //单据状态(1-打开 2-待作业 3-作业中 4-待处理 5-完成 6-作废)
-            if(wmsInventoryVerification.getProjectType()==2 && wmsInventoryVerification.getStockMode()==(byte)2){
+            //&& wmsInventoryVerification.getStockMode()==(byte)2
+            if(wmsInventoryVerification.getProjectType()==2){
                 // 复盘单确认后 单据状态为 4-待处理
                 wmsInventoryVerification.setOrderStatus((byte)4);
             }else if(wmsInventoryVerification.getProjectType()==(byte)1){
