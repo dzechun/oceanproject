@@ -110,6 +110,11 @@
             <if test="barcode != null and barcode != ''">
                 and mswob.barcode = #{barcode}
             </if>
+            <if test="barcodeList != null and barcodeList != ''">
+                <foreach collection="list" index="index" item="item" open="mswob.barcode in (" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
             <if test="workOrderBarcodeId != null">
                 and mswob.work_order_barcode_id = #{workOrderBarcodeId}
             </if>

@@ -15,4 +15,6 @@ public interface WanbaoStackingDetService extends IService<WanbaoStackingDet> {
     List<WanbaoStackingDetDto> findList(Map<String, Object> map);
 
     Map<String, Object> importExcel(List<WanbaoStackingDet> list);
+
+    int batchAdd(List<WanbaoStackingDet> list);
 }

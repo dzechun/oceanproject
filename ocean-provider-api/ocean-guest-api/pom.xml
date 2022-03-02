@@ -20,6 +20,7 @@
         <module>ocean-guest-leisai-api</module>
         <module>ocean-guest-fivering-api</module>
         <module>ocean-guest-callagv-api</module>
+        <module>ocean-guest-wanbao-api</module>
     </modules>
 
 </project>

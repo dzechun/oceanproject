@@ -11,10 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -43,5 +40,20 @@ public class WanbaoStackingDetServiceImpl extends BaseService<WanbaoStackingDet>
         resultMap.put("操作成功总数",success);
         resultMap.put("操作失败行数",fail);
         return resultMap;
+    }
+
+    @Override
+    public int batchAdd(List<WanbaoStackingDet> list) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        for (WanbaoStackingDet det : list){
+            det.setOrgId(user.getOrganizationId());
+            det.setCreateTime(new Date());
+            det.setCreateUserId(user.getUserId());
+            det.setModifiedTime(new Date());
+            det.setModifiedUserId(user.getUserId());
+            det.setIsDelete((byte) 1);
+            det.setStatus((byte) 1);
+        }
+        return wanbaoStackingDetMapper.insertList(list);
     }
 }
