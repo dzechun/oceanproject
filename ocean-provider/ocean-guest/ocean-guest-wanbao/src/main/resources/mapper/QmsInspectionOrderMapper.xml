@@ -112,6 +112,10 @@
       <if test="inspectionOrderId != null">
         and qio.inspection_order_id = #{inspectionOrderId}
       </if>
+      <if test="queryType != null and queryType == 0 ">
+        and qio.same_package_code is null and qio.sales_code is null
+      </if>
+
       <if test="inspectionOrderCode != null and inspectionOrderCode!=''">
         and qio.inspection_order_code like CONCAT('%', #{inspectionOrderCode}, '%')
       </if>

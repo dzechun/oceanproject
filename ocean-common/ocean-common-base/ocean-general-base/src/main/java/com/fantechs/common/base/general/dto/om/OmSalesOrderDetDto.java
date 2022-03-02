@@ -77,5 +77,10 @@ public class OmSalesOrderDetDto extends OmSalesOrderDet implements Serializable 
 //    @Excel(name = "PO号", height = 20, width = 30)
     private String samePackageCode;
 
+    /**
+     * 客户ID
+     */
+    @ApiModelProperty(name="supplierId",value = "客户ID")
+    private Long supplierId;
 
 }

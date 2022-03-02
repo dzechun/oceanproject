@@ -77,4 +77,9 @@ public class SearchQmsInspectionOrder extends BaseQuery implements Serializable 
     @ApiModelProperty(name="inspectionResult",value = "检验结果(0-不合格 1-合格)")
     private Byte inspectionResult;
 
+    /**
+     * 查询条件
+     */
+    @ApiModelProperty(name="auditUserName",value = "(0-PO号和销售编码为空)")
+    private Integer queryType;
 }
