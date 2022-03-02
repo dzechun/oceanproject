@@ -1045,10 +1045,10 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : innerInventoryDetDtos) {
             if (StringUtils.isEmpty(wmsInnerInventoryDetDto.getOption4())) {
 
+                List<WmsInnerInventoryDetDto> inventoryDetDtos = new LinkedList<>();
                 boolean tag = false;
                 if (StringUtils.isNotEmpty(wmsInnerInventoryDetDto.getOption3())) {
                     //PO号为空的情况、销售订单号不为空
-                    List<WmsInnerInventoryDetDto> inventoryDetDtos = new LinkedList<>();
                     if (collect.containsKey(wmsInnerInventoryDetDto.getOption3())) {
                         inventoryDetDtos = collect.get(wmsInnerInventoryDetDto.getOption3());
                     }
@@ -1060,11 +1060,11 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
                 if (tag) {
                     //PO号为空的情况、销售订单号为空
-                    if (collect.containsKey(wmsInnerInventoryDetDto.getMaterialCode())) ;
-                    List<WmsInnerInventoryDetDto> inventoryDetDtos = collect.get(wmsInnerInventoryDetDto.getMaterialCode());
+                    if (collect.containsKey(wmsInnerInventoryDetDto.getMaterialCode())) {
+                        inventoryDetDtos = collect.get(wmsInnerInventoryDetDto.getMaterialCode());
+                    }
                     inventoryDetDtos.add(wmsInnerInventoryDetDto);
                     collect.put(wmsInnerInventoryDetDto.getMaterialCode(), inventoryDetDtos);
-
                 }
             } else {
 
