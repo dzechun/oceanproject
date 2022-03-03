@@ -70,12 +70,12 @@ public class MesSfcBarcodeProcessServiceImpl extends BaseService<MesSfcBarcodePr
     }
 
     @Override
-    public int countBarcodeListForPOGroup(Map<String, Object> map) {
+    public String countBarcodeListForPOGroup(Map<String, Object> map) {
         return mesSfcBarcodeProcessMapper.countBarcodeListForPOGroup(map);
     }
 
     @Override
-    public int countBarcodeListForSalesOrder(Map<String, Object> map) {
+    public String countBarcodeListForSalesOrder(Map<String, Object> map) {
         return mesSfcBarcodeProcessMapper.countBarcodeListForSalesOrder(map);
     }
 }
