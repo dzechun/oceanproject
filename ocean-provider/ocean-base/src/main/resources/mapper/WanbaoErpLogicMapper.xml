@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.base.mapper.WanbaoErpLogicMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.basic.WanbaoErpLogic">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="logic_id" jdbcType="BIGINT" property="logicId" />
+    <result column="logic_code" jdbcType="VARCHAR" property="logicCode" />
+    <result column="logic_name" jdbcType="VARCHAR" property="logicName" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+  </resultMap>
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.basic.WanbaoErpLogicDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+  </resultMap>
+  <sql id="base_column_list">
+    wel.logic_id,
+wel.logic_code,
+wel.logic_name,
+wel.create_user_id,
+    wel.create_time,
+    wel.modified_user_id,
+    wel.modified_time,
+    wel.status,
+wel.remark,
+wel.org_id
+  </sql>
+  <select id="findList" resultMap="BaseResultMapDto">
+    select <include refid="base_column_list"/>,su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name
+    from wanbao_erp_logic wel
+    LEFT JOIN ocean_v2.sys_user su ON wel.create_user_id = su.user_id
+    LEFT JOIN ocean_v2.sys_user sus ON wel.modified_user_id = sus.user_id
+    LEFT JOIN base_organization bo ON wel.org_id = bo.organization_id
+    <where>
+      <if test="logicCode!=null and logicCode!=''">
+        and wel.logic_code like CONCAT('%',#{logicCode},'%')
+      </if>
+      <if test="logicName!=null and logicName!=''">
+        and wel.logic_name like CONCAT('%',#{logicName},'%')
+      </if>
+      <if test="status!=null">
+        and wel.status=#{status}
+      </if>
+      <if test="orgId!=null">
+        and wel.org_id=#{orgId}
+      </if>
+    </where>
+  </select>
+</mapper>
