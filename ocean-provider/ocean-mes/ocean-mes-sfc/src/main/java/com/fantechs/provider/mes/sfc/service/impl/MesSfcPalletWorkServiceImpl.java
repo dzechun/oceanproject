@@ -572,7 +572,10 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         }
         if (dto.getPalletType() == 1){
             // 同料号
-
+            String count = mesSfcBarcodeProcessService.countBarcodeListForMaterial(map);
+            if (count == null || Integer.parseInt(count) > 1){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此批条码不属于同个物料，不可提交");
+            }
         }
         map.clear();
         map.put("stackingCode", dto.getStackingCode());
