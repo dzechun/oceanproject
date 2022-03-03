@@ -579,6 +579,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int workByManualOperation(PalletWorkByManualOperationDto dto) throws Exception {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (dto.getWanbaoBarcodeDtos().isEmpty()){
             throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "条码集合为空，请扫码");
         }
@@ -619,11 +620,18 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             WanbaoStackingDet stackingDet = new WanbaoStackingDet();
             BeanUtil.copyProperties(wanbaoBarcodeDto, stackingDet);
             stackingDet.setStackingId(stackingList.get(0).getStackingId());
+            for (MesSfcWorkOrderBarcodeDto workOrderBarcodeDto : mesSfcWorkOrderBarcodeDtoList){
+                if (workOrderBarcodeDto.getBarcode().equals(wanbaoBarcodeDto.getBarcode())){
+                    wanbaoBarcodeDto.setWorkOrderId(workOrderBarcodeDto.getWorkOrderId());
+                    break;
+                }
+            }
             stackingDets.add(stackingDet);
         }
         wanbaoFeignApi.batchAdd(stackingDets);
 
         // 完工入库以及上架作业
+        this.beforePalletAutoAsnOrder(stackingList.get(0).getStackingId(), user.getOrganizationId(), dto.getWanbaoBarcodeDtos());
         return 1;
     }
 
@@ -873,113 +881,84 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
     /**
      * 生成完工入库单
-     * @param palletIds 栈板集合
+     * @param stackingId 堆垛
      * @param orgId 组织
-     * @param mesSfcWorkOrderBarcodeList 条码集合
+     * @param wanbaoBarcodeDtos 条码
      */
-    private void beforePalletAutoAsnOrder(List<Long> palletIds, Long orgId, List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeList){
+    private void beforePalletAutoAsnOrder(Long stackingId, Long orgId, List<WanbaoBarcodeDto> wanbaoBarcodeDtos){
+
         /**
-         * @date 20211217
-         * @autor bgkun
-         * 判断是否包箱工序是否工单的产出工序，若是，则调用完工入库
-         * 增加程序配置项决定是否开启此处理
+         * 2022-03-12 bgkun 人工栈板作业提交完工入库以及后续操作
          */
-        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-        searchSysSpecItem.setSpecCode("autoWipCompletion");
-        List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-        log.info("程序配置项autoWipCompletion值："+ specItems.get(0).getParaValue());
-        if (!specItems.isEmpty() && specItems.size() > 0 && specItems.get(0).getParaValue().equals("1")){
-
-            /**
-             * 2022-02-17 bgkun 完工入库增加堆垛编码，上架作业堆垛编码
-             */
-            Map<String, Object> map = new HashMap<>();
-//            map.put("stackingCode", stackingCode);
-//            List<WanbaoStackingDto> stackingList = this.mesSfcProductPalletService.findStackingList(map);
-//            if (stackingList.isEmpty()){
-//                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛编码不存在");
-//            }
-
-            map.clear();
-            map.put("list", palletIds);
-            map.put("orgId", orgId);
-            List<PalletAutoAsnDto> autoAsnDtos = mesSfcProductPalletDetService.findListGroupByWorkOrder(map);
-            for (PalletAutoAsnDto palletAutoAsnDto : autoAsnDtos){
-                map.clear();
-                map.put("productPalletId", palletAutoAsnDto.getProductPalletId());
-                List<MesSfcWorkOrderBarcodeDto> barcodeDtos = mesSfcWorkOrderBarcodeService.findListByPalletDet(map);
-                List<BarPODto> barPODtos = new ArrayList<>();
-                barcodeDtos.forEach(item -> {
+        Map<String, Object> map = new HashMap<>();
+        map.clear();
+        map.put("stackingId", stackingId);
+        map.put("orgId", orgId);
+        List<PalletAutoAsnDto> autoAsnDtos = mesSfcProductPalletDetService.findListGroupByWorkOrder(map);
+        for (PalletAutoAsnDto palletAutoAsnDto : autoAsnDtos){
+            List<BarPODto> barPODtos = new ArrayList<>();
+            wanbaoBarcodeDtos.forEach(item -> {
+                if (item.getWorkOrderId().equals(palletAutoAsnDto.getSourceOrderId())){
                     BarPODto barPODto = new BarPODto();
                     barPODto.setBarCode(item.getBarcode());
-                    barPODto.setPOCode(item.getSamePackageCode());
-                    barPODto.setCutsomerBarcode(item.getCutsomerBarcode());
+                    barPODto.setPOCode(palletAutoAsnDto.getSalesOrderCode());
+                    barPODto.setCutsomerBarcode(item.getCustomerBarcode());
                     barPODto.setSalesBarcode(item.getSalesBarcode());
                     barPODtos.add(barPODto);
-                });
-                if(mesSfcWorkOrderBarcodeList != null && mesSfcWorkOrderBarcodeList.size() > 0) {
-                    mesSfcWorkOrderBarcodeList.forEach(item -> {
-                        BarPODto barPODto = new BarPODto();
-                        barPODto.setBarCode(item.getBarcode());
-                        barPODto.setPOCode(item.getSamePackageCode());
-                        barPODtos.add(barPODto);
-                    });
-                    palletAutoAsnDto.setActualQty(palletAutoAsnDto.getActualQty().add(new BigDecimal(mesSfcWorkOrderBarcodeList.size())));
-                    palletAutoAsnDto.setPackingQty(palletAutoAsnDto.getActualQty());
                 }
-                palletAutoAsnDto.setBarCodeList(barPODtos);
-                //完工入库
-                SearchBaseMaterialOwner searchBaseMaterialOwner = new SearchBaseMaterialOwner();
-                searchBaseMaterialOwner.setAsc((byte)1);
-                ResponseEntity<List<BaseMaterialOwnerDto>> baseMaterialOwnerDtos = baseFeignApi.findList(searchBaseMaterialOwner);
-                if(StringUtils.isNotEmpty(baseMaterialOwnerDtos.getData())){
-                    palletAutoAsnDto.setMaterialOwnerId(baseMaterialOwnerDtos.getData().get(0).getMaterialOwnerId());
-                    palletAutoAsnDto.setShipperName(baseMaterialOwnerDtos.getData().get(0).getMaterialOwnerName());
-                }else{
-                    throw new BizErrorException("未查询到货主信息");
-                }
-
-                SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
-                searchBaseStorage.setMinSurplusCanPutSalver(0);
-                searchBaseStorage.setStorageType((byte) 2);
-                // 万宝项目-通过程序配置项判定物料匹配的仓库
-                searchSysSpecItem.setSpecCode("wanbaoWarehouse");
-                List<SysSpecItem> itemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-                if(!itemList.isEmpty()){
-                    String warehouseCode = null;
-                    log.info("程序配置项wanbaoWarehouse值："+ itemList.get(0).getParaValue() + " ========== 条码集合数：" + barcodeDtos.size());
-                    List<Map<String, String>> list = JSONArray.parseObject(itemList.get(0).getParaValue(), List.class);
-                    for (Map<String, String> item : list){
-                        if(barcodeDtos.get(0).getMaterialCode().contains(item.get("material"))){
-                            warehouseCode = item.get("warehouse");
-                            break;
-                        }
-                    }
-                    searchBaseStorage.setWarehouseCode(warehouseCode);
-                }
-                ResponseEntity<List<BaseStorage>> baseStorages = baseFeignApi.findList(searchBaseStorage);
-                if(StringUtils.isNotEmpty(baseStorages.getData())){
-                    palletAutoAsnDto.setStorageId(baseStorages.getData().get(0).getStorageId());
-                    palletAutoAsnDto.setWarehouseId(baseStorages.getData().get(0).getWarehouseId());
-                }else{
-                    throw new BizErrorException(ErrorCodeEnum.STO30012000);
-                }
-                palletAutoAsnDto.setProductionDate(new Date());
-
-                //2021-07-30 增加包装单位 by Dylan
-                SearchBasePackageSpecification searchBasePackageSpecification = new SearchBasePackageSpecification();
-                searchBasePackageSpecification.setMaterialId(palletAutoAsnDto.getMaterialId());
-                searchBasePackageSpecification.setOrgId(orgId);
-                ResponseEntity<List<BasePackageSpecificationDto>> basePackgeSpecifications = baseFeignApi.findBasePackageSpecificationList(searchBasePackageSpecification);
-                if(StringUtils.isNotEmpty(basePackgeSpecifications.getData())){
-                    List<BaseMaterialPackageDto> baseMaterialPackageDtos = basePackgeSpecifications.getData().get(0).getBaseMaterialPackages();
-                    if(StringUtils.isNotEmpty(baseMaterialPackageDtos)){
-                        BaseMaterialPackageDto baseMaterialPackageDto = baseMaterialPackageDtos.get(0);
-                        palletAutoAsnDto.setPackingUnitName(baseMaterialPackageDto.getPackingUnitName());
-                    }
-                }
-                inFeignApi.palletAutoAsnOrder(palletAutoAsnDto);
+            });
+            palletAutoAsnDto.setBarCodeList(barPODtos);
+            //完工入库
+            SearchBaseMaterialOwner searchBaseMaterialOwner = new SearchBaseMaterialOwner();
+            searchBaseMaterialOwner.setAsc((byte)1);
+            ResponseEntity<List<BaseMaterialOwnerDto>> baseMaterialOwnerDtos = baseFeignApi.findList(searchBaseMaterialOwner);
+            if(StringUtils.isNotEmpty(baseMaterialOwnerDtos.getData())){
+                palletAutoAsnDto.setMaterialOwnerId(baseMaterialOwnerDtos.getData().get(0).getMaterialOwnerId());
+                palletAutoAsnDto.setShipperName(baseMaterialOwnerDtos.getData().get(0).getMaterialOwnerName());
+            }else{
+                throw new BizErrorException("未查询到货主信息");
             }
+
+            SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+            searchBaseStorage.setMinSurplusCanPutSalver(0);
+            searchBaseStorage.setStorageType((byte) 2);
+            // 万宝项目-通过程序配置项判定物料匹配的仓库
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("wanbaoWarehouse");
+            List<SysSpecItem> itemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if(!itemList.isEmpty()){
+                String warehouseCode = null;
+                List<Map<String, String>> list = JSONArray.parseObject(itemList.get(0).getParaValue(), List.class);
+                for (Map<String, String> item : list){
+                    if(palletAutoAsnDto.getMaterialCode().contains(item.get("material"))){
+                        warehouseCode = item.get("warehouse");
+                        break;
+                    }
+                }
+                searchBaseStorage.setWarehouseCode(warehouseCode);
+            }
+            ResponseEntity<List<BaseStorage>> baseStorages = baseFeignApi.findList(searchBaseStorage);
+            if(StringUtils.isNotEmpty(baseStorages.getData())){
+                palletAutoAsnDto.setStorageId(baseStorages.getData().get(0).getStorageId());
+                palletAutoAsnDto.setWarehouseId(baseStorages.getData().get(0).getWarehouseId());
+            }else{
+                throw new BizErrorException(ErrorCodeEnum.STO30012000);
+            }
+            palletAutoAsnDto.setProductionDate(new Date());
+
+            //2021-07-30 增加包装单位 by Dylan
+            SearchBasePackageSpecification searchBasePackageSpecification = new SearchBasePackageSpecification();
+            searchBasePackageSpecification.setMaterialId(palletAutoAsnDto.getMaterialId());
+            searchBasePackageSpecification.setOrgId(orgId);
+            ResponseEntity<List<BasePackageSpecificationDto>> basePackgeSpecifications = baseFeignApi.findBasePackageSpecificationList(searchBasePackageSpecification);
+            if(StringUtils.isNotEmpty(basePackgeSpecifications.getData())){
+                List<BaseMaterialPackageDto> baseMaterialPackageDtos = basePackgeSpecifications.getData().get(0).getBaseMaterialPackages();
+                if(StringUtils.isNotEmpty(baseMaterialPackageDtos)){
+                    BaseMaterialPackageDto baseMaterialPackageDto = baseMaterialPackageDtos.get(0);
+                    palletAutoAsnDto.setPackingUnitName(baseMaterialPackageDto.getPackingUnitName());
+                }
+            }
+            inFeignApi.palletAutoAsnOrder(palletAutoAsnDto);
         }
     }
 

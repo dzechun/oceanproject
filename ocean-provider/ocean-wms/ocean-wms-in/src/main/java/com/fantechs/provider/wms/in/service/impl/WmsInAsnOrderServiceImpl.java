@@ -753,7 +753,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 if(StringUtils.isEmpty(wmsInAsnOrder)){
                     throw new BizErrorException(ErrorCodeEnum.GL9999404);
                 }
-                wmsInAsnOrder.setProductPalletId(palletAutoAsnDto.getProductPalletId());
+                wmsInAsnOrder.setProductPalletId(palletAutoAsnDto.getStackingId());
                 Example example = new Example(WmsInAsnOrderDet.class);
                 example.createCriteria().andEqualTo("asnOrderId",wmsInAsnOrder.getAsnOrderId())
                         .andEqualTo("materialId",palletAutoAsnDto.getMaterialId())
@@ -800,7 +800,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                         .orderTypeId((long)4)
                         .startReceivingDate(new Date())
                         .endReceivingDate(new Date())
-                        .productPalletId(palletAutoAsnDto.getProductPalletId())
+                        .productPalletId(palletAutoAsnDto.getStackingId())
                         .orgId(sysUser.getOrganizationId())
                         .remark(DateUtils.getDateString(new Date(),"yyyy-MM-dd"))
                         .materialType(Byte.valueOf(materialType))

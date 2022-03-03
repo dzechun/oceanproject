@@ -25,4 +25,6 @@ public class WanbaoBarcodeDto implements Serializable {
      */
     @ApiModelProperty(name="salesBarcode",value = "销售条码")
     private String salesBarcode;
+
+    private Long workOrderId;
 }

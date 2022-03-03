@@ -54,6 +54,7 @@
         <result column="e_mail_address" jdbcType="VARCHAR" property="eMailAddress" />
         <result column="detailed_address" jdbcType="VARCHAR" property="detailedAddress" />
         <result column="platform_name" jdbcType="VARCHAR" property="platformName"/>
+        <result column="stacking_code" jdbcType="VARCHAR" property="stackingCode"/>
     </resultMap>
     <sql id="BaseColumnList">
         wipo.job_order_id,
@@ -95,6 +96,7 @@
         (SELECT IFNULL(SUM(wipod.distribution_qty),0) FROM wms_inner_job_order_det wipod where wipod.job_order_id = wipo.job_order_id) as distribution_qty
         <if test="isPallet!=null and isPallet!='' and isPallet==1">
             ,
+            ws.stacking_code,
           CASE
             WHEN (select COUNT(*) FROM wms_inner_job_order_re_mspp wijorm where wijorm.job_order_id=wipo.job_order_id)>0
             THEN 1
@@ -112,6 +114,10 @@
         LEFT JOIN ocean_v2.sys_user su ON wipo.create_user_id = su.user_id
         LEFT JOIN ocean_v2.sys_user sus ON wipo.modified_user_id = sus.user_id
         LEFT JOIN base_organization bo ON wipo.org_id = bo.organization_id
+        <if test="isPallet!=null and isPallet!='' and isPallet==1">
+            LEFT JOIN wms_inner_job_order_re_mspp wijorm ON wipo.job_order_id = wijorm.job_order_id
+            LEFT JOIN wanbao_stacking ws ON wijorm.product_pallet_id = ws.stacking_id
+        </if>
         <where>
             <if test="orgId!=null and orgId!=''">
                 and wipo.org_id = #{orgId}
