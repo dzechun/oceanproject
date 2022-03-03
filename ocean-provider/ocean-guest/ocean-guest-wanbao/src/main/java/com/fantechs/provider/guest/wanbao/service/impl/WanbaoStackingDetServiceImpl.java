@@ -1,12 +1,16 @@
 package com.fantechs.provider.guest.wanbao.service.impl;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDetDto;
+import com.fantechs.common.base.general.entity.wanbao.WanbaoStacking;
 import com.fantechs.common.base.general.entity.wanbao.WanbaoStackingDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.provider.guest.wanbao.mapper.WanbaoStackingDetMapper;
 import com.fantechs.provider.guest.wanbao.service.WanbaoStackingDetService;
+import com.fantechs.provider.guest.wanbao.service.WanbaoStackingService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +26,8 @@ public class WanbaoStackingDetServiceImpl extends BaseService<WanbaoStackingDet>
 
     @Resource
     private WanbaoStackingDetMapper wanbaoStackingDetMapper;
+    @Resource
+    private WanbaoStackingService wanbaoStackingService;
 
     @Override
     public List<WanbaoStackingDetDto> findList(Map<String, Object> map) {
@@ -44,6 +50,9 @@ public class WanbaoStackingDetServiceImpl extends BaseService<WanbaoStackingDet>
 
     @Override
     public int batchAdd(List<WanbaoStackingDet> list) {
+        if (list.isEmpty()){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码堆垛数据不能为空");
+        }
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         for (WanbaoStackingDet det : list){
             det.setOrgId(user.getOrganizationId());
@@ -54,6 +63,9 @@ public class WanbaoStackingDetServiceImpl extends BaseService<WanbaoStackingDet>
             det.setIsDelete((byte) 1);
             det.setStatus((byte) 1);
         }
+        WanbaoStacking stacking = wanbaoStackingService.selectByKey(list.get(0).getStackingId());
+        stacking.setUsageStatus((byte) 2);
+        wanbaoStackingService.update(stacking);
         return wanbaoStackingDetMapper.insertList(list);
     }
 }

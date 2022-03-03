@@ -561,15 +561,18 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         if (dto.getPalletType() == 2){
             String count = mesSfcBarcodeProcessService.countBarcodeListForPOGroup(map);
             if (count == null || Integer.valueOf(count) > 1){
-//                dto.setPalletType((byte) 3);
-                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "提交条码不是同PO，与配置同PO作业不符");
+                dto.setPalletType((byte) 3);
             }
-        }else if (dto.getPalletType() == 3){
+        }
+        if (dto.getPalletType() == 3){
             String count = mesSfcBarcodeProcessService.countBarcodeListForSalesOrder(map);
             if (count == null || Integer.parseInt(count) > 1){
-//                dto.setPalletType((byte) 1);
-                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "提交条码不是同销售编码，与配置同销售订单作业不符");
+                dto.setPalletType((byte) 1);
             }
+        }
+        if (dto.getPalletType() == 1){
+            // 同料号
+
         }
         map.clear();
         map.put("stackingCode", dto.getStackingCode());
