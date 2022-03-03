@@ -422,6 +422,7 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
         }
 
         List<WmsInnerInventoryDetDto> newInventoryDetDtoList = new ArrayList<>();
+    //    List<WmsInnerInventoryDetDto> addOnlyInventoryDetDtoList = new ArrayList<>();
         BigDecimal totalQty = new BigDecimal(0);
         BigDecimal distributionQty = StringUtils.isEmpty(wmsInPutawayOrderDet.getDistributionQty()) ? new BigDecimal(0) : wmsInPutawayOrderDet.getDistributionQty();
         String[] arrId = ids.split(",");
@@ -449,6 +450,11 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
                     map.put(innerInventoryDetDto.getColorBoxCode(), (byte) 2);
                     set.add(innerInventoryDetDto.getColorBoxCode());
                 }
+                if (StringUtils.isNotEmpty(innerInventoryDetDto.getBarcode())
+                        && StringUtils.isEmpty(innerInventoryDetDto.getColorBoxCode(),innerInventoryDetDto.getCartonCode(),innerInventoryDetDto.getPalletCode())) {
+                    map.put(innerInventoryDetDto.getBarcode(), (byte) 1);
+                    set.add(innerInventoryDetDto.getBarcode());
+                }
                 newInventoryDetDtoList.add(innerInventoryDetDto);
             }
         }
@@ -463,7 +469,9 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
             String code = iterator.next();
             Byte type = map.get(code);
             SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
-            if (2 == type) {
+            if (1 == type) {
+                searchWmsInnerInventoryDet.setBarcode(code);
+            }else if (2 == type) {
                 searchWmsInnerInventoryDet.setColorBoxCode(code);
             } else if (3 == type) {
                 searchWmsInnerInventoryDet.setCartonCode(code);
@@ -485,8 +493,6 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
                 //    wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(innerInventoryDetDto);
                 if(!newInventoryDetDtoList.contains(innerInventoryDetDto))
                     newInventoryDetDtoList.add(innerInventoryDetDto);
-                if(StringUtils.isNotEmpty(innerInventoryDetDto.getBarcode()))
-                    totalQty = totalQty.add(innerInventoryDetDto.getMaterialQty());
 
             }
 
@@ -510,6 +516,40 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
                 wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(update);
             }
         }
+
+        //更新条码状态
+        List<WmsInnerMaterialBarcodeReOrder> list = new ArrayList<>();
+        for (WmsInnerInventoryDetDto newInventoryDetDto : newInventoryDetDtoList) {
+            if(StringUtils.isNotEmpty(newInventoryDetDto.getBarcode())){
+                //增加条码中间表信息
+                WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
+                wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("INNER-SSO");
+                wmsInnerMaterialBarcodeReOrder.setOrderCode(wmsInnerJobOrder.getJobOrderCode());
+                wmsInnerMaterialBarcodeReOrder.setOrderId(wmsInnerJobOrder.getJobOrderId());
+                wmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInPutawayOrderDet.getJobOrderDetId());
+                wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(newInventoryDetDto.getMaterialBarcodeId());
+                wmsInnerMaterialBarcodeReOrder.setStatus((byte) 1);
+                wmsInnerMaterialBarcodeReOrder.setOrgId(sysUser.getOrganizationId());
+                wmsInnerMaterialBarcodeReOrder.setCreateUserId(sysUser.getUserId());
+                wmsInnerMaterialBarcodeReOrder.setCreateTime(new Date());
+                wmsInnerMaterialBarcodeReOrder.setModifiedUserId(sysUser.getUserId());
+                wmsInnerMaterialBarcodeReOrder.setModifiedTime(new Date());
+                list.add(wmsInnerMaterialBarcodeReOrder);
+
+                //更新条码状态
+                WmsInnerMaterialBarcode wmsInnerMaterialBarcode = new WmsInnerMaterialBarcode();
+                wmsInnerMaterialBarcode.setMaterialBarcodeId(newInventoryDetDto.getMaterialBarcodeId());
+                wmsInnerMaterialBarcode.setBarcodeStatus((byte) 5);//已上架
+                wmsInnerMaterialBarcode.setModifiedUserId(sysUser.getUserId());
+                wmsInnerMaterialBarcode.setModifiedTime(new Date());
+                wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(wmsInnerMaterialBarcode);
+
+                //过滤重复的数量 只计算最大单位带出的数量
+                totalQty = totalQty.add(newInventoryDetDto.getMaterialQty());
+            }
+
+        }
+
 
         //判断是否大于分配数
         if (totalQty.compareTo(distributionQty) == 1) {
@@ -616,38 +656,6 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
             wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory_old);
             wmsInnerInventory.setPackingQty(BigDecimal.ZERO);
             wmsInnerInventoryService.updateByPrimaryKeySelective(wmsInnerInventory);
-        }
-
-
-        //更新条码状态
-        List<WmsInnerMaterialBarcodeReOrder> list = new ArrayList<>();
-        for (WmsInnerInventoryDetDto newInventoryDetDto : newInventoryDetDtoList) {
-            if(StringUtils.isNotEmpty(newInventoryDetDto.getBarcode())){
-                //增加条码中间表信息
-                WmsInnerMaterialBarcodeReOrder wmsInnerMaterialBarcodeReOrder = new WmsInnerMaterialBarcodeReOrder();
-                wmsInnerMaterialBarcodeReOrder.setOrderTypeCode("INNER-SSO");
-                wmsInnerMaterialBarcodeReOrder.setOrderCode(wmsInnerJobOrder.getJobOrderCode());
-                wmsInnerMaterialBarcodeReOrder.setOrderId(wmsInnerJobOrder.getJobOrderId());
-                wmsInnerMaterialBarcodeReOrder.setOrderDetId(wmsInPutawayOrderDet.getJobOrderDetId());
-                wmsInnerMaterialBarcodeReOrder.setMaterialBarcodeId(newInventoryDetDto.getMaterialBarcodeId());
-                wmsInnerMaterialBarcodeReOrder.setStatus((byte) 1);
-                wmsInnerMaterialBarcodeReOrder.setOrgId(sysUser.getOrganizationId());
-                wmsInnerMaterialBarcodeReOrder.setCreateUserId(sysUser.getUserId());
-                wmsInnerMaterialBarcodeReOrder.setCreateTime(new Date());
-                wmsInnerMaterialBarcodeReOrder.setModifiedUserId(sysUser.getUserId());
-                wmsInnerMaterialBarcodeReOrder.setModifiedTime(new Date());
-                list.add(wmsInnerMaterialBarcodeReOrder);
-
-                //更新条码状态
-                WmsInnerMaterialBarcode wmsInnerMaterialBarcode = new WmsInnerMaterialBarcode();
-                wmsInnerMaterialBarcode.setMaterialBarcodeId(newInventoryDetDto.getMaterialBarcodeId());
-                wmsInnerMaterialBarcode.setBarcodeStatus((byte) 5);//已上架
-                wmsInnerMaterialBarcode.setModifiedUserId(sysUser.getUserId());
-                wmsInnerMaterialBarcode.setModifiedTime(new Date());
-                wmsInnerMaterialBarcodeMapper.updateByPrimaryKeySelective(wmsInnerMaterialBarcode);
-
-            }
-
         }
 
         if (StringUtils.isNotEmpty(list))
@@ -990,7 +998,7 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
         searchWmsInnerJobOrder.setJobOrderId(record.getJobOrderId());
         List<WmsInnerJobOrderDto> oldWmsInnerJobOrderDtos = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder);
 
-/*        //删除原有明细
+        //删除原有明细
         String ids = null;
         for(WmsInnerJobOrderDet det : oldWmsInnerJobOrderDtos.get(0).getWmsInPutawayOrderDets()){
             if(StringUtils.isEmpty(ids))
@@ -998,7 +1006,7 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
             else
                 ids = ids + "," + det.getJobOrderDetId().toString();
         }
-        wmsInnerShiftWorkDetService.batchDeleteByShiftWork(ids);*/
+        wmsInnerShiftWorkDetService.batchDeleteByShiftWork(ids);
 
 
         //新增剩余的明细
@@ -1011,12 +1019,13 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
                 det.setModifiedUserId(sysUser.getUserId());
                 det.setModifiedTime(new Date());
                 det.setStatus(StringUtils.isEmpty(det.getStatus())?1: det.getStatus());
-                addlist.add(det);
+                wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(det);
+            //    addlist.add(det);
                 //移位作业库存校验、变更
                 updateInnerInventory(det,record,sysUser);
             }
-            if (StringUtils.isNotEmpty(addlist))
-                wmsInnerJobOrderDetMapper.insertList(addlist);
+           /* if (StringUtils.isNotEmpty(addlist))
+                wmsInnerJobOrderDetMapper.insertList(addlist);*/
         }
 
         int i = wmsInnerJobOrderMapper.updateByPrimaryKey(record);

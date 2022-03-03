@@ -94,14 +94,22 @@
     sus.user_name AS modified_user_name,
     bo.organization_name AS organization_Name,
     bm.material_name as materialName,
-    bm.material_code as materialCode,
-    bs.supplier_name as supplierName
+    bm.material_code as materialCode
+    <if test="printOrderTypeCode == 'SRM-ASN'">
+        ,bs.supplier_name as supplierName
+    </if>
     FROM wms_inner_material_barcode wimb
     LEFT JOIN sys_user su ON wimb.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON wimb.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON wimb.org_id = bo.organization_id
     LEFT JOIN base_material bm on bm.material_id = wimb.material_id
-    LEFT JOIN base_supplier bs on bs.supplier_id = wimb.supplier_id
+    <if test="printOrderTypeCode == 'SRM-ASN'">
+        left join wms_in_asn_order_det wiaod on wiaod.asn_order_det_id = wimb.print_order_det_id
+        LEFT JOIN om_purchase_order_det opod ON wiaod.source_order_id = opod.purchase_order_det_id
+        LEFT JOIN om_purchase_order opo ON opod.purchase_order_id = opo.purchase_order_id
+        LEFT JOIN base_supplier bs on bs.supplier_id = opo.supplier_id
+    </if>
+
     <where>
         <if test="orgId!=null and orgId!=''">
             and wimb.org_id = #{orgId}
@@ -121,7 +129,7 @@
         <if test="batchCode!=null and batchCode!=''">
             and wimb.batch_code like CONCAT('%',#{batchCode},'%')
         </if>
-        <if test="supplierName!=null and supplierName!=''">
+        <if test="supplierName!=null and supplierName!='' and printOrderTypeCode == 'SRM-ASN'">
             and bs.supplier_name like CONCAT('%',#{supplierName},'%')
         </if>
         <if test="barcode!=null and barcode!=''and codeQueryMark != 1">

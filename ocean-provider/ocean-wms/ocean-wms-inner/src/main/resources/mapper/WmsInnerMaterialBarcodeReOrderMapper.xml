@@ -94,10 +94,12 @@
             <if test="orderTypeCode!=null and orderTypeCode!=''">
                 and wimbro.order_type_code = #{orderTypeCode}
             </if>
+            <if test="queryType!=null and queryType!=''">
+                and wimb.barcode_type = #{queryType}
+            </if>
             <if test="orderId!=null and orderId!=''">
                 and wimbro.order_id = #{orderId}
             </if>
-
             <if test="orderDetId !=null and orderDetId!=''">
                 and wimbro.order_det_id = #{orderDetId}
             </if>
