@@ -64,7 +64,7 @@ public class EwsWarningEventExecuteLogServiceImpl extends BaseService<EwsWarning
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public void push() {
+    public int push() {
         List<UntreatedLogDto> list = ewsWarningEventExecuteLogMapper.findUntreatedLog();
         for (UntreatedLogDto untreatedLogDto : list) {
             //判断是否推送
@@ -150,21 +150,24 @@ public class EwsWarningEventExecuteLogServiceImpl extends BaseService<EwsWarning
                     default:
                 }
             //更新执行时间 推送状态
-            EwsWarningEventExecutePushLog ewsWarningEventExecutePushLog = new EwsWarningEventExecutePushLog();
-            ewsWarningEventExecutePushLog.setWarningEventExecutePushLogId(untreatedLogDto.getWarningEventExecutePushLogId());
-            ewsWarningEventExecutePushLog.setPersonnelLevel(untreatedLogDto.getPersonnelLevel());
-            ewsWarningEventExecutePushLog.setMessagePushResult(!isOk?(byte)1:(byte)2);
-            ewsWarningEventExecutePushLog.setModifiedTime(new Date());
-            ewsWarningEventExecutePushLogMapper.updateByPrimaryKeySelective(ewsWarningEventExecutePushLog);
+            if(isOk){
+                EwsWarningEventExecutePushLog ewsWarningEventExecutePushLog = new EwsWarningEventExecutePushLog();
+                ewsWarningEventExecutePushLog.setWarningEventExecutePushLogId(untreatedLogDto.getWarningEventExecutePushLogId());
+                ewsWarningEventExecutePushLog.setPersonnelLevel(untreatedLogDto.getPersonnelLevel());
+                ewsWarningEventExecutePushLog.setMessagePushResult(!isOk?(byte)1:(byte)2);
+                ewsWarningEventExecutePushLog.setModifiedTime(new Date());
+                ewsWarningEventExecutePushLogMapper.updateByPrimaryKeySelective(ewsWarningEventExecutePushLog);
 
-            EwsWarningEventExecuteLog ewsWarningEventExecuteLog = new EwsWarningEventExecuteLog();
-            ewsWarningEventExecuteLog.setWarningEventExecuteLogId(untreatedLogDto.getWarningEventExecuteLogId());
-            ewsWarningEventExecuteLog.setExecuteTime(untreatedLogDto.getExecuteTime());
-            ewsWarningEventExecuteLog.setExecuteResult(!isOk?(byte)2:(byte)1);
-            ewsWarningEventExecuteLog.setExecuteResultMessage(resMessage);
-            ewsWarningEventExecuteLog.setModifiedTime(new Date());
-            ewsWarningEventExecuteLogMapper.updateByPrimaryKeySelective(ewsWarningEventExecuteLog);
+                EwsWarningEventExecuteLog ewsWarningEventExecuteLog = new EwsWarningEventExecuteLog();
+                ewsWarningEventExecuteLog.setWarningEventExecuteLogId(untreatedLogDto.getWarningEventExecuteLogId());
+                ewsWarningEventExecuteLog.setExecuteTime(untreatedLogDto.getExecuteTime());
+                ewsWarningEventExecuteLog.setExecuteResult(!isOk?(byte)2:(byte)1);
+                ewsWarningEventExecuteLog.setExecuteResultMessage(resMessage);
+                ewsWarningEventExecuteLog.setModifiedTime(new Date());
+                ewsWarningEventExecuteLogMapper.updateByPrimaryKeySelective(ewsWarningEventExecuteLog);
+            }
         }
+        return 1;
     }
 
     @Override

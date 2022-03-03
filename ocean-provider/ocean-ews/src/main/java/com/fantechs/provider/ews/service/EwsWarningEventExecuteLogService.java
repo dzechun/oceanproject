@@ -15,7 +15,7 @@ import java.util.Map;
 public interface EwsWarningEventExecuteLogService extends IService<EwsWarningEventExecuteLog> {
     List<EwsWarningEventExecuteLogDto> findList(Map<String, Object> map);
 
-    void push();
+    int push();
 
     List<LogUreportDto> findLogUreport(Map<String ,Object> map);
 

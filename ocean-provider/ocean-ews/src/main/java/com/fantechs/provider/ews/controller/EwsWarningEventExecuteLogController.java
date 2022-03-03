@@ -80,8 +80,8 @@ public class EwsWarningEventExecuteLogController {
 
     @ApiOperation("推送")
     @GetMapping("/push")
-    public void push() {
-       ewsWarningEventExecuteLogService.push();
+    public ResponseEntity<Integer> push() {
+        return ControllerUtil.returnCRUD(ewsWarningEventExecuteLogService.push());
     }
 
     @ApiOperation("预警报表")
