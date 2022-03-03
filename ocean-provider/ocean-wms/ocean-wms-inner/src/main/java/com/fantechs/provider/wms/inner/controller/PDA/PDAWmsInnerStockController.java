@@ -63,6 +63,12 @@ public class PDAWmsInnerStockController {
         return ControllerUtil.returnDataSuccess(wmsInnerStockOrderService.scanBarcode(stockOrderDetId,barcode),1);
     }
 
+    @ApiOperation("PDA盘点增补 扫描条码")
+    @PostMapping("/scanBarcodeNewDet")
+    public ResponseEntity<BarcodeResultDto> scanBarcodeNewDet(@ApiParam(value = "物料ID")@RequestParam Long materialId,@ApiParam(value = "条码")@RequestParam String barcode){
+        return ControllerUtil.returnDataSuccess(wmsInnerStockOrderService.scanBarcodeNewDet(materialId,barcode),1);
+    }
+
     @ApiOperation("PDA盘点增补")
     @PostMapping("/addInnerStockDet")
     public ResponseEntity addInnerStockDet(@RequestBody(required = true) List<AddInnerStockDetDto> addDetList){

@@ -1842,18 +1842,18 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码不能为空");
         }
 
-        WmsInnerStockOrderDet stockOrderDet=wmsInventoryVerificationDetMapper.selectByPrimaryKey(stockOrderDetId);
-        if(StringUtils.isEmpty(stockOrderDet)){
-            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未找到相应的盘点明细信息");
-        }
-
-        WmsInnerStockOrder stockOrder=wmsInventoryVerificationMapper.selectByPrimaryKey(stockOrderDet.getStockOrderId());
-        if(StringUtils.isEmpty(stockOrder)){
-            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未找到相应的盘点单信息");
-        }
-
         //条码判断
-        if(stockOrderDetId!=0) {
+        if(StringUtils.isNotEmpty(stockOrderDetId)) {
+            WmsInnerStockOrderDet stockOrderDet = wmsInventoryVerificationDetMapper.selectByPrimaryKey(stockOrderDetId);
+            if (StringUtils.isEmpty(stockOrderDet)) {
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "未找到相应的盘点明细信息");
+            }
+
+            WmsInnerStockOrder stockOrder = wmsInventoryVerificationMapper.selectByPrimaryKey(stockOrderDet.getStockOrderId());
+            if (StringUtils.isEmpty(stockOrder)) {
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "未找到相应的盘点单信息");
+            }
+
             List<WmsInnerStockOrderDetBarcodeDto> detBarcodeDtos = new ArrayList<>();
             SearchWmsInnerStockOrderDetBarcode searchOrderDetBarcode = new SearchWmsInnerStockOrderDetBarcode();
             searchOrderDetBarcode.setQueryAll("true");
