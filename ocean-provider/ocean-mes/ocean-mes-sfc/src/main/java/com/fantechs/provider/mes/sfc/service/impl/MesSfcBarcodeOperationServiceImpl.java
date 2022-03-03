@@ -540,12 +540,12 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                         .build());
             }
 
-            // 完工入库
+            /*// 完工入库
             List<Long> cartonIds = new ArrayList<>();
             cartonIds.add(sfcProductCarton.getProductCartonId());
             if (mesPmWorkOrder.getOutputProcessId().equals(dto.getProcessId())){
                 this.beforeCartonAutoAsnOrder(cartonIds, user.getOrganizationId(), null);
-            }
+            }*/
         }
         return true;
     }
@@ -604,7 +604,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                         .build());
             }
 
-            // 获取该条码对应的工单信息
+            /*// 获取该条码对应的工单信息
             SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
             searchMesPmWorkOrder.setWorkOrderId(mesSfcProductCarton.getWorkOrderId());
             List<MesPmWorkOrderDto> mesPmWorkOrderDtoList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
@@ -617,7 +617,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             cartonIds.add(productCartonId);
             if (mesPmWorkOrderDto.getOutputProcessId().equals(processId)){
                 this.beforeCartonAutoAsnOrder(cartonIds, user.getOrganizationId(), null);
-            }
+            }*/
             return update;
         } else {
             mesSfcProductCarton.setNowPackageSpecQty(cartonDescNum);
@@ -707,7 +707,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     .build());
         }
 
-        // 获取该条码对应的工单信息
+        /*// 获取该条码对应的工单信息
         SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
         searchMesPmWorkOrder.setWorkOrderId(mesSfcProductCarton.getWorkOrderId());
         List<MesPmWorkOrderDto> mesPmWorkOrderDtoList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
@@ -720,7 +720,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         cartonIds.add(mesSfcProductCarton.getProductCartonId());
         if (mesPmWorkOrderDto.getOutputProcessId().equals(dto.getProcessId())){
             this.beforeCartonAutoAsnOrder(cartonIds, user.getOrganizationId(), null);
-        }
+        }*/
 
 
         return update;
@@ -863,7 +863,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             List<PalletAutoAsnDto> autoAsnDtos = mesSfcProductCartonDetService.findListGroupByWorkOrder(map);
             for (PalletAutoAsnDto palletAutoAsnDto : autoAsnDtos){
                 map.clear();
-                map.put("productCartonId", palletAutoAsnDto.getProductPalletId());
+                map.put("productCartonId", palletAutoAsnDto.getStackingId());
                 List<MesSfcWorkOrderBarcodeDto> barcodeDtos = mesSfcWorkOrderBarcodeService.findListByCartonDet(map);
                 List<BarPODto> barPODtos = new ArrayList<>();
                 barcodeDtos.forEach(item -> {
