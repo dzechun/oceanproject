@@ -107,5 +107,12 @@ public class WmsInnerMaterialBarcodeReOrderDto extends WmsInnerMaterialBarcodeRe
     @ApiModelProperty(name="barcodeType",value = "条码类型(1-SN码 2-彩盒号 3-箱号 4-栈板号)")
     private Byte barcodeType;
 
+
+    /**
+     * 采购订单编码
+     */
+    @ApiModelProperty(name="purchaseOrderCode",value = "采购订单编码")
+    private String purchaseOrderCode;
+
     private static final long serialVersionUID = 1L;
 }

@@ -67,8 +67,8 @@
         bm.material_name,
         bm.material_code,
         wimb.material_id,
-        wimb.material_qty as qty,
-        wimb.production_time as production_date,
+        wimb.material_qty AS qty,
+        wimb.production_time AS production_date,
         wimb.create_type,
         wimb.inspection_status,
         wimb.color_box_code,
@@ -77,13 +77,18 @@
         wimb.batch_code,
         wimb.barcode,
         wimb.barcode_type ,
-        wimb.if_sys_barcode
+        wimb.if_sys_barcode,
+        case when wimb.print_order_type_code = 'SRM-ASN' then opo.purchase_order_code
+        when wimb.print_order_type_code != 'SRM-ASN' then null end AS purchaseOrderCode
         FROM wms_inner_material_barcode_re_order wimbro
         LEFT JOIN sys_user su ON wimbro.create_user_id = su.user_id
         LEFT JOIN sys_user sus ON wimbro.modified_user_id = sus.user_id
         LEFT JOIN base_organization bo ON wimbro.org_id = bo.organization_id
-        left join wms_inner_material_barcode wimb on wimb.material_barcode_id = wimbro.material_barcode_id
-        LEFT JOIN base_material bm on bm.material_id = wimb.material_id
+        LEFT JOIN wms_inner_material_barcode wimb ON wimb.material_barcode_id = wimbro.material_barcode_id
+        LEFT JOIN base_material bm ON bm.material_id = wimb.material_id
+        LEFT JOIN wms_in_asn_order_det wiaod ON wiaod.asn_order_det_id = wimb.print_order_det_id
+        LEFT JOIN om_purchase_order_det opod ON opod.purchase_order_det_id = wiaod.source_order_id
+        LEFT JOIN om_purchase_order opo ON opo.purchase_order_id = opod.purchase_order_id
         <where>
             <if test="ifSysBarcode !=null and ifSysBarcode!=''">
                 and wimb.if_sys_barcode = #{ifSysBarcode}
