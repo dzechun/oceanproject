@@ -998,7 +998,7 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
         searchWmsInnerJobOrder.setJobOrderId(record.getJobOrderId());
         List<WmsInnerJobOrderDto> oldWmsInnerJobOrderDtos = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder);
 
-/*        //删除原有明细
+        //删除原有明细
         String ids = null;
         for(WmsInnerJobOrderDet det : oldWmsInnerJobOrderDtos.get(0).getWmsInPutawayOrderDets()){
             if(StringUtils.isEmpty(ids))
@@ -1006,7 +1006,7 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
             else
                 ids = ids + "," + det.getJobOrderDetId().toString();
         }
-        wmsInnerShiftWorkDetService.batchDeleteByShiftWork(ids);*/
+        wmsInnerShiftWorkDetService.batchDeleteByShiftWork(ids);
 
 
         //新增剩余的明细
@@ -1019,12 +1019,13 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
                 det.setModifiedUserId(sysUser.getUserId());
                 det.setModifiedTime(new Date());
                 det.setStatus(StringUtils.isEmpty(det.getStatus())?1: det.getStatus());
-                addlist.add(det);
+                wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(det);
+            //    addlist.add(det);
                 //移位作业库存校验、变更
                 updateInnerInventory(det,record,sysUser);
             }
-            if (StringUtils.isNotEmpty(addlist))
-                wmsInnerJobOrderDetMapper.insertList(addlist);
+           /* if (StringUtils.isNotEmpty(addlist))
+                wmsInnerJobOrderDetMapper.insertList(addlist);*/
         }
 
         int i = wmsInnerJobOrderMapper.updateByPrimaryKey(record);
