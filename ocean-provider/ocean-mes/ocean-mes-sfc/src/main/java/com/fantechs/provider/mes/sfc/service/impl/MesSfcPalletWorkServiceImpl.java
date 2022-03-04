@@ -621,10 +621,19 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             Map<String, Object> map = new HashMap<>();
             map.put("barcodeCode", barcode);
             List<MesSfcKeyPartRelevanceDto> mesSfcKeyPartRelevanceDtoList = mesSfcKeyPartRelevanceService.findList(map);
+            map.clear();
+            map.put("barcode", barcode);
+            List<MesSfcBarcodeProcessDto> processServiceList = mesSfcBarcodeProcessService.findList(map);
+            if (processServiceList.isEmpty()){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码不存在，清重新扫码");
+            }
+            if(!processServiceList.get(0).getProLineId().equals(proLineId)){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "配置产线与条码产线不一致");
+            }
+            if (!processServiceList.get(0).getNextProcessId().equals(0)){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "当前条码未完成所有过站，请重新扫码");
+            }
             if (!mesSfcKeyPartRelevanceDtoList.isEmpty()) {
-                if (!mesSfcKeyPartRelevanceDtoList.get(0).getProLineId().equals(proLineId)){
-                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "配置产线与条码产线不一致");
-                }
                 for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : mesSfcKeyPartRelevanceDtoList){
                     BaseLabelCategory keyPartLabelCategory = baseFeignApi.findLabelCategoryDetail(keyPartRelevanceDto.getLabelCategoryId()).getData();
                     if (keyPartLabelCategory.getLabelCategoryCode().equals("02")) {
@@ -636,6 +645,9 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                     }
                 }
                 dto.setProName(mesSfcKeyPartRelevanceDtoList.get(0).getProName());
+            }else {
+                BaseProLine baseProLine = baseFeignApi.selectProLinesDetail(proLineId).getData();
+                dto.setProName(baseProLine.getProName());
             }
             dto.setBarcode(barcode);
             SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
@@ -659,6 +671,18 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             }else if (labelCategory.getLabelCategoryCode().equals("03")){
                 // 客户条码
                 dto.setCutsomerBarcode(barcode);
+            }
+            map.clear();
+            map.put("barcode", mesSfcKeyPartRelevanceDtoList.get(0).getBarcodeCode());
+            List<MesSfcBarcodeProcessDto> processServiceList = mesSfcBarcodeProcessService.findList(map);
+            if (processServiceList.isEmpty()){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码不存在，清重新扫码");
+            }
+            if(!processServiceList.get(0).getProLineId().equals(proLineId)){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "配置产线与条码产线不一致");
+            }
+            if (!processServiceList.get(0).getNextProcessId().equals(0)){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "当前条码未完成所有过站，请重新扫码");
             }
             dto.setBarcode(mesSfcKeyPartRelevanceDtoList.get(0).getBarcodeCode());
             dto.setProName(mesSfcKeyPartRelevanceDtoList.get(0).getProName());
