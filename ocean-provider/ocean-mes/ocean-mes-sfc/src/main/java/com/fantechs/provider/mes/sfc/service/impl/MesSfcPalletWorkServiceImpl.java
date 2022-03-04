@@ -560,20 +560,20 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         map.put("barcodeList", barcodeList);
         if (dto.getPalletType() == 2){
             String count = mesSfcBarcodeProcessService.countBarcodeListForPOGroup(map);
-            if (count == null || Integer.valueOf(count) > 1){
+            if (count != null && Integer.parseInt(count) > 1){
                 dto.setPalletType((byte) 3);
             }
         }
         if (dto.getPalletType() == 3){
             String count = mesSfcBarcodeProcessService.countBarcodeListForSalesOrder(map);
-            if (count == null || Integer.parseInt(count) > 1){
+            if (count != null && Integer.parseInt(count) > 1){
                 dto.setPalletType((byte) 1);
             }
         }
         if (dto.getPalletType() == 1){
             // 同料号
             String count = mesSfcBarcodeProcessService.countBarcodeListForMaterial(map);
-            if (count == null || Integer.parseInt(count) > 1){
+            if (count != null && Integer.parseInt(count) > 1){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此批条码不属于同个物料，不可提交");
             }
         }
@@ -630,7 +630,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             if(!processServiceList.get(0).getProLineId().equals(proLineId)){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "配置产线与条码产线不一致");
             }
-            if (!processServiceList.get(0).getNextProcessId().equals(0)){
+            if (!processServiceList.get(0).getNextProcessId().equals(0L)){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "当前条码未完成所有过站，请重新扫码");
             }
             if (!mesSfcKeyPartRelevanceDtoList.isEmpty()) {
@@ -681,7 +681,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             if(!processServiceList.get(0).getProLineId().equals(proLineId)){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "配置产线与条码产线不一致");
             }
-            if (!processServiceList.get(0).getNextProcessId().equals(0)){
+            if (!processServiceList.get(0).getNextProcessId().equals(0L)){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "当前条码未完成所有过站，请重新扫码");
             }
             dto.setBarcode(mesSfcKeyPartRelevanceDtoList.get(0).getBarcodeCode());
