@@ -1,6 +1,7 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
@@ -32,7 +33,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.guest.leisai.WanbaoFeignApi;
+import com.fantechs.provider.api.guest.wanbao.WanbaoFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
@@ -543,7 +544,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     @Transactional(rollbackFor = Exception.class)
     public int workByManualOperation(PalletWorkByManualOperationDto dto) throws Exception {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (dto.getWanbaoBarcodeDtos().isEmpty()){
+        if (dto.getWanbaoBarcodeDtos() == null || dto.getWanbaoBarcodeDtos().isEmpty()){
             throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "条码集合为空，请扫码");
         }
         List<String> barcodeList = dto.getWanbaoBarcodeDtos().stream().map(WanbaoBarcodeDto::getBarcode).collect(Collectors.toList());
@@ -558,16 +559,22 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         Map<String, Object> map = new HashMap<>();
         map.put("barcodeList", barcodeList);
         if (dto.getPalletType() == 2){
-            int count = mesSfcBarcodeProcessService.countBarcodeListForPOGroup(map);
-            if (count >= 0){
-//                dto.setPalletType((byte) 3);
-                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "提交条码不是同PO，与配置同PO作业不符");
+            String count = mesSfcBarcodeProcessService.countBarcodeListForPOGroup(map);
+            if (count == null || Integer.valueOf(count) > 1){
+                dto.setPalletType((byte) 3);
             }
-        }else if (dto.getPalletType() == 3){
-            int count = mesSfcBarcodeProcessService.countBarcodeListForSalesOrder(map);
-            if (count >= 0){
-//                dto.setPalletType((byte) 1);
-                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "提交条码不是同销售编码，与配置同销售订单作业不符");
+        }
+        if (dto.getPalletType() == 3){
+            String count = mesSfcBarcodeProcessService.countBarcodeListForSalesOrder(map);
+            if (count == null || Integer.parseInt(count) > 1){
+                dto.setPalletType((byte) 1);
+            }
+        }
+        if (dto.getPalletType() == 1){
+            // 同料号
+            String count = mesSfcBarcodeProcessService.countBarcodeListForMaterial(map);
+            if (count == null || Integer.parseInt(count) > 1){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此批条码不属于同个物料，不可提交");
             }
         }
         map.clear();
@@ -576,7 +583,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         if (stackingList.isEmpty()){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛编码不存在");
         }
-
+        log.info("=========dto:" + JSON.toJSONString(dto) + "=========== stackingList: " + JSON.toJSONString(stackingList));
         // 保存条码堆垛关系
         List<WanbaoStackingDet> stackingDets = new ArrayList<>();
         for (WanbaoBarcodeDto wanbaoBarcodeDto : dto.getWanbaoBarcodeDtos()) {
@@ -614,26 +621,25 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             Map<String, Object> map = new HashMap<>();
             map.put("barcodeCode", barcode);
             List<MesSfcKeyPartRelevanceDto> mesSfcKeyPartRelevanceDtoList = mesSfcKeyPartRelevanceService.findList(map);
-            if (mesSfcKeyPartRelevanceDtoList.isEmpty()) {
-                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该条码未绑定产品条码");
-            }
-            if (!mesSfcKeyPartRelevanceDtoList.get(0).getProLineId().equals(proLineId)){
-                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "配置产线与条码产线不一致");
-            }
-            for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : mesSfcKeyPartRelevanceDtoList){
-                BaseLabelCategory keyPartLabelCategory = baseFeignApi.findLabelCategoryDetail(keyPartRelevanceDto.getLabelCategoryId()).getData();
-                if (keyPartLabelCategory.getLabelCategoryCode().equals("02")) {
-                    // 销售订单条码
-                    dto.setSalesBarcode(keyPartRelevanceDto.getPartBarcode());
-                }else if (keyPartLabelCategory.getLabelCategoryCode().equals("03")){
-                    // 客户条码
-                    dto.setCutsomerBarcode(keyPartRelevanceDto.getPartBarcode());
+            if (!mesSfcKeyPartRelevanceDtoList.isEmpty()) {
+                if (!mesSfcKeyPartRelevanceDtoList.get(0).getProLineId().equals(proLineId)){
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "配置产线与条码产线不一致");
                 }
+                for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : mesSfcKeyPartRelevanceDtoList){
+                    BaseLabelCategory keyPartLabelCategory = baseFeignApi.findLabelCategoryDetail(keyPartRelevanceDto.getLabelCategoryId()).getData();
+                    if (keyPartLabelCategory.getLabelCategoryCode().equals("02")) {
+                        // 销售订单条码
+                        dto.setSalesBarcode(keyPartRelevanceDto.getPartBarcode());
+                    }else if (keyPartLabelCategory.getLabelCategoryCode().equals("03")){
+                        // 客户条码
+                        dto.setCutsomerBarcode(keyPartRelevanceDto.getPartBarcode());
+                    }
+                }
+                dto.setProName(mesSfcKeyPartRelevanceDtoList.get(0).getProName());
             }
             dto.setBarcode(barcode);
-            dto.setProName(mesSfcKeyPartRelevanceDtoList.get(0).getProName());
             SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
-            searchMesPmWorkOrder.setWorkOrderId(mesSfcKeyPartRelevanceDtoList.get(0).getWorkOrderId());
+            searchMesPmWorkOrder.setWorkOrderId(mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderId());
             List<MesPmWorkOrderDto> orderDtos = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
             if (orderDtos.isEmpty()){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该条码所属离散任务不存在或已被删除，不可作业");

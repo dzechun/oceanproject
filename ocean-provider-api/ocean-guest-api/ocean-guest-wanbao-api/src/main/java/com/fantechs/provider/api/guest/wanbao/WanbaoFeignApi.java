@@ -1,4 +1,4 @@
-package com.fantechs.provider.api.guest.leisai;
+package com.fantechs.provider.api.guest.wanbao;
 
 import com.fantechs.common.base.general.entity.wanbao.WanbaoStackingDet;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient(name = "ocean-wanbao-api")
+@FeignClient(name = "ocean-guest-wanbao")
 public interface WanbaoFeignApi {
 
     @ApiOperation("页签信息列表")

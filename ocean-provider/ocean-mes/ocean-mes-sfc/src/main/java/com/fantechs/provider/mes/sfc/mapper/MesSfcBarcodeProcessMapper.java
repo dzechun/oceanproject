@@ -44,11 +44,18 @@ public interface MesSfcBarcodeProcessMapper extends MyMapper<MesSfcBarcodeProces
      * 人工栈板作业-按PO号分组，统计条码的PO号个数
      * @return
      */
-    int countBarcodeListForPOGroup(Map<String, Object> map);
+    String countBarcodeListForPOGroup(Map<String, Object> map);
 
     /**
-     * 人工栈板作业-按销售订单分组，统计条码的销售订单号个数
+     * 人工栈板作业-按销售编码分组，统计条码的销售编码个数
      * @return
      */
-    int countBarcodeListForSalesOrder(Map<String, Object> map);
+    String countBarcodeListForSalesOrder(Map<String, Object> map);
+
+    /**
+     * 人工栈板作业-按物料分组，统计条码的物料个数
+     * @param map
+     * @return
+     */
+    String countBarcodeListForMaterial(Map<String, Object> map);
 }
