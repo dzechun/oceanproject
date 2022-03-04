@@ -37,6 +37,8 @@
         <result column="option1" jdbcType="VARCHAR" property="option1"/>
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
+        <result column="pro_line_id" jdbcType="BIGINT" property="proLineId"/>
+        <result column="is_heelpiece" jdbcType="TINYINT" property="isHeelpiece"/>
 
         <result column="working_area_code" jdbcType="VARCHAR" property="workingAreaCode"/>
         <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
@@ -45,6 +47,7 @@
         <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
         <result column="warehouse_category" jdbcType="BIGINT" property="warehouseCategory"/>
+        <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
     </resultMap>
 
     <sql id="Base_Cloumn_List">
@@ -82,13 +85,15 @@
         ss.is_delete,
         ss.option1,
         ss.option2,
-        ss.option3
+        ss.option3,
+ss.pro_line_id,
+ss.is_heelpiece
     </sql>
 
     <select id="findList" parameterType="map"
             resultMap="BaseResultMap">
         select <include refid="Base_Cloumn_List"></include>,
-        sw.warehouse_name, sw.warehouse_code,sw.warehouse_category,bwa.working_area_code,
+        sw.warehouse_name, sw.warehouse_code,sw.warehouse_category,bwa.working_area_code,bpl.pro_name
         u.user_name as createUserName, s.user_name as modifiedUserName,
         swa.warehouse_area_code, swa.warehouse_area_name,
         bo.organization_name
@@ -99,6 +104,7 @@
         left join ocean_v2.sys_user u on ss.create_user_id=u.user_id
         left join ocean_v2.sys_user s on ss.modified_user_id=s.user_id
         LEFT JOIN fantech_imes_v2.base_organization bo ON ss.org_id = bo.organization_id
+        left join base_pro_line bpl on ss.pro_line_id = bpl.pro_line_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(ss.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

@@ -59,4 +59,7 @@ public class BaseWarehouseAreaDto extends BaseWarehouseArea implements Serializa
     @Transient
     @ApiModelProperty(name="warehouseCategory",value = "仓库类型")
     private Long warehouseCategory;
+
+    @ApiModelProperty(name = "logicName",value = "erp逻辑仓名称")
+    private String logicName;
 }

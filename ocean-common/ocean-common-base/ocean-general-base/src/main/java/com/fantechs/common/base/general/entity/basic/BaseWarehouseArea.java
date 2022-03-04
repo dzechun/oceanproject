@@ -166,4 +166,8 @@ public class BaseWarehouseArea extends ValidGroup implements Serializable {
      */
     private String option3;
 
+    @ApiModelProperty(name = "logicId",value = "erp逻辑id")
+    @Column(name = "logic_id")
+    private Long logicId;
+
    }

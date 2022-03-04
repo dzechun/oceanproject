@@ -5,12 +5,15 @@ import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Table(name = "base_storage")
 @Data
@@ -342,5 +345,17 @@ public class BaseStorage extends ValidGroup implements Serializable {
      * 扩展字段3
      */
     private String option3;
+
+    @ApiModelProperty(name = "proLineId",value = "产线id")
+    @Column(name = "pro_line_id")
+    private Long proLineId;
+
+    @ApiModelProperty(name = "isHeelpiece",value = "是否底垫（1-否 2-是）")
+    @Column(name = "is_heelpiece")
+    private Byte isHeelpiece;
+
+    @Transient
+    @ApiModelProperty(name = "proName",value = "产线名称")
+    private String proName;
 
 }

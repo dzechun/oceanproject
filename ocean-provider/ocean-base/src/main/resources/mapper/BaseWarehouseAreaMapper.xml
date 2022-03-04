@@ -22,6 +22,7 @@
         <result column="option1" jdbcType="VARCHAR" property="option1"/>
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
+        <result column="logic_id" jdbcType="BIGINT" property="logicId"/>
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
@@ -32,6 +33,7 @@
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
         <result column="warehouse_category" jdbcType="BIGINT" property="warehouseCategory"/>
+        <result column="logic_name" jdbcType="VARCHAR" property="logicName"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -55,19 +57,21 @@
         swa.is_delete,
         swa.option1,
         swa.option2,
-        swa.option3
+        swa.option3,
+swa.logic_id
     </sql>
 
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         select  <include refid="Base_Column_List"></include>,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-        sw.warehouse_code, sw.warehouse_name, sw.warehouse_category,
+        sw.warehouse_code, sw.warehouse_name, sw.warehouse_category,wel.logic_name
         bo.organization_name
         FROM fantech_imes_v2.base_warehouse_area swa
         LEFT JOIN ocean_v2.sys_user su ON swa.create_user_id = su.user_id
         LEFT JOIN ocean_v2.sys_user sus ON swa.modified_user_id = sus.user_id
         LEfT JOIN fantech_imes_v2.base_warehouse sw ON swa.warehouse_id= sw.warehouse_id
         LEFT JOIN fantech_imes_v2.base_organization bo ON swa.org_id = bo.organization_id
+        left join wanbao_erp_logic wel on swa.logic_id = wel.logic_id
         <where>
             <if test="warehouseAreaId != null and warehouseAreaId != ''">
                 and swa.warehouse_area_id = #{warehouseAreaId}
