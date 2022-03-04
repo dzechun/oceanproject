@@ -35,6 +35,12 @@ public class SearchBaseLabel extends BaseQuery implements Serializable {
     private String labelDesc;
 
     /**
+     * 标签类别编码
+     */
+    @ApiModelProperty(name="labelCategoryCode",value = "标签类别编码")
+    private String labelCategoryCode;
+
+    /**
      * 标签类别名称
      */
     @ApiModelProperty(name="labelCategoryName",value = "标签类别名称")

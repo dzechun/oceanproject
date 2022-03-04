@@ -686,7 +686,8 @@ public class PDAWmsInnerSplitAndCombineCartonPalletCartonPalletServiceImpl imple
 
         //打印
         SearchBaseLabel searchBaseLabel = new SearchBaseLabel();
-        searchBaseLabel.setLabelCategoryName(type == (byte)1 || type == (byte)2 ? "包箱条码" : "栈板条码");
+        searchBaseLabel.setLabelCategoryCode(type == (byte)1 || type == (byte)2 ? "09" : "10");
+        searchBaseLabel.setCodeQueryMark(1);
         List<BaseLabelDto> labelList = baseFeignApi.findLabelList(searchBaseLabel).getData();
         if (StringUtils.isEmpty(labelList)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"标签模板不存在");

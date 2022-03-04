@@ -56,7 +56,9 @@
   </sql>
 
     <select id="findList" resultMap="BaseResultMapDto">
-        SELECT<include refid="Base_Column_List"/>,blc.label_category_name,su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name FROM base_label bl
+        SELECT<include refid="Base_Column_List"/>,blc.label_category_name,blc.label_category_code,
+        su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name
+        FROM base_label bl
         LEFT JOIN base_label_category blc ON blc.`label_category_id`= bl.label_category_id
         LEFT JOIN sys_user su ON bl.create_user_id = su.user_id
         LEFT JOIN sys_user sus ON bl.modified_user_id = sus.user_id
@@ -73,6 +75,12 @@
             </if>
             <if test="labelDesc!=null and labelDesc!=''">
                 and bl.label_desc LIKE CONCAT('%',#{labelDesc},'%')
+            </if>
+            <if test="labelCategoryCode!=null and labelCategoryCode!='' and codeQueryMark == 1">
+                and blc.label_category_code = #{labelCategoryCode}
+            </if>
+            <if test="labelCategoryCode!=null and labelCategoryCode!='' and codeQueryMark != 1">
+                and blc.label_category_code like CONCAT('%',#{labelCategoryCode},'%')
             </if>
             <if test="labelCategoryName!=null and labelCategoryName!=''">
                 and blc.label_category_name like CONCAT('%',#{labelCategoryName},'%')
