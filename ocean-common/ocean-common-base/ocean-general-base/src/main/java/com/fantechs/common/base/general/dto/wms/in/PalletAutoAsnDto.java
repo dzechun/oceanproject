@@ -116,4 +116,16 @@ public class PalletAutoAsnDto extends WmsInAsnOrderDet implements Serializable {
 
     @ApiModelProperty(name = "materialCode",value = "物料编码")
     private String materialCode;
+
+    @ApiModelProperty(name = "logicId",value = "erp逻辑仓id")
+    private Long logicId;
+
+    @ApiModelProperty(name = "proLineId",value = "产线id")
+    private Long proLineId;
+
+    @ApiModelProperty(name = "workOrderCode",value = "离散任务号")
+    private String workOrderCode;
+
+    @ApiModelProperty(name = "samePackageCode" ,value = "PO")
+    private String samePackageCode;
 }

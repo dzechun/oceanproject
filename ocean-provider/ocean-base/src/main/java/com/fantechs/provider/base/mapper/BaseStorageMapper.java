@@ -1,5 +1,6 @@
 package com.fantechs.provider.base.mapper;
 
+import com.fantechs.common.base.general.dto.basic.StorageRuleInventry;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.mybatis.MyMapper;
 import com.fantechs.common.base.general.dto.basic.StorageRuleDto;
@@ -25,4 +26,18 @@ public interface BaseStorageMapper extends MyMapper<BaseStorage> {
     List<StorageRuleDto> EmptyStorage(Map<String ,Object> map);
     List<StorageRuleDto> MixedWithStorage(Map<String ,Object> map);
     List<StorageRuleDto> LastStorage(Map<String ,Object> map);
+
+    /**
+     * 查询小于30天的同批次库存
+     * @param map
+     * @return
+     */
+    List<StorageRuleInventry> findInv(Map<String,Object> map);
+
+    /**
+     * 查询先进库存
+     * @param map
+     * @return
+     */
+    List<StorageRuleInventry> findOutInv(Map<String,Object> map);
 }

@@ -870,7 +870,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 if (item.getWorkOrderId().equals(palletAutoAsnDto.getSourceOrderId())){
                     BarPODto barPODto = new BarPODto();
                     barPODto.setBarCode(item.getBarcode());
-                    barPODto.setPOCode(palletAutoAsnDto.getSalesOrderCode());
+                    barPODto.setPOCode(palletAutoAsnDto.getSamePackageCode());
                     barPODto.setCutsomerBarcode(item.getCustomerBarcode());
                     barPODto.setSalesBarcode(item.getSalesBarcode());
                     barPODtos.add(barPODto);
