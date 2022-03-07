@@ -118,7 +118,7 @@
             <if test="status != null">
                 and opod.status = #{status}
             </if>
-            <if test="ifAllIssued != null and ifAllIssue != ''">
+            <if test="ifAllIssued != null and ifAllIssued != ''">
                 and opod.if_all_issued = #{ifAllIssued}
             </if>
 
