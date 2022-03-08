@@ -21,11 +21,13 @@ import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDto;
 import com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDto;
 import com.fantechs.common.base.general.dto.wms.in.BarPODto;
 import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.*;
 import com.fantechs.common.base.general.entity.wanbao.WanbaoStackingDet;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.BeanUtils;
@@ -38,6 +40,7 @@ import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
+import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.mes.sfc.service.*;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -84,6 +87,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     OMFeignApi omFeignApi;
     @Resource
     WanbaoFeignApi wanbaoFeignApi;
+    @Resource
+    InnerFeignApi innerFeignApi;
 
     // endregion
 
@@ -91,6 +96,14 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
     public PalletWorkScanDto palletWorkScanBarcode(RequestPalletWorkScanDto requestPalletWorkScanDto) throws Exception {
+        // 2022-03-08 判断是否质检完成之后走产线入库
+        SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
+        searchWmsInnerInventoryDet.setBarcode(requestPalletWorkScanDto.getBarcode());
+        List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
+        if (!inventoryDetDtos.isEmpty()){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此条码已入库，不可重复扫码，请检查是否品质重新入库");
+        }
+
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         //samePackageCode 同包装编码--扫描的箱号产品条码对应的或者扫描的产品条码对应的PO编码 2020-10-20
@@ -583,7 +596,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         if (stackingList.isEmpty()){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛编码不存在");
         }
-        log.info("=========dto:" + JSON.toJSONString(dto) + "=========== stackingList: " + JSON.toJSONString(stackingList));
         // 保存条码堆垛关系
         List<WanbaoStackingDet> stackingDets = new ArrayList<>();
         for (WanbaoBarcodeDto wanbaoBarcodeDto : dto.getWanbaoBarcodeDtos()) {
@@ -607,6 +619,15 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
     @Override
     public ScanByManualOperationDto scanByManualOperation(String barcode, Long proLineId) {
+        // 2022-03-08 判断是否质检完成之后走产线入库
+        SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
+        searchWmsInnerInventoryDet.setBarcode(barcode);
+        List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
+        if (!inventoryDetDtos.isEmpty()){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此条码已入库，不可重复扫码，请检查是否品质重新入库");
+        }
+
+
         ScanByManualOperationDto dto = new ScanByManualOperationDto();
 
         SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
