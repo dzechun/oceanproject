@@ -39,6 +39,7 @@
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
         <result column="pro_line_id" jdbcType="BIGINT" property="proLineId"/>
         <result column="is_heelpiece" jdbcType="TINYINT" property="isHeelpiece"/>
+        <result column="logic_id" jdbcType="BIGINT" property="logicId"/>
 
         <result column="working_area_code" jdbcType="VARCHAR" property="workingAreaCode"/>
         <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
@@ -48,6 +49,7 @@
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
         <result column="warehouse_category" jdbcType="BIGINT" property="warehouseCategory"/>
         <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
+        <result column="logic_name" jdbcType="VARCHAR" property="logicName"/>
     </resultMap>
 
     <sql id="Base_Cloumn_List">
@@ -87,7 +89,8 @@
         ss.option2,
         ss.option3,
 ss.pro_line_id,
-ss.is_heelpiece
+ss.is_heelpiece,
+ss.logic_id
     </sql>
 
     <select id="findList" parameterType="map"
@@ -95,7 +98,7 @@ ss.is_heelpiece
         select <include refid="Base_Cloumn_List"></include>,
         sw.warehouse_name, sw.warehouse_code,sw.warehouse_category,bwa.working_area_code,bpl.pro_name,
         u.user_name as createUserName, s.user_name as modifiedUserName,
-        swa.warehouse_area_code, swa.warehouse_area_name,
+        swa.warehouse_area_code, swa.warehouse_area_name,wel.logic_name,
         bo.organization_name
         from fantech_imes_v2.base_storage ss
         left join fantech_imes_v2.base_working_area bwa on ss.working_area_id=bwa.working_area_id
@@ -105,6 +108,7 @@ ss.is_heelpiece
         left join ocean_v2.sys_user s on ss.modified_user_id=s.user_id
         LEFT JOIN fantech_imes_v2.base_organization bo ON ss.org_id = bo.organization_id
         left join base_pro_line bpl on ss.pro_line_id = bpl.pro_line_id
+        left join wanbao_erp_logic wel on ss.logic_id = wel.logic_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(ss.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -200,7 +204,8 @@ ss.is_heelpiece
                 is_delete =#{item.isDelete},
                 option1 =#{item.option1},
                 option2 =#{item.option2},
-                option3 =#{item.option3}
+                option3 =#{item.option3},
+                logic_id=#{item.logicId}
             </set>
             where storage_code =#{item.storageCode}
         </foreach>

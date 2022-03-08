@@ -346,6 +346,14 @@ public class BaseStorage extends ValidGroup implements Serializable {
      */
     private String option3;
 
+    @ApiModelProperty(name = "logicId",value = "erp逻辑id")
+    @Column(name = "logic_id")
+    private Long logicId;
+
+    @Transient
+    @ApiModelProperty(name = "logicName",value = "erp逻辑仓名称")
+    private String logicName;
+
     @ApiModelProperty(name = "proLineId",value = "产线id")
     @Column(name = "pro_line_id")
     private Long proLineId;
