@@ -8,7 +8,6 @@ import com.fantechs.common.base.general.dto.basic.StorageRuleInventry;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseStorageCapacity;
-import com.fantechs.common.base.general.entity.basic.BaseWarehouseArea;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.mapper.BaseMaterialMapper;
@@ -66,15 +65,15 @@ public class WanbaoStorageRule {
             throw new BizErrorException(ErrorCodeEnum.GL99990100);
         }
         //查询erp逻辑仓绑定的库区
-        Example example = new Example(BaseWarehouseArea.class);
-        example.createCriteria().andNotEqualTo("logicId",baseStorageRule.getLogicId());
-        BaseWarehouseArea baseWarehouseArea = wanbaoStorageRule.baseWarehouseAreaMapper.selectOneByExample(example);
-        if(StringUtils.isEmpty(baseStorageRule)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未获取到ERP逻辑仓绑定的库区");
-        }
+//        Example example = new Example(BaseWarehouseArea.class);
+//        example.createCriteria().andNotEqualTo("logicId",baseStorageRule.getLogicId());
+//        BaseWarehouseArea baseWarehouseArea = wanbaoStorageRule.baseWarehouseAreaMapper.selectOneByExample(example);
+//        if(StringUtils.isEmpty(baseStorageRule)){
+//            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未获取到ERP逻辑仓绑定的库区");
+//        }
         //根据仓库产线查询库位
-        example = new Example(BaseStorage.class);
-        example.createCriteria().andNotEqualTo("warehouseId",baseWarehouseArea.getWarehouseId()).andEqualTo("proLineId",baseStorageRule.getProLineId());
+        Example example = new Example(BaseStorage.class);
+        example.createCriteria().andNotEqualTo("logicId",baseStorageRule.getLogicId()).andEqualTo("proLineId",baseStorageRule.getProLineId());
         List<BaseStorage> baseStorageList = wanbaoStorageRule.baseStorageMapper.selectByExample(example);
         if(StringUtils.isEmpty(baseStorageList) || baseStorageList.size()<1){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"根据仓库产线获取库位信息失败");
