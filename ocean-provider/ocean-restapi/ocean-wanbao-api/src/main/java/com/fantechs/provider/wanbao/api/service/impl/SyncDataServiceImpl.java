@@ -158,6 +158,12 @@ public class SyncDataServiceImpl implements SyncDataService {
                         baseProductModel.setProductModelName(dto.getProductModelCode());
                         baseProductModel.setProductModelCode(dto.getProductModelCode());
                         baseProductModel.setProductModelDesc(dto.getMaterialCode());
+                        baseProductModel.setOrganizationId(sysUser.getOrganizationId());
+                        baseProductModel.setIsDelete((byte) 1);
+                        baseProductModel.setCreateTime(new Date());
+                        baseProductModel.setCreateUserId(sysUser.getUserId());
+                        baseProductModel.setModifiedTime(new Date());
+                        baseProductModel.setModifiedUserId(sysUser.getUserId());
                         baseProductModel.setStatus(1);
                         Long id = baseFeignApi.addForReturnId(baseProductModel).getData();
                         dto.setProductModelId(id.toString());
@@ -208,6 +214,12 @@ public class SyncDataServiceImpl implements SyncDataService {
                             baseProductModel.setProductModelName(dto.getProductModelCode());
                             baseProductModel.setProductModelCode(dto.getProductModelCode());
                             baseProductModel.setProductModelDesc(dto.getMaterialCode());
+                            baseProductModel.setOrganizationId(sysUser.getOrganizationId());
+                            baseProductModel.setIsDelete((byte) 1);
+                            baseProductModel.setCreateTime(new Date());
+                            baseProductModel.setCreateUserId(sysUser.getUserId());
+                            baseProductModel.setModifiedTime(new Date());
+                            baseProductModel.setModifiedUserId(sysUser.getUserId());
                             baseProductModel.setStatus(1);
                             Long id = baseFeignApi.addForReturnId(baseProductModel).getData();
                             dto.setProductModelId(id.toString());
