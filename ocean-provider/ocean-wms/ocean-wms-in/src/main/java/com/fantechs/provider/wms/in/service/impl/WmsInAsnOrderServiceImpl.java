@@ -877,8 +877,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 .build();
         if (wmsInAsnOrder.getBaseStorageRule() != null){
             wmsInnerJobOrder.setBaseStorageRule(wmsInAsnOrder.getBaseStorageRule());
-            wmsInnerJobOrder.setOption1(wmsInAsnOrder.getBaseStorageRule().getLogicId().toString());
-            wmsInnerJobOrder.setOption2(wmsInAsnOrder.getBaseStorageRule().getProLineId().toString());
+            wmsInnerJobOrder.setOption1(wmsInAsnOrder.getBaseStorageRule().getLogicId() != null?wmsInAsnOrder.getBaseStorageRule().getLogicId().toString():null);
+            wmsInnerJobOrder.setOption2(wmsInAsnOrder.getBaseStorageRule().getProLineId() != null?wmsInAsnOrder.getBaseStorageRule().getProLineId().toString():null);
             wmsInnerJobOrder.setOption3(wmsInAsnOrder.getBaseStorageRule().getSalesBarcode());
             wmsInnerJobOrder.setOption4(wmsInAsnOrder.getBaseStorageRule().getPoCode());
         }
