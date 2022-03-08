@@ -901,6 +901,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 }
             });
             palletAutoAsnDto.setBarCodeList(barPODtos);
+            palletAutoAsnDto.setStackingId(stackingId);
             //完工入库
             SearchBaseMaterialOwner searchBaseMaterialOwner = new SearchBaseMaterialOwner();
             searchBaseMaterialOwner.setAsc((byte)1);
