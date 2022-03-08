@@ -150,14 +150,10 @@ public class SyncDataServiceImpl implements SyncDataService {
             }
 
             for (MiddleMaterial dto : list) {
-                if (dto.getProductModelCode() != null) {
-                    for (BaseProductModel item : productModels) {
-                        if (item.getProductModelCode().equals(dto.getProductModelCode())) {
-                            dto.setProductModelId(item.getProductModelId().toString());
-                            break;
-                        }
-                    }
-                    if (StringUtils.isEmpty(dto.getProductModelId())) {
+                long MaterialCount = baseMaterials.stream().filter(item -> item.getMaterialCode().equals(dto.getMaterialCode())).count();
+                if (MaterialCount <= 0) {
+                    // 新增客户型号
+                    if (dto.getProductModelId() == null){
                         BaseProductModel baseProductModel = new BaseProductModel();
                         baseProductModel.setProductModelName(dto.getProductModelCode());
                         baseProductModel.setProductModelCode(dto.getProductModelCode());
@@ -166,9 +162,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                         Long id = baseFeignApi.addForReturnId(baseProductModel).getData();
                         dto.setProductModelId(id.toString());
                     }
-                }
-                long MaterialCount = baseMaterials.stream().filter(item -> item.getMaterialCode().equals(dto.getMaterialCode())).count();
-                if (MaterialCount <= 0) {
+
                     //新增物料
                     BaseMaterial material = new BaseMaterial();
                     BeanUtil.copyProperties(dto, material);
@@ -202,6 +196,23 @@ public class SyncDataServiceImpl implements SyncDataService {
                     material.setMaterialDesc(dto.getMaterialDesc());
                     material.setBarcodeRuleSetId(ruleSetId);
                     dto.setMaterialId(material.getMaterialId().toString());
+                    if (dto.getProductModelCode() != null) {
+                        for (BaseProductModel item : productModels) {
+                            if (item.getProductModelCode().equals(dto.getProductModelCode()) && dto.getMaterialId().equals(item.getMaterialId())) {
+                                dto.setProductModelId(item.getProductModelId().toString());
+                                break;
+                            }
+                        }
+                        if (dto.getProductModelId() == null){
+                            BaseProductModel baseProductModel = new BaseProductModel();
+                            baseProductModel.setProductModelName(dto.getProductModelCode());
+                            baseProductModel.setProductModelCode(dto.getProductModelCode());
+                            baseProductModel.setProductModelDesc(dto.getMaterialCode());
+                            baseProductModel.setStatus(1);
+                            Long id = baseFeignApi.addForReturnId(baseProductModel).getData();
+                            dto.setProductModelId(id.toString());
+                        }
+                    }
                     baseFeignApi.update(material);
 
                     //修改物料页签
