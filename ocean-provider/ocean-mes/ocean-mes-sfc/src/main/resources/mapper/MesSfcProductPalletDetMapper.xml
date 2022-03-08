@@ -34,6 +34,10 @@
     <result column="supplier_name" jdbcType="VARCHAR" property="customerName" />
     <result column="sales_code" jdbcType="VARCHAR" property="salesOrderCode" />
     <result column="sales_user_name" jdbcType="VARCHAR" property="salesManName" />
+    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+    <result column="logic_id" jdbcType="BIGINT" property="logicId"/>
+    <result column="pro_line_id" jdbcType="BIGINT" property="proLineId"/>
+    <result column="same_package_code" jdbcType="VARCHAR" property="samePackageCode"/>
   </resultMap>
 
   <sql id="BaseColumnList">
@@ -86,7 +90,11 @@
       COUNT( wsd.stacking_det_id ) AS actual_qty,
       bs.supplier_name,
       oscrs.sales_code,
-      oso.sales_user_name
+      oscrs.same_package_code,
+      oso.sales_user_name,
+      mpwo.work_order_code,
+      mpwo.logic_id,
+      mpwo.pro_line_id
     FROM
         wanbao_stacking_det wsd
     LEFT JOIN mes_sfc_barcode_process msbp ON wsd.barcode = msbp.barcode

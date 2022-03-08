@@ -1,19 +1,26 @@
 package com.fantechs.common.base.general.entity.wms.inner;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.general.dto.basic.BaseStorageRule;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import javax.persistence.*;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+
+;
+;
 
 /**
  * 上架单
@@ -235,6 +242,8 @@ public class WmsInnerJobOrder extends ValidGroup implements Serializable {
 
     private String option3;
 
+    private String option4;
+
     @Transient
     @ApiModelProperty("明细")
     private List<WmsInnerJobOrderDet> wmsInPutawayOrderDets;
@@ -251,6 +260,10 @@ public class WmsInnerJobOrder extends ValidGroup implements Serializable {
      */
     @Transient
     private Integer type;
+
+    @Transient
+    @ApiModelProperty(name = "BaseStorageRule",value = "入库规则对象")
+    private BaseStorageRule baseStorageRule;
 
     private static final long serialVersionUID = 1L;
 }

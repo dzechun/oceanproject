@@ -93,7 +93,7 @@ ss.is_heelpiece
     <select id="findList" parameterType="map"
             resultMap="BaseResultMap">
         select <include refid="Base_Cloumn_List"></include>,
-        sw.warehouse_name, sw.warehouse_code,sw.warehouse_category,bwa.working_area_code,bpl.pro_name
+        sw.warehouse_name, sw.warehouse_code,sw.warehouse_category,bwa.working_area_code,bpl.pro_name,
         u.user_name as createUserName, s.user_name as modifiedUserName,
         swa.warehouse_area_code, swa.warehouse_area_name,
         bo.organization_name
@@ -290,5 +290,59 @@ order by wii.modified_time desc limit 1
         FROM base_storage bs
         LEFT JOIN base_material_tab bmt ON bmt.material_id=#{materialId}
         WHERE bs.org_id=#{orgId} and  bs.storage_id IN(SELECT wii.storage_id FROM wms_inner_inventory wii WHERE bs.storage_type=1 AND wii.warehouse_id=#{warehouseId} and wii.packing_qty>0 GROUP BY wii.storage_id HAVING COUNT(wii.material_id)>1)
+    </select>
+
+    <select id="findInv" resultType="com.fantechs.common.base.general.dto.basic.StorageRuleInventry">
+        SELECT storage_id as 'storageId',material_id as 'materialId',sales_barcode as 'salesBarcode',option4 as 'poCode',sum(material_qty) as 'materialQty',production_date,a.inventory_status_id,bis.inventory_status_name  FROM (SELECT storage_id,material_id,sales_barcode,option4,material_qty,production_date,inventory_status_id
+        FROM wms_inner_inventory_det
+        <where>
+            <if test="storageIds!=null and storageIds.size()&gt; 0">
+                and storage_id  in
+                <foreach collection="storageIds" item="list" open="(" close=")" separator=",">
+                    #{list}
+                </foreach>
+            </if>
+            <if test="materialId!=null and materialId!=''">
+                and material_id = #{materialId}
+            </if>
+            <if test="salesBarcode!=null and salesBarcode!=''">
+                and sales_barcode = #{salesBarcode}
+            </if>
+            <if test="poCode!=null and poCode!=''">
+                and option4 = #{poCode}
+            </if>
+            <if test="inventoryStatusId!=null">
+                and inventory_status_id = #{inventoryStatusId}
+            </if>
+        </where>
+        ORDER BY production_date DESC) a
+        LEFT JOIN base_inventory_status bis ON a.inventory_status_id = bis.inventory_status_id
+        GROUP BY storage_id,material_id,sales_barcode,option4,inventory_status_id
+        HAVING TIMESTAMPDIFF(DAY,production_date,DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%S'))&lt;30 and bis.inventory_status_name='待检'
+    </select>
+    <select id="findOutInv" resultType="com.fantechs.common.base.general.dto.basic.StorageRuleInventry">
+        SELECT storage_id as 'storageId',material_id as 'materialId',sales_barcode as 'salesBarcode',option4 as 'poCode',sum(material_qty) as 'materialQty',production_date,a.inventory_status_id,bis.inventory_status_name  FROM (SELECT storage_id,material_id,sales_barcode,option4,material_qty,production_date,inventory_status_id
+        FROM wms_inner_inventory_det
+        <where>
+            <if test="storageId!=null and storageId!=null">
+                and storage_id = #{storageId}
+            </if>
+            <if test="materialId!=null and materialId!=''">
+                and material_id = #{materialId}
+            </if>
+            <if test="salesBarcode!=null and salesBarcode!=''">
+                and sales_barcode = #{salesBarcode}
+            </if>
+            <if test="poCode!=null and poCode!=''">
+                and option4 = #{poCode}
+            </if>
+            <if test="inventoryStatusId!=null">
+                and inventory_status_id = #{inventoryStatusId}
+            </if>
+        </where>
+        ORDER BY production_date DESC) a
+        LEFT JOIN base_inventory_status bis ON a.inventory_status_id = bis.inventory_status_id
+        GROUP BY storage_id,material_id,sales_barcode,option4,inventory_status_id
+        HAVING materialQty &gt;= #{materialQty} and bis.inventory_status_name='合格'
     </select>
 </mapper>

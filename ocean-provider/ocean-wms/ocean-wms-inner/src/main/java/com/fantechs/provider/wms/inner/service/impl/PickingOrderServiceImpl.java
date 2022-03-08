@@ -8,14 +8,13 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
+import com.fantechs.common.base.general.dto.basic.BaseStorageRule;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
-import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
@@ -40,14 +39,12 @@ import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
 import com.fantechs.provider.wms.inner.service.PickingOrderService;
 import com.fantechs.provider.wms.inner.util.InBarcodeUtil;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
-import com.fantechs.provider.wms.inner.util.OutInventoryRule;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -266,85 +263,116 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 throw new BizErrorException("单据已分配完成");
             }
             Example example = new Example(WmsInnerJobOrderDet.class);
-            example.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrder.getJobOrderId());
+            example.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrder.getJobOrderId()).andEqualTo("OrderStatus",1);
             List<WmsInnerJobOrderDet> list = wmsInnerJobOrderDetMapper.selectByExample(example);
+            //成功自动分配数量
+            int success = 0;
             for (WmsInnerJobOrderDet wms : list) {
                 if(StringUtils.isEmpty(wms)){
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003);
                 }
                 //推荐库位
-                SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-                List<WmsInnerInventory> wmsInnerInventories = OutInventoryRule.jobMainRule(wmsInnerJobOrder.getWarehouseId(),wms.getMaterialId(),StringUtils.isNotEmpty(wms.getBatchCode())?wms.getBatchCode():null,StringUtils.isNotEmpty(wms.getProductionDate())?sf.format(wms.getProductionDate()):null,StringUtils.isNotEmpty(wms.getInventoryStatusId())?wms.getInventoryStatusId():null);
-                if(StringUtils.isEmpty(wmsInnerInventories) || wmsInnerInventories.size()<1){
-                    throw new BizErrorException("未匹配到库位");
+                BaseStorageRule baseStorageRule = new BaseStorageRule();
+                baseStorageRule.setMaterialId(wms.getMaterialId());
+                baseStorageRule.setQty(wms.getPlanQty());
+                baseStorageRule.setSalesBarcode(wms.getOption1());
+                baseStorageRule.setSalesBarcode(wms.getOption2());
+                ResponseEntity<Long> responseEntity = baseFeignApi.outRule(baseStorageRule);
+                if(responseEntity.getCode()!=0){
+                    throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
                 }
-                BigDecimal playQty = wms.getPlanQty();
-                for (WmsInnerInventory wmsInnerInventory : wmsInnerInventories) {
-                    if(playQty.compareTo(BigDecimal.ZERO)==1){
-                        if(wmsInnerInventory.getPackingQty().compareTo(playQty)>-1 && wms.getPlanQty().compareTo(playQty)==0){
-                            num+=wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(WmsInnerJobOrderDet.builder()
-                                    .jobOrderDetId(wms.getJobOrderDetId())
-                                    .outStorageId(wmsInnerInventory.getStorageId())
-                                    .distributionQty(wms.getPlanQty())
-                                    .modifiedUserId(sysUser.getUserId())
-                                    .modifiedTime(new Date())
-                                    .orderStatus((byte)3)
-                                    .build());
-                            playQty = playQty.subtract(wms.getPlanQty());
-                            wms.setDistributionQty(wms.getPlanQty());
-                            wms.setOutStorageId(wmsInnerInventory.getStorageId());
-                            //分配库存
-                            num += this.DistributionInventory(wmsInnerJobOrder, wms,2,wmsInnerInventory);
-                        }else{
-                            if(wms.getPlanQty().compareTo(playQty)==0) {
-                                num += wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(WmsInnerJobOrderDet.builder()
-                                        .jobOrderDetId(wms.getJobOrderDetId())
-                                        .outStorageId(wmsInnerInventory.getStorageId())
-                                        .planQty(wmsInnerInventory.getPackingQty())
-                                        .distributionQty(wmsInnerInventory.getPackingQty())
-                                        .modifiedUserId(sysUser.getUserId())
-                                        .modifiedTime(new Date())
-                                        .orderStatus((byte) 3)
-                                        .build());
-                                playQty = playQty.subtract(wmsInnerInventory.getPackingQty());
-                                wms.setOutStorageId(wmsInnerInventory.getStorageId());
-                                wms.setDistributionQty(wmsInnerInventory.getPackingQty());
-                                //分配库存
-                                num += this.DistributionInventory(wmsInnerJobOrder, wms,2,wmsInnerInventory);
-                            }else{
-                                if(wmsInnerInventory.getPackingQty().compareTo(playQty)>-1){
-                                    WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
-                                    BeanUtil.copyProperties(wms,wmsInnerJobOrderDet);
-                                    wmsInnerJobOrderDet.setJobOrderDetId(null);
-                                    wmsInnerJobOrderDet.setPlanQty(playQty);
-                                    wmsInnerJobOrderDet.setDistributionQty(playQty);
-                                    num+=wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
-                                    playQty = BigDecimal.ZERO;
+                if(StringUtils.isNotEmpty(responseEntity.getData())){
+                    Long storageId = responseEntity.getData();
+                    wms.setOutStorageId(storageId);
+                    wms.setDistributionQty(wms.getPlanQty());
+                    wms.setOrderStatus((byte)3);
+                    wms.setModifiedUserId(sysUser.getUserId());
+                    wms.setModifiedTime(new Date());
+                    //分配库存
+                    num += this.DistributionInventory(wmsInnerJobOrder, wms,1,null);
 
-                                    //分配库存
-                                    num += this.DistributionInventory(wmsInnerJobOrder, wmsInnerJobOrderDet,2,wmsInnerInventory);
-                                }else {
-                                    WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
-                                    BeanUtil.copyProperties(wms,wmsInnerJobOrderDet);
-                                    wmsInnerJobOrderDet.setJobOrderDetId(null);
-                                    wmsInnerJobOrderDet.setPlanQty(wmsInnerInventory.getPackingQty());
-                                    wmsInnerJobOrderDet.setDistributionQty(wmsInnerInventory.getPackingQty());
-                                    num+=wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
-                                    playQty = playQty.subtract(wmsInnerInventory.getPackingQty());
-
-                                    //分配库存
-                                    num += this.DistributionInventory(wmsInnerJobOrder, wmsInnerJobOrderDet,2,wmsInnerInventory);
-                                }
-                            }
-                        }
-                    }
+                    success++;
                 }
+
+
+
+//                SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+//                List<WmsInnerInventory> wmsInnerInventories = OutInventoryRule.jobMainRule(wmsInnerJobOrder.getWarehouseId(),wms.getMaterialId(),StringUtils.isNotEmpty(wms.getBatchCode())?wms.getBatchCode():null,StringUtils.isNotEmpty(wms.getProductionDate())?sf.format(wms.getProductionDate()):null,StringUtils.isNotEmpty(wms.getInventoryStatusId())?wms.getInventoryStatusId():null);
+//                if(StringUtils.isEmpty(wmsInnerInventories) || wmsInnerInventories.size()<1){
+//                    throw new BizErrorException("未匹配到库位");
+//                }
+//                BigDecimal playQty = wms.getPlanQty();
+//                for (WmsInnerInventory wmsInnerInventory : wmsInnerInventories) {
+//                    if(playQty.compareTo(BigDecimal.ZERO)==1){
+//                        if(wmsInnerInventory.getPackingQty().compareTo(playQty)>-1 && wms.getPlanQty().compareTo(playQty)==0){
+//                            num+=wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(WmsInnerJobOrderDet.builder()
+//                                    .jobOrderDetId(wms.getJobOrderDetId())
+//                                    .outStorageId(wmsInnerInventory.getStorageId())
+//                                    .distributionQty(wms.getPlanQty())
+//                                    .modifiedUserId(sysUser.getUserId())
+//                                    .modifiedTime(new Date())
+//                                    .orderStatus((byte)3)
+//                                    .build());
+//                            playQty = playQty.subtract(wms.getPlanQty());
+//                            wms.setDistributionQty(wms.getPlanQty());
+//                            wms.setOutStorageId(wmsInnerInventory.getStorageId());
+//
+//                        }else{
+//                            if(wms.getPlanQty().compareTo(playQty)==0) {
+//                                num += wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(WmsInnerJobOrderDet.builder()
+//                                        .jobOrderDetId(wms.getJobOrderDetId())
+//                                        .outStorageId(wmsInnerInventory.getStorageId())
+//                                        .planQty(wmsInnerInventory.getPackingQty())
+//                                        .distributionQty(wmsInnerInventory.getPackingQty())
+//                                        .modifiedUserId(sysUser.getUserId())
+//                                        .modifiedTime(new Date())
+//                                        .orderStatus((byte) 3)
+//                                        .build());
+//                                playQty = playQty.subtract(wmsInnerInventory.getPackingQty());
+//                                wms.setOutStorageId(wmsInnerInventory.getStorageId());
+//                                wms.setDistributionQty(wmsInnerInventory.getPackingQty());
+//                                //分配库存
+//                                num += this.DistributionInventory(wmsInnerJobOrder, wms,2,wmsInnerInventory);
+//                            }else{
+//                                if(wmsInnerInventory.getPackingQty().compareTo(playQty)>-1){
+//                                    WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+//                                    BeanUtil.copyProperties(wms,wmsInnerJobOrderDet);
+//                                    wmsInnerJobOrderDet.setJobOrderDetId(null);
+//                                    wmsInnerJobOrderDet.setPlanQty(playQty);
+//                                    wmsInnerJobOrderDet.setDistributionQty(playQty);
+//                                    num+=wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
+//                                    playQty = BigDecimal.ZERO;
+//
+//                                    //分配库存
+//                                    num += this.DistributionInventory(wmsInnerJobOrder, wmsInnerJobOrderDet,2,wmsInnerInventory);
+//                                }else {
+//                                    WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+//                                    BeanUtil.copyProperties(wms,wmsInnerJobOrderDet);
+//                                    wmsInnerJobOrderDet.setJobOrderDetId(null);
+//                                    wmsInnerJobOrderDet.setPlanQty(wmsInnerInventory.getPackingQty());
+//                                    wmsInnerJobOrderDet.setDistributionQty(wmsInnerInventory.getPackingQty());
+//                                    num+=wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
+//                                    playQty = playQty.subtract(wmsInnerInventory.getPackingQty());
+//
+//                                    //分配库存
+//                                    num += this.DistributionInventory(wmsInnerJobOrder, wmsInnerJobOrderDet,2,wmsInnerInventory);
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
                 //库位容量减1
                 //baseFeignApi.minusSurplusCanPutSalver(wms.getInStorageId(),1);
 //                WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderDetMapper.selectByPrimaryKey(wms.getJobOrderDetId());
             }
-
-            wmsInnerJobOrder.setOrderStatus((byte)3);
+            if(success==0){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"未匹配到可用库位");
+            }else if(success==list.size()){
+                wmsInnerJobOrder.setOrderStatus((byte)3);
+            }else {
+                wmsInnerJobOrder.setOrderStatus((byte)2);
+            }
+//            wmsInnerJobOrder.setOrderStatus((byte)3);
             wmsInnerJobOrder.setModifiedTime(new Date());
             wmsInnerJobOrder.setModifiedUserId(sysUser.getUserId());
             wmsInnerJobOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);

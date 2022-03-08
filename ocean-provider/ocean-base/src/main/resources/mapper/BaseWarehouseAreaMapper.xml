@@ -64,7 +64,7 @@ swa.logic_id
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         select  <include refid="Base_Column_List"></include>,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-        sw.warehouse_code, sw.warehouse_name, sw.warehouse_category,wel.logic_name
+        sw.warehouse_code, sw.warehouse_name, sw.warehouse_category,wel.logic_name,
         bo.organization_name
         FROM fantech_imes_v2.base_warehouse_area swa
         LEFT JOIN ocean_v2.sys_user su ON swa.create_user_id = su.user_id
