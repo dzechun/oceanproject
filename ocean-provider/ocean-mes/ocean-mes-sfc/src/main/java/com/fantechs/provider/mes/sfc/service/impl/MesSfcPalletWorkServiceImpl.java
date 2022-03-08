@@ -889,6 +889,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         map.put("orgId", orgId);
         List<PalletAutoAsnDto> autoAsnDtos = mesSfcProductPalletDetService.findListGroupByWorkOrder(map);
         for (PalletAutoAsnDto palletAutoAsnDto : autoAsnDtos){
+            palletAutoAsnDto.setPackingQty(BigDecimal.valueOf(wanbaoBarcodeDtos.size()));
             List<BarPODto> barPODtos = new ArrayList<>();
             wanbaoBarcodeDtos.forEach(item -> {
                 if (item.getWorkOrderId().equals(palletAutoAsnDto.getSourceOrderId())){
