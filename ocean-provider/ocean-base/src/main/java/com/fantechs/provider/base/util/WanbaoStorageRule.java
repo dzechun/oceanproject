@@ -92,7 +92,7 @@ public class WanbaoStorageRule {
         BigDecimal capacity = screenStorageCapacity(baseMaterial);
 
         //计算可上架库位
-        Long storageId = onStorge(baseStorageRule,baseStorageList,capacity);
+        Long storageId = onStorage(baseStorageRule,baseStorageList,capacity);
         return storageId;
     }
 
@@ -149,7 +149,7 @@ public class WanbaoStorageRule {
      * @param capacity
      * @return
      */
-    private static Long onStorge(BaseStorageRule baseStorageRule,List<BaseStorage> list,BigDecimal capacity){
+    private static Long onStorage(BaseStorageRule baseStorageRule,List<BaseStorage> list,BigDecimal capacity){
         Long storageId= null;
         //查询批次相同库位 物料+库位+销售编码+PO+库龄小于30天
         List<StorageRuleInventry> storageRuleInventries = wanbaoStorageRule.baseStorageMapper.findInv(ControllerUtil.dynamicCondition("storageIds",list,"materialId",baseStorageRule.getMaterialId(),
