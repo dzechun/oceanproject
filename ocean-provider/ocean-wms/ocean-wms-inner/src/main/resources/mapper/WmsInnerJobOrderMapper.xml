@@ -95,10 +95,10 @@ wipo.option4
         sus.user_name AS modified_user_name,
         bo.organization_name AS organization_Name,
         bp.platform_name,
+        ws.stacking_code,
         (SELECT IFNULL(SUM(wipod.distribution_qty),0) FROM wms_inner_job_order_det wipod where wipod.job_order_id = wipo.job_order_id) as distribution_qty
         <if test="isPallet!=null and isPallet!='' and isPallet==1">
             ,
-            ws.stacking_code,
           CASE
             WHEN (select COUNT(*) FROM wms_inner_job_order_re_mspp wijorm where wijorm.job_order_id=wipo.job_order_id)>0
             THEN 1
@@ -116,10 +116,8 @@ wipo.option4
         LEFT JOIN ocean_v2.sys_user su ON wipo.create_user_id = su.user_id
         LEFT JOIN ocean_v2.sys_user sus ON wipo.modified_user_id = sus.user_id
         LEFT JOIN base_organization bo ON wipo.org_id = bo.organization_id
-        <if test="isPallet!=null and isPallet!='' and isPallet==1">
-            LEFT JOIN wms_inner_job_order_re_mspp wijorm ON wipo.job_order_id = wijorm.job_order_id
-            LEFT JOIN wanbao_stacking ws ON wijorm.product_pallet_id = ws.stacking_id
-        </if>
+        LEFT JOIN wms_inner_job_order_re_mspp wijorm ON wipo.job_order_id = wijorm.job_order_id
+        LEFT JOIN wanbao_stacking ws ON wijorm.product_pallet_id = ws.stacking_id
         <where>
             <if test="orgId!=null and orgId!=''">
                 and wipo.org_id = #{orgId}
