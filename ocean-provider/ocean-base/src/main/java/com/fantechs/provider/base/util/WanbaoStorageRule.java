@@ -120,14 +120,14 @@ public class WanbaoStorageRule {
     private static BigDecimal screenStorageCapacity(BaseMaterial baseMaterial){
         //根据物料查询库位类型
         Example example = new Example(BaseStorageCapacity.class);
-        example.createCriteria().andEqualTo("matereialId",baseMaterial.getMaterialId());
+        example.createCriteria().andEqualTo("materialId",baseMaterial.getMaterialId());
         BaseStorageCapacity baseStorageCapacity = wanbaoStorageRule.baseStorageCapacityMapper.selectOneByExample(example);
         if(StringUtils.isEmpty(baseStorageCapacity)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"获取库位类型失败");
         }
         //物料前缀39110157 推荐C类  39110089、39110090推荐B类
         BigDecimal capacity = BigDecimal.ZERO;
-        if(baseMaterial.getMaterialCode().startsWith("39110089")){
+        if(baseMaterial.getMaterialCode().startsWith("39110157")){
             capacity = baseStorageCapacity.getTypeCCapacity();
         }else if(baseMaterial.getMaterialCode().startsWith("39110089") || baseMaterial.getMaterialCode().startsWith("39110090") || baseMaterial.getMaterialName().contains("酒柜") || baseMaterial.getMaterialName().contains("饮料柜")){
             capacity = baseStorageCapacity.getTypeBCapacity();
