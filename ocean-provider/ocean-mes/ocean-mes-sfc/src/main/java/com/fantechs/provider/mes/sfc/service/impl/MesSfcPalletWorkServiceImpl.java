@@ -630,7 +630,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             if(!processServiceList.get(0).getProLineId().equals(proLineId)){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "配置产线与条码产线不一致");
             }
-            if (!processServiceList.get(0).getNextProcessId().equals(0L)){
+            if (processServiceList.get(0).getNextProcessId() != 0L){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "当前条码未完成所有过站，请重新扫码");
             }
             if (!mesSfcKeyPartRelevanceDtoList.isEmpty()) {
@@ -681,7 +681,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             if(!processServiceList.get(0).getProLineId().equals(proLineId)){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "配置产线与条码产线不一致");
             }
-            if (!processServiceList.get(0).getNextProcessId().equals(0L)){
+            if (processServiceList.get(0).getNextProcessId() != 0L){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "当前条码未完成所有过站，请重新扫码");
             }
             dto.setBarcode(mesSfcKeyPartRelevanceDtoList.get(0).getBarcodeCode());
