@@ -21,6 +21,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageCapacity;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorker;
+import com.fantechs.common.base.general.entity.wanbao.WanbaoStacking;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrderDet;
@@ -33,6 +34,7 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.guest.wanbao.WanbaoFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
@@ -82,6 +84,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     private SecurityFeignApi securityFeignApi;
     @Resource
     private WmsDataExportInnerJobOrderService wmsDataExportInnerJobOrderService;
+    @Resource
+    private WanbaoFeignApi wanbaoFeignApi;
 
     @Override
     public List<WmsInnerJobOrderDto> findList(SearchWmsInnerJobOrder searchWmsInnerJobOrder) {
@@ -1420,7 +1424,15 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
         }
 
-        // 释放堆垛，修改状态
+        // 2022-03-09 万宝项目 - 上架作业后释放堆垛
+        Example example = new Example(WmsInnerJobOrderReMspp.class);
+        example.createCriteria().andEqualTo("jobOrderId", wmsInnerJobOrderDto.getJobOrderId());
+        List<WmsInnerJobOrderReMspp> jobOrderReMspps = wmsInnerJobOrderReMsppMapper.selectByExample(example);
+        if (!jobOrderReMspps.isEmpty()){
+            WanbaoStacking stacking = wanbaoFeignApi.detail(jobOrderReMspps.get(0).getProductPalletId()).getData();
+            stacking.setUsageStatus((byte) 1);
+            wanbaoFeignApi.update(stacking);
+        }
         return wmsInnerJobOrderDet;
     }
 

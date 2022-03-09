@@ -49,6 +49,9 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
         if (!stackingDtos.get(0).getProLineId().equals(dto.getProLineId())){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛编码跟配置产线不匹配");
         }
+        if (stackingDtos.get(0).getUsageStatus() == 2){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛正在使用中，请更换独堆垛");
+        }
         // 容量校验
         map.clear();
         map.put("stackingId", stackingDto.getStackingId());
