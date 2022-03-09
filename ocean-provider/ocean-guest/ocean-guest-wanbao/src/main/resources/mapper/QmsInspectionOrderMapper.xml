@@ -9,11 +9,15 @@
     <result column="inspection_order_code" jdbcType="VARCHAR" property="inspectionOrderCode" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
     <result column="customer_id" jdbcType="BIGINT" property="customerId" />
+    <result column="sales_code" jdbcType="VARCHAR" property="salesCode" />
+    <result column="same_package_code" jdbcType="VARCHAR" property="samePackageCode" />
+    <result column="inventory_qty" jdbcType="DECIMAL" property="inventoryQty" />
     <result column="order_qty" jdbcType="DECIMAL" property="orderQty" />
     <result column="inspection_standard_id" jdbcType="BIGINT" property="inspectionStandardId" />
     <result column="inspection_way_id" jdbcType="BIGINT" property="inspectionWayId" />
     <result column="inspection_status" jdbcType="TINYINT" property="inspectionStatus" />
     <result column="inspection_result" jdbcType="TINYINT" property="inspectionResult" />
+    <result column="inspection_user_id" jdbcType="BIGINT" property="inspectionUserId" />
     <result column="audit_status" jdbcType="TINYINT" property="auditStatus" />
     <result column="audit_dept_id" jdbcType="BIGINT" property="auditDeptId" />
     <result column="audit_user_id" jdbcType="BIGINT" property="auditUserId" />
@@ -43,6 +47,7 @@
     <result column="inspection_way_code" jdbcType="VARCHAR" property="inspectionWayCode"/>
     <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
     <result column="audit_user_name" jdbcType="VARCHAR" property="auditUserName"/>
+    <result column="inspection_user_name" jdbcType="VARCHAR" property="inspectionUserName"/>
     <collection property="qmsInspectionOrderDets" ofType="com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrderDet"
                 column="{inspectionOrderId=inspection_order_id}" select="com.fantechs.provider.guest.wanbao.mapper.QmsInspectionOrderDetMapper.findDetList">
     </collection>
@@ -53,11 +58,15 @@
     qio.inspection_order_code,
     qio.material_id,
     qio.customer_id,
+    qio.sales_code,
+    qio.same_package_code,
+    qio.inventory_qty,
     qio.order_qty,
     qio.inspection_standard_id,
     qio.inspection_way_id,
     qio.inspection_status,
     qio.inspection_result,
+    qio.inspection_user_id,
     qio.audit_status,
     qio.audit_dept_id,
     qio.audit_user_id,
@@ -84,6 +93,7 @@
     bis.inspection_standard_name,
     biw.inspection_way_code,
     bd.dept_name,su.user_name as audit_user_name,
+    sus.user_name as inspection_user_name,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
@@ -93,6 +103,7 @@
     left join fantech_imes_v2.base_inspection_standard bis on qio.inspection_standard_id=bis.inspection_standard_id
     left join fantech_imes_v2.base_inspection_way biw on qio.inspection_way_id=biw.inspection_way_id
     left join fantech_imes_v2.base_dept bd on qio.audit_dept_id=bd.dept_id
+    left join ocean_v2.sys_user sus on qio.inspection_user_id=sus.user_id
     left join ocean_v2.sys_user su on qio.audit_user_id=su.user_id
     left join ocean_v2.sys_user u on qio.create_user_id=u.user_id
     left join ocean_v2.sys_user s on qio.modified_user_id=s.user_id
@@ -101,11 +112,30 @@
       <if test="inspectionOrderId != null">
         and qio.inspection_order_id = #{inspectionOrderId}
       </if>
+      <if test="queryType != null and queryType == 0 ">
+        and qio.same_package_code is null and qio.sales_code is null
+      </if>
+
       <if test="inspectionOrderCode != null and inspectionOrderCode!=''">
         and qio.inspection_order_code like CONCAT('%', #{inspectionOrderCode}, '%')
       </if>
       <if test="materialCode != null and materialCode!=''">
         and bm.material_code like CONCAT('%', #{materialCode}, '%')
+      </if>
+      <if test="customerName != null and customerName!=''">
+        and bs.supplier_name like CONCAT('%', #{customerName}, '%')
+      </if>
+      <if test="salesCode != null and salesCode!=''">
+        and qio.sales_code like CONCAT('%', #{salesCode}, '%')
+      </if>
+      <if test="samePackageCode != null and samePackageCode!=''">
+        and qio.same_package_code like CONCAT('%', #{samePackageCode}, '%')
+      </if>
+      <if test="auditUserName != null and auditUserName!=''">
+        and su.user_name like CONCAT('%', #{auditUserName}, '%')
+      </if>
+      <if test="inspectionUserName != null and inspectionUserName!=''">
+        and sus.user_name like CONCAT('%', #{inspectionUserName}, '%')
       </if>
       <if test="inspectionStatus != null">
         and qio.inspection_status = #{inspectionStatus}

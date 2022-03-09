@@ -6,6 +6,7 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseLabelMaterialDto;
+import com.fantechs.common.base.general.dto.basic.BaseStorageRule;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductPalletDetDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPalletDet;
 import com.fantechs.common.base.general.dto.wms.in.*;
@@ -753,7 +754,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 if(StringUtils.isEmpty(wmsInAsnOrder)){
                     throw new BizErrorException(ErrorCodeEnum.GL9999404);
                 }
-                wmsInAsnOrder.setProductPalletId(palletAutoAsnDto.getProductPalletId());
+                wmsInAsnOrder.setProductPalletId(palletAutoAsnDto.getStackingId());
                 Example example = new Example(WmsInAsnOrderDet.class);
                 example.createCriteria().andEqualTo("asnOrderId",wmsInAsnOrder.getAsnOrderId())
                         .andEqualTo("materialId",palletAutoAsnDto.getMaterialId())
@@ -782,7 +783,13 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 wms.setActualQty(palletAutoAsnDto.getActualQty());
                 //新增库存明细
                 res = this.addInventoryDet(palletAutoAsnDto,wmsInAsnOrder.getAsnCode(),wms);
-
+                BaseStorageRule baseStorageRule = new BaseStorageRule();
+                baseStorageRule.setLogicId(palletAutoAsnDto.getLogicId());
+                baseStorageRule.setMaterialId(palletAutoAsnDto.getMaterialId());
+                baseStorageRule.setProLineId(palletAutoAsnDto.getProLineId());
+                baseStorageRule.setSalesBarcode(palletAutoAsnDto.getSalesOrderCode());
+                baseStorageRule.setPoCode(palletAutoAsnDto.getSamePackageCode());
+                wmsInAsnOrder.setBaseStorageRule(baseStorageRule);
                 //新增上架作业单
                 res = this.createJobOrder(wmsInAsnOrder,wms);
                 return 1;
@@ -800,7 +807,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                         .orderTypeId((long)4)
                         .startReceivingDate(new Date())
                         .endReceivingDate(new Date())
-                        .productPalletId(palletAutoAsnDto.getProductPalletId())
+                        .productPalletId(palletAutoAsnDto.getStackingId())
                         .orgId(sysUser.getOrganizationId())
                         .remark(DateUtils.getDateString(new Date(),"yyyy-MM-dd"))
                         .materialType(Byte.valueOf(materialType))
@@ -835,6 +842,14 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 redisUtil.set("pallet_id",palletMap);
                 redisUtil.expire("pallet_id",getRemainSecondsOneDay(new Date()));
                 //新增上级作业单
+
+                BaseStorageRule baseStorageRule = new BaseStorageRule();
+                baseStorageRule.setLogicId(palletAutoAsnDto.getLogicId());
+                baseStorageRule.setMaterialId(palletAutoAsnDto.getMaterialId());
+                baseStorageRule.setProLineId(palletAutoAsnDto.getProLineId());
+                baseStorageRule.setSalesBarcode(palletAutoAsnDto.getSalesOrderCode());
+                baseStorageRule.setPoCode(palletAutoAsnDto.getSamePackageCode());
+                wmsInAsnOrder.setBaseStorageRule(baseStorageRule);
                 res = this.createJobOrder(wmsInAsnOrder,wmsInAsnOrderDet);
                 return 1;
             }
@@ -860,6 +875,13 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 .actualQty(new BigDecimal("0"))
                 .productPalletId(wmsInAsnOrder.getProductPalletId())
                 .build();
+        if (wmsInAsnOrder.getBaseStorageRule() != null){
+            wmsInnerJobOrder.setBaseStorageRule(wmsInAsnOrder.getBaseStorageRule());
+            wmsInnerJobOrder.setOption1(wmsInAsnOrder.getBaseStorageRule().getLogicId() != null?wmsInAsnOrder.getBaseStorageRule().getLogicId().toString():null);
+            wmsInnerJobOrder.setOption2(wmsInAsnOrder.getBaseStorageRule().getProLineId() != null?wmsInAsnOrder.getBaseStorageRule().getProLineId().toString():null);
+            wmsInnerJobOrder.setOption3(wmsInAsnOrder.getBaseStorageRule().getSalesBarcode());
+            wmsInnerJobOrder.setOption4(wmsInAsnOrder.getBaseStorageRule().getPoCode());
+        }
         List<WmsInnerJobOrderDet> list = new ArrayList<>();
         list.add(WmsInnerJobOrderDet.builder()
                 .sourceDetId(wmsInAsnOrderDet.getAsnOrderDetId())
@@ -971,6 +993,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerInventoryDet.setOption2(palletAutoAsnDto.getSalesManName());
             wmsInnerInventoryDet.setOption3(palletAutoAsnDto.getSalesOrderCode());
             wmsInnerInventoryDet.setOption4(barcode.getPOCode());
+            wmsInnerInventoryDet.setOption5(palletAutoAsnDto.getWorkOrderCode());
             wmsInnerInventoryDets.add(wmsInnerInventoryDet);
             ResponseEntity responseEntity = innerFeignApi.add(wmsInnerInventoryDets);
             if(responseEntity.getCode()!=0){

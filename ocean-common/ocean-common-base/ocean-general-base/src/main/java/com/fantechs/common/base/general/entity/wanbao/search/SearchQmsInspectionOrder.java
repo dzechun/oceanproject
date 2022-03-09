@@ -30,6 +30,36 @@ public class SearchQmsInspectionOrder extends BaseQuery implements Serializable 
     private String materialCode;
 
     /**
+     * 客户
+     */
+    @ApiModelProperty(name="customerName",value = "客户")
+    private String customerName;
+
+    /**
+     * 销售编码
+     */
+    @ApiModelProperty(name="salesCode",value = "销售编码")
+    private String salesCode;
+
+    /**
+     * PO号
+     */
+    @ApiModelProperty(name="samePackageCode",value = "PO号")
+    private String samePackageCode;
+
+    /**
+     * 审批人
+     */
+    @ApiModelProperty(name="auditUserName",value = "审批人")
+    private String auditUserName;
+
+    /**
+     * 检验人
+     */
+    @ApiModelProperty(name="inspectionUserName",value = "检验人")
+    private String inspectionUserName;
+
+    /**
      * 检验状态(1-待检验 2-检验中 3-已检验)
      */
     @ApiModelProperty(name="inspectionStatus",value = "检验状态(1-待检验 2-检验中 3-已检验)")
@@ -47,4 +77,9 @@ public class SearchQmsInspectionOrder extends BaseQuery implements Serializable 
     @ApiModelProperty(name="inspectionResult",value = "检验结果(0-不合格 1-合格)")
     private Byte inspectionResult;
 
+    /**
+     * 查询条件
+     */
+    @ApiModelProperty(name="auditUserName",value = "(0-PO号和销售编码为空)")
+    private Integer queryType;
 }

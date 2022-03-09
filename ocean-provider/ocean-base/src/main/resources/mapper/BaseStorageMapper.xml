@@ -37,6 +37,9 @@
         <result column="option1" jdbcType="VARCHAR" property="option1"/>
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
+        <result column="pro_line_id" jdbcType="BIGINT" property="proLineId"/>
+        <result column="is_heelpiece" jdbcType="TINYINT" property="isHeelpiece"/>
+        <result column="logic_id" jdbcType="BIGINT" property="logicId"/>
 
         <result column="working_area_code" jdbcType="VARCHAR" property="workingAreaCode"/>
         <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode"/>
@@ -45,6 +48,8 @@
         <result column="warehouse_area_name" jdbcType="VARCHAR" property="warehouseAreaName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
         <result column="warehouse_category" jdbcType="BIGINT" property="warehouseCategory"/>
+        <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
+        <result column="logic_name" jdbcType="VARCHAR" property="logicName"/>
     </resultMap>
 
     <sql id="Base_Cloumn_List">
@@ -82,15 +87,18 @@
         ss.is_delete,
         ss.option1,
         ss.option2,
-        ss.option3
+        ss.option3,
+ss.pro_line_id,
+ss.is_heelpiece,
+ss.logic_id
     </sql>
 
     <select id="findList" parameterType="map"
             resultMap="BaseResultMap">
         select <include refid="Base_Cloumn_List"></include>,
-        sw.warehouse_name, sw.warehouse_code,sw.warehouse_category,bwa.working_area_code,
+        sw.warehouse_name, sw.warehouse_code,sw.warehouse_category,bwa.working_area_code,bpl.pro_name,
         u.user_name as createUserName, s.user_name as modifiedUserName,
-        swa.warehouse_area_code, swa.warehouse_area_name,
+        swa.warehouse_area_code, swa.warehouse_area_name,wel.logic_name,
         bo.organization_name
         from fantech_imes_v2.base_storage ss
         left join fantech_imes_v2.base_working_area bwa on ss.working_area_id=bwa.working_area_id
@@ -99,6 +107,8 @@
         left join ocean_v2.sys_user u on ss.create_user_id=u.user_id
         left join ocean_v2.sys_user s on ss.modified_user_id=s.user_id
         LEFT JOIN fantech_imes_v2.base_organization bo ON ss.org_id = bo.organization_id
+        left join base_pro_line bpl on ss.pro_line_id = bpl.pro_line_id
+        left join wanbao_erp_logic wel on ss.logic_id = wel.logic_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(ss.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
@@ -194,7 +204,8 @@
                 is_delete =#{item.isDelete},
                 option1 =#{item.option1},
                 option2 =#{item.option2},
-                option3 =#{item.option3}
+                option3 =#{item.option3},
+                logic_id=#{item.logicId}
             </set>
             where storage_code =#{item.storageCode}
         </foreach>
@@ -284,5 +295,59 @@ order by wii.modified_time desc limit 1
         FROM base_storage bs
         LEFT JOIN base_material_tab bmt ON bmt.material_id=#{materialId}
         WHERE bs.org_id=#{orgId} and  bs.storage_id IN(SELECT wii.storage_id FROM wms_inner_inventory wii WHERE bs.storage_type=1 AND wii.warehouse_id=#{warehouseId} and wii.packing_qty>0 GROUP BY wii.storage_id HAVING COUNT(wii.material_id)>1)
+    </select>
+
+    <select id="findInv" resultType="com.fantechs.common.base.general.dto.basic.StorageRuleInventry">
+        SELECT storage_id as 'storageId',material_id as 'materialId',sales_barcode as 'salesBarcode',option4 as 'poCode',sum(material_qty) as 'materialQty',production_date,a.inventory_status_id,bis.inventory_status_name  FROM (SELECT storage_id,material_id,sales_barcode,option4,material_qty,production_date,inventory_status_id
+        FROM wms_inner_inventory_det
+        <where>
+            <if test="storageIds!=null and storageIds.size()&gt; 0">
+                and storage_id  in
+                <foreach collection="storageIds" item="list" open="(" close=")" separator=",">
+                    #{list}
+                </foreach>
+            </if>
+            <if test="materialId!=null and materialId!=''">
+                and material_id = #{materialId}
+            </if>
+            <if test="salesBarcode!=null and salesBarcode!=''">
+                and sales_barcode = #{salesBarcode}
+            </if>
+            <if test="poCode!=null and poCode!=''">
+                and option4 = #{poCode}
+            </if>
+            <if test="inventoryStatusId!=null">
+                and inventory_status_id = #{inventoryStatusId}
+            </if>
+        </where>
+        ORDER BY production_date DESC) a
+        LEFT JOIN base_inventory_status bis ON a.inventory_status_id = bis.inventory_status_id
+        GROUP BY storage_id,material_id,sales_barcode,option4,inventory_status_id
+        HAVING TIMESTAMPDIFF(DAY,production_date,DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%S'))&lt;30 and bis.inventory_status_name='待检'
+    </select>
+    <select id="findOutInv" resultType="com.fantechs.common.base.general.dto.basic.StorageRuleInventry">
+        SELECT storage_id as 'storageId',material_id as 'materialId',sales_barcode as 'salesBarcode',option4 as 'poCode',sum(material_qty) as 'materialQty',production_date,a.inventory_status_id,bis.inventory_status_name  FROM (SELECT storage_id,material_id,sales_barcode,option4,material_qty,production_date,inventory_status_id
+        FROM wms_inner_inventory_det
+        <where>
+            <if test="storageId!=null and storageId!=null">
+                and storage_id = #{storageId}
+            </if>
+            <if test="materialId!=null and materialId!=''">
+                and material_id = #{materialId}
+            </if>
+            <if test="salesBarcode!=null and salesBarcode!=''">
+                and sales_barcode = #{salesBarcode}
+            </if>
+            <if test="poCode!=null and poCode!=''">
+                and option4 = #{poCode}
+            </if>
+            <if test="inventoryStatusId!=null">
+                and inventory_status_id = #{inventoryStatusId}
+            </if>
+        </where>
+        ORDER BY production_date DESC) a
+        LEFT JOIN base_inventory_status bis ON a.inventory_status_id = bis.inventory_status_id
+        GROUP BY storage_id,material_id,sales_barcode,option4,inventory_status_id
+        HAVING materialQty &gt;= #{materialQty} and bis.inventory_status_name='合格'
     </select>
 </mapper>

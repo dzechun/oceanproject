@@ -1,6 +1,7 @@
 package com.fantechs.common.base.general.entity.wanbao;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import cn.afterturn.easypoi.excel.annotation.ExcelCollection;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
@@ -59,10 +60,34 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
     private Long customerId;
 
     /**
+     * 销售编码
+     */
+    @ApiModelProperty(name="salesCode",value = "销售编码")
+    @Excel(name = "销售编码", height = 20, width = 30,orderNum="6")
+    @Column(name = "sales_code")
+    private String salesCode;
+
+    /**
+     * PO号
+     */
+    @ApiModelProperty(name="samePackageCode",value = "PO号")
+    @Excel(name = "PO号", height = 20, width = 30,orderNum="7")
+    @Column(name = "same_package_code")
+    private String samePackageCode;
+
+    /**
+     * 已入库数量
+     */
+    @ApiModelProperty(name="inventoryQty",value = "已入库数量")
+    @Excel(name = "已入库数量", height = 20, width = 30,orderNum="9")
+    @Column(name = "inventory_qty")
+    private BigDecimal inventoryQty;
+
+    /**
      * 单据数量
      */
     @ApiModelProperty(name="orderQty",value = "单据数量")
-    @Excel(name = "单据数量", height = 20, width = 30,orderNum="6")
+    @Excel(name = "单据数量", height = 20, width = 30,orderNum="8")
     @Column(name = "order_qty")
     private BigDecimal orderQty;
 
@@ -84,7 +109,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      * 检验状态(1-待检验 2-检验中 3-已检验)
      */
     @ApiModelProperty(name="inspectionStatus",value = "检验状态(1-待检验 2-检验中 3-已检验)")
-    @Excel(name = "检验状态(1-待检验 2-检验中 3-已检验)", height = 20, width = 30,orderNum="9")
+    @Excel(name = "检验状态(1-待检验 2-检验中 3-已检验)", height = 20, width = 30,orderNum="13",replace = {"待检验_1", "检验中_2", "已检验_3"})
     @Column(name = "inspection_status")
     private Byte inspectionStatus;
 
@@ -92,15 +117,23 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      * 检验结果(0-整批不合格 1-整批合格 2-部分不合格)
      */
     @ApiModelProperty(name="inspectionResult",value = "检验结果(0-整批不合格 1-整批合格 2-部分不合格)")
-    @Excel(name = "检验结果(0-整批不合格 1-整批合格 2-部分不合格)", height = 20, width = 30,orderNum="10")
+    @Excel(name = "检验结果(0-整批不合格 1-整批合格 2-部分不合格)", height = 20, width = 30,orderNum="14",replace = {"整批不合格_0", "整批合格_1", "部分不合格_2"})
     @Column(name = "inspection_result")
     private Byte inspectionResult;
+
+    /**
+     * 检验用户id
+     */
+    @ApiModelProperty(name="inspectionUserId",value = "检验用户id")
+    @Column(name = "inspection_user_id")
+    private Long inspectionUserId;
 
     /**
      * 审核状态(0-未审核 1-通过 2-不通过)
      */
     @ApiModelProperty(name="auditStatus",value = "审核状态(0-未审核 1-通过 2-不通过)")
     @Column(name = "audit_status")
+    @Excel(name = "审核状态(0-未审核 1-通过 2-不通过)", height = 20, width = 30,orderNum="16",replace = {"未审核_0", "通过_1", "不通过_2"})
     private Byte auditStatus;
 
     /**
@@ -168,7 +201,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="12",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="18",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -184,7 +217,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="14",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="20",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -201,7 +234,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="11")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="19")
     private String createUserName;
 
     /**
@@ -209,7 +242,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="13")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="21")
     private String modifiedUserName;
 
     /**
@@ -256,7 +289,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "inspectionStandardName",value = "检验标准")
-    @Excel(name = "检验标准", height = 20, width = 30,orderNum="7")
+    @Excel(name = "检验标准", height = 20, width = 30,orderNum="12")
     private String inspectionStandardName;
 
     /**
@@ -264,7 +297,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "inspectionWayCode",value = "检验方式")
-    @Excel(name = "检验方式", height = 20, width = 30,orderNum="8")
+    @Excel(name = "检验方式", height = 20, width = 30,orderNum="11")
     private String inspectionWayCode;
 
     /**
@@ -279,13 +312,23 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "auditUserName",value = "审核人")
+    @Excel(name = "审核人", height = 20, width = 30,orderNum="17")
     private String auditUserName;
+
+    /**
+     * 检验人
+     */
+    @Transient
+    @ApiModelProperty(name = "inspectionUserName",value = "检验人")
+    @Excel(name = "检验人", height = 20, width = 30,orderNum="15")
+    private String inspectionUserName;
 
     /**
      * 成品检验单明细
      */
     @Transient
     @ApiModelProperty(name="qmsInspectionOrderDets",value = "成品检验单明细")
+    @ExcelCollection(name="成品检验单明细",orderNum="22")
     private List<QmsInspectionOrderDet> qmsInspectionOrderDets = new ArrayList<>();
 
     /**

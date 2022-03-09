@@ -71,6 +71,12 @@ public class QmsInspectionOrderController {
         return ControllerUtil.returnCRUD(qmsInspectionOrderService.batchSubmit(inspectionOrderId));
     }
 
+    @ApiOperation("生成质检移位单")
+    @PostMapping("/qmsInspectToInnerJobShift")
+    public ResponseEntity qmsInspectToInnerJobShift(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
+        return ControllerUtil.returnCRUD(qmsInspectionOrderService.qmsInspectToInnerJobShift(ids));
+    }
+
     @ApiOperation("审核")
     @PostMapping("/audit")
     public ResponseEntity audit(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=QmsInspectionOrder.update.class) QmsInspectionOrder qmsInspectionOrder) {
@@ -136,10 +142,9 @@ public class QmsInspectionOrderController {
         throw new BizErrorException(e);
         }
     }
-
     @ApiOperation(value = "定时自动新增",notes = "定时自动新增")
     @GetMapping("/autoAdd")
     public ResponseEntity autoAdd() {
-        return ControllerUtil.returnCRUD(qmsInspectionOrderService.autoAdd());
+        return ControllerUtil.returnCRUD(qmsInspectionOrderService.newAutoAdd());
     }
 }

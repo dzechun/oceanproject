@@ -1,7 +1,5 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
-import cn.hutool.core.date.DatePattern;
-import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
@@ -12,7 +10,6 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialPackageDto;
 import com.fantechs.common.base.general.dto.basic.BasePackageSpecificationDto;
-import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderMaterialRePDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderProcessReWoDto;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
@@ -20,28 +17,27 @@ import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodePr
 import com.fantechs.common.base.general.dto.om.OmSalesCodeReSpcDto;
 import com.fantechs.common.base.general.dto.wms.in.BarPODto;
 import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialOwner;
 import com.fantechs.common.base.general.entity.basic.search.SearchBasePackageSpecification;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSignature;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
-import com.fantechs.common.base.general.entity.leisai.LeisaiWmsCarton;
-import com.fantechs.common.base.general.entity.leisai.LeisaiWmsCartonDet;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
-import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderProcessReWo;
 import com.fantechs.common.base.general.entity.mes.sfc.*;
 import com.fantechs.common.base.general.entity.om.OmSalesCodeReSpc;
 import com.fantechs.common.base.general.entity.om.search.SearchOmSalesCodeReSpc;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.guest.leisai.LeisaiFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
+import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcProductCartonMapper;
 import com.fantechs.provider.mes.sfc.service.*;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
@@ -85,15 +81,22 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     @Resource
     private OMFeignApi omFeignApi;
     @Resource
-    private LeisaiFeignApi leisaiFeignApi;
-    @Resource
     InFeignApi inFeignApi;
-
+    @Resource
+    InnerFeignApi innerFeignApi;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
     public Boolean pdaCartonWork(PdaCartonWorkDto dto) throws Exception {
+        // 2022-03-08 判断是否质检完成之后走产线入库
+        SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
+        searchWmsInnerInventoryDet.setBarcode(dto.getBarCode());
+        List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
+        if (!inventoryDetDtos.isEmpty()){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此条码已入库，不可重复扫码，请检查是否品质重新入库");
+        }
+
         // 获取登录用户
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -543,12 +546,12 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                         .build());
             }
 
-            // 完工入库
+            /*// 完工入库
             List<Long> cartonIds = new ArrayList<>();
             cartonIds.add(sfcProductCarton.getProductCartonId());
             if (mesPmWorkOrder.getOutputProcessId().equals(dto.getProcessId())){
                 this.beforeCartonAutoAsnOrder(cartonIds, user.getOrganizationId(), null);
-            }
+            }*/
         }
         return true;
     }
@@ -607,7 +610,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                         .build());
             }
 
-            // 获取该条码对应的工单信息
+            /*// 获取该条码对应的工单信息
             SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
             searchMesPmWorkOrder.setWorkOrderId(mesSfcProductCarton.getWorkOrderId());
             List<MesPmWorkOrderDto> mesPmWorkOrderDtoList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
@@ -620,7 +623,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             cartonIds.add(productCartonId);
             if (mesPmWorkOrderDto.getOutputProcessId().equals(processId)){
                 this.beforeCartonAutoAsnOrder(cartonIds, user.getOrganizationId(), null);
-            }
+            }*/
             return update;
         } else {
             mesSfcProductCarton.setNowPackageSpecQty(cartonDescNum);
@@ -710,7 +713,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     .build());
         }
 
-        // 获取该条码对应的工单信息
+        /*// 获取该条码对应的工单信息
         SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
         searchMesPmWorkOrder.setWorkOrderId(mesSfcProductCarton.getWorkOrderId());
         List<MesPmWorkOrderDto> mesPmWorkOrderDtoList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
@@ -723,50 +726,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         cartonIds.add(mesSfcProductCarton.getProductCartonId());
         if (mesPmWorkOrderDto.getOutputProcessId().equals(dto.getProcessId())){
             this.beforeCartonAutoAsnOrder(cartonIds, user.getOrganizationId(), null);
-        }
+        }*/
 
-        //雷赛包箱数据是否同步到WMS开始
-        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-        searchSysSpecItem.setSpecCode("CartonIfToLeisaiWms");
-        List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-        if(specItems.size()>0) {
-            SysSpecItem sysSpecItem = specItems.get(0);
-            if(sysSpecItem.getParaValue().equals("1")){
-                LeisaiWmsCarton leisaiWmsCarton=new LeisaiWmsCarton();
-                List<LeisaiWmsCartonDet> dets=new ArrayList<>();
-
-                leisaiWmsCarton.setBOXID(productCartonDto.getCartonCode());
-                leisaiWmsCarton.setSTATUS("1");
-                leisaiWmsCarton.setCREATEBY("MES");
-                leisaiWmsCarton.setCREATEDATE(DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
-                leisaiWmsCarton.setCLIENT("93");
-                leisaiWmsCarton.setPRINTCOUNT("1");
-                leisaiWmsCarton.setPRINTBY("MES");
-                leisaiWmsCarton.setPRINTDATE(DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
-
-                List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findBarcode(SearchMesSfcBarcodeProcess.builder()
-                        .cartonCode(productCartonDto.getCartonCode())
-                        .build());
-
-                for (MesSfcBarcodeProcess sfcBarcodeProcess : mesSfcBarcodeProcessList) {
-                    LeisaiWmsCartonDet leisaiWmsCartonDet=new LeisaiWmsCartonDet();
-                    leisaiWmsCartonDet.setBOXID(productCartonDto.getCartonCode());
-                    leisaiWmsCartonDet.setBARCODENO(sfcBarcodeProcess.getBarcode());
-                    leisaiWmsCartonDet.setPN(sfcBarcodeProcess.getMaterialCode());
-                    leisaiWmsCartonDet.setORDERNO(sfcBarcodeProcess.getWorkOrderCode());
-                    leisaiWmsCartonDet.setCLIENT("93");
-                    leisaiWmsCartonDet.setCREATEBY("MES");
-                    leisaiWmsCartonDet.setCREATEDATE(DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
-
-                    dets.add(leisaiWmsCartonDet);
-
-                }
-                leisaiWmsCarton.setLeisaiWmsCartonDetList(dets);
-                leisaiFeignApi.syncCartonData(leisaiWmsCarton);
-            }
-        }
-
-        //雷赛包箱数据是否同步到WMS结束
 
         return update;
     }
@@ -908,7 +869,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             List<PalletAutoAsnDto> autoAsnDtos = mesSfcProductCartonDetService.findListGroupByWorkOrder(map);
             for (PalletAutoAsnDto palletAutoAsnDto : autoAsnDtos){
                 map.clear();
-                map.put("productCartonId", palletAutoAsnDto.getProductPalletId());
+                map.put("productCartonId", palletAutoAsnDto.getStackingId());
                 List<MesSfcWorkOrderBarcodeDto> barcodeDtos = mesSfcWorkOrderBarcodeService.findListByCartonDet(map);
                 List<BarPODto> barPODtos = new ArrayList<>();
                 barcodeDtos.forEach(item -> {

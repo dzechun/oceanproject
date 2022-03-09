@@ -92,7 +92,7 @@ public class WanbaoBarcodeRultData extends ValidGroup implements Serializable {
      * 使用状态(0-未使用 1-已使用)
      */
     @ApiModelProperty(name="dataStatus",value = "使用状态(0-未使用 1-已使用)")
-    @Excel(name = "使用状态(0-未使用 1-已使用)", height = 20, width = 30,orderNum="6")
+    @Excel(name = "使用状态", height = 20, width = 30,orderNum="6", replace = {})
     @Column(name = "data_status")
     private Byte dataStatus;
 

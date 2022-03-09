@@ -77,7 +77,7 @@
     <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
         select<include refid="Base_Column_List"/>, oso.sales_order_code,
         bm.material_code, bm.material_name, bm.material_version,
-        bm.material_desc, bw.warehouse_name,
+        bm.material_desc, bw.warehouse_name,oso.supplier_id as supplierId,
         suc.user_name as create_user_name,
         bo.organization_name,
         sumod.user_name as modified_user_name

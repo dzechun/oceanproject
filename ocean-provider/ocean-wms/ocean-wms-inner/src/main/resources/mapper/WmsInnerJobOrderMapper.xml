@@ -15,6 +15,7 @@
         <result column="platform_id" jdbcType="BIGINT" property="platformId"/>
         <result column="job_order_code" jdbcType="VARCHAR" property="jobOrderCode"/>
         <result column="job_order_type" jdbcType="TINYINT" property="jobOrderType"/>
+        <result column="shift_type" jdbcType="TINYINT" property="shiftType"/>
         <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode"/>
         <result column="plan_qty" jdbcType="DECIMAL" property="planQty"/>
         <result column="actual_qty" jdbcType="DECIMAL" property="actualQty"/>
@@ -33,6 +34,7 @@
         <result column="option1" jdbcType="VARCHAR" property="option1"/>
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
+        <result column="option4" jdbcType="VARCHAR" property="option4"/>
         <collection property="wmsInPutawayOrderDets" ofType="com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet"
                     column="{jobOrderId=job_order_id}" select="com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper.findList">
         </collection>
@@ -54,6 +56,7 @@
         <result column="e_mail_address" jdbcType="VARCHAR" property="eMailAddress" />
         <result column="detailed_address" jdbcType="VARCHAR" property="detailedAddress" />
         <result column="platform_name" jdbcType="VARCHAR" property="platformName"/>
+        <result column="stacking_code" jdbcType="VARCHAR" property="stackingCode"/>
     </resultMap>
     <sql id="BaseColumnList">
         wipo.job_order_id,
@@ -61,6 +64,7 @@
         wipo.material_owner_id,
         wipo.warehouse_id,
         wipo.order_type_id,
+        wipo.shift_type,
         wipo.working_area_id,
         wipo.worker_id,
         wipo.platform_id,
@@ -82,7 +86,8 @@
         wipo.is_delete,
         wipo.option1,
         wipo.option2,
-        wipo.option3
+        wipo.option3,
+wipo.option4
     </sql>
     <select id="findList" resultMap="BaseResultMapDto" parameterType="java.util.Map">
         SELECT<include refid="BaseColumnList"/>,
@@ -92,6 +97,7 @@
         sus.user_name AS modified_user_name,
         bo.organization_name AS organization_Name,
         bp.platform_name,
+        ws.stacking_code,
         (SELECT IFNULL(SUM(wipod.distribution_qty),0) FROM wms_inner_job_order_det wipod where wipod.job_order_id = wipo.job_order_id) as distribution_qty
         <if test="isPallet!=null and isPallet!='' and isPallet==1">
             ,
@@ -112,6 +118,8 @@
         LEFT JOIN ocean_v2.sys_user su ON wipo.create_user_id = su.user_id
         LEFT JOIN ocean_v2.sys_user sus ON wipo.modified_user_id = sus.user_id
         LEFT JOIN base_organization bo ON wipo.org_id = bo.organization_id
+        LEFT JOIN wms_inner_job_order_re_mspp wijorm ON wipo.job_order_id = wijorm.job_order_id
+        LEFT JOIN wanbao_stacking ws ON wijorm.product_pallet_id = ws.stacking_id
         <where>
             <if test="orgId!=null and orgId!=''">
                 and wipo.org_id = #{orgId}

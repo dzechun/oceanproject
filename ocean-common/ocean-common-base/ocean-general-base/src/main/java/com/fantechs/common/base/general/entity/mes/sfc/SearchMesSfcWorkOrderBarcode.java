@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author Mr.Lei
@@ -51,4 +52,6 @@ public class SearchMesSfcWorkOrderBarcode extends BaseQuery implements Serializa
      */
     @ApiModelProperty(name = "barcodeStatus",value = "条码状态(0-待投产 1-投产中 2-已完成 3-待打印)")
     private String barcodeStatus;
+
+    private List<String> barcodeList;
 }

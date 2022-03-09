@@ -65,6 +65,12 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.fantechs.provider.api.wms.inner</groupId>
+            <artifactId>ocean-wms-inner-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>com.fantechs.common.base.general</groupId>
             <artifactId>ocean-general-base</artifactId>
             <version>0.0.1-SNAPSHOT</version>
@@ -83,8 +89,8 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.fantechs.provider.api.guest.leisai</groupId>
-            <artifactId>ocean-guest-leisai-api</artifactId>
+            <groupId>com.fantechs.provider.api.guest.wanbao</groupId>
+            <artifactId>ocean-guest-wanbao-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

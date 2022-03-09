@@ -108,10 +108,10 @@ public class BaseStorageImport implements Serializable {
     private String workingAreaCode;
 
     /**
-     * 产品存储类型(1-A类 2-B类 3-C类 4-D类)
+     * 产品存储类型(1-A类 2-B类 3-C类 4-D类)(必填)
      */
-    @ApiModelProperty(name="materialStoreType",value = "产品存储类型(1-A类 2-B类 3-C类 4-D类)")
-    @Excel(name = "产品存储类型(1-A类 2-B类 3-C类 4-D类)", height = 20, width = 30)
+    @ApiModelProperty(name="materialStoreType",value = "产品存储类型(1-A类 2-B类 3-C类 4-D类)(必填)")
+    @Excel(name = "产品存储类型(1-A类 2-B类 3-C类 4-D类)(必填)", height = 20, width = 30)
     private Integer materialStoreType;
 
     /**
@@ -163,4 +163,36 @@ public class BaseStorageImport implements Serializable {
     @Excel(name = "盘点动线号(必填)", height = 20, width = 30)
     private Integer stockMoveLineNo;
 
+    /**
+     * erp逻辑id
+     */
+    @ApiModelProperty(name="logicId",value = "erp逻辑id")
+    private Long logicId;
+
+    /**
+     * ERP逻辑仓库编码(必填)
+     */
+    @ApiModelProperty(name="logicCode" ,value="ERP逻辑仓库编码(必填)")
+    @Excel(name = "ERP逻辑仓库编码(必填)", height = 20, width = 30)
+    private String logicCode;
+
+    /**
+     * 产线id
+     */
+    @ApiModelProperty(name="proLineId",value = "产线id")
+    private Long proLineId;
+
+    /**
+     * 产线编码(必填)
+     */
+    @ApiModelProperty(name="proCode" ,value="产线编码(必填)")
+    @Excel(name = "产线编码(必填)", height = 20, width = 30)
+    private String proCode;
+
+    /**
+     * 是否底垫(1-否 2-是)(必填)
+     */
+    @ApiModelProperty(name="isHeelpiece",value = "是否底垫(1-否 2-是)(必填)")
+    @Excel(name = "是否底垫(1-否 2-是)(必填)", height = 20, width = 30)
+    private Integer isHeelpiece;
 }

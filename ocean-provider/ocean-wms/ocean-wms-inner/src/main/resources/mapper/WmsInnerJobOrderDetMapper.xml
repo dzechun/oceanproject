@@ -133,6 +133,10 @@
             <if test="jobOrderDetId !=null and jobOrderDetId !=''">
                 and wipod.job_order_det_id = #{jobOrderDetId}
             </if>
+            <if test="materialId !=null and materialId !=''">
+                and wipod.material_id = #{materialId}
+            </if>
+
             <if test="orderStatusList !=null and orderStatusList.size()!=0">
                 and wipod.order_status in
                 <foreach item="orderStatus" collection="orderStatusList" open="(" separator="," close=")">

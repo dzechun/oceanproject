@@ -189,4 +189,43 @@
       where barcode_process_id =#{item.barcodeProcessId}
     </foreach>
   </update>
+
+  <select id="countBarcodeListForPOGroup" parameterType="map" resultType="java.lang.String">
+    SELECT IFNULL(COUNT(*),0) FROM om_sales_code_re_spc oscrs
+    LEFT JOIN mes_sfc_barcode_process msbp ON oscrs.material_id = msbp.material_id
+    <where>
+      <if test="barcodeList != null">
+        <foreach collection="barcodeList" index="index" item="item" open="and msbp.barcode in (" close=")" separator=",">
+          #{item}
+        </foreach>
+      </if>
+    </where>
+    GROUP BY oscrs.same_package_code
+  </select>
+
+  <select id="countBarcodeListForSalesOrder" parameterType="map" resultType="java.lang.String">
+    SELECT IFNULL(COUNT(*),0) FROM om_sales_order_det osod
+    LEFT JOIN mes_pm_work_order mpwo ON osod.sales_order_id = mpwo.sales_order_id
+    LEFT JOIN mes_sfc_barcode_process msbp ON mpwo.work_order_id = msbp.work_order_id AND msbp.material_id = osod.material_id
+    <where>
+      <if test="barcodeList != null">
+        <foreach collection="barcodeList" index="index" item="item" open="and msbp.barcode in (" close=")" separator=",">
+          #{item}
+        </foreach>
+      </if>
+    </where>
+    GROUP BY osod.sales_code
+  </select>
+
+  <select id="countBarcodeListForMaterial" parameterType="map" resultType="java.lang.String">
+    SELECT IFNULL(COUNT(*),0) FROM mes_sfc_barcode_process msbp
+    <where>
+      <if test="barcodeList != null">
+        <foreach collection="barcodeList" index="index" item="item" open="and msbp.barcode in (" close=")" separator=",">
+          #{item}
+        </foreach>
+      </if>
+    </where>
+    GROUP BY msbp.material_id
+  </select>
 </mapper>

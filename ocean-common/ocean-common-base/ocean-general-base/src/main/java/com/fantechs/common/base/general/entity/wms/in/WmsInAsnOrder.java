@@ -2,6 +2,7 @@ package com.fantechs.common.base.general.entity.wms.in;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;;
+import com.fantechs.common.base.general.dto.basic.BaseStorageRule;
 import com.fantechs.common.base.support.ValidGroup;;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
@@ -279,6 +280,10 @@ public class WmsInAsnOrder extends ValidGroup implements Serializable {
     @Transient
     @ApiModelProperty(name = "productPalletId",value = "车间管理模块栈板表ID")
     private Long productPalletId;
+
+    @Transient
+    @ApiModelProperty(name = "baseStorageRule",value = "出入库规则对象")
+    private BaseStorageRule baseStorageRule;
 
     private static final long serialVersionUID = 1L;
 }

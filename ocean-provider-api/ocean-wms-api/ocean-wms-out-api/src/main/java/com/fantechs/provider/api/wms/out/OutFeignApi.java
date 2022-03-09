@@ -29,7 +29,7 @@ public interface OutFeignApi {
 
     @ApiOperation("获取详情")
     @PostMapping("/wmsOutDeliveryOrder/detail")
-    ResponseEntity<WmsOutDeliveryOrder> details(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id);
+    ResponseEntity<WmsOutDeliveryOrder> details(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message="id不能为空") Long id);
 
     @ApiOperation("列表")
     @PostMapping("/wmsOutDeliveryOrder/findList")

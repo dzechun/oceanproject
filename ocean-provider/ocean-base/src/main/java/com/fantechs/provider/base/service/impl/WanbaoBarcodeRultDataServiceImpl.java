@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -55,6 +56,11 @@ public class WanbaoBarcodeRultDataServiceImpl extends BaseService<WanbaoBarcodeR
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
 
+        // 物料重复数据过滤
+        Set<WanbaoBarcodeRultDataImportDto> importDtosSet = new TreeSet<>(Comparator.comparing(WanbaoBarcodeRultDataImportDto::getMaterialCode, Comparator.nullsFirst(Comparator.naturalOrder())));
+        importDtosSet.addAll(list);
+        list = importDtosSet.stream().collect(Collectors.toList());
+
         List<WanbaoBarcodeRultData> saveList = new ArrayList<>();
         List<WanbaoBarcodeRultData> updateList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++){
@@ -71,6 +77,10 @@ public class WanbaoBarcodeRultDataServiceImpl extends BaseService<WanbaoBarcodeR
                 fail.add(i+1);
                 continue;
             }
+            if (importDto.getIdentificationCode().length() != 3){
+                fail.add(i+1);
+                continue;
+            }
 
             // 对比识别码
             for (WanbaoBarcodeRultDataDto dataDto : rultDataDtos){
@@ -79,7 +89,7 @@ public class WanbaoBarcodeRultDataServiceImpl extends BaseService<WanbaoBarcodeR
                     break;
                 }
             }
-            if (StringUtils.isEmpty(rultData.getIdentificationCode())){
+            if (StringUtils.isNotEmpty(rultData.getIdentificationCode())){
                 // 修改
                 rultData.setIdentificationCode(importDto.getIdentificationCode());
                 if (StringUtils.isNotEmpty(importDto.getMaterialCode())){
@@ -88,7 +98,6 @@ public class WanbaoBarcodeRultDataServiceImpl extends BaseService<WanbaoBarcodeR
                         if (materialDto.getMaterialCode().equals(importDto.getMaterialCode())){
                             rultData.setMaterialId(materialDto.getMaterialId().toString());
                             rultData.setProductCode(materialDto.getMaterialCode());
-                            rultData.setDataStatus((byte) 1);
                             break;
                         }
                     }
@@ -97,10 +106,18 @@ public class WanbaoBarcodeRultDataServiceImpl extends BaseService<WanbaoBarcodeR
                         continue;
                     }
                 }
-
-                updateList.add(rultData);
+                if (rultData.getDataStatus().equals((byte) 0)){
+                    if (StringUtils.isNotEmpty(rultData.getMaterialId())){
+                        rultData.setDataStatus((byte) 1);
+                    }
+                    updateList.add(rultData);
+                }else {
+                    fail.add(i+1);
+                    continue;
+                }
             }else {
                 // 新增
+                rultData.setIdentificationCode(importDto.getIdentificationCode());
                 rultData.setDataStatus((byte) 0);
                 if (StringUtils.isNotEmpty(importDto.getMaterialCode())){
                     // 对比物料
@@ -123,6 +140,9 @@ public class WanbaoBarcodeRultDataServiceImpl extends BaseService<WanbaoBarcodeR
 
             // 批量保存
             if (!saveList.isEmpty()){
+                Set<WanbaoBarcodeRultData> saveSet = new TreeSet<>(Comparator.comparing(WanbaoBarcodeRultData::getIdentificationCode, Comparator.nullsFirst(Comparator.naturalOrder())));
+                saveSet.addAll(saveList);
+                saveList = saveSet.stream().collect(Collectors.toList());
                 wanbaoBarcodeRultDataMapper.insertList(saveList);
                 success = success + saveList.size();
             }

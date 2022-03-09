@@ -61,7 +61,7 @@
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select
     <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,bo.organization_name,
-    spm.product_model_code AS product_code, bmt.voltage, sm.material_code, sm.material_name
+    spm.product_model_code AS customer_model, bmt.voltage, sm.material_code, sm.material_name
     from wanbao_barcode_rult_data wbrd
     LEFT JOIN ocean_v2.sys_user su ON wbrd.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON wbrd.modified_user_id = sus.user_id
@@ -82,8 +82,8 @@
       <if test="voltage!=null and voltage!=''">
         and bmt.voltage like CONCAT('%', #{voltage}, '%')
       </if>
-      <if test="productModelCode!=null and productModelCode!=''">
-        and spm.product_model_code like CONCAT('%', #{productModelCode}, '%')
+      <if test="customerModel!=null and customerModel!=''">
+        and spm.product_model_code like CONCAT('%', #{customerModel}, '%')
       </if>
       <if test="status!=null">
         and wbrd.status=#{status}
@@ -97,16 +97,11 @@
 
   <update id="batchUpdate" parameterType="java.util.List">
     <foreach collection="list" item="item" separator=";">
-      update wanbao_barcode_rult_data wbrd
+      update wanbao_barcode_rult_data wbrd SET
         <if test="item.materialId != null">
             wbrd.material_id = #{item.materialId},
         </if>
---       wbrd.voltage = #{item.provinceCode},
       wbrd.identification_code = #{item.identificationCode},
---       wbrd.year = #{item.provinceCode},
---       wbrd.month = #{item.provinceCode},
---       wbrd.serial_number = #{item.provinceCode},
---       wbrd.product_code = #{item.provinceCode},
       wbrd.data_status = #{item.dataStatus},
       wbrd.create_user_id = #{item.createUserId},
       wbrd.create_time = #{item.createTime},

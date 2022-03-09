@@ -38,6 +38,7 @@
         SELECT
             mh.mo_number AS sales_order_code,
             mh.CUSTOMER_NUMBER AS supplier_code,
+            mh.CUSTOMER_NAME AS supplier_name,
             mh.salesperson_name AS make_order_user_name,
             mh.mo_status AS order_status,
             mh.order_type_name AS order_type,

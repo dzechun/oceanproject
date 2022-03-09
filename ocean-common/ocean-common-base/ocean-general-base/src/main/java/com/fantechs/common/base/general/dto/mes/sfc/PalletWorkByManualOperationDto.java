@@ -18,8 +18,8 @@ public class PalletWorkByManualOperationDto implements Serializable {
     @ApiModelProperty(name="stationId",value = "工位ID")
     private Long stationId;
 
-    @ApiModelProperty(name="barcode",value = "条码")
-    private List<String> barcode;
+    @ApiModelProperty(name="wanbaoBarcodeDtos",value = "条码")
+    private List<WanbaoBarcodeDto> wanbaoBarcodeDtos;
 
     @ApiModelProperty(name = "checkdaliyOrder", value = "检查排程单（0-否 1-是）")
     private byte checkdaliyOrder;

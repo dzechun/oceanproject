@@ -46,7 +46,6 @@
             AND msib.organization_id = 83
             AND wjs.lookup_type = 'WIP_JOB_STATUS'
             AND wjs.LOOKUP_CODE = WDJ.STATUS_TYPE
-            AND wjs.meaning = '已发放'
             AND wdj.job_type = 1
 --             AND wdj.scheduled_start_date >= TO_DATE ( '2021-10-01', 'YYYY-MM-DD' )
             AND (we.wip_entity_name LIKE 'ZL%'
@@ -59,16 +58,22 @@
             <if test="workOrderCode != null and workOrderCode != ''">
                 AND we.wip_entity_name = #{workOrderCode}
             </if>
+            <if test="workOrderCode == null">
+                AND wjs.meaning = '已发放'
+            </if>
+
         </where>
         ORDER BY
             msib.segment1,
             we.wip_entity_name
     </select>
 
-    <insert id="save" parameterType="com.fantechs.provider.wanbao.api.entity.MiddleOrder">
-        INSERT INTO "K3WMS"."middle_order" ( "work_order_id", "work_order_code", "work_order_status", "work_order_type", "sales_order_code", "pro_name", "plan_start_time", "plan_end_time", "work_order_qty", "output_qty", "material_code", "material_name", "modified_time" )
-        VALUES
-            ( #{workOrderId},
+    <insert id="save" parameterType="java.util.List" useGeneratedKeys="false">
+        INSERT INTO "K3WMS"."middle_order" ( "work_order_id", "work_order_code", "work_order_status", "work_order_type", "sales_order_code", "pro_name", "plan_start_time", "plan_end_time", "work_order_qty", "output_qty", "material_code", "material_name", "modified_time", "sales_code" )
+        <foreach item="item" index="index" collection="list" separator="union all">
+            (
+            SELECT
+            #{workOrderId},
             #{workOrderCode},
             #{workOrderStatus},
             #{workOrderType},
@@ -80,7 +85,11 @@
             #{materialName} ,
             #{workOrderQty} ,
             #{outputQty} ,
-            #{modifiedTime} )
+            #{modifiedTime},
+            #{salesCode}
+            FROM DUAL
+            )
+        </foreach>
     </insert>
 
 </mapper>

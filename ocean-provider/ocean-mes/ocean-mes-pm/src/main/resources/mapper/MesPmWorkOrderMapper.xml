@@ -39,6 +39,7 @@
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
         <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
+        <result column="logic_id" jdbcType="BIGINT" property="logicId"/>
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto">
@@ -46,6 +47,7 @@
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
         <result column="material_desc" jdbcType="VARCHAR" property="materialDesc"/>
         <result column="material_version" jdbcType="VARCHAR" property="materialVersion"/>
+        <result column="logic_name" jdbcType="VARCHAR" property="logicName"/>
         <collection property="mesPmWorkOrderBomDtos" ofType="com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto"
                     column="{workOrderId=work_order_id}" select="com.fantechs.provider.mes.pm.mapper.MesPmWorkOrderBomMapper.findList">
         </collection>
@@ -118,6 +120,7 @@
         swo.remark,
         swo.contract_no,
         swo.batch_code,
+        swo.logic_id,
         sm.material_code AS material_code,
         sm.material_name AS material_name,
         sm.material_version AS material_version,
@@ -137,7 +140,8 @@
         sps.package_specification_quantity AS 'packageSpecificationQuantity',
         putbp.process_name AS 'putIntoProcessName',
         outbp.process_name AS 'outputProcessName',
-        oso.sales_order_code AS 'salesOrderCode'
+        oso.sales_order_code AS 'salesOrderCode',
+        wel.logic_name as 'logicName'
         FROM
         mes_pm_work_order swo
         left join base_material sm on swo.material_id=sm.material_id
@@ -153,6 +157,7 @@
         left join base_process putbp ON putbp.process_id = swo.put_into_process_id
         left join base_process outbp ON outbp.process_id = swo.output_process_id
         left join om_sales_order oso ON oso.sales_order_id = swo.sales_order_id
+        left join wanbao_erp_logic wel on wel.logic_id = swo.logic_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(swo.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

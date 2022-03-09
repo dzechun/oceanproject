@@ -68,4 +68,19 @@ public class MesSfcBarcodeProcessServiceImpl extends BaseService<MesSfcBarcodePr
     public int batchUpdate(List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList) {
         return mesSfcBarcodeProcessMapper.batchUpdate(mesSfcBarcodeProcessList);
     }
+
+    @Override
+    public String countBarcodeListForPOGroup(Map<String, Object> map) {
+        return mesSfcBarcodeProcessMapper.countBarcodeListForPOGroup(map);
+    }
+
+    @Override
+    public String countBarcodeListForSalesOrder(Map<String, Object> map) {
+        return mesSfcBarcodeProcessMapper.countBarcodeListForSalesOrder(map);
+    }
+
+    @Override
+    public String countBarcodeListForMaterial(Map<String, Object> map) {
+        return mesSfcBarcodeProcessMapper.countBarcodeListForSalesOrder(map);
+    }
 }

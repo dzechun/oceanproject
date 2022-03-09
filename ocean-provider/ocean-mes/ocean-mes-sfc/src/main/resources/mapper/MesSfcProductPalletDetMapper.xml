@@ -24,15 +24,20 @@
   </resultMap>
 
   <resultMap id="BaseResultDto" type="com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto">
-    <result column="product_pallet_id" jdbcType="BIGINT" property="productPalletId" />
+    <result column="stacking_id" jdbcType="BIGINT" property="stackingId" />
     <result column="source_order_id" jdbcType="BIGINT" property="sourceOrderId" />
     <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
     <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />
     <result column="packing_qty" jdbcType="DECIMAL" property="packingQty" />
     <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
     <result column="supplier_name" jdbcType="VARCHAR" property="customerName" />
     <result column="sales_code" jdbcType="VARCHAR" property="salesOrderCode" />
     <result column="sales_user_name" jdbcType="VARCHAR" property="salesManName" />
+    <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+    <result column="logic_id" jdbcType="BIGINT" property="logicId"/>
+    <result column="pro_line_id" jdbcType="BIGINT" property="proLineId"/>
+    <result column="same_package_code" jdbcType="VARCHAR" property="samePackageCode"/>
   </resultMap>
 
   <sql id="BaseColumnList">
@@ -76,38 +81,38 @@
 
   <select id="findListGroupByWorkOrder" resultMap="BaseResultDto" parameterType="map">
     SELECT
-    msppd.product_pallet_id AS product_pallet_id,
-    mswob.work_order_id AS source_order_id,
+    msbp.work_order_id AS source_order_id,
     mpwo.material_id AS material_id,
+    msbp.material_code,
     sps.package_specification_quantity AS packing_unit_name,
-    COUNT( msppd.work_order_barcode_id ) AS packing_qty,
-    COUNT( msppd.work_order_barcode_id ) AS actual_qty,
+    COUNT( msbp.work_order_id ) AS packing_qty,
+    COUNT( msbp.work_order_id ) AS actual_qty,
     bs.supplier_name,
     oscrs.sales_code,
-    oso.sales_user_name
+    oscrs.same_package_code,
+    oso.sales_user_name,
+    mpwo.work_order_code,
+    mpwo.logic_id,
+    mpwo.pro_line_id
     FROM
-    mes_sfc_product_pallet_det msppd
-    LEFT JOIN mes_sfc_work_order_barcode mswob ON msppd.work_order_barcode_id = mswob.work_order_barcode_id
-    LEFT JOIN mes_pm_work_order mpwo ON mswob.work_order_id = mpwo.work_order_id
+    mes_sfc_barcode_process msbp
+    LEFT JOIN mes_pm_work_order mpwo ON msbp.work_order_id = mpwo.work_order_id
     LEFT JOIN base_material_tab bt ON bt.material_id = mpwo.material_id
     LEFT JOIN base_package_specification sps ON sps.package_specification_id = bt.package_specification_id
     LEFT JOIN om_sales_order oso ON mpwo.sales_order_id = oso.sales_order_id
     LEFT JOIN base_supplier bs ON oso.supplier_id = bs.supplier_id
-    LEFT JOIN mes_sfc_barcode_process msbp ON mswob.work_order_barcode_id = msbp.work_order_barcode_id
     LEFT JOIN om_sales_code_re_spc oscrs ON msbp.sales_code_re_spc_id = oscrs.sales_code_re_spc_id
     <where>
       <if test="orgId != null">
-        and msppd.org_id = #{orgId}
+        and mpwo.org_id = #{orgId}
       </if>
-      <if test="list != null">
-        <foreach collection="list" open="and msppd.product_pallet_id IN (" separator="," close=")" item="value">
-          #{value}
-        </foreach>
-      </if>
+    <if test="barcodeList != null">
+      <foreach collection="barcodeList" item="item" open="and msbp.barcode IN (" close=")" separator="," >
+        #{item}
+      </foreach>
+    </if>
     </where>
-    GROUP BY
-    msppd.product_pallet_id,
-    mswob.work_order_id
+    GROUP BY mpwo.work_order_id
   </select>
 
 </mapper>

@@ -22,6 +22,7 @@
         <result column="option1" jdbcType="VARCHAR" property="option1"/>
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
+
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap"
@@ -32,6 +33,7 @@
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
         <result column="warehouse_category" jdbcType="BIGINT" property="warehouseCategory"/>
+
     </resultMap>
 
     <sql id="Base_Column_List">

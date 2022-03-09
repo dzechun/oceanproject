@@ -187,4 +187,11 @@ public class BaseProductModel extends ValidGroup implements Serializable {
      * 扩展字段3
      */
     private String option3;
+
+    /**
+     * 组织名称
+     */
+    @ApiModelProperty(name="materialId",value = "物料ID")
+    @Transient
+    private Long materialId;
 }

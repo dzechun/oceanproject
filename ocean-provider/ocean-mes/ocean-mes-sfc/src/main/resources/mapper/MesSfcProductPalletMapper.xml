@@ -124,7 +124,7 @@
     GROUP BY oso.sales_order_code
   </select>
 
-  <select id="findStackingList" resultMap="ResultBySalesCodeGroup" parameterType="map">
+  <select id="findStackingList" resultMap="BaseResultMapDto" parameterType="map">
     SELECT ws.stacking_id,
     ws.stacking_code,
     ws.stacking_name,

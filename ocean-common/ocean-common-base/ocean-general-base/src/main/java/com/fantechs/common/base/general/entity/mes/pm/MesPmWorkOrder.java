@@ -279,5 +279,8 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
     @Column(name = "sales_code")
     private String salesCode;
 
+    @ApiModelProperty(name="logicId",value = "erp逻辑仓id")
+    @Column(name = "logic_id")
+    private Long logicId;
 
 }
