@@ -31,7 +31,7 @@ import java.util.List;
  * Created by leifengzhi on 2022/03/09.
  */
 @RestController
-@Api(tags = "wmsInnerBarcodeOperation控制器")
+@Api(tags = "条码替换报废控制器")
 @RequestMapping("/wmsInnerBarcodeOperation")
 @Validated
 public class WmsInnerBarcodeOperationController {
