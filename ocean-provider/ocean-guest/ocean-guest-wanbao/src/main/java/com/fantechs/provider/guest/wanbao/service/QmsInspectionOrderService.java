@@ -24,4 +24,11 @@ public interface QmsInspectionOrderService extends IService<QmsInspectionOrder> 
     QmsInspectionOrder selectByKey(Long key);
     int recheck(Long inspectionOrderId);
     int updateSampleQty(Long inspectionOrderId, BigDecimal sampleQty);
+
+    /**
+     * 成品检验生成质检移位单
+     * @param ids
+     * @return
+     */
+    int qmsInspectToInnerJobShift(String ids);
 }

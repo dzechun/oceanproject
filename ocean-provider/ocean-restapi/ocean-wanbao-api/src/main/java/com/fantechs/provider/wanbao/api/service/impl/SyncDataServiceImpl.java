@@ -158,6 +158,12 @@ public class SyncDataServiceImpl implements SyncDataService {
                         baseProductModel.setProductModelName(dto.getProductModelCode());
                         baseProductModel.setProductModelCode(dto.getProductModelCode());
                         baseProductModel.setProductModelDesc(dto.getMaterialCode());
+                        baseProductModel.setOrganizationId(sysUser.getOrganizationId());
+                        baseProductModel.setIsDelete((byte) 1);
+                        baseProductModel.setCreateTime(new Date());
+                        baseProductModel.setCreateUserId(sysUser.getUserId());
+                        baseProductModel.setModifiedTime(new Date());
+                        baseProductModel.setModifiedUserId(sysUser.getUserId());
                         baseProductModel.setStatus(1);
                         Long id = baseFeignApi.addForReturnId(baseProductModel).getData();
                         dto.setProductModelId(id.toString());
@@ -196,23 +202,6 @@ public class SyncDataServiceImpl implements SyncDataService {
                     material.setMaterialDesc(dto.getMaterialDesc());
                     material.setBarcodeRuleSetId(ruleSetId);
                     dto.setMaterialId(material.getMaterialId().toString());
-                    if (dto.getProductModelCode() != null) {
-                        for (BaseProductModel item : productModels) {
-                            if (item.getProductModelCode().equals(dto.getProductModelCode()) && dto.getMaterialId().equals(item.getMaterialId())) {
-                                dto.setProductModelId(item.getProductModelId().toString());
-                                break;
-                            }
-                        }
-                        if (dto.getProductModelId() == null){
-                            BaseProductModel baseProductModel = new BaseProductModel();
-                            baseProductModel.setProductModelName(dto.getProductModelCode());
-                            baseProductModel.setProductModelCode(dto.getProductModelCode());
-                            baseProductModel.setProductModelDesc(dto.getMaterialCode());
-                            baseProductModel.setStatus(1);
-                            Long id = baseFeignApi.addForReturnId(baseProductModel).getData();
-                            dto.setProductModelId(id.toString());
-                        }
-                    }
                     baseFeignApi.update(material);
 
                     //修改物料页签
