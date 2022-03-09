@@ -303,7 +303,7 @@ public class WmsInnerBarcodeOperationServiceImpl extends BaseService<WmsInnerBar
         wmsInnerBarcodeOperation.setModifiedUserId(sysUser.getUserId());
         wmsInnerBarcodeOperation.setModifiedTime(new Date());
         i+=wmsInnerBarcodeOperationMapper.insertUseGeneratedKeys(wmsInnerBarcodeOperation);
-        
+
         return i;
     }
 

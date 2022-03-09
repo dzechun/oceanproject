@@ -11,10 +11,7 @@ import com.fantechs.common.base.general.dto.basic.imports.BaseStorageImport;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
 import com.fantechs.common.base.general.dto.restapi.EngReportStorageDto;
-import com.fantechs.common.base.general.entity.basic.BaseStorage;
-import com.fantechs.common.base.general.entity.basic.BaseStorageMaterial;
-import com.fantechs.common.base.general.entity.basic.BaseWarehouseArea;
-import com.fantechs.common.base.general.entity.basic.BaseWorkingArea;
+import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtStorage;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
@@ -57,6 +54,10 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
     private SecurityFeignApi securityFeignApi;
     @Resource
     private FiveringFeignApi fiveringFeignApi;
+    @Resource
+    private BaseProLineMapper baseProLineMapper;
+    @Resource
+    private WanbaoErpLogicMapper wanbaoErpLogicMapper;
 
     @Override
     public int batchUpdate(List<BaseStorage> baseStorages) {
@@ -233,11 +234,26 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
             Integer pickingMoveLineNo = baseStorageImport.getPickingMoveLineNo();
             Integer putawayMoveLineNo = baseStorageImport.getPutawayMoveLineNo();
             Integer stockMoveLineNo = baseStorageImport.getStockMoveLineNo();
+            Integer materialStoreType = baseStorageImport.getMaterialStoreType();
+            Integer isHeelpiece = baseStorageImport.getIsHeelpiece();
+            String proCode = baseStorageImport.getProCode();
+            String logicCode = baseStorageImport.getLogicCode();
 
             if (StringUtils.isEmpty(
                     storageCode,warehouseAreaCode,storageType,workingAreaCode,roadway,rowNo,
-                    columnNo,levelNo,pickingMoveLineNo,putawayMoveLineNo,stockMoveLineNo
+                    columnNo,levelNo,pickingMoveLineNo,putawayMoveLineNo,stockMoveLineNo,
+                    materialStoreType,isHeelpiece,proCode,logicCode
             )){
+                fail.add(i+4);
+                continue;
+            }
+
+            Example example = new Example(BaseStorage.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria.andEqualTo("storageCode", storageCode);
+            BaseStorage baseStorage = baseStorageMapper.selectOneByExample(example);
+            if (StringUtils.isNotEmpty(baseStorage)) {
                 fail.add(i+4);
                 continue;
             }
@@ -267,6 +283,30 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
             }
             baseStorageImport.setWorkingAreaId(baseWorkingArea.getWorkingAreaId());
 
+            //判断产线是否存在
+            Example example3 = new Example(BaseProLine.class);
+            Example.Criteria criteria3 = example3.createCriteria();
+            criteria3.andEqualTo("organizationId", currentUser.getOrganizationId());
+            criteria3.andEqualTo("proCode",proCode);
+            BaseProLine baseProLine = baseProLineMapper.selectOneByExample(example3);
+            if (StringUtils.isEmpty(baseProLine)){
+                fail.add(i+4);
+                continue;
+            }
+            baseStorageImport.setProLineId(baseProLine.getProLineId());
+
+            //判断ERP逻辑仓是否存在
+            Example example4 = new Example(WanbaoErpLogic.class);
+            Example.Criteria criteria4 = example4.createCriteria();
+            criteria4.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria4.andEqualTo("logicCode",logicCode);
+            WanbaoErpLogic wanbaoErpLogic = wanbaoErpLogicMapper.selectOneByExample(example4);
+            if (StringUtils.isEmpty(wanbaoErpLogic)){
+                fail.add(i+4);
+                continue;
+            }
+            baseStorageImport.setLogicId(wanbaoErpLogic.getLogicId());
+
             baseStorageImportArrayList.add(baseStorageImport);
         }
 
@@ -281,6 +321,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
             baseStorage.setOrgId(currentUser.getOrganizationId());
             baseStorage.setStorageType(baseStorageImport.getStorageType().byteValue());
             baseStorage.setMaterialStoreType(baseStorageImport.getMaterialStoreType().byteValue());
+            baseStorage.setIsHeelpiece(baseStorageImport.getIsHeelpiece().byteValue());
             list.add(baseStorage);
         }
 

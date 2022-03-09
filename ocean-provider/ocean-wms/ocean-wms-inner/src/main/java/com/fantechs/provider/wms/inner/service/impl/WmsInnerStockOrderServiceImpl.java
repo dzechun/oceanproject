@@ -2,22 +2,18 @@ package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.wms.inner.*;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
@@ -50,8 +46,6 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
     private WmsInnerInventoryMapper wmsInnerInventoryMapper;
     @Resource
     private WmsInnerInventoryDetMapper wmsInnerInventoryDetMapper;
-    @Resource
-    private EngFeignApi engFeignApi;
     @Resource
     private SecurityFeignApi securityFeignApi;
     @Resource
@@ -500,21 +494,6 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             wmsInventoryVerification.setModifiedUserId(sysUser.getUserId());
             num +=wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInventoryVerification);
 
-            //返写盘点数据（五环） 复盘确认时才回写
-            //获取程序配置项
-            if(wmsInventoryVerification.getProjectType()==(byte)2 && StringUtils.isNotEmpty(id)) {
-                SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
-                searchSysSpecItemFiveRing.setSpecCode("FiveRing");
-                List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
-                if (itemListFiveRing.size() < 1) {
-                    throw new BizErrorException("配置项 FiveRing 获取失败");
-                }
-                SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-                if ("1".equals(sysSpecItem.getParaValue())) {
-                    engFeignApi.reportStockOrder(wmsInventoryVerification);
-                }
-            }
-
         }
         return num;
     }
@@ -555,17 +534,6 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
             wmsInventoryVerification.setOrderStatus((byte)6);
             num+=wmsInventoryVerificationMapper.updateByPrimaryKeySelective(wmsInventoryVerification);
 
-            //返写盘点数据（五环）
-//            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
-//            searchSysSpecItemFiveRing.setSpecCode("FiveRing");
-//            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
-//            if (itemListFiveRing.size() < 1) {
-//                throw new BizErrorException("配置项 FiveRing 获取失败");
-//            }
-//            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-//            if ("1".equals(sysSpecItem.getParaValue())) {
-//                engFeignApi.reportStockOrder(wmsInventoryVerification);
-//            }
         }
         return num;
     }

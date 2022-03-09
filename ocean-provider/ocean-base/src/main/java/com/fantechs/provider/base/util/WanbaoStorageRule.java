@@ -162,7 +162,7 @@ public class WanbaoStorageRule {
         }
         //筛选空库位 根据上架动线号升序
         list = list.stream().filter(x-> x.getStorageId().longValue()!=storageRuleInventries.listIterator().next().getStorageId().longValue()).sorted(Comparator.comparing(BaseStorage::getPutawayMoveLineNo)).collect(Collectors.toList());
-        if(list.size()>0){
+        if(StringUtils.isEmpty(storageId) && list.size()>0){
             storageId = list.get(0).getStorageId();
         }else {
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"未匹配到空库位");
