@@ -15,6 +15,7 @@
         <result column="platform_id" jdbcType="BIGINT" property="platformId"/>
         <result column="job_order_code" jdbcType="VARCHAR" property="jobOrderCode"/>
         <result column="job_order_type" jdbcType="TINYINT" property="jobOrderType"/>
+        <result column="shift_type" jdbcType="TINYINT" property="shiftType"/>
         <result column="related_order_code" jdbcType="VARCHAR" property="relatedOrderCode"/>
         <result column="plan_qty" jdbcType="DECIMAL" property="planQty"/>
         <result column="actual_qty" jdbcType="DECIMAL" property="actualQty"/>
@@ -63,6 +64,7 @@
         wipo.material_owner_id,
         wipo.warehouse_id,
         wipo.order_type_id,
+        wipo.shift_type,
         wipo.working_area_id,
         wipo.worker_id,
         wipo.platform_id,

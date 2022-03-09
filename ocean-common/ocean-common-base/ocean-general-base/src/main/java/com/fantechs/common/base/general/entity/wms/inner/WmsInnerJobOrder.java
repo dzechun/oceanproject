@@ -115,6 +115,13 @@ public class WmsInnerJobOrder extends ValidGroup implements Serializable {
     private Byte jobOrderType;
 
     /**
+     * 移位类型(1-正常移位单 2-质检移位单 3-三星移位单)
+     */
+    @ApiModelProperty(name="shiftType",value = "移位类型(1-正常移位单 2-质检移位单 3-三星移位单)")
+    @Column(name = "shift_type")
+    private Byte shiftType;
+
+    /**
      * 相关单号
      */
     @ApiModelProperty(name="relatedOrderCode",value = "相关单号")
