@@ -1702,6 +1702,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         } else if (record.getJobOrderType() == (byte) 2) {
             //移位单
             record.setJobOrderCode(CodeUtils.getId("SHIFT-"));
+            if(StringUtils.isEmpty(record.getShiftType())){
+                record.setShiftType((byte)1);//正常移位单
+            }
         }
         record.setCreateTime(new Date());
         record.setCreateUserId(sysUser.getUserId());
