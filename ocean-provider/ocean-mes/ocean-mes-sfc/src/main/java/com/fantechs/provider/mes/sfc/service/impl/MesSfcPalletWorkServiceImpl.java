@@ -21,11 +21,13 @@ import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDto;
 import com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDto;
 import com.fantechs.common.base.general.dto.wms.in.BarPODto;
 import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.*;
 import com.fantechs.common.base.general.entity.wanbao.WanbaoStackingDet;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.BeanUtils;
@@ -38,6 +40,7 @@ import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
+import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.mes.sfc.service.*;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -84,6 +87,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     OMFeignApi omFeignApi;
     @Resource
     WanbaoFeignApi wanbaoFeignApi;
+    @Resource
+    InnerFeignApi innerFeignApi;
 
     // endregion
 
@@ -91,6 +96,14 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
     public PalletWorkScanDto palletWorkScanBarcode(RequestPalletWorkScanDto requestPalletWorkScanDto) throws Exception {
+        // 2022-03-08 判断是否质检完成之后走产线入库
+        SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
+        searchWmsInnerInventoryDet.setBarcode(requestPalletWorkScanDto.getBarcode());
+        List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
+        if (!inventoryDetDtos.isEmpty()){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此条码已入库，不可重复扫码，请检查是否品质重新入库");
+        }
+
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         //samePackageCode 同包装编码--扫描的箱号产品条码对应的或者扫描的产品条码对应的PO编码 2020-10-20
@@ -560,20 +573,20 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         map.put("barcodeList", barcodeList);
         if (dto.getPalletType() == 2){
             String count = mesSfcBarcodeProcessService.countBarcodeListForPOGroup(map);
-            if (count == null || Integer.valueOf(count) > 1){
+            if (count != null && Integer.parseInt(count) > 1){
                 dto.setPalletType((byte) 3);
             }
         }
         if (dto.getPalletType() == 3){
             String count = mesSfcBarcodeProcessService.countBarcodeListForSalesOrder(map);
-            if (count == null || Integer.parseInt(count) > 1){
+            if (count != null && Integer.parseInt(count) > 1){
                 dto.setPalletType((byte) 1);
             }
         }
         if (dto.getPalletType() == 1){
             // 同料号
             String count = mesSfcBarcodeProcessService.countBarcodeListForMaterial(map);
-            if (count == null || Integer.parseInt(count) > 1){
+            if (count != null && Integer.parseInt(count) > 1){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此批条码不属于同个物料，不可提交");
             }
         }
@@ -583,7 +596,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         if (stackingList.isEmpty()){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛编码不存在");
         }
-        log.info("=========dto:" + JSON.toJSONString(dto) + "=========== stackingList: " + JSON.toJSONString(stackingList));
         // 保存条码堆垛关系
         List<WanbaoStackingDet> stackingDets = new ArrayList<>();
         for (WanbaoBarcodeDto wanbaoBarcodeDto : dto.getWanbaoBarcodeDtos()) {
@@ -607,6 +619,15 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
     @Override
     public ScanByManualOperationDto scanByManualOperation(String barcode, Long proLineId) {
+        // 2022-03-08 判断是否质检完成之后走产线入库
+        SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
+        searchWmsInnerInventoryDet.setBarcode(barcode);
+        List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
+        if (!inventoryDetDtos.isEmpty()){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此条码已入库，不可重复扫码，请检查是否品质重新入库");
+        }
+
+
         ScanByManualOperationDto dto = new ScanByManualOperationDto();
 
         SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
@@ -630,7 +651,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             if(!processServiceList.get(0).getProLineId().equals(proLineId)){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "配置产线与条码产线不一致");
             }
-            if (!processServiceList.get(0).getNextProcessId().equals(0)){
+            if (processServiceList.get(0).getNextProcessId() != 0L){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "当前条码未完成所有过站，请重新扫码");
             }
             if (!mesSfcKeyPartRelevanceDtoList.isEmpty()) {
@@ -681,7 +702,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             if(!processServiceList.get(0).getProLineId().equals(proLineId)){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "配置产线与条码产线不一致");
             }
-            if (!processServiceList.get(0).getNextProcessId().equals(0)){
+            if (processServiceList.get(0).getNextProcessId() != 0L){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "当前条码未完成所有过站，请重新扫码");
             }
             dto.setBarcode(mesSfcKeyPartRelevanceDtoList.get(0).getBarcodeCode());
@@ -889,6 +910,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         map.put("orgId", orgId);
         List<PalletAutoAsnDto> autoAsnDtos = mesSfcProductPalletDetService.findListGroupByWorkOrder(map);
         for (PalletAutoAsnDto palletAutoAsnDto : autoAsnDtos){
+            palletAutoAsnDto.setPackingQty(BigDecimal.valueOf(wanbaoBarcodeDtos.size()));
             List<BarPODto> barPODtos = new ArrayList<>();
             wanbaoBarcodeDtos.forEach(item -> {
                 if (item.getWorkOrderId().equals(palletAutoAsnDto.getSourceOrderId())){
@@ -901,6 +923,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 }
             });
             palletAutoAsnDto.setBarCodeList(barPODtos);
+            palletAutoAsnDto.setStackingId(stackingId);
             //完工入库
             SearchBaseMaterialOwner searchBaseMaterialOwner = new SearchBaseMaterialOwner();
             searchBaseMaterialOwner.setAsc((byte)1);

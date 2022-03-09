@@ -150,25 +150,25 @@ public class SyncDataServiceImpl implements SyncDataService {
             }
 
             for (MiddleMaterial dto : list) {
-                if (dto.getProductModelCode() != null) {
-                    for (BaseProductModel item : productModels) {
-                        if (item.getProductModelCode().equals(dto.getProductModelCode())) {
-                            dto.setProductModelId(item.getProductModelId().toString());
-                            break;
-                        }
-                    }
-                    if (StringUtils.isEmpty(dto.getProductModelId())) {
+                long MaterialCount = baseMaterials.stream().filter(item -> item.getMaterialCode().equals(dto.getMaterialCode())).count();
+                if (MaterialCount <= 0) {
+                    // 新增客户型号
+                    if (dto.getProductModelId() == null){
                         BaseProductModel baseProductModel = new BaseProductModel();
                         baseProductModel.setProductModelName(dto.getProductModelCode());
                         baseProductModel.setProductModelCode(dto.getProductModelCode());
                         baseProductModel.setProductModelDesc(dto.getMaterialCode());
+                        baseProductModel.setOrganizationId(sysUser.getOrganizationId());
+                        baseProductModel.setIsDelete((byte) 1);
+                        baseProductModel.setCreateTime(new Date());
+                        baseProductModel.setCreateUserId(sysUser.getUserId());
+                        baseProductModel.setModifiedTime(new Date());
+                        baseProductModel.setModifiedUserId(sysUser.getUserId());
                         baseProductModel.setStatus(1);
                         Long id = baseFeignApi.addForReturnId(baseProductModel).getData();
                         dto.setProductModelId(id.toString());
                     }
-                }
-                long MaterialCount = baseMaterials.stream().filter(item -> item.getMaterialCode().equals(dto.getMaterialCode())).count();
-                if (MaterialCount <= 0) {
+
                     //新增物料
                     BaseMaterial material = new BaseMaterial();
                     BeanUtil.copyProperties(dto, material);

@@ -8,7 +8,6 @@ import com.fantechs.common.base.general.dto.basic.StorageRuleInventry;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseStorageCapacity;
-import com.fantechs.common.base.general.entity.basic.BaseWarehouseArea;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.mapper.BaseMaterialMapper;
@@ -66,15 +65,15 @@ public class WanbaoStorageRule {
             throw new BizErrorException(ErrorCodeEnum.GL99990100);
         }
         //查询erp逻辑仓绑定的库区
-        Example example = new Example(BaseWarehouseArea.class);
-        example.createCriteria().andNotEqualTo("logicId",baseStorageRule.getLogicId());
-        BaseWarehouseArea baseWarehouseArea = wanbaoStorageRule.baseWarehouseAreaMapper.selectOneByExample(example);
-        if(StringUtils.isEmpty(baseStorageRule)){
-            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未获取到ERP逻辑仓绑定的库区");
-        }
+//        Example example = new Example(BaseWarehouseArea.class);
+//        example.createCriteria().andNotEqualTo("logicId",baseStorageRule.getLogicId());
+//        BaseWarehouseArea baseWarehouseArea = wanbaoStorageRule.baseWarehouseAreaMapper.selectOneByExample(example);
+//        if(StringUtils.isEmpty(baseStorageRule)){
+//            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未获取到ERP逻辑仓绑定的库区");
+//        }
         //根据仓库产线查询库位
-        example = new Example(BaseStorage.class);
-        example.createCriteria().andNotEqualTo("warehouseId",baseWarehouseArea.getWarehouseId()).andEqualTo("proLineId",baseStorageRule.getProLineId());
+        Example example = new Example(BaseStorage.class);
+        example.createCriteria().andNotEqualTo("logicId",baseStorageRule.getLogicId()).andEqualTo("proLineId",baseStorageRule.getProLineId());
         List<BaseStorage> baseStorageList = wanbaoStorageRule.baseStorageMapper.selectByExample(example);
         if(StringUtils.isEmpty(baseStorageList) || baseStorageList.size()<1){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"根据仓库产线获取库位信息失败");
@@ -92,7 +91,7 @@ public class WanbaoStorageRule {
         BigDecimal capacity = screenStorageCapacity(baseMaterial);
 
         //计算可上架库位
-        Long storageId = onStorge(baseStorageRule,baseStorageList,capacity);
+        Long storageId = onStorage(baseStorageRule,baseStorageList,capacity);
         return storageId;
     }
 
@@ -120,14 +119,14 @@ public class WanbaoStorageRule {
     private static BigDecimal screenStorageCapacity(BaseMaterial baseMaterial){
         //根据物料查询库位类型
         Example example = new Example(BaseStorageCapacity.class);
-        example.createCriteria().andEqualTo("matereialId",baseMaterial.getMaterialId());
+        example.createCriteria().andEqualTo("materialId",baseMaterial.getMaterialId());
         BaseStorageCapacity baseStorageCapacity = wanbaoStorageRule.baseStorageCapacityMapper.selectOneByExample(example);
         if(StringUtils.isEmpty(baseStorageCapacity)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"获取库位类型失败");
         }
         //物料前缀39110157 推荐C类  39110089、39110090推荐B类
         BigDecimal capacity = BigDecimal.ZERO;
-        if(baseMaterial.getMaterialCode().startsWith("39110089")){
+        if(baseMaterial.getMaterialCode().startsWith("39110157")){
             capacity = baseStorageCapacity.getTypeCCapacity();
         }else if(baseMaterial.getMaterialCode().startsWith("39110089") || baseMaterial.getMaterialCode().startsWith("39110090") || baseMaterial.getMaterialName().contains("酒柜") || baseMaterial.getMaterialName().contains("饮料柜")){
             capacity = baseStorageCapacity.getTypeBCapacity();
@@ -149,7 +148,7 @@ public class WanbaoStorageRule {
      * @param capacity
      * @return
      */
-    private static Long onStorge(BaseStorageRule baseStorageRule,List<BaseStorage> list,BigDecimal capacity){
+    private static Long onStorage(BaseStorageRule baseStorageRule,List<BaseStorage> list,BigDecimal capacity){
         Long storageId= null;
         //查询批次相同库位 物料+库位+销售编码+PO+库龄小于30天
         List<StorageRuleInventry> storageRuleInventries = wanbaoStorageRule.baseStorageMapper.findInv(ControllerUtil.dynamicCondition("storageIds",list,"materialId",baseStorageRule.getMaterialId(),

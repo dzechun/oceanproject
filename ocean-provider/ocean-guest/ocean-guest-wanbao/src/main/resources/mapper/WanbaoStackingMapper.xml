@@ -78,7 +78,7 @@
         AND bpl.pro_name like CONCAT('%', #{proName}, '%')
       </if>
       <if test="proLineId != null">
-        AND bpl.proLineId = #{proLineId}
+        AND bpl.pro_line_id = #{proLineId}
       </if>
       <if test="status!=null">
         AND ws.status = #{status}

@@ -874,12 +874,14 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 .orderTypeId(wmsInAsnOrder.getOrderTypeId())
                 .actualQty(new BigDecimal("0"))
                 .productPalletId(wmsInAsnOrder.getProductPalletId())
-                .baseStorageRule(wmsInAsnOrder.getBaseStorageRule())
-                .option1(wmsInAsnOrder.getBaseStorageRule().getLogicId().toString())
-                .option2(wmsInAsnOrder.getBaseStorageRule().getProLineId().toString())
-                .option3(wmsInAsnOrder.getBaseStorageRule().getSalesBarcode())
-                .option4(wmsInAsnOrder.getBaseStorageRule().getPoCode())
                 .build();
+        if (wmsInAsnOrder.getBaseStorageRule() != null){
+            wmsInnerJobOrder.setBaseStorageRule(wmsInAsnOrder.getBaseStorageRule());
+            wmsInnerJobOrder.setOption1(wmsInAsnOrder.getBaseStorageRule().getLogicId() != null?wmsInAsnOrder.getBaseStorageRule().getLogicId().toString():null);
+            wmsInnerJobOrder.setOption2(wmsInAsnOrder.getBaseStorageRule().getProLineId() != null?wmsInAsnOrder.getBaseStorageRule().getProLineId().toString():null);
+            wmsInnerJobOrder.setOption3(wmsInAsnOrder.getBaseStorageRule().getSalesBarcode());
+            wmsInnerJobOrder.setOption4(wmsInAsnOrder.getBaseStorageRule().getPoCode());
+        }
         List<WmsInnerJobOrderDet> list = new ArrayList<>();
         list.add(WmsInnerJobOrderDet.builder()
                 .sourceDetId(wmsInAsnOrderDet.getAsnOrderDetId())
