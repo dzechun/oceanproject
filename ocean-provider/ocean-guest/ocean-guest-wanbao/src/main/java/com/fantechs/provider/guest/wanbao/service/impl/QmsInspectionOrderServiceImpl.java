@@ -198,6 +198,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 inspectionOrderDetSample.setBarcode(qmsInspectionOrderDetSample.getBarcode());
                 inspectionOrderDetSample.setSampleValue("OK");
                 inspectionOrderDetSample.setOrgId(user.getOrganizationId());
+                inspectionOrderDetSample.setInspectionOrderId(inspectionOrderId);
                 inspectionOrderDetSampleList.add(inspectionOrderDetSample);
             }
         }
@@ -252,6 +253,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                     inspectionOrderDetSample.setBarcode(qmsInspectionOrderDetSample.getBarcode());
                     inspectionOrderDetSample.setSampleValue("OK");
                     inspectionOrderDetSample.setOrgId(user.getOrganizationId());
+                    inspectionOrderDetSample.setInspectionOrderId(inspectionOrderId);
                     inspectionOrderDetSampleList.add(inspectionOrderDetSample);
                 }
             }
