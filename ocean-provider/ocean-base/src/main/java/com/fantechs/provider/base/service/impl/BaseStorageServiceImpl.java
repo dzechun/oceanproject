@@ -248,6 +248,16 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
                 continue;
             }
 
+            Example example = new Example(BaseStorage.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("orgId", currentUser.getOrganizationId());
+            criteria.andEqualTo("storageCode", storageCode);
+            BaseStorage baseStorage = baseStorageMapper.selectOneByExample(example);
+            if (StringUtils.isNotEmpty(baseStorage)) {
+                fail.add(i+4);
+                continue;
+            }
+
             //判断仓库区域是否存在
             Example example1 = new Example(BaseWarehouseArea.class);
             Example.Criteria criteria1 = example1.createCriteria();
