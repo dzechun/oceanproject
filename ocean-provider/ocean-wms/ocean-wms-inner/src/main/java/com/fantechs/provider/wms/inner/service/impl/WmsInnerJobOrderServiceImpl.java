@@ -8,7 +8,6 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
-import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
@@ -22,7 +21,6 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageCapacity;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorker;
-import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrderDet;
@@ -35,7 +33,6 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
@@ -81,8 +78,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     WmsInnerJobOrderDetBarcodeService wmsInnerJobOrderDetBarcodeService;
     @Resource
     private PickingOrderService pickingOrderService;
-    @Resource
-    private EngFeignApi engFeignApi;
     @Resource
     private SecurityFeignApi securityFeignApi;
     @Resource
@@ -726,11 +721,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         int num = wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsIn);
         //添加扣减库存日志
         InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrder,wmsInnerJobOrderDet,wmsInnerInventory.getPackingQty(),wmsInnerJobOrderDet.getDistributionQty(),(byte)2,(byte)1);
-        //更新收货作业分配数量
-        ResponseEntity responseEntity = engFeignApi.writeQty(wmsInnerJobOrderDet.getSourceDetId(),wmsInnerJobOrderDet.getDistributionQty().negate(),(byte)2);
-        if(responseEntity.getCode()!=0){
-            throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
-        }
         return num;
     }
 
@@ -794,12 +784,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             //原库存
             wmsInnerInventorys.setPackingQty(wmsInnerInventorys.getPackingQty().add(wmsInnerJobOrderDet.getDistributionQty()));
             num = wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventorys);
-        }
-
-        //更新收货作业分配数量
-        ResponseEntity responseEntity = engFeignApi.writeQty(wmsInnerJobOrderDet.getSourceDetId(),wmsInnerJobOrderDet.getDistributionQty(),(byte)2);
-        if(responseEntity.getCode()!=0){
-            throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
         }
         return num;
     }
@@ -928,22 +912,14 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                             }
                         }
                     } else {
-                        if(StringUtils.isNotEmpty(wmsInnerJobOrder.getOrderTypeId()) &&wmsInnerJobOrder.getOrderTypeId()==9L){
-                            //收货作业反写
-                            ResponseEntity responseEntity = engFeignApi.writeQty(wmsInnerJobOrderDet.getSourceDetId(),wmsInnerJobOrderDet.getDistributionQty(),(byte)1);
-                            if(responseEntity.getCode()!=0){
-                                throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
-                            }
-                        }else{
-                            if(wmsInnerJobOrder.getJobOrderType()!=2){
-                                //反写完工入库单
-                                ResponseEntity responseEntity = inFeignApi.writeQty(WmsInAsnOrderDet.builder()
-                                        .putawayQty(wmsInnerJobOrderDet.getDistributionQty())
-                                        .asnOrderDetId(wmsInnerJobOrderDet.getSourceDetId())
-                                        .build());
-                                if (responseEntity.getCode() != 0) {
-                                    throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
-                                }
+                        if(wmsInnerJobOrder.getJobOrderType()!=2){
+                            //反写完工入库单
+                            ResponseEntity responseEntity = inFeignApi.writeQty(WmsInAsnOrderDet.builder()
+                                    .putawayQty(wmsInnerJobOrderDet.getDistributionQty())
+                                    .asnOrderDetId(wmsInnerJobOrderDet.getSourceDetId())
+                                    .build());
+                            if (responseEntity.getCode() != 0) {
+                                throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
                             }
                         }
                     }
@@ -970,33 +946,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
             //更改表头为作业完成状态
             wmsInPutawayOrderMapper.updateByPrimaryKeySelective(innerJobOrder);
-
-            //回传接口（五环）
-            //获取程序配置项
-            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
-            searchSysSpecItemFiveRing.setSpecCode("FiveRing");
-            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
-            if(itemListFiveRing.size()<1){
-                throw new BizErrorException("配置项 FiveRing 获取失败");
-            }
-            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-            if("1".equals(sysSpecItem.getParaValue())) {
-                //回写上架完成接口(五环入库完成)
-//                if("3".equals(wmsInnerJobOrder.getJobOrderType().toString())){
-//                    wmsDataExportInnerJobOrderService.writeDeliveryDetails(innerJobOrder);
-//                }
-
-                //单据类型是收货入库类型的才调接口
-                if(StringUtils.isNotEmpty(wmsInnerJobOrder.getOrderTypeId()) && wmsInnerJobOrder.getOrderTypeId()==9L){
-                    wmsDataExportInnerJobOrderService.writeDeliveryDetails(innerJobOrder,new WmsInnerJobOrderDet());
-                }
-
-                //返写移位接口（五环）
-                if(wmsInnerJobOrder.getJobOrderType()==2){
-                    //engFeignApi.reportInnerJobOrder(innerJobOrder);
-                    engFeignApi.reportInnerJobOrder(wmsInnerJobOrder);
-                }
-            }
         }
         return num;
     }
@@ -1210,33 +1159,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 }
                 ws.setWorkEndtTime(new Date());
                 num += wmsInPutawayOrderMapper.updateByPrimaryKeySelective(ws);
-
-                //回传接口（五环）
-                //获取程序配置项
-//                SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
-//                searchSysSpecItemFiveRing.setSpecCode("FiveRing");
-//                List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
-//                if(itemListFiveRing.size()<1){
-//                    throw new BizErrorException("配置项 FiveRing 获取失败");
-//                }
-//                SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-                if("1".equals(sysSpecItem.getParaValue())) {
-                    //回写上架完成接口(五环入库完成)
-//                    if("3".equals(wmsInnerJobOrder.getJobOrderType().toString())){
-//                        wmsDataExportInnerJobOrderService.writeDeliveryDetails(ws);
-//                    }
-
-                    //单据类型是收货入库类型的才调接口
-//                    if(StringUtils.isNotEmpty(wmsInnerJobOrder.getOrderTypeId()) && wmsInnerJobOrder.getOrderTypeId()==9L){
-//                        wmsDataExportInnerJobOrderService.writeDeliveryDetails(ws);
-//                    }
-
-                    //返写移位接口（五环）
-                    if(wmsInnerJobOrder.getJobOrderType()==2){
-                        engFeignApi.reportInnerJobOrder(ws);
-                    }
-                }
-
             } else {
                 WmsInnerJobOrder ws = wmsInPutawayOrderMapper.selectByPrimaryKey(wmsInnerJobOrderDto.getJobOrderId());
                 ws.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
@@ -1256,24 +1178,16 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 num += wmsInPutawayOrderMapper.updateByPrimaryKeySelective(ws);
             }
 
-            if(StringUtils.isNotEmpty(wmsInnerJobOrder.getOrderTypeId()) && wmsInnerJobOrder.getOrderTypeId()==9L){
-                ResponseEntity responseEntity = engFeignApi.writeQty(wmsInnerJobOrderDetDto.getSourceDetId(),wmsInnerJobOrderDetDto.getActualQty(),(byte)1);
-                if(responseEntity.getCode()!=0){
-                    throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
-                }
-            }else{
-                if (wmsInnerJobOrder.getJobOrderType() != (byte) 2) {
-                    //反写完工入库单
-                    ResponseEntity responseEntity = inFeignApi.writeQty(WmsInAsnOrderDet.builder()
-                            .putawayQty(wmsInnerJobOrderDetDto.getActualQty())
-                            .asnOrderDetId(wmsInnerJobOrderDetDto.getSourceDetId())
-                            .build());
-                    if (responseEntity.getCode() != 0) {
-                        throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
-                    }
+            if (wmsInnerJobOrder.getJobOrderType() != (byte) 2) {
+                //反写完工入库单
+                ResponseEntity responseEntity = inFeignApi.writeQty(WmsInAsnOrderDet.builder()
+                        .putawayQty(wmsInnerJobOrderDetDto.getActualQty())
+                        .asnOrderDetId(wmsInnerJobOrderDetDto.getSourceDetId())
+                        .build());
+                if (responseEntity.getCode() != 0) {
+                    throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
                 }
             }
-
         }
         //返写领料出库单
 
@@ -1451,26 +1365,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
         }
 
-        //回传接口（五环）
-        //获取程序配置项
-        SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
-        searchSysSpecItemFiveRing.setSpecCode("FiveRing");
-        List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
-        if(itemListFiveRing.size()<1){
-            throw new BizErrorException("配置项 FiveRing 获取失败");
-        }
-        SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-        if("1".equals(sysSpecItem.getParaValue())) {
-            //回写上架完成接口(五环入库完成)
-            if(StringUtils.isNotEmpty(wmsInnerJobOrderDto.getOrderTypeId()) && wmsInnerJobOrderDto.getOrderTypeId()==9L){
-                WmsInnerJobOrderDet wmsInnerJobOrderDet1=new WmsInnerJobOrderDet();
-                wmsInnerJobOrderDet1.setJobOrderDetId(jobOrderDetId);
-                wmsDataExportInnerJobOrderService.writeDeliveryDetails(new WmsInnerJobOrder(),wmsInnerJobOrderDet1);
-            }
-
-        }
-        //回传结束
-
         WmsInnerJobOrderDet wms = new WmsInnerJobOrderDet();
         wms.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
         int count = wmsInPutawayOrderDetMapper.selectCount(wms);
@@ -1502,20 +1396,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             ws.setWorkEndtTime(new Date());
             num += wmsInPutawayOrderMapper.updateByPrimaryKeySelective(ws);
 
-            //回传接口（五环）
-            //获取程序配置项
-            if("1".equals(sysSpecItem.getParaValue())) {
-                //回写上架完成接口(五环入库完成)
-//                if(StringUtils.isNotEmpty(wmsInnerJobOrderDto.getOrderTypeId()) && wmsInnerJobOrderDto.getOrderTypeId()==9L){
-//                    wmsDataExportInnerJobOrderService.writeDeliveryDetails(ws,new WmsInnerJobOrderDet());
-//                }
-
-                //返写移位接口（五环）
-                if(wmsInnerJobOrderDto.getJobOrderType()==2){
-                    engFeignApi.reportInnerJobOrder(ws);
-                }
-            }
-
         } else {
             WmsInnerJobOrder ws = new WmsInnerJobOrder();
             ws.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
@@ -1531,21 +1411,16 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
             num += wmsInPutawayOrderMapper.updateByPrimaryKeySelective(ws);
         }
-        if(StringUtils.isNotEmpty(wmsInnerJobOrderDto.getOrderTypeId()) && wmsInnerJobOrderDto.getOrderTypeId()==9L){
-            ResponseEntity responseEntity = engFeignApi.writeQty(wmsInnerJobOrderDet.getSourceDetId(),qty,(byte)1);
-            if(responseEntity.getCode()!=0){
-                throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
-            }
-        }else {
-            //反写完工入库单
-            ResponseEntity responseEntity = inFeignApi.writeQty(WmsInAsnOrderDet.builder()
-                    .putawayQty(qty)
-                    .asnOrderDetId(oldDto.getSourceDetId())
-                    .build());
-            if (responseEntity.getCode() != 0) {
-                throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
-            }
+        //反写完工入库单
+        ResponseEntity responseEntity = inFeignApi.writeQty(WmsInAsnOrderDet.builder()
+                .putawayQty(qty)
+                .asnOrderDetId(oldDto.getSourceDetId())
+                .build());
+        if (responseEntity.getCode() != 0) {
+            throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
         }
+
+        // 释放堆垛，修改状态
         return wmsInnerJobOrderDet;
     }
 
@@ -1797,27 +1672,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                             List<WmsInnerJobOrderDet> dets = wmsInPutawayOrderDetMapper.selectByExample(example);
                             if(dets.stream().filter(dt->dt.getOrderStatus()==5).collect(Collectors.toList()).size()==dets.size()){
                                 wmsInnerJobOrder.setOrderStatus((byte)5);
-
-                                //回传接口（五环）
-                                //获取程序配置项
-                                SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
-                                searchSysSpecItemFiveRing.setSpecCode("FiveRing");
-                                List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
-                                if(itemListFiveRing.size()<1){
-                                    throw new BizErrorException("配置项 FiveRing 获取失败");
-                                }
-                                SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-                                if("1".equals(sysSpecItem.getParaValue())) {
-                                    //回写上架完成接口(五环入库完成)
-//                                    if(StringUtils.isNotEmpty(wmsInnerJobOrder.getOrderTypeId()) && wmsInnerJobOrder.getOrderTypeId()==9L){
-//                                        wmsDataExportInnerJobOrderService.writeDeliveryDetails(wmsInnerJobOrder);
-//                                    }
-
-                                    //返写移位接口（五环）
-//                                    if(wmsInnerJobOrder.getJobOrderType()==2){
-//                                        engFeignApi.reportInnerJobOrder(wmsInnerJobOrder);
-//                                    }
-                                }
                             }
                             num+=wmsInPutawayOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
                         }
@@ -2221,33 +2075,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         //记录库存日志
         InventoryLogUtil.addLog(wmsInnerInventory,wmsInnerJobOrder,newDto,qty,newDto.getActualQty(),(byte)2,(byte)1);
 
-        if(wmsInnerJobOrder.getOrderTypeId()==9L) {
-            //记录材料日志
-            //获取程序配置项
-            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
-            searchSysSpecItemFiveRing.setSpecCode("sendMaterialLogMessage");
-            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
-            if (itemListFiveRing.size() < 1) {
-                throw new BizErrorException("配置项 sendMaterialLogMessage 获取失败");
-            }
-            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-            if ("1".equals(sysSpecItem.getParaValue())) {
-                List<EngPackingOrderSummaryDetDto> list = new ArrayList<>();
-                EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto = new EngPackingOrderSummaryDetDto();
-                engPackingOrderSummaryDetDto.setContractCode(StringUtils.isNotEmpty(wmsInnerInventory.getContractCode())?wmsInnerInventory.getContractCode():null);
-                engPackingOrderSummaryDetDto.setPurchaseReqOrderCode(StringUtils.isNotEmpty(wmsInnerInventory.getPurchaseReqOrderCode())?wmsInnerInventory.getPurchaseReqOrderCode():null);
-                engPackingOrderSummaryDetDto.setLocationNum(StringUtils.isNotEmpty(wmsInnerInventory.getOption4())?wmsInnerInventory.getOption4():null);
-                engPackingOrderSummaryDetDto.setDeviceCode(StringUtils.isNotEmpty(wmsInnerInventory.getOption1())?wmsInnerInventory.getOption1():null);
-                engPackingOrderSummaryDetDto.setDominantTermCode(StringUtils.isNotEmpty(wmsInnerInventory.getOption2())?wmsInnerInventory.getOption2():null);
-                engPackingOrderSummaryDetDto.setMaterialCode(newDto.getMaterialCode());
-                engPackingOrderSummaryDetDto.setQty(newDto.getActualQty());
-                list.add(engPackingOrderSummaryDetDto);
-                EngPackingOrder engPackingOrder = new EngPackingOrder();
-                engPackingOrder.setPackingOrderCode(wmsInnerJobOrderDto.getJobOrderCode());
-                engPackingOrder.setSummaryDetList(list);
-                engFeignApi.saveRecord(engPackingOrder, (byte) 5, "入库");
-            }
-        }
         return num;
     }
 

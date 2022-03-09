@@ -29,7 +29,6 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
@@ -71,8 +70,6 @@ public class PickingOrderServiceImpl implements PickingOrderService {
     private WmsInnerInventoryDetMapper wmsInnerInventoryDetMapper;
     @Resource
     private SecurityFeignApi securityFeignApi;
-    @Resource
-    private EngFeignApi engFeignApi;
 
     private String REDIS_KEY = "PICKINGID:";
 
@@ -827,30 +824,6 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 }
                 num += wmsInnerInventoryMapper.updateByPrimaryKeySelective(innerInventory);
             }
-//            //记录材料日志
-//            //获取程序配置项
-//            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
-//            searchSysSpecItemFiveRing.setSpecCode("sendMaterialLogMessage");
-//            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
-//            if(itemListFiveRing.size()<1){
-//                throw new BizErrorException("配置项 sendMaterialLogMessage 获取失败");
-//            }
-//            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-//            if("1".equals(sysSpecItem.getParaValue())) {
-//                List<EngPackingOrderSummaryDetDto> list = new ArrayList<>();
-//                EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto = new EngPackingOrderSummaryDetDto();
-//                engPackingOrderSummaryDetDto.setContractCode(innerInventory.getContractCode());
-//                engPackingOrderSummaryDetDto.setPurchaseReqOrderCode(innerInventory.getPurchaseReqOrderCode());
-//                engPackingOrderSummaryDetDto.setLocationNum(innerInventory.getOption4());
-//                engPackingOrderSummaryDetDto.setDeviceCode(innerInventory.getOption1());
-//                engPackingOrderSummaryDetDto.setDominantTermCode(innerInventory.getOption2());
-//                engPackingOrderSummaryDetDto.setMaterialCode(wmsInnerJobOrderDetDto.getMaterialCode());
-//                engPackingOrderSummaryDetDto.setQty(wmsInnerJobOrderDetDto.getDistributionQty().subtract(acuQty));
-//                list.add(engPackingOrderSummaryDetDto);
-//                EngPackingOrder engPackingOrder = new EngPackingOrder();
-//                engPackingOrder.setSummaryDetList(list);
-//                engFeignApi.saveRecord(engPackingOrder,(byte)6,"出库");
-//            }
         }
         redisUtil.set(this.REDIS_KEY+wmsInnerJobOrderDetDto.getJobOrderDetId().toString(),bigDecimalMap);
         return num;
@@ -1220,24 +1193,6 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         if(rs.getCode()!=0){
             throw new BizErrorException(rs.getMessage());
         }
-
-        //领料出库回传接口（五环） 发运调用 回传数量=发运数量 开始
-        //获取程序配置项
-        if(orderTypeId==(byte)8) {
-            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
-            searchSysSpecItemFiveRing.setSpecCode("FiveRing");
-            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
-            if (itemListFiveRing.size() < 1) {
-                throw new BizErrorException("配置项 FiveRing 获取失败");
-            }
-            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-            if ("1".equals(sysSpecItem.getParaValue())) {
-                WmsInnerJobOrder wmsInnerJobOrderIssue=new WmsInnerJobOrder();
-                wmsInnerJobOrderIssue.setJobOrderId(outDeliveryOrderId);
-                engFeignApi.reportIssueDetails(wmsInnerJobOrderIssue);
-            }
-        }
-        //领料出库回传接口（五环） 发运之前调用 回传数量=发运数量 结束
 
         return 1;
     }

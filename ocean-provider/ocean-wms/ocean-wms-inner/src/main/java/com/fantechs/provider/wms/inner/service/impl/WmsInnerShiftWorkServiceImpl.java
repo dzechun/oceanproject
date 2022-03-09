@@ -1,7 +1,6 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -14,7 +13,6 @@ import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseStorageCapacity;
 import com.fantechs.common.base.general.entity.basic.search.*;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
@@ -23,7 +21,6 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
@@ -83,9 +80,6 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
 
     @Resource
     private SecurityFeignApi securityFeignApi;
-
-    @Resource
-    private EngFeignApi engFeignApi;
 
     @Override
     public List<WmsInnerJobOrderDto> pdaFindList(Map<String, Object> map) {
@@ -549,27 +543,6 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             }
         }
         num += wmsInnerJobOrderMapper.updateByPrimaryKeySelective(ws);
-
-        if(oCount == count){
-            //回传接口（五环）
-            //获取程序配置项
-            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
-            searchSysSpecItemFiveRing.setSpecCode("FiveRing");
-            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
-            if(itemListFiveRing.size()<1){
-                throw new BizErrorException("配置项 FiveRing 获取失败");
-            }
-            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-            if("1".equals(sysSpecItem.getParaValue())) {
-                //返写移位接口（五环）
-                if(wmsInnerJobOrderDto.getJobOrderType()==2){
-                    ws.setOption1(baseStorage.getOption1());//baseStorage
-                    engFeignApi.reportInnerJobOrder(ws);
-                }
-            }
-            //回传结束
-        }
-
         return num;
     }
 
