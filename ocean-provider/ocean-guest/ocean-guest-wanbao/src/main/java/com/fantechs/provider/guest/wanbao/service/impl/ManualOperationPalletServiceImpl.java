@@ -52,6 +52,9 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
         if (stackingDtos.get(0).getUsageStatus() == 2){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛正在使用中，请更换独堆垛");
         }
+        if (stackingDtos.get(0).getStatus() == 0){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛无效，请重新扫码");
+        }
         // 容量校验
         map.clear();
         map.put("stackingId", stackingDto.getStackingId());

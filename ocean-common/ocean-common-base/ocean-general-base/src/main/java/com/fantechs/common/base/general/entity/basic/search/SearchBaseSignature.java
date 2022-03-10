@@ -1,5 +1,6 @@
 package com.fantechs.common.base.general.entity.basic.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -29,6 +30,18 @@ public class SearchBaseSignature extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="materialName" ,value="物料名称")
     private String materialName;
+
+    /**
+     * 物料描述
+     */
+    @ApiModelProperty(name="materialDesc" ,value="物料描述")
+    private String materialDesc;
+
+    /**
+     * 供应商名称
+     */
+    @ApiModelProperty(name="supplierName" ,value="供应商名称")
+    private String supplierName;
 
     /**
      * 物料ID集合

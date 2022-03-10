@@ -112,7 +112,7 @@
         ORDER BY
             ao.operatorname,
             soh.creation_date,
-            sol.order_line_id;
+            sol.order_line_id
     </select>
 
     <insert id="save" parameterType="com.fantechs.provider.wanbao.api.entity.MiddleSaleOrder">

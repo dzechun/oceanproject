@@ -950,7 +950,18 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
             //更改表头为作业完成状态
             wmsInPutawayOrderMapper.updateByPrimaryKeySelective(innerJobOrder);
+
+            // 2022-03-09 万宝项目 - 上架作业后释放堆垛
+            Example example1 = new Example(WmsInnerJobOrderReMspp.class);
+            example1.createCriteria().andEqualTo("jobOrderId", wmsInnerJobOrder.getJobOrderId());
+            List<WmsInnerJobOrderReMspp> jobOrderReMspps = wmsInnerJobOrderReMsppMapper.selectByExample(example1);
+            if (!jobOrderReMspps.isEmpty()){
+                WanbaoStacking stacking = wanbaoFeignApi.detail(jobOrderReMspps.get(0).getProductPalletId()).getData();
+                stacking.setUsageStatus((byte) 1);
+                wanbaoFeignApi.update(stacking);
+            }
         }
+
         return num;
     }
 
@@ -1115,26 +1126,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 num = this.Inventory(wmsInnerJobOrderDto,oldDto, wmsInnerJobOrderDetDto);
             }
 
-            //单一确认回写
-            //回传接口（五环）
-            //获取程序配置项
-            SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
-            searchSysSpecItemFiveRing.setSpecCode("FiveRing");
-            List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
-            if(itemListFiveRing.size()<1){
-                throw new BizErrorException("配置项 FiveRing 获取失败");
-            }
-            SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-            if("1".equals(sysSpecItem.getParaValue())) {
-                //单据类型是收货入库类型的才调接口
-                if(StringUtils.isNotEmpty(wmsInnerJobOrder.getOrderTypeId()) && wmsInnerJobOrder.getOrderTypeId()==9L){
-                    WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
-                    wmsInnerJobOrderDet.setJobOrderDetId(jobOrderDetId);
-                    wmsDataExportInnerJobOrderService.writeDeliveryDetails(new WmsInnerJobOrder(),wmsInnerJobOrderDet);
-                }
-            }
-            //单一确认回写结束
-
             WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
             wmsInnerJobOrderDet.setJobOrderId(wmsInnerJobOrderDto.getJobOrderId());
             int count = wmsInPutawayOrderDetMapper.selectCount(wmsInnerJobOrderDet);
@@ -1193,7 +1184,17 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 }
             }
         }
-        //返写领料出库单
+        // 2022-03-09 万宝项目 - 上架作业后释放堆垛
+        if (!wmsInPutawayOrderDets.isEmpty()){
+            Example example = new Example(WmsInnerJobOrderReMspp.class);
+            example.createCriteria().andEqualTo("jobOrderId", wmsInPutawayOrderDets.get(0).getJobOrderId());
+            List<WmsInnerJobOrderReMspp> jobOrderReMspps = wmsInnerJobOrderReMsppMapper.selectByExample(example);
+            if (!jobOrderReMspps.isEmpty()){
+                WanbaoStacking stacking = wanbaoFeignApi.detail(jobOrderReMspps.get(0).getProductPalletId()).getData();
+                stacking.setUsageStatus((byte) 1);
+                wanbaoFeignApi.update(stacking);
+            }
+        }
 
         return num;
     }

@@ -510,7 +510,11 @@ public class SyncDataServiceImpl implements SyncDataService {
         // 执行查询前调用函数执行存储过程
         middleSaleOrderMapper.setPolicy();
         List<MiddleSaleOrder> salesOrders = middleSaleOrderMapper.findSaleOrderData(map);
+        log.info("============切换数据源前：" + DynamicDataSourceHolder.getDataSource());
+        DynamicDataSourceHolder.putDataSouce("fourth");
+        log.info("============切换数据源后：" + DynamicDataSourceHolder.getDataSource());
         List<MiddleSaleOrder> orderFormIMS = middleSaleOrderMapper.findSaleOrderFormIMS(map);
+        DynamicDataSourceHolder.removeDataSource();
         log.info("获取万宝销售订单数据，当前获取数量：" + salesOrders.size() + "IMS系统销售订单数量：" + orderFormIMS.size());
         if (!orderFormIMS.isEmpty() && orderFormIMS.size() > 0){
             salesOrders.addAll(orderFormIMS);
@@ -682,7 +686,9 @@ public class SyncDataServiceImpl implements SyncDataService {
         // 执行查询前调用函数执行存储过程
         middleOutDeliveryOrderMapper.setPolicy();
         List<MiddleOutDeliveryOrder> deliveryOrders = middleOutDeliveryOrderMapper.findOutDeliveryData(map);
+        DynamicDataSourceHolder.putDataSouce("fourth");
         List<MiddleOutDeliveryOrder> orderFormIMS = middleOutDeliveryOrderMapper.findOutDeliveryDataFormIMS(map);
+        DynamicDataSourceHolder.removeDataSource();
         log.info("获取万宝出库单数据，当前获取数量：" + deliveryOrders.size() + "IMS系统出库单数量：" + orderFormIMS.size());
         if (!orderFormIMS.isEmpty() && orderFormIMS.size() > 0){
             deliveryOrders.addAll(orderFormIMS);
