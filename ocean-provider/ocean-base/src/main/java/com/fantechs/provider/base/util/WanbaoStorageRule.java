@@ -92,6 +92,26 @@ public class WanbaoStorageRule {
 
         //计算可上架库位
         Long storageId = onStorage(baseStorageRule,baseStorageList,capacity);
+
+        //库位爆满 执行获取公共库位
+        if(StringUtils.isEmpty(storageId)){
+            //根据仓库产线查询库位
+            example = new Example(BaseStorage.class);
+            example.createCriteria().andNotEqualTo("logicId",baseStorageRule.getLogicId()).andIsNull("proLineId");
+            baseStorageList = wanbaoStorageRule.baseStorageMapper.selectByExample(example);
+            if(StringUtils.isEmpty(baseStorageList) || baseStorageList.size()<1){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"根据仓库产线获取库位信息失败");
+            }
+            if(baseMaterial.getMaterialName().contains("/MC/")){
+                //包含MC则筛选底垫的库位
+                baseStorageList = baseStorageList.stream().filter(x->x.getIsHeelpiece()==2).collect(Collectors.toList());
+            }
+            //库容最大容量
+            capacity = screenStorageCapacity(baseMaterial);
+
+            //计算可上架库位
+            storageId = onStorage(baseStorageRule,baseStorageList,capacity);
+        }
         return storageId;
     }
 
