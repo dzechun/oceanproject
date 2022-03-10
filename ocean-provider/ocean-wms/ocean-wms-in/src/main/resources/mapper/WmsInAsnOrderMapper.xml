@@ -183,6 +183,12 @@ wiao.material_type
       <if test="materialType!=null and materialType!=''">
         and wiao.material_type = #{materialType}
       </if>
+      <if test="remark!=null and remark!=''">
+        and wiao.remark like CONCAT('%',#{remark},'%')
+      </if>
+      <if test="createTime!=null and createTime!=''">
+        and date_format(wiao.create_Time, '%Y-%m-%d') =#{createTime}
+      </if>
 </where>
 order by wiao.create_time desc
     </select>

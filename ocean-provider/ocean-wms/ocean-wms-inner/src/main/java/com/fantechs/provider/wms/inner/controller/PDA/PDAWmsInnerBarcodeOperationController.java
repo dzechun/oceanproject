@@ -52,7 +52,7 @@ public class PDAWmsInnerBarcodeOperationController {
     @ApiOperation("替换条码提交")
     @PostMapping("/replaceCommit")
     public ResponseEntity replaceCommit(@ApiParam(value = "条码")@RequestParam String barcode,@ApiParam(value = "替换条码")@RequestParam String replaceBarcode){
-        return ControllerUtil.returnDataSuccess(wmsInnerBarcodeOperationService.replaceCommit(barcode,replaceBarcode),1);
+        return ControllerUtil.returnCRUD(wmsInnerBarcodeOperationService.replaceCommit(barcode,replaceBarcode));
     }
 
     @ApiOperation("扫描报废条码")

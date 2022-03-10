@@ -1,9 +1,11 @@
 package com.fantechs.common.base.general.entity.om.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Transient;
 import java.io.Serializable;
 
 /**
@@ -63,4 +65,47 @@ public class SearchOmOtherOutOrder extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name = "supplierName",value = "客户")
     private String supplierName;
+
+    /**
+     * 收货人
+     */
+    @ApiModelProperty(name = "consigneeName",value = "收货人")
+    private String consigneeName;
+
+    /**
+     * 联系人名称
+     */
+    @ApiModelProperty(name="linkManName",value = "联系人名称")
+    private String linkManName;
+
+    /**
+     * 联系人电话
+     */
+    @ApiModelProperty(name="linkManPhone",value = "联系人电话")
+    private String linkManPhone;
+
+    /**
+     * 传真
+     */
+    @ApiModelProperty(name="faxNumber",value = "传真")
+    private String faxNumber;
+
+    /**
+     * 邮件地址
+     */
+    @ApiModelProperty(name="eMailAddress",value = "邮件地址")
+    private String eMailAddress;
+
+    /**
+     * 地址
+     */
+    @ApiModelProperty(name="address",value = "地址")
+    private String address;
+
+
+    /**
+     * 货主
+     */
+    @ApiModelProperty(name = "materialOwnerName",value = "货主")
+    private String materialOwnerName;
 }

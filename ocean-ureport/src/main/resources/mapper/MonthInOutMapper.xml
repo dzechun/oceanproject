@@ -213,8 +213,8 @@
             <if test="salesCode != null and salesCode != ''">
                 AND wiid.option3 LIKE CONCAT('%', #{salesCode}, '%')
             </if>
-            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-                and date_format(wodo.actual_despatch_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            <if test="actualDespatchTime != null">
+                and date_format(wodo.actual_despatch_time, '%Y-%m-%d') =#{actualDespatchTime}
             </if>
             <if test="clearanceLocale != null and clearanceLocale != ''">
                 AND wodo.clearance_locale LIKE CONCAT('%', #{clearanceLocale}, '%')

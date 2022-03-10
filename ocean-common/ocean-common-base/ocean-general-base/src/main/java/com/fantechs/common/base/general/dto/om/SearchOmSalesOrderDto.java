@@ -1,11 +1,9 @@
 package com.fantechs.common.base.general.dto.om;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 
 @Data
@@ -37,4 +35,28 @@ public class SearchOmSalesOrderDto extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name = "salesUserName",value = "销售人员")
     private String salesUserName;
+
+    /**
+     * 制单人员
+     */
+    @ApiModelProperty(name="makeOrderUserName",value = "制单人员")
+    private String makeOrderUserName;
+
+    /**
+     * 审核人员
+     */
+    @ApiModelProperty(name="auditUserName",value = "审核人员")
+    private String auditUserName;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    private String remark;
+
+    /**
+     * 条码规则集合名称
+     */
+    @ApiModelProperty(name="barcodeRuleSetName", value = "条码规则集合名称")
+    private String barcodeRuleSetName;
 }

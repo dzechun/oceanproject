@@ -113,6 +113,21 @@
             <if test="samePackageCode!=null and samePackageCode!=''">
                 and wiid.option4 like CONCAT('%',#{samePackageCode}, '%')
             </if>
+            <if test="countryName!=null and countryName!=''">
+                and bsp.country_name like CONCAT('%',#{countryName},'%')
+            </if>
+            <if test="regionName!=null and regionName!=''">
+                and bsp.region_name like CONCAT('%',#{regionName},'%')
+            </if>
+            <if test="materialName!=null and materialName!=''">
+                and bm.material_name like CONCAT('%',#{materialName},'%')
+            </if>
+            <if test="materialDesc!=null and materialDesc!=''">
+                and bm.material_desc like CONCAT('%',#{materialDesc},'%')
+            </if>
+            <if test="productCategory!=null and productCategory!=''">
+                and bmt.product_category like CONCAT('%',#{productCategory},'%')
+            </if>
         </where>
         GROUP BY wiid.option4,wiid.option3,wiid.storage_id,wiid.material_id,wiid.inventory_status_id
         <if test="qty!=null">

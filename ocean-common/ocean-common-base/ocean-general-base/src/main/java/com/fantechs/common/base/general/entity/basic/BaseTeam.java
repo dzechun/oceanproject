@@ -1,16 +1,21 @@
 package com.fantechs.common.base.general.entity.basic;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
-import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.*;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.Date;
 
-import lombok.Data;
+;
+;
 
 /**
  * 班组信息表
@@ -34,7 +39,7 @@ public class BaseTeam extends ValidGroup implements Serializable {
      * 班组代码
      */
     @ApiModelProperty(name="teamCode",value = "班组代码")
-    @Excel(name = "班组代码", height = 20, width = 30)
+    @Excel(name = "班组代码", height = 20, width = 30,orderNum = "1")
     @Column(name = "team_code")
     @NotBlank(message = "班组代码不能为空")
     private String teamCode;
@@ -43,7 +48,7 @@ public class BaseTeam extends ValidGroup implements Serializable {
      * 班组名称
      */
     @ApiModelProperty(name="teamName",value = "班组名称")
-    @Excel(name = "班组名称", height = 20, width = 30)
+    @Excel(name = "班组名称", height = 20, width = 30,orderNum = "2")
     @Column(name = "team_name")
     private String teamName;
 
@@ -51,7 +56,7 @@ public class BaseTeam extends ValidGroup implements Serializable {
      * 班组描述
      */
     @ApiModelProperty(name="teamDesc",value = "班组描述")
-    @Excel(name = "班组描述", height = 20, width = 30)
+    @Excel(name = "班组描述", height = 20, width = 30,orderNum = "3")
     @Column(name = "team_desc")
     private String teamDesc;
 
@@ -66,7 +71,7 @@ public class BaseTeam extends ValidGroup implements Serializable {
      * 状态(0无效，1有效)
      */
     @ApiModelProperty(name="status",value = "状态(0无效，1有效)")
-    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,replace = {"无效_0", "有效_1"})
+    @Excel(name = "状态(0无效，1有效)", height = 20, width = 30,replace = {"无效_0", "有效_1"},orderNum = "11")
     private Byte status;
 
     /**
@@ -94,7 +99,7 @@ public class BaseTeam extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss",orderNum = "14")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -110,7 +115,7 @@ public class BaseTeam extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,exportFormat ="yyyy-MM-dd HH:mm:ss",orderNum = "16")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;

@@ -54,12 +54,13 @@
         select<include refid="Base_Column_List"/>,
         sws.work_shop_code, sws.work_shop_name, sws.work_shop_desc,
         sf.factory_id,sf.factory_code, sf.factory_name, sf.factory_desc,
-        su.user_name as create_user_name,sus.user_name as modified_user_name
+        su.user_name as create_user_name,sus.user_name as modified_user_name,bo.organization_name
         from fantech_imes_v2.base_team bt
         LEFT JOIN fantech_imes_v2.base_work_shop sws on bt.work_shop_id = sws.work_shop_id
         LEFT JOIN ocean_v2.sys_user su ON bt.create_user_id = su.user_id
         LEFT JOIN ocean_v2.sys_user sus ON bt.modified_user_id = sus.user_id
         LEFT JOIN fantech_imes_v2.base_factory sf ON sws.factory_id = sf.factory_id
+        LEFT JOIN fantech_imes_v2.base_organization bo ON bt.org_id = bo.organization_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                 and date_format(bt.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}

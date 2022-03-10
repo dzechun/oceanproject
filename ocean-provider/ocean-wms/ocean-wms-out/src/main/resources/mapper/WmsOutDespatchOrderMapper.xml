@@ -85,6 +85,15 @@ wodo.clearance_locale
 <if test="isPda==true">
   and order_status =3
 </if>
+<if test="carNumber!=null and carNumber!=''">
+  and wodo.car_number like CONCAT('%',#{carNumber},'%')
+</if>
+    <if test="driverName!=null and driverName!=''">
+      and wodo.driver_name like CONCAT('%',#{driverName},'%')
+    </if>
+    <if test="orderStatus!+null">
+      and wodo.order_status = #{orderStatus}
+    </if>
 </where>
 order by wodo.create_time desc
   </select>

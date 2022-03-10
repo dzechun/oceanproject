@@ -59,4 +59,16 @@ public class SearchWmsInAsnOrder extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name = "materialType",value = "物料类别")
     private Byte materialType;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    private String remark;
+
+    /**
+     * 创建时间
+     */
+    @ApiModelProperty(name="createTime",value = "创建时间")
+    private String createTime;
 }

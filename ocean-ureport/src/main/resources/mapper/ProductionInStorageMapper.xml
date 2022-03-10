@@ -86,6 +86,18 @@
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
                 and date_format(wijod.work_end_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
             </if>
+            <if test="warehouseAreaCode!=null and warehouseAreaCode!=''">
+                and bwa.warehouse_area_code like CONCAT('%',#{warehouseAreaCode},'%')
+            </if>
+            <if test="storageCode!=null and storageCode!=''">
+                and bs.storage_code like CONCAT('%',#{storageCode},'%')
+            </if>
+            <if test="materialName!=null and materialName!=''">
+                and bm.material_name like CONCAT('%',#{materialName},'%')
+            </if>
+            <if test="packingUnitName!=null and packingUnitName!=''">
+                and wiaod.packing_unit_name like CONCAT('%',#{packingUnitName},'%')
+            </if>
         </where>
         GROUP BY wiaod.org_id,mpwo.work_order_id,bw.warehouse_id,bwa.warehouse_area_id,bm.material_id
     </select>
@@ -142,6 +154,12 @@
             </if>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
                 and date_format(wijod.work_end_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="materialName!=null and materialName!=''">
+                and bm.material_name like CONCAT('%',#{materialName},'%')
+            </if>
+            <if test="packingUnitName!=null and packingUnitName!=''">
+                and wiaod.packing_unit_name like CONCAT('%',#{packingUnitName},'%')
             </if>
         </where>
         GROUP BY wiaod.org_id,oso.sales_order_id,bw.warehouse_id,bwa.warehouse_area_id,bm.material_id

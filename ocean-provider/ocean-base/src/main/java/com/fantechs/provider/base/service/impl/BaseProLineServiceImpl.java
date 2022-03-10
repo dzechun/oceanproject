@@ -1,26 +1,21 @@
 package com.fantechs.provider.base.service.impl;
 
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
+import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.imports.BaseProLineImport;
-import com.fantechs.common.base.general.entity.basic.BaseDept;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.BaseProductProcessRoute;
 import com.fantechs.common.base.general.entity.basic.BaseWorkShop;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtDept;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProLine;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseProLine;
-import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.entity.restapi.esop.EsopDept;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.base.mapper.*;
+import com.fantechs.provider.base.mapper.BaseHtProLineMapper;
+import com.fantechs.provider.base.mapper.BaseProLineMapper;
+import com.fantechs.provider.base.mapper.BaseProductProcessRouteMapper;
+import com.fantechs.provider.base.mapper.BaseWorkShopMapper;
 import com.fantechs.provider.base.service.BaseProLineService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -219,6 +214,7 @@ public class BaseProLineServiceImpl extends BaseService<BaseProLine> implements 
                 baseProLine.setModifiedTime(new Date());
                 baseProLine.setModifiedUserId(currentUser.getUserId());
                 baseProLine.setOrganizationId(currentUser.getOrganizationId());
+                baseProLine.setIsDelete((byte)1);
                 list.add(baseProLine);
             }
 
