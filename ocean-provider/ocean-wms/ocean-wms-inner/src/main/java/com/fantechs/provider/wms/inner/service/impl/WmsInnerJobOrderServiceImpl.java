@@ -7,6 +7,7 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseStorageRule;
 import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
 import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDetDto;
@@ -159,8 +160,15 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 if (StringUtils.isEmpty(wms)) {
                     throw new BizErrorException(ErrorCodeEnum.OPT20012003);
                 }
+                BaseStorageRule baseStorageRule = new BaseStorageRule();
+                baseStorageRule.setLogicId(Long.parseLong(wmsInnerJobOrder.getOption1()));
+                baseStorageRule.setProLineId(Long.parseLong(wmsInnerJobOrder.getOption2()));
+                baseStorageRule.setSalesBarcode(wmsInnerJobOrder.getOption3());
+                baseStorageRule.setPoCode(wmsInnerJobOrder.getOption4());
+                baseStorageRule.setQty(wms.getPlanQty());
+                baseStorageRule.setMaterialId(wms.getMaterialId());
                 //获取推荐库位
-                ResponseEntity<Long> responseEntity = baseFeignApi.inRule(wmsInnerJobOrder.getBaseStorageRule());
+                ResponseEntity<Long> responseEntity = baseFeignApi.inRule(baseStorageRule);
                 if(responseEntity.getCode()!=0){
                     throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
                 }

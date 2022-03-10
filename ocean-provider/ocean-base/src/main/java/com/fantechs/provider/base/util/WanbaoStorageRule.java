@@ -61,7 +61,7 @@ public class WanbaoStorageRule {
      * @return
      */
     public static Long retInStorage(BaseStorageRule baseStorageRule){
-        if(StringUtils.isEmpty(baseStorageRule.getLogicId(),baseStorageRule.getMaterialId(),baseStorageRule.getSalesBarcode(),baseStorageRule.getQty(),baseStorageRule.getPoCode())){
+        if(StringUtils.isEmpty(baseStorageRule.getLogicId(),baseStorageRule.getMaterialId(),baseStorageRule.getQty())){
             throw new BizErrorException(ErrorCodeEnum.GL99990100);
         }
         //查询erp逻辑仓绑定的库区
