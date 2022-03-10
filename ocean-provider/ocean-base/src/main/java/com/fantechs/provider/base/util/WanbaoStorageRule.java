@@ -111,6 +111,9 @@ public class WanbaoStorageRule {
 
             //计算可上架库位
             storageId = onStorage(baseStorageRule,baseStorageList,capacity);
+            if(StringUtils.isEmpty(storageId)) {
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"未匹配到可上架库位");
+            }
         }
         return storageId;
     }
@@ -184,8 +187,6 @@ public class WanbaoStorageRule {
         list = list.stream().filter(x-> x.getStorageId().longValue()!=storageRuleInventries.listIterator().next().getStorageId().longValue()).sorted(Comparator.comparing(BaseStorage::getPutawayMoveLineNo)).collect(Collectors.toList());
         if(StringUtils.isEmpty(storageId) && list.size()>0){
             storageId = list.get(0).getStorageId();
-        }else {
-            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"未匹配到空库位");
         }
         return storageId;
     }
