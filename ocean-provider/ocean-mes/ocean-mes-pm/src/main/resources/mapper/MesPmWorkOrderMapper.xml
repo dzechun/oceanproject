@@ -185,6 +185,15 @@
             <if test="workOrderStatus!=null and workOrderStatus!=''">
                 and swo.work_order_status =#{workOrderStatus}
             </if>
+            <if test="option1!=null and option1!=''">
+                and swo.option1 =#{option1}
+            </if>
+            <if test="option2!=null and option2!=''">
+                and swo.option2 =#{option2}
+            </if>
+            <if test="option3!=null and option3!=''">
+                and swo.option3 =#{option3}
+            </if>
             <if test="workOrderStatusList != null and workOrderStatusList.size() > 0">
                 and swo.work_order_status
                 <foreach collection="workOrderStatusList" open="in (" close=")" item="item" separator="," index="index">
