@@ -613,7 +613,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         wanbaoFeignApi.batchAdd(stackingDets);
 
         // 完工入库以及上架作业
-        this.beforePalletAutoAsnOrder(stackingList.get(0).getStackingId(), user.getOrganizationId(), dto.getWanbaoBarcodeDtos());
+        this.beforePalletAutoAsnOrder(stackingList.get(0).getStackingId(), user.getOrganizationId(), dto.getWanbaoBarcodeDtos(), barcodeList, mesSfcWorkOrderBarcodeDtoList);
         return 1;
     }
 
@@ -899,18 +899,21 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
      * @param orgId 组织
      * @param wanbaoBarcodeDtos 条码
      */
-    private void beforePalletAutoAsnOrder(Long stackingId, Long orgId, List<WanbaoBarcodeDto> wanbaoBarcodeDtos){
+    private void beforePalletAutoAsnOrder(Long stackingId, Long orgId, List<WanbaoBarcodeDto> wanbaoBarcodeDtos, List<String> barcodeList, List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtoList){
 
         /**
          * 2022-03-12 bgkun 人工栈板作业提交完工入库以及后续操作
          */
         Map<String, Object> map = new HashMap<>();
         map.clear();
-        map.put("stackingId", stackingId);
+        map.put("barcodeList", barcodeList);
         map.put("orgId", orgId);
         List<PalletAutoAsnDto> autoAsnDtos = mesSfcProductPalletDetService.findListGroupByWorkOrder(map);
         for (PalletAutoAsnDto palletAutoAsnDto : autoAsnDtos){
-            palletAutoAsnDto.setPackingQty(BigDecimal.valueOf(wanbaoBarcodeDtos.size()));
+            long count = mesSfcWorkOrderBarcodeDtoList.stream().filter(item -> item.getWorkOrderId().equals(palletAutoAsnDto.getSourceOrderId())).count();
+            palletAutoAsnDto.setPackingQty(BigDecimal.valueOf(count));
+            palletAutoAsnDto.setActualQty(BigDecimal.valueOf(count));
+            palletAutoAsnDto.setStackingId(stackingId);
             List<BarPODto> barPODtos = new ArrayList<>();
             wanbaoBarcodeDtos.forEach(item -> {
                 if (item.getWorkOrderId().equals(palletAutoAsnDto.getSourceOrderId())){
@@ -923,7 +926,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 }
             });
             palletAutoAsnDto.setBarCodeList(barPODtos);
-            palletAutoAsnDto.setStackingId(stackingId);
             //完工入库
             SearchBaseMaterialOwner searchBaseMaterialOwner = new SearchBaseMaterialOwner();
             searchBaseMaterialOwner.setAsc((byte)1);
