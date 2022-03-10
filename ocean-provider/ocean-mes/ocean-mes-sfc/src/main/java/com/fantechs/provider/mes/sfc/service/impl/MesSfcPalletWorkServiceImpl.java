@@ -937,7 +937,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 throw new BizErrorException("未查询到货主信息");
             }
 
-            SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+            //注释掉 2022-03-10
+            /*SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
             searchBaseStorage.setMinSurplusCanPutSalver(0);
             searchBaseStorage.setStorageType((byte) 2);
             // 万宝项目-通过程序配置项判定物料匹配的仓库
@@ -961,7 +962,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 palletAutoAsnDto.setWarehouseId(baseStorages.getData().get(0).getWarehouseId());
             }else{
                 throw new BizErrorException(ErrorCodeEnum.STO30012000);
-            }
+            }*/
+
             palletAutoAsnDto.setProductionDate(new Date());
 
             //2021-07-30 增加包装单位 by Dylan
