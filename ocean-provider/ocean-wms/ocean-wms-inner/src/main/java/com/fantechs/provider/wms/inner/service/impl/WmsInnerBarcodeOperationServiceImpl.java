@@ -30,6 +30,7 @@ import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
 import com.fantechs.provider.wms.inner.service.*;
+import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -303,6 +304,9 @@ public class WmsInnerBarcodeOperationServiceImpl extends BaseService<WmsInnerBar
         wmsInnerBarcodeOperation.setModifiedUserId(sysUser.getUserId());
         wmsInnerBarcodeOperation.setModifiedTime(new Date());
         i+=wmsInnerBarcodeOperationMapper.insertUseGeneratedKeys(wmsInnerBarcodeOperation);
+
+        //库存日志
+        //InventoryLogUtil.addLog();
 
         return i;
     }

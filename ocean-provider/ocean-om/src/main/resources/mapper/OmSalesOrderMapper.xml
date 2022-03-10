@@ -86,6 +86,14 @@
                 and so.org_id = #{orgId}
             </if>
 
+            <if test="createUserName != null and createUserName !=''">
+                and suc.user_name = #{createUserName}
+            </if>
+
+            <if test="auditUserName != null and auditUserName !=''">
+                and so.audit_user_name = #{auditUserName}
+            </if>
+
             <if test="salesOrderCode != null and salesOrderCode != ''">
                 and so.sales_order_code like CONCAT('%', #{salesOrderCode}, '%')
             </if>

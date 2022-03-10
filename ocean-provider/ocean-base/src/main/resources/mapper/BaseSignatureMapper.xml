@@ -48,7 +48,10 @@
     <select id="findList" parameterType="map"
             resultMap="BaseResultMap">
         select <include refid="Base_Column_List"></include>,
-        sm.material_code as materialCode, sm.material_name as materialName, sm.material_version as materialVersion, sm.material_desc as materialDesc,
+        sm.material_code as materialCode,
+        sm.material_name as materialName,
+        sm.material_version as materialVersion,
+        sm.material_desc as materialDesc,
         ssu.supplier_name as supplierName,
         u.user_name as createUserName, s.user_name as modifiedUserName,
         bo.organization_name
@@ -68,6 +71,13 @@
             <if test="materialName!=null and materialName!=''">
                 and sm.material_name like CONCAT('%', #{materialName}, '%')
             </if>
+            <if test="materialDesc!=null and materialDesc!=''">
+                and sm.material_desc like CONCAT('%', #{materialDesc}, '%')
+            </if>
+            <if test="supplierName!=null and supplierName!=''">
+                and ssu.supplier_name like CONCAT('%', #{supplierName}, '%')
+            </if>
+
             <if test="signatureCode!=null and signatureCode!=''">
                 and ss.signature_code like CONCAT('%', #{signatureCode}, '%')
             </if>
