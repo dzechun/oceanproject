@@ -391,12 +391,14 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
                     //新增工序物料清单数据
                     LinkedList<BaseProductMaterialReP> baseProductMaterialRePList = new LinkedList<>();
                     for (BaseProductProcessReMImport baseProductProcessReMImport : baseProductProcessReMImports2) {
-                        BaseProductMaterialReP baseProductMaterialReP = new BaseProductMaterialReP();
-                        BeanUtils.copyProperties(baseProductProcessReMImport, baseProductMaterialReP);
-                        baseProductMaterialReP.setProductProcessReMId(baseProductProcessReM.getProductProcessReMId());
-                        baseProductMaterialReP.setScanType(StringUtils.isEmpty(baseProductProcessReMImport.getScanType())?null:baseProductProcessReMImport.getScanType().byteValue());
-                        baseProductMaterialReP.setStatus((byte) 1);
-                        baseProductMaterialRePList.add(baseProductMaterialReP);
+                        if(StringUtils.isNotEmpty(baseProductProcessReMImport.getMaterialCode())) {
+                            BaseProductMaterialReP baseProductMaterialReP = new BaseProductMaterialReP();
+                            BeanUtils.copyProperties(baseProductProcessReMImport, baseProductMaterialReP);
+                            baseProductMaterialReP.setProductProcessReMId(baseProductProcessReM.getProductProcessReMId());
+                            baseProductMaterialReP.setScanType(StringUtils.isEmpty(baseProductProcessReMImport.getScanType()) ? null : baseProductProcessReMImport.getScanType().byteValue());
+                            baseProductMaterialReP.setStatus((byte) 1);
+                            baseProductMaterialRePList.add(baseProductMaterialReP);
+                        }
                     }
                     baseProductMaterialRePMapper.insertList(baseProductMaterialRePList);
                 }
