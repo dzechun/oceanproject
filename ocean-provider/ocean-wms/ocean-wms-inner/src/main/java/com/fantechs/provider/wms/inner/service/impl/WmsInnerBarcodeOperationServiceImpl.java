@@ -351,6 +351,7 @@ public class WmsInnerBarcodeOperationServiceImpl extends BaseService<WmsInnerBar
             result.setProName(processDtos.get(0).getProName());
         }
 
+        result.setScanBarcode(barcode);
         return result;
     }
 

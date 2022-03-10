@@ -104,4 +104,11 @@ public class WmsInnerInventoryDetDto extends WmsInnerInventoryDet implements Ser
     @ApiModelProperty(name="proName",value = "产线名称")
     @Transient
     private String proName;
+
+    /**
+     * 扫描的条码
+     */
+    @ApiModelProperty(name="scanBarcode",value = "扫描的条码")
+    @Transient
+    private String scanBarcode;
 }
