@@ -53,7 +53,7 @@
         mswob.parent_id,
         mswob.barcode,
         mswob.work_order_id,
-        mswob.work_order_code,
+
         mswob.barcode_status,
         mswob.label_category_id,
         mswob.remark,
@@ -73,12 +73,6 @@
         COUNT(mswobr.work_order_barcode_reprint_id) AS reprint_count,
         CASE mswob.option1
         WHEN 5 THEN
-        sod.material_id
-        ELSE
-        mpwo.material_id
-        END 'material_id',
-        CASE mswob.option1
-        WHEN 5 THEN
         bms.material_code
         ELSE
         bm.material_code
@@ -88,14 +82,44 @@
         bms.material_name
         ELSE
         bm.material_name
-        END 'material_name'
+        END 'material_name',
+        <choose>
+            <when test="barcodeType==3 or barcodeType==4">
+                oso.sales_order_code as 'work_order_code',
+                CASE mswob.option1
+                WHEN 5 THEN
+                sod.material_id
+                ELSE
+                osod.material_id
+                END 'material_id'
+            </when>
+            <otherwise>
+                mswob.work_order_code,
+                CASE mswob.option1
+                WHEN 5 THEN
+                sod.material_id
+                ELSE
+                mpwo.material_id
+                END 'material_id'
+            </otherwise>
+        </choose>
         FROM mes_sfc_work_order_barcode mswob
         LEFT JOIN ocean_v2.sys_user su ON mswob.create_user_id = su.user_id
         LEFT JOIN ocean_v2.sys_user sus ON mswob.modified_user_id = sus.user_id
         LEFT JOIN base_organization bo ON mswob.org_id = bo.organization_id
-        LEFT JOIN mes_pm_work_order mpwo ON mswob.work_order_id = mpwo.work_order_id
+        <choose>
+            <when test="barcodeType==3 or barcodeType==4">
+                LEFT JOIN om_sales_order_det osod ON mswob.work_order_id = osod.sales_order_det_id
+                LEFT JOIN om_sales_order oso on osod.sales_order_id = oso.sales_order_id
+                LEFT JOIN base_material bm on osod.material_id = bm.material_id
+            </when>
+            <otherwise>
+                LEFT JOIN mes_pm_work_order mpwo ON mswob.work_order_id = mpwo.work_order_id
+                LEFT JOIN base_material bm on mpwo.material_id = bm.material_id
+            </otherwise>
+        </choose>
         left join om_sales_order_det sod on mswob.work_order_id = sod.sales_order_det_id
-        LEFT JOIN base_material bm on mpwo.material_id = bm.material_id
+
         left join base_material bms on sod.material_id = bms.material_id
         left join base_label_category blc on mswob.label_category_id = blc.label_category_id
         LEFT JOIN mes_sfc_barcode_process msbp ON mswob.work_order_barcode_id = msbp.work_order_barcode_id
@@ -142,7 +166,15 @@
             </if>
         </where>
         GROUP BY mswob.work_order_barcode_id
-        order by mpwo.work_order_code desc, mswob.barcode desc
+        <choose>
+            <when test="barcodeType==3 or barcodeType==4">
+                order by oso.sales_order_code desc, mswob.barcode desc
+            </when>
+            <otherwise>
+                order by mpwo.work_order_code desc, mswob.barcode desc
+            </otherwise>
+        </choose>
+
     </select>
     <select id="findMaxCode" resultType="java.lang.String">
         select barcode

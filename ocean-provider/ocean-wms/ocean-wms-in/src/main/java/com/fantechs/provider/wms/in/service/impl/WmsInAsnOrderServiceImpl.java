@@ -789,6 +789,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 baseStorageRule.setProLineId(palletAutoAsnDto.getProLineId());
                 baseStorageRule.setSalesBarcode(palletAutoAsnDto.getSalesOrderCode());
                 baseStorageRule.setPoCode(palletAutoAsnDto.getSamePackageCode());
+                baseStorageRule.setQty(palletAutoAsnDto.getPackingQty());
                 wmsInAsnOrder.setBaseStorageRule(baseStorageRule);
                 //新增上架作业单
                 res = this.createJobOrder(wmsInAsnOrder,wms);
@@ -849,6 +850,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 baseStorageRule.setProLineId(palletAutoAsnDto.getProLineId());
                 baseStorageRule.setSalesBarcode(palletAutoAsnDto.getSalesOrderCode());
                 baseStorageRule.setPoCode(palletAutoAsnDto.getSamePackageCode());
+                baseStorageRule.setQty(palletAutoAsnDto.getPackingQty());
                 wmsInAsnOrder.setBaseStorageRule(baseStorageRule);
                 res = this.createJobOrder(wmsInAsnOrder,wmsInAsnOrderDet);
                 return 1;
