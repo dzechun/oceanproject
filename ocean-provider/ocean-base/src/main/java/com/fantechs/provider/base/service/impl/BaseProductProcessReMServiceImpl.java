@@ -391,7 +391,17 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
                     //新增工序物料清单数据
                     LinkedList<BaseProductMaterialReP> baseProductMaterialRePList = new LinkedList<>();
                     for (BaseProductProcessReMImport baseProductProcessReMImport : baseProductProcessReMImports2) {
-                        if(StringUtils.isNotEmpty(baseProductProcessReMImport.getMaterialCode())) {
+                        if(StringUtils.isNotEmpty(baseProductProcessReMImport.getMaterialCode())
+                            && baseProductProcessReMImport.getScanType()==1) {
+                            BaseProductMaterialReP baseProductMaterialReP = new BaseProductMaterialReP();
+                            BeanUtils.copyProperties(baseProductProcessReMImport, baseProductMaterialReP);
+                            baseProductMaterialReP.setProductProcessReMId(baseProductProcessReM.getProductProcessReMId());
+                            baseProductMaterialReP.setScanType(StringUtils.isEmpty(baseProductProcessReMImport.getScanType()) ? null : baseProductProcessReMImport.getScanType().byteValue());
+                            baseProductMaterialReP.setStatus((byte) 1);
+                            baseProductMaterialRePList.add(baseProductMaterialReP);
+                        }
+                        else if(StringUtils.isEmpty(baseProductProcessReMImport.getMaterialCode())
+                                && baseProductProcessReMImport.getScanType()==2){
                             BaseProductMaterialReP baseProductMaterialReP = new BaseProductMaterialReP();
                             BeanUtils.copyProperties(baseProductProcessReMImport, baseProductMaterialReP);
                             baseProductMaterialReP.setProductProcessReMId(baseProductProcessReM.getProductProcessReMId());
@@ -400,10 +410,14 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
                             baseProductMaterialRePList.add(baseProductMaterialReP);
                         }
                     }
-                    baseProductMaterialRePMapper.insertList(baseProductMaterialRePList);
+                    if(baseProductMaterialRePList.size()>0) {
+                        baseProductMaterialRePMapper.insertList(baseProductMaterialRePList);
+                    }
                 }
             }
-            baseHtProductProcessReMMapper.insertList(htList);
+            if(htList.size()>0) {
+                baseHtProductProcessReMMapper.insertList(htList);
+            }
         }
 
         resultMap.put("操作成功总数",success);
