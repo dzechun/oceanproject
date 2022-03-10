@@ -1,7 +1,11 @@
 package com.fantechs.provider.api.guest.wanbao;
 
+import com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrder;
+import com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrderDetSample;
 import com.fantechs.common.base.general.entity.wanbao.WanbaoStacking;
 import com.fantechs.common.base.general.entity.wanbao.WanbaoStackingDet;
+import com.fantechs.common.base.general.entity.wanbao.search.SearchQmsInspectionOrder;
+import com.fantechs.common.base.general.entity.wanbao.search.SearchQmsInspectionOrderDetSample;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -21,6 +25,13 @@ public interface WanbaoFeignApi {
     @PostMapping("/wanbaoStackingDet/batchAdd")
     ResponseEntity batchAdd(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<WanbaoStackingDet> list);
 
+    @ApiOperation("页签信息列表")
+    @PostMapping("/qmsInspectionOrderDetSample/findList")
+    ResponseEntity<List<QmsInspectionOrderDetSample>> findList(@ApiParam(value = "查询对象")@RequestBody SearchQmsInspectionOrderDetSample searchQmsInspectionOrderDetSample);
+
+    @ApiOperation("成品检验单列表")
+    @PostMapping("/qmsInspectionOrder/findList")
+    ResponseEntity<List<QmsInspectionOrder>> findList(@ApiParam(value = "查询对象")@RequestBody SearchQmsInspectionOrder searchQmsInspectionOrder);
     @ApiOperation("堆垛修改")
     @PostMapping("/wanbaoStacking/update")
     ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value= WanbaoStacking.update.class) WanbaoStacking wanbaoStacking);

@@ -81,23 +81,21 @@
 
   <select id="findListGroupByWorkOrder" resultMap="BaseResultDto" parameterType="map">
     SELECT
-      wsd.stacking_id,
-      msbp.work_order_id AS source_order_id,
-      mpwo.material_id AS material_id,
-      msbp.material_code,
-      sps.package_specification_quantity AS packing_unit_name,
-      COUNT( wsd.stacking_det_id ) AS packing_qty,
-      COUNT( wsd.stacking_det_id ) AS actual_qty,
-      bs.supplier_name,
-      oscrs.sales_code,
-      oscrs.same_package_code,
-      oso.sales_user_name,
-      mpwo.work_order_code,
-      mpwo.logic_id,
-      mpwo.pro_line_id
+    msbp.work_order_id AS source_order_id,
+    mpwo.material_id AS material_id,
+    msbp.material_code,
+    sps.package_specification_quantity AS packing_unit_name,
+    COUNT( msbp.work_order_id ) AS packing_qty,
+    COUNT( msbp.work_order_id ) AS actual_qty,
+    bs.supplier_name,
+    oscrs.sales_code,
+    oscrs.same_package_code,
+    oso.sales_user_name,
+    mpwo.work_order_code,
+    mpwo.logic_id,
+    mpwo.pro_line_id
     FROM
-        wanbao_stacking_det wsd
-    LEFT JOIN mes_sfc_barcode_process msbp ON wsd.barcode = msbp.barcode
+    mes_sfc_barcode_process msbp
     LEFT JOIN mes_pm_work_order mpwo ON msbp.work_order_id = mpwo.work_order_id
     LEFT JOIN base_material_tab bt ON bt.material_id = mpwo.material_id
     LEFT JOIN base_package_specification sps ON sps.package_specification_id = bt.package_specification_id
@@ -106,11 +104,13 @@
     LEFT JOIN om_sales_code_re_spc oscrs ON msbp.sales_code_re_spc_id = oscrs.sales_code_re_spc_id
     <where>
       <if test="orgId != null">
-        and wsd.org_id = #{orgId}
+        and mpwo.org_id = #{orgId}
       </if>
-      <if test="stackingId != null">
-        and wsd.stacking_id = #{stackingId}
-      </if>
+    <if test="barcodeList != null">
+      <foreach collection="barcodeList" item="item" open="and msbp.barcode IN (" close=")" separator="," >
+        #{item}
+      </foreach>
+    </if>
     </where>
     GROUP BY mpwo.work_order_id
   </select>

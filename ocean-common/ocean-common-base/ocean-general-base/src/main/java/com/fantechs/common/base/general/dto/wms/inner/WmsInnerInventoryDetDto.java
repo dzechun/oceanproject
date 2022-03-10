@@ -97,4 +97,11 @@ public class WmsInnerInventoryDetDto extends WmsInnerInventoryDet implements Ser
     @ApiModelProperty(name="salesOrderCode",value = "销售订单号")
     @Transient
     private String salesOrderCode;
+
+    /**
+     * 产线名称
+     */
+    @ApiModelProperty(name="proName",value = "产线名称")
+    @Transient
+    private String proName;
 }
