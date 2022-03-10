@@ -110,6 +110,15 @@
             <if test="orderType!=null and orderType!=''">
                 and so.order_type like CONCAT('%',#{orderType},'%')
             </if>
+            <if test="makeOrderUserName!=null and makeOrderUserName!=''">
+                and so.make_order_user_name lile CONCAT('%',#{makeOrderUserName},'%')
+            </if>
+            <if test="auditUserName!=null and auditUserName!=''">
+                and so.audit_user_name like CONCAT('%',#{auditUserName},'%')
+            </if>
+            <if test="remark!=null and remark!=''">
+                and so.remark like CONCAT('%',#{remark},'%')
+            </if>
         </where>
         order by so.modified_time desc
     </select>

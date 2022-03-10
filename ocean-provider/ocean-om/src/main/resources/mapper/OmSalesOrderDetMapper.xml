@@ -119,6 +119,6 @@
                 and sod.sales_code = #{salesCode}
             </if>
         </where>
-        order by oso.modified_time desc,sod.customer_order_line_number asc
+        order by oso.modified_time desc,sod.customer_order_line_number,oso.sales_order_code asc
     </select>
 </mapper>
