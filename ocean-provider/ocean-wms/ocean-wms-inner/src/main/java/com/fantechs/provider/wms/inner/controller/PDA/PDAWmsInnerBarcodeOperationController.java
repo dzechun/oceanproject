@@ -51,7 +51,7 @@ public class PDAWmsInnerBarcodeOperationController {
 
     @ApiOperation("替换条码提交")
     @PostMapping("/replaceCommit")
-    public ResponseEntity replaceCommit(@ApiParam(value = "条码")@RequestParam String barcode,@ApiParam(value = "替换条码")@RequestParam String replaceBarcode){
+    public ResponseEntity replaceCommit(@ApiParam(value = "厂内条码")@RequestParam String barcode,@ApiParam(value = "替换厂内条码")@RequestParam String replaceBarcode){
         return ControllerUtil.returnCRUD(wmsInnerBarcodeOperationService.replaceCommit(barcode,replaceBarcode));
     }
 
@@ -63,7 +63,7 @@ public class PDAWmsInnerBarcodeOperationController {
 
     @ApiOperation("报废条码提交")
     @PostMapping("/crapCommit")
-    public ResponseEntity crapCommit(@ApiParam(value = "条码")@RequestParam String barcode){
+    public ResponseEntity crapCommit(@ApiParam(value = "厂内条码")@RequestParam String barcode){
         return ControllerUtil.returnCRUD(wmsInnerBarcodeOperationService.crapCommit(barcode));
     }
 

@@ -39,7 +39,13 @@ public class SearchOmSalesOrderDto extends BaseQuery implements Serializable {
     /**
      * 制单人员
      */
-    @ApiModelProperty(name="createUserName",value = "制单人员")
+    @ApiModelProperty(name="makeOrderUserName",value = "制单人员")
+    private String makeOrderUserName;
+
+    /**
+     * 创建人员
+     */
+    @ApiModelProperty(name="createUserName",value = "创建人员")
     private String createUserName;
 
     /**
