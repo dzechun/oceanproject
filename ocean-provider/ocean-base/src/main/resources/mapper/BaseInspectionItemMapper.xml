@@ -68,6 +68,9 @@
       <if test="orgId!=null">
         and bii.organization_id=#{orgId}
       </if>
+        <if test="inspectionItemType!=null and inspectionItemType!=''">
+          and bii.inspection_item_type = #{inspectionItemType}
+        </if>
     </where>
     order by bii.inspection_item_code,bii.create_time desc
   </select>

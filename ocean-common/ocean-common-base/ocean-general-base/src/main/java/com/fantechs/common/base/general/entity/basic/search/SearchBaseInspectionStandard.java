@@ -48,6 +48,12 @@ public class SearchBaseInspectionStandard extends BaseQuery implements Serializa
     private Long supplierId;
 
     /**
+     * 客户id
+     */
+    @ApiModelProperty(name="supplierName" ,value="客户名称")
+    private String supplierName;
+
+    /**
      * 物料id
      */
     @ApiModelProperty(name="materialId" ,value="物料id")
@@ -70,5 +76,23 @@ public class SearchBaseInspectionStandard extends BaseQuery implements Serializa
      */
     @ApiModelProperty(name="inspectionWayId" ,value="检验方式id")
     private Long inspectionWayId;
+
+    /**
+     * 检验方式名称
+     */
+    @ApiModelProperty(name="inspectionWayName" ,value="检验方式名称")
+    private String inspectionWayName;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    private String remark;
+
+    /**
+     * 检验标准版本号
+     */
+    @ApiModelProperty(name="inspectionStandardVersion",value = "检验标准版本号")
+    private String inspectionStandardVersion;
 
 }

@@ -29,4 +29,10 @@ public class SearchBaseInspectionItem extends BaseQuery implements Serializable 
      */
     @ApiModelProperty(name="inspectionItemDesc" ,value="检验项目描述")
     private String inspectionItemDesc;
+
+    /**
+     * 检验项目类型(1-大类 2-小类)
+     */
+    @ApiModelProperty(name="inspectionItemType",value = "检验项目类型(1-大类 2-小类)")
+    private Byte inspectionItemType;
 }

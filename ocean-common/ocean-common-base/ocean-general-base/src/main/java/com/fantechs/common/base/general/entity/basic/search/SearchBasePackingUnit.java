@@ -22,4 +22,10 @@ public class SearchBasePackingUnit extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="packingUnitDesc" ,value="包装单位描述")
     private String packingUnitDesc;
+
+    /**
+     * 是否主要(0否，1是)
+     */
+    @ApiModelProperty(name="isChief",value = "是否主要(0否，1是)")
+    private Byte isChief;
 }

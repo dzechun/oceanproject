@@ -71,6 +71,9 @@
             <if test="orgId!=null">
                 and spu.org_id=#{orgId}
             </if>
+            <if test="isChief!=null and isChief!=''">
+                and spu.is_chief = #{isChief}
+            </if>
         </where>
         order by spu.create_time desc
     </select>

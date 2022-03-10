@@ -111,6 +111,18 @@
       <if test="orgId!=null">
         and bis.org_id=#{orgId}
       </if>
+     <if test="supplierName!=null and supplierName!=''">
+      and bs.supplier_name like CONCAT('%',#{supplierName},'%')
+     </if>
+    <if test="inspectionWayName!=null and inspectionWayName!=''">
+      and biw.inspection_way_name like CONCAT('%',#{inspectionWayName},'%')
+    </if>
+    <if test="remark!=null and remark!=''">
+      and bis.remark like CONCAT('%',#{remark},'%')
+    </if>
+    <if test="inspectionStandardVersion!=null and inspectionStandardVersion!=''">
+      and bis.inspection_standard_version like CONCAT('%',#{inspectionStandardVersion},'%')
+    </if>
     </where>
     order by bis.create_time desc
   </select>

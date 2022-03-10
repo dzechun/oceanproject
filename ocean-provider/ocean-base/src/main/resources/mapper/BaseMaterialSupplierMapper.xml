@@ -85,6 +85,10 @@
             <if test="materialSupplierCode!=null and materialSupplierCode!=''">
                 and sms.material_supplier_code like CONCAT('%', #{materialSupplierCode}, '%')
             </if>
+            <if test="supplierProductModel!=null and supplierProductModel!=''">
+                and sms.supplier_product_model like CONCAT('%', #{supplierProductModel}, '%')
+            </if>
+
             <if test="supplierId!=null and supplierId!=''">
                 and sms.supplier_id=#{supplierId}
             </if>

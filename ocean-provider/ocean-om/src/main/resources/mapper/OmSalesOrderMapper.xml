@@ -86,6 +86,14 @@
                 and so.org_id = #{orgId}
             </if>
 
+            <if test="createUserName != null and createUserName !=''">
+                and suc.user_name = #{createUserName}
+            </if>
+
+            <if test="auditUserName != null and auditUserName !=''">
+                and so.audit_user_name = #{auditUserName}
+            </if>
+
             <if test="salesOrderCode != null and salesOrderCode != ''">
                 and so.sales_order_code like CONCAT('%', #{salesOrderCode}, '%')
             </if>
@@ -109,6 +117,15 @@
             </if>
             <if test="orderType!=null and orderType!=''">
                 and so.order_type like CONCAT('%',#{orderType},'%')
+            </if>
+            <if test="makeOrderUserName!=null and makeOrderUserName!=''">
+                and so.make_order_user_name lile CONCAT('%',#{makeOrderUserName},'%')
+            </if>
+            <if test="auditUserName!=null and auditUserName!=''">
+                and so.audit_user_name like CONCAT('%',#{auditUserName},'%')
+            </if>
+            <if test="remark!=null and remark!=''">
+                and so.remark like CONCAT('%',#{remark},'%')
             </if>
         </where>
         order by so.modified_time desc

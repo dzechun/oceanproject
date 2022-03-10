@@ -89,6 +89,9 @@
       <if test="orgId!=null">
         AND ws.org_id=#{orgId}
       </if>
+    <if test="stackingName!=null and stackingName!=''">
+      and ws.stacking_name like CONCAT('%',#{stackingName},'%')
+    </if>
     </where>
     order by ws.create_time desc
   </select>
