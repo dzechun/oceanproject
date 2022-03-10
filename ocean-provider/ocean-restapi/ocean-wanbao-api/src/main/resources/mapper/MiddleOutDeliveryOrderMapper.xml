@@ -82,23 +82,13 @@
     <select id="findOutDeliveryDataFormIMS" parameterType="map" resultMap="BaseResultMap">
         SELECT
         sh.sor_no AS delivery_order_code,
-        -- 	sh.STATUS AS order_status,
         sh.creation_date AS order_date,
-        -- 	ao.operatorname,
         cc.customer_name AS customer_name,
         cc.CUSTOMER_CODE AS customer_code,
-        -- 	sh.transport_type 运输方式,
-        -- 	sh.caculatetype 计算方式,
-        -- 	sh.deliverytype 提货方式,
-        sp.material_code AS material_code,,
+        sp.material_code AS material_code,
         sp.material_description AS material_name,
         sp.quantity AS packing_qty,
         sp.real_quantity AS dispatch_qty,
-        -- 	sp.real_quantity2 实收数量,
-        -- 	sp.volume 体积,
-        -- 	sp.real_amount,
-        -- 	sp.sum_amount,
-        -- 	sp.source_type 来源类型,
         sp.source_no AS related_order_code_1
         FROM
         crm_lg_sor_header sh,

@@ -215,6 +215,11 @@ public class MesPmWorkOrderDto extends MesPmWorkOrder implements Serializable {
     @ApiModelProperty(name = "logicName",value = "erp逻辑仓名称")
     private String logicName;
 
+
+    @Transient
+    @ApiModelProperty(name = "salesCode",value = "销售编码")
+    private String salesCode;
+
     @Transient
     List<MesPmWorkOrderBomDto> mesPmWorkOrderBomDtos;
 }

@@ -32,7 +32,6 @@ public class BaseOrganizationDto extends BaseOrganization implements Serializabl
      */
     @Transient
     @ApiModelProperty(name = "userName",value = "用户名称")
-    @Excel(name = "用户名称", height = 20, width = 30,orderNum="8")
     private String userName;
 
     /**

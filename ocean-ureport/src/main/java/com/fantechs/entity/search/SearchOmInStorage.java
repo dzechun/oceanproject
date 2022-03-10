@@ -30,4 +30,8 @@ public class SearchOmInStorage extends BaseQuery implements Serializable {
     private String workOrderCode;
 
     private String salesOrderCode;
+
+    private String materialName;
+
+    private String packingUnitName;
 }

@@ -25,6 +25,7 @@
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="factory_name" jdbcType="VARCHAR" property="factoryName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="factory_code" jdbcType="VARCHAR" property="factoryCode"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -49,7 +50,7 @@
     <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
         select
         <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS
-        modified_user_name,sf.factory_name,
+        modified_user_name,sf.factory_name,sf.factory_code,
         bo.organization_name
         from fantech_imes_v2.base_work_shop ws
         LEFT JOIN ocean_v2.sys_user su ON ws.create_user_id = su.user_id

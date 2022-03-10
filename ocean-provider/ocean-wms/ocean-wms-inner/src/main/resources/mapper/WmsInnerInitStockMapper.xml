@@ -73,7 +73,7 @@ wiis.is_delete
     and bs.storage_code like CONCAT('%',#{storageCode},'%')
   </if>
   <if test="warehouseName!=null and warehouseName!=''">
-    and bw.warehouse_name like CONCAT('%',#{warehouseId},'%')
+    and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
   </if>
 <if test="initStockType!=null and initStockType!=''">
   and wiis.init_stock_type=#{initStockType}

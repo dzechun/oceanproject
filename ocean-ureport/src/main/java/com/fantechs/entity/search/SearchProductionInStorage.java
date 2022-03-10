@@ -37,4 +37,28 @@ public class SearchProductionInStorage extends BaseQuery implements Serializable
     private String workOrderCode;
 
     private String salesOrderCode;
+
+    /**
+     *库区
+     */
+    @ApiModelProperty(name = "warehouseAreaCode",value = "库区")
+    private String warehouseAreaCode;
+
+    /**
+     *库位
+     */
+    @ApiModelProperty(name = "storageCode",value = "库位")
+    private String storageCode;
+
+    /**
+     *物料名称
+     */
+    @ApiModelProperty(name = "materialName",value = "物料名称")
+    private String materialName;
+
+    /**
+     *单位
+     */
+    @ApiModelProperty(name = "packingUnitName",value = "单位")
+    private String  packingUnitName;
 }

@@ -51,6 +51,9 @@
             <if test="workOrderStatus!=null and workOrderStatus!=''">
                 AND mpwo.work_order_status = #{productModelCode}
             </if>
+            <if test="type!=null and type!=''">
+                and type=#{type}
+            </if>
         </where>
     </select>
     <select id="findBarcodeList" resultMap="barcode_column_list">
