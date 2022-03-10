@@ -192,6 +192,15 @@
       <if test="option1!=null and option1!=''">
         and wodo.option1 =#{option1}
       </if>
+        <if test="platformName!=null and platformName!=''">
+          and bp.platform_name like CONCAT('%',#{platformName},'%')
+        </if>
+    <if test="ifCreatedJobOrder!=null and ifCreatedJobOrder!=''">
+      and wodo.if_created_job_order=#{ifCreatedJobOrder}
+    </if>
+    <if test="remark!=null and remark!=''">
+      and wodo.remark like CONCAT('%',#{remark},'%')
+    </if>
     </where>
     order by wodo.create_time desc
   </select>

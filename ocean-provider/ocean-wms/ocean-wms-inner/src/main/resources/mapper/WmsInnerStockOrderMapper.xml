@@ -91,6 +91,15 @@ wiv.modified_time
     <if test="isPda==true">
       and wiv.order_status in (2,3) and wiv.stock_mode = 1
     </if>
+    <if test="stockMode!=null">
+        and wiv.stock_mode = #{stockMode}
+    </if>
+    <if test="ifBlindStock!=null">
+      and wiv.if_blind_stock=#{ifBlindStock}
+    </if>
+    <if test="remark!=null and remark!=''">
+      and wiv.remark like CONCAT('%',#{remark},'%')
+    </if>
     </where>
 order by wiv.create_time desc
   </select>

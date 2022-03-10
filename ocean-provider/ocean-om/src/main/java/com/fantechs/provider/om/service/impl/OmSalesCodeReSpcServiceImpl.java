@@ -155,8 +155,13 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
 
         Example example = new Example(OmSalesCodeReSpc.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("salesCode", omSalesCodeReSpc.getSalesCode())
-                .andEqualTo("priority", omSalesCodeReSpc.getPriority());
+        criteria.andEqualTo("samePackageCode",omSalesCodeReSpc.getSamePackageCode());
+        if(omSalesCodeReSpcMapper.selectCountByExample(example)>0){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"重复PO");
+        }
+        example.clear();
+        criteria.andEqualTo("salesCode", omSalesCodeReSpc.getSalesCode());
+        criteria.andEqualTo("priority", omSalesCodeReSpc.getPriority());
         int count = omSalesCodeReSpcMapper.selectCountByExample(example);
         if (count > 0){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "同个销售编码不能存在相同优先级");
@@ -187,6 +192,11 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
 
         Example example = new Example(OmSalesCodeReSpc.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("samePackageCode",omSalesCodeReSpc.getSamePackageCode()).andNotEqualTo("salesCodeReSpcId",omSalesCodeReSpc.getSalesCodeReSpcId());
+        if(omSalesCodeReSpcMapper.selectCountByExample(example)>0){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"重复PO");
+        }
+        example.clear();
         criteria.andEqualTo("salesCode", omSalesCodeReSpc.getSalesCode())
                 .andEqualTo("priority", omSalesCodeReSpc.getPriority())
                 .andNotEqualTo("salesCodeReSpcId", omSalesCodeReSpc.getSalesCodeReSpcId());

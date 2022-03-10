@@ -24,4 +24,7 @@ public class SearchWorkOrderUreportDto extends BaseQuery implements Serializable
 
     @ApiModelProperty(name="work_order_status" ,value="订单状态/计划状态")
     private String workOrderStatus;
+
+    @ApiModelProperty(name="type",value = "计划类型")
+    private String type;
 }

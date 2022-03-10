@@ -76,4 +76,46 @@ public class SearchInventoryAgeUreport extends BaseQuery implements Serializable
     @ApiModelProperty(name = "qty",value = "正品库存")
     private BigDecimal qty;
 
+
+    /**
+     *  国家
+     */
+    @ApiModelProperty(name = "countryName",value = "国家")
+    private String  countryName;
+
+    /**
+     *  大区
+     */
+    @ApiModelProperty(name = "regionName",value = "大区")
+    private String  regionName;
+
+    /**
+     *物料名称
+     */
+    @ApiModelProperty(name = "materialName",value = "物料名称")
+    private String materialName;
+
+    /**
+     *单位
+     */
+    @ApiModelProperty(name = "packingUnitName",value = "单位")
+    private String  packingUnitName;
+
+    /**
+     *  产品描述
+     */
+    @ApiModelProperty(name = "materialDesc",value = "产品描述")
+    private String  materialDesc;
+
+    /**
+     *  产品分类
+     */
+    @ApiModelProperty(name = "productCategory",value = "产品分类")
+    private String  productCategory;
+
+    /**
+     *子库
+     */
+    @ApiModelProperty(name = "subWarehouseName",value = "子库")
+    private String subWarehouseName;
 }

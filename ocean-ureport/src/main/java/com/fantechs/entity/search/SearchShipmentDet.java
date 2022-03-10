@@ -1,12 +1,10 @@
 package com.fantechs.entity.search;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
 
 @Data
 public class SearchShipmentDet extends BaseQuery implements Serializable {
@@ -27,8 +25,7 @@ public class SearchShipmentDet extends BaseQuery implements Serializable {
     private String salesCode;
 
     @ApiModelProperty(name="actualDespatchTime",value = "实际发车时间")
-    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
-    private Date actualDespatchTime;
+    private String actualDespatchTime;
 
     @ApiModelProperty(name="containerNumber",value = "柜号")
     private String containerNumber;

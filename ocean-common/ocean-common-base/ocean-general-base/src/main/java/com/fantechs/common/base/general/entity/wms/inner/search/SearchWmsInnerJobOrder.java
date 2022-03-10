@@ -1,12 +1,9 @@
 package com.fantechs.common.base.general.entity.wms.inner.search;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.List;
 
@@ -83,4 +80,10 @@ public class SearchWmsInnerJobOrder extends BaseQuery implements Serializable {
     private Byte orderStatus;
 
     private Byte sealOrder;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name="remark",value = "备注")
+    private String remark;
 }

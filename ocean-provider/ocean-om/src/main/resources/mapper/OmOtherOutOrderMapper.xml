@@ -121,6 +121,27 @@ ouo.option3
   <if test="supplierName!=null and supplierName!=''">
     and bs.supplier_name like CONCAT('%',#{supplierName},'%')
   </if>
+    <if test="consigneeName!=null and consigneeName!=''">
+      and bc.consignee_name like CONCAT('%',#{consigneeName},'%')
+    </if>
+  <if test="linkManName!=null and linkManName!=''">
+    and ouo.link_man_name like CONCAT('%',#{linkManName},'%')
+  </if>
+  <if test="linkManPhone!=null and linkManPhone!=''">
+    and ouo.link_man_phone like CONCAT('%',#{linkManPhone},'%')
+  </if>
+  <if test="faxNumber!=null and faxNumber!=''">
+    and ouo.fax_number like CONCAT('%',#{faxNumber},'%')
+  </if>
+  <if test="eMailAddress!=null and eMailAddress!=''">
+    and ouo.e_mail_address like CONCAT('%',#{eMailAddress},'%')
+  </if>
+  <if test="address!=null and address!=''">
+    and ouo.address like CONCAT('%',#{address},'%')
+  </if>
+    <if test="materialOwnerName!=null and materialOwnerName!=''">
+      and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')
+    </if>
 </where>
 order by ouo.create_time desc
   </select>
