@@ -13,21 +13,21 @@ public class OmSalesCodeReSpcImport implements Serializable {
      * 销售编码
      */
     @ApiModelProperty(name="salesCode",value = "销售编码")
-    @Excel(name = "销售编码", height = 20, width = 30,orderNum="1")
+    @Excel(name = "销售编码", height = 20, width = 30)
     private String salesCode;
 
     /**
      * 物料编码
      */
     @ApiModelProperty(name = "materialCode", value = "物料编码")
-    @Excel(name = "物料编码", height = 20, width = 30,orderNum="2")
+    @Excel(name = "物料编码", height = 20, width = 30)
     private String materialCode;
 
     /**
-     * 同包装编码
+     * PO号
      */
     @ApiModelProperty(name="samePackageCode",value = "PO号")
-    @Excel(name = "PO号", height = 20, width = 30,orderNum="3")
+    @Excel(name = "PO号", height = 20, width = 30)
     private String samePackageCode;
 
 
@@ -47,14 +47,14 @@ public class OmSalesCodeReSpcImport implements Serializable {
      * 优先级
      */
     @ApiModelProperty(name="priority",value = "优先级")
-    @Excel(name = "优先级", height = 20, width = 30,orderNum="4")
+    @Excel(name = "优先级", height = 20, width = 30)
     private String priority;
 
     /**
      * 同包装编码数量
      */
     @ApiModelProperty(name="samePackageCodeQty",value = "PO数量")
-    @Excel(name = "PO数量", height = 20, width = 30,orderNum="5")
+    @Excel(name = "PO数量", height = 20, width = 30)
     private String samePackageCodeQty;
 
     /**
