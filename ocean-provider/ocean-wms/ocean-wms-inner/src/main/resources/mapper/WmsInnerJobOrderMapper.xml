@@ -157,7 +157,7 @@ wipo.option4
             <if test="orderStatus!=null and orderStatus!=''">
                 and wipo.order_status =#{orderStatus}
             </if>
-            <if test="remark!=null and remark!+''">
+            <if test="remark!=null and remark!=''">
                 and wipo.remark like CONCAT('%',#{remark},'%')
             </if>
             <if test="isPick==true">
