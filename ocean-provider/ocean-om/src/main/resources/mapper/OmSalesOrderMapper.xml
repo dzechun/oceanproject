@@ -89,6 +89,9 @@
             <if test="createUserName != null and createUserName !=''">
                 and suc.user_name = #{createUserName}
             </if>
+            <if test="makeOrderUserName != null and makeOrderUserName !=''">
+                and so.make_order_user_name = #{makeOrderUserName}
+            </if>
 
             <if test="auditUserName != null and auditUserName !=''">
                 and so.audit_user_name = #{auditUserName}
