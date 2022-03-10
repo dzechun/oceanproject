@@ -121,6 +121,9 @@
         swo.contract_no,
         swo.batch_code,
         swo.logic_id,
+        swo.option1,
+        swo.option2,
+        swo.option3,
         sm.material_code AS material_code,
         sm.material_name AS material_name,
         sm.material_version AS material_version,
@@ -247,7 +250,10 @@
         swo.inventory_qty,
         swo.remark,
         swo.contract_no,
-        swo.batch_code
+        swo.batch_code,
+        swo.option1,
+        swo.option2,
+        swo.option3
         FROM
         mes_pm_work_order swo
         order by swo.modified_time desc
@@ -281,6 +287,9 @@
                swo.work_order_status,
                swo.pro_line_id,
                swo.batch_code,
+               swo.option1,
+                swo.option2,
+               swo.option3,
                 sm.material_code AS material_code,
                 sm.material_name AS material_name,
                 sm.material_version AS material_version,
