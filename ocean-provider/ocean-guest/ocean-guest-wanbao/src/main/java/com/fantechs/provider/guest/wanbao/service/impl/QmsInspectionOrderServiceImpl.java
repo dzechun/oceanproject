@@ -326,7 +326,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             proCode=processDtos.get(0).getProCode();
         }
         if(proCode.contains("A")){
-            String storageCode="defaultA";
+            String storageCode="Z-SX";
             SearchBaseStorage searchBaseStorage=new SearchBaseStorage();
             searchBaseStorage.setStorageCode(storageCode);
             List<BaseStorage> storageDtoList=baseFeignApi.findList(searchBaseStorage).getData();
@@ -1260,7 +1260,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         }
         //移入库位默认为质检专用库位
         Long inStorageId=null;
-        String storageCode="defaultQms";
+        String storageCode="Z-QC";
         SearchBaseStorage searchBaseStorage=new SearchBaseStorage();
         searchBaseStorage.setStorageCode(storageCode);
         List<BaseStorage> storageDtoList=baseFeignApi.findList(searchBaseStorage).getData();
