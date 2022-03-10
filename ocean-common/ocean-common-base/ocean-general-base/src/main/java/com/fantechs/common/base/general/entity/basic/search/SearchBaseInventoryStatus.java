@@ -1,10 +1,12 @@
 package com.fantechs.common.base.general.entity.basic.search;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 
 @ApiModel
@@ -52,5 +54,17 @@ public class SearchBaseInventoryStatus extends BaseQuery implements Serializable
      */
     @ApiModelProperty(name = "nameQueryMark",value = "名称查询标记(设为1做等值查询)")
     private Integer nameQueryMark;
+
+    /**
+     * 是否默认状态(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifDefaultStatus",value = "是否默认状态(0-否 1-是)")
+    private Byte ifDefaultStatus;
+
+    /**
+     * 是否可发(0-否 1-是)
+     */
+    @ApiModelProperty(name="ifCanStoreIssue",value = "是否可发(0-否 1-是)")
+    private Byte ifCanStoreIssue;
 
 }
