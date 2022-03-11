@@ -121,6 +121,9 @@
         swo.contract_no,
         swo.batch_code,
         swo.logic_id,
+        swo.option1,
+        swo.option2,
+        swo.option3,
         sm.material_code AS material_code,
         sm.material_name AS material_name,
         sm.material_version AS material_version,
@@ -181,6 +184,15 @@
             </if>
             <if test="workOrderStatus!=null and workOrderStatus!=''">
                 and swo.work_order_status =#{workOrderStatus}
+            </if>
+            <if test="option1!=null and option1!=''">
+                and swo.option1 =#{option1}
+            </if>
+            <if test="option2!=null and option2!=''">
+                and swo.option2 =#{option2}
+            </if>
+            <if test="option3!=null and option3!=''">
+                and swo.option3 =#{option3}
             </if>
             <if test="workOrderStatusList != null and workOrderStatusList.size() > 0">
                 and swo.work_order_status
@@ -247,7 +259,10 @@
         swo.inventory_qty,
         swo.remark,
         swo.contract_no,
-        swo.batch_code
+        swo.batch_code,
+        swo.option1,
+        swo.option2,
+        swo.option3
         FROM
         mes_pm_work_order swo
         order by swo.modified_time desc
@@ -281,6 +296,9 @@
                swo.work_order_status,
                swo.pro_line_id,
                swo.batch_code,
+               swo.option1,
+                swo.option2,
+               swo.option3,
                 sm.material_code AS material_code,
                 sm.material_name AS material_name,
                 sm.material_version AS material_version,

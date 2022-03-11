@@ -91,7 +91,7 @@ wodo.clearance_locale
     <if test="driverName!=null and driverName!=''">
       and wodo.driver_name like CONCAT('%',#{driverName},'%')
     </if>
-    <if test="orderStatus!+null">
+    <if test="orderStatus!=null">
       and wodo.order_status = #{orderStatus}
     </if>
 </where>

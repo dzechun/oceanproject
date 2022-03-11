@@ -113,7 +113,7 @@ public class OmSalesCodeReSpcController {
     public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true) @RequestPart(value="file") MultipartFile file){
         try {
             // 导入操作
-            List<OmSalesCodeReSpcImport> baseAddressImports = EasyPoiUtils.importExcel(file, 0, 1, OmSalesCodeReSpcImport.class);
+            List<OmSalesCodeReSpcImport> baseAddressImports = EasyPoiUtils.importExcel(file, 2, 1, OmSalesCodeReSpcImport.class);
             Map<String, Object> resultMap = omSalesCodeReSpcService.importExcel(baseAddressImports);
             return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
         } catch (Exception e) {

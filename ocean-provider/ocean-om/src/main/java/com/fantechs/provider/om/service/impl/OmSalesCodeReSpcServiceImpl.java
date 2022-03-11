@@ -9,6 +9,7 @@ import com.fantechs.common.base.general.dto.om.OmSalesCodeReSpcDto;
 import com.fantechs.common.base.general.dto.om.imports.OmSalesCodeReSpcImport;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseProductModel;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.general.entity.om.OmHtSalesCodeReSpc;
 import com.fantechs.common.base.general.entity.om.OmSalesCodeReSpc;
 import com.fantechs.common.base.support.BaseService;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -62,9 +64,7 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
         List<OmHtSalesCodeReSpc> omHtSalesCodeReSpcs = new ArrayList<>();
 
         // 获取物料编码集合
-        List<BaseMaterial> baseMaterials = baseFeignApi.findMaterialAll().getData();
-        // 获取客户型号集合
-        List<BaseProductModel> productModels = baseFeignApi.findProductModelAll().getData();
+        //List<BaseMaterial> baseMaterials = baseFeignApi.findMaterialAll().getData();
         // 获取所有PO号
         List<OmSalesCodeReSpcDto> reSpcDtos = omSalesCodeReSpcMapper.findList(new HashMap<>());
         // 循环便利数据
@@ -74,15 +74,14 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
                     item.getSalesCode(),
                     item.getSamePackageCode(),
                     item.getMaterialCode(),
-                    item.getSamePackageCodeQty(),
-                    item.getSamePackageCodeStatus())
+                    item.getSamePackageCodeQty())
             ){
                 fail.add(i + 1);
                 continue;
             }
 
             // 判断物料
-            for (BaseMaterial material : baseMaterials){
+            /*for (BaseMaterial material : baseMaterials){
                 if (material.getMaterialCode().equals(item.getMaterialCode())){
                     item.setMaterialId(material.getMaterialId());
                     break;
@@ -91,20 +90,18 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
             if (StringUtils.isEmpty(item.getMaterialId())){
                 fail.add(i + 1);
                 continue;
-            }
+            }*/
 
-            if(StringUtils.isNotEmpty(item.getProductModelCode())){
-                // 判断客户型号
-                for (BaseProductModel productModel : productModels){
-                    if (productModel.getProductModelCode().equals(item.getProductModelCode())){
-                        item.setProductModelId(productModel.getProductModelId());
-                        break;
-                    }
-                }
-                if (StringUtils.isEmpty(item.getProductModelId())){
-                    fail.add(i + 1);
-                    continue;
-                }
+            SearchBaseMaterial searchBaseMaterial=new SearchBaseMaterial();
+            searchBaseMaterial.setMaterialCode(item.getMaterialCode());
+            searchBaseMaterial.setCodeQueryMark(1);
+            List<BaseMaterial> materialList=baseFeignApi.findList(searchBaseMaterial).getData();
+            if(StringUtils.isNotEmpty(materialList) && materialList.size()>0){
+                item.setMaterialId(materialList.get(0).getMaterialId());
+            }
+            else {
+                fail.add(i + 1);
+                continue;
             }
 
             boolean flag = false;
@@ -122,6 +119,8 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
 
             OmSalesCodeReSpc reSpc = new OmSalesCodeReSpc();
             BeanUtil.copyProperties(item, reSpc);
+            reSpc.setSamePackageCodeStatus((byte)1);
+            reSpc.setMatchedQty(new BigDecimal(0));
             reSpc.setCreateTime(new Date());
             reSpc.setCreateUserId(user.getUserId());
             reSpc.setModifiedUserId(user.getUserId());
