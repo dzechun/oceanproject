@@ -208,7 +208,11 @@ public class WanbaoStorageRule {
             list = list.stream().filter(x-> x.getStorageId().longValue()!=storageRuleInventries.listIterator().next().getStorageId().longValue()).sorted(Comparator.comparing(BaseStorage::getPutawayMoveLineNo)).collect(Collectors.toList());
         }
         if(StringUtils.isEmpty(storageId) && list.size()>0){
-            storageId = list.get(0).getStorageId();
+            //筛选没有库存的库位
+            List<Long> longs= wanbaoStorageRule.baseStorageMapper.findEmptyStorage(list);
+            if(StringUtils.isNotEmpty(longs) || longs.size()>0){
+                storageId = longs.get(0);
+            }
         }
         return storageId;
     }
