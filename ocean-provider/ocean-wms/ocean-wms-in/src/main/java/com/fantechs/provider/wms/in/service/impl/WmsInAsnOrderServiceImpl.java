@@ -12,7 +12,9 @@ import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPa
 import com.fantechs.common.base.general.dto.wms.in.*;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabelMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.om.OmOtherInOrderDet;
 import com.fantechs.common.base.general.entity.om.OmSalesReturnOrderDet;
@@ -547,6 +549,13 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         record.setModifiedTime(new Date());
         record.setOrgId(sysUser.getOrganizationId());
         int num = wmsInAsnOrderMapper.insertUseGeneratedKeys(record);
+
+        //获取默认收货库位
+        SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+        searchBaseStorage.setStorageCode("收货库位");
+        searchBaseStorage.setCodeQueryMark((byte)1);
+        List<BaseStorage> baseStorageList = baseFeignApi.findList(searchBaseStorage).getData();
+
         for (WmsInAsnOrderDet wmsInAsnOrderDet : record.getWmsInAsnOrderDetList()) {
             if(StringUtils.isEmpty(wmsInAsnOrderDet.getPackingQty()) || wmsInAsnOrderDet.getPackingQty().compareTo(BigDecimal.ZERO)<1){
                 throw new BizErrorException("包装数量必须大于0");
@@ -561,6 +570,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                     throw new BizErrorException(rs.getMessage());
                 }
             }
+            wmsInAsnOrderDet.setStorageId(baseStorageList.get(0).getStorageId());
+            wmsInAsnOrderDet.setWarehouseId(baseStorageList.get(0).getWarehouseId());
             wmsInAsnOrderDet.setAsnOrderId(record.getAsnOrderId());
             wmsInAsnOrderDet.setCreateTime(new Date());
             wmsInAsnOrderDet.setCreateUserId(sysUser.getUserId());
@@ -709,6 +720,13 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         if(listResponseEntity.getCode()!=0){
             throw new BizErrorException(listResponseEntity.getCode(),listResponseEntity.getMessage());
         }
+
+        //获取默认收货库位
+        SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+        searchBaseStorage.setStorageCode("收货库位");
+        searchBaseStorage.setCodeQueryMark((byte)1);
+        List<BaseStorage> baseStorageList = baseFeignApi.findList(searchBaseStorage).getData();
+
         if(!listResponseEntity.getData().isEmpty()){
             BaseLabelMaterialDto baseLabelMaterialDto = listResponseEntity.getData().get(0);
             switch (baseLabelMaterialDto.getLabelCode()){
@@ -768,6 +786,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 }else{
                     wms = palletAutoAsnDto;
                     Long statusId = wmsInAsnOrderMapper.findDefaultStatus(ControllerUtil.dynamicCondition("warehouseId",wms.getWarehouseId(),"orgId",sysUser.getOrganizationId()));
+                    wms.setWarehouseId(baseStorageList.get(0).getWarehouseId());
+                    wms.setStorageId(baseStorageList.get(0).getStorageId());
                     wms.setInventoryStatusId(statusId);
                     wms.setAsnOrderId(asnOrderId);
                     wms.setCreateTime(new Date());
@@ -829,6 +849,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 wmsInAsnOrderDet.setReceivingDate(new Date());
                 wmsInAsnOrderDet.setOrgId(sysUser.getOrganizationId());
                 wmsInAsnOrderDet.setLineNumber(1);
+                wmsInAsnOrderDet.setWarehouseId(baseStorageList.get(0).getWarehouseId());
+                wmsInAsnOrderDet.setStorageId(baseStorageList.get(0).getStorageId());
                 wmsInAsnOrderDetMapper.insertUseGeneratedKeys(wmsInAsnOrderDet);
                 //新增库存
                 int res = this.addInventory(wmsInAsnOrder.getAsnOrderId(),wmsInAsnOrderDet.getAsnOrderDetId(),palletAutoAsnDto.getPackingQty(),(byte)2);
