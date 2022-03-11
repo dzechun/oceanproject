@@ -143,7 +143,7 @@ public class WanbaoStorageRule {
      * @return
      */
     public static Long retOutStorage(BaseStorageRule baseStorageRule){
-        if(StringUtils.isEmpty(baseStorageRule.getLogicId(),baseStorageRule.getMaterialId(),baseStorageRule.getSalesBarcode(),baseStorageRule.getQty(),baseStorageRule.getPoCode())){
+        if(StringUtils.isEmpty(baseStorageRule.getLogicId(),baseStorageRule.getMaterialId(),baseStorageRule.getQty())){
             throw new BizErrorException(ErrorCodeEnum.GL99990100);
         }
         List<StorageRuleInventry> storageRuleInventries = wanbaoStorageRule.baseStorageMapper.findOutInv(ControllerUtil.dynamicCondition("materialId",baseStorageRule.getMaterialId(),
@@ -178,7 +178,7 @@ public class WanbaoStorageRule {
             list = list.stream().filter(x->x.getMaterialStoreType()==2).collect(Collectors.toList());
         }else {
             //根据冰箱升数 大于等于100取B库容 小于等于90取A库容
-            String code = baseMaterial.getMaterialCode().substring(6,8);
+            String code = baseMaterial.getMaterialCode().substring(5,8);
             if(Integer.parseInt(code)<=99){
                 capacity = baseStorageCapacity.getTypeACapacity();
                 list = list.stream().filter(x->x.getMaterialStoreType()==1).collect(Collectors.toList());
@@ -222,7 +222,7 @@ public class WanbaoStorageRule {
     }
 
     public static void main(String[] args) {
-        String ss = "391100470226";
-        System.out.println(Integer.parseInt(ss.substring(6,8)));
+        String ss = "396101060025";
+        System.out.println(Integer.parseInt(ss.substring(5,8)));
     }
 }
