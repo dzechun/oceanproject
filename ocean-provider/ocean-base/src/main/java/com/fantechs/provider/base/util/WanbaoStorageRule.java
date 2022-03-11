@@ -112,7 +112,7 @@ public class WanbaoStorageRule {
             example.createCriteria().andLike("storageCode","C4-%").andIsNull("proLineId");
             List<BaseStorage> baseStorageList = wanbaoStorageRule.baseStorageMapper.selectByExample(example);
             if(StringUtils.isEmpty(baseStorageList) || baseStorageList.size()<1){
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"根据仓库产线获取库位信息失败");
+                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"获取C4公共库位失败");
             }
             //是否MC产品
             BaseMaterial baseMaterial = wanbaoStorageRule.baseMaterialMapper.selectByPrimaryKey(baseStorageRule.getMaterialId());
