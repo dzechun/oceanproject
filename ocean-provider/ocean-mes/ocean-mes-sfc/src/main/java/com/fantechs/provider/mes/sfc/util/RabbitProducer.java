@@ -3,6 +3,7 @@ package com.fantechs.provider.mes.sfc.util;
 import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
+import com.fantechs.common.base.general.dto.mes.sfc.WanbaoStackingMQDto;
 import com.fantechs.provider.mes.sfc.config.RabbitConfig;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.Message;
@@ -73,5 +74,23 @@ public class RabbitProducer {
         ibytes[0]=(byte)1;
         System.arraycopy(bytes,0,ibytes,1,bytes.length);
         this.rabbitTemplate.convertAndSend(RabbitConfig.QUEUE_NAME_FILE+":"+id,ibytes);
+    }
+
+    /**
+     * 催动PLC堆垛运行
+     * @param json
+     */
+    public void sendStacking(String json){
+        byte[] bytes = json.getBytes();
+        byte[] ibytes = new byte[bytes.length];
+        this.rabbitTemplate.convertAndSend(RabbitConfig.STACKING_QUEUE_NAME,ibytes);
+    }
+
+    /**
+     * 催动PLC堆垛运行
+     * @param stackingMQDto
+     */
+    public void sendStacking(WanbaoStackingMQDto stackingMQDto){
+        this.rabbitTemplate.convertAndSend(RabbitConfig.STACKING_QUEUE_NAME+"123",stackingMQDto);
     }
 }

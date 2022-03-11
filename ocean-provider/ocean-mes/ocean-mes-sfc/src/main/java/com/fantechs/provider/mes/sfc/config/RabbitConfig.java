@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitConfig {
     //topic
     public static final String QUEUE_NAME_FILE = "topic.prinQueue";
+    // 万宝项目-对接PLC队列key
+    public static final String STACKING_QUEUE_NAME = "wanbaostackingQueue";
     //redirect模式
     public static final String DIRECT_QUEUE1 = "direct.queue1";
     public static final String DIRECT_EXCHANGE = "direct.exchange";

@@ -32,9 +32,10 @@ public interface WanbaoFeignApi {
     @ApiOperation("成品检验单列表")
     @PostMapping("/qmsInspectionOrder/findList")
     ResponseEntity<List<QmsInspectionOrder>> findList(@ApiParam(value = "查询对象")@RequestBody SearchQmsInspectionOrder searchQmsInspectionOrder);
-    @ApiOperation("堆垛修改")
-    @PostMapping("/wanbaoStacking/update")
-    ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value= WanbaoStacking.update.class) WanbaoStacking wanbaoStacking);
+
+    @ApiOperation("堆垛修改并清空明细表条码")
+    @PostMapping("/wanbaoStacking/updateAndClearBarcode")
+    ResponseEntity updateAndClearBarcode(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value= WanbaoStacking.update.class) WanbaoStacking wanbaoStacking);
 
     @ApiOperation("获取堆垛详情")
     @PostMapping("/wanbaoStacking/detail")
