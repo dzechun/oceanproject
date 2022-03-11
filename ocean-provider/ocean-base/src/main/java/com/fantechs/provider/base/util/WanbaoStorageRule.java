@@ -101,7 +101,7 @@ public class WanbaoStorageRule {
         //库位爆满 执行获取公共库位
             //根据仓库产线查询库位
             Example example = new Example(BaseStorage.class);
-            example.createCriteria().andLike("storageCode","C4-%").andIsNull("proLineId");
+            example.createCriteria().andEqualTo("logicId",baseStorageRule.getLogicId()).andLike("storageCode","C4-%").andIsNull("proLineId");
             List<BaseStorage> baseStorageList = wanbaoStorageRule.baseStorageMapper.selectByExample(example);
             if(StringUtils.isEmpty(baseStorageList) || baseStorageList.size()<1){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"获取C4公共库位失败");
