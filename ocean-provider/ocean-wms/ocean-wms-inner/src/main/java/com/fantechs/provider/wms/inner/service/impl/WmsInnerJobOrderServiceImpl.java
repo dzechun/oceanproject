@@ -966,7 +966,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             if (!jobOrderReMspps.isEmpty()){
                 WanbaoStacking stacking = wanbaoFeignApi.detail(jobOrderReMspps.get(0).getProductPalletId()).getData();
                 stacking.setUsageStatus((byte) 1);
-                wanbaoFeignApi.update(stacking);
+                wanbaoFeignApi.updateAndClearBarcode(stacking);
             }
         }
 
@@ -1200,7 +1200,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             if (!jobOrderReMspps.isEmpty()){
                 WanbaoStacking stacking = wanbaoFeignApi.detail(jobOrderReMspps.get(0).getProductPalletId()).getData();
                 stacking.setUsageStatus((byte) 1);
-                wanbaoFeignApi.update(stacking);
+                wanbaoFeignApi.updateAndClearBarcode(stacking);
             }
         }
 
@@ -1440,7 +1440,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         if (!jobOrderReMspps.isEmpty()){
             WanbaoStacking stacking = wanbaoFeignApi.detail(jobOrderReMspps.get(0).getProductPalletId()).getData();
             stacking.setUsageStatus((byte) 1);
-            wanbaoFeignApi.update(stacking);
+            wanbaoFeignApi.updateAndClearBarcode(stacking);
         }
         return wmsInnerJobOrderDet;
     }

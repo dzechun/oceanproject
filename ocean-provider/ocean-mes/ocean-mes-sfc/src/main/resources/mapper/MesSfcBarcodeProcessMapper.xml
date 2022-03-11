@@ -218,14 +218,16 @@
   </select>
 
   <select id="countBarcodeListForMaterial" parameterType="map" resultType="java.lang.String">
-    SELECT IFNULL(COUNT(*),0) FROM mes_sfc_barcode_process msbp
+    SELECT COUNT(1) FROM (SELECT * FROM mes_sfc_barcode_process msbp
     <where>
       <if test="barcodeList != null">
-        <foreach collection="barcodeList" index="index" item="item" open="and msbp.barcode in (" close=")" separator=",">
+        <foreach collection="barcodeList" index="index" item="item" open="and msbp.barcode in (" close=")"
+                 separator=",">
           #{item}
         </foreach>
       </if>
     </where>
     GROUP BY msbp.material_id
+    ) t
   </select>
 </mapper>

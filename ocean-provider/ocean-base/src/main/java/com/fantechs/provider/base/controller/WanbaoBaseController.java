@@ -75,12 +75,10 @@ public class WanbaoBaseController {
         List<BaseMaterialDto> materialDtos = materialService.findAll(new HashMap<>());
         List<BaseTabDto> tabDtos = tabService.findList(new HashMap<>());
         List<BaseBarcodeRuleSetDto> barcodeRuleSetDtos = barcodeRuleSetService.findList(new HashMap<>());
-        List<BaseProductModel> productModels = productModelService.selectProductModels(new HashMap<>());
 
         WanbaoBaseBySyncDto dto = new WanbaoBaseBySyncDto();
         dto.setMaterialDtoList(materialDtos);
         dto.setBaseTabDtoList(tabDtos);
-        dto.setProductModelList(productModels);
         dto.setBarcodeRuleSetDtoList(barcodeRuleSetDtos);
         return ControllerUtil.returnDataSuccess(dto, 1);
     }
