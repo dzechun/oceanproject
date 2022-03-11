@@ -3,6 +3,7 @@ package com.fantechs.provider.guest.wanbao.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
+import com.fantechs.common.base.general.entity.wanbao.WanbaoStackingDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -10,9 +11,11 @@ import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDto;
 import com.fantechs.provider.guest.wanbao.mapper.WanbaoStackingMapper;
 import com.fantechs.common.base.general.entity.wanbao.WanbaoStacking;
+import com.fantechs.provider.guest.wanbao.service.WanbaoStackingDetService;
 import com.fantechs.provider.guest.wanbao.service.WanbaoStackingService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -26,7 +29,8 @@ public class WanbaoStackingServiceImpl extends BaseService<WanbaoStacking> imple
 
     @Resource
     private WanbaoStackingMapper wanbaoStackingMapper;
-
+    @Resource
+    private WanbaoStackingDetService wanbaoStackingDetService;
     @Resource
     private BaseFeignApi baseFeignApi;
 
@@ -109,5 +113,13 @@ public class WanbaoStackingServiceImpl extends BaseService<WanbaoStacking> imple
         resultMap.put("操作成功总数", entitys.size());
         resultMap.put("操作失败行数", fail);
         return resultMap;
+    }
+
+    @Override
+    public int updateAndClearBarcode(WanbaoStacking wanbaoStacking) {
+        Example example = new Example(WanbaoStackingDet.class);
+        example.createCriteria().andEqualTo("stackingId", wanbaoStacking.getStackingId());
+        wanbaoStackingDetService.deleteByExample(example);
+        return this.update(wanbaoStacking);
     }
 }

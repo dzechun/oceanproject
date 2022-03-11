@@ -70,6 +70,15 @@ public class WanbaoStackingController {
         return ControllerUtil.returnCRUD(wanbaoStackingService.update(wanbaoStacking));
     }
 
+    @ApiOperation("修改状态并清空明细表条码")
+    @PostMapping("/updateAndClearBarcode")
+    public ResponseEntity updateAndClearBarcode(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WanbaoStacking.update.class) WanbaoStacking wanbaoStacking) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        wanbaoStacking.setModifiedTime(new Date());
+        wanbaoStacking.setModifiedUserId(sysUser.getUserId());
+        return ControllerUtil.returnCRUD(wanbaoStackingService.updateAndClearBarcode(wanbaoStacking));
+    }
+
     @ApiOperation("获取详情")
     @PostMapping("/detail")
     public ResponseEntity<WanbaoStacking> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
