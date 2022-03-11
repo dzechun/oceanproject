@@ -4,9 +4,11 @@ import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseKeyMaterialDto;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialDto;
 import com.fantechs.common.base.general.dto.basic.WanbaoBarcodeRultDataDto;
 import com.fantechs.common.base.general.dto.basic.imports.WanbaoBarcodeRultDataImportDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.entity.basic.WanbaoBarcodeRultData;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -83,24 +85,36 @@ public class WanbaoBarcodeRultDataServiceImpl extends BaseService<WanbaoBarcodeR
             }
 
             // 对比识别码
-            for (WanbaoBarcodeRultDataDto dataDto : rultDataDtos){
+            /*for (WanbaoBarcodeRultDataDto dataDto : rultDataDtos){
                 if (dataDto.getIdentificationCode().equals(importDto.getIdentificationCode())){
                     BeanUtil.copyProperties(dataDto, rultData);
                     break;
                 }
+            }*/
+
+            List<WanbaoBarcodeRultDataDto> rultDataDtoList = rultDataDtos.stream().filter(u -> (u.getIdentificationCode().equals(importDto.getIdentificationCode()))).collect(Collectors.toList());
+            if(rultDataDtoList.size()>0){
+                BeanUtil.copyProperties(rultDataDtoList.get(0), rultData);
             }
             if (StringUtils.isNotEmpty(rultData.getIdentificationCode())){
                 // 修改
                 rultData.setIdentificationCode(importDto.getIdentificationCode());
                 if (StringUtils.isNotEmpty(importDto.getMaterialCode())){
                     // 对比物料
-                    for (BaseMaterialDto materialDto : materialDtos){
+                    /*for (BaseMaterialDto materialDto : materialDtos){
                         if (materialDto.getMaterialCode().equals(importDto.getMaterialCode())){
                             rultData.setMaterialId(materialDto.getMaterialId().toString());
                             rultData.setProductCode(materialDto.getMaterialCode());
                             break;
                         }
-                    }
+                    }*/
+
+                    List<BaseMaterialDto> dtoList=materialDtos.stream().filter(u -> (u.getMaterialCode().equals(importDto.getMaterialCode()))).collect(Collectors.toList());
+                     if(dtoList.size()>0){
+                         rultData.setMaterialId(dtoList.get(0).getMaterialId().toString());
+                         rultData.setProductCode(dtoList.get(0).getMaterialCode());
+                     }
+
                     if (StringUtils.isEmpty(rultData.getMaterialId())){
                         fail.add(i+1);
                         continue;
@@ -121,7 +135,7 @@ public class WanbaoBarcodeRultDataServiceImpl extends BaseService<WanbaoBarcodeR
                 rultData.setDataStatus((byte) 0);
                 if (StringUtils.isNotEmpty(importDto.getMaterialCode())){
                     // 对比物料
-                    for (BaseMaterialDto materialDto : materialDtos){
+                    /*for (BaseMaterialDto materialDto : materialDtos){
                         if (materialDto.getMaterialCode().equals(importDto.getMaterialCode())){
                             rultData.setMaterialId(materialDto.getMaterialId().toString());
                             rultData.setProductCode(materialDto.getMaterialCode());
@@ -132,7 +146,19 @@ public class WanbaoBarcodeRultDataServiceImpl extends BaseService<WanbaoBarcodeR
                     if (StringUtils.isEmpty(rultData.getMaterialId())){
                         fail.add(i+1);
                         continue;
+                    }*/
+
+                    List<BaseMaterialDto> dtoList=materialDtos.stream().filter(u -> (u.getMaterialCode().equals(importDto.getMaterialCode()))).collect(Collectors.toList());
+                    if(dtoList.size()>0){
+                        rultData.setMaterialId(dtoList.get(0).getMaterialId().toString());
+                        rultData.setProductCode(dtoList.get(0).getMaterialCode());
+                        rultData.setDataStatus((byte) 1);
                     }
+                    else{
+                        fail.add(i+1);
+                        continue;
+                    }
+
                 }
 
                 saveList.add(rultData);
