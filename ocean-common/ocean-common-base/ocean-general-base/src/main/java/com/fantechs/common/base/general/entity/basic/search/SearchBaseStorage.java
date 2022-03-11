@@ -112,4 +112,7 @@ public class SearchBaseStorage extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name = "minSurplusCanPutSalver",value = "最小剩余可放托盘数")
     private int minSurplusCanPutSalver;
+
+    @ApiModelProperty(name = "logicName",value = "ERP逻辑仓库")
+    private String logicName;
 }

@@ -204,9 +204,12 @@ wipo.option4
         </where>
         order by wipo.create_time desc
     </select>
+<!--    <select id="workBarCodeList" resultType="java.lang.String">-->
+<!--        SELECT msfwo.barcode FROM mes_sfc_product_pallet_det msfpd-->
+<!--        LEFT JOIN mes_sfc_work_order_barcode msfwo ON msfpd.work_order_barcode_id = msfwo.work_order_barcode_id-->
+<!--        WHERE msfpd.product_pallet_id=#{productPalletId}-->
+<!--    </select>-->
     <select id="workBarCodeList" resultType="java.lang.String">
-        SELECT msfwo.barcode FROM mes_sfc_product_pallet_det msfpd
-        LEFT JOIN mes_sfc_work_order_barcode msfwo ON msfpd.work_order_barcode_id = msfwo.work_order_barcode_id
-        WHERE msfpd.product_pallet_id=#{productPalletId}
+        SELECT barcode FROM wanbao_stacking_det where stacking_id=#{productPalletId}
     </select>
 </mapper>
