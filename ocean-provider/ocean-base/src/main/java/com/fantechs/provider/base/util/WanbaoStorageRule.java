@@ -64,20 +64,12 @@ public class WanbaoStorageRule {
         if(StringUtils.isEmpty(baseStorageRule.getLogicId(),baseStorageRule.getMaterialId(),baseStorageRule.getQty())){
             throw new BizErrorException(ErrorCodeEnum.GL99990100);
         }
-        //查询erp逻辑仓绑定的库区
-//        Example example = new Example(BaseWarehouseArea.class);
-//        example.createCriteria().andNotEqualTo("logicId",baseStorageRule.getLogicId());
-//        BaseWarehouseArea baseWarehouseArea = wanbaoStorageRule.baseWarehouseAreaMapper.selectOneByExample(example);
-//        if(StringUtils.isEmpty(baseStorageRule)){
-//            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"未获取到ERP逻辑仓绑定的库区");
-//        }
         //根据仓库产线查询库位
         Example example = new Example(BaseStorage.class);
         example.createCriteria().andEqualTo("logicId",baseStorageRule.getLogicId()).andEqualTo("proLineId",baseStorageRule.getProLineId());
         List<BaseStorage> baseStorageList = wanbaoStorageRule.baseStorageMapper.selectByExample(example);
         if(StringUtils.isEmpty(baseStorageList) || baseStorageList.size()<1){
-            //throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"根据仓库产线获取库位信息失败");
-            return ss(baseStorageRule);
+            return publicStorage(baseStorageRule);
         }
         //是否MC产品
         BaseMaterial baseMaterial = wanbaoStorageRule.baseMaterialMapper.selectByPrimaryKey(baseStorageRule.getMaterialId());
@@ -94,18 +86,18 @@ public class WanbaoStorageRule {
         BigDecimal capacity = new BigDecimal(map.get("capacity").toString());
         baseStorageList = (List<BaseStorage>) map.get("list");
         if(StringUtils.isEmpty(baseStorageList) || baseStorageList.size()<1){
-            return ss(baseStorageRule);
+            return publicStorage(baseStorageRule);
         }
         //计算可上架库位
         Long storageId = onStorage(baseStorageRule,baseStorageList,capacity);
         if(StringUtils.isEmpty(storageId)){
-            storageId = ss(baseStorageRule);
+            storageId = publicStorage(baseStorageRule);
         }
 
         return storageId;
     }
 
-    private static Long ss(BaseStorageRule baseStorageRule){
+    private static Long publicStorage(BaseStorageRule baseStorageRule){
         //库位爆满 执行获取公共库位
             //根据仓库产线查询库位
             Example example = new Example(BaseStorage.class);
