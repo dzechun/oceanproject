@@ -171,7 +171,7 @@
                 order by oso.sales_order_code desc, mswob.barcode desc
             </when>
             <otherwise>
-                order by mpwo.work_order_code desc, mswob.barcode desc
+                order by mswob.create_time desc,mswob.work_order_code desc, mswob.barcode desc
             </otherwise>
         </choose>
 

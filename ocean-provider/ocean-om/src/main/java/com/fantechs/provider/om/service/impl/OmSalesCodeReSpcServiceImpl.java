@@ -148,6 +148,7 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int save(OmSalesCodeReSpc omSalesCodeReSpc) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         omSalesCodeReSpc.setOrgId(user.getOrganizationId());
@@ -158,11 +159,19 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
         if(omSalesCodeReSpcMapper.selectCountByExample(example)>0){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"重复PO");
         }
+//        example.clear();
+//        criteria.andEqualTo("salesCode", omSalesCodeReSpc.getSalesCode());
+//        criteria.andEqualTo("priority", omSalesCodeReSpc.getPriority());
+//        int count = omSalesCodeReSpcMapper.selectCountByExample(example);
+//        if (count > 0){
+//            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "同个销售编码不能存在相同优先级");
+//        }
+
         example.clear();
         criteria.andEqualTo("salesCode", omSalesCodeReSpc.getSalesCode());
         criteria.andEqualTo("priority", omSalesCodeReSpc.getPriority());
-        int count = omSalesCodeReSpcMapper.selectCountByExample(example);
-        if (count > 0){
+        List<OmSalesCodeReSpc> list= omSalesCodeReSpcMapper.selectByExample(example);
+        if (StringUtils.isNotEmpty(list) || list.size()>0){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "同个销售编码不能存在相同优先级");
         }
 
