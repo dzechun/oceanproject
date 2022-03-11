@@ -304,7 +304,7 @@ order by wii.modified_time desc limit 1
             <if test="storageIds!=null and storageIds.size()&gt; 0">
                 and storage_id  in
                 <foreach collection="storageIds" item="list" open="(" close=")" separator=",">
-                    #{list}
+                    #{list.storageId}
                 </foreach>
             </if>
             <if test="materialId!=null and materialId!=''">
@@ -315,9 +315,6 @@ order by wii.modified_time desc limit 1
             </if>
             <if test="poCode!=null and poCode!=''">
                 and option4 = #{poCode}
-            </if>
-            <if test="inventoryStatusId!=null">
-                and inventory_status_id = #{inventoryStatusId}
             </if>
         </where>
         ORDER BY production_date DESC) a
@@ -340,9 +337,6 @@ order by wii.modified_time desc limit 1
             </if>
             <if test="poCode!=null and poCode!=''">
                 and option4 = #{poCode}
-            </if>
-            <if test="inventoryStatusId!=null">
-                and inventory_status_id = #{inventoryStatusId}
             </if>
         </where>
         ORDER BY production_date DESC) a
