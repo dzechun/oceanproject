@@ -7,6 +7,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmHtSalesCodeReSpcDto;
 import com.fantechs.common.base.general.dto.om.OmSalesCodeReSpcDto;
 import com.fantechs.common.base.general.dto.om.imports.OmSalesCodeReSpcImport;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseProductModel;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
@@ -26,6 +27,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -91,9 +93,12 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
                 fail.add(i + 1);
                 continue;
             }*/
-
+            String materialCode=item.getMaterialCode();
+            materialCode=materialCode.replaceAll("\r", "");
+            materialCode=materialCode.replaceAll("\n", "");
+            materialCode=materialCode.trim();
             SearchBaseMaterial searchBaseMaterial=new SearchBaseMaterial();
-            searchBaseMaterial.setMaterialCode(item.getMaterialCode());
+            searchBaseMaterial.setMaterialCode(materialCode);
             searchBaseMaterial.setCodeQueryMark(1);
             List<BaseMaterial> materialList=baseFeignApi.findList(searchBaseMaterial).getData();
             if(StringUtils.isNotEmpty(materialList) && materialList.size()>0){
@@ -104,7 +109,7 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
                 continue;
             }
 
-            boolean flag = false;
+            /*boolean flag = false;
             for (OmSalesCodeReSpcDto dto : reSpcDtos){
                 if (dto.getSalesCode().equals(item.getSalesCode())
                         && dto.getPriority().toString().equals(item.getPriority())){
@@ -113,6 +118,12 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
                 }
             }
             if (flag){
+                fail.add(i + 1);
+                continue;
+            }*/
+
+            List<OmSalesCodeReSpcDto> salesCodeReSpcDtoList = reSpcDtos.stream().filter(u -> (u.getSalesCode().equals(item.getSalesCode()) && u.getPriority().toString().equals(item.getPriority()))).collect(Collectors.toList());
+            if(salesCodeReSpcDtoList.size()>0){
                 fail.add(i + 1);
                 continue;
             }
@@ -167,11 +178,12 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
 //            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "同个销售编码不能存在相同优先级");
 //        }
 
-        example.clear();
-        criteria.andEqualTo("salesCode", omSalesCodeReSpc.getSalesCode());
-        criteria.andEqualTo("priority", omSalesCodeReSpc.getPriority());
-        List<OmSalesCodeReSpc> list= omSalesCodeReSpcMapper.selectByExample(example);
-        if (StringUtils.isNotEmpty(list) && list.size()>0){
+        Example exampleExist = new Example(OmSalesCodeReSpc.class);
+        Example.Criteria criteriaExist = exampleExist.createCriteria();
+        criteriaExist.andEqualTo("salesCode", omSalesCodeReSpc.getSalesCode());
+        criteriaExist.andEqualTo("priority", omSalesCodeReSpc.getPriority());
+        int count = omSalesCodeReSpcMapper.selectCountByExample(exampleExist);
+        if (count >0){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "同个销售编码不能存在相同优先级");
         }
 
@@ -205,6 +217,7 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"重复PO");
         }
         example.clear();
+        criteria = example.createCriteria();
         criteria.andEqualTo("salesCode", omSalesCodeReSpc.getSalesCode())
                 .andEqualTo("priority", omSalesCodeReSpc.getPriority())
                 .andNotEqualTo("salesCodeReSpcId", omSalesCodeReSpc.getSalesCodeReSpcId());
