@@ -663,7 +663,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     @Override
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
-    public int update(QmsInspectionOrder qmsInspectionOrder) {
+    public int update(QmsInspectionOrder qmsInspectionOrder,Byte type) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         qmsInspectionOrder.setModifiedUserId(user.getUserId());
@@ -726,8 +726,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         }
 
         //返写检验状态与检验结果
-        this.writeBack(qmsInspectionOrder.getInspectionOrderId());
-
+        if(type != 0) {
+            this.writeBack(qmsInspectionOrder.getInspectionOrderId());
+        }
         return i;
     }
 
@@ -1123,7 +1124,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 qmsInspectionOrder.setInventoryQty(new BigDecimal(qualifiedInventoryDetDtos.size()));
                 List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetService.showOrderDet(qmsInspectionOrder.getInspectionStandardId(), qmsInspectionOrder.getOrderQty());
                 qmsInspectionOrder.setQmsInspectionOrderDets(qmsInspectionOrderDets);
-                this.update(qmsInspectionOrder);
+                this.update(qmsInspectionOrder,(byte)0);
             }else{
                 qmsInspectionOrder.setMaterialId(detDtos.get(0).getMaterialId());
                 qmsInspectionOrder.setOrderQty(new BigDecimal(detDtos.size()));
