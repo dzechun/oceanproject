@@ -301,7 +301,7 @@ order by wii.modified_time desc limit 1
     </select>
 
     <select id="findInv" resultType="com.fantechs.common.base.general.dto.basic.StorageRuleInventry">
-        SELECT storage_id as 'storageId',material_id as 'materialId',sales_barcode as 'salesBarcode',option4 as 'poCode',sum(material_qty) as 'materialQty',production_date,a.inventory_status_id,bis.inventory_status_name  FROM (SELECT storage_id,material_id,sales_barcode,option4,material_qty,production_date,inventory_status_id
+        SELECT storage_id as 'storageId',material_id as 'materialId',sales_barcode as 'salesBarcode',option4 as 'poCode',sum(material_qty) as 'materialQty',production_date,inventory_status_id  FROM (SELECT storage_id,material_id,sales_barcode,option4,material_qty,production_date,inventory_status_id
         FROM wms_inner_inventory_det
         <where>
             <if test="storageIds!=null and storageIds.size()&gt; 0">
@@ -321,9 +321,8 @@ order by wii.modified_time desc limit 1
             </if>
         </where>
         ORDER BY production_date DESC) a
-        LEFT JOIN base_inventory_status bis ON a.inventory_status_id = bis.inventory_status_id
         GROUP BY storage_id,material_id,sales_barcode,option4,inventory_status_id
-        HAVING TIMESTAMPDIFF(DAY,production_date,DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%S'))&lt;30 and bis.inventory_status_name='待检'
+        HAVING TIMESTAMPDIFF(DAY,production_date,DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%S'))&lt;30 and inventory_status_id=#{inventoryStatusId}
     </select>
     <select id="findOutInv" resultType="com.fantechs.common.base.general.dto.basic.StorageRuleInventry">
         SELECT storage_id as 'storageId',material_id as 'materialId',sales_barcode as 'salesBarcode',option4 as 'poCode',sum(material_qty) as 'materialQty',production_date,a.inventory_status_id,bis.inventory_status_name  FROM (SELECT storage_id,material_id,sales_barcode,option4,material_qty,production_date,inventory_status_id
