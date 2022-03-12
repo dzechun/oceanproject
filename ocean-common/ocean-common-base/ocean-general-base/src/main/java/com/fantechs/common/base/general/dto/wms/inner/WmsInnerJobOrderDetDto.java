@@ -112,4 +112,10 @@ public class WmsInnerJobOrderDetDto extends WmsInnerJobOrderDet implements Seria
      */
     @ApiModelProperty(name = "proName",value = "产线")
     private String proName;
+
+    /**
+     * 堆垛号
+     */
+    @ApiModelProperty(name = "palletCode",value = "堆垛号")
+    private String palletCode;
 }
