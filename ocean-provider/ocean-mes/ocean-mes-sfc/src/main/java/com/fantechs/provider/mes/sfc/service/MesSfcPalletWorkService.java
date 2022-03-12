@@ -42,4 +42,7 @@ public interface MesSfcPalletWorkService {
      * @return
      */
     int updateMoveStatus(Long productPalletId);
+
+
+    Boolean testStacking(String code);
 }

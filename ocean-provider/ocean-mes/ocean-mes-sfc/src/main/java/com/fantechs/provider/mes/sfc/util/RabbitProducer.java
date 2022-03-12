@@ -3,12 +3,9 @@ package com.fantechs.provider.mes.sfc.util;
 import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
-import com.fantechs.common.base.general.dto.mes.sfc.WanbaoStackingMQDto;
 import com.fantechs.provider.mes.sfc.config.RabbitConfig;
-import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageBuilder;
-import org.springframework.amqp.core.MessageProperties;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +17,7 @@ import java.io.IOException;
  * @create 2021/2/24
  */
 @Component
+@Slf4j
 public class RabbitProducer {
     @Autowired
     private AmqpTemplate rabbitTemplate;
@@ -81,16 +79,9 @@ public class RabbitProducer {
      * @param json
      */
     public void sendStacking(String json){
-        byte[] bytes = json.getBytes();
-        byte[] ibytes = new byte[bytes.length];
-        this.rabbitTemplate.convertAndSend(RabbitConfig.STACKING_QUEUE_NAME,ibytes);
+        String s = 1 + json;
+        byte[] bytes = s.getBytes();
+        this.rabbitTemplate.convertAndSend(RabbitConfig.STACKING_QUEUE_NAME,bytes);
     }
 
-    /**
-     * 催动PLC堆垛运行
-     * @param stackingMQDto
-     */
-    public void sendStacking(WanbaoStackingMQDto stackingMQDto){
-        this.rabbitTemplate.convertAndSend(RabbitConfig.STACKING_QUEUE_NAME+"123",stackingMQDto);
-    }
 }

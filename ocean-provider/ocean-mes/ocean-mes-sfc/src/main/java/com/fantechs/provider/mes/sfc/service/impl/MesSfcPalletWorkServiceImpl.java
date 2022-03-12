@@ -43,6 +43,7 @@ import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.mes.sfc.service.*;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
+import com.fantechs.provider.mes.sfc.util.RabbitProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,6 +90,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     WanbaoFeignApi wanbaoFeignApi;
     @Resource
     InnerFeignApi innerFeignApi;
+    @Resource
+    private RabbitProducer rabbitProducer;
 
     // endregion
 
@@ -556,66 +559,89 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int workByManualOperation(PalletWorkByManualOperationDto dto) throws Exception {
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        if (dto.getWanbaoBarcodeDtos() == null || dto.getWanbaoBarcodeDtos().isEmpty()){
-            throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "条码集合为空，请扫码");
-        }
-        List<String> barcodeList = dto.getWanbaoBarcodeDtos().stream().map(WanbaoBarcodeDto::getBarcode).collect(Collectors.toList());
-        SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
-        searchMesSfcWorkOrderBarcode.setBarcodeList(barcodeList);
-        List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtoList = mesSfcWorkOrderBarcodeService.findList(searchMesSfcWorkOrderBarcode);
-        if (mesSfcWorkOrderBarcodeDtoList.isEmpty()) {
-            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码不存在或已被删除");
-        }
-
-        // 校验同一配置作业
         Map<String, Object> map = new HashMap<>();
-        map.put("barcodeList", barcodeList);
-        if (dto.getPalletType() == 2){
-            String count = mesSfcBarcodeProcessService.countBarcodeListForPOGroup(map);
-            if (count != null && Integer.parseInt(count) > 1){
-                dto.setPalletType((byte) 3);
-            }
-        }
-        if (dto.getPalletType() == 3){
-            String count = mesSfcBarcodeProcessService.countBarcodeListForSalesOrder(map);
-            if (count != null && Integer.parseInt(count) > 1){
-                dto.setPalletType((byte) 1);
-            }
-        }
-        if (dto.getPalletType() == 1){
-            // 同料号
-            String count = mesSfcBarcodeProcessService.countBarcodeListForMaterial(map);
-            if (count != null && Integer.parseInt(count) > 1){
-                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此批条码不属于同个物料，不可提交");
-            }
-        }
-        map.clear();
         map.put("stackingCode", dto.getStackingCode());
         List<WanbaoStackingDto> stackingList = mesSfcProductPalletService.findStackingList(map);
         if (stackingList.isEmpty()){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛编码不存在");
         }
-        // 保存条码堆垛关系
-        List<WanbaoStackingDet> stackingDets = new ArrayList<>();
-        for (WanbaoBarcodeDto wanbaoBarcodeDto : dto.getWanbaoBarcodeDtos()) {
-            WanbaoStackingDet stackingDet = new WanbaoStackingDet();
-            BeanUtil.copyProperties(wanbaoBarcodeDto, stackingDet);
-            stackingDet.setStackingId(stackingList.get(0).getStackingId());
-            for (MesSfcWorkOrderBarcodeDto workOrderBarcodeDto : mesSfcWorkOrderBarcodeDtoList){
-                if (workOrderBarcodeDto.getBarcode().equals(wanbaoBarcodeDto.getBarcode())){
-                    wanbaoBarcodeDto.setWorkOrderId(workOrderBarcodeDto.getWorkOrderId());
-                    break;
+        try {
+            SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+            if (dto.getWanbaoBarcodeDtos() == null || dto.getWanbaoBarcodeDtos().isEmpty()){
+                throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "条码集合为空，请扫码");
+            }
+            List<String> barcodeList = dto.getWanbaoBarcodeDtos().stream().map(WanbaoBarcodeDto::getBarcode).collect(Collectors.toList());
+            SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
+            searchMesSfcWorkOrderBarcode.setBarcodeList(barcodeList);
+            List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtoList = mesSfcWorkOrderBarcodeService.findList(searchMesSfcWorkOrderBarcode);
+            if (mesSfcWorkOrderBarcodeDtoList.isEmpty()) {
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码不存在或已被删除");
+            }
+
+            // 校验同一配置作业
+            map.clear();
+            map.put("barcodeList", barcodeList);
+            if (dto.getPalletType() == 2){
+                String count = mesSfcBarcodeProcessService.countBarcodeListForPOGroup(map);
+                if (count != null && Integer.parseInt(count) > 1){
+                    dto.setPalletType((byte) 3);
                 }
             }
-            stackingDets.add(stackingDet);
-        }
-        wanbaoFeignApi.batchAdd(stackingDets);
+            if (dto.getPalletType() == 3){
+                String count = mesSfcBarcodeProcessService.countBarcodeListForSalesOrder(map);
+                if (count != null && Integer.parseInt(count) > 1){
+                    dto.setPalletType((byte) 1);
+                }
+            }
+            if (dto.getPalletType() == 1){
+                // 同料号
+                String count = mesSfcBarcodeProcessService.countBarcodeListForMaterial(map);
+                if (count != null && Integer.parseInt(count) > 1){
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此批条码不属于同个物料，不可提交");
+                }
+            }
 
-        // 完工入库以及上架作业
-        this.beforePalletAutoAsnOrder(stackingList.get(0).getStackingId(), user.getOrganizationId(), dto.getWanbaoBarcodeDtos(), barcodeList, mesSfcWorkOrderBarcodeDtoList);
+            // 保存条码堆垛关系
+            List<WanbaoStackingDet> stackingDets = new ArrayList<>();
+            for (WanbaoBarcodeDto wanbaoBarcodeDto : dto.getWanbaoBarcodeDtos()) {
+                WanbaoStackingDet stackingDet = new WanbaoStackingDet();
+                BeanUtil.copyProperties(wanbaoBarcodeDto, stackingDet);
+                stackingDet.setStackingId(stackingList.get(0).getStackingId());
+                for (MesSfcWorkOrderBarcodeDto workOrderBarcodeDto : mesSfcWorkOrderBarcodeDtoList){
+                    if (workOrderBarcodeDto.getBarcode().equals(wanbaoBarcodeDto.getBarcode())){
+                        wanbaoBarcodeDto.setWorkOrderId(workOrderBarcodeDto.getWorkOrderId());
+                        break;
+                    }
+                }
+                stackingDets.add(stackingDet);
+            }
+            wanbaoFeignApi.batchAdd(stackingDets);
+
+            // 完工入库以及上架作业
+            this.beforePalletAutoAsnOrder(stackingList.get(0).getStackingId(), user.getOrganizationId(), dto.getWanbaoBarcodeDtos(), barcodeList, mesSfcWorkOrderBarcodeDtoList);
+
+            // A产线，发送堆垛数据至MQ
+            if (stackingList.get(0).getProCode().equals("A")){
+                WanbaoStackingMQDto wanbaoStackingMQDto = new WanbaoStackingMQDto();
+                wanbaoStackingMQDto.setCode(0);
+                wanbaoStackingMQDto.setStackingCode(stackingList.get(0).getStackingCode());
+                String stackingLine = stackingList.get(0).getStackingCode().substring(stackingList.get(0).getStackingCode().length() - 1);
+                wanbaoStackingMQDto.setStackingLine(stackingLine);
+                // 发送堆垛号至mq
+                rabbitProducer.sendStacking(JSON.toJSONString(wanbaoStackingMQDto));
+            }
+        }catch (Exception e){
+            if (!stackingList.isEmpty() && stackingList.get(0).getProCode().equals("A")){
+                WanbaoStackingMQDto wanbaoStackingMQDto = new WanbaoStackingMQDto();
+                wanbaoStackingMQDto.setCode(500);
+                // 发送堆垛号至mq
+                rabbitProducer.sendStacking(JSON.toJSONString(wanbaoStackingMQDto));
+            }
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), e.getMessage());
+        }
         return 1;
     }
+
 
     @Override
     public ScanByManualOperationDto scanByManualOperation(String barcode, Long proLineId) {
@@ -801,22 +827,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             }
             palletIds.add(item.getProductPalletId());
         }
-
-        // 2022-03-01 改为不自动提交栈板，有人工堆垛作业触发
-        /*// 生成完工入库单
-        if (!palletIds.isEmpty() && palletIds.size() > 0){
-            // 获取该条码对应的工单信息
-            SearchMesPmWorkOrder searchMesPmWorkOrder = new SearchMesPmWorkOrder();
-            searchMesPmWorkOrder.setWorkOrderId(productPallets.get(0).getWorkOrderId());
-            List<MesPmWorkOrderDto> mesPmWorkOrderDtoList = pmFeignApi.findWorkOrderList(searchMesPmWorkOrder).getData();
-            if (mesPmWorkOrderDtoList.isEmpty()) {
-                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "没有找到条码绑定的工单");
-            }
-            MesPmWorkOrderDto mesPmWorkOrderDto = mesPmWorkOrderDtoList.get(0);
-            if (mesPmWorkOrderDto.getOutputProcessId().equals(processId)){
-                this.beforePalletAutoAsnOrder(palletIds, user.getOrganizationId(), null);
-            }
-        }*/
         return productPallets.size();
     }
 
@@ -891,6 +901,28 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         return mesSfcProductPalletService.update(sfcProductPallet);
     }
 
+    @Override
+    public Boolean testStacking(String code) {
+        try {
+            if (code.equals("500")){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "报错啦！！！");
+            }
+            WanbaoStackingMQDto wanbaoStackingMQDto = new WanbaoStackingMQDto();
+            wanbaoStackingMQDto.setCode(0);
+            wanbaoStackingMQDto.setStackingCode("391-1066920304213");
+            wanbaoStackingMQDto.setStackingLine("1");
+            // 发送堆垛号至mq
+            rabbitProducer.sendStacking(JSON.toJSONString(wanbaoStackingMQDto));
+            return true;
+        }catch (Exception e){
+            WanbaoStackingMQDto wanbaoStackingMQDto = new WanbaoStackingMQDto();
+            wanbaoStackingMQDto.setCode(500);
+            // 发送堆垛号至mq
+            rabbitProducer.sendStacking(JSON.toJSONString(wanbaoStackingMQDto));
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), e.getMessage());
+        }
+    }
+
     // region 私有方法
 
     /**
@@ -936,34 +968,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             }else{
                 throw new BizErrorException("未查询到货主信息");
             }
-
-            //注释掉 2022-03-10
-            /*SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
-            searchBaseStorage.setMinSurplusCanPutSalver(0);
-            searchBaseStorage.setStorageType((byte) 2);
-            // 万宝项目-通过程序配置项判定物料匹配的仓库
-            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-            searchSysSpecItem.setSpecCode("wanbaoWarehouse");
-            List<SysSpecItem> itemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-            if(!itemList.isEmpty()){
-                String warehouseCode = null;
-                List<Map<String, String>> list = JSONArray.parseObject(itemList.get(0).getParaValue(), List.class);
-                for (Map<String, String> item : list){
-                    if(palletAutoAsnDto.getMaterialCode().contains(item.get("material"))){
-                        warehouseCode = item.get("warehouse");
-                        break;
-                    }
-                }
-                searchBaseStorage.setWarehouseCode(warehouseCode);
-            }
-            ResponseEntity<List<BaseStorage>> baseStorages = baseFeignApi.findList(searchBaseStorage);
-            if(StringUtils.isNotEmpty(baseStorages.getData())){
-                palletAutoAsnDto.setStorageId(baseStorages.getData().get(0).getStorageId());
-                palletAutoAsnDto.setWarehouseId(baseStorages.getData().get(0).getWarehouseId());
-            }else{
-                throw new BizErrorException(ErrorCodeEnum.STO30012000);
-            }*/
-
             palletAutoAsnDto.setProductionDate(new Date());
 
             //2021-07-30 增加包装单位 by Dylan

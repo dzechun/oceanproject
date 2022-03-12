@@ -32,6 +32,13 @@ public class MesSfcPalletWorkController {
         return ControllerUtil.returnDataSuccess(palletWorkScanDto, 1);
     }
 
+    @PostMapping("/testStacking")
+    @ApiOperation("给PLC的MQ存测试数据")
+    public ResponseEntity<PalletWorkScanDto> testStacking(@ApiParam(value = "条码", required = true) @RequestParam String code) throws Exception {
+        mesSfcPalletWorkService.testStacking(code);
+        return ControllerUtil.returnSuccess();
+    }
+
     @PostMapping("/scanByManualOperation")
     @ApiOperation("栈板作业扫码(人工), 提供给万宝定制化包使用")
     public ResponseEntity<ScanByManualOperationDto> scanByManualOperation(
