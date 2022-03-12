@@ -104,7 +104,7 @@ public class QmsInspectionOrderController {
     @ApiOperation("修改")
     @PostMapping("/update")
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=QmsInspectionOrder.update.class) QmsInspectionOrder qmsInspectionOrder) {
-        return ControllerUtil.returnCRUD(qmsInspectionOrderService.update(qmsInspectionOrder));
+        return ControllerUtil.returnCRUD(qmsInspectionOrderService.update(qmsInspectionOrder,(byte)1));
     }
 
     @ApiOperation("获取详情")
