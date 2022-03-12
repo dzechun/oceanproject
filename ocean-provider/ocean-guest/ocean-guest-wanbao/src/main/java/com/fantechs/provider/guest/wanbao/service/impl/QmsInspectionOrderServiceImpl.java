@@ -263,7 +263,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         List<QmsInspectionOrderDetSample> unQualifiedBarcodes = barcodes.stream().filter(item -> item.getBarcodeStatus()!=null && item.getBarcodeStatus() == 0).collect(Collectors.toList());
         if(barcodes.size() == unQualifiedBarcodes.size()){
             qmsInspectionOrder.setInspectionResult((byte)0);
-        }else {
+        }else if(unQualifiedBarcodes.size() == 0){
+            qmsInspectionOrder.setInspectionResult((byte)1);
+        } else{
             qmsInspectionOrder.setInspectionResult((byte)2);
         }
 
@@ -1171,6 +1173,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 this.add(qmsInspectionOrder);
             }
 
+            Map<String,List<WmsInnerInventoryDetDto>> map = new HashMap<>();
             //对应的库存明细写入质检单号
             if (StringUtils.isNotEmpty(detDtos)) {
                 for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : detDtos) {
@@ -1178,8 +1181,35 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                     ResponseEntity update = innerFeignApi.update(wmsInnerInventoryDetDto);
                     if(StringUtils.isNotEmpty(update) && update.getCode()!=0)
                         throw new BizErrorException("更新库存明细失败");
+
+                    //按库存分组
+                    String groupCode = wmsInnerInventoryDetDto.getMaterialId() + "_" + wmsInnerInventoryDetDto.getStorageId() + "_" + wmsInnerInventoryDetDto.getInventoryStatusId();
+                    List<WmsInnerInventoryDetDto> inventoryDetDtoList = new LinkedList<>();
+                    if (map.containsKey(groupCode)) {
+                        inventoryDetDtoList = map.get(groupCode);
+                    }
+                    inventoryDetDtoList.add(wmsInnerInventoryDetDto);
+                    map.put(groupCode, inventoryDetDtoList);
                 }
             }
+
+
+
+            //对应的库存写入质检单号
+            Set<String> set = map.keySet();
+            for (String s : set){
+                List<WmsInnerInventoryDetDto> inventoryDetDtos = map.get(s);
+                SearchWmsInnerInventory searchWmsInnerInventory = new SearchWmsInnerInventory();
+                searchWmsInnerInventory.setPageSize(999);
+                searchWmsInnerInventory.setStorageId(inventoryDetDtos.get(0).getStorageId());
+                searchWmsInnerInventory.setMaterialId(inventoryDetDtos.get(0).getMaterialId());
+                searchWmsInnerInventory.setInventoryStatusId(inventoryDetDtos.get(0).getInventoryStatusId());
+                List<WmsInnerInventoryDto> innerInventoryDtos = innerFeignApi.findList(searchWmsInnerInventory).getData();
+                WmsInnerInventoryDto wmsInnerInventoryDto = innerInventoryDtos.get(0);
+                wmsInnerInventoryDto.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
+                innerFeignApi.update(wmsInnerInventoryDto);
+            }
+
 
             //锁定所有待检库存
             SearchWmsInnerInventory searchWmsInnerInventory = new SearchWmsInnerInventory();
