@@ -45,22 +45,21 @@ public class WmsInnerBarcodeOperationDto extends WmsInnerBarcodeOperation implem
      */
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
-    @Excel(name = "组织名称", height = 20, width = 30,orderNum="24")
     private String organizationName;
 
     /**
-     * 创建用户名称
+     * 创建人
      */
     @Transient
-    @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="25")
+    @ApiModelProperty(name = "createUserName",value = "创建人")
+    @Excel(name = "创建人", height = 20, width = 30)
     private String createUserName;
 
     /**
-     * 修改用户名称
+     * 修改人
      */
     @Transient
-    @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="27")
+    @ApiModelProperty(name = "createUserName",value = "修改人")
+    @Excel(name = "修改人", height = 20, width = 30)
     private String modifiedUserName;
 }

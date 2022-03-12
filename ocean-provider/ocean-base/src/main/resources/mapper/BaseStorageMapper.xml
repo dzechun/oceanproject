@@ -171,7 +171,7 @@ ss.logic_id
             and wel.logic_name like CONCAT('%',#{logicName},'%')
         </if>
         </where>
-        order by ss.create_time desc
+        order by ss.storage_code desc
     </select>
 
     <update id="batchUpdate" parameterType="java.util.List">
