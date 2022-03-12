@@ -2,6 +2,7 @@ package com.fantechs.provider.mes.sfc.util;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -422,7 +423,7 @@ public class BarcodeUtils {
                         List<MesSfcWorkOrderBarcodeDto> barcodeDtos = barcodeUtils.mesSfcWorkOrderBarcodeService.findList(new SearchMesSfcWorkOrderBarcode());
                         List<MesSfcWorkOrderBarcode> barcodes = new ArrayList<>();
                         for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : keyPartRelevanceDtos){
-                            if (keyPartRelevanceDto.getPartBarcode() != null){
+                            if (keyPartRelevanceDto.getPartBarcode() != null && mesSfcBarcodeProcess.getCustomerBarcode() == null){
                                 MesSfcWorkOrderBarcodeDto barcodeDto = barcodeDtos.stream().filter(item -> item.getBarcode().equals(keyPartRelevanceDto.getPartBarcode())).findFirst().get();
                                 MesSfcWorkOrderBarcode barcode = new MesSfcWorkOrderBarcode();
                                 barcode.setWorkOrderBarcodeId(barcodeDto.getWorkOrderBarcodeId());
