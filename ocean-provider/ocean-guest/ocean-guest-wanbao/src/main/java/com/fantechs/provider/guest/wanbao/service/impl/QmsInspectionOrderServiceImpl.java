@@ -1115,7 +1115,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             List<QmsInspectionOrder> qmsInspectionOrderList = qmsInspectionOrderMapper.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrder));
 
             //入库数量（合格数量）
-            List<WmsInnerInventoryDetDto> qualifiedInventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
+            List<WmsInnerInventoryDetDto> qualifiedInventoryDetDtos = innerFeignApi.findList(searchQualifiedInventoryDet).getData();
 
             if(StringUtils.isNotEmpty(qmsInspectionOrderList)){
                 qmsInspectionOrder = qmsInspectionOrderList.get(0);
