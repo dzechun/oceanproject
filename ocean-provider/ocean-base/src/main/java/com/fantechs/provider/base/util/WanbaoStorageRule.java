@@ -61,7 +61,7 @@ public class WanbaoStorageRule {
      * @return
      */
     public static Long retInStorage(BaseStorageRule baseStorageRule){
-        if(StringUtils.isEmpty(baseStorageRule.getLogicId(),baseStorageRule.getMaterialId(),baseStorageRule.getQty())){
+        if(StringUtils.isEmpty(baseStorageRule.getLogicId(),baseStorageRule.getMaterialId(),baseStorageRule.getQty(),baseStorageRule.getInventoryStatusId())){
             throw new BizErrorException(ErrorCodeEnum.GL99990100);
         }
         //根据仓库产线查询库位
@@ -195,7 +195,7 @@ public class WanbaoStorageRule {
         Long storageId= null;
         //查询批次相同库位 物料+库位+销售编码+PO+库龄小于30天
         List<StorageRuleInventry> storageRuleInventries = wanbaoStorageRule.baseStorageMapper.findInv(list,baseStorageRule.getMaterialId(),
-                baseStorageRule.getSalesBarcode(),baseStorageRule.getPoCode());
+                baseStorageRule.getSalesBarcode(),baseStorageRule.getPoCode(),baseStorageRule.getInventoryStatusId());
         List<StorageRuleInventry> alikeList = storageRuleInventries.stream().filter(x->(capacity.subtract(x.getMaterialQty()))
                 .compareTo(baseStorageRule.getQty())>-1)
                 .sorted(Comparator.comparing(StorageRuleInventry::getMaterialQty))

@@ -18,6 +18,14 @@ public interface QmsInspectionOrderService extends IService<QmsInspectionOrder> 
     int audit(QmsInspectionOrder qmsInspectionOrder);
     //    int autoAdd();
     int newAutoAdd();
+
+    /**
+     * 成品检验生成质检移位单
+     * @param qmsInspectionOrder
+     * @param type (0-正常更新 ，1-返写检验单据)
+     * @return
+     */
+    int update(QmsInspectionOrder qmsInspectionOrder,Byte type);
     int thirdInspection(QmsInspectionOrder qmsInspectionOrder);
     int batchQualified(Long inspectionOrderId);
     int batchSubmit(Long inspectionOrderId);

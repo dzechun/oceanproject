@@ -73,7 +73,6 @@
         wipod.plan_qty,
         wipod.distribution_qty,
         wipod.actual_qty,
-        wipod.pallet_code,
         wipod.receiving_date,
         wipod.production_date,
         wipod.expired_date,
@@ -110,7 +109,8 @@
         su.user_name AS create_user_name,
         sus.user_name AS modified_user_name,
         bo.organization_name AS organization_name,
-        bpl.pro_name
+        bpl.pro_name,
+        ws.stacking_code AS pallet_code
         FROM wms_inner_job_order_det wipod
         LEFT JOIN wms_inner_job_order wijo ON wipod.job_order_id = wijo.job_order_id
         LEFT JOIN base_material_owner bmo ON wipod.material_owner_id = bmo.material_owner_id
@@ -126,6 +126,8 @@
         LEFT JOIN wms_in_asn_order_det wiaod ON wipod.source_det_id = wiaod.asn_order_det_id
         LEFT JOIN mes_pm_work_order mpwo ON wiaod.source_order_id = mpwo.work_order_id AND wijo.order_type_id=4
         LEFT JOIN base_pro_line bpl ON mpwo.pro_line_id = bpl.pro_line_id
+        LEFT JOIN wms_inner_job_order_re_mspp wijorm ON wijo.job_order_id = wijorm.job_order_id
+        LEFT JOIN wanbao_stacking ws ON wijorm.product_pallet_id = ws.stacking_id
         <where>
             <if test="jobOrderId!=null and jobOrderId!=''">
                 and wipod.job_order_id = #{jobOrderId}
