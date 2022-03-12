@@ -382,27 +382,29 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 //                }
 //            }
         }
+        WmsInnerJobOrder wms = new WmsInnerJobOrder();
+        wms.setJobOrderId(wmsInnerJobOrder.getJobOrderId());
         if(success==0){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"未匹配到可用库位");
         }else if(success==list.size()){
             //待激活
-            wmsInnerJobOrder.setOrderStatus((byte)3);
-            wmsInnerJobOrder.setWorkStartTime(new Date());
-            wmsInnerJobOrder.setWorkEndtTime(new Date());
+            wms.setOrderStatus((byte)3);
+            wms.setWorkStartTime(new Date());
+            wms.setWorkEndtTime(new Date());
         }else {
-            wmsInnerJobOrder.setOrderStatus((byte)2);
-            wmsInnerJobOrder.setWorkStartTime(new Date());
+            wms.setOrderStatus((byte)2);
+            wms.setWorkStartTime(new Date());
         }
         SearchBaseWorker searchBaseWorker = new SearchBaseWorker();
         searchBaseWorker.setWarehouseId(wmsInnerJobOrder.getWarehouseId());
         searchBaseWorker.setUserId(wmsInnerJobOrder.getCreateUserId());
         List<BaseWorkerDto> workerDtos = baseFeignApi.findList(searchBaseWorker).getData();
         if (!workerDtos.isEmpty()) {
-            wmsInnerJobOrder.setWorkerId(workerDtos.get(0).getWorkerId());
+            wms.setWorkerId(workerDtos.get(0).getWorkerId());
         }
-        wmsInnerJobOrder.setModifiedTime(new Date());
-        wmsInnerJobOrder.setModifiedUserId(wmsInnerJobOrder.getCreateUserId());
-        wmsInPutawayOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
+        wms.setModifiedTime(new Date());
+        wms.setModifiedUserId(wmsInnerJobOrder.getCreateUserId());
+        num += wmsInPutawayOrderMapper.updateByPrimaryKeySelective(wms);
         return num;
     }
     /**

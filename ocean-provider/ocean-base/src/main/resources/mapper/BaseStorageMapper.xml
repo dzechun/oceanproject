@@ -347,4 +347,17 @@ order by wii.modified_time desc limit 1
         GROUP BY storage_id,material_id,sales_barcode,option4,inventory_status_id
         HAVING materialQty &gt;= #{materialQty} and bis.inventory_status_name='合格'
     </select>
+    <select id="findEmptyStorage" resultType="java.lang.Long">
+        SELECT storage_id FROM (SELECT storage_id FROM base_storage
+            <where>
+                <if test="storageIds!=null and storageIds.size()&gt; 0">
+                    and storage_id  in
+                    <foreach collection="storageIds" item="list" open="(" close=")" separator=",">
+                        #{list.storageId}
+                    </foreach>
+                </if>
+            </where>
+            ) a
+        WHERE storage_id NOT IN(SELECT storage_id FROM wms_inner_inventory_det WHERE material_qty>0)
+    </select>
 </mapper>

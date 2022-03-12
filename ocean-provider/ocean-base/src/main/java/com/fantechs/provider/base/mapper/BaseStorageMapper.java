@@ -40,4 +40,6 @@ public interface BaseStorageMapper extends MyMapper<BaseStorage> {
      * @return
      */
     List<StorageRuleInventry> findOutInv(Map<String,Object> map);
+
+    List<Long> findEmptyStorage(@Param("storageIds") List<BaseStorage>storageIds);
 }
