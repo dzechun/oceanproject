@@ -1181,35 +1181,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                     ResponseEntity update = innerFeignApi.update(wmsInnerInventoryDetDto);
                     if(StringUtils.isNotEmpty(update) && update.getCode()!=0)
                         throw new BizErrorException("更新库存明细失败");
-
-                    //按库存分组
-                    String groupCode = wmsInnerInventoryDetDto.getMaterialId() + "_" + wmsInnerInventoryDetDto.getStorageId() + "_" + wmsInnerInventoryDetDto.getInventoryStatusId();
-                    List<WmsInnerInventoryDetDto> inventoryDetDtoList = new LinkedList<>();
-                    if (map.containsKey(groupCode)) {
-                        inventoryDetDtoList = map.get(groupCode);
-                    }
-                    inventoryDetDtoList.add(wmsInnerInventoryDetDto);
-                    map.put(groupCode, inventoryDetDtoList);
                 }
             }
-
-
-
-            //对应的库存写入质检单号
-            Set<String> set = map.keySet();
-            for (String s : set){
-                List<WmsInnerInventoryDetDto> inventoryDetDtos = map.get(s);
-                SearchWmsInnerInventory searchWmsInnerInventory = new SearchWmsInnerInventory();
-                searchWmsInnerInventory.setPageSize(999);
-                searchWmsInnerInventory.setStorageId(inventoryDetDtos.get(0).getStorageId());
-                searchWmsInnerInventory.setMaterialId(inventoryDetDtos.get(0).getMaterialId());
-                searchWmsInnerInventory.setInventoryStatusId(inventoryDetDtos.get(0).getInventoryStatusId());
-                List<WmsInnerInventoryDto> innerInventoryDtos = innerFeignApi.findList(searchWmsInnerInventory).getData();
-                WmsInnerInventoryDto wmsInnerInventoryDto = innerInventoryDtos.get(0);
-                wmsInnerInventoryDto.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
-                innerFeignApi.update(wmsInnerInventoryDto);
-            }
-
 
             //锁定所有待检库存
             SearchWmsInnerInventory searchWmsInnerInventory = new SearchWmsInnerInventory();
@@ -1222,6 +1195,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             if (StringUtils.isNotEmpty(list)) {
                 for(WmsInnerInventoryDto wmsInnerInventoryDto : list){
                     wmsInnerInventoryDto.setQcLock((byte) 1);
+                    wmsInnerInventoryDto.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
                     ResponseEntity update = innerFeignApi.update(wmsInnerInventoryDto);
                     if(StringUtils.isNotEmpty(update) && update.getCode()!=0)
                         throw new BizErrorException("更新库存状态失败");
