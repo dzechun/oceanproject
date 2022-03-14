@@ -420,7 +420,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : inventoryDetDtos) {
                 wmsInnerInventoryDetDto.setInventoryStatusId(inventoryStatusList2.get(0).getInventoryStatusId());
                 for (QmsInspectionOrderDetSample qmsInspectionOrderDetSample : unQualifiedBarcodes){
-                    if(wmsInnerInventoryDetDto.getBarcode().equals(qmsInspectionOrderDetSample.getBarcode())){
+                    if(wmsInnerInventoryDetDto.getBarcode().equals(qmsInspectionOrderDetSample.getFactoryBarcode())){
                         wmsInnerInventoryDetDto.setInventoryStatusId(inventoryStatusList1.get(0).getInventoryStatusId());
                         unQualifiedCount++;
                     }
@@ -858,6 +858,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             if(StringUtils.isEmpty(qmsInspectionOrder)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
+            if(qmsInspectionOrder.getInspectionStatus()==(byte)2||qmsInspectionOrder.getInspectionStatus()==(byte)3){
+                throw new BizErrorException("检验中或检验完成的单据不可删除");
+            }
             QmsHtInspectionOrder qmsHtInspectionOrder = new QmsHtInspectionOrder();
             BeanUtils.copyProperties(qmsInspectionOrder, qmsHtInspectionOrder);
             list.add(qmsHtInspectionOrder);
@@ -876,6 +879,28 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             //删除检验单明细
             qmsInspectionOrderDetMapper.deleteByExample(example1);
 
+            //将库存的检验单号置空
+            SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
+            searchWmsInnerInventoryDet.setPageSize(999);
+            searchWmsInnerInventoryDet.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
+            List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
+            if(StringUtils.isNotEmpty(inventoryDetDtos)) {
+                for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : inventoryDetDtos) {
+                    wmsInnerInventoryDetDto.setInspectionOrderCode(null);
+                    innerFeignApi.update(wmsInnerInventoryDetDto);
+                }
+            }
+
+            SearchWmsInnerInventory searchWmsInnerInventory = new SearchWmsInnerInventory();
+            searchWmsInnerInventory.setPageSize(999);
+            searchWmsInnerInventory.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
+            List<WmsInnerInventoryDto> innerInventoryDtos = innerFeignApi.findList(searchWmsInnerInventory).getData();
+            if(StringUtils.isNotEmpty(innerInventoryDtos)){
+                for (WmsInnerInventoryDto wmsInnerInventoryDto : innerInventoryDtos) {
+                    wmsInnerInventoryDto.setInspectionOrderCode(null);
+                    innerFeignApi.update(wmsInnerInventoryDto);
+                }
+            }
         }
         //履历
         qmsHtInspectionOrderMapper.insertList(list);

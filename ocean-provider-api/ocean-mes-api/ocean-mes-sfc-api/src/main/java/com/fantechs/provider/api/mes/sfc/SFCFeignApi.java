@@ -10,7 +10,10 @@ import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -96,4 +99,8 @@ public interface SFCFeignApi {
     @PostMapping("/mesSfcPalletWork/workByManualOperation")
     @ApiOperation("栈板作业提交(人工)")
     ResponseEntity<Integer> workByManualOperation(@ApiParam(value = "条码", required = true) @RequestBody PalletWorkByManualOperationDto dto);
+
+    @ApiOperation("产品关键物料清单列表")
+    @PostMapping("/mesSfcKeyPartRelevance/findList")
+    ResponseEntity<List<MesSfcKeyPartRelevanceDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchMesSfcKeyPartRelevance searchMesSfcKeyPartRelevance);
 }
