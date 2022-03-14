@@ -1127,6 +1127,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 qmsInspectionOrder.setInventoryQty(new BigDecimal(qualifiedInventoryDetDtos.size()));
                 List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetService.showOrderDet(qmsInspectionOrder.getInspectionStandardId(), qmsInspectionOrder.getOrderQty());
                 qmsInspectionOrder.setQmsInspectionOrderDets(qmsInspectionOrderDets);
+                qmsInspectionOrder.setSalesCode(detDtos.get(0).getOption3());
+                qmsInspectionOrder.setSamePackageCode(detDtos.get(0).getOption4());
                 this.update(qmsInspectionOrder,(byte)0);
             }else{
                 qmsInspectionOrder.setMaterialId(detDtos.get(0).getMaterialId());
@@ -1168,7 +1170,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 }
 
                 qmsInspectionOrder.setInspectionStandardId(inspectionStandardList.get(0).getInspectionStandardId());
-
+                qmsInspectionOrder.setSalesCode(detDtos.get(0).getOption3());
+                qmsInspectionOrder.setSamePackageCode(detDtos.get(0).getOption4());
                 //明细
                 List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetService.showOrderDet(qmsInspectionOrder.getInspectionStandardId(), qmsInspectionOrder.getOrderQty());
                 qmsInspectionOrder.setQmsInspectionOrderDets(qmsInspectionOrderDets);
