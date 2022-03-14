@@ -1091,7 +1091,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
         SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
         searchWmsInnerInventoryDet.setInventoryStatusId(wait);
-        searchWmsInnerInventoryDet.setJobStatus((byte)2);
+        searchWmsInnerInventoryDet.setBarcodeStatus("3");
         List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
 
         //库存明细按PO和销售订单号和物料进行分组
