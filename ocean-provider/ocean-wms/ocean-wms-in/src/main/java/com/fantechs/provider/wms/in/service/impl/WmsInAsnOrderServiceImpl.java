@@ -476,6 +476,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerInventory.setWarehouseId(wmsInAsnOrderDetDto.getWarehouseId());
             wmsInnerInventory.setStorageId(wmsInAsnOrderDetDto.getStorageId());
             wmsInnerInventory.setBatchCode(wmsInAsnOrderDetDto.getBatchCode());
+            wmsInnerInventory.setJobOrderDetId(wmsInAsnOrderDetDto.getAsnOrderDetId());
             wmsInnerInventory.setReceivingDate(new Date());
             wmsInnerInventory.setPackingUnitName(wmsInAsnOrderDetDto.getPackingUnitName());
             wmsInnerInventory.setJobStatus(type);

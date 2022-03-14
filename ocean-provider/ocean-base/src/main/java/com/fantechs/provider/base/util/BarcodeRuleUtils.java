@@ -2,25 +2,18 @@ package com.fantechs.provider.base.util;
 
 
 import com.alibaba.fastjson.JSON;
-import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
 import com.fantechs.common.base.utils.CodeUtils;
-import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.service.BaseBarcodeRuleSpecService;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import java.text.DecimalFormat;
-import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -33,7 +26,7 @@ public class BarcodeRuleUtils {
 
     @Autowired
     private BaseBarcodeRuleSpecService baseBarcodeRuleSpecService;
-    @Resource
+    @Autowired
     private RedisUtil redisUtil;
 
     // 声明对象
@@ -379,6 +372,7 @@ public class BarcodeRuleUtils {
             }
             // 更新redis最新条码
             barcodeRuleUtils.redisUtil.set(key, sb.toString());
+            log.info("key:"+key+"============value:"+sb);
             barcodeList.add(sb.toString());
         }
 
