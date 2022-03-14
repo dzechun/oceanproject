@@ -653,6 +653,21 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此条码已入库，不可重复扫码，请检查是否品质重新入库");
         }
 
+        if (barcode.length() != 23){
+            // 判断是否三星客户条码
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("wanbaoCheckBarcode");
+            List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if (!specItems.isEmpty()){
+                Example example = new Example(MesSfcBarcodeProcess.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andLike("customerBarcode", barcode + "%");
+                List<MesSfcBarcodeProcess> mesSfcBarcodeProcesses = mesSfcBarcodeProcessService.selectByExample(example);
+                if (!mesSfcBarcodeProcesses.isEmpty()){
+                    barcode = mesSfcBarcodeProcesses.get(0).getBarcode();
+                }
+            }
+        }
 
         ScanByManualOperationDto dto = new ScanByManualOperationDto();
 
