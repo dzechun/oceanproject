@@ -45,6 +45,7 @@
     <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
     <result column="spec" jdbcType="VARCHAR" property="spec"/>
     <result column="purchase_req_order_code" jdbcType="VARCHAR" property="purchaseReqOrderCode"/>
+    <result column="inspection_order_code" jdbcType="VARCHAR" property="inspectionOrderCode"/>
   </resultMap>
 
   <resultMap id="BaseResultMapDto" type="com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto" extends="BaseResultMap">
@@ -66,6 +67,7 @@
     wii.parent_inventory_id,
     wii.sales_code,
     wii.make_code,
+    wii.inspection_order_code,
 wii.material_owner_id,
 wii.warehouse_id,
 wii.storage_id,
