@@ -218,6 +218,9 @@ order by wiao.create_time desc
       <if test="poCode!=null and poCode!=''">
         and option4=#{poCode}
       </if>
+      <if test="materialId!=null and materialId!=''">
+        and material_id = #{materialId}
+      </if>
     </where>
      GROUP BY inventory_status_id) a) b
   </select>
