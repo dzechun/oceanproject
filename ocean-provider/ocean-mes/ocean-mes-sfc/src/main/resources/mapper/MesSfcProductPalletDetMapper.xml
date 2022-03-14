@@ -88,7 +88,7 @@
     COUNT( msbp.work_order_id ) AS packing_qty,
     COUNT( msbp.work_order_id ) AS actual_qty,
     bs.supplier_name,
-    oscrs.sales_code,
+    mpwo.sales_code,
     oscrs.same_package_code,
     oso.sales_user_name,
     mpwo.work_order_code,
