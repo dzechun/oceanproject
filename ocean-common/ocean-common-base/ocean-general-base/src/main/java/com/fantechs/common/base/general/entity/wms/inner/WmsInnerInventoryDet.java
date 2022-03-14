@@ -255,8 +255,15 @@ public class WmsInnerInventoryDet extends ValidGroup implements Serializable {
 
     private String option2;
 
+
+    /**
+     * 销售编码
+     */
     private String option3;
 
+    /**
+     * PO号
+     */
     private String option4;
 
     private String option5;
