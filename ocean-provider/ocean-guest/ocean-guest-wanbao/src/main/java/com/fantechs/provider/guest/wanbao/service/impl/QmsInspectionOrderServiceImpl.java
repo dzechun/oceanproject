@@ -1158,9 +1158,10 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 List<BaseInspectionStandard> inspectionStandardList = baseFeignApi.findList(searchBaseInspectionStandard).getData();
                 if (StringUtils.isEmpty(inspectionStandardList)) {
                     //查询通用的检验方式
-                    searchBaseInspectionStandard.setMaterialId((long)0);
-                    searchBaseInspectionStandard.setInspectionType((byte)2);
-                    inspectionStandardList = baseFeignApi.findList(searchBaseInspectionStandard).getData();
+                    SearchBaseInspectionStandard searchBaseInspectionStandard1 = new SearchBaseInspectionStandard();
+                    searchBaseInspectionStandard1.setMaterialId((long)0);
+                    searchBaseInspectionStandard1.setInspectionType((byte)2);
+                    inspectionStandardList = baseFeignApi.findList(searchBaseInspectionStandard1).getData();
                     if (StringUtils.isEmpty(inspectionStandardList))
                         throw new BizErrorException("未查到检验标准");
                 }
