@@ -121,7 +121,7 @@
             <if test="logicCode!=null and logicCode!='' and notEqualMark!=1">
                 and wel.logic_code = #{logicCode}
             </if>
-            <if test="logicCode!=null and storageId!='' and notEqualMark==1">
+            <if test="logicCode!=null and logicCode!='' and notEqualMark==1">
                 and wel.logic_code != #{logicCode}
             </if>
             <if test="inventoryStatusId!=null and inventoryStatusId!=''">
