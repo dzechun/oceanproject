@@ -731,9 +731,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         }
 
         //返写检验状态与检验结果
-        if(type != 0) {
+        /*if(type != 0) {
             this.writeBack(qmsInspectionOrder.getInspectionOrderId());
-        }
+        }*/
         return i;
     }
 
