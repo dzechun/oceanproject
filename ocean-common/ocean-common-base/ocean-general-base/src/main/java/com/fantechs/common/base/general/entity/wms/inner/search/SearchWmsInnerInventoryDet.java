@@ -1,14 +1,11 @@
 package com.fantechs.common.base.general.entity.wms.inner.search;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * @Author mr.lei
@@ -84,5 +81,12 @@ public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializabl
 
     @ApiModelProperty(name = "customerBarcode",value = "客户条码")
     private String customerBarcode;
+
+    /**
+     * ERP逻辑仓编码
+     */
+    @ApiModelProperty(name="logicCode",value = "ERP逻辑仓编码")
+    private String logicCode;
+
 
 }
