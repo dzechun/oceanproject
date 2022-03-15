@@ -987,8 +987,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         //只查询不属于三星仓的库存明细
         SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
         searchWmsInnerInventoryDet.setInventoryStatusId(wait);
-       /* searchWmsInnerInventoryDet.setBarcodeStatus("3");
-        searchWmsInnerInventoryDet.setLogicCode("C149");*/
+        searchWmsInnerInventoryDet.setBarcodeStatus("3");
+        searchWmsInnerInventoryDet.setLogicCode("C149");
         searchWmsInnerInventoryDet.setNotEqualMark(1);
         List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
 
