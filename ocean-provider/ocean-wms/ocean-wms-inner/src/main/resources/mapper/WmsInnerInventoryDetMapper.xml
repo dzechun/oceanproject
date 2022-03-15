@@ -131,7 +131,7 @@
                 and wiid.inspection_order_code like CONCAT('%',#{inspectionOrderCode},'%')
             </if>
             <if test="ifInspectionOrderCodeNull!=null and ifInspectionOrderCodeNull==1">
-                and wiid.inspection_order_code is null
+                and (wiid.inspection_order_code is null or wiid.inspection_order_code = '')
             </if>
             <if test="materialId!=null and materialId!=''">
                 and wiid.material_id = #{materialId}
