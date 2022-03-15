@@ -325,6 +325,9 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "没有找到条码绑定的工单");
         }
         MesPmWorkOrderDto mesPmWorkOrderDto = mesPmWorkOrderDtoList.get(0);
+        if (!mesPmWorkOrderDto.getProLineId().equals(requestPalletWorkScanDto.getProLineId())){
+            throw new BizErrorException(ErrorCodeEnum.PDA40012003.getCode(), "该产品条码产线跟该工位产线不匹配");
+        }
         // 获取该工位所有未关闭的栈板
         Map<String, Object> productPalletMap = new HashMap<>();
         productPalletMap.put("stationId", requestPalletWorkScanDto.getStationId());
