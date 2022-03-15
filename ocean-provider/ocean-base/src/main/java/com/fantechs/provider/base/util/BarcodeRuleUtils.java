@@ -371,8 +371,8 @@ public class BarcodeRuleUtils {
                 }
             }
             // 更新redis最新条码
-            barcodeRuleUtils.redisUtil.set(key, sb.toString());
-            log.info("key:"+key+"============value:"+sb);
+            boolean b = barcodeRuleUtils.redisUtil.set(key, sb.toString());
+            log.info("key:"+key+"============value:"+sb + "================redis 返回值:" + b);
             barcodeList.add(sb.toString());
         }
 
