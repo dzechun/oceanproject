@@ -61,7 +61,7 @@ public class BaseLabelCategoryController {
 
     @ApiOperation("获取详情")
     @PostMapping("/detail")
-    public ResponseEntity<BaseLabelCategory> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {
+    public ResponseEntity<BaseLabelCategory> detail(@ApiParam(value = "ID",required = true) @RequestParam(value = "id") Long id) {
         BaseLabelCategory baseLabelCategory = baseLabelCategoryService.selectByKey(id);
         return  ControllerUtil.returnDataSuccess(baseLabelCategory,StringUtils.isEmpty(baseLabelCategory)?0:1);
     }

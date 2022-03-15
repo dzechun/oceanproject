@@ -476,6 +476,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerInventory.setWarehouseId(wmsInAsnOrderDetDto.getWarehouseId());
             wmsInnerInventory.setStorageId(wmsInAsnOrderDetDto.getStorageId());
             wmsInnerInventory.setBatchCode(wmsInAsnOrderDetDto.getBatchCode());
+            wmsInnerInventory.setJobOrderDetId(wmsInAsnOrderDetDto.getAsnOrderDetId());
             wmsInnerInventory.setReceivingDate(new Date());
             wmsInnerInventory.setPackingUnitName(wmsInAsnOrderDetDto.getPackingUnitName());
             wmsInnerInventory.setJobStatus(type);
@@ -783,12 +784,14 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 if(StringUtils.isNotEmpty(wms)){
                     wms.setPackingQty(wms.getPackingQty().add(palletAutoAsnDto.getPackingQty()));
                     wms.setActualQty(wms.getActualQty().add(palletAutoAsnDto.getPackingQty()));
+                    Long statusId = wmsInAsnOrderMapper.findDefaultStatus(ControllerUtil.dynamicCondition("salesCode",palletAutoAsnDto.getSalesOrderCode(),"poCode",palletAutoAsnDto.getSamePackageCode(),"materialId",palletAutoAsnDto.getMaterialId()));
+                    wms.setInventoryStatusId(statusId);
                     wmsInAsnOrderDetMapper.updateByPrimaryKeySelective(wms);
                 }else{
                     wms = palletAutoAsnDto;
                     wms.setWarehouseId(baseStorageList.get(0).getWarehouseId());
                     wms.setStorageId(baseStorageList.get(0).getStorageId());
-                    Long statusId = wmsInAsnOrderMapper.findDefaultStatus(ControllerUtil.dynamicCondition("salesCode",palletAutoAsnDto.getSalesOrderCode(),"poCode",palletAutoAsnDto.getSamePackageCode()));
+                    Long statusId = wmsInAsnOrderMapper.findDefaultStatus(ControllerUtil.dynamicCondition("salesCode",palletAutoAsnDto.getSalesOrderCode(),"poCode",palletAutoAsnDto.getSamePackageCode(),"materialId",palletAutoAsnDto.getMaterialId()));
                     wms.setInventoryStatusId(statusId);
                     wms.setAsnOrderId(asnOrderId);
                     wms.setCreateTime(new Date());
@@ -843,7 +846,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 BeanUtil.copyProperties(palletAutoAsnDto,wmsInAsnOrderDet);
                 wmsInAsnOrderDet.setWarehouseId(baseStorageList.get(0).getWarehouseId());
                 wmsInAsnOrderDet.setStorageId(baseStorageList.get(0).getStorageId());
-                Long statusId = wmsInAsnOrderMapper.findDefaultStatus(ControllerUtil.dynamicCondition("salesCode",palletAutoAsnDto.getSalesOrderCode(),"poCode",palletAutoAsnDto.getSamePackageCode()));
+                Long statusId = wmsInAsnOrderMapper.findDefaultStatus(ControllerUtil.dynamicCondition("salesCode",palletAutoAsnDto.getSalesOrderCode(),"poCode",palletAutoAsnDto.getSamePackageCode(),"materialId",palletAutoAsnDto.getMaterialId()));
                 wmsInAsnOrderDet.setInventoryStatusId(statusId);
                 wmsInAsnOrderDet.setAsnOrderId(wmsInAsnOrder.getAsnOrderId());
                 wmsInAsnOrderDet.setCreateTime(new Date());

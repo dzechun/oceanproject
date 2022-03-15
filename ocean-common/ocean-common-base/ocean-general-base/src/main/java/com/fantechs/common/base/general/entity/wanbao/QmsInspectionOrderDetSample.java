@@ -58,6 +58,13 @@ public class QmsInspectionOrderDetSample extends ValidGroup implements Serializa
     private String barcode;
 
     /**
+     * 厂内码
+     */
+    @ApiModelProperty(name="factoryBarcode",value = "厂内码")
+    @Column(name = "factory_barcode")
+    private String factoryBarcode;
+
+    /**
      * 样本值
      */
     @ApiModelProperty(name="sampleValue",value = "样本值")

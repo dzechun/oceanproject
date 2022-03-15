@@ -652,7 +652,23 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         if (!inventoryDetDtos.isEmpty()){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此条码已入库，不可重复扫码，请检查是否品质重新入库");
         }
-
+        String customerBarcode = null;
+        if (barcode.length() != 23){
+            // 判断是否三星客户条码
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("wanbaoCheckBarcode");
+            List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if (!specItems.isEmpty()){
+                Example example = new Example(MesSfcBarcodeProcess.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andLike("customerBarcode", barcode + "%");
+                List<MesSfcBarcodeProcess> mesSfcBarcodeProcesses = mesSfcBarcodeProcessService.selectByExample(example);
+                if (!mesSfcBarcodeProcesses.isEmpty()){
+                    customerBarcode = barcode;
+                    barcode = mesSfcBarcodeProcesses.get(0).getBarcode();
+                }
+            }
+        }
 
         ScanByManualOperationDto dto = new ScanByManualOperationDto();
 
@@ -681,14 +697,18 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "当前条码未完成所有过站，请重新扫码");
             }
             if (!mesSfcKeyPartRelevanceDtoList.isEmpty()) {
-                for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : mesSfcKeyPartRelevanceDtoList){
-                    BaseLabelCategory keyPartLabelCategory = baseFeignApi.findLabelCategoryDetail(keyPartRelevanceDto.getLabelCategoryId()).getData();
-                    if (keyPartLabelCategory.getLabelCategoryCode().equals("02")) {
-                        // 销售订单条码
-                        dto.setSalesBarcode(keyPartRelevanceDto.getPartBarcode());
-                    }else if (keyPartLabelCategory.getLabelCategoryCode().equals("03")){
-                        // 客户条码
-                        dto.setCutsomerBarcode(keyPartRelevanceDto.getPartBarcode());
+                if (customerBarcode != null){
+                    dto.setCutsomerBarcode(customerBarcode);
+                }else {
+                    for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : mesSfcKeyPartRelevanceDtoList){
+                        BaseLabelCategory keyPartLabelCategory = baseFeignApi.findLabelCategoryDetail(keyPartRelevanceDto.getLabelCategoryId()).getData();
+                        if (keyPartLabelCategory.getLabelCategoryCode().equals("02")) {
+                            // 销售订单条码
+                            dto.setSalesBarcode(keyPartRelevanceDto.getPartBarcode());
+                        }else if (keyPartLabelCategory.getLabelCategoryCode().equals("03")){
+                            // 客户条码
+                            dto.setCutsomerBarcode(keyPartRelevanceDto.getPartBarcode());
+                        }
                     }
                 }
                 dto.setProName(mesSfcKeyPartRelevanceDtoList.get(0).getProName());

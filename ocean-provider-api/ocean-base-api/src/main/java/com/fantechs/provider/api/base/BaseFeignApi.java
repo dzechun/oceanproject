@@ -265,7 +265,7 @@ public interface BaseFeignApi {
 
     @ApiOperation("根据ID集合获取标签类别列表")
     @PostMapping("/baseLabelCategory/detail")
-    ResponseEntity<BaseLabelCategory> findLabelCategoryDetail(@ApiParam(value = "标签分类id", required = true) @RequestParam @NotNull(message = "labelCategoryId不能为空") Long id);
+    ResponseEntity<BaseLabelCategory> findLabelCategoryDetail(@ApiParam(value = "标签分类id", required = true) @RequestParam(value = "id") Long id);
 
     @ApiOperation("打印")
     @PostMapping("/rabbit/print")

@@ -9,6 +9,7 @@
     <result column="inspection_order_det_id" jdbcType="BIGINT" property="inspectionOrderDetId" />
     <result column="inspection_order_id" jdbcType="BIGINT" property="inspectionOrderId" />
     <result column="barcode" jdbcType="VARCHAR" property="barcode" />
+    <result column="factory_barcode" jdbcType="VARCHAR" property="factoryBarcode" />
     <result column="sample_value" jdbcType="VARCHAR" property="sampleValue" />
     <result column="badness_phenotype_id" jdbcType="BIGINT" property="badnessPhenotypeId" />
     <result column="duty_user_name" jdbcType="VARCHAR" property="dutyUserName" />
@@ -40,6 +41,7 @@
     qiods.inspection_order_det_id,
     qiods.inspection_order_id,
     qiods.barcode,
+    qiods.factory_barcode,
     qiods.sample_value,
     qiods.badness_phenotype_id,
     qiods.duty_user_name,

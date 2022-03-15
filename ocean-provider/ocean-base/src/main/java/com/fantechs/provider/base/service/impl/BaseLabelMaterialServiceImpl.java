@@ -4,12 +4,13 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseLabelMaterialDto;
-import com.fantechs.common.base.general.dto.basic.imports.BaseBadnessCauseImport;
 import com.fantechs.common.base.general.dto.basic.imports.BaseLabelMaterialImport;
-import com.fantechs.common.base.general.entity.basic.*;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessCause;
+import com.fantechs.common.base.general.entity.basic.BaseLabel;
+import com.fantechs.common.base.general.entity.basic.BaseLabelMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseProcess;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtLabelMaterial;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabelMaterial;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -18,11 +19,11 @@ import com.fantechs.provider.base.service.BaseLabelMaterialService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tk.mybatis.mapper.common.BaseMapper;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
 * @author Mr.Lei
@@ -57,6 +58,7 @@ public class BaseLabelMaterialServiceImpl extends BaseService<BaseLabelMaterial>
         if(StringUtils.isNotEmpty(record.getIsProcess()) && record.getIsProcess()==(byte)1 && StringUtils.isEmpty(record.getProcessId())){
             throw new BizErrorException("请绑定工序");
         }
+
         Example example = new Example(BaseLabelMaterial.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("labelId",record.getLabelId());
@@ -66,6 +68,14 @@ public class BaseLabelMaterialServiceImpl extends BaseService<BaseLabelMaterial>
         if(!StringUtils.isEmpty(baseLabelMaterial)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
+
+        //获取标签类别
+        BaseLabel baseLabel = baseLabelMapper.selectByPrimaryKey(record.getLabelId());
+        List<BaseLabelMaterial> list = baseLabelMaterialMapper.findEqualLabel(ControllerUtil.dynamicCondition("materialId",record.getMaterialId(),"categoryId",baseLabel.getLabelCategoryId(),"orgId",currentUserInfo.getOrganizationId()));
+        if(StringUtils.isNotEmpty(list) || list.size()>0){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(),"同物料不能绑定相同产品类型标签");
+        }
+
         record.setCreateTime(new Date());
         record.setCreateUserId(currentUserInfo.getUserId());
         record.setModifiedTime(new Date());
@@ -89,6 +99,16 @@ public class BaseLabelMaterialServiceImpl extends BaseService<BaseLabelMaterial>
         if(!StringUtils.isEmpty(baseLabelMaterial)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012001);
         }
+
+        //获取标签类别
+        BaseLabel baseLabel = baseLabelMapper.selectByPrimaryKey(entity.getLabelId());
+        List<BaseLabelMaterial> list = baseLabelMaterialMapper.findEqualLabel(ControllerUtil.dynamicCondition("materialId",entity.getMaterialId(),"categoryId",baseLabel.getLabelCategoryId(),"orgId",currentUserInfo.getOrganizationId()));
+        if(StringUtils.isNotEmpty(list) || list.size()>0){
+            if(list.stream().filter(x->x.getLabelMaterialId()!=entity.getLabelMaterialId()).collect(Collectors.toList()).size()>0) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "同物料不能绑定相同产品类型标签");
+            }
+        }
+
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(currentUserInfo.getUserId());
         entity.setOrgId(currentUserInfo.getOrganizationId());
