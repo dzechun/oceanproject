@@ -6,6 +6,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
+import com.fantechs.common.base.general.dto.om.OmSalesCodeReSpcDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
@@ -20,6 +21,7 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspection
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionWay;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInventoryStatus;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
+import com.fantechs.common.base.general.entity.om.search.SearchOmSalesCodeReSpc;
 import com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrder;
 import com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrderDet;
 import com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrderDetSample;
@@ -729,9 +731,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         }
 
         //返写检验状态与检验结果
-        if(type != 0) {
+        /*if(type != 0) {
             this.writeBack(qmsInspectionOrder.getInspectionOrderId());
-        }
+        }*/
         return i;
     }
 
@@ -1036,6 +1038,25 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                     this.update(qmsInspectionOrder, (byte) 0);
                 } else {
                     //新建检验单
+                    qmsInspectionOrder.setMaterialId(detDtos.get(0).getMaterialId());
+                    if(StringUtils.isNotEmpty(detDtos.get(0).getOption4())) {
+                        SearchOmSalesCodeReSpc searchOmSalesCodeReSpc = new SearchOmSalesCodeReSpc();
+                        searchOmSalesCodeReSpc.setSamePackageCode(detDtos.get(0).getOption4());
+                        List<OmSalesCodeReSpcDto> omSalesCodeReSpcDtos = oMFeignApi.findList(searchOmSalesCodeReSpc).getData();
+                        if(StringUtils.isEmpty(omSalesCodeReSpcDtos))
+                            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "未查询到对应的PO号:"+detDtos.get(0).getOption4());
+                        qmsInspectionOrder.setOrderQty(omSalesCodeReSpcDtos.get(0).getSamePackageCodeQty());
+                        qmsInspectionOrder.setInventoryQty(new BigDecimal(qualifiedInventoryDetDtos.size()));
+                    }else if(StringUtils.isNotEmpty(detDtos.get(0).getOption3()) && StringUtils.isEmpty(detDtos.get(0).getOption4()) ) {
+                        SearchOmSalesOrderDetDto searchOmSalesOrderDetDto = new SearchOmSalesOrderDetDto();
+                        searchOmSalesOrderDetDto.setSalesCode(detDtos.get(0).getOption3());
+                        List<OmSalesOrderDetDto> omSalesOrderDetDtos = oMFeignApi.findList(searchOmSalesOrderDetDto).getData();
+                        qmsInspectionOrder.setOrderQty(omSalesOrderDetDtos.get(0).getOrderQty());
+                        qmsInspectionOrder.setInventoryQty(new BigDecimal(qualifiedInventoryDetDtos.size()));
+                    }else{
+                        qmsInspectionOrder.setOrderQty(new BigDecimal(detDtos.size()));
+                        qmsInspectionOrder.setInventoryQty(new BigDecimal(detDtos.size()));
+                    }
                     createQmsInspectionOrder(qmsInspectionOrder, detDtos);
                 }
 
@@ -1081,6 +1102,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                         this.update(qmsInspectionOrder, (byte) 0);
                     } else {
                         //新建检验单
+                        qmsInspectionOrder.setMaterialId(detDtos.get(0).getMaterialId());
+                        qmsInspectionOrder.setOrderQty(new BigDecimal(detDtos.size()));
+                        qmsInspectionOrder.setInventoryQty(new BigDecimal(detDtos.size()));
                         createQmsInspectionOrder(qmsInspectionOrder, detDtos);
                     }
 
@@ -1093,9 +1117,6 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     }
 
     public void createQmsInspectionOrder(QmsInspectionOrder qmsInspectionOrder,List<WmsInnerInventoryDetDto> detDtos){
-        qmsInspectionOrder.setMaterialId(detDtos.get(0).getMaterialId());
-        qmsInspectionOrder.setOrderQty(new BigDecimal(detDtos.size()));
-        qmsInspectionOrder.setInventoryQty(new BigDecimal(detDtos.size()));
         qmsInspectionOrder.setInspectionStatus((byte) 1);
         SearchBaseInspectionWay searchBaseInspectionWay = new SearchBaseInspectionWay();
         searchBaseInspectionWay.setInspectionWayDesc("万宝检验方式");

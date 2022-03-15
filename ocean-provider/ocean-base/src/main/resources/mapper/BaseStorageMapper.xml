@@ -301,7 +301,7 @@ order by wii.modified_time desc limit 1
     </select>
 
     <select id="findInv" resultType="com.fantechs.common.base.general.dto.basic.StorageRuleInventry">
-        SELECT storage_id as 'storageId',material_id as 'materialId',sales_barcode as 'salesBarcode',option4 as 'poCode',sum(material_qty) as 'materialQty',production_date,inventory_status_id  FROM (SELECT storage_id,material_id,sales_barcode,option4,material_qty,production_date,inventory_status_id
+        SELECT storage_id as 'storageId',material_id as 'materialId',option3 as 'salesBarcode',option4 as 'poCode',sum(material_qty) as 'materialQty',production_date  FROM (SELECT storage_id,material_id,option3,option4,material_qty,production_date
         FROM wms_inner_inventory_det
         <where>
             <if test="storageIds!=null and storageIds.size()&gt; 0">
@@ -314,18 +314,18 @@ order by wii.modified_time desc limit 1
                 and material_id = #{materialId}
             </if>
             <if test="salesBarcode!=null and salesBarcode!=''">
-                and sales_barcode = #{salesBarcode}
+                and option3 = #{salesBarcode}
             </if>
             <if test="poCode!=null and poCode!=''">
                 and option4 = #{poCode}
             </if>
         </where>
         ORDER BY production_date DESC) a
-        GROUP BY storage_id,material_id,sales_barcode,option4,inventory_status_id
-        HAVING TIMESTAMPDIFF(DAY,production_date,DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%S'))&lt;30 and inventory_status_id=#{inventoryStatusId}
+        GROUP BY storage_id,material_id,option3,option4
+        HAVING TIMESTAMPDIFF(DAY,production_date,DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%S'))&lt;30
     </select>
     <select id="findOutInv" resultType="com.fantechs.common.base.general.dto.basic.StorageRuleInventry">
-        SELECT storage_id as 'storageId',material_id as 'materialId',sales_barcode as 'salesBarcode',option4 as 'poCode',sum(material_qty) as 'materialQty',production_date,a.inventory_status_id,bis.inventory_status_name  FROM (SELECT storage_id,material_id,sales_barcode,option4,material_qty,production_date,inventory_status_id
+        SELECT storage_id as 'storageId',material_id as 'materialId',option3 as 'salesBarcode',option4 as 'poCode',sum(material_qty) as 'materialQty',production_date,a.inventory_status_id,bis.inventory_status_name  FROM (SELECT storage_id,material_id,sales_barcode,option4,material_qty,production_date,inventory_status_id
         FROM wms_inner_inventory_det
         <where>
             <if test="storageId!=null and storageId!=null">
@@ -335,7 +335,7 @@ order by wii.modified_time desc limit 1
                 and material_id = #{materialId}
             </if>
             <if test="salesBarcode!=null and salesBarcode!=''">
-                and sales_barcode = #{salesBarcode}
+                and option3 = #{salesBarcode}
             </if>
             <if test="poCode!=null and poCode!=''">
                 and option4 = #{poCode}
