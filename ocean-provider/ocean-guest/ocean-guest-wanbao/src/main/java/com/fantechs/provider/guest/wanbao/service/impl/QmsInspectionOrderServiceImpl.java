@@ -290,7 +290,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     }
 
     private int createJobOrderShift(List<QmsInspectionOrderDetSample> list,QmsInspectionOrder qmsInspectionOrder,SysUser user){
-        int i=0;
+        int i=1;
         String barcode=list.get(0).getBarcode();
         Long materialId=qmsInspectionOrder.getMaterialId();
         String proCode=null;
