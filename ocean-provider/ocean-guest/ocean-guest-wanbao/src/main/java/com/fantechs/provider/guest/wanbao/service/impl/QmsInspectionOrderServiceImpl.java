@@ -972,11 +972,14 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "未查询带待检的检验状态");
         Long wait = null;
         Long qualified = null;
+        Long noQualified = null;
         for(BaseInventoryStatus status : inventoryStatus){
             if("待检".equals(status.getInventoryStatusName()))
                 wait = status.getInventoryStatusId();
             if("合格".equals(status.getInventoryStatusName()))
                 qualified = status.getInventoryStatusId();
+            if("不合格".equals(status.getInventoryStatusName()))
+                noQualified = status.getInventoryStatusId();
         }
 
         //只查询不属于三星仓的库存明细
@@ -1026,9 +1029,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 }else{
                     qmsInspectionOrder.setOrderQty(new BigDecimal(detDtos.size()));
                     qmsInspectionOrder.setInventoryQty(new BigDecimal(detDtos.size()));
+                    List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetService.showOrderDet(qmsInspectionOrder.getInspectionStandardId(), qmsInspectionOrder.getOrderQty());
+                    qmsInspectionOrder.setQmsInspectionOrderDets(qmsInspectionOrderDets);
                 }
-                List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetService.showOrderDet(qmsInspectionOrder.getInspectionStandardId(), qmsInspectionOrder.getOrderQty());
-                qmsInspectionOrder.setQmsInspectionOrderDets(qmsInspectionOrderDets);
                 this.update(qmsInspectionOrder,(byte)0);
             }else{
                 //新建检验单
@@ -1036,7 +1039,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             }
 
             //库存、库存明细写入检验单号
-            writeInspectionOrderCode(qmsInspectionOrder,detDtos);
+            writeInspectionOrderCode(qmsInspectionOrder,detDtos,qualified,noQualified);
         }
 
         //处理三星仓库物料,统一按照无PO号和销售编码处理
@@ -1083,7 +1086,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 }
 
                 //库存、库存明细写入检验单号
-                writeInspectionOrderCode(qmsInspectionOrder,detDtos);
+                writeInspectionOrderCode(qmsInspectionOrder,detDtos,qualified,noQualified);
             }
         }
 
@@ -1138,11 +1141,17 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
     }
 
-    public void writeInspectionOrderCode(QmsInspectionOrder qmsInspectionOrder,List<WmsInnerInventoryDetDto> detDtos) {
+    public void writeInspectionOrderCode(QmsInspectionOrder qmsInspectionOrder,List<WmsInnerInventoryDetDto> detDtos,Long qualified ,Long noQualified) {
         //对应的库存明细写入质检单号
         if (StringUtils.isNotEmpty(detDtos)) {
             for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : detDtos) {
                 wmsInnerInventoryDetDto.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
+                if("0".equals(qmsInspectionOrder.getInspectionResult())){
+                    wmsInnerInventoryDetDto.setInventoryStatusId(noQualified);
+                }else if("1".equals(qmsInspectionOrder.getInspectionResult())){
+                    wmsInnerInventoryDetDto.setInventoryStatusId(qualified);
+                }
+
                 ResponseEntity update = innerFeignApi.update(wmsInnerInventoryDetDto);
                 if (StringUtils.isNotEmpty(update) && update.getCode() != 0)
                     throw new BizErrorException("更新库存明细失败");
