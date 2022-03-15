@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseTabDto;
 import com.fantechs.common.base.general.dto.om.OmHtSalesCodeReSpcDto;
 import com.fantechs.common.base.general.dto.om.OmSalesCodeReSpcDto;
 import com.fantechs.common.base.general.dto.om.imports.OmSalesCodeReSpcImport;
@@ -11,6 +12,7 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseProductModel;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseTab;
 import com.fantechs.common.base.general.entity.om.OmHtSalesCodeReSpc;
 import com.fantechs.common.base.general.entity.om.OmSalesCodeReSpc;
 import com.fantechs.common.base.support.BaseService;
@@ -107,6 +109,16 @@ public class OmSalesCodeReSpcServiceImpl extends BaseService<OmSalesCodeReSpc> i
             else {
                 fail.add(i + 1);
                 continue;
+            }
+
+            //获取客户型号编码
+            if(StringUtils.isNotEmpty(item.getMaterialId())){
+                SearchBaseTab searchBaseTab=new SearchBaseTab();
+                searchBaseTab.setMaterialId(item.getMaterialId());
+                List<BaseTabDto> tabDtoList=baseFeignApi.findTabList(searchBaseTab).getData();
+                if(StringUtils.isNotEmpty(tabDtoList) && tabDtoList.size()>0){
+                    item.setProductModelId(tabDtoList.get(0).getProductModelId());
+                }
             }
 
             /*boolean flag = false;
