@@ -889,7 +889,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
             if(StringUtils.isNotEmpty(inventoryDetDtos)) {
                 for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : inventoryDetDtos) {
-                    wmsInnerInventoryDetDto.setInspectionOrderCode(null);
+                    wmsInnerInventoryDetDto.setInspectionOrderCode("");
                     innerFeignApi.update(wmsInnerInventoryDetDto);
                 }
             }
@@ -900,7 +900,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             List<WmsInnerInventoryDto> innerInventoryDtos = innerFeignApi.findList(searchWmsInnerInventory).getData();
             if(StringUtils.isNotEmpty(innerInventoryDtos)){
                 for (WmsInnerInventoryDto wmsInnerInventoryDto : innerInventoryDtos) {
-                    wmsInnerInventoryDto.setInspectionOrderCode(null);
+                    wmsInnerInventoryDto.setInspectionOrderCode("");
                     innerFeignApi.update(wmsInnerInventoryDto);
                 }
             }
@@ -1244,7 +1244,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int qmsInspectToInnerJobShift(String ids) {
-        int i=0;
+        int i=1;
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(ids.length()<=0){
             throw new BizErrorException(ErrorCodeEnum.GL99990100);
