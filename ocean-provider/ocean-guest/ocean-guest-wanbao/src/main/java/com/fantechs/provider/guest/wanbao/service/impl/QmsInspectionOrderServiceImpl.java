@@ -1002,10 +1002,10 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 QmsInspectionOrder qmsInspectionOrder = new QmsInspectionOrder();
 
                 SearchWmsInnerInventoryDet searchQualifiedInventoryDet = new SearchWmsInnerInventoryDet();
-                searchQualifiedInventoryDet.setMaterialCode(code);
+                searchQualifiedInventoryDet.setMaterialCode(detDtos.get(0).getMaterialCode());
 
                 SearchQmsInspectionOrder searchQmsInspectionOrder = new SearchQmsInspectionOrder();
-                searchQmsInspectionOrder.setMaterialCode(code);
+                searchQmsInspectionOrder.setMaterialCode(detDtos.get(0).getMaterialCode());
                 if (StringUtils.isNotEmpty(detDtos.get(0).getOption3())) {
                     searchQmsInspectionOrder.setSalesCode(detDtos.get(0).getOption3());
                     searchQualifiedInventoryDet.setOption3(detDtos.get(0).getOption3());
@@ -1171,7 +1171,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 }else if("1".equals(qmsInspectionOrder.getInspectionResult())){
                     wmsInnerInventoryDetDto.setInventoryStatusId(qualified);
                 }
-
+                wmsInnerInventoryDetDto.setModifiedTime(new Date());
                 ResponseEntity update = innerFeignApi.update(wmsInnerInventoryDetDto);
                 if (StringUtils.isNotEmpty(update) && update.getCode() != 0)
                     throw new BizErrorException("更新库存明细失败");
@@ -1189,6 +1189,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         if (StringUtils.isNotEmpty(list)) {
             for (WmsInnerInventoryDto wmsInnerInventoryDto : list) {
                 wmsInnerInventoryDto.setQcLock((byte) 1);
+                wmsInnerInventoryDto.setModifiedTime(new Date());
                 wmsInnerInventoryDto.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
                 ResponseEntity update = innerFeignApi.update(wmsInnerInventoryDto);
                 if (StringUtils.isNotEmpty(update) && update.getCode() != 0)
