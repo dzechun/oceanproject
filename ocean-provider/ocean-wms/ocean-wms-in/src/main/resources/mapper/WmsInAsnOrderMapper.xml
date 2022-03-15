@@ -213,7 +213,7 @@ order by wiao.create_time desc
      FROM wms_inner_inventory_det
     <where>
       <if test="salesCode!=null and salesCode!=''">
-        and sales_barcode=#{salesCode}
+        and option3=#{salesCode}
       </if>
       <if test="poCode!=null and poCode!=''">
         and option4=#{poCode}
