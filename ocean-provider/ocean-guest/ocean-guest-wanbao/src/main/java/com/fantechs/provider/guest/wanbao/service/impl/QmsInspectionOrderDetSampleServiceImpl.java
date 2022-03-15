@@ -1,7 +1,13 @@
 package com.fantechs.provider.guest.wanbao.service.impl;
 
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessDto;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcKeyPartRelevanceDto;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcKeyPartRelevance;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrder;
 import com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrderDet;
@@ -10,6 +16,8 @@ import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerIn
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.guest.wanbao.mapper.QmsInspectionOrderDetMapper;
 import com.fantechs.provider.guest.wanbao.mapper.QmsInspectionOrderDetSampleMapper;
@@ -38,6 +46,10 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
     private QmsInspectionOrderMapper qmsInspectionOrderMapper;
     @Resource
     private InnerFeignApi innerFeignApi;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
+    @Resource
+    private SFCFeignApi sfcFeignApi;
 
     @Override
     public List<QmsInspectionOrderDetSample> findList(Map<String, Object> map) {
@@ -185,15 +197,47 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
         return list;
     }
 
+    public String getFactoryBarcode(String barcode){
+        String factoryBarcode = null;
+        if (barcode.length() != 23){
+            // 判断是否三星客户条码
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("wanbaoCheckBarcode");
+            List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if (!specItems.isEmpty()){
+                SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess = new SearchMesSfcBarcodeProcess();
+                searchMesSfcBarcodeProcess.setIsCustomerBarcode(barcode);
+                List<MesSfcBarcodeProcessDto> mesSfcBarcodeProcessDtos = sfcFeignApi.findList(searchMesSfcBarcodeProcess).getData();
+                if (!mesSfcBarcodeProcessDtos.isEmpty()){
+                    factoryBarcode = mesSfcBarcodeProcessDtos.get(0).getBarcode();
+                }
+            }
+        }
+
+        if (factoryBarcode == null) {
+            SearchMesSfcKeyPartRelevance searchMesSfcKeyPartRelevance = new SearchMesSfcKeyPartRelevance();
+            searchMesSfcKeyPartRelevance.setPartBarcode(barcode);
+            List<MesSfcKeyPartRelevanceDto> mesSfcKeyPartRelevanceDtos = sfcFeignApi.findList(searchMesSfcKeyPartRelevance).getData();
+            if (!mesSfcKeyPartRelevanceDtos.isEmpty()) {
+                factoryBarcode = mesSfcKeyPartRelevanceDtos.get(0).getBarcodeCode();
+            }else{
+                factoryBarcode = barcode;
+            }
+        }
+        return factoryBarcode;
+    }
+
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public QmsInspectionOrderDetSample checkAndSaveBarcode(QmsInspectionOrderDetSample qmsInspectionOrderDetSample) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        //获取厂内码
+        String factoryBarcode = getFactoryBarcode(qmsInspectionOrderDetSample.getBarcode());
 
         QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(qmsInspectionOrderDetSample.getInspectionOrderId());
 
         SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
-        searchWmsInnerInventoryDet.setBarcode(qmsInspectionOrderDetSample.getBarcode());
+        searchWmsInnerInventoryDet.setBarcode(factoryBarcode);
         searchWmsInnerInventoryDet.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
         List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
         if(StringUtils.isEmpty(inventoryDetDtos)){
@@ -229,6 +273,7 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
             throw new BizErrorException("已存在该条码，请勿重复扫描");
         }
 
+        qmsInspectionOrderDetSample.setFactoryBarcode(factoryBarcode);
         qmsInspectionOrderDetSample.setCreateUserId(user.getUserId());
         qmsInspectionOrderDetSample.setCreateTime(new Date());
         qmsInspectionOrderDetSample.setModifiedUserId(user.getUserId());

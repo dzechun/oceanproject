@@ -4,7 +4,7 @@ server:
 
 spring:
   profiles:
-    include: wanbao
+    include: dev
   application:
     name: @pom.artifactId@
 

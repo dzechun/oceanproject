@@ -101,6 +101,7 @@
         from wms_inner_inventory_det wiid
         LEFT JOIN base_inventory_status bis ON bis.inventory_status_id = wiid.inventory_status_id
         LEFT JOIN base_storage bs ON wiid.storage_id = bs.storage_id
+        LEFT JOIN wanbao_erp_logic wel ON bs.logic_id = wel.logic_id
         LEFT JOIN base_warehouse bw ON bs.warehouse_id = bw.warehouse_id
         LEFT JOIN base_material bm ON wiid.material_id = bm.material_id
         LEFT JOIN base_supplier bss ON wiid.supplier_id = bss.supplier_id
@@ -116,6 +117,12 @@
             </if>
             <if test="storageId!=null and storageId!='' and notEqualMark==1">
                 and wiid.storage_id != #{storageId}
+            </if>
+            <if test="logicCode!=null and logicCode!='' and notEqualMark!=1">
+                and wel.logic_code = #{logicCode}
+            </if>
+            <if test="logicCode!=null and storageId!='' and notEqualMark==1">
+                and wel.logic_code != #{logicCode}
             </if>
             <if test="inventoryStatusId!=null and inventoryStatusId!=''">
                 and wiid.inventory_status_id = #{inventoryStatusId}
