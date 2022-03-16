@@ -1,6 +1,7 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -428,7 +429,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         String key = barcodeRulList.get(0).getBarcodeRule()+orgIDStr;
         //万宝销售条码打印 按销售订单更新流水号
         if(StringUtils.isNotEmpty(record.getOption1()) && record.getOption1().equals("5")){
-            key = barcodeRulList.get(0).getBarcodeRule()+orgIDStr+":"+record.getSalesOrderId().toString();
+            key = barcodeRulList.get(0).getBarcodeRule()+orgIDStr+":"+record.getSalesOrderDetId().toString();
         }
         //生成条码
         BatchGenerateCodeDto dto = new BatchGenerateCodeDto();
@@ -453,7 +454,8 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                         "salesOrderId", record.getSalesOrderId(),
                         "barcodeTypeId",record.getLabelCategoryId()));
                 BigDecimal salesTotalQty = mesSfcWorkOrderBarcodeMapper.saleOrderTotalQty(ControllerUtil.dynamicCondition("type",1,"salesOrderId", record.getSalesOrderId()));
-                if(salesTotalQty.compareTo(barCodeTotalQty)==0){
+                if(barCodeTotalQty.compareTo(BigDecimal.ZERO)!=0 && salesTotalQty.compareTo(barCodeTotalQty)==0){
+                    log.info("=========== redis 失效了");
                     //三秒后失效
                     redisUtil.expire(key,3);
                 }
