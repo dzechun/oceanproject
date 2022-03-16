@@ -144,7 +144,6 @@
         putbp.process_name AS 'putIntoProcessName',
         outbp.process_name AS 'outputProcessName',
         oso.sales_order_code AS 'salesOrderCode',
-        osod.sales_code AS 'salesCode',
         wel.logic_name
         FROM
         mes_pm_work_order swo
@@ -161,7 +160,6 @@
         left join base_process putbp ON putbp.process_id = swo.put_into_process_id
         left join base_process outbp ON outbp.process_id = swo.output_process_id
         left join om_sales_order oso ON oso.sales_order_id = swo.sales_order_id
-        left join om_sales_order_det osod on osod.sales_order_id = oso.sales_order_id and osod.material_id = swo.material_id
         left join wanbao_erp_logic wel on wel.logic_id = swo.logic_id
         <where>
             <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
@@ -223,7 +221,6 @@
             </if>
             and swo.is_delete = 1
         </where>
-        GROUP BY swo.work_order_id
         order by swo.modified_time desc
     </select>
 
