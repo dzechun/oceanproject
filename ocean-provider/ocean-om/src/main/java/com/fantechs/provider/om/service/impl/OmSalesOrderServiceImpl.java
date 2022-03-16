@@ -1,6 +1,7 @@
 package com.fantechs.provider.om.service.impl;
 
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -18,7 +19,9 @@ import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialOwner;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.om.OmHtSalesOrder;
+import com.fantechs.common.base.general.entity.om.OmHtSalesOrderDet;
 import com.fantechs.common.base.general.entity.om.OmSalesOrder;
+import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -35,6 +38,7 @@ import com.fantechs.provider.om.service.ht.OmHtSalesOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -115,6 +119,8 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
             }
         }
         omSalesOrder.setOrgId(currentUserInfo.getOrganizationId());
+        omSalesOrder.setIsDelete((byte) 1);
+        omSalesOrder.setStatus((byte) 1);
         omSalesOrder.setCreateTime(DateUtils.getDateTimeString(new DateTime()));
         omSalesOrder.setCreateUserId(currentUserInfo.getUserId());
         omSalesOrder.setModifiedUserId(currentUserInfo.getUserId());
@@ -387,6 +393,111 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
     @Override
     public int batchUpdate(List<OmSalesOrder> orders) {
         return omSalesOrderMapper.batchUpdate(orders);
+    }
+
+    @Override
+    public int syncBatchSave(List<OmSalesOrderDto> list) {
+        SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
+
+        for (OmSalesOrderDto dto : list){
+            if(StringUtils.isEmpty(dto.getSalesOrderId())) {
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "销售订单ID不能为空");
+            }
+            OmSalesOrder omSalesOrder = new OmSalesOrder();
+            BeanUtils.autoFillEqFields(dto, omSalesOrder);
+            if(this.save(omSalesOrder, currentUserInfo) <= 0) {
+                return 0;
+            }
+
+            List<OmSalesOrderDet> detList = new ArrayList<>();
+            for(int i = 0; i < dto.getOmSalesOrderDetDtoList().size(); i++) {
+                OmSalesOrderDetDto omSalesOrderDetDto = dto.getOmSalesOrderDetDtoList().get(i);
+                OmSalesOrderDet omSalesOrderDet = new OmSalesOrderDet();
+                BeanUtil.copyProperties(omSalesOrderDetDto, omSalesOrder);
+                omSalesOrderDetDto.setSalesOrderId(omSalesOrder.getSalesOrderId());
+//                SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+//                searchSysSpecItem.setSpecCode("wanbaoSyncData");
+//                List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+//                if (specItems.isEmpty()){
+//                    omSalesOrderDet.setCustomerOrderLineNumber(omSalesOrder.getCustomerOrderCode() + String.format("%03d", i));
+//                }else {
+//                    JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
+//                    if(!jsonObject.get("enable").equals(1)){
+//                        omSalesOrderDet.setCustomerOrderLineNumber(omSalesOrder.getCustomerOrderCode() + String.format("%03d", i));
+//                    }
+//                }
+                log.info("============= customerOrderLineNumber: " + omSalesOrderDet.getCustomerOrderLineNumber());
+                omSalesOrderDet.setSourceLineNumber(String.format("%03d", i));
+                Integer num = i+1;
+                omSalesOrderDet.setLineNumber(String.format("%02d",num));
+                omSalesOrderDet.setOrgId(currentUserInfo.getOrganizationId());
+                omSalesOrderDet.setCreateTime(DateUtils.getDateTimeString(new DateTime()));
+                omSalesOrderDet.setCreateUserId(currentUserInfo.getUserId());
+                omSalesOrderDet.setModifiedUserId(currentUserInfo.getUserId());
+                omSalesOrderDet.setModifiedTime(DateUtils.getDateTimeString(new DateTime()));
+                OmHtSalesOrderDet htSalesOrderDet = new OmHtSalesOrderDet();
+                BeanUtil.copyProperties(omSalesOrder, htSalesOrderDet);
+                detList.add(omSalesOrderDet);
+            }
+            if(omSalesOrderDetService.batchSave(detList) <= 0) {
+                return 0;
+            }
+        }
+        return 1;
+    }
+
+    @Override
+    public int syncBatchUpdate(List<OmSalesOrderDto> list) {
+        SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
+
+        for (OmSalesOrderDto omSalesOrderDto : list){
+            OmSalesOrder omSalesOrder = new OmSalesOrder();
+            BeanUtils.autoFillEqFields(omSalesOrderDto, omSalesOrder);
+            if(this.update(omSalesOrder, currentUserInfo) <= 0) {
+                return 0;
+            }
+
+            // 删除原明细数据
+            Example example = new Example(OmSalesOrderDet.class);
+            example.createCriteria().andEqualTo("salesOrderId", omSalesOrder.getSalesOrderId());
+            omSalesOrderDetService.deleteByExample(example);
+
+            // 批量新增明细
+            List<OmSalesOrderDet> detList = new ArrayList<>();
+            for(int i = 0; i < omSalesOrderDto.getOmSalesOrderDetDtoList().size(); i++) {
+                OmSalesOrderDetDto omSalesOrderDetDto = omSalesOrderDto.getOmSalesOrderDetDtoList().get(i);
+                OmSalesOrderDet omSalesOrderDet = new OmSalesOrderDet();
+                BeanUtil.copyProperties(omSalesOrderDetDto, omSalesOrder);
+                omSalesOrderDetDto.setSalesOrderId(omSalesOrder.getSalesOrderId());
+//                SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+//                searchSysSpecItem.setSpecCode("wanbaoSyncData");
+//                List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+//                if (specItems.isEmpty()){
+//                    omSalesOrderDet.setCustomerOrderLineNumber(omSalesOrder.getCustomerOrderCode() + String.format("%03d", i));
+//                }else {
+//                    JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
+//                    if(!jsonObject.get("enable").equals(1)){
+//                        omSalesOrderDet.setCustomerOrderLineNumber(omSalesOrder.getCustomerOrderCode() + String.format("%03d", i));
+//                    }
+//                }
+                log.info("============= customerOrderLineNumber: " + omSalesOrderDet.getCustomerOrderLineNumber());
+                omSalesOrderDet.setSourceLineNumber(String.format("%03d", i));
+                Integer num = i+1;
+                omSalesOrderDet.setLineNumber(String.format("%02d",num));
+                omSalesOrderDet.setOrgId(currentUserInfo.getOrganizationId());
+                omSalesOrderDet.setCreateTime(DateUtils.getDateTimeString(new DateTime()));
+                omSalesOrderDet.setCreateUserId(currentUserInfo.getUserId());
+                omSalesOrderDet.setModifiedUserId(currentUserInfo.getUserId());
+                omSalesOrderDet.setModifiedTime(DateUtils.getDateTimeString(new DateTime()));
+                OmHtSalesOrderDet htSalesOrderDet = new OmHtSalesOrderDet();
+                BeanUtil.copyProperties(omSalesOrder, htSalesOrderDet);
+                detList.add(omSalesOrderDet);
+            }
+            if(omSalesOrderDetService.batchSave(detList) <= 0) {
+                return 0;
+            }
+        }
+        return 1;
     }
 
 }

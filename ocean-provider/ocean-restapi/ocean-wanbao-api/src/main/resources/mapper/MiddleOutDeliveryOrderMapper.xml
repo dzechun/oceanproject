@@ -65,7 +65,6 @@
         sld.product_name AS material_name,
         sld.product_code AS sales_code,
         sld.quantity_plan_ship AS packing_qty,
-        sld.quantity_load_container AS dispatch_qty,
         sh.CREATION_DATE AS order_date,
         sh.CONTAINER_NUMBER AS container_number,
         sh.DECLARATION_LOCATION AS declaration_location,
@@ -80,7 +79,7 @@
             sh.so_header_id = sl.so_header_id
             AND sld.so_line_id = sl.so_line_id
             AND msib.inventory_item_id = sld.product_item_id
-            and sh.last_update_date >= TO_DATE('2021-08-01' , 'YYYY-MM-DD' )
+            and sh.last_update_date >= TO_DATE('2020-01-01' , 'YYYY-MM-DD' )
             <if test="date != null and date != ''">
                 and sh.last_update_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
             </if>
@@ -103,16 +102,16 @@
         '' AS sales_order_no,
         '' AS out_order_code
         FROM
-        crm_lg_sor_header sh,
-        crm_lg_sor_product sp,
-        crm_ctm_customer cc,
-        ac_operator ao
+        EOS.crm_lg_sor_header sh,
+        EOS.crm_lg_sor_product sp,
+        EOS.crm_ctm_customer cc,
+        EOS.ac_operator ao
         <where>
             sp.sor_header_id = sh.sor_header_id
             AND cc.customer_id = sh.customer_id
             AND sh.created_by = ao.operatorid
             AND sh.status = '已生成出库单'
-            and sh.last_update_date >= TO_DATE('2021-08-01' , 'YYYY-MM-DD' )
+            and sh.last_update_date >= TO_DATE('2020-01-01' , 'YYYY-MM-DD' )
             <if test="date != null and date != ''">
                 and sh.last_update_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
             </if>

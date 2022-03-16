@@ -1053,6 +1053,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                         SearchOmSalesOrderDetDto searchOmSalesOrderDetDto = new SearchOmSalesOrderDetDto();
                         searchOmSalesOrderDetDto.setSalesCode(detDtos.get(0).getOption3());
                         List<OmSalesOrderDetDto> omSalesOrderDetDtos = oMFeignApi.findList(searchOmSalesOrderDetDto).getData();
+                        if(StringUtils.isEmpty(omSalesOrderDetDtos))
+                            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "未查询到对应的销售编码:"+detDtos.get(0).getOption3());
                         qmsInspectionOrder.setOrderQty(omSalesOrderDetDtos.get(0).getOrderQty());
                         qmsInspectionOrder.setInventoryQty(new BigDecimal(qualifiedInventoryDetDtos.size()));
                     }else{
@@ -1092,6 +1094,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 searchQmsInspectionOrder.setMaterialCode(code);
                 searchQmsInspectionOrder.setInspectionStatus((byte) 1);
                 List<QmsInspectionOrder> qmsInspectionOrderList = qmsInspectionOrderMapper.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrder));
+
                 if (StringUtils.isNotEmpty(qmsInspectionOrderList)) {
                     qmsInspectionOrder1 = qmsInspectionOrderList.get(0);
                     String qmsInspectionOrderTime = DateUtils.getDateString(qmsInspectionOrder1.getCreateTime(), "yyyy-MM-dd");
@@ -1112,6 +1115,13 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
                     //库存、库存明细写入检验单号
                     writeInspectionOrderCode(qmsInspectionOrder1, detDtos, qualified, noQualified);
+                }else{
+                    //新建检验单
+                    qmsInspectionOrder1.setMaterialId(detDtos.get(0).getMaterialId());
+                    qmsInspectionOrder1.setOrderQty(new BigDecimal(detDtos.size()));
+                    qmsInspectionOrder1.setInventoryQty(new BigDecimal(detDtos.size()));
+                    createQmsInspectionOrder(qmsInspectionOrder1, detDtos);
+
                 }
             }
         }
