@@ -10,6 +10,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -111,6 +112,57 @@ public class WmsOutDeliveryOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name="customerOrderCode",value = "客户单号")
     @Column(name = "customer_order_code")
     private String customerOrderCode;
+
+    /**
+     * 销售单号
+     */
+    @ApiModelProperty(name="salesOrderNo",value = "销售单号")
+    @Column(name = "sales_order_no")
+    private String salesOrderNo;
+
+    /**
+     * 出库单号
+     */
+    @ApiModelProperty(name="outOrderCode",value = "出库单号")
+    @Column(name = "out_order_code")
+    private String outOrderCode;
+
+    /**
+     * 柜号
+     */
+    @ApiModelProperty(name="containerNumber",value = "柜号")
+    @Column(name = "container_number")
+    private String containerNumber;
+
+    /**
+     * 报关地点
+     */
+    @ApiModelProperty(name="declarationLocation ",value = "报关地点")
+    @Column(name = "declaration_location")
+    private String declarationLocation;
+
+    /**
+     * 起运港
+     */
+    @ApiModelProperty(name="portFrom",value = "起运港")
+    @Column(name = "port_from")
+    private String portFrom;
+
+    /**
+     * 业务员
+     */
+    @ApiModelProperty(name="salesName",value = "业务员")
+    @Column(name = "sales_name")
+    private String salesName;
+
+    @Transient
+    @ApiModelProperty(name="salesCode",value = "销售编码")
+    private String salesCode;
+
+    //柜号、报关地点、起运港、业务员（接口获取，sh.CONTAINER_NUMBER AS "柜号",
+    // sh.DECLARATION_LOCATION AS "报关地点",
+    //sh.PORT_FROM AS "起运港",sh.salesname AS "业务员"），
+    //出货通知单表体的“销售编码”（接口获取，sld.product_code AS "生产编码"）。
 
     /**
      * 月台id

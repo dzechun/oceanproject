@@ -672,7 +672,7 @@ public class SyncDataServiceImpl implements SyncDataService {
         apiLog.setCallType((byte) 1);
         apiLog.setCallResult((byte) 0);
         apiLog.setApiModule("ocean-wanbao-api");
-        apiLog.setApiUrl("查询数据库-同步出库单");
+        apiLog.setApiUrl("查询数据库-同步出库单");//出货通知单
         apiLog.setOrgId(sysUser.getOrganizationId());
 
         if (specItems.isEmpty()) {

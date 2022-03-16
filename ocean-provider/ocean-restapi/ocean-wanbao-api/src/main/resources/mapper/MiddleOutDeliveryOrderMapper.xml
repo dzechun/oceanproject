@@ -13,6 +13,12 @@
         <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode" />
         <result column="customer_order_code" jdbcType="VARCHAR" property="customerOrderCode" />
         <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode" />
+        <result column="sales_order_no" jdbcType="VARCHAR" property="salesOrderNo" />
+        <result column="out_order_code" jdbcType="VARCHAR" property="outOrderCode" />
+        <result column="container_number" jdbcType="VARCHAR" property="containerNumber" />
+        <result column="declaration_location" jdbcType="VARCHAR" property="declarationLocation" />
+        <result column="port_from" jdbcType="VARCHAR" property="portFrom" />
+        <result column="sales_name" jdbcType="VARCHAR" property="salesName" />
         <result column="material_code" jdbcType="VARCHAR" property="materialCode" />
         <result column="material_name" jdbcType="VARCHAR" property="materialName" />
         <result column="packing_qty" jdbcType="DECIMAL" property="packingQty"/>
@@ -59,7 +65,11 @@
         sld.product_name AS material_name,
         sld.product_code AS sales_code,
         sld.quantity_plan_ship AS packing_qty,
-        sh.CREATION_DATE AS order_date
+        sh.CREATION_DATE AS order_date,
+        sh.CONTAINER_NUMBER AS container_number,
+        sh.DECLARATION_LOCATION AS declaration_location,
+        sh.PORT_FROM AS port_from,
+        sh.salesname AS sales_name
         FROM
         APPS.oms_so_headers_v sh,
         APPS.oms_so_lines_v sl,
@@ -88,7 +98,9 @@
         sp.material_description AS material_name,
         sp.quantity AS packing_qty,
         sp.real_quantity AS dispatch_qty,
-        sp.source_no AS related_order_code_1
+        sp.source_no AS related_order_code_1,
+        '' AS sales_order_no,
+        '' AS out_order_code
         FROM
         EOS.crm_lg_sor_header sh,
         EOS.crm_lg_sor_product sp,

@@ -272,6 +272,8 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                 wmsOutDeliveryOrderDet.setModifiedTime(new Date());
                 wmsOutDeliveryOrderDet.setModifiedUserId(user.getUserId());
                 wmsOutDeliveryOrderDet.setOrgId(user.getOrganizationId());
+                //增加保存明细销售编码 2022-03-16
+                wmsOutDeliveryOrderDet.setSalesCode(wmsOutDeliveryOrder.getSalesCode());
                 //出库单明细履历
                 WmsOutHtDeliveryOrderDet wmsOutHtDeliveryOrderDet = new WmsOutHtDeliveryOrderDet();
                 BeanUtils.copyProperties(wmsOutDeliveryOrderDet,wmsOutHtDeliveryOrderDet);

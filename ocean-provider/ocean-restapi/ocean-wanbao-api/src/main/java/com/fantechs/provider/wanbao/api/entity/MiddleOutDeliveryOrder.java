@@ -76,6 +76,42 @@ public class MiddleOutDeliveryOrder implements Serializable {
     @Column(name = "product_model_code")
     private String productModelCode;
 
+    @ApiModelProperty(name="salesOrderNo" ,value="销售单号")
+    @Column(name = "sales_order_no")
+    private String salesOrderNo;
+
+    @ApiModelProperty(name="outOrderCode" ,value="出库单号")
+    @Column(name = "out_order_code")
+    private String outOrderCode;
+
+    /**
+     * 柜号
+     */
+    @ApiModelProperty(name="containerNumber",value = "柜号")
+    @Column(name = "container_number")
+    private String containerNumber;
+
+    /**
+     * 报关地点
+     */
+    @ApiModelProperty(name="declarationLocation ",value = "报关地点")
+    @Column(name = "declaration_location")
+    private String declarationLocation;
+
+    /**
+     * 起运港
+     */
+    @ApiModelProperty(name="portFrom",value = "起运港")
+    @Column(name = "port_from")
+    private String portFrom;
+
+    /**
+     * 业务员
+     */
+    @ApiModelProperty(name="salesName",value = "业务员")
+    @Column(name = "sales_name")
+    private String salesName;
+
     @ApiModelProperty(name="packingQty" ,value="包装数量")
     @Column(name = "packing_qty")
     private BigDecimal packingQty;
