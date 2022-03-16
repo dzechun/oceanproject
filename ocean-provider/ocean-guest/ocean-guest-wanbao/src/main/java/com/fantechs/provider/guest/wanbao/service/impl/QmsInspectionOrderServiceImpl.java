@@ -1090,6 +1090,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 searchQmsInspectionOrder.setMaterialCode(code);
                 searchQmsInspectionOrder.setInspectionStatus((byte) 1);
                 List<QmsInspectionOrder> qmsInspectionOrderList = qmsInspectionOrderMapper.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrder));
+
                 if (StringUtils.isNotEmpty(qmsInspectionOrderList)) {
                     qmsInspectionOrder1 = qmsInspectionOrderList.get(0);
                     String qmsInspectionOrderTime = DateUtils.getDateString(qmsInspectionOrder1.getCreateTime(), "yyyy-MM-dd");
@@ -1110,6 +1111,13 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
                     //库存、库存明细写入检验单号
                     writeInspectionOrderCode(qmsInspectionOrder1, detDtos, qualified, noQualified);
+                }else{
+                    //新建检验单
+                    qmsInspectionOrder1.setMaterialId(detDtos.get(0).getMaterialId());
+                    qmsInspectionOrder1.setOrderQty(new BigDecimal(detDtos.size()));
+                    qmsInspectionOrder1.setInventoryQty(new BigDecimal(detDtos.size()));
+                    createQmsInspectionOrder(qmsInspectionOrder1, detDtos);
+
                 }
             }
         }
