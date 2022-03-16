@@ -101,13 +101,13 @@ public class BaseLabelMaterialServiceImpl extends BaseService<BaseLabelMaterial>
         }
 
         //获取标签类别
-        BaseLabel baseLabel = baseLabelMapper.selectByPrimaryKey(entity.getLabelId());
+        /*BaseLabel baseLabel = baseLabelMapper.selectByPrimaryKey(entity.getLabelId());
         List<BaseLabelMaterial> list = baseLabelMaterialMapper.findEqualLabel(ControllerUtil.dynamicCondition("materialId",entity.getMaterialId(),"categoryId",baseLabel.getLabelCategoryId(),"orgId",currentUserInfo.getOrganizationId()));
         if(StringUtils.isNotEmpty(list) || list.size()>0){
             if(list.stream().filter(x->x.getLabelMaterialId()!=entity.getLabelMaterialId()).collect(Collectors.toList()).size()>0) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "同物料不能绑定相同产品类型标签");
             }
-        }
+        }*/
 
         entity.setModifiedTime(new Date());
         entity.setModifiedUserId(currentUserInfo.getUserId());
@@ -117,7 +117,15 @@ public class BaseLabelMaterialServiceImpl extends BaseService<BaseLabelMaterial>
         BeanUtils.copyProperties(entity, baseHtLabelMaterial);
         baseHtLabelMaterialMapper.insertSelective(baseHtLabelMaterial);
 
-        return baseLabelMaterialMapper.updateByPrimaryKeySelective(entity);
+        int i=baseLabelMaterialMapper.updateByPrimaryKeySelective(entity);
+
+        BaseLabel baseLabel = baseLabelMapper.selectByPrimaryKey(entity.getLabelId());
+        List<BaseLabelMaterial> list = baseLabelMaterialMapper.findEqualLabel(ControllerUtil.dynamicCondition("materialId",entity.getMaterialId(),"categoryId",baseLabel.getLabelCategoryId(),"orgId",currentUserInfo.getOrganizationId()));
+        if(StringUtils.isNotEmpty(list) && list.size()>1){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012001.getCode(), "同物料不能绑定相同产品类型标签");
+        }
+
+        return i;
     }
 
     @Override
