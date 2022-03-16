@@ -62,7 +62,7 @@
             AND mh.mo_number IS NOT null
             AND mh.mo_status = '审批通过'
             AND mld.LINE_NUMBER LIKE '%.1'
-            AND mh.order_date >= TO_DATE('2021-08-01' , 'YYYY-MM-DD' )
+            AND mh.order_date >= TO_DATE('2020-01-01' , 'YYYY-MM-DD' )
             <if test="date != null and date != ''">
                 and mh.order_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
             </if>
@@ -85,16 +85,18 @@
             pm.material_code AS material_code,
             pm.material_name AS material_name,
             sol.order_quantity AS order_qty,
-            sol.order_quantity AS sales_code_qty
+            sol.order_quantity AS sales_code_qty,
+            sol.ORDER_LINE_NO AS customer_order_line_number,
+            sol.CREATION_DATE AS create_time
         FROM
-            crm_so_order_header soh,
-            crm_so_order_line sol,
-            crm_ctm_customer cc,
-            crm_pub_materials pm,
-            om_employee oe2,
-            ac_operator ao,
-            om_organization oo,
-            crm_so_order_type ot
+        EOS.crm_so_order_header soh,
+        EOS.crm_so_order_line sol,
+        EOS.crm_ctm_customer cc,
+        EOS.crm_pub_materials pm,
+        EOS.om_employee oe2,
+        EOS.ac_operator ao,
+        EOS.om_organization oo,
+        EOS.crm_so_order_type ot
         WHERE
             soh.order_id = sol.order_id
           AND soh.customer_id = cc.customer_id
@@ -105,7 +107,7 @@
           AND ot.order_type_id = soh.order_type_id
           AND soh.inv_ex_order_no IS NULL
           AND soh.status = '审批通过'
-          AND soh.creation_date >= TO_DATE('2021-08-01' , 'YYYY-MM-DD' )
+          AND soh.creation_date >= TO_DATE('2020-01-01' , 'YYYY-MM-DD' )
         <if test="date != null and date != ''">
             and soh.creation_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
         </if>

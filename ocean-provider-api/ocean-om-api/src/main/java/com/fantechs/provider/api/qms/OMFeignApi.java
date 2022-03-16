@@ -78,6 +78,14 @@ public interface OMFeignApi {
     @PostMapping("/omSalesOrder/add")
     ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated OmSalesOrderDto omSalesOrderDto);
 
+    @ApiOperation("万宝-同步销售订单批量新增")
+    @PostMapping("/omSalesOrder/syncBatchSave")
+    ResponseEntity syncBatchSave(@RequestBody List<OmSalesOrderDto> list);
+
+    @ApiOperation("万宝-同步销售订单批量修改")
+    @PostMapping("/omSalesOrder/syncBatchUpdate")
+    ResponseEntity syncBatchUpdate(@RequestBody List<OmSalesOrderDto> list);
+
     @ApiOperation("销售列表")
     @PostMapping("/omSalesOrder/findAll")
     ResponseEntity<List<OmSalesOrderDto>> findSalesOrderAll();

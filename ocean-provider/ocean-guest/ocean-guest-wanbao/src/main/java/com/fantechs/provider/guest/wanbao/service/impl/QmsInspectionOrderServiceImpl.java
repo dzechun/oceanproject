@@ -687,6 +687,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         if(StringUtils.isNotEmpty(qmsInspectionOrderDets)) {
             for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets) {
                 if (StringUtils.isNotEmpty(qmsInspectionOrderDet.getInspectionOrderDetId())) {
+                    qmsInspectionOrderDet.setSampleQty(StringUtils.isNotEmpty(qmsInspectionOrder.getSampleQty())?qmsInspectionOrder.getSampleQty():qmsInspectionOrderDet.getSampleQty());
                     qmsInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsInspectionOrderDet);
                     idList.add(qmsInspectionOrderDet.getInspectionOrderDetId());
                 }
@@ -720,6 +721,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 if (idList.contains(qmsInspectionOrderDet.getInspectionOrderDetId())) {
                     continue;
                 }
+                qmsInspectionOrderDet.setSampleQty(StringUtils.isNotEmpty(qmsInspectionOrder.getSampleQty())?qmsInspectionOrder.getSampleQty():qmsInspectionOrderDet.getSampleQty());
                 qmsInspectionOrderDet.setInspectionOrderId(qmsInspectionOrder.getInspectionOrderId());
                 qmsInspectionOrderDet.setCreateUserId(user.getUserId());
                 qmsInspectionOrderDet.setCreateTime(new Date());

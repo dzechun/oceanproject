@@ -201,27 +201,34 @@ order by wiao.create_time desc
   </select>
 
   <select id="findDefaultStatus" resultType="java.lang.Long">
-        SELECT id FROM (SELECT inventory_status_id,
-                               CASE
-                                 WHEN COUNT(*)=1 THEN
-                                    inventory_status_id
+        <choose>
+          <when test="salesCode!=null and salesCode!=null">
+            SELECT id FROM (SELECT inventory_status_id,
+            CASE
+            WHEN COUNT(*)=1 THEN
+            inventory_status_id
 
-          ELSE
-                (SELECT inventory_status_id FROM base_inventory_status WHERE inventory_status_name='待检' LIMIT 1)
-        END as 'id'
-     FROM (SELECT inventory_status_id
-     FROM wms_inner_inventory_det
-    <where>
-      <if test="salesCode!=null and salesCode!=''">
-        and option3=#{salesCode}
-      </if>
-      <if test="poCode!=null and poCode!=''">
-        and option4=#{poCode}
-      </if>
-      <if test="materialId!=null and materialId!=''">
-        and material_id = #{materialId}
-      </if>
-    </where>
-     GROUP BY inventory_status_id) a) b
+            ELSE
+            (SELECT inventory_status_id FROM base_inventory_status WHERE inventory_status_name='待检' LIMIT 1)
+            END as 'id'
+            FROM (SELECT inventory_status_id
+            FROM wms_inner_inventory_det
+            <where>
+              <if test="salesCode!=null and salesCode!=''">
+                and option3=#{salesCode}
+              </if>
+              <if test="poCode!=null and poCode!=''">
+                and option4=#{poCode}
+              </if>
+              <if test="materialId!=null and materialId!=''">
+                and material_id = #{materialId}
+              </if>
+            </where>
+            GROUP BY inventory_status_id) a) b
+          </when>
+         <otherwise>
+           SELECT inventory_status_id FROM base_inventory_status WHERE inventory_status_name='待检' LIMIT 1
+         </otherwise>
+        </choose>
   </select>
 </mapper>
