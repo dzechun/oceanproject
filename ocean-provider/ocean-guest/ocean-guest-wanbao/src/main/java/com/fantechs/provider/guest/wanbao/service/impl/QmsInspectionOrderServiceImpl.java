@@ -1053,6 +1053,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                         SearchOmSalesOrderDetDto searchOmSalesOrderDetDto = new SearchOmSalesOrderDetDto();
                         searchOmSalesOrderDetDto.setSalesCode(detDtos.get(0).getOption3());
                         List<OmSalesOrderDetDto> omSalesOrderDetDtos = oMFeignApi.findList(searchOmSalesOrderDetDto).getData();
+                        if(StringUtils.isEmpty(omSalesOrderDetDtos))
+                            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "未查询到对应的销售编码:"+detDtos.get(0).getOption3());
                         qmsInspectionOrder.setOrderQty(omSalesOrderDetDtos.get(0).getOrderQty());
                         qmsInspectionOrder.setInventoryQty(new BigDecimal(qualifiedInventoryDetDtos.size()));
                     }else{
