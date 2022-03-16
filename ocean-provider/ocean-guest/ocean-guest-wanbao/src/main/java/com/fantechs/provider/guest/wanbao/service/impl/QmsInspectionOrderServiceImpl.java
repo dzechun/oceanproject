@@ -290,7 +290,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     }
 
     private int createJobOrderShift(List<QmsInspectionOrderDetSample> list,QmsInspectionOrder qmsInspectionOrder,SysUser user){
-        int i=0;
+        int i=1;
         String barcode=list.get(0).getBarcode();
         Long materialId=qmsInspectionOrder.getMaterialId();
         String proCode=null;
@@ -687,6 +687,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         if(StringUtils.isNotEmpty(qmsInspectionOrderDets)) {
             for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets) {
                 if (StringUtils.isNotEmpty(qmsInspectionOrderDet.getInspectionOrderDetId())) {
+                    qmsInspectionOrderDet.setSampleQty(StringUtils.isNotEmpty(qmsInspectionOrder.getSampleQty())?qmsInspectionOrder.getSampleQty():qmsInspectionOrderDet.getSampleQty());
                     qmsInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsInspectionOrderDet);
                     idList.add(qmsInspectionOrderDet.getInspectionOrderDetId());
                 }
@@ -720,6 +721,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 if (idList.contains(qmsInspectionOrderDet.getInspectionOrderDetId())) {
                     continue;
                 }
+                qmsInspectionOrderDet.setSampleQty(StringUtils.isNotEmpty(qmsInspectionOrder.getSampleQty())?qmsInspectionOrder.getSampleQty():qmsInspectionOrderDet.getSampleQty());
                 qmsInspectionOrderDet.setInspectionOrderId(qmsInspectionOrder.getInspectionOrderId());
                 qmsInspectionOrderDet.setCreateUserId(user.getUserId());
                 qmsInspectionOrderDet.setCreateTime(new Date());
@@ -731,9 +733,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         }
 
         //返写检验状态与检验结果
-        if(type != 0) {
+        /*if(type != 0) {
             this.writeBack(qmsInspectionOrder.getInspectionOrderId());
-        }
+        }*/
         return i;
     }
 
@@ -889,7 +891,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
             if(StringUtils.isNotEmpty(inventoryDetDtos)) {
                 for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : inventoryDetDtos) {
-                    wmsInnerInventoryDetDto.setInspectionOrderCode(null);
+                    wmsInnerInventoryDetDto.setInspectionOrderCode("");
                     innerFeignApi.update(wmsInnerInventoryDetDto);
                 }
             }
@@ -900,7 +902,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             List<WmsInnerInventoryDto> innerInventoryDtos = innerFeignApi.findList(searchWmsInnerInventory).getData();
             if(StringUtils.isNotEmpty(innerInventoryDtos)){
                 for (WmsInnerInventoryDto wmsInnerInventoryDto : innerInventoryDtos) {
-                    wmsInnerInventoryDto.setInspectionOrderCode(null);
+                    wmsInnerInventoryDto.setInspectionOrderCode("");
                     innerFeignApi.update(wmsInnerInventoryDto);
                 }
             }
@@ -1002,10 +1004,10 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 QmsInspectionOrder qmsInspectionOrder = new QmsInspectionOrder();
 
                 SearchWmsInnerInventoryDet searchQualifiedInventoryDet = new SearchWmsInnerInventoryDet();
-                searchQualifiedInventoryDet.setMaterialCode(code);
+                searchQualifiedInventoryDet.setMaterialCode(detDtos.get(0).getMaterialCode());
 
                 SearchQmsInspectionOrder searchQmsInspectionOrder = new SearchQmsInspectionOrder();
-                searchQmsInspectionOrder.setMaterialCode(code);
+                searchQmsInspectionOrder.setMaterialCode(detDtos.get(0).getMaterialCode());
                 if (StringUtils.isNotEmpty(detDtos.get(0).getOption3())) {
                     searchQmsInspectionOrder.setSalesCode(detDtos.get(0).getOption3());
                     searchQualifiedInventoryDet.setOption3(detDtos.get(0).getOption3());
@@ -1071,7 +1073,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         searchWmsInnerInventoryDet1.setLogicCode("C149");
         searchWmsInnerInventoryDet1.setNotEqualMark(0);
         searchWmsInnerInventoryDet1.setIfInspectionOrderCodeNull(1);
-        List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos1 = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
+        List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos1 = innerFeignApi.findList(searchWmsInnerInventoryDet1).getData();
         Map<String, List<WmsInnerInventoryDetDto>> collect1 = new HashMap<>();
         for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : wmsInnerInventoryDetDtos1) {
             List<WmsInnerInventoryDetDto> inventoryDetDtos = new LinkedList<>();
@@ -1085,31 +1087,31 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             Set<String> codes1 = collect1.keySet();
             for (String code : codes1) {
                 List<WmsInnerInventoryDetDto> detDtos = collect1.get(code);
-                QmsInspectionOrder qmsInspectionOrder = new QmsInspectionOrder();
+                QmsInspectionOrder qmsInspectionOrder1 = new QmsInspectionOrder();
                 SearchQmsInspectionOrder searchQmsInspectionOrder = new SearchQmsInspectionOrder();
                 searchQmsInspectionOrder.setMaterialCode(code);
                 searchQmsInspectionOrder.setInspectionStatus((byte) 1);
                 List<QmsInspectionOrder> qmsInspectionOrderList = qmsInspectionOrderMapper.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrder));
                 if (StringUtils.isNotEmpty(qmsInspectionOrderList)) {
-                    qmsInspectionOrder = qmsInspectionOrderList.get(0);
-                    String qmsInspectionOrderTime = DateUtils.getDateString(qmsInspectionOrder.getCreateTime(), "yyyy-MM-dd");
+                    qmsInspectionOrder1 = qmsInspectionOrderList.get(0);
+                    String qmsInspectionOrderTime = DateUtils.getDateString(qmsInspectionOrder1.getCreateTime(), "yyyy-MM-dd");
                     String newDate = DateUtils.getDateString(new Date(), "yyyy-MM-dd");
                     if (newDate.equals(qmsInspectionOrderTime)) {
-                        qmsInspectionOrder.setOrderQty(new BigDecimal(detDtos.size()));
-                        qmsInspectionOrder.setInventoryQty(new BigDecimal(detDtos.size()));
-                        List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetService.showOrderDet(qmsInspectionOrder.getInspectionStandardId(), qmsInspectionOrder.getOrderQty());
-                        qmsInspectionOrder.setQmsInspectionOrderDets(qmsInspectionOrderDets);
-                        this.update(qmsInspectionOrder, (byte) 0);
+                        qmsInspectionOrder1.setOrderQty(new BigDecimal(detDtos.size()));
+                        qmsInspectionOrder1.setInventoryQty(new BigDecimal(detDtos.size()));
+                        List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetService.showOrderDet(qmsInspectionOrder1.getInspectionStandardId(), qmsInspectionOrder1.getOrderQty());
+                        qmsInspectionOrder1.setQmsInspectionOrderDets(qmsInspectionOrderDets);
+                        this.update(qmsInspectionOrder1, (byte) 0);
                     } else {
                         //新建检验单
-                        qmsInspectionOrder.setMaterialId(detDtos.get(0).getMaterialId());
-                        qmsInspectionOrder.setOrderQty(new BigDecimal(detDtos.size()));
-                        qmsInspectionOrder.setInventoryQty(new BigDecimal(detDtos.size()));
-                        createQmsInspectionOrder(qmsInspectionOrder, detDtos);
+                        qmsInspectionOrder1.setMaterialId(detDtos.get(0).getMaterialId());
+                        qmsInspectionOrder1.setOrderQty(new BigDecimal(detDtos.size()));
+                        qmsInspectionOrder1.setInventoryQty(new BigDecimal(detDtos.size()));
+                        createQmsInspectionOrder(qmsInspectionOrder1, detDtos);
                     }
 
                     //库存、库存明细写入检验单号
-                    writeInspectionOrderCode(qmsInspectionOrder, detDtos, qualified, noQualified);
+                    writeInspectionOrderCode(qmsInspectionOrder1, detDtos, qualified, noQualified);
                 }
             }
         }
@@ -1166,12 +1168,14 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         if (StringUtils.isNotEmpty(detDtos)) {
             for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : detDtos) {
                 wmsInnerInventoryDetDto.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
-                if("0".equals(qmsInspectionOrder.getInspectionResult())){
-                    wmsInnerInventoryDetDto.setInventoryStatusId(noQualified);
-                }else if("1".equals(qmsInspectionOrder.getInspectionResult())){
-                    wmsInnerInventoryDetDto.setInventoryStatusId(qualified);
+                if(StringUtils.isNotEmpty(qmsInspectionOrder.getSalesCode()) || StringUtils.isNotEmpty(qmsInspectionOrder.getSamePackageCode())) {
+                    if ("0".equals(qmsInspectionOrder.getInspectionResult())) {
+                        wmsInnerInventoryDetDto.setInventoryStatusId(noQualified);
+                    } else if ("1".equals(qmsInspectionOrder.getInspectionResult())) {
+                        wmsInnerInventoryDetDto.setInventoryStatusId(qualified);
+                    }
                 }
-
+                wmsInnerInventoryDetDto.setModifiedTime(new Date());
                 ResponseEntity update = innerFeignApi.update(wmsInnerInventoryDetDto);
                 if (StringUtils.isNotEmpty(update) && update.getCode() != 0)
                     throw new BizErrorException("更新库存明细失败");
@@ -1189,6 +1193,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         if (StringUtils.isNotEmpty(list)) {
             for (WmsInnerInventoryDto wmsInnerInventoryDto : list) {
                 wmsInnerInventoryDto.setQcLock((byte) 1);
+                wmsInnerInventoryDto.setModifiedTime(new Date());
                 wmsInnerInventoryDto.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
                 ResponseEntity update = innerFeignApi.update(wmsInnerInventoryDto);
                 if (StringUtils.isNotEmpty(update) && update.getCode() != 0)
@@ -1244,7 +1249,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int qmsInspectToInnerJobShift(String ids) {
-        int i=0;
+        int i=1;
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(ids.length()<=0){
             throw new BizErrorException(ErrorCodeEnum.GL99990100);

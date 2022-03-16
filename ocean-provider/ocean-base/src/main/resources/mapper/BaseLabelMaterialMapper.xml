@@ -121,7 +121,7 @@
 
     <select id="findEqualLabel" resultMap="BaseResultMap">
         SELECT blm.* FROM base_label_material blm
-                              LEFT JOIN base_label bl ON blm.label_id = blm.label_id
+                              LEFT JOIN base_label bl ON blm.label_id = bl.label_id
                               LEFT JOIN base_label_category blc ON bl.label_category_id = blc.label_category_id
         WHERE blm.material_id=#{materialId} AND blc.label_category_id=#{categoryId} AND blm.org_id=#{orgId}
     </select>

@@ -223,6 +223,7 @@
             </if>
             and swo.is_delete = 1
         </where>
+        GROUP BY swo.work_order_id
         order by swo.modified_time desc
     </select>
 

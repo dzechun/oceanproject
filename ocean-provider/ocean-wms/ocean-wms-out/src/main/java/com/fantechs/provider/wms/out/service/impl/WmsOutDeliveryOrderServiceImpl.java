@@ -9,6 +9,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
+import com.fantechs.common.base.general.dto.om.OmSalesCodeReSpcDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
@@ -559,6 +560,16 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
 
     @Override
     public int updateStatus(List<Long> ids) {
+        if(ids.size()>0){
+            for (Long id : ids) {
+                WmsOutDeliveryOrder deliveryOrder=wmsOutDeliveryOrderMapper.selectByPrimaryKey(id);
+                if(StringUtils.isNotEmpty(deliveryOrder)){
+                    if(deliveryOrder.getAuditStatus()==(byte)1){
+                        throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"出货通知单已审核 请勿重复操作-->"+deliveryOrder.getDeliveryOrderCode());
+                    }
+                }
+            }
+        }
         return wmsOutDeliveryOrderMapper.batchUpdateStatus(ids);
     }
 
@@ -705,6 +716,13 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                     }
                 }
             }
+            /*else {
+                //为空 默认为三星客户 1032050057
+                List<BaseSupplier> baseSupplierList = baseSuppliers.stream().filter(u -> (u.getSupplierCode().equals("1032050057"))).collect(Collectors.toList());
+                if(StringUtils.isNotEmpty(baseSupplierList) && baseSupplierList.size()>0){
+                    wmsOutDeliveryOrderImport.setCustomerId(baseSupplierList.get(0).getSupplierId());
+                }
+            }*/
 
 //            //收货人是否存在
 //            String consigneeCode = wmsOutDeliveryOrderImport.getConsigneeCode();
@@ -778,6 +796,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                 wmsOutDeliveryOrder.setAuditStatus((byte) 0);
                 wmsOutDeliveryOrder.setOrderStatus((byte)1);
                 wmsOutDeliveryOrder.setOrderTypeId((long)1);
+                wmsOutDeliveryOrder.setIfCreatedJobOrder((byte)0);
                 success += wmsOutDeliveryOrderMapper.insertUseGeneratedKeys(wmsOutDeliveryOrder);
 
                 //履历
@@ -811,7 +830,15 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importSamsungExcel(List<WmsSamsungOutDeliveryOrderImport> wmsSamsungOutDeliveryOrderImports) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-
+        Long customerId=null;
+        SearchBaseSupplier searchBaseSupplier=new SearchBaseSupplier();
+        searchBaseSupplier.setSupplierCode("1032050057");
+        searchBaseSupplier.setCodeQueryMark((byte)1);
+        searchBaseSupplier.setSupplierType((byte)2);
+        List<BaseSupplier> supplierList=baseFeignApi.findSupplierList(searchBaseSupplier).getData();
+        if(StringUtils.isNotEmpty(supplierList) && supplierList.size()>0){
+            customerId=supplierList.get(0).getSupplierId();
+        }
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
@@ -820,7 +847,8 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         for (int i = 0; i < wmsSamsungOutDeliveryOrderImports.size(); i++) {
             WmsSamsungOutDeliveryOrderImport wmsSamsungOutDeliveryOrderImport = wmsSamsungOutDeliveryOrderImports.get(i);
             String LIDCode = wmsSamsungOutDeliveryOrderImport.getOption1();
-            String deliveryOrderCode = "SM"+LIDCode;
+            //String deliveryOrderCode = "SM"+LIDCode;
+            String deliveryOrderCode = LIDCode;
             if (StringUtils.isEmpty(LIDCode)){
                 fail.add(i+4);
                 continue;
@@ -861,7 +889,8 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                 List<WmsSamsungOutDeliveryOrderImport> wmsSamsungOutDeliveryOrderImports1 = collect.get(s);
                 WmsOutDeliveryOrder wmsOutDeliveryOrder = new WmsOutDeliveryOrder();
                 //新增父级数据
-                wmsOutDeliveryOrder.setDeliveryOrderCode("SM"+wmsSamsungOutDeliveryOrderImports1.get(0).getOption1());
+                //wmsOutDeliveryOrder.setDeliveryOrderCode("SM"+wmsSamsungOutDeliveryOrderImports1.get(0).getOption1());
+                wmsOutDeliveryOrder.setDeliveryOrderCode(wmsSamsungOutDeliveryOrderImports1.get(0).getOption1());
                 wmsOutDeliveryOrder.setPlanDespatchDate(wmsSamsungOutDeliveryOrderImports1.get(0).getPlanDespatchDate());
                 wmsOutDeliveryOrder.setCreateTime(new Date());
                 wmsOutDeliveryOrder.setCreateUserId(user.getUserId());
@@ -872,6 +901,8 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                 wmsOutDeliveryOrder.setAuditStatus((byte) 0);
                 wmsOutDeliveryOrder.setOrderStatus((byte)1);
                 wmsOutDeliveryOrder.setOrderTypeId((long)1);
+                wmsOutDeliveryOrder.setCustomerId(customerId);
+                wmsOutDeliveryOrder.setIfCreatedJobOrder((byte)0);
                 success += wmsOutDeliveryOrderMapper.insertUseGeneratedKeys(wmsOutDeliveryOrder);
 
                 //新增明细数据

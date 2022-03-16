@@ -114,4 +114,7 @@ public interface OMFeignApi {
     @PostMapping("/omSalesOrderDet/findList")
     ResponseEntity<List<OmSalesOrderDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesOrderDetDto searchOmSalesOrderDetDto);
 
+    @ApiOperation("列表")
+    @PostMapping("/omSalesCodeReSpc/findList")
+    ResponseEntity<List<OmSalesCodeReSpcDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchOmSalesCodeReSpc searchOmSalesCodeReSpc);
 }

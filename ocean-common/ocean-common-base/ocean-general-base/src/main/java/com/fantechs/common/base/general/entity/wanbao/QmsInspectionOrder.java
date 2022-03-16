@@ -338,6 +338,13 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name = "inventoryIds",value = "库存ids")
     private String inventoryIds;
 
+    /**
+     * 样本数
+     */
+    @Transient
+    @ApiModelProperty(name = "sampleQty",value = "样本数")
+    private BigDecimal sampleQty;
+
     private String option1;
 
     private String option2;
