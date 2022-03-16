@@ -508,16 +508,7 @@ public class SyncDataServiceImpl implements SyncDataService {
 
         // 执行查询前调用函数执行存储过程
         middleSaleOrderMapper.setPolicy();
-        DynamicDataSourceHolder.putDataSouce("primary");
         List<MiddleSaleOrder> salesOrders = middleSaleOrderMapper.findSaleOrderData(map);
-        DynamicDataSourceHolder.removeDataSource();
-        log.info("===========获取万宝销售订单数据，当前获取数量：" + salesOrders.size());
-//        DynamicDataSourceHolder.putDataSouce("fourth");
-//        List<MiddleSaleOrder> orderFormIMS = middleSaleOrderMapper.findSaleOrderFormIMS(map);
-//        log.info("===========获取万宝销售订单数据，当前获取数量：" + salesOrders.size() + "==========IMS系统销售订单数量：" + orderFormIMS.size());
-//        if (!orderFormIMS.isEmpty()){
-//            salesOrders.addAll(orderFormIMS);
-//        }
         if (!salesOrders.isEmpty()) {
             // 记录日志
             long start = System.currentTimeMillis();
@@ -538,8 +529,6 @@ public class SyncDataServiceImpl implements SyncDataService {
             List<OmSalesOrderDto> salesOrderDtos = omFeignApi.findSalesOrderAll().getData();
 
             List<MiddleSaleOrder> list = new ArrayList<>();
-            List<OmSalesOrderDto> saveList = new ArrayList<>();
-            List<OmSalesOrderDto> updateList = new ArrayList<>();
             Map<String, List<MiddleSaleOrder>> collect = salesOrders.stream().collect(Collectors.groupingBy(MiddleSaleOrder::getSalesOrderCode));
             collect.forEach((key, value) -> {
                 Map<BigDecimal, List<MiddleSaleOrder>> listMap = value.stream().sorted(Comparator.comparing(MiddleSaleOrder::getModifiedTime))
@@ -550,8 +539,9 @@ public class SyncDataServiceImpl implements SyncDataService {
                 });
 
 
+
                 OmSalesOrderDto omSalesOrder =  new OmSalesOrderDto();
-                BeanUtil.copyProperties(value.get(0), omSalesOrder);
+                BeanUtil.copyProperties(orders.get(0), omSalesOrder);
                 for (BaseBarcodeRuleSetDto ruleSetDto : ruleSetDtos){
                     if (ruleSetDto.getBarcodeRuleSetCode().equals(jsonObject.get("ruleCode"))){
                         omSalesOrder.setBarcodeRuleSetId(ruleSetDto.getBarcodeRuleSetId());
@@ -560,32 +550,33 @@ public class SyncDataServiceImpl implements SyncDataService {
                 }
 
                 List<OmSalesOrderDetDto> omSalesOrderDetDtoList = new ArrayList<>();
-                for (MiddleSaleOrder saleOrder : value) {
+                for (MiddleSaleOrder saleOrder : orders) {
                     // 客户编码
-                    if (StringUtils.isEmpty(value.get(0).getSupplierCode())) {
+                    if (StringUtils.isEmpty(saleOrder.getSupplierCode())) {
                         // 记录日志
-                        apiLog.setResponseData(value.get(0).getSalesOrderCode() + "此销售订单客户编码为空，不同步此条订单数据");
+                        apiLog.setResponseData(saleOrder.getSalesOrderCode() + "此销售订单客户编码为空，不同步此条订单数据");
                         logList.add(apiLog);
                         break;
                     }
                     for (BaseSupplier supplier : baseSuppliers) {
-                        if (value.get(0).getSupplierCode().equals(supplier.getSupplierCode())) {
+                        if (saleOrder.getSupplierCode().equals(supplier.getSupplierCode())) {
+                            saleOrder.setSupplierId(supplier.getSupplierId().toString());
                             omSalesOrder.setSupplierId(supplier.getSupplierId());
                             break;
                         }
                     }
-                    if (StringUtils.isEmpty(omSalesOrder.getSupplierId())) {
+                    if (StringUtils.isEmpty(saleOrder.getSupplierId())) {
                         // 平台没有此客户信息，自动新增
                         BaseSupplier baseSupplier = new BaseSupplier();
-                        baseSupplier.setSupplierCode(value.get(0).getSupplierCode());
-                        baseSupplier.setSupplierName(value.get(0).getSupplierName());
+                        baseSupplier.setSupplierCode(saleOrder.getSupplierCode());
+                        baseSupplier.setSupplierName(saleOrder.getSupplierName());
                         baseSupplier.setSupplierType((byte) 2);
                         baseSupplier.setStatus((byte) 1);
                         Long supplierId = baseFeignApi.saveForReturnID(baseSupplier).getData();
-                        baseSupplier.setSupplierId(supplierId);
-                        baseSuppliers.add(baseSupplier);
+                        saleOrder.setSupplierId(supplierId.toString());
                         omSalesOrder.setSupplierId(supplierId);
                     }
+
                     // 物料
                     if (StringUtils.isEmpty(saleOrder.getMaterialCode())) {
                         // 记录日志
@@ -605,16 +596,22 @@ public class SyncDataServiceImpl implements SyncDataService {
                         logList.add(apiLog);
                         break;
                     }
+                    OmSalesOrderDetDto detDto = new OmSalesOrderDetDto();
+                    BeanUtil.copyProperties(saleOrder, detDto);
                     // 判断订单是否存在
                     for (OmSalesOrderDto dto : salesOrderDtos) {
                         if (dto.getSalesOrderCode().equals(saleOrder.getSalesOrderCode())) {
                             omSalesOrder.setSalesOrderId(dto.getSalesOrderId());
                             saleOrder.setSaleOrderId(dto.getSalesOrderId().toString());
+                            for (OmSalesOrderDetDto oldDetDto : dto.getOmSalesOrderDetDtoList()){
+                                if (oldDetDto.getSalesCode().equals(saleOrder.getSalesCode())){
+                                    detDto.setSalesOrderDetId(oldDetDto.getSalesOrderDetId());
+                                }
+                            }
                             break;
                         }
                     }
-                    OmSalesOrderDetDto detDto = new OmSalesOrderDetDto();
-                    BeanUtil.copyProperties(saleOrder, detDto);
+
                     omSalesOrderDetDtoList.add(detDto);
                 }
                 // 保存平台库
@@ -622,12 +619,12 @@ public class SyncDataServiceImpl implements SyncDataService {
                     omSalesOrder.setSalesUserName(omSalesOrder.getMakeOrderUserName());
                     omSalesOrder.setOmSalesOrderDetDtoList(omSalesOrderDetDtoList);
                     if (StringUtils.isNotEmpty(omSalesOrder.getSalesOrderId())) {
-                        updateList.add(omSalesOrder);
+                        omFeignApi.update(omSalesOrder);
                     } else {
-//                        list.addAll(value);
+                        list.addAll(orders);
                         omSalesOrder.setOrderStatus((byte) 1);
                         omSalesOrder.setStatus((byte) 1);
-                        saveList.add(omSalesOrder);
+                        omFeignApi.add(omSalesOrder);
                     }
                 }
             });
@@ -641,12 +638,6 @@ public class SyncDataServiceImpl implements SyncDataService {
 //                }
 //                DynamicDataSourceHolder.removeDataSource();
 //            }
-            if (!saveList.isEmpty()){
-                omFeignApi.syncBatchSave(saveList);
-            }
-            if (!updateList.isEmpty()){
-                omFeignApi.syncBatchUpdate(updateList);
-            }
 
             apiLog.setRequestTime(new Date());
             apiLog.setConsumeTime(new BigDecimal(System.currentTimeMillis() - start));
