@@ -1166,10 +1166,12 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         if (StringUtils.isNotEmpty(detDtos)) {
             for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : detDtos) {
                 wmsInnerInventoryDetDto.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
-                if("0".equals(qmsInspectionOrder.getInspectionResult())){
-                    wmsInnerInventoryDetDto.setInventoryStatusId(noQualified);
-                }else if("1".equals(qmsInspectionOrder.getInspectionResult())){
-                    wmsInnerInventoryDetDto.setInventoryStatusId(qualified);
+                if(StringUtils.isNotEmpty(qmsInspectionOrder.getSalesCode()) || StringUtils.isNotEmpty(qmsInspectionOrder.getSamePackageCode())) {
+                    if ("0".equals(qmsInspectionOrder.getInspectionResult())) {
+                        wmsInnerInventoryDetDto.setInventoryStatusId(noQualified);
+                    } else if ("1".equals(qmsInspectionOrder.getInspectionResult())) {
+                        wmsInnerInventoryDetDto.setInventoryStatusId(qualified);
+                    }
                 }
                 wmsInnerInventoryDetDto.setModifiedTime(new Date());
                 ResponseEntity update = innerFeignApi.update(wmsInnerInventoryDetDto);
