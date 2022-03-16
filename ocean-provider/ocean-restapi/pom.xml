@@ -16,12 +16,7 @@
     <description>Demo project for Spring Boot</description>
 
     <modules>
-        <module>ocean-imes-restapi</module>
-        <module>ocean-imes-materialapi</module>
-        <module>ocean-chinafivering-api</module>
         <module>ocean-wanbao-api</module>
-        <module>ocean-leisai-api</module>
-        <module>ocean-mulinsen-api</module>
     </modules>
 
 </project>
