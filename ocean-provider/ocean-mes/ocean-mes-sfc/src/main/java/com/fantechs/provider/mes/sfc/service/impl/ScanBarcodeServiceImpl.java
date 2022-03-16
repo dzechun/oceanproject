@@ -103,11 +103,11 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
                 }
             }
             if(StringUtils.isEmpty(cleanBarcodeDto.getOrderBarCode())){
-                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码中不存在厂内码，不允许操作");
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "平台中不存在此条码，不允许操作");
             }
             if (barcodeArr.length >= 3){
                 if(StringUtils.isEmpty(cleanBarcodeDto.getOrderBarCode()) || StringUtils.isEmpty(cleanBarcodeDto.getSalesBarcode())){
-                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码中不存在销售条码，不允许操作");
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "平台中不存在此销售条码，不允许操作");
                 }
             }
             if (!StringUtils.isEmpty(cleanBarcodeDto.getCutsomerBarcode())){
