@@ -699,8 +699,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             if(orderDtoList.get(0).getOrderStatus()>=4){
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"质检移位单已作业或已完成 不能修改-->"+orderDtoList.get(0).getJobOrderCode());
             }
+
+            jobOrderId=orderDtoList.get(0).getJobOrderId();
         }
-        jobOrderId=orderDtoList.get(0).getJobOrderId();
 
         qmsInspectionOrder.setModifiedUserId(user.getUserId());
         qmsInspectionOrder.setModifiedTime(new Date());
