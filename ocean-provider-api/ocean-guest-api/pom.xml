@@ -16,10 +16,6 @@
     <description>Demo project for Spring Boot</description>
     <packaging>pom</packaging>
     <modules>
-        <module>ocean-guest-eng-api</module>
-        <module>ocean-guest-leisai-api</module>
-        <module>ocean-guest-fivering-api</module>
-        <module>ocean-guest-callagv-api</module>
         <module>ocean-guest-wanbao-api</module>
     </modules>
 

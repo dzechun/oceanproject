@@ -128,15 +128,4 @@ public class OmSalesOrderController {
         }
     }
 
-    @ApiOperation("万宝-同步销售订单批量新增")
-    @PostMapping("/syncBatchSave")
-    public ResponseEntity syncBatchSave(@RequestBody List<OmSalesOrderDto> list){
-        return ControllerUtil.returnCRUD(omSalesOrderService.syncBatchSave(list));
-    }
-
-    @ApiOperation("万宝-同步销售订单批量修改")
-    @PostMapping("/syncBatchUpdate")
-    public ResponseEntity syncBatchUpdate(@RequestBody List<OmSalesOrderDto> list){
-        return ControllerUtil.returnCRUD(omSalesOrderService.syncBatchUpdate(list));
-    }
 }

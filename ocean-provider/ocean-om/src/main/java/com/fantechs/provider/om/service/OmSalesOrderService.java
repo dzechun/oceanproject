@@ -20,18 +20,4 @@ public interface OmSalesOrderService extends IService<OmSalesOrder> {
     int updateDto(OmSalesOrderDto omSalesOrderDto);
     int issueWarehouse(Long id);
     int batchUpdate(List<OmSalesOrder> orders);
-
-    /**
-     * 万宝同步销售订单批量新增
-     * @param list
-     * @return
-     */
-    int syncBatchSave(List<OmSalesOrderDto> list);
-
-    /**
-     * 万宝同步销售订单批量修改
-     * @param list
-     * @return
-     */
-    int syncBatchUpdate(List<OmSalesOrderDto> list);
 }

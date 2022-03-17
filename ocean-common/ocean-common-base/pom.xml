@@ -15,10 +15,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>ocean-agv-base</module>
         <module>ocean-public-base</module>
         <module>ocean-imes-base</module>
-        <module>ocean-electronic-tag-base</module>
         <module>ocean-general-base</module>
     </modules>
 

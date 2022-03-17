@@ -46,6 +46,9 @@
         <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <collection property="omSalesOrderDetDtoList" ofType="com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto"
+                    column="{salesOrderId=sales_order_id}" select="com.fantechs.provider.om.mapper.OmSalesOrderDetMapper.findList">
+        </collection>
     </resultMap>
 
     <sql id="Base_Column_List">
