@@ -3,20 +3,14 @@ package com.fantechs.provider.wms.out.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eng.EngPackingOrderSummaryDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryLogDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
-import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDespatchOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDespatchOrderReJoReDetDto;
-import com.fantechs.common.base.general.entity.eng.EngPackingOrder;
 import com.fantechs.common.base.general.entity.om.OmOtherOutOrderDet;
 import com.fantechs.common.base.general.entity.om.OmSalesOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrder;
@@ -25,7 +19,6 @@ import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryLog;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.*;
@@ -184,32 +177,6 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
                     wmsInnerInventoryLog.setOrgId(sysUser.getOrganizationId());
                     innerFeignApi.add(wmsInnerInventoryLog);
 
-
-                    //记录材料日志
-                    //获取程序配置项
-                    SearchSysSpecItem searchSysSpecItemFiveRing = new SearchSysSpecItem();
-                    searchSysSpecItemFiveRing.setSpecCode("sendMaterialLogMessage");
-                    List<SysSpecItem> itemListFiveRing = securityFeignApi.findSpecItemList(searchSysSpecItemFiveRing).getData();
-                    if(itemListFiveRing.size()<1){
-                        throw new BizErrorException("配置项 sendMaterialLogMessage 获取失败");
-                    }
-                    SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-                    if("1".equals(sysSpecItem.getParaValue())) {
-                        List<EngPackingOrderSummaryDetDto> lists = new ArrayList<>();
-                        EngPackingOrderSummaryDetDto engPackingOrderSummaryDetDto = new EngPackingOrderSummaryDetDto();
-                        engPackingOrderSummaryDetDto.setContractCode(wmsInnerInventory.getContractCode());
-                        engPackingOrderSummaryDetDto.setPurchaseReqOrderCode(wmsInnerInventory.getPurchaseReqOrderCode());
-                        engPackingOrderSummaryDetDto.setLocationNum(wmsInnerInventory.getOption4());
-                        engPackingOrderSummaryDetDto.setDeviceCode(wmsInnerInventory.getOption1());
-                        engPackingOrderSummaryDetDto.setDominantTermCode(wmsInnerInventory.getOption2());
-                        engPackingOrderSummaryDetDto.setMaterialCode(wmsInnerJobOrderDetDto.getMaterialCode());
-                        engPackingOrderSummaryDetDto.setQty(wmsInnerJobOrderDetDto.getActualQty());
-                        lists.add(engPackingOrderSummaryDetDto);
-                        EngPackingOrder engPackingOrder = new EngPackingOrder();
-                        engPackingOrder.setPackingOrderCode(wmsInnerJobOrder.getRelatedOrderCode());
-                        engPackingOrder.setSummaryDetList(lists);
-                        engFeignApi.saveRecord(engPackingOrder,(byte)7,"出库");
-                    }
                 }
             }
             wmsOutDespatchOrder.setOrderStatus((byte)4);

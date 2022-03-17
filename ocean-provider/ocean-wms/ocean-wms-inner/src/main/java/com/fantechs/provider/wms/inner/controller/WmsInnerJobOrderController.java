@@ -1,7 +1,6 @@
 package com.fantechs.provider.wms.inner.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -135,12 +134,6 @@ public class WmsInnerJobOrderController {
     @PostMapping("/addList")
     public ResponseEntity addList(@RequestBody List<WmsInnerJobOrder> list){
         return ControllerUtil.returnCRUD(wmsInPutawayOrderService.addList(list));
-    }
-
-    @ApiIgnore
-    @PostMapping("/cancelJobOrder")
-    public ResponseEntity cancelJobOrder(@RequestBody List<EngPackingOrderTakeCancel> engPackingOrderTakeCancels){
-        return ControllerUtil.returnCRUD(wmsInPutawayOrderService.cancelJobOrder(engPackingOrderTakeCancels));
     }
 
     @PostMapping("/storageCapacity")

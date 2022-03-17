@@ -17,7 +17,6 @@
     <modules>
         <module>ocean-fileserver</module>  <!-- 文件服务 -->
         <module>ocean-security</module>    <!-- 用户认证中心 -->
-        <module>ocean-client</module>     <!-- 客户端服务 -->
         <module>ocean-restapi</module> <!-- API接口服务 -->
         <module>ocean-mes</module>    <!-- mes服务 -->
         <module>ocean-wms</module>    <!-- wms服务 -->
