@@ -769,8 +769,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         }*/
 
         //改了样本数 从新生成质检移位单
-        if(StringUtils.isNotEmpty(jobOrderId)) {
-            BigDecimal qty = qmsInspectionOrder.getSampleQty();
+        BigDecimal qty = qmsInspectionOrderDets.get(0).getSampleQty();
+        if(StringUtils.isNotEmpty(jobOrderId) && StringUtils.isNotEmpty(qty)) {
             innerFeignApi.reCreateInnerJobShift(jobOrderId,qty);
         }
         return i;
