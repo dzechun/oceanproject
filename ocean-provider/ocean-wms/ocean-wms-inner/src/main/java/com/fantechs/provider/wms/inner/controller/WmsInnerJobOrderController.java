@@ -141,4 +141,10 @@ public class WmsInnerJobOrderController {
     public ResponseEntity storageCapacity(@RequestParam Long materialId, @RequestParam Long storageId, @RequestParam BigDecimal qty){
         return ControllerUtil.returnDataSuccess(wmsInPutawayOrderService.storageCapacity(materialId,storageId,qty),1);
     }
+
+    @PostMapping("/reCreateInnerJobShift")
+    @ApiOperation("重新生成质检移位单")
+    public ResponseEntity reCreateInnerJobShift(@RequestParam Long jobOrderId, @RequestParam BigDecimal qty){
+        return ControllerUtil.returnDataSuccess(wmsInPutawayOrderService.reCreateInnerJobShift(jobOrderId,qty),1);
+    }
 }

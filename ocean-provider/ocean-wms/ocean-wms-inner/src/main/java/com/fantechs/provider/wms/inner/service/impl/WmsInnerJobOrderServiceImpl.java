@@ -2033,12 +2033,16 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         int i=0;
         SysUser sysUser=currentUser();
         WmsInnerJobOrder wmsInnerJobOrder=wmsInPutawayOrderMapper.selectByPrimaryKey(jobOrderId);
-        this.cancelDistribution(jobOrderId.toString());
-
         Example example = new Example(WmsInnerJobOrderDet.class);
         example.createCriteria().andEqualTo("jobOrderId",jobOrderId);
         List<WmsInnerJobOrderDet> jobOrderDetList = wmsInPutawayOrderDetMapper.selectByExample(example);
         if(jobOrderDetList.size()>0){
+            if(qty.compareTo(jobOrderDetList.get(0).getPlanQty())==0){
+                return 1;
+            }
+            //取消分配
+            this.cancelDistribution(jobOrderId.toString());
+
             WmsInnerJobOrderDet wmsInnerJobOrderDet=jobOrderDetList.get(0);
             wmsInnerJobOrderDet.setPlanQty(qty);
             wmsInnerJobOrderDet.setDistributionQty(qty);
@@ -2058,7 +2062,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
             List<WmsInnerInventoryDto> dtoList = inventoryDtos.stream().filter(u -> (u.getPackingQty().compareTo(qty)>=0)).collect(Collectors.toList());
             if(StringUtils.isEmpty(dtoList) || dtoList.size()<=0){
-                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未找到大于等于样板数的待检库存");
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未找到大于等于样本数的待检库存");
             }
             //分配库存
             WmsInnerInventory innerInventory=dtoList.get(0);

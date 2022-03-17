@@ -689,6 +689,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         //生成的质检移位单判断
+        Long jobOrderId=null;
         String inspectionOrderCode=qmsInspectionOrder.getInspectionOrderCode();
         SearchWmsInnerJobOrder searchWmsInnerJobOrder=new SearchWmsInnerJobOrder();
         searchWmsInnerJobOrder.setRelatedOrderCode(inspectionOrderCode);
@@ -699,6 +700,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"质检移位单已作业或已完成 不能修改-->"+orderDtoList.get(0).getJobOrderCode());
             }
         }
+        jobOrderId=orderDtoList.get(0).getJobOrderId();
 
         qmsInspectionOrder.setModifiedUserId(user.getUserId());
         qmsInspectionOrder.setModifiedTime(new Date());
@@ -765,6 +767,12 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         /*if(type != 0) {
             this.writeBack(qmsInspectionOrder.getInspectionOrderId());
         }*/
+
+        //改了样本数 从新生成质检移位单
+        if(StringUtils.isNotEmpty(jobOrderId)) {
+            BigDecimal qty = qmsInspectionOrder.getSampleQty();
+            innerFeignApi.reCreateInnerJobShift(jobOrderId,qty);
+        }
         return i;
     }
 
