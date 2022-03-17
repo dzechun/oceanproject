@@ -24,7 +24,7 @@ public class ScanByManualOperationDto {
     @ApiModelProperty(name="salesBarcode" ,value="销售条码")
     private String salesBarcode;
 
-    @ApiModelProperty(name="cutsomerBarcode" ,value="客户条码")
-    private String cutsomerBarcode;
+    @ApiModelProperty(name="customerBarcode" ,value="客户条码")
+    private String customerBarcode;
 
 }
