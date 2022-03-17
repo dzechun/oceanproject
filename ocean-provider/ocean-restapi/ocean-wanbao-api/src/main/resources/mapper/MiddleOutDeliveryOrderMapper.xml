@@ -99,8 +99,7 @@
         sp.quantity AS packing_qty,
         sp.real_quantity AS dispatch_qty,
         sp.source_no AS related_order_code_1,
-        '' AS sales_order_no,
-        '' AS out_order_code
+        sh.INV_NUM AS out_order_code
         FROM
         EOS.crm_lg_sor_header sh,
         EOS.crm_lg_sor_product sp,

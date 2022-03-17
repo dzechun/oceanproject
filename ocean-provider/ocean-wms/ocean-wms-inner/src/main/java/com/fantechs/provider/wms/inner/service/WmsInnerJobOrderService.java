@@ -90,9 +90,16 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
     /**
      * 库容入库规则判断入库数量
      * @param materialId
-     * @param materialStoreType
+     * @param
      * @param qty
      * @return
      */
     Boolean storageCapacity(Long materialId,Long storageId,BigDecimal qty);
+
+    /**
+     * 重新处理质检移位单
+     * @param
+     * @return
+     */
+    int reCreateInnerJobShift(Long jobOrderId,BigDecimal qty);
 }
