@@ -701,7 +701,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             }
             if (!mesSfcKeyPartRelevanceDtoList.isEmpty()) {
                 if (customerBarcode != null){
-                    dto.setCutsomerBarcode(customerBarcode);
+                    dto.setCustomerBarcode(customerBarcode);
                 }else {
                     for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : mesSfcKeyPartRelevanceDtoList){
                         BaseLabelCategory keyPartLabelCategory = baseFeignApi.findLabelCategoryDetail(keyPartRelevanceDto.getLabelCategoryId()).getData();
@@ -710,7 +710,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                             dto.setSalesBarcode(keyPartRelevanceDto.getPartBarcode());
                         }else if (keyPartLabelCategory.getLabelCategoryCode().equals("03")){
                             // 客户条码
-                            dto.setCutsomerBarcode(keyPartRelevanceDto.getPartBarcode());
+                            dto.setCustomerBarcode(keyPartRelevanceDto.getPartBarcode());
                         }
                     }
                 }
@@ -740,7 +740,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 dto.setSalesBarcode(barcode);
             }else if (labelCategory.getLabelCategoryCode().equals("03")){
                 // 客户条码
-                dto.setCutsomerBarcode(barcode);
+                dto.setCustomerBarcode(barcode);
             }
             map.clear();
             map.put("barcode", mesSfcKeyPartRelevanceDtoList.get(0).getBarcodeCode());
@@ -771,7 +771,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 BaseLabelCategory keyPartLabelCategory = baseFeignApi.findLabelCategoryDetail(keyPartRelevanceDto.getLabelCategoryId()).getData();
                 if (labelCategory.getLabelCategoryCode().equals("02") && keyPartLabelCategory.getLabelCategoryCode().equals("03")) {
                     // 客户条码
-                    dto.setCutsomerBarcode(keyPartRelevanceDto.getPartBarcode());
+                    dto.setCustomerBarcode(keyPartRelevanceDto.getPartBarcode());
                 }else if (labelCategory.getLabelCategoryCode().equals("03") && keyPartLabelCategory.getLabelCategoryCode().equals("02")){
                     // 销售订单条码
                     dto.setSalesBarcode(keyPartRelevanceDto.getPartBarcode());
@@ -980,6 +980,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                     barPODtos.add(barPODto);
                 }
             });
+            log.info("========= wanbaoBarcodeDtos:" + JSON.toJSONString(wanbaoBarcodeDtos));
+            log.info("========= barPODtos:" + JSON.toJSONString(barPODtos));
             palletAutoAsnDto.setBarCodeList(barPODtos);
             //完工入库
             SearchBaseMaterialOwner searchBaseMaterialOwner = new SearchBaseMaterialOwner();
