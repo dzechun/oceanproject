@@ -70,4 +70,6 @@ public interface MesSfcWorkOrderBarcodeService extends IService<MesSfcWorkOrderB
      */
     List<MesSfcWorkOrderBarcode> wanbaoFindCustomerBarcode(Long salesOrderDetId);
 
+    int printByOrderCode(Long id,Byte barcodeType,String printName,String userCode,String password);
+
 }

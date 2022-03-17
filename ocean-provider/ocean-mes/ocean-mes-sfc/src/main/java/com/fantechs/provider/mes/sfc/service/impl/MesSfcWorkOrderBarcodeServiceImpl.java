@@ -223,6 +223,32 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    public int printByOrderCode(Long id, Byte barcodeType, String printName, String userCode, String password) {
+        int i=0;
+        StringBuilder sb=new StringBuilder();
+        Example example=new Example(MesSfcWorkOrderBarcode.class);
+        Example.Criteria criteria=example.createCriteria();
+        criteria.andEqualTo("workOrderId",id);
+        criteria.andEqualTo("option1",barcodeType);
+        List<MesSfcWorkOrderBarcode> workOrderBarcodeList=mesSfcWorkOrderBarcodeMapper.selectByExample(example);
+        if(StringUtils.isNotEmpty(workOrderBarcodeList) && workOrderBarcodeList.size()>0){
+            for (MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode : workOrderBarcodeList) {
+                if(sb.toString().length()==0) {
+                    sb.append(mesSfcWorkOrderBarcode.getWorkOrderBarcodeId().toString());
+                }
+                else {
+                    sb.append(","+mesSfcWorkOrderBarcode.getWorkOrderBarcodeId().toString());
+                }
+            }
+
+            i=this.print(sb.toString(),(byte)2,printName,userCode,password);
+        }
+
+        return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int update(MesSfcWorkOrderBarcode entity) {
         if(entity.getOrgId()==1000L){
             entity.setModifiedTime(new Date());

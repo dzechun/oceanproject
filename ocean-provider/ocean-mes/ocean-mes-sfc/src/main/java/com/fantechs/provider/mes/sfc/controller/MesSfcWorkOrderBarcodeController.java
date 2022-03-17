@@ -65,6 +65,16 @@ public class MesSfcWorkOrderBarcodeController {
         return ControllerUtil.returnCRUD(mesSfcWorkOrderBarcodeService.print(ids,printType,printName,userCode,password));
     }
 
+    @ApiOperation("按单据补打")
+    @PostMapping("/printByOrderCode")
+    public ResponseEntity printByOrderCode(@ApiParam(value = "id 传工单ID或者销售订单明细ID",required = true) @RequestParam @NotBlank(message="id不能为空") Long id,
+                                @ApiParam(value = "条码类型（2，工单条码 5，销售订单条码）",required = true)@RequestParam Byte barcodeType,
+                                           @RequestParam String printName,
+                                           @RequestParam String userCode,
+                                           @RequestParam String password){
+        return ControllerUtil.returnCRUD(mesSfcWorkOrderBarcodeService.printByOrderCode(id,barcodeType,printName,userCode,password));
+    }
+
     @ApiOperation("规则解析及标签模版")
     @PostMapping("/findRule")
     public ResponseEntity<LabelRuteDto> findRule(@ApiParam(value = "Id",required = true)@RequestParam Long Id, @ApiParam("条码类别（1.工序流转卡、2.工单条码、3.客户条码、4-销售订单条码）")@RequestParam Byte barcodeType){
