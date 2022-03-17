@@ -59,6 +59,13 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
         return wmsInnerInventoryDetMapper.insertList(wmsInnerInventoryDets);
     }
 
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
+    public int update(WmsInnerInventoryDet entity) {
+        return super.update(entity);
+    }
+
     /**
      * 减库存明细
      * @param wmsInnerInventoryDet
