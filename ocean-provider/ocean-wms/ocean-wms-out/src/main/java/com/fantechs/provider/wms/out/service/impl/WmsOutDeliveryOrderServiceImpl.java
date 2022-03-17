@@ -20,10 +20,8 @@ import com.fantechs.common.base.general.dto.wms.out.imports.WmsSamsungOutDeliver
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialOwner;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
+import com.fantechs.common.base.general.entity.basic.BaseWarehouse;
+import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -220,6 +218,14 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
             throw new BizErrorException(ErrorCodeEnum.UAC10011039);
         }
 
+        Long warehouseId=null;
+        SearchBaseWarehouse searchBaseWarehouse=new SearchBaseWarehouse();
+        searchBaseWarehouse.setOrgId(user.getOrganizationId());
+        List<BaseWarehouse> warehouseList=baseFeignApi.findList(searchBaseWarehouse).getData();
+        if(StringUtils.isNotEmpty(warehouseList) && warehouseList.size()>0){
+            warehouseId=warehouseList.get(0).getWarehouseId();
+        }
+
         //出库单
         if(wmsOutDeliveryOrder.getOrderTypeId()==1){
             SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
@@ -274,6 +280,10 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                 wmsOutDeliveryOrderDet.setOrgId(user.getOrganizationId());
                 //增加保存明细销售编码 2022-03-16
                 wmsOutDeliveryOrderDet.setSalesCode(wmsOutDeliveryOrder.getSalesCode());
+
+                if(StringUtils.isEmpty(wmsOutDeliveryOrderDet.getWarehouseId())){
+                    wmsOutDeliveryOrderDet.setWarehouseId(warehouseId);
+                }
                 //出库单明细履历
                 WmsOutHtDeliveryOrderDet wmsOutHtDeliveryOrderDet = new WmsOutHtDeliveryOrderDet();
                 BeanUtils.copyProperties(wmsOutDeliveryOrderDet,wmsOutHtDeliveryOrderDet);
@@ -301,6 +311,14 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         List<WmsInnerJobOrderDto> wmsInnerJobOrderDtos = innerFeignApi.findList(searchWmsInnerJobOrder).getData();
         if(StringUtils.isNotEmpty(wmsInnerJobOrderDtos)){
             throw new BizErrorException("对应的拣货作业单已存在,该出库单不允许修改！");
+        }
+
+        Long warehouseId=null;
+        SearchBaseWarehouse searchBaseWarehouse=new SearchBaseWarehouse();
+        searchBaseWarehouse.setOrgId(user.getOrganizationId());
+        List<BaseWarehouse> warehouseList=baseFeignApi.findList(searchBaseWarehouse).getData();
+        if(StringUtils.isNotEmpty(warehouseList) && warehouseList.size()>0){
+            warehouseId=warehouseList.get(0).getWarehouseId();
         }
 
         //出库单
@@ -332,6 +350,12 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                 wmsOutDeliveryOrderDet.setModifiedUserId(user.getUserId());
                 wmsOutDeliveryOrderDet.setOrgId(user.getOrganizationId());
 
+                //增加保存明细销售编码 2022-03-16
+                wmsOutDeliveryOrderDet.setSalesCode(wmsOutDeliveryOrder.getSalesCode());
+
+                if(StringUtils.isEmpty(wmsOutDeliveryOrderDet.getWarehouseId())){
+                    wmsOutDeliveryOrderDet.setWarehouseId(warehouseId);
+                }
                 //出库单明细履历
                 WmsOutHtDeliveryOrderDet wmsOutHtDeliveryOrderDet = new WmsOutHtDeliveryOrderDet();
                 BeanUtils.copyProperties(wmsOutDeliveryOrderDet,wmsOutHtDeliveryOrderDet);

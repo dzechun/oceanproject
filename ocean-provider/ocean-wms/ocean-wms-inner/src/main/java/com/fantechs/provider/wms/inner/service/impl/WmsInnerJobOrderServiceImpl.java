@@ -10,9 +10,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseStorageRule;
 import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
+import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseStorageCapacity;
@@ -25,8 +23,10 @@ import com.fantechs.common.base.general.entity.wms.in.WmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.*;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -41,6 +41,7 @@ import com.fantechs.provider.wms.inner.mapper.*;
 import com.fantechs.provider.wms.inner.service.*;
 import com.fantechs.provider.wms.inner.util.InBarcodeUtil;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -1567,7 +1568,10 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         record.setModifiedUserId(sysUser.getUserId());
         record.setOrgId(sysUser.getOrganizationId());
         record.setIsDelete((byte) 1);
-        record.setOrderStatus((byte) 1);
+        if(StringUtils.isEmpty(record.getOrderStatus())){
+            record.setOrderStatus((byte) 1);
+        }
+
         record.setPlanQty(record.getWmsInPutawayOrderDets().stream().map(WmsInnerJobOrderDet::getPlanQty).reduce(BigDecimal.ZERO, BigDecimal::add));
         int num = wmsInPutawayOrderMapper.insertUseGeneratedKeys(record);
         for (WmsInnerJobOrderDet wmsInPutawayOrderDet : record.getWmsInPutawayOrderDets()) {
@@ -2021,6 +2025,65 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
         }
         return isSuccess;
+    }
+
+    @Override
+    @Transactional
+    public int reCreateInnerJobShift(Long jobOrderId, BigDecimal qty) {
+        int i=0;
+        SysUser sysUser=currentUser();
+        WmsInnerJobOrder wmsInnerJobOrder=wmsInPutawayOrderMapper.selectByPrimaryKey(jobOrderId);
+        Example example = new Example(WmsInnerJobOrderDet.class);
+        example.createCriteria().andEqualTo("jobOrderId",jobOrderId);
+        List<WmsInnerJobOrderDet> jobOrderDetList = wmsInPutawayOrderDetMapper.selectByExample(example);
+        if(jobOrderDetList.size()>0){
+            if(qty.compareTo(jobOrderDetList.get(0).getPlanQty())==0){
+                return 1;
+            }
+            //取消分配
+            this.cancelDistribution(jobOrderId.toString());
+
+            WmsInnerJobOrderDet wmsInnerJobOrderDet=jobOrderDetList.get(0);
+            wmsInnerJobOrderDet.setPlanQty(qty);
+            wmsInnerJobOrderDet.setDistributionQty(qty);
+            wmsInnerJobOrderDet.setModifiedUserId(sysUser.getUserId());
+            wmsInnerJobOrderDet.setModifiedTime(new Date());
+            i=wmsInPutawayOrderDetMapper.updateByPrimaryKeySelective(wmsInnerJobOrderDet);
+
+            SearchWmsInnerInventory searchWmsInnerInventory=new SearchWmsInnerInventory();
+            searchWmsInnerInventory.setMaterialId(wmsInnerJobOrderDet.getMaterialId());
+            searchWmsInnerInventory.setStorageId(wmsInnerJobOrderDet.getOutStorageId());
+            searchWmsInnerInventory.setLockStatus((byte)0);
+            searchWmsInnerInventory.setInventoryStatusName("待检");
+            List<WmsInnerInventoryDto> inventoryDtos=wmsInnerInventoryService.findList(ControllerUtil.dynamicCondition(searchWmsInnerInventory));
+            if(StringUtils.isEmpty(inventoryDtos) || inventoryDtos.size()<=0){
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未找到待检库存");
+            }
+
+            List<WmsInnerInventoryDto> dtoList = inventoryDtos.stream().filter(u -> (u.getPackingQty().compareTo(qty)>=0)).collect(Collectors.toList());
+            if(StringUtils.isEmpty(dtoList) || dtoList.size()<=0){
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未找到大于等于样本数的待检库存");
+            }
+            //分配库存
+            WmsInnerInventory innerInventory=dtoList.get(0);
+            WmsInnerInventory newInnerInventory = new WmsInnerInventory();
+            BeanUtil.copyProperties(innerInventory, newInnerInventory);
+            newInnerInventory.setPackingQty(qty);
+            newInnerInventory.setJobStatus((byte) 2);
+            newInnerInventory.setJobOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
+            newInnerInventory.setOrgId(sysUser.getOrganizationId());
+            newInnerInventory.setCreateTime(new Date());
+            newInnerInventory.setCreateUserId(sysUser.getUserId());
+            newInnerInventory.setParentInventoryId(innerInventory.getInventoryId());
+            newInnerInventory.setRelevanceOrderCode(wmsInnerJobOrder.getJobOrderCode());
+            i+=wmsInnerInventoryService.save(newInnerInventory);
+            // 变更减少原库存
+            innerInventory.setPackingQty(innerInventory.getPackingQty().subtract(qty));
+            i+=wmsInnerInventoryService.update(innerInventory);
+
+        }
+
+        return i;
     }
 
     /**
