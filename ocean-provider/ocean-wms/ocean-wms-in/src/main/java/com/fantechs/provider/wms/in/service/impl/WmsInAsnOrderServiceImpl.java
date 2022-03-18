@@ -485,6 +485,12 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerInventory.setModifiedTime(new Date());
             wmsInnerInventory.setModifiedUserId(sysUser.getUserId());
             wmsInnerInventory.setOrgId(sysUser.getOrganizationId());
+
+            //2022-03-18 增加锁默认值
+            wmsInnerInventory.setStockLock((byte)0);
+            wmsInnerInventory.setLockStatus((byte)0);
+            wmsInnerInventory.setQcLock((byte)0);
+
             ResponseEntity responseEntity =innerFeignApi.insertSelective(wmsInnerInventory);
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException("库存添加失败");
@@ -1024,6 +1030,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerInventoryDet.setOption3(palletAutoAsnDto.getSalesOrderCode());
             wmsInnerInventoryDet.setOption4(barcode.getPOCode());
             wmsInnerInventoryDet.setOption5(palletAutoAsnDto.getWorkOrderCode());
+
+            wmsInnerInventoryDet.setIfStockLock((byte)0);
             wmsInnerInventoryDets.add(wmsInnerInventoryDet);
             ResponseEntity responseEntity = innerFeignApi.add(wmsInnerInventoryDets);
             if(responseEntity.getCode()!=0){

@@ -352,7 +352,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         searchWmsInnerInventory.setStorageId(outStorageId);
         searchWmsInnerInventory.setLockStatus((byte) 0);
         searchWmsInnerInventory.setJobStatus((byte) 1);
-        searchWmsInnerInventory.setInventoryStatusName("合格");
+        //searchWmsInnerInventory.setInventoryStatusName("合格");
         List<WmsInnerInventoryDto> inventoryDtos = innerFeignApi.findList(searchWmsInnerInventory).getData();
         if (StringUtils.isNotEmpty(inventoryDtos)) {
             //存在合格的库存才生成移位单
