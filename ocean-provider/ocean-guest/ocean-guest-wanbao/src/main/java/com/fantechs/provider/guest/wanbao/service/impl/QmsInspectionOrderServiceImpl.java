@@ -208,8 +208,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         //处理库存
         this.handleInventory(qmsInspectionOrder.getInspectionOrderCode(),qmsInspectionOrder.getInspectionResult());
 
+        List<QmsInspectionOrderDetSample> barcodes = qmsInspectionOrderDetSampleService.findBarcodes(inspectionOrderId);
         //生成移位单
-        createJobOrderShift(qmsInspectionOrderDetSamples,qmsInspectionOrder,user);
+        createJobOrderShift(barcodes,qmsInspectionOrder,user);
 
         return i;
     }
@@ -278,7 +279,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         }
 
         //生成移位单
-        createJobOrderShift(qmsInspectionOrderDetSamples,qmsInspectionOrder,user);
+        createJobOrderShift(barcodes,qmsInspectionOrder,user);
 
         return i;
     }
@@ -357,7 +358,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         if (StringUtils.isNotEmpty(inventoryDtos)) {
             //存在合格的库存才生成移位单
             List<QmsInspectionOrderDetSample> ngQualifiedBarcodes = list.stream().filter(item -> item.getBarcodeStatus() != null && item.getBarcodeStatus() == 0).collect(Collectors.toList());
-            List<QmsInspectionOrderDetSample> goodQualifiedBarcodes = list.stream().filter(item -> item.getBarcodeStatus() != null && item.getBarcodeStatus() == 0).collect(Collectors.toList());
+            List<QmsInspectionOrderDetSample> goodQualifiedBarcodes = list.stream().filter(item -> item.getBarcodeStatus() == null || item.getBarcodeStatus() != 0).collect(Collectors.toList());
             BigDecimal ngQty = new BigDecimal(ngQualifiedBarcodes.size());
             BigDecimal goodQty = new BigDecimal(goodQualifiedBarcodes.size());
 
