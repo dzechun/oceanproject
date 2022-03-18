@@ -918,6 +918,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                 //wmsOutDeliveryOrder.setDeliveryOrderCode("SM"+wmsSamsungOutDeliveryOrderImports1.get(0).getOption1());
                 wmsOutDeliveryOrder.setDeliveryOrderCode(wmsSamsungOutDeliveryOrderImports1.get(0).getOption1());
                 wmsOutDeliveryOrder.setPlanDespatchDate(wmsSamsungOutDeliveryOrderImports1.get(0).getPlanDespatchDate());
+                wmsOutDeliveryOrder.setRelatedOrderCode1(wmsSamsungOutDeliveryOrderImports1.get(0).getOption3());
                 wmsOutDeliveryOrder.setCreateTime(new Date());
                 wmsOutDeliveryOrder.setCreateUserId(user.getUserId());
                 wmsOutDeliveryOrder.setModifiedUserId(user.getUserId());
@@ -938,6 +939,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                     BeanUtils.copyProperties(wmsSamsungOutDeliveryOrderImport, wmsOutDeliveryOrderDet);
                     wmsOutDeliveryOrderDet.setDeliveryOrderId(wmsOutDeliveryOrder.getDeliveryOrderId());
                     wmsOutDeliveryOrderDet.setStatus((byte) 1);
+                    wmsOutDeliveryOrderDet.setOption3(null);
                     detList.add(wmsOutDeliveryOrderDet);
                 }
                 wmsOutDeliveryOrderDetMapper.insertList(detList);
