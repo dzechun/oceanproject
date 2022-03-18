@@ -94,6 +94,7 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
             map.put("stackingCode", stackingCode);
         }
         map.put("proLineId", proLineId);
+        map.put("usageStatus", 1);
         List<WanbaoStackingDto> stackingDtos = stackingService.findList(map);
         if (stackingDtos.isEmpty()){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛编码在平台中不存在或已被删除");
