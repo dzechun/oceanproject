@@ -345,10 +345,11 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 //proCode=processDtos.get(0).getProCode();
                 proLineId = processDtos.get(0).getProLineId();
             }
-
-            BaseProLine baseProLine = baseFeignApi.getProLineDetail(proLineId).getData();
-            if (StringUtils.isNotEmpty(baseProLine)) {
-                proCode = baseProLine.getProCode();
+            if(StringUtils.isNotEmpty(proLineId)) {
+                BaseProLine baseProLine = baseFeignApi.getProLineDetail(proLineId).getData();
+                if (StringUtils.isNotEmpty(baseProLine)) {
+                    proCode = baseProLine.getProCode();
+                }
             }
 
             if (StringUtils.isNotEmpty(proCode) && proCode.contains("A")) {
