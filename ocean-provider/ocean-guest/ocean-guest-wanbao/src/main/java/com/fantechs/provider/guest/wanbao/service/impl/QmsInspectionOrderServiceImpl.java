@@ -208,9 +208,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         //处理库存
         this.handleInventory(qmsInspectionOrder.getInspectionOrderCode(),qmsInspectionOrder.getInspectionResult());
 
-        List<QmsInspectionOrderDetSample> barcodes = qmsInspectionOrderDetSampleService.findBarcodes(inspectionOrderId);
         //生成移位单
-        createJobOrderShift(barcodes,qmsInspectionOrder,user);
+        createJobOrderShift(qmsInspectionOrderDetSamples,qmsInspectionOrder,user);
 
         return i;
     }
@@ -257,9 +256,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             qmsInspectionOrderDetSampleMapper.insertList(inspectionOrderDetSampleList);
         }
 
-        List<QmsInspectionOrderDetSample> barcodes = qmsInspectionOrderDetSampleService.findBarcodes(inspectionOrderId);
-        List<QmsInspectionOrderDetSample> unQualifiedBarcodes = barcodes.stream().filter(item -> item.getBarcodeStatus()!=null && item.getBarcodeStatus() == 0).collect(Collectors.toList());
-        if(barcodes.size() == unQualifiedBarcodes.size()){
+
+        List<QmsInspectionOrderDetSample> unQualifiedBarcodes = qmsInspectionOrderDetSamples.stream().filter(item -> item.getBarcodeStatus()!=null && item.getBarcodeStatus() == 0).collect(Collectors.toList());
+        if(qmsInspectionOrderDetSamples.size() == unQualifiedBarcodes.size()){
             qmsInspectionOrder.setInspectionResult((byte)0);
         }else if(unQualifiedBarcodes.size() == 0){
             qmsInspectionOrder.setInspectionResult((byte)1);
@@ -279,7 +278,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         }
 
         //生成移位单
-        createJobOrderShift(barcodes,qmsInspectionOrder,user);
+        createJobOrderShift(qmsInspectionOrderDetSamples,qmsInspectionOrder,user);
 
         return i;
     }
