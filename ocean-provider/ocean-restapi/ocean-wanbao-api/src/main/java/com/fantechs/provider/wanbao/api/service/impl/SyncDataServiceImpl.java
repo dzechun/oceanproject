@@ -850,13 +850,14 @@ public class SyncDataServiceImpl implements SyncDataService {
         log.info("============== 同步PQMS数据barcodeDatas: " + barcodeDatas.size());
         DynamicDataSourceHolder.removeDataSource();
 
-        if (StringUtils.isNotEmpty(barcodeDatas)) {
+        if (!barcodeDatas.isEmpty()) {
+            log.info("============ 开始同步PQMS数据");
             WanbaoBaseBySyncDto syncDto = baseFeignApi.findBySyncBarcodeData().getData();
             // 产线
             BaseProLine proLine = new BaseProLine();
             List<BaseProLine> proLines = syncDto.getProLineList();
             for (BaseProLine entity : proLines) {
-                if (proLine.getProCode().equals("A")) {
+                if (entity.getProCode().equals("A")) {
                     proLine = entity;
                     break;
                 }
@@ -873,7 +874,7 @@ public class SyncDataServiceImpl implements SyncDataService {
             for (BaseLabelCategoryDto entity : categoryDtoList) {
                 if (entity.getLabelCategoryCode().equals("01")) {
                     labelCategoryId = entity.getLabelCategoryId();
-                    return;
+                    break;
                 }
             }
             if (labelCategoryId == null){
@@ -920,6 +921,8 @@ public class SyncDataServiceImpl implements SyncDataService {
             // 条码流程表
             List<MesSfcBarcodeProcess> sfcBarcodeProcesses = findBarcodeDto.getBarcodeProcesses();
 
+            log.info("============ sfcBarcodeProcesses: " + sfcBarcodeProcesses.size());
+            log.info("============ workOrderBarcodeDtos: " + workOrderBarcodeDtos.size());
             // 记录日志
             long start = System.currentTimeMillis();
             List<MesSfcBarcodeProcess> updateBarcodeProcess = new ArrayList<>();
@@ -994,6 +997,12 @@ public class SyncDataServiceImpl implements SyncDataService {
                     mesSfcBarcodeProcess.setNextProcessName(routeProcess.getProcessName());
                     mesSfcBarcodeProcess.setSectionId(routeProcess.getSectionId());
                     mesSfcBarcodeProcess.setSectionName(routeProcess.getSectionName());
+                    mesSfcBarcodeProcess.setCreateTime(new Date());
+                    mesSfcBarcodeProcess.setCreateUserId(sysUser.getUserId());
+                    mesSfcBarcodeProcess.setModifiedTime(new Date());
+                    mesSfcBarcodeProcess.setModifiedUserId(sysUser.getUserId());
+                    mesSfcBarcodeProcess.setOrgId(sysUser.getOrganizationId());
+                    mesSfcBarcodeProcess.setIsDelete((byte) 1);
 
                     BatchSyncBarcodeSaveDto batchSyncBarcodeSaveDto = new BatchSyncBarcodeSaveDto();
                     batchSyncBarcodeSaveDto.setBarcodeProcess(mesSfcBarcodeProcess);
@@ -1010,6 +1019,8 @@ public class SyncDataServiceImpl implements SyncDataService {
                 }
             }
             // 批量处理
+            log.info("============ updateBarcodeProcess: " + updateBarcodeProcess.size());
+            log.info("============ saveList: " + saveList.size());
             if (updateBarcodeProcess.size() > 0 || saveList.size() > 0) {
                 BatchSyncBarcodeDto batchSyncBarcodeDto = new BatchSyncBarcodeDto();
                 batchSyncBarcodeDto.setUpdateList(updateBarcodeProcess);

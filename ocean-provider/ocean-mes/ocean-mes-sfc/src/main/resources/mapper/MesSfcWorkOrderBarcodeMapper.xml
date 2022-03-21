@@ -129,7 +129,7 @@
                 and mswob.work_order_id = #{workOrderId}
             </if>
             <if test="labelCategoryId != null">
-                and mswob.labelCategoryId = #{labelCategoryId}
+                and mswob.label_category_id = #{labelCategoryId}
             </if>
             <if test="barcode != null and barcode != ''">
                 and mswob.barcode = #{barcode}
