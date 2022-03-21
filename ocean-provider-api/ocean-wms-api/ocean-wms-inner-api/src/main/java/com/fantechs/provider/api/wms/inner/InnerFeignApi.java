@@ -46,6 +46,10 @@ public interface InnerFeignApi {
     @PostMapping("/wmsInnerJobOrder/add")
     ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerJobOrder wmsInPutawayOrder);
 
+    @ApiOperation(value = "成品检验单复检更新移位单",notes = "成品检验单复检更新移位单")
+    @PostMapping("/wmsInnerJobOrder/updateShit")
+    ResponseEntity updateShit(@RequestParam Long jobOrderId, @RequestParam BigDecimal ngQty);
+
     @ApiOperation("列表")
     @PostMapping("/wmsInnerJobOrderDet/findList")
      ResponseEntity<List<WmsInnerJobOrderDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerJobOrderDet searchWmsInPutawayOrderDet);
