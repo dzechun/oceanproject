@@ -1,7 +1,6 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -11,10 +10,7 @@ import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
 import com.fantechs.common.base.general.dto.basic.BaseLabelMaterialDto;
 import com.fantechs.common.base.general.dto.basic.BatchGenerateCodeDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
-import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
-import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
-import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
-import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
+import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
@@ -245,6 +241,45 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         }
 
         return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int batchSyncBarcode(BatchSyncBarcodeDto dto) {
+        // 1、批量新增部分
+        if (dto.getList().size() > 0){
+            List<MesSfcBarcodeProcess> list = new ArrayList<>();
+            for (BatchSyncBarcodeSaveDto entity : dto.getList()){
+                // 保存条码表并返回ID
+                mesSfcWorkOrderBarcodeMapper.insertUseGeneratedKeys(entity.getWorkOrderBarcode());
+                log.info("========= 同步PQMS条码数据，保存条码表并返回ID:" + entity.getWorkOrderBarcode().getWorkOrderBarcodeId());
+
+                MesSfcBarcodeProcess barcodeProcess = entity.getBarcodeProcess();
+                barcodeProcess.setWorkOrderBarcodeId(entity.getWorkOrderBarcode().getWorkOrderBarcodeId());
+                list.add(barcodeProcess);
+            }
+
+            // 批量保存条码流程表
+            mesSfcBarcodeProcessMapper.insertList(list);
+        }
+
+        // 2、批量修改部分
+        if (dto.getUpdateList().size() > 0){
+            mesSfcBarcodeProcessMapper.batchUpdate(dto.getUpdateList());
+        }
+        return 1;
+    }
+
+    @Override
+    public SyncFindBarcodeDto syncFindBarcode(Long labelCategoryId) {
+        SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
+        searchMesSfcWorkOrderBarcode.setLabelCategoryId(labelCategoryId);
+        List<MesSfcWorkOrderBarcodeDto> orderBarcodeDtos = this.findList(searchMesSfcWorkOrderBarcode);
+        List<MesSfcBarcodeProcess> sfcBarcodeProcesses = mesSfcBarcodeProcessMapper.findByLabelCategory(labelCategoryId);
+        SyncFindBarcodeDto dto = new SyncFindBarcodeDto();
+        dto.setWorkOrderBarcodes(orderBarcodeDtos);
+        dto.setBarcodeProcesses(sfcBarcodeProcesses);
+        return dto;
     }
 
     @Override

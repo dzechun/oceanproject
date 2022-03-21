@@ -614,6 +614,10 @@ public interface BaseFeignApi {
     @PostMapping("/wanbaoBase/findBySyncOutDelivery")
     ResponseEntity<WanbaoBaseBySyncDto> findBySyncOutDelivery();
 
+    @ApiOperation("同步PQMS条码查询基础数据汇总")
+    @PostMapping("/wanbaoBase/findBySyncBarcode")
+    ResponseEntity<WanbaoBaseBySyncDto> findBySyncBarcodeData();
+
     @ApiOperation(value = "入库规则",notes = "入库规则")
     @PostMapping("/storageRule/inRule")
     ResponseEntity<Long> inRule(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseStorageRule baseStorageRule);

@@ -236,4 +236,14 @@
     GROUP BY msbp.material_id
     ) t
   </select>
+
+  <select id="findByLabelCategory" parameterType="long" resultMap="BaseResultMap">
+    SELECT
+      msbp.*
+    FROM
+      mes_sfc_barcode_process msbp
+        LEFT JOIN mes_sfc_work_order_barcode mswob ON msbp.work_order_barcode_id = mswob.work_order_barcode_id
+    WHERE
+      mswob.label_category_id = #{labelCategoryId}
+  </select>
 </mapper>
