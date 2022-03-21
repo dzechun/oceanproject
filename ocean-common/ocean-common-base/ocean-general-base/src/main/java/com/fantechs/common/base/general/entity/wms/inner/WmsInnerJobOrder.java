@@ -251,6 +251,8 @@ public class WmsInnerJobOrder extends ValidGroup implements Serializable {
 
     private String option4;
 
+    private String option5;
+
     @Transient
     @ApiModelProperty("明细")
     private List<WmsInnerJobOrderDet> wmsInPutawayOrderDets;

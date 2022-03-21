@@ -167,6 +167,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 baseStorageRule.setQty(wms.getPlanQty());
                 baseStorageRule.setMaterialId(wms.getMaterialId());
                 baseStorageRule.setInventoryStatusId(wms.getInventoryStatusId());
+                baseStorageRule.setWorkOrderQty(new BigDecimal(wmsInnerJobOrder.getOption5()));
                 //获取推荐库位
                 ResponseEntity<Long> responseEntity = baseFeignApi.inRule(baseStorageRule);
                 if(responseEntity.getCode()!=0){

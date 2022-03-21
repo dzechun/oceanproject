@@ -35,6 +35,7 @@
         <result column="option2" jdbcType="VARCHAR" property="option2"/>
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
         <result column="option4" jdbcType="VARCHAR" property="option4"/>
+        <result column="option5" jdbcType="VARCHAR" property="option5"/>
         <collection property="wmsInPutawayOrderDets" ofType="com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet"
                     column="{jobOrderId=job_order_id}" select="com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper.findList">
         </collection>
@@ -87,7 +88,8 @@
         wipo.option1,
         wipo.option2,
         wipo.option3,
-wipo.option4
+wipo.option4,
+wipo.option5
     </sql>
     <select id="findList" resultMap="BaseResultMapDto" parameterType="java.util.Map">
         SELECT<include refid="BaseColumnList"/>,
