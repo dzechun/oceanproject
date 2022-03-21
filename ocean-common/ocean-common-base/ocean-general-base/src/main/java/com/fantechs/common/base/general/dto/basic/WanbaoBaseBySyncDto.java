@@ -21,4 +21,6 @@ public class WanbaoBaseBySyncDto implements Serializable {
     List<BaseTabDto> baseTabDtoList;
     List<BaseSupplier> baseSupplierList;
     List<BaseMaterialOwnerDto> materialOwnerDtoList;
+    List<BaseProductProcessRoute> processRouteList;
+    List<BaseLabelCategoryDto> labelCategoryDtoList;
 }

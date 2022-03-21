@@ -103,4 +103,13 @@ public interface SFCFeignApi {
     @ApiOperation("产品关键物料清单列表")
     @PostMapping("/mesSfcKeyPartRelevance/findList")
     ResponseEntity<List<MesSfcKeyPartRelevanceDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchMesSfcKeyPartRelevance searchMesSfcKeyPartRelevance);
+
+
+    @ApiOperation("万宝-同步三星客户条码")
+    @PostMapping("/batchSyncBarcode")
+    ResponseEntity batchSyncBarcode(@ApiParam(value = "必传",required = true) @RequestBody BatchSyncBarcodeDto dto);
+
+    @ApiOperation("万宝-查询条码数据")
+    @PostMapping("/syncFindBarcode")
+    ResponseEntity<SyncFindBarcodeDto> syncFindBarcode(@ApiParam(value = "必传",required = true) @RequestParam Long labelCategoryId);
 }
