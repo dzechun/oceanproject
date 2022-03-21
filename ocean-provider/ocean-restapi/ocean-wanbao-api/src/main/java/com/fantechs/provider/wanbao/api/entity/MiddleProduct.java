@@ -17,9 +17,13 @@ public class MiddleProduct implements Serializable {
     @Column(name = "product_id")
     private String productId;
 
-    @ApiModelProperty(name="planName" ,value="PlanName")
-    @Column(name = "plan_name")
-    private String planName;
+    @ApiModelProperty(name="materialCode" ,value="物料编码")
+    @Column(name = "material_code")
+    private String materialCode;
+
+    @ApiModelProperty(name="workOrderCode" ,value="工单编码")
+    @Column(name = "work_order_code")
+    private String workOrderCode;
 
     @ApiModelProperty(name="barcode" ,value="产品条码(万宝场内码)")
     @Column(name = "barcode")
@@ -28,14 +32,6 @@ public class MiddleProduct implements Serializable {
     @ApiModelProperty(name="customerBarcode" ,value="客户条码（三星产品唯一码）")
     @Column(name = "customer_barcode")
     private String customerBarcode;
-
-    @ApiModelProperty(name="stationId" ,value="工站")
-    @Column(name = "station_id")
-    private String stationId;
-
-    @ApiModelProperty(name="status",value = "过站状态")
-    @Column(name = "status")
-    private Byte status;
 
     @ApiModelProperty(name="createTime" ,value="创建时间")
     @Column(name = "create_time")

@@ -13,7 +13,6 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.common.base.utils.TokenUtil;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
-import com.fantechs.security.service.SysLoginByEquipmentService;
 import com.fantechs.security.service.SysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,9 +44,6 @@ public class LoginController {
 
     @Resource
     private SysUserService sysUserService;
-
-    @Resource
-    private SysLoginByEquipmentService sysLoginByEquipmentService;
 
     @Resource
     private BaseFeignApi baseFeignApi;
@@ -130,11 +126,4 @@ public class LoginController {
         return ControllerUtil.returnDataSuccess("生成client_token成功", token);
     }
 
-
-    @PostMapping("/eamlogin")
-    @ApiOperation(value = "设备登陆接口")
-    public ResponseEntity mesloginByEam(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "organizationId") Long orgId
-            , @RequestParam(value = "mac") String mac ,@RequestParam(value = "type") String type ){
-        return  sysLoginByEquipmentService.eamLogin(username,password,orgId,mac,type);
-    }
 }

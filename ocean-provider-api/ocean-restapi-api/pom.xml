@@ -16,7 +16,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>ocean-restapi-mulinsen-api</module>
     </modules>
 
 </project>

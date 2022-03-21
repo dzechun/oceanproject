@@ -1,6 +1,5 @@
 package com.fantechs.provider.wms.inner.service;
 
-import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
@@ -85,14 +84,27 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
      */
     int addList(List<WmsInnerJobOrder> list);
 
-    int cancelJobOrder(List<EngPackingOrderTakeCancel> engPackingOrderTakeCancels);
 
     /**
      * 库容入库规则判断入库数量
      * @param materialId
-     * @param materialStoreType
+     * @param storageId
      * @param qty
      * @return
      */
     Boolean storageCapacity(Long materialId,Long storageId,BigDecimal qty);
+
+    /**
+     * 修改样本数重新处理质检移位单
+     * @param
+     * @return
+     */
+    int reCreateInnerJobShift(Long jobOrderId,BigDecimal qty);
+
+    /**
+     * 复检重新处理质检移位单
+     * @param
+     * @return
+     */
+    int updateShit(Long jobOrderId,BigDecimal ngQty);
 }

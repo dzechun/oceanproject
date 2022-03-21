@@ -1,6 +1,5 @@
 package com.fantechs.provider.api.wms.inner;
 
-import com.fantechs.common.base.general.dto.eng.EngPackingOrderTakeCancel;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.general.entity.wms.inner.search.*;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +45,10 @@ public interface InnerFeignApi {
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/wmsInnerJobOrder/add")
     ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated WmsInnerJobOrder wmsInPutawayOrder);
+
+    @ApiOperation(value = "成品检验单复检更新移位单",notes = "成品检验单复检更新移位单")
+    @PostMapping("/wmsInnerJobOrder/updateShit")
+    ResponseEntity updateShit(@RequestParam Long jobOrderId, @RequestParam BigDecimal ngQty);
 
     @ApiOperation("列表")
     @PostMapping("/wmsInnerJobOrderDet/findList")
@@ -92,10 +96,6 @@ public interface InnerFeignApi {
     @PostMapping("/wmsInnerJobOrder/addList")
     ResponseEntity addList(@RequestBody List<WmsInnerJobOrder> list);
 
-    @ApiOperation(value = "收货作业取消收货",notes = "收货作业取消收货")
-    @PostMapping("/wmsInnerJobOrder/cancelJobOrder")
-    ResponseEntity cancelJobOrder(@RequestBody List<EngPackingOrderTakeCancel> engPackingOrderTakeCancels);
-
     @ApiOperation("列表")
     @PostMapping("/wmsInventoryVerification/findList")
     ResponseEntity<List<WmsInnerStockOrderDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWmsInnerStockOrder searchWmsInnerStockOrder);
@@ -103,4 +103,9 @@ public interface InnerFeignApi {
     @ApiOperation(value = "领料单发运校验",notes = "领料单发运校验")
     @PostMapping("/wmsInnerJobOrderDet/pickDisQty")
     ResponseEntity pickDisQty(@ApiParam(value = "必传：",required = true)@RequestBody @Validated List<WmsInnerJobOrderDet> wmsInPutawayOrderDet);
+
+    @ApiOperation(value = "重新生成质检移位单",notes = "重新生成质检移位单")
+    @PostMapping("/wmsInnerJobOrder/reCreateInnerJobShift")
+    ResponseEntity reCreateInnerJobShift(@RequestParam Long jobOrderId, @RequestParam BigDecimal qty);
+
 }

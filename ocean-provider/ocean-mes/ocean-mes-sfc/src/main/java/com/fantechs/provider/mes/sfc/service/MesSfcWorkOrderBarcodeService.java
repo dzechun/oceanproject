@@ -1,12 +1,10 @@
 package com.fantechs.provider.mes.sfc.service;
 
-import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
-import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
+import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.support.IService;
-import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -69,5 +67,21 @@ public interface MesSfcWorkOrderBarcodeService extends IService<MesSfcWorkOrderB
      * @return
      */
     List<MesSfcWorkOrderBarcode> wanbaoFindCustomerBarcode(Long salesOrderDetId);
+
+    int printByOrderCode(Long id,Byte barcodeType,String printName,String userCode,String password);
+
+    /**
+     * 同步PQMS系统，批量处理条码数据
+     * @param dto
+     * @return
+     */
+    int batchSyncBarcode(BatchSyncBarcodeDto dto);
+
+    /**
+     * 同步PQMS系统，查找条码以及条码流程表
+     * @param labelCategoryId
+     * @return
+     */
+    SyncFindBarcodeDto syncFindBarcode(Long labelCategoryId);
 
 }

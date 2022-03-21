@@ -48,6 +48,10 @@ public class WanbaoBaseController {
     BaseSupplierService supplierService;
     @Resource
     BaseMaterialOwnerService materialOwnerService;
+    @Resource
+    BaseProductProcessRouteService productProcessRouteService;
+    @Resource
+    BaseLabelCategoryService labelCategoryService;
 
     // endregion
 
@@ -108,6 +112,22 @@ public class WanbaoBaseController {
         dto.setMaterialDtoList(materialDtos);
         dto.setBaseSupplierList(baseSuppliers);
         dto.setMaterialOwnerDtoList(materialOwnerDtos);
+        return ControllerUtil.returnDataSuccess(dto, 1);
+    }
+
+    @ApiOperation("同步PQMS条码查询基础数据汇总")
+    @PostMapping("/findBySyncBarcode")
+    public ResponseEntity<WanbaoBaseBySyncDto> findBySyncBarcode(){
+        List<BaseProLine> proLineList = proLineService.findList(new HashMap<>());
+        List<BaseProductProcessRoute> productProcessRoutes = productProcessRouteService.findList(new HashMap<>());
+        List<BaseRouteProcess> baseRouteProcesses = routeProcessService.findList(new HashMap<>());
+        List<BaseLabelCategoryDto> labelCategoryDtoList = labelCategoryService.findList(new HashMap<>());
+
+        WanbaoBaseBySyncDto dto = new WanbaoBaseBySyncDto();
+        dto.setProLineList(proLineList);
+        dto.setProcessRouteList(productProcessRoutes);
+        dto.setRouteProcessList(baseRouteProcesses);
+        dto.setLabelCategoryDtoList(labelCategoryDtoList);
         return ControllerUtil.returnDataSuccess(dto, 1);
     }
 }

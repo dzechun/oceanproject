@@ -107,7 +107,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此条码已入库，不可重复扫码，请检查是否品质重新入库");
         }
 
-
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         //samePackageCode 同包装编码--扫描的箱号产品条码对应的或者扫描的产品条码对应的PO编码 2020-10-20
         String samePackageCode = "";
@@ -648,13 +647,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
     @Override
     public ScanByManualOperationDto scanByManualOperation(String barcode, Long proLineId) {
-        // 2022-03-08 判断是否质检完成之后走产线入库
-        SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
-        searchWmsInnerInventoryDet.setBarcode(barcode);
-        List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
-        if (!inventoryDetDtos.isEmpty()){
-            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此条码已入库，不可重复扫码，请检查是否品质重新入库");
-        }
         String customerBarcode = null;
         if (barcode.length() != 23){
             // 判断是否三星客户条码
@@ -672,7 +664,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 }
             }
         }
-
         ScanByManualOperationDto dto = new ScanByManualOperationDto();
 
         SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
@@ -683,6 +674,13 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         }
         BaseLabelCategory labelCategory = baseFeignApi.findLabelCategoryDetail(mesSfcWorkOrderBarcodeDtoList.get(0).getLabelCategoryId()).getData();
         if (labelCategory.getLabelCategoryCode().equals("01")) {
+            // 2022-03-08 判断是否质检完成之后走产线入库
+            SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
+            searchWmsInnerInventoryDet.setBarcode(barcode);
+            List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
+            if (!inventoryDetDtos.isEmpty()){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此条码已入库，不可重复扫码，请检查是否品质重新入库");
+            }
             // 产品条码
             Map<String, Object> map = new HashMap<>();
             map.put("barcodeCode", barcode);
@@ -701,7 +699,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             }
             if (!mesSfcKeyPartRelevanceDtoList.isEmpty()) {
                 if (customerBarcode != null){
-                    dto.setCutsomerBarcode(customerBarcode);
+                    dto.setCustomerBarcode(customerBarcode);
                 }else {
                     for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : mesSfcKeyPartRelevanceDtoList){
                         BaseLabelCategory keyPartLabelCategory = baseFeignApi.findLabelCategoryDetail(keyPartRelevanceDto.getLabelCategoryId()).getData();
@@ -710,7 +708,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                             dto.setSalesBarcode(keyPartRelevanceDto.getPartBarcode());
                         }else if (keyPartLabelCategory.getLabelCategoryCode().equals("03")){
                             // 客户条码
-                            dto.setCutsomerBarcode(keyPartRelevanceDto.getPartBarcode());
+                            dto.setCustomerBarcode(keyPartRelevanceDto.getPartBarcode());
                         }
                     }
                 }
@@ -740,7 +738,14 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 dto.setSalesBarcode(barcode);
             }else if (labelCategory.getLabelCategoryCode().equals("03")){
                 // 客户条码
-                dto.setCutsomerBarcode(barcode);
+                dto.setCustomerBarcode(barcode);
+            }
+            // 2022-03-08 判断是否质检完成之后走产线入库
+            SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
+            searchWmsInnerInventoryDet.setBarcode(mesSfcKeyPartRelevanceDtoList.get(0).getBarcodeCode());
+            List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
+            if (!inventoryDetDtos.isEmpty()){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此条码已入库，不可重复扫码，请检查是否品质重新入库");
             }
             map.clear();
             map.put("barcode", mesSfcKeyPartRelevanceDtoList.get(0).getBarcodeCode());
@@ -771,7 +776,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 BaseLabelCategory keyPartLabelCategory = baseFeignApi.findLabelCategoryDetail(keyPartRelevanceDto.getLabelCategoryId()).getData();
                 if (labelCategory.getLabelCategoryCode().equals("02") && keyPartLabelCategory.getLabelCategoryCode().equals("03")) {
                     // 客户条码
-                    dto.setCutsomerBarcode(keyPartRelevanceDto.getPartBarcode());
+                    dto.setCustomerBarcode(keyPartRelevanceDto.getPartBarcode());
                 }else if (labelCategory.getLabelCategoryCode().equals("03") && keyPartLabelCategory.getLabelCategoryCode().equals("02")){
                     // 销售订单条码
                     dto.setSalesBarcode(keyPartRelevanceDto.getPartBarcode());
@@ -980,6 +985,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                     barPODtos.add(barPODto);
                 }
             });
+            log.info("========= wanbaoBarcodeDtos:" + JSON.toJSONString(wanbaoBarcodeDtos));
+            log.info("========= barPODtos:" + JSON.toJSONString(barPODtos));
             palletAutoAsnDto.setBarCodeList(barPODtos);
             //完工入库
             SearchBaseMaterialOwner searchBaseMaterialOwner = new SearchBaseMaterialOwner();
