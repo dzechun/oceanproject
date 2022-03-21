@@ -190,6 +190,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 QmsInspectionOrderDetSample inspectionOrderDetSample = new QmsInspectionOrderDetSample();
                 inspectionOrderDetSample.setInspectionOrderDetId(qmsInspectionOrderDet.getInspectionOrderDetId());
                 inspectionOrderDetSample.setBarcode(qmsInspectionOrderDetSample.getBarcode());
+                inspectionOrderDetSample.setBarcodeStatus((byte)1);
                 inspectionOrderDetSample.setSampleValue("OK");
                 inspectionOrderDetSample.setOrgId(user.getOrganizationId());
                 inspectionOrderDetSample.setInspectionOrderId(inspectionOrderId);
@@ -209,7 +210,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         this.handleInventory(qmsInspectionOrder.getInspectionOrderCode(),qmsInspectionOrder.getInspectionResult());
 
         //生成移位单
-        createJobOrderShift(qmsInspectionOrderDetSamples,qmsInspectionOrder,user);
+        createJobOrderShift(inspectionOrderDetSampleList,qmsInspectionOrder,user);
 
         return i;
     }
@@ -294,118 +295,129 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         Long proLineId = null;
         Byte shiftType = 2;
         String orderCode = qmsInspectionOrder.getInspectionOrderCode();
-        //找成品检验对应的质检移位单
+
         SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
         searchWmsInnerJobOrder.setRelatedOrderCode(orderCode);
+        searchWmsInnerJobOrder.setOption1("qmsCommit");
         List<WmsInnerJobOrderDto> jobOrderDtoList = innerFeignApi.findList(searchWmsInnerJobOrder).getData();
-        if (StringUtils.isNotEmpty(jobOrderDtoList) && jobOrderDtoList.size() > 0) {
-            SearchWmsInnerJobOrderDet sDet = new SearchWmsInnerJobOrderDet();
-            sDet.setJobOrderId(jobOrderDtoList.get(0).getJobOrderId());
-            List<WmsInnerJobOrderDetDto> detDtoList = innerFeignApi.findList(sDet).getData();
-            if (StringUtils.isNotEmpty(detDtoList) && detDtoList.size() > 0) {
-                inStorageId = detDtoList.get(0).getOutStorageId();
-                outStorageId = detDtoList.get(0).getInStorageId();
+        if(StringUtils.isNotEmpty(jobOrderDtoList) && jobOrderDtoList.size()>0){
+            //复检提交 对已生成的质检移位单做处理
 
+        }
+        else {
+            //找成品检验对应的质检移位单
+            searchWmsInnerJobOrder.setOption1("qmsToInnerJobShift");
+            jobOrderDtoList = innerFeignApi.findList(searchWmsInnerJobOrder).getData();
+            if (StringUtils.isNotEmpty(jobOrderDtoList) && jobOrderDtoList.size() > 0) {
+                SearchWmsInnerJobOrderDet sDet = new SearchWmsInnerJobOrderDet();
+                sDet.setJobOrderId(jobOrderDtoList.get(0).getJobOrderId());
+                List<WmsInnerJobOrderDetDto> detDtoList = innerFeignApi.findList(sDet).getData();
+                if (StringUtils.isNotEmpty(detDtoList) && detDtoList.size() > 0) {
+                    inStorageId = detDtoList.get(0).getOutStorageId();
+                    outStorageId = detDtoList.get(0).getInStorageId();
+
+                    SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+                    searchBaseStorage.setStorageId(inStorageId);
+                    List<BaseStorage> storageDtoList = baseFeignApi.findList(searchBaseStorage).getData();
+                    if (StringUtils.isNotEmpty(storageDtoList) && storageDtoList.size() > 0) {
+                        warehouseId = storageDtoList.get(0).getWarehouseId();
+                    }
+                }
+            }
+            //库存状态
+            SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
+            searchBaseInventoryStatus.setWarehouseId(warehouseId);
+            searchBaseInventoryStatus.setOrgId(user.getOrganizationId());
+            List<BaseInventoryStatus> inventoryStatusList = baseFeignApi.findList(searchBaseInventoryStatus).getData();
+
+            SearchMesSfcBarcodeProcess sBarcodeProcess = new SearchMesSfcBarcodeProcess();
+            sBarcodeProcess.setBarcode(barcode);
+            sBarcodeProcess.setOrgId(user.getOrganizationId());
+            List<MesSfcBarcodeProcessDto> processDtos = sfcFeignApi.findList(sBarcodeProcess).getData();
+            if (StringUtils.isNotEmpty(processDtos) && processDtos.size() > 0) {
+                //proCode=processDtos.get(0).getProCode();
+                proLineId = processDtos.get(0).getProLineId();
+            }
+
+            BaseProLine baseProLine = baseFeignApi.getProLineDetail(proLineId).getData();
+            if (StringUtils.isNotEmpty(baseProLine)) {
+                proCode = baseProLine.getProCode();
+            }
+
+            if (StringUtils.isNotEmpty(proCode) && proCode.contains("A")) {
+                String storageCode = "Z-SX";
                 SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
-                searchBaseStorage.setStorageId(inStorageId);
+                searchBaseStorage.setStorageCode(storageCode);
                 List<BaseStorage> storageDtoList = baseFeignApi.findList(searchBaseStorage).getData();
-                if (StringUtils.isNotEmpty(storageDtoList) && storageDtoList.size() > 0) {
-                    warehouseId = storageDtoList.get(0).getWarehouseId();
+                if (StringUtils.isEmpty(storageDtoList) || storageDtoList.size() <= 0) {
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未找到三星质检专用库位");
                 }
+                inStorageId = storageDtoList.get(0).getStorageId();
+                warehouseId = storageDtoList.get(0).getWarehouseId();
+                shiftType = 3;
             }
-        }
-        //库存状态
-        SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
-        searchBaseInventoryStatus.setWarehouseId(warehouseId);
-        searchBaseInventoryStatus.setOrgId(user.getOrganizationId());
-        List<BaseInventoryStatus> inventoryStatusList = baseFeignApi.findList(searchBaseInventoryStatus).getData();
 
-        SearchMesSfcBarcodeProcess sBarcodeProcess = new SearchMesSfcBarcodeProcess();
-        sBarcodeProcess.setBarcode(barcode);
-        sBarcodeProcess.setOrgId(user.getOrganizationId());
-        List<MesSfcBarcodeProcessDto> processDtos = sfcFeignApi.findList(sBarcodeProcess).getData();
-        if (StringUtils.isNotEmpty(processDtos) && processDtos.size() > 0) {
-            //proCode=processDtos.get(0).getProCode();
-            proLineId = processDtos.get(0).getProLineId();
-        }
+            SearchWmsInnerInventory searchWmsInnerInventory = new SearchWmsInnerInventory();
+            searchWmsInnerInventory.setMaterialId(materialId);
+            searchWmsInnerInventory.setStorageId(outStorageId);
+            searchWmsInnerInventory.setLockStatus((byte) 0);
+            searchWmsInnerInventory.setJobStatus((byte) 1);
+            //searchWmsInnerInventory.setInventoryStatusName("合格");
+            List<WmsInnerInventoryDto> inventoryDtos = innerFeignApi.findList(searchWmsInnerInventory).getData();
+            if (StringUtils.isNotEmpty(inventoryDtos)) {
+                //存在合格的库存才生成移位单
+                List<QmsInspectionOrderDetSample> ngQualifiedBarcodes = list.stream().filter(item -> item.getBarcodeStatus() != null && item.getBarcodeStatus() == 0).collect(Collectors.toList());
+                List<QmsInspectionOrderDetSample> goodQualifiedBarcodes = list.stream().filter(item -> item.getBarcodeStatus() != null && item.getBarcodeStatus() == 1).collect(Collectors.toList());
+                BigDecimal ngQty = new BigDecimal(ngQualifiedBarcodes.size());
+                BigDecimal goodQty = new BigDecimal(goodQualifiedBarcodes.size());
 
-        BaseProLine baseProLine = baseFeignApi.getProLineDetail(proLineId).getData();
-        if (StringUtils.isNotEmpty(baseProLine)) {
-            proCode = baseProLine.getProCode();
-        }
+                WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+                wmsInnerJobOrder.setOrderStatus((byte) 3);
+                wmsInnerJobOrder.setJobOrderType((byte) 2);
+                wmsInnerJobOrder.setShiftType(shiftType);
+                wmsInnerJobOrder.setWarehouseId(warehouseId);
+                wmsInnerJobOrder.setStatus((byte) 1);
+                wmsInnerJobOrder.setOrgId(user.getOrganizationId());
+                wmsInnerJobOrder.setRelatedOrderCode(orderCode);
+                wmsInnerJobOrder.setSourceOrderId(qmsInspectionOrder.getInspectionOrderId());
+                wmsInnerJobOrder.setOption1("qmsCommit");
 
-        if (StringUtils.isNotEmpty(proCode) && proCode.contains("A")) {
-            String storageCode = "Z-SX";
-            SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
-            searchBaseStorage.setStorageCode(storageCode);
-            List<BaseStorage> storageDtoList = baseFeignApi.findList(searchBaseStorage).getData();
-            if (StringUtils.isEmpty(storageDtoList) || storageDtoList.size() <= 0) {
-                throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "未找到三星质检专用库位");
-            }
-            inStorageId = storageDtoList.get(0).getStorageId();
-            warehouseId = storageDtoList.get(0).getWarehouseId();
-            shiftType = 3;
-        }
-
-        SearchWmsInnerInventory searchWmsInnerInventory = new SearchWmsInnerInventory();
-        searchWmsInnerInventory.setMaterialId(materialId);
-        searchWmsInnerInventory.setStorageId(outStorageId);
-        searchWmsInnerInventory.setLockStatus((byte) 0);
-        searchWmsInnerInventory.setJobStatus((byte) 1);
-        //searchWmsInnerInventory.setInventoryStatusName("合格");
-        List<WmsInnerInventoryDto> inventoryDtos = innerFeignApi.findList(searchWmsInnerInventory).getData();
-        if (StringUtils.isNotEmpty(inventoryDtos)) {
-            //存在合格的库存才生成移位单
-            List<QmsInspectionOrderDetSample> ngQualifiedBarcodes = list.stream().filter(item -> item.getBarcodeStatus() != null && item.getBarcodeStatus() == 0).collect(Collectors.toList());
-            List<QmsInspectionOrderDetSample> goodQualifiedBarcodes = list.stream().filter(item -> item.getBarcodeStatus() != null && item.getBarcodeStatus() == 0).collect(Collectors.toList());
-            BigDecimal ngQty = new BigDecimal(ngQualifiedBarcodes.size());
-            BigDecimal goodQty = new BigDecimal(goodQualifiedBarcodes.size());
-
-            WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
-            wmsInnerJobOrder.setOrderStatus((byte) 3);
-            wmsInnerJobOrder.setJobOrderType((byte) 2);
-            wmsInnerJobOrder.setShiftType(shiftType);
-            wmsInnerJobOrder.setWarehouseId(warehouseId);
-            wmsInnerJobOrder.setStatus((byte) 1);
-            wmsInnerJobOrder.setOrgId(user.getOrganizationId());
-            wmsInnerJobOrder.setRelatedOrderCode(orderCode);
-            wmsInnerJobOrder.setSourceOrderId(qmsInspectionOrder.getInspectionOrderId());
-
-            List<WmsInnerJobOrderDet> detList = new LinkedList<>();
-            if (ngQty.compareTo(new BigDecimal(0)) == 1) {
-                List<BaseInventoryStatus> statusList = inventoryStatusList.stream().filter(item -> item.getInventoryStatusName().equals("不合格")).collect(Collectors.toList());
-                WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
-                wmsInnerJobOrderDet.setMaterialId(materialId);
-                wmsInnerJobOrderDet.setPlanQty(ngQty);
-                wmsInnerJobOrderDet.setDistributionQty(ngQty);
-                wmsInnerJobOrderDet.setOutStorageId(outStorageId);
-                wmsInnerJobOrderDet.setInStorageId(inStorageId);
-                wmsInnerJobOrderDet.setSourceDetId(inventoryDtos.get(0).getInventoryId());
-                wmsInnerJobOrderDet.setOrderStatus((byte) 3);
-                if (statusList.size() > 0) {
-                    wmsInnerJobOrderDet.setInventoryStatusId(statusList.get(0).getInventoryStatusId());
+                List<WmsInnerJobOrderDet> detList = new LinkedList<>();
+                if (ngQty.compareTo(new BigDecimal(0)) == 1) {
+                    List<BaseInventoryStatus> statusList = inventoryStatusList.stream().filter(item -> item.getInventoryStatusName().equals("不合格")).collect(Collectors.toList());
+                    WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                    wmsInnerJobOrderDet.setMaterialId(materialId);
+                    wmsInnerJobOrderDet.setPlanQty(ngQty);
+                    wmsInnerJobOrderDet.setDistributionQty(ngQty);
+                    wmsInnerJobOrderDet.setOutStorageId(outStorageId);
+                    wmsInnerJobOrderDet.setInStorageId(inStorageId);
+                    wmsInnerJobOrderDet.setSourceDetId(inventoryDtos.get(0).getInventoryId());
+                    wmsInnerJobOrderDet.setOrderStatus((byte) 3);
+                    if (statusList.size() > 0) {
+                        wmsInnerJobOrderDet.setInventoryStatusId(statusList.get(0).getInventoryStatusId());
+                    }
+                    detList.add(wmsInnerJobOrderDet);
                 }
-                detList.add(wmsInnerJobOrderDet);
-            }
-            if (goodQty.compareTo(new BigDecimal(0)) == 1) {
-                List<BaseInventoryStatus> statusList = inventoryStatusList.stream().filter(item -> item.getInventoryStatusName().equals("合格")).collect(Collectors.toList());
-                WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
-                wmsInnerJobOrderDet.setMaterialId(materialId);
-                wmsInnerJobOrderDet.setPlanQty(goodQty);
-                wmsInnerJobOrderDet.setOutStorageId(outStorageId);
-                wmsInnerJobOrderDet.setInStorageId(inStorageId);
-                wmsInnerJobOrderDet.setSourceDetId(inventoryDtos.get(0).getInventoryId());
-                wmsInnerJobOrderDet.setOrderStatus((byte) 3);
-                if (statusList.size() > 0) {
-                    wmsInnerJobOrderDet.setInventoryStatusId(statusList.get(0).getInventoryStatusId());
+                if (goodQty.compareTo(new BigDecimal(0)) == 1) {
+                    List<BaseInventoryStatus> statusList = inventoryStatusList.stream().filter(item -> item.getInventoryStatusName().equals("合格")).collect(Collectors.toList());
+                    WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                    wmsInnerJobOrderDet.setMaterialId(materialId);
+                    wmsInnerJobOrderDet.setPlanQty(goodQty);
+                    wmsInnerJobOrderDet.setOutStorageId(outStorageId);
+                    wmsInnerJobOrderDet.setInStorageId(inStorageId);
+                    wmsInnerJobOrderDet.setSourceDetId(inventoryDtos.get(0).getInventoryId());
+                    wmsInnerJobOrderDet.setOrderStatus((byte) 3);
+                    if (statusList.size() > 0) {
+                        wmsInnerJobOrderDet.setInventoryStatusId(statusList.get(0).getInventoryStatusId());
+                    }
+                    detList.add(wmsInnerJobOrderDet);
                 }
-                detList.add(wmsInnerJobOrderDet);
-            }
 
-            wmsInnerJobOrder.setWmsInPutawayOrderDets(detList);
-            ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
-            if (responseEntity.getCode() != 0) {
-                throw new BizErrorException("生成质检移位单失败");
+                wmsInnerJobOrder.setWmsInPutawayOrderDets(detList);
+                ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
+                if (responseEntity.getCode() != 0) {
+                    throw new BizErrorException("生成质检移位单失败");
+                }
             }
         }
 
@@ -1374,6 +1386,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 wmsInnerJobOrder.setOrgId(user.getOrganizationId());
                 wmsInnerJobOrder.setRelatedOrderCode(orderCode);
                 wmsInnerJobOrder.setSourceOrderId(qmsInspectionOrder.getInspectionOrderId());
+                wmsInnerJobOrder.setOption1("qmsToInnerJobShift");
 
                 List<WmsInnerJobOrderDet> detList = new LinkedList<>();
 
