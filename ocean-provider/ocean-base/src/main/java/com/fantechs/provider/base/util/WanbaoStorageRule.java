@@ -5,14 +5,12 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseStorageRule;
 import com.fantechs.common.base.general.dto.basic.StorageRuleInventry;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
+import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseStorageCapacity;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.base.mapper.BaseMaterialMapper;
-import com.fantechs.provider.base.mapper.BaseStorageCapacityMapper;
-import com.fantechs.provider.base.mapper.BaseStorageMapper;
-import com.fantechs.provider.base.mapper.BaseWarehouseAreaMapper;
+import com.fantechs.provider.base.mapper.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import tk.mybatis.mapper.entity.Example;
@@ -42,6 +40,8 @@ public class WanbaoStorageRule {
     private BaseMaterialMapper baseMaterialMapper;
     @Resource
     private BaseStorageCapacityMapper baseStorageCapacityMapper;
+    @Resource
+    private BaseProLineMapper baseProLineMapper;
 
     // 声明对象
     private static WanbaoStorageRule wanbaoStorageRule;
@@ -53,6 +53,7 @@ public class WanbaoStorageRule {
         wanbaoStorageRule.baseStorageMapper = this.baseStorageMapper;
         wanbaoStorageRule.baseMaterialMapper = this.baseMaterialMapper;
         wanbaoStorageRule.baseStorageCapacityMapper = this.baseStorageCapacityMapper;
+        wanbaoStorageRule.baseProLineMapper = this.baseProLineMapper;
     }
 
     /**
@@ -80,9 +81,22 @@ public class WanbaoStorageRule {
             //包含MC则筛选底垫的库位
             baseStorageList = baseStorageList.stream().filter(x->x.getIsHeelpiece()==2).collect(Collectors.toList());
         }
-        //库容最大容量
-        Map<String ,Object> map = screenStorageCapacity(baseMaterial,baseStorageList);
 
+        //查询产线是否为A产线
+        BaseProLine baseProLine = wanbaoStorageRule.baseProLineMapper.selectByPrimaryKey(baseStorageRule.getProLineId());
+        if(StringUtils.isEmpty(baseProLine)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取产线信息失败");
+        }
+        Map<String ,Object> map = null;
+        if(baseProLine.getProCode().equals("A")){
+            map = ALineScreenStorageCapacity(baseMaterial,baseStorageRule.getWorkOrderQty(),baseStorageList);
+        }else {
+            //库容最大容量
+            map = screenStorageCapacity(baseMaterial,baseStorageList);
+        }
+        if(StringUtils.isEmpty(map)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"获取最大库容失败");
+        }
         BigDecimal capacity = new BigDecimal(map.get("capacity").toString());
         baseStorageList = (List<BaseStorage>) map.get("list");
         if(StringUtils.isEmpty(baseStorageList) || baseStorageList.size()<1){
@@ -186,6 +200,70 @@ public class WanbaoStorageRule {
     }
 
     /**
+     * A产线筛选库位类型
+     * @return
+     */
+    private static Map<String,Object> ALineScreenStorageCapacity(BaseMaterial baseMaterial,BigDecimal workOrderQty, List<BaseStorage> list){
+        //根据物料查询库位类型
+        String str = baseMaterial.getMaterialCode().substring(0,8);
+        Example example = new Example(BaseStorageCapacity.class);
+        example.createCriteria().andEqualTo("materialCodePrefix",str);
+        BaseStorageCapacity baseStorageCapacity = wanbaoStorageRule.baseStorageCapacityMapper.selectOneByExample(example);
+        if(StringUtils.isEmpty(baseStorageCapacity)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"获取库位类型失败");
+        }
+        //物料前缀39110157 推荐C类  39110089、39110090推荐B类
+        BigDecimal capacity = BigDecimal.ZERO;
+        int[] src = new int[]{baseStorageCapacity.getTypeACapacity().intValue(),baseStorageCapacity.getTypeBCapacity().intValue(),baseStorageCapacity.getTypeCCapacity().intValue(),baseStorageCapacity.getTypeDCapacity().intValue()};
+        int x = getApproximate(workOrderQty.intValue(),src);
+        if(BigDecimal.valueOf(x).compareTo(baseStorageCapacity.getTypeACapacity())==0){
+            capacity = baseStorageCapacity.getTypeACapacity();
+            list = list.stream().filter(y->y.getMaterialStoreType()==1).collect(Collectors.toList());
+        }else
+        if(BigDecimal.valueOf(x).compareTo(baseStorageCapacity.getTypeBCapacity())==0){
+            capacity = baseStorageCapacity.getTypeBCapacity();
+            list = list.stream().filter(y->y.getMaterialStoreType()==2).collect(Collectors.toList());
+        }else
+        if(BigDecimal.valueOf(x).compareTo(baseStorageCapacity.getTypeCCapacity())==0){
+            capacity = baseStorageCapacity.getTypeCCapacity();
+            list = list.stream().filter(y->y.getMaterialStoreType()==3).collect(Collectors.toList());
+        }else
+        if(BigDecimal.valueOf(x).compareTo(baseStorageCapacity.getTypeDCapacity())==0){
+            capacity = baseStorageCapacity.getTypeDCapacity();
+            list = list.stream().filter(y->y.getMaterialStoreType()==4).collect(Collectors.toList());
+        }
+        Map<String,Object> map = new HashMap<>();
+        map.put("capacity",capacity);
+        map.put("list",list);
+        return map;
+    }
+
+    /**
+     * 获取最接近的数
+     * @param x
+     * @param src
+     * @return
+     */
+    private static int getApproximate (int x, int[] src) {
+        if (src == null) {
+            return -1;
+        }
+        if (src.length == 1) {
+            return src[0];
+        }
+        int minDifference = Math.abs(src[0] - x);
+        int minIndex = 0;
+        for (int i = 1; i < src.length; i++) {
+            int temp = Math.abs(src[i] - x);
+            if (temp < minDifference) {
+                minIndex = i;
+                minDifference = temp;
+            }
+        }
+        return src[minIndex];
+    }
+
+    /**
      * 计算可上架库位
      * @param list
      * @param capacity
@@ -218,7 +296,9 @@ public class WanbaoStorageRule {
     }
 
     public static void main(String[] args) {
-        String ss = "396101060025";
-        System.out.println(Integer.parseInt(ss.substring(5,8)));
+//        String ss = "396101060025";
+//        System.out.println(Integer.parseInt(ss.substring(5,8)));
+        int[] src = new int[]{25,100,30,20,49,51};
+        System.out.println(getApproximate(50,src));
     }
 }

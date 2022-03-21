@@ -165,6 +165,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 baseStorageRule.setQty(wms.getPlanQty());
                 baseStorageRule.setMaterialId(wms.getMaterialId());
                 baseStorageRule.setInventoryStatusId(wms.getInventoryStatusId());
+                baseStorageRule.setWorkOrderQty(new BigDecimal(wmsInnerJobOrder.getOption5()));
                 //获取推荐库位
                 ResponseEntity<Long> responseEntity = baseFeignApi.inRule(baseStorageRule);
                 if(responseEntity.getCode()!=0){
@@ -1139,7 +1140,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
         }
         // 2022-03-09 万宝项目 - 上架作业后释放堆垛
-        if (!wmsInPutawayOrderDets.isEmpty()){
+        /*if (!wmsInPutawayOrderDets.isEmpty()){
             Example example = new Example(WmsInnerJobOrderReMspp.class);
             example.createCriteria().andEqualTo("jobOrderId", wmsInPutawayOrderDets.get(0).getJobOrderId());
             List<WmsInnerJobOrderReMspp> jobOrderReMspps = wmsInnerJobOrderReMsppMapper.selectByExample(example);
@@ -1148,7 +1149,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 stacking.setUsageStatus((byte) 1);
                 wanbaoFeignApi.updateAndClearBarcode(stacking);
             }
-        }
+        }*/
 
         return num;
     }
@@ -2170,6 +2171,25 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         }
 
         return i;
+    }
+
+    @Override
+    public int releaseStacking(Long jobOrderId) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        // 释放堆垛
+        Example example = new Example(WmsInnerJobOrderReMspp.class);
+        example.createCriteria().andEqualTo("jobOrderId", jobOrderId);
+        List<WmsInnerJobOrderReMspp> jobOrderReMspps = wmsInnerJobOrderReMsppMapper.selectByExample(example);
+        if (!jobOrderReMspps.isEmpty()){
+            WanbaoStacking stacking = wanbaoFeignApi.detail(jobOrderReMspps.get(0).getProductPalletId()).getData();
+            stacking.setUsageStatus((byte) 1);
+            wanbaoFeignApi.updateAndClearBarcode(stacking);
+        }
+        // 添加操作员以及操作时间
+        WmsInnerJobOrder wmsInnerJobOrder = wmsInPutawayOrderMapper.selectByPrimaryKey(jobOrderId);
+        wmsInnerJobOrder.setReleaseUserId(user.getUserId());
+        wmsInnerJobOrder.setReleaseTime(new Date());
+        return this.update(wmsInnerJobOrder);
     }
 
     /**

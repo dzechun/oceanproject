@@ -820,6 +820,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 baseStorageRule.setSalesBarcode(palletAutoAsnDto.getSalesOrderCode());
                 baseStorageRule.setPoCode(palletAutoAsnDto.getSamePackageCode());
                 baseStorageRule.setQty(palletAutoAsnDto.getPackingQty());
+                baseStorageRule.setWorkOrderQty(palletAutoAsnDto.getWorkOrderQty());
                 baseStorageRule.setInventoryStatusId(wms.getInventoryStatusId());
                 wmsInAsnOrder.setBaseStorageRule(baseStorageRule);
                 //新增上架作业单
@@ -884,6 +885,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 baseStorageRule.setSalesBarcode(palletAutoAsnDto.getSalesOrderCode());
                 baseStorageRule.setPoCode(palletAutoAsnDto.getSamePackageCode());
                 baseStorageRule.setQty(palletAutoAsnDto.getPackingQty());
+                baseStorageRule.setWorkOrderQty(palletAutoAsnDto.getWorkOrderQty());
                 baseStorageRule.setInventoryStatusId(wmsInAsnOrderDet.getInventoryStatusId());
                 wmsInAsnOrder.setBaseStorageRule(baseStorageRule);
                 res = this.createJobOrder(wmsInAsnOrder,wmsInAsnOrderDet);
@@ -917,6 +919,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerJobOrder.setOption2(wmsInAsnOrder.getBaseStorageRule().getProLineId() != null?wmsInAsnOrder.getBaseStorageRule().getProLineId().toString():null);
             wmsInnerJobOrder.setOption3(wmsInAsnOrder.getBaseStorageRule().getSalesBarcode());
             wmsInnerJobOrder.setOption4(wmsInAsnOrder.getBaseStorageRule().getPoCode());
+            wmsInnerJobOrder.setOption5(wmsInAsnOrder.getBaseStorageRule().getWorkOrderQty().toString());
         }
         List<WmsInnerJobOrderDet> list = new ArrayList<>();
         list.add(WmsInnerJobOrderDet.builder()

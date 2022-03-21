@@ -43,4 +43,9 @@ public class BaseStorageRule implements Serializable {
     private String poCode;
 
     private Long inventoryStatusId;
+
+    /**
+     * 工单数量
+     */
+    private BigDecimal workOrderQty;
 }

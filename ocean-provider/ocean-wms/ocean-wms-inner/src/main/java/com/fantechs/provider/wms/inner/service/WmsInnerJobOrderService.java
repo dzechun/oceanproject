@@ -107,4 +107,11 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
      * @return
      */
     int updateShit(Long jobOrderId,BigDecimal ngQty);
+
+    /**
+     * 上架作业-释放堆垛
+     * @param jobOrderId
+     * @return
+     */
+    int releaseStacking(Long jobOrderId);
 }

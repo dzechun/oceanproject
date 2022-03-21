@@ -106,10 +106,10 @@ public interface SFCFeignApi {
 
 
     @ApiOperation("万宝-同步三星客户条码")
-    @PostMapping("/batchSyncBarcode")
+    @PostMapping("/mesSfcWorkOrderBarcode/batchSyncBarcode")
     ResponseEntity batchSyncBarcode(@ApiParam(value = "必传",required = true) @RequestBody BatchSyncBarcodeDto dto);
 
     @ApiOperation("万宝-查询条码数据")
-    @PostMapping("/syncFindBarcode")
+    @PostMapping("/mesSfcWorkOrderBarcode/syncFindBarcode")
     ResponseEntity<SyncFindBarcodeDto> syncFindBarcode(@ApiParam(value = "必传",required = true) @RequestParam Long labelCategoryId);
 }
