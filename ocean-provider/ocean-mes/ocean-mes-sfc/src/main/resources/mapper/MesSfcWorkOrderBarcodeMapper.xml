@@ -128,8 +128,8 @@
             <if test="workOrderId != null">
                 and mswob.work_order_id = #{workOrderId}
             </if>
-            <if test="workOrderCode != null">
-                and mswob.work_order_code = #{workOrderCode}
+            <if test="workOrderCode != null and workOrderCode !=''">
+                and mswob.work_order_code like CONCAT('%', #{workOrderCode}, '%')
             </if>
             <if test="labelCategoryId != null">
                 and mswob.label_category_id = #{labelCategoryId}
