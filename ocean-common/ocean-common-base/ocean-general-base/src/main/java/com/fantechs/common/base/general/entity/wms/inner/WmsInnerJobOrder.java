@@ -275,4 +275,17 @@ public class WmsInnerJobOrder extends ValidGroup implements Serializable {
     private BaseStorageRule baseStorageRule;
 
     private static final long serialVersionUID = 1L;
+
+    // ========= 20220321 万宝项目上架作业添加释放堆垛功能，增加一下字段  =========
+
+    @ApiModelProperty(name="releaseUserId",value = "堆垛释放人ID")
+    @Column(name = "release_user_id")
+    private Long releaseUserId;
+
+    @ApiModelProperty(name="releaseTime",value = "堆垛释放时间")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "release_time")
+    private Date releaseTime;
+
+    // ========= 20220321 万宝项目上架作业添加释放堆垛功能，增加一下字段  =========
 }

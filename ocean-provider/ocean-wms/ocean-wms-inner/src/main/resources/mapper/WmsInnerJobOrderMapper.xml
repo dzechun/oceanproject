@@ -58,6 +58,7 @@
         <result column="detailed_address" jdbcType="VARCHAR" property="detailedAddress" />
         <result column="platform_name" jdbcType="VARCHAR" property="platformName"/>
         <result column="stacking_code" jdbcType="VARCHAR" property="stackingCode"/>
+        <result column="release_name" jdbcType="VARCHAR" property="releaseName"/>
     </resultMap>
     <sql id="BaseColumnList">
         wipo.job_order_id,
@@ -97,6 +98,7 @@ wipo.option5
         wodo.consignee as consignee_name,wodo.link_man_name,wodo.link_man_phone,wodo.fax_number,wodo.e_mail_address,wodo.detailed_address,
         su.user_name AS create_user_name,
         sus.user_name AS modified_user_name,
+        rel.user_name AS release_name,
         bo.organization_name AS organization_Name,
         bp.platform_name,
         ws.stacking_code,
@@ -122,6 +124,7 @@ wipo.option5
         LEFT JOIN base_organization bo ON wipo.org_id = bo.organization_id
         LEFT JOIN wms_inner_job_order_re_mspp wijorm ON wipo.job_order_id = wijorm.job_order_id
         LEFT JOIN wanbao_stacking ws ON wijorm.product_pallet_id = ws.stacking_id
+        LEFT JOIN ocean_v2.sys_user rel ON rel.user_id = wipo.release_user_id
         <where>
             <if test="orgId!=null and orgId!=''">
                 and wipo.org_id = #{orgId}

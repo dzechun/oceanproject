@@ -125,4 +125,8 @@ public class WmsInnerJobOrderDto extends WmsInnerJobOrder implements Serializabl
     @Transient
     @ApiModelProperty(name = "stackingCode",value = "堆垛编码")
     private String stackingCode;
+
+    @Transient
+    @ApiModelProperty(name = "releaseName",value = "堆垛释放人")
+    private String releaseName;
 }
