@@ -151,6 +151,13 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             materialId = inventoryDetDto.getMaterialId();
             materialQty = inventoryDetDto.getMaterialQty();
         }
+        //移位类型(1-正常移位单 2-质检移位单 3-三星移位单)
+        Byte shiftType=null;
+        if(StringUtils.isNotEmpty(dto.getJobOrderDetId())) {
+            WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderDetMapper.selectByPrimaryKey(dto.getJobOrderDetId());
+            WmsInnerJobOrder wmsInnerJobOrder=wmsInnerJobOrderMapper.selectByPrimaryKey(wmsInnerJobOrderDet.getJobOrderId());
+            shiftType=wmsInnerJobOrder.getShiftType();
+        }
 
         // 查询库存信息，同一库位跟同物料有且只有一条数据
         map.clear();
@@ -164,7 +171,10 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         }
         map.put("lockStatus", (byte) 0);
         map.put("stockLock", (byte) 0);
-        map.put("qcLock", (byte) 0);
+        if(StringUtils.isNotEmpty(shiftType) && shiftType==(byte)1){
+            map.put("qcLock", (byte) 0);
+        }
+        //map.put("qcLock", (byte) 0);
         List<WmsInnerInventoryDto> innerInventoryDtos = wmsInnerInventoryService.findList(map);
         if (innerInventoryDtos == null || innerInventoryDtos.size() <= 0) {
             throw new BizErrorException(ErrorCodeEnum.PDA5001009);
@@ -415,6 +425,8 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder).get(0);
         List<WmsInnerJobOrderDet> wmsInnerJobOrderDetDto = wmsInnerJobOrderDto.getWmsInPutawayOrderDets();
 
+        Byte shiftType=wmsInnerJobOrderDto.getShiftType();
+
         // 更改库存
         Example example = new Example(WmsInnerInventory.class);
         Example.Criteria criteria = example.createCriteria();
@@ -424,8 +436,13 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 .andEqualTo("jobOrderDetId", oldDto.getJobOrderDetId())
                 .andEqualTo("jobStatus", (byte) 2)
                 .andEqualTo("stockLock", 0)
-                .andEqualTo("qcLock", 0)
+                //.andEqualTo("qcLock", 0)
                 .andEqualTo("lockStatus", 0);
+
+        //正常移位单
+        if(StringUtils.isNotEmpty(shiftType) && shiftType==(byte)1){
+            criteria.andEqualTo("qcLock",0);
+        }
         WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
         example.clear();
         Example.Criteria criteria1 = example.createCriteria().andEqualTo("materialId", oldDto.getMaterialId())
@@ -433,11 +450,14 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 .andEqualTo("storageId", baseStorage.getStorageId())
                 .andEqualTo("jobStatus", (byte) 1)
                 .andEqualTo("stockLock", 0)
-                .andEqualTo("qcLock", 0)
+                //.andEqualTo("qcLock", 0)
                 .andEqualTo("lockStatus", 0);
 //                .andGreaterThan("packingQty", 0);
         if (StringUtils.isNotEmpty(wmsInnerInventory)){
             criteria1.andEqualTo("inventoryStatusId", wmsInnerInventory.getInventoryStatusId());
+        }
+        if(StringUtils.isNotEmpty(shiftType) && shiftType==(byte)1){
+            criteria.andEqualTo("qcLock",0);
         }
         WmsInnerInventory wmsInnerInventory_old = wmsInnerInventoryMapper.selectOneByExample(example);
         //获取初期数量
