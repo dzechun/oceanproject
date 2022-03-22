@@ -129,4 +129,11 @@ public class PDAWmsInnerJobOrderController {
         Map<String,Object> qty = pickingOrderService.checkBarcode(barCode,jobOrderDetId);
         return ControllerUtil.returnDataSuccess(qty,StringUtils.isEmpty(qty)?0:1);
     }
+
+
+    @ApiOperation("万宝-上架作业释放堆垛")
+    @PostMapping("/releaseStacking")
+    public ResponseEntity releaseStacking(@ApiParam(value = "作业单id")@RequestParam Long jobOrderId){
+        return ControllerUtil.returnCRUD(wmsInnerJobOrderService.releaseStacking(jobOrderId));
+    }
 }

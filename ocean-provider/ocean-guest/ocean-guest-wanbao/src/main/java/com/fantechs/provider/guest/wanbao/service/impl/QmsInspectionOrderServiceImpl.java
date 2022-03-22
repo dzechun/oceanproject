@@ -211,7 +211,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         this.handleInventory(qmsInspectionOrder.getInspectionOrderCode(),qmsInspectionOrder.getInspectionResult());
 
         //生成移位单
-        createJobOrderShift(inspectionOrderDetSampleList,qmsInspectionOrder,user);
+        createJobOrderShift(qmsInspectionOrderDetSamples,qmsInspectionOrder,user);
 
         return i;
     }
@@ -345,10 +345,11 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 //proCode=processDtos.get(0).getProCode();
                 proLineId = processDtos.get(0).getProLineId();
             }
-
-            BaseProLine baseProLine = baseFeignApi.getProLineDetail(proLineId).getData();
-            if (StringUtils.isNotEmpty(baseProLine)) {
-                proCode = baseProLine.getProCode();
+            if(StringUtils.isNotEmpty(proLineId)) {
+                BaseProLine baseProLine = baseFeignApi.getProLineDetail(proLineId).getData();
+                if (StringUtils.isNotEmpty(baseProLine)) {
+                    proCode = baseProLine.getProCode();
+                }
             }
 
             if (StringUtils.isNotEmpty(proCode) && proCode.contains("A")) {
@@ -374,7 +375,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             if (StringUtils.isNotEmpty(inventoryDtos)) {
                 //存在合格的库存才生成移位单
                 List<QmsInspectionOrderDetSample> ngQualifiedBarcodes = list.stream().filter(item -> item.getBarcodeStatus() != null && item.getBarcodeStatus() == 0).collect(Collectors.toList());
-                List<QmsInspectionOrderDetSample> goodQualifiedBarcodes = list.stream().filter(item -> item.getBarcodeStatus() != null && item.getBarcodeStatus() == 1).collect(Collectors.toList());
+                List<QmsInspectionOrderDetSample> goodQualifiedBarcodes = list.stream().filter(item -> item.getBarcodeStatus() == null || item.getBarcodeStatus() != 0).collect(Collectors.toList());
                 BigDecimal ngQty = new BigDecimal(ngQualifiedBarcodes.size());
                 BigDecimal goodQty = new BigDecimal(goodQualifiedBarcodes.size());
 
@@ -414,6 +415,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                     WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
                     wmsInnerJobOrderDet.setMaterialId(materialId);
                     wmsInnerJobOrderDet.setPlanQty(goodQty);
+                    wmsInnerJobOrderDet.setDistributionQty(goodQty);
                     wmsInnerJobOrderDet.setOutStorageId(outStorageId);
                     wmsInnerJobOrderDet.setInStorageId(inStorageId);
                     wmsInnerJobOrderDet.setSourceDetId(inventoryDtos.get(0).getInventoryId());
