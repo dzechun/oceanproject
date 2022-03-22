@@ -2189,7 +2189,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         WmsInnerJobOrder wmsInnerJobOrder = wmsInPutawayOrderMapper.selectByPrimaryKey(jobOrderId);
         wmsInnerJobOrder.setReleaseUserId(user.getUserId());
         wmsInnerJobOrder.setReleaseTime(new Date());
-        return this.update(wmsInnerJobOrder);
+        return wmsInPutawayOrderMapper.updateByPrimaryKey(wmsInnerJobOrder);
     }
 
     /**
