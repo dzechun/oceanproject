@@ -214,23 +214,24 @@ public class WanbaoStorageRule {
         }
         //物料前缀39110157 推荐C类  39110089、39110090推荐B类
         BigDecimal capacity = BigDecimal.ZERO;
-        int[] src = new int[]{baseStorageCapacity.getTypeACapacity().intValue(),baseStorageCapacity.getTypeBCapacity().intValue(),baseStorageCapacity.getTypeCCapacity().intValue(),baseStorageCapacity.getTypeDCapacity().intValue()};
-        int x = getApproximate(workOrderQty.intValue(),src);
-        if(BigDecimal.valueOf(x).compareTo(baseStorageCapacity.getTypeACapacity())==0){
+        int[] src = new int[]{baseStorageCapacity.getTypeACapacity().intValue(), baseStorageCapacity.getTypeBCapacity().intValue(), baseStorageCapacity.getTypeCCapacity().intValue(), baseStorageCapacity.getTypeDCapacity().intValue()};
+        int x = getApproximate(workOrderQty.intValue(), src);
+        if ((workOrderQty.compareTo(baseStorageCapacity.getTypeACapacity())==1 &&
+                workOrderQty.compareTo(baseStorageCapacity.getTypeBCapacity())==1 &&
+                workOrderQty.compareTo(baseStorageCapacity.getTypeCCapacity())==1 &&
+                workOrderQty.compareTo(baseStorageCapacity.getTypeDCapacity())==1) ||
+                (BigDecimal.valueOf(x).compareTo(baseStorageCapacity.getTypeACapacity()) == 0)) {
             capacity = baseStorageCapacity.getTypeACapacity();
-            list = list.stream().filter(y->y.getMaterialStoreType()==1).collect(Collectors.toList());
-        }else
-        if(BigDecimal.valueOf(x).compareTo(baseStorageCapacity.getTypeBCapacity())==0){
+            list = list.stream().filter(y -> y.getMaterialStoreType() == 1).collect(Collectors.toList());
+        } else if (BigDecimal.valueOf(x).compareTo(baseStorageCapacity.getTypeBCapacity()) == 0) {
             capacity = baseStorageCapacity.getTypeBCapacity();
-            list = list.stream().filter(y->y.getMaterialStoreType()==2).collect(Collectors.toList());
-        }else
-        if(BigDecimal.valueOf(x).compareTo(baseStorageCapacity.getTypeCCapacity())==0){
+            list = list.stream().filter(y -> y.getMaterialStoreType() == 2).collect(Collectors.toList());
+        } else if (BigDecimal.valueOf(x).compareTo(baseStorageCapacity.getTypeCCapacity()) == 0) {
             capacity = baseStorageCapacity.getTypeCCapacity();
-            list = list.stream().filter(y->y.getMaterialStoreType()==3).collect(Collectors.toList());
-        }else
-        if(BigDecimal.valueOf(x).compareTo(baseStorageCapacity.getTypeDCapacity())==0){
+            list = list.stream().filter(y -> y.getMaterialStoreType() == 3).collect(Collectors.toList());
+        } else if (BigDecimal.valueOf(x).compareTo(baseStorageCapacity.getTypeDCapacity()) == 0) {
             capacity = baseStorageCapacity.getTypeDCapacity();
-            list = list.stream().filter(y->y.getMaterialStoreType()==4).collect(Collectors.toList());
+            list = list.stream().filter(y -> y.getMaterialStoreType() == 4).collect(Collectors.toList());
         }
         Map<String,Object> map = new HashMap<>();
         map.put("capacity",capacity);

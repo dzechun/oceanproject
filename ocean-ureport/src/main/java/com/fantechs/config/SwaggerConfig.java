@@ -8,6 +8,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import springfox.documentation.RequestHandler;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -26,6 +27,7 @@ import java.util.List;
  */
 @Configuration
 @EnableSwagger2
+@Profile("test")
 public class SwaggerConfig {
 
     // 定义分隔符,配置Swagger多包
