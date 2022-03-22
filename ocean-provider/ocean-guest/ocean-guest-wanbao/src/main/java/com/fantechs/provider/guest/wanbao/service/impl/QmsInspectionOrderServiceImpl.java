@@ -211,7 +211,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         this.handleInventory(qmsInspectionOrder.getInspectionOrderCode(),qmsInspectionOrder.getInspectionResult());
 
         //生成移位单
-        createJobOrderShift(inspectionOrderDetSampleList,qmsInspectionOrder,user);
+        createJobOrderShift(qmsInspectionOrderDetSamples,qmsInspectionOrder,user);
 
         return i;
     }
@@ -415,6 +415,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                     WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
                     wmsInnerJobOrderDet.setMaterialId(materialId);
                     wmsInnerJobOrderDet.setPlanQty(goodQty);
+                    wmsInnerJobOrderDet.setDistributionQty(goodQty);
                     wmsInnerJobOrderDet.setOutStorageId(outStorageId);
                     wmsInnerJobOrderDet.setInStorageId(inStorageId);
                     wmsInnerJobOrderDet.setSourceDetId(inventoryDtos.get(0).getInventoryId());
