@@ -38,6 +38,7 @@
     <result column="logic_id" jdbcType="BIGINT" property="logicId"/>
     <result column="pro_line_id" jdbcType="BIGINT" property="proLineId"/>
     <result column="same_package_code" jdbcType="VARCHAR" property="samePackageCode"/>
+    <result column="work_order_qty" jdbcType="VARCHAR" property="workOrderQty"/>
   </resultMap>
 
   <sql id="BaseColumnList">
@@ -93,7 +94,8 @@
     oso.sales_user_name,
     mpwo.work_order_code,
     mpwo.logic_id,
-    mpwo.pro_line_id
+    mpwo.pro_line_id,
+    mpwo.work_order_qty
     FROM
     mes_sfc_barcode_process msbp
     LEFT JOIN mes_pm_work_order mpwo ON msbp.work_order_id = mpwo.work_order_id
