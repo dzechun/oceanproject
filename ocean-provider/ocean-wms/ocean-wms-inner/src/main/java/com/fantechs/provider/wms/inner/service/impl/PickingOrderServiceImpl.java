@@ -286,6 +286,9 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     wms.setOrderStatus((byte)3);
                     wms.setModifiedUserId(sysUser.getUserId());
                     wms.setModifiedTime(new Date());
+
+                    //更新明细 2022-03-22
+                    num+=wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wms);
                     //分配库存
                     num += this.DistributionInventory(wmsInnerJobOrder, wms,1,null);
 
