@@ -260,7 +260,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 throw new BizErrorException("单据已分配完成");
             }
             Example example = new Example(WmsInnerJobOrderDet.class);
-            example.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrder.getJobOrderId()).andEqualTo("OrderStatus",1);
+            example.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrder.getJobOrderId()).andEqualTo("orderStatus",1);
             List<WmsInnerJobOrderDet> list = wmsInnerJobOrderDetMapper.selectByExample(example);
             //成功自动分配数量
             int success = 0;
@@ -273,7 +273,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 baseStorageRule.setMaterialId(wms.getMaterialId());
                 baseStorageRule.setQty(wms.getPlanQty());
                 baseStorageRule.setSalesBarcode(wms.getOption1());
-                baseStorageRule.setSalesBarcode(wms.getOption2());
+                //baseStorageRule.setSalesBarcode(wms.getOption2());
+                baseStorageRule.setPoCode(wms.getOption2());
                 ResponseEntity<Long> responseEntity = baseFeignApi.outRule(baseStorageRule);
                 if(responseEntity.getCode()!=0){
                     throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());

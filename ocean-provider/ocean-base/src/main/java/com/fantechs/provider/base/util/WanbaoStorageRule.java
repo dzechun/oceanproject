@@ -149,7 +149,10 @@ public class WanbaoStorageRule {
      * @return
      */
     public static Long retOutStorage(BaseStorageRule baseStorageRule){
-        if(StringUtils.isEmpty(baseStorageRule.getLogicId(),baseStorageRule.getMaterialId(),baseStorageRule.getQty())){
+//        if(StringUtils.isEmpty(baseStorageRule.getLogicId(),baseStorageRule.getMaterialId(),baseStorageRule.getQty())){
+//            throw new BizErrorException(ErrorCodeEnum.GL99990100);
+//        }
+        if(StringUtils.isEmpty(baseStorageRule.getMaterialId(),baseStorageRule.getQty())){
             throw new BizErrorException(ErrorCodeEnum.GL99990100);
         }
         List<StorageRuleInventry> storageRuleInventries = wanbaoStorageRule.baseStorageMapper.findOutInv(ControllerUtil.dynamicCondition("materialId",baseStorageRule.getMaterialId(),
