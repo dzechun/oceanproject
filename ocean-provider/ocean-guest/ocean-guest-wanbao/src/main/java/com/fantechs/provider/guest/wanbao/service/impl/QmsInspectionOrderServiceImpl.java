@@ -492,7 +492,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         BeanUtils.copyProperties(innerInventoryDtoList.getData().get(0),innerInventoryDto);
 
         //合并不合格库存
-        Map<String,Object> map = new HashMap<>();
+        /*Map<String,Object> map = new HashMap<>();
         map.put("materialId",wmsInnerInventoryDto.getMaterialId());
         map.put("warehouseId",wmsInnerInventoryDto.getWarehouseId());
         map.put("storageId",wmsInnerInventoryDto.getStorageId());
@@ -515,11 +515,17 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             wmsInnerInventoryDto.setInventoryStatusId(inventoryStatusList1.get(0).getInventoryStatusId());
             wmsInnerInventoryDto.setPackingQty(new BigDecimal(unQualifiedCount));
             innerFeignApi.update(wmsInnerInventoryDto);
-        }
+        }*/
+
+        //不做合并库存操作
+        wmsInnerInventoryDto.setQcLock((byte)0);
+        wmsInnerInventoryDto.setInventoryStatusId(inventoryStatusList1.get(0).getInventoryStatusId());
+        wmsInnerInventoryDto.setPackingQty(new BigDecimal(unQualifiedCount));
+        innerFeignApi.update(wmsInnerInventoryDto);
 
         //合并合格库存
         BigDecimal qty = innerInventoryDto.getPackingQty().subtract(new BigDecimal(unQualifiedCount));
-        map.put("inventoryStatusId",inventoryStatusList2.get(0).getInventoryStatusId());
+        /*map.put("inventoryStatusId",inventoryStatusList2.get(0).getInventoryStatusId());
         WmsInnerInventory oldInventory1 = innerFeignApi.selectOneByExample(map).getData();
         if (StringUtils.isNotEmpty(oldInventory1)) {
             WmsInnerInventoryDto inventoryDto = new WmsInnerInventoryDto();
@@ -532,7 +538,13 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             innerInventoryDto.setInventoryStatusId(inventoryStatusList2.get(0).getInventoryStatusId());
             innerInventoryDto.setPackingQty(qty);
             innerFeignApi.add(innerInventoryDto);
-        }
+        }*/
+
+        innerInventoryDto.setInventoryId(null);
+        innerInventoryDto.setQcLock((byte)0);
+        innerInventoryDto.setInventoryStatusId(inventoryStatusList2.get(0).getInventoryStatusId());
+        innerInventoryDto.setPackingQty(qty);
+        innerFeignApi.add(innerInventoryDto);
 
         return 1;
     }
@@ -877,7 +889,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         }
 
         //合并库存
-        Map<String,Object> map = new HashMap<>();
+        /*Map<String,Object> map = new HashMap<>();
         map.put("materialId",wmsInnerInventoryDto.getMaterialId());
         map.put("warehouseId",wmsInnerInventoryDto.getWarehouseId());
         map.put("storageId",wmsInnerInventoryDto.getStorageId());
@@ -896,11 +908,11 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             innerFeignApi.update(innerInventoryDto);
             wmsInnerInventoryDto.setPackingQty(BigDecimal.ZERO);
             innerFeignApi.update(wmsInnerInventoryDto);
-        }else{
+        }else{*/
             wmsInnerInventoryDto.setQcLock((byte)0);
             wmsInnerInventoryDto.setInventoryStatusId(inventoryStatusList.get(0).getInventoryStatusId());
             innerFeignApi.update(wmsInnerInventoryDto);
-        }
+        //}
 
         //检验结果返写回库存明细
         SearchWmsInnerInventoryDet  searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
