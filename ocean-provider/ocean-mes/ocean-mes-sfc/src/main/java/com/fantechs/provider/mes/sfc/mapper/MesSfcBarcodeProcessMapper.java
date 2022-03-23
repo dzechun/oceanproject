@@ -42,10 +42,10 @@ public interface MesSfcBarcodeProcessMapper extends MyMapper<MesSfcBarcodeProces
 
     /**
      * 批量修改
-     * @param mesSfcBarcodeProcessList
+     * @param list
      * @return
      */
-    int batchUpdateCustomerBarcode(List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList);
+    int batchUpdateCustomerBarcode(List<MesSfcBarcodeProcess> list);
 
     /**
      * 人工栈板作业-按PO号分组，统计条码的PO号个数

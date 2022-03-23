@@ -359,7 +359,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                 workOrder.setCreateUserId(sysUser.getUserId());
                 workOrder.setModifiedUserId(sysUser.getUserId());
                 workOrder.setModifiedTime(new Date());
-                workOrder.setOption3(order.getSalesCode());
+                workOrder.setSalesCode(order.getSalesCode());
 
                 // 2021-11-18
                 // 欢欢确定万宝同步工单时，工艺路线按产线匹配，产线由工单编码前缀确定
@@ -810,6 +810,7 @@ public class SyncDataServiceImpl implements SyncDataService {
 
     @Override
     public void syncBarcodeData(boolean flag) {
+        long start = System.currentTimeMillis();
 
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -844,12 +845,15 @@ public class SyncDataServiceImpl implements SyncDataService {
                 map.put("date", "2021-09-01");
             }
         }
+        long time1 = System.currentTimeMillis();
+        log.info("=========== tiem1: " + (time1-start));
         // 执行查询
         DynamicDataSourceHolder.putDataSouce("thirdary");
         List<MiddleProduct> barcodeDatas = middleProductMapper.findBarcodeData(map);
         log.info("============== 同步PQMS数据barcodeDatas: " + barcodeDatas.size());
         DynamicDataSourceHolder.removeDataSource();
-
+        long time2 = System.currentTimeMillis();
+        log.info("=========== 同步三星PQMS: " + (time2-time1));
         if (!barcodeDatas.isEmpty()) {
             log.info("============ 开始同步PQMS数据");
             WanbaoBaseBySyncDto syncDto = baseFeignApi.findBySyncBarcodeData().getData();
@@ -910,10 +914,12 @@ public class SyncDataServiceImpl implements SyncDataService {
                 return;
             }
             BaseRouteProcess routeProcess = list.stream().sorted(Comparator.comparing(BaseRouteProcess::getOrderNum)).findFirst().get();
-
+            long time3 = System.currentTimeMillis();
+            log.info("=========== 查询base: " + (time3-time2));
             // 工单
             List<MesPmWorkOrder> workOrders = pmFeignApi.findWorkOrderAll().getData();
-
+            long time4 = System.currentTimeMillis();
+            log.info("=========== 查询om: " + (time4-time3));
             // 条码
             SyncFindBarcodeDto findBarcodeDto = sfcFeignApi.syncFindBarcode(labelCategoryId).getData();
             List<MesSfcWorkOrderBarcodeDto> workOrderBarcodeDtos = findBarcodeDto.getWorkOrderBarcodes();
@@ -923,8 +929,9 @@ public class SyncDataServiceImpl implements SyncDataService {
 
             log.info("============ sfcBarcodeProcesses: " + sfcBarcodeProcesses.size());
             log.info("============ workOrderBarcodeDtos: " + workOrderBarcodeDtos.size());
+            long time5 = System.currentTimeMillis();
+            log.info("=========== 查询sfc: " + (time5-time4));
             // 记录日志
-            long start = System.currentTimeMillis();
             List<MesSfcBarcodeProcess> updateBarcodeProcess = new ArrayList<>();
             List<BatchSyncBarcodeSaveDto> saveList = new ArrayList<>();
             for (MiddleProduct middleProduct : barcodeDatas) {
@@ -981,6 +988,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                     MesSfcBarcodeProcess mesSfcBarcodeProcess = new MesSfcBarcodeProcess();
                     mesSfcBarcodeProcess.setWorkOrderId(workOrder.getWorkOrderId());
                     mesSfcBarcodeProcess.setWorkOrderCode(workOrder.getWorkOrderCode());
+                    mesSfcBarcodeProcess.setCustomerBarcode(middleProduct.getCustomerBarcode());
                     mesSfcBarcodeProcess.setBarcodeType((byte) 2);
                     mesSfcBarcodeProcess.setBarcode(middleProduct.getBarcode());
                     mesSfcBarcodeProcess.setProLineId(proLine.getProLineId());
@@ -1018,6 +1026,8 @@ public class SyncDataServiceImpl implements SyncDataService {
                     }
                 }
             }
+            long time6 = System.currentTimeMillis();
+            log.info("=========== 循环处理: " + (time6-time5));
             // 批量处理
             log.info("============ updateBarcodeProcess: " + updateBarcodeProcess.size());
             log.info("============ saveList: " + saveList.size());
@@ -1027,6 +1037,8 @@ public class SyncDataServiceImpl implements SyncDataService {
                 batchSyncBarcodeDto.setList(saveList);
                 sfcFeignApi.batchSyncBarcode(batchSyncBarcodeDto);
             }
+            long time7 = System.currentTimeMillis();
+            log.info("=========== 批量处理插入: " + (time7-time6));
 
             // 保存中间库
 //           DynamicDataSourceHolder.putDataSouce("secondary");
@@ -1042,6 +1054,8 @@ public class SyncDataServiceImpl implements SyncDataService {
         if (!logList.isEmpty()) {
             securityFeignApi.batchAdd(logList);
         }
+        long time8 = System.currentTimeMillis();
+        log.info("=========== 总耗时: " + (time8-start));
     }
 
 }
