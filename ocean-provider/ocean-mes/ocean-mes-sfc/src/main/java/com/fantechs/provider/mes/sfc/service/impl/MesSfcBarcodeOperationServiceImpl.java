@@ -39,6 +39,7 @@ import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcProductCartonMapper;
+import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
 import com.fantechs.provider.mes.sfc.service.*;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -64,6 +65,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     private MesSfcBarcodeProcessService mesSfcBarcodeProcessService;
     @Resource
     private MesSfcWorkOrderBarcodeService mesSfcWorkOrderBarcodeService;
+    @Resource
+    private MesSfcWorkOrderBarcodeMapper mesSfcWorkOrderBarcodeMapper;
     @Resource
     private MesSfcProductCartonService mesSfcProductCartonService;
     @Resource
@@ -216,6 +219,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             return false;
         }
         if (dto.getAnnex()) {
+            if (dto.getBarCode().equals(dto.getBarAnnexCode())){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "厂内码与附件码重复扫描");
+            }
             Example example = new Example(MesSfcKeyPartRelevance.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("partBarcode", dto.getBarAnnexCode());
@@ -263,6 +269,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
 
             boolean isBarCode = false;
             if(sfcWorkOrderAnnexBarcodeDtos != null && sfcWorkOrderAnnexBarcodeDtos.size() > 0){
+                if (sfcWorkOrderAnnexBarcodeDtos.get(0).getLabelCategoryId().equals(mesSfcWorkOrderBarcodeMapper.finByTypeId("产品条码"))){
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该附件码为厂内码类型，不可扫码");
+                }
                 for (MesSfcWorkOrderBarcodeDto workOrderBarcodeDto: sfcWorkOrderAnnexBarcodeDtos) {
                     if(workOrderBarcodeDto.getBarcode().equals(dto.getBarAnnexCode())){
                         isBarCode = true;
