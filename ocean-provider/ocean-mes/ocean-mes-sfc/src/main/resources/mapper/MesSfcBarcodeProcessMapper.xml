@@ -190,6 +190,16 @@
     </foreach>
   </update>
 
+  <update id="batchUpdateCustomerBarcode" parameterType="java.util.ArrayList">
+    <foreach collection="mesSfcBarcodeProcessList" item="item" index="index" open="" close="" separator=";">
+      update mes_sfc_barcode_process
+      <set>
+        customer_barcode = #{item.customerBarcode}
+      </set>
+      where barcode_process_id =#{item.barcodeProcessId}
+    </foreach>
+  </update>
+
   <select id="countBarcodeListForPOGroup" parameterType="map" resultType="java.lang.String">
     SELECT COUNT(*) FROM (
     SELECT IFNULL(COUNT(*),0) FROM om_sales_code_re_spc oscrs
