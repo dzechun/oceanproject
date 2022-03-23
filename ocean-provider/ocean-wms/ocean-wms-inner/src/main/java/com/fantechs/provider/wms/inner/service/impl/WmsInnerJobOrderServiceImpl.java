@@ -81,8 +81,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     @Resource
     private SecurityFeignApi securityFeignApi;
     @Resource
-    private WmsDataExportInnerJobOrderService wmsDataExportInnerJobOrderService;
-    @Resource
     private WanbaoFeignApi wanbaoFeignApi;
 
     @Override
@@ -2187,6 +2185,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         }
         // 添加操作员以及操作时间
         WmsInnerJobOrder wmsInnerJobOrder = wmsInPutawayOrderMapper.selectByPrimaryKey(jobOrderId);
+        if(!wmsInnerJobOrder.getJobOrderType().equals((byte) 3)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该订单不是移位上架单，不可操作");
+        }
         wmsInnerJobOrder.setReleaseUserId(user.getUserId());
         wmsInnerJobOrder.setReleaseTime(new Date());
         return wmsInPutawayOrderMapper.updateByPrimaryKey(wmsInnerJobOrder);
