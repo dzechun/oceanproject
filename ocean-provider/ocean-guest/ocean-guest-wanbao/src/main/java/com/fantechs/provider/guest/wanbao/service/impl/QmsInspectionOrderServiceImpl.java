@@ -273,7 +273,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         int i = qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);
 
         //处理库存
-        if(qmsInspectionOrder.getInspectionResult() == (byte)0) {
+        if(qmsInspectionOrder.getInspectionResult() == (byte)0||qmsInspectionOrder.getInspectionResult() == (byte)1) {
             this.handleInventory(qmsInspectionOrder.getInspectionOrderCode(), qmsInspectionOrder.getInspectionResult());
         }else if(qmsInspectionOrder.getInspectionResult() == (byte)2){
             this.splitInventory(qmsInspectionOrder.getInspectionOrderCode(), unQualifiedBarcodes);
