@@ -265,7 +265,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
 
         // 2、批量修改部分
         if (dto.getUpdateList().size() > 0){
-            mesSfcBarcodeProcessMapper.batchUpdate(dto.getUpdateList());
+            mesSfcBarcodeProcessMapper.batchUpdateCustomerBarcode(dto.getUpdateList());
         }
         return 1;
     }
