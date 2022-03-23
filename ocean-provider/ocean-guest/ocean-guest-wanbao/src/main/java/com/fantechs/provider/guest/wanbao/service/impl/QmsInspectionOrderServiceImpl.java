@@ -85,8 +85,6 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     private SFCFeignApi sfcFeignApi;
     @Resource
     private QmsInspectionOrderDetServiceImpl qmsInspectionOrderDetService;
-    @Resource
-    private QmsInspectionOrderDetSampleServiceImpl qmsInspectionOrderDetSampleService;
 
     @Override
     public List<QmsInspectionOrder> findList(Map<String, Object> map) {
@@ -697,6 +695,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         qmsInspectionOrder.setCreateTime(new Date());
         qmsInspectionOrder.setModifiedUserId(user.getUserId());
         qmsInspectionOrder.setModifiedTime(new Date());
+        qmsInspectionOrder.setAuditStatus(StringUtils.isEmpty(qmsInspectionOrder.getAuditStatus())?0:qmsInspectionOrder.getAuditStatus());
         qmsInspectionOrder.setStatus(StringUtils.isEmpty(qmsInspectionOrder.getStatus())?1:qmsInspectionOrder.getStatus());
         qmsInspectionOrder.setInspectionStatus((byte)1);
         qmsInspectionOrder.setOrgId(user.getOrganizationId());
