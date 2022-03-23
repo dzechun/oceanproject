@@ -29,7 +29,6 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.*;
-import com.fantechs.provider.api.guest.eng.EngFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
@@ -67,8 +66,6 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
     private WmsOutDeliveryOrderMapper wmsOutDeliveryOrderMapper;
     @Resource
     private InFeignApi inFeignApi;
-    @Resource
-    private EngFeignApi engFeignApi;
     @Resource
     private SecurityFeignApi securityFeignApi;
 

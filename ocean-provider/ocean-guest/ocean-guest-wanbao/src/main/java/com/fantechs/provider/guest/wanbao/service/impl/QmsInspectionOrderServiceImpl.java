@@ -1325,6 +1325,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
     public int qmsInspectToInnerJobShift(String ids) {
         int i=1;
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -1395,6 +1396,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             searchWmsInnerInventory.setMaterialId(materialId);
             searchWmsInnerInventory.setStorageId(outStorageId);
             searchWmsInnerInventory.setLockStatus((byte)0);
+            searchWmsInnerInventory.setJobStatus((byte)1);
             searchWmsInnerInventory.setInventoryStatusName("待检");
             List<WmsInnerInventoryDto> inventoryDtos=innerFeignApi.findList(searchWmsInnerInventory).getData();
             if(StringUtils.isEmpty(inventoryDtos) || inventoryDtos.size()<=0){
