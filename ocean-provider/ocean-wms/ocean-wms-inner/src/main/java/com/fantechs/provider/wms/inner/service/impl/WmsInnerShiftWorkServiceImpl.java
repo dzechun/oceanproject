@@ -450,11 +450,15 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 //.andEqualTo("qcLock", 0)
                 .andEqualTo("lockStatus", 0);
 //                .andGreaterThan("packingQty", 0);
-        if (StringUtils.isNotEmpty(wmsInnerInventory)){
+        if (StringUtils.isNotEmpty(wmsInnerInventory) && StringUtils.isNotEmpty(shiftType) && shiftType==(byte)1){
             criteria1.andEqualTo("inventoryStatusId", wmsInnerInventory.getInventoryStatusId());
         }
         if(StringUtils.isNotEmpty(shiftType) && shiftType==(byte)1){
             criteria.andEqualTo("qcLock",0);
+        }
+        else if(StringUtils.isNotEmpty(shiftType) && shiftType!=(byte)1){
+            criteria1.andEqualTo("inventoryStatusId", wmsInnerJobOrderDet.getInventoryStatusId());
+            criteria1.andEqualTo("inspectionOrderCode", wmsInnerJobOrderDto.getRelatedOrderCode());
         }
         WmsInnerInventory wmsInnerInventory_old = wmsInnerInventoryMapper.selectOneByExample(example);
         //获取初期数量
