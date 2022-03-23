@@ -354,9 +354,10 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             List<WmsInnerJobOrderDetBarcode> jobOrderDetBarcodeList = new ArrayList<>();
             List<WmsInnerHtJobOrderDetBarcode> htJobOrderDetBarcodes = new ArrayList<>();
             for (String barcode : dto.getBarcodes()) {
+                String factoryBarcode = this.getFactoryBarcode(barcode);
                 // 创建条码移位单明细关系
                 WmsInnerJobOrderDetBarcode wmsInnerJobOrderDetBarcode = new WmsInnerJobOrderDetBarcode();
-                wmsInnerJobOrderDetBarcode.setBarcode(barcode);
+                wmsInnerJobOrderDetBarcode.setBarcode(factoryBarcode);
                 wmsInnerJobOrderDetBarcode.setJobOrderDetId(dto.getJobOrderDetId());
                 wmsInnerJobOrderDetBarcode.setStatus((byte) 1);
                 wmsInnerJobOrderDetBarcode.setOrgId(sysUser.getOrganizationId());
