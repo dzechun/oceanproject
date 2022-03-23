@@ -370,7 +370,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             searchWmsInnerInventory.setStorageId(outStorageId);
             searchWmsInnerInventory.setLockStatus((byte) 0);
             searchWmsInnerInventory.setJobStatus((byte) 1);
-            //searchWmsInnerInventory.setInventoryStatusName("合格");
+            searchWmsInnerInventory.setInspectionOrderCode(orderCode);
             List<WmsInnerInventoryDto> inventoryDtos = innerFeignApi.findList(searchWmsInnerInventory).getData();
             if (StringUtils.isNotEmpty(inventoryDtos)) {
                 //存在合格的库存才生成移位单
@@ -543,7 +543,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         innerInventoryDto.setInventoryId(null);
         innerInventoryDto.setQcLock((byte)0);
         innerInventoryDto.setInventoryStatusId(inventoryStatusList2.get(0).getInventoryStatusId());
-        innerInventoryDto.setPackingQty(qty);
+        //innerInventoryDto.setPackingQty(qty);
+        //质检移位单 作业完成后再移入合格库存
+        innerInventoryDto.setPackingQty(BigDecimal.ZERO);
         innerFeignApi.add(innerInventoryDto);
 
         return 1;
