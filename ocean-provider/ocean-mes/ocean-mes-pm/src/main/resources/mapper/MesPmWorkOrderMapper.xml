@@ -40,6 +40,7 @@
         <result column="option3" jdbcType="VARCHAR" property="option3"/>
         <result column="batch_code" jdbcType="VARCHAR" property="batchCode"/>
         <result column="logic_id" jdbcType="BIGINT" property="logicId"/>
+        <result column="sales_code" jdbcType="VARCHAR" property="salesCode"/>
     </resultMap>
 
     <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto">
@@ -120,6 +121,7 @@
         swo.remark,
         swo.contract_no,
         swo.batch_code,
+        swo.sales_code,
         swo.logic_id,
         swo.option1,
         swo.option2,
