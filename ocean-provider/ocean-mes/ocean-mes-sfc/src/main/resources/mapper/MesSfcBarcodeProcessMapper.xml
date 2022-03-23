@@ -191,12 +191,16 @@
   </update>
 
   <update id="batchUpdateCustomerBarcode" parameterType="java.util.ArrayList">
-    <foreach collection="mesSfcBarcodeProcessList" item="item" index="index" open="" close="" separator=";">
-      update mes_sfc_barcode_process
-      <set>
-        customer_barcode = #{item.customerBarcode}
-      </set>
-      where barcode_process_id =#{item.barcodeProcessId}
+    update mes_sfc_barcode_process
+    SET customer_barcode =
+    <foreach collection="list" item="item" index="index"
+             separator=" " open="case" close="end">
+      when barcode_process_id=#{item.barcodeProcessId} then #{item.customerBarcode}
+    </foreach>
+    where barcode_process_id in
+    <foreach collection="list" index="index" item="item"
+             separator="," open="(" close=")">
+      #{item.barcodeProcessId,jdbcType=BIGINT}
     </foreach>
   </update>
 
