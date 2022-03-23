@@ -9,6 +9,10 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseStorageRule;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessDto;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcKeyPartRelevanceDto;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcKeyPartRelevance;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
@@ -29,6 +33,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
@@ -70,6 +75,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
     private WmsInnerInventoryDetMapper wmsInnerInventoryDetMapper;
     @Resource
     private SecurityFeignApi securityFeignApi;
+    @Resource
+    private SFCFeignApi sfcFeignApi;
 
     private String REDIS_KEY = "PICKINGID:";
 
@@ -236,7 +243,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         }else{
             //获取出库单对应的工单
 //            WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet = outFeignApi.detail(wmsInnerJobOrderDet.getSourceDetId()).getData();
-            BigDecimal qty = InBarcodeUtil.pickCheckBarCode(wmsInnerJobOrderDet.getInventoryStatusId(),wmsInnerJobOrderDet.getMaterialId(),barCode);
+            String factoryBarcode = this.getFactoryBarcode(barCode);
+            BigDecimal qty = InBarcodeUtil.pickCheckBarCode(wmsInnerJobOrderDet.getInventoryStatusId(),wmsInnerJobOrderDet.getMaterialId(),factoryBarcode);
             map.put("SN","true");
             map.put("qty",qty);
         }
@@ -1660,6 +1668,37 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             wmsInnerInventorys.setPackingQty(wmsInnerInventorys.getPackingQty().add(wmsInPutawayOrderDet.getActualQty()));
             wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventorys);
         }
+    }
+
+    // 条码清洗，获取厂内码
+    public String getFactoryBarcode(String barcode){
+        String factoryBarcode = null;
+        if (barcode.length() != 23){
+            // 判断是否三星客户条码
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("wanbaoCheckBarcode");
+            List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if (!specItems.isEmpty()){
+                SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess = new SearchMesSfcBarcodeProcess();
+                searchMesSfcBarcodeProcess.setIsCustomerBarcode(barcode);
+                List<MesSfcBarcodeProcessDto> mesSfcBarcodeProcessDtos = sfcFeignApi.findList(searchMesSfcBarcodeProcess).getData();
+                if (!mesSfcBarcodeProcessDtos.isEmpty()){
+                    factoryBarcode = mesSfcBarcodeProcessDtos.get(0).getBarcode();
+                }
+            }
+        }
+
+        if (factoryBarcode == null) {
+            SearchMesSfcKeyPartRelevance searchMesSfcKeyPartRelevance = new SearchMesSfcKeyPartRelevance();
+            searchMesSfcKeyPartRelevance.setPartBarcode(barcode);
+            List<MesSfcKeyPartRelevanceDto> mesSfcKeyPartRelevanceDtos = sfcFeignApi.findList(searchMesSfcKeyPartRelevance).getData();
+            if (!mesSfcKeyPartRelevanceDtos.isEmpty()) {
+                factoryBarcode = mesSfcKeyPartRelevanceDtos.get(0).getBarcodeCode();
+            }else{
+                factoryBarcode = barcode;
+            }
+        }
+        return factoryBarcode;
     }
 
     /**
