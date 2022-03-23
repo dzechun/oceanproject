@@ -216,6 +216,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             return false;
         }
         if (dto.getAnnex()) {
+            if (dto.getBarCode().equals(dto.getBarAnnexCode())){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "厂内码与附件码重复扫描");
+            }
             Example example = new Example(MesSfcKeyPartRelevance.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("partBarcode", dto.getBarAnnexCode());
