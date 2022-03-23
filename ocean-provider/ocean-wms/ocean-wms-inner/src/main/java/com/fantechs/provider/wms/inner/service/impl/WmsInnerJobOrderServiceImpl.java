@@ -81,8 +81,6 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     @Resource
     private SecurityFeignApi securityFeignApi;
     @Resource
-    private WmsDataExportInnerJobOrderService wmsDataExportInnerJobOrderService;
-    @Resource
     private WanbaoFeignApi wanbaoFeignApi;
 
     @Override
