@@ -495,23 +495,23 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         }
 
         //更新库存明细
-        Example example1 = new Example(WmsInnerJobOrderDetBarcode.class);
-        example1.createCriteria().andEqualTo("jobOrderDetId", dto.getJobOrderDetId());
-        List<WmsInnerJobOrderDetBarcode> orderDetBarcodeList = wmsInnerJobOrderDetBarcodeService.selectByExample(example1);
-        if (!orderDetBarcodeList.isEmpty()) {
-            for (WmsInnerJobOrderDetBarcode jobOrderDetBarcode : orderDetBarcodeList) {
-                Map<String, Object> map = new HashMap<>();
-                map.put("storageId", wmsInnerJobOrderDet.getOutStorageId());
-                map.put("barcode", jobOrderDetBarcode.getBarcode());
-                List<WmsInnerInventoryDetDto> inventoryDetDtos = wmsInnerInventoryDetService.findList(map);
-                if (inventoryDetDtos.isEmpty()) {
-                    throw new BizErrorException(ErrorCodeEnum.PDA5001004);
-                }
-                WmsInnerInventoryDetDto inventoryDetDto = inventoryDetDtos.get(0);
-                inventoryDetDto.setStorageId(dto.getStorageId());
-                wmsInnerInventoryDetService.update(inventoryDetDto);
-            }
-        }
+//        Example example1 = new Example(WmsInnerJobOrderDetBarcode.class);
+//        example1.createCriteria().andEqualTo("jobOrderDetId", dto.getJobOrderDetId());
+//        List<WmsInnerJobOrderDetBarcode> orderDetBarcodeList = wmsInnerJobOrderDetBarcodeService.selectByExample(example1);
+//        if (!orderDetBarcodeList.isEmpty()) {
+//            for (WmsInnerJobOrderDetBarcode jobOrderDetBarcode : orderDetBarcodeList) {
+//                Map<String, Object> map = new HashMap<>();
+//                map.put("storageId", wmsInnerJobOrderDet.getOutStorageId());
+//                map.put("barcode", jobOrderDetBarcode.getBarcode());
+//                List<WmsInnerInventoryDetDto> inventoryDetDtos = wmsInnerInventoryDetService.findList(map);
+//                if (inventoryDetDtos.isEmpty()) {
+//                    throw new BizErrorException(ErrorCodeEnum.PDA5001004);
+//                }
+//                WmsInnerInventoryDetDto inventoryDetDto = inventoryDetDtos.get(0);
+//                inventoryDetDto.setStorageId(dto.getStorageId());
+//                wmsInnerInventoryDetService.update(inventoryDetDto);
+//            }
+//        }
 
         // 变更移位单
         wms = new WmsInnerJobOrderDet();
