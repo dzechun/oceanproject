@@ -873,13 +873,15 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         //检验结果返写回库存
         SearchWmsInnerInventory  searchWmsInnerInventory = new SearchWmsInnerInventory();
         searchWmsInnerInventory.setInspectionOrderCode(inspectionOrderCode);
+        //2022/03/23 查询所有质检锁的库存 整批合格要更新库存合格状态
+        searchWmsInnerInventory.setQcLock((byte)1);
+                
         ResponseEntity<List<WmsInnerInventoryDto>> innerInventoryDtoList = innerFeignApi.findList(searchWmsInnerInventory);
         if(StringUtils.isEmpty(innerInventoryDtoList.getData())){
             throw new BizErrorException("未查询到对应库存信息");
         }
-        WmsInnerInventoryDto wmsInnerInventoryDto = new WmsInnerInventoryDto();
-        BeanUtils.copyProperties(innerInventoryDtoList.getData().get(0),wmsInnerInventoryDto);
-
+//        WmsInnerInventoryDto wmsInnerInventoryDto = new WmsInnerInventoryDto();
+//        BeanUtils.copyProperties(innerInventoryDtoList.getData().get(0),wmsInnerInventoryDto);
 
         SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
         searchBaseInventoryStatus.setInventoryStatusName(inspectionResult==0 ? "不合格" : "合格");
@@ -909,11 +911,19 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             innerFeignApi.update(innerInventoryDto);
             wmsInnerInventoryDto.setPackingQty(BigDecimal.ZERO);
             innerFeignApi.update(wmsInnerInventoryDto);
-        }else{*/
+        }else{
             wmsInnerInventoryDto.setQcLock((byte)0);
             wmsInnerInventoryDto.setInventoryStatusId(inventoryStatusList.get(0).getInventoryStatusId());
             innerFeignApi.update(wmsInnerInventoryDto);
-        //}
+        }*/
+
+        List<WmsInnerInventoryDto> inventoryDtoList=innerInventoryDtoList.getData();
+        for (WmsInnerInventoryDto innerInventoryDto : inventoryDtoList) {
+            innerInventoryDto.setQcLock((byte)0);
+            innerInventoryDto.setInventoryStatusId(inventoryStatusList.get(0).getInventoryStatusId());
+            innerInventoryDto.setModifiedTime(new Date());
+            innerFeignApi.update(innerInventoryDto);
+        }
 
         //检验结果返写回库存明细
         SearchWmsInnerInventoryDet  searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();

@@ -200,8 +200,9 @@ public class PickingOrderServiceImpl implements PickingOrderService {
      */
     private int addInventoryDet(String barcode,String jobOrderCode,WmsInnerJobOrderDet wmsInnerJobOrderDet){
         //获取完工入库单单号
+        String factoryBarcode=this.getFactoryBarcode(barcode);
         Example example = new Example(WmsInnerInventoryDet.class);
-        example.createCriteria().andEqualTo("barcode",barcode).andEqualTo("storageId",wmsInnerJobOrderDet.getOutStorageId())
+        example.createCriteria().andEqualTo("barcode",factoryBarcode).andEqualTo("storageId",wmsInnerJobOrderDet.getOutStorageId())
                 .andEqualTo("materialId",wmsInnerJobOrderDet.getMaterialId())
                 .andEqualTo("barcodeStatus",3)
                 .andEqualTo("orgId",wmsInnerJobOrderDet.getOrgId());
