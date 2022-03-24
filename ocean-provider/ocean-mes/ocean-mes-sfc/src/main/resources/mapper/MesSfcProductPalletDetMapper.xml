@@ -88,6 +88,7 @@
     sps.package_specification_quantity AS packing_unit_name,
     COUNT( msbp.work_order_id ) AS packing_qty,
     COUNT( msbp.work_order_id ) AS actual_qty,
+    oso.supplier_id,
     bs.supplier_name,
     mpwo.sales_code,
     oscrs.same_package_code,
