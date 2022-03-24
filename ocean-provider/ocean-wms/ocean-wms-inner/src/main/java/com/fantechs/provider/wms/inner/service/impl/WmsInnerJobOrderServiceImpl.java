@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.fastjson.JSON;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
@@ -40,6 +41,7 @@ import com.fantechs.provider.wms.inner.mapper.*;
 import com.fantechs.provider.wms.inner.service.*;
 import com.fantechs.provider.wms.inner.util.InBarcodeUtil;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -1310,7 +1312,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         //是否条码上架
         if(wmsInnerJobOrderDto.getOrderTypeId()!=9L) {
             if (StringUtils.isEmpty(barcode)) {
-                barcode = InBarcodeUtil.getWorkBarCodeList(wmsInnerJobOrderDto.getJobOrderId());
+                barcode = InBarcodeUtil.getWorkBarCodeList(jobOrderDetId);
             }
             String[] code = barcode.split(",");
             for (String s : code) {
@@ -1653,7 +1655,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 WmsInnerJobOrderDet wmsInnerJobOrderDet = record.getWmsInPutawayOrderDets().get(0);
                 for (BarPODto barPODto : record.getBarCodeList()){
                     WmsInnerJobOrderDetBarcode detBarcode = new WmsInnerJobOrderDetBarcode();
-                    BeanUtil.copyProperties(barPODto, detBarcode);
+                    detBarcode.setBarcode(barPODto.getBarCode());
+                    detBarcode.setCustomerBarcode(barPODto.getCutsomerBarcode());
+                    detBarcode.setSalesBarcode(barPODto.getSalesBarcode());
                     detBarcode.setJobOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
                     detBarcode.setStatus((byte) 1);
                     detBarcode.setOrgId(sysUser.getOrganizationId());
