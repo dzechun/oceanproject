@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.fastjson.JSON;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
@@ -9,6 +10,7 @@ import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseStorageRule;
 import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
+import com.fantechs.common.base.general.dto.wms.in.BarPODto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.entity.basic.BaseInventoryStatus;
@@ -39,6 +41,7 @@ import com.fantechs.provider.wms.inner.mapper.*;
 import com.fantechs.provider.wms.inner.service.*;
 import com.fantechs.provider.wms.inner.util.InBarcodeUtil;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,6 +85,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
     private SecurityFeignApi securityFeignApi;
     @Resource
     private WanbaoFeignApi wanbaoFeignApi;
+    @Resource
+    WmsInnerHtJobOrderDetBarcodeService wmsInnerHtJobOrderDetBarcodeService;
 
     @Override
     public List<WmsInnerJobOrderDto> findList(SearchWmsInnerJobOrder searchWmsInnerJobOrder) {
@@ -1307,7 +1312,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         //是否条码上架
         if(wmsInnerJobOrderDto.getOrderTypeId()!=9L) {
             if (StringUtils.isEmpty(barcode)) {
-                barcode = InBarcodeUtil.getWorkBarCodeList(wmsInnerJobOrderDto.getJobOrderId());
+                barcode = InBarcodeUtil.getWorkBarCodeList(jobOrderDetId);
             }
             String[] code = barcode.split(",");
             for (String s : code) {
@@ -1372,14 +1377,14 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         }
 
         // 2022-03-09 万宝项目 - 上架作业后释放堆垛
-        Example example = new Example(WmsInnerJobOrderReMspp.class);
-        example.createCriteria().andEqualTo("jobOrderId", wmsInnerJobOrderDto.getJobOrderId());
-        List<WmsInnerJobOrderReMspp> jobOrderReMspps = wmsInnerJobOrderReMsppMapper.selectByExample(example);
-        if (!jobOrderReMspps.isEmpty()){
-            WanbaoStacking stacking = wanbaoFeignApi.detail(jobOrderReMspps.get(0).getProductPalletId()).getData();
-            stacking.setUsageStatus((byte) 1);
-            wanbaoFeignApi.updateAndClearBarcode(stacking);
-        }
+//        Example example = new Example(WmsInnerJobOrderReMspp.class);
+//        example.createCriteria().andEqualTo("jobOrderId", wmsInnerJobOrderDto.getJobOrderId());
+//        List<WmsInnerJobOrderReMspp> jobOrderReMspps = wmsInnerJobOrderReMsppMapper.selectByExample(example);
+//        if (!jobOrderReMspps.isEmpty()){
+//            WanbaoStacking stacking = wanbaoFeignApi.detail(jobOrderReMspps.get(0).getProductPalletId()).getData();
+//            stacking.setUsageStatus((byte) 1);
+//            wanbaoFeignApi.updateAndClearBarcode(stacking);
+//        }
         return wmsInnerJobOrderDet;
     }
 
@@ -1637,6 +1642,39 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             int res = wmsInnerJobOrderReMsppMapper.insertSelective(wmsInnerJobOrderReMspp);
             if (res <= 0) {
                 throw new BizErrorException("上架单关联栈板失败");
+            }
+            /**
+             * 2022-03-24
+             * 万宝项目
+             * 增加上架作业单跟条码关系
+             * 因为堆垛需要在上架作业提交之前释放，导致上架作业单找不到条码，故，有此改动
+             */
+            if (!record.getBarCodeList().isEmpty()){
+                List<WmsInnerJobOrderDetBarcode> jobOrderDetBarcodeList = new ArrayList<>();
+                List<WmsInnerHtJobOrderDetBarcode> htJobOrderDetBarcodes = new ArrayList<>();
+                WmsInnerJobOrderDet wmsInnerJobOrderDet = record.getWmsInPutawayOrderDets().get(0);
+                for (BarPODto barPODto : record.getBarCodeList()){
+                    WmsInnerJobOrderDetBarcode detBarcode = new WmsInnerJobOrderDetBarcode();
+                    detBarcode.setBarcode(barPODto.getBarCode());
+                    detBarcode.setCustomerBarcode(barPODto.getCutsomerBarcode());
+                    detBarcode.setSalesBarcode(barPODto.getSalesBarcode());
+                    detBarcode.setJobOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
+                    detBarcode.setStatus((byte) 1);
+                    detBarcode.setOrgId(sysUser.getOrganizationId());
+                    detBarcode.setCreateTime(new Date());
+                    detBarcode.setCreateUserId(sysUser.getUserId());
+                    detBarcode.setIsDelete((byte) 1);
+                    jobOrderDetBarcodeList.add(detBarcode);
+                    WmsInnerHtJobOrderDetBarcode innerHtJobOrderDetBarcode = new WmsInnerHtJobOrderDetBarcode();
+                    BeanUtil.copyProperties(detBarcode, innerHtJobOrderDetBarcode);
+                    htJobOrderDetBarcodes.add(innerHtJobOrderDetBarcode);
+                }
+                if (jobOrderDetBarcodeList.size() > 0) {
+                    wmsInnerJobOrderDetBarcodeService.batchSave(jobOrderDetBarcodeList);
+                }
+                if (htJobOrderDetBarcodes.size() > 0) {
+                    wmsInnerHtJobOrderDetBarcodeService.batchSave(htJobOrderDetBarcodes);
+                }
             }
 
             //是否直接分配

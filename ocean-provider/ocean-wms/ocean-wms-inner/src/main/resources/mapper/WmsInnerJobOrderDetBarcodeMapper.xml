@@ -17,5 +17,7 @@
     <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="customer_barcode" jdbcType="VARCHAR" property="customerBarcode" />
+    <result column="sales_barcode" jdbcType="VARCHAR" property="salesBarcode" />
   </resultMap>
 </mapper>
