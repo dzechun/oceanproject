@@ -56,6 +56,7 @@ import java.util.stream.Collectors;
  * Created by Mr.Lei on 2021/05/06.
  */
 @Service
+@Slf4j
 public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> implements WmsInnerJobOrderService {
     @Resource
     private WmsInnerJobOrderMapper wmsInPutawayOrderMapper;
@@ -1609,6 +1610,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             } else if (record.getJobOrderType() == (byte) 2) {
                 // 生成库存，扣减原库存
                 WmsInnerInventory innerInventory = wmsInnerInventoryService.selectByKey(wmsInPutawayOrderDet.getSourceDetId());
+                log.info("============= 查库存信息" + JSON.toJSONString(innerInventory));
+                log.info("============= 移位明细信息" + JSON.toJSONString(wmsInPutawayOrderDet));
                 if (innerInventory.getPackingQty().compareTo(wmsInPutawayOrderDet.getPlanQty()) < 0) {
                     throw new BizErrorException(ErrorCodeEnum.PDA5001012);
                 }

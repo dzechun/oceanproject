@@ -1,5 +1,6 @@
 package com.fantechs.provider.guest.wanbao.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -47,6 +48,7 @@ import com.fantechs.provider.guest.wanbao.mapper.QmsInspectionOrderDetMapper;
 import com.fantechs.provider.guest.wanbao.mapper.QmsInspectionOrderDetSampleMapper;
 import com.fantechs.provider.guest.wanbao.mapper.QmsInspectionOrderMapper;
 import com.fantechs.provider.guest.wanbao.service.QmsInspectionOrderService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,6 +65,7 @@ import java.util.stream.Collectors;
  * Created by leifengzhi on 2021/05/25.
  */
 @Service
+@Slf4j
 public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrder> implements QmsInspectionOrderService {
 
     @Resource
@@ -238,6 +241,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             if(StringUtils.isEmpty(qmsInspectionOrderDet.getInspectionResult())) {
                 qmsInspectionOrderDet.setBadnessQty(BigDecimal.ZERO);
                 qmsInspectionOrderDet.setInspectionResult((byte) 1);
+                qmsInspectionOrderDet.setUnitName("台");
                 qmsInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsInspectionOrderDet);
 
                 //样本
@@ -368,10 +372,13 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             searchWmsInnerInventory.setStorageId(outStorageId);
             searchWmsInnerInventory.setLockStatus((byte) 0);
             searchWmsInnerInventory.setJobStatus((byte) 1);
-            searchWmsInnerInventory.setQcLock((byte)1);
             searchWmsInnerInventory.setInspectionOrderCode(orderCode);
             List<WmsInnerInventoryDto> inventoryDtos = innerFeignApi.findList(searchWmsInnerInventory).getData();
             if (StringUtils.isNotEmpty(inventoryDtos)) {
+                List<WmsInnerInventoryDto> dtoList=inventoryDtos.stream().filter(item -> item.getPackingQty() != null && item.getPackingQty().compareTo(new BigDecimal(0))==1).collect(Collectors.toList());
+
+                log.info("============= 库存数据" + JSON.toJSONString(dtoList));
+
                 //存在合格的库存才生成移位单
                 List<QmsInspectionOrderDetSample> ngQualifiedBarcodes = list.stream().filter(item -> item.getBarcodeStatus() != null && item.getBarcodeStatus() == 0).collect(Collectors.toList());
                 List<QmsInspectionOrderDetSample> goodQualifiedBarcodes = list.stream().filter(item -> item.getBarcodeStatus() == null || item.getBarcodeStatus() != 0).collect(Collectors.toList());
@@ -398,7 +405,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                     wmsInnerJobOrderDet.setDistributionQty(ngQty);
                     wmsInnerJobOrderDet.setOutStorageId(outStorageId);
                     wmsInnerJobOrderDet.setInStorageId(inStorageId);
-                    wmsInnerJobOrderDet.setSourceDetId(inventoryDtos.get(0).getInventoryId());
+                    if(dtoList.size()>0) {
+                        wmsInnerJobOrderDet.setSourceDetId(dtoList.get(0).getInventoryId());
+                    }
                     wmsInnerJobOrderDet.setOrderStatus((byte) 3);
                     if (statusList.size() > 0) {
                         wmsInnerJobOrderDet.setInventoryStatusId(statusList.get(0).getInventoryStatusId());
@@ -408,6 +417,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                     }
 
                     detList.add(wmsInnerJobOrderDet);
+
+                    log.info("============= 不良数量" + JSON.toJSONString(ngQty));
                 }
                 if (goodQty.compareTo(new BigDecimal(0)) == 1) {
                     List<BaseInventoryStatus> statusList = inventoryStatusList.stream().filter(item -> item.getInventoryStatusName().equals("合格")).collect(Collectors.toList());
@@ -417,7 +428,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                     wmsInnerJobOrderDet.setDistributionQty(goodQty);
                     wmsInnerJobOrderDet.setOutStorageId(outStorageId);
                     wmsInnerJobOrderDet.setInStorageId(inStorageId);
-                    wmsInnerJobOrderDet.setSourceDetId(inventoryDtos.get(0).getInventoryId());
+                    if(dtoList.size()>0) {
+                        wmsInnerJobOrderDet.setSourceDetId(dtoList.get(0).getInventoryId());
+                    }
                     wmsInnerJobOrderDet.setOrderStatus((byte) 3);
                     if (statusList.size() > 0) {
                         wmsInnerJobOrderDet.setInventoryStatusId(statusList.get(0).getInventoryStatusId());
@@ -427,7 +440,11 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                     }
 
                     detList.add(wmsInnerJobOrderDet);
+
+                    log.info("============= 良品数量" + JSON.toJSONString(goodQty));
                 }
+
+                log.info("============= 明细信息" + JSON.toJSONString(detList));
 
                 wmsInnerJobOrder.setWmsInPutawayOrderDets(detList);
                 ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
@@ -517,10 +534,10 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         }*/
 
         //不做合并库存操作
-        wmsInnerInventoryDto.setQcLock((byte)0);
+        /*wmsInnerInventoryDto.setQcLock((byte)0);
         wmsInnerInventoryDto.setInventoryStatusId(inventoryStatusList1.get(0).getInventoryStatusId());
         wmsInnerInventoryDto.setPackingQty(new BigDecimal(unQualifiedCount));
-        innerFeignApi.update(wmsInnerInventoryDto);
+        innerFeignApi.update(wmsInnerInventoryDto);*/
 
         //合并合格库存
         BigDecimal qty = innerInventoryDto.getPackingQty().subtract(new BigDecimal(unQualifiedCount));

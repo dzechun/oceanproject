@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
@@ -45,6 +46,7 @@ import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
 import com.fantechs.provider.wms.inner.service.PickingOrderService;
 import com.fantechs.provider.wms.inner.util.InBarcodeUtil;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -59,6 +61,7 @@ import java.util.stream.Collectors;
  * @Date 2021/5/10
  */
 @Service
+@Slf4j
 public class PickingOrderServiceImpl implements PickingOrderService {
 
     @Resource
@@ -433,6 +436,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 }
             }
 
+            log.info("============= 推荐库位库存数据" + JSON.toJSONString(listMap));
+
             //成功自动分配数量
             int success = 0;
             for (WmsInnerJobOrderDet wms : list) {
@@ -474,6 +479,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
 
                             planQty=new BigDecimal(0);
                             storageRuleInventry.setMaterialQty(packingQty.subtract(planQty));
+
+                            log.info("============= 库存足 拣货明细数据" + JSON.toJSONString(wms));
 
                             //分配库存
                             num += this.DistributionInventory(wmsInnerJobOrder, wms,1,null);
