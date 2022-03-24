@@ -352,16 +352,36 @@
     </select>
 
     <update id="batchUpdate" parameterType="java.util.ArrayList">
-        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
-            update mes_pm_work_order
-            <set>
-                output_qty = #{item.outputQty},
-                pro_line_id = #{item.proLineId},
-                route_id = #{item.routeId},
-                sales_code = #{item.salesCode},
-                sales_order_id = #{item.salesOrderId}
-            </set>
-            where work_order_id =#{item.workOrderId}
+        update mes_pm_work_order
+        SET output_qty =
+        <foreach collection="list" item="item" index="index"
+                 separator=" " open="case" close="end">
+            when work_order_id=#{item.workOrderId} then #{item.outputQty}
+        </foreach>,
+        pro_line_id =
+        <foreach collection="list" item="item" index="index"
+                 separator=" " open="case" close="end">
+            when work_order_id=#{item.workOrderId} then #{item.proLineId}
+        </foreach>,
+        route_id =
+        <foreach collection="list" item="item" index="index"
+                 separator=" " open="case" close="end">
+            when work_order_id=#{item.workOrderId} then #{item.routeId}
+        </foreach>,
+        sales_code =
+        <foreach collection="list" item="item" index="index"
+                 separator=" " open="case" close="end">
+            when work_order_id=#{item.workOrderId} then #{item.salesCode}
+        </foreach>,
+        sales_order_id =
+        <foreach collection="list" item="item" index="index"
+                 separator=" " open="case" close="end">
+            when work_order_id=#{item.workOrderId} then #{item.salesOrderId}
+        </foreach>
+        where work_order_id in
+        <foreach collection="list" index="index" item="item"
+                 separator="," open="(" close=")">
+            #{item.workOrderId,jdbcType=BIGINT}
         </foreach>
     </update>
 </mapper>

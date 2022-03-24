@@ -359,7 +359,6 @@ public class SyncDataServiceImpl implements SyncDataService {
                 workOrder.setCreateUserId(sysUser.getUserId());
                 workOrder.setModifiedUserId(sysUser.getUserId());
                 workOrder.setModifiedTime(new Date());
-                workOrder.setSalesCode(order.getSalesCode());
 
                 // 2021-11-18
                 // 欢欢确定万宝同步工单时，工艺路线按产线匹配，产线由工单编码前缀确定
@@ -399,8 +398,6 @@ public class SyncDataServiceImpl implements SyncDataService {
                 for (OmSalesOrderDto item : salesOrderDtos) {
                     if (item.getSalesOrderCode().equals(order.getSalesOrderCode())) {
                         workOrder.setSalesOrderId(item.getSalesOrderId());
-                        // 记录销售编码
-                        workOrder.setSalesCode(item.getSalesCode());
                         break;
                     }
                 }
