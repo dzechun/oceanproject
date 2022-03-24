@@ -358,6 +358,7 @@
                 output_qty = #{item.outputQty},
                 pro_line_id = #{item.proLineId},
                 route_id = #{item.routeId},
+                sales_code = #{item.salesCode},
                 sales_order_id = #{item.salesOrderId}
             </set>
             where work_order_id =#{item.workOrderId}
