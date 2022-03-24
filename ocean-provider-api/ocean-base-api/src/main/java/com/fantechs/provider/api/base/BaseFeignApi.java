@@ -625,4 +625,8 @@ public interface BaseFeignApi {
     @ApiOperation(value = "出库规则",notes = "出库规则")
     @PostMapping("/storageRule/outRule")
     ResponseEntity<Long> outRule(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseStorageRule baseStorageRule);
+
+    @ApiOperation(value = "出库规则",notes = "出库规则")
+    @PostMapping("/storageRule/returnOutStorage")
+    ResponseEntity<List<StorageRuleInventry>> returnOutStorage(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseStorageRule baseStorageRule);
 }

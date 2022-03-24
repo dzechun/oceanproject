@@ -732,17 +732,19 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
         //生成的质检移位单判断
         Long jobOrderId=null;
-        String inspectionOrderCode=qmsInspectionOrder.getInspectionOrderCode();
-        SearchWmsInnerJobOrder searchWmsInnerJobOrder=new SearchWmsInnerJobOrder();
-        searchWmsInnerJobOrder.setRelatedOrderCode(inspectionOrderCode);
-        searchWmsInnerJobOrder.setCodeQueryMark(1);
-        List<WmsInnerJobOrderDto> orderDtoList=innerFeignApi.findList(searchWmsInnerJobOrder).getData();
-        if(StringUtils.isNotEmpty(orderDtoList) && orderDtoList.size()>0){
-            if(orderDtoList.get(0).getOrderStatus()>=4){
-                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"质检移位单已作业或已完成 不能修改-->"+orderDtoList.get(0).getJobOrderCode());
-            }
+        if(type!=(byte)0) {
+            String inspectionOrderCode = qmsInspectionOrder.getInspectionOrderCode();
+            SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
+            searchWmsInnerJobOrder.setRelatedOrderCode(inspectionOrderCode);
+            searchWmsInnerJobOrder.setCodeQueryMark(1);
+            List<WmsInnerJobOrderDto> orderDtoList = innerFeignApi.findList(searchWmsInnerJobOrder).getData();
+            if (StringUtils.isNotEmpty(orderDtoList) && orderDtoList.size() > 0) {
+                if (orderDtoList.get(0).getOrderStatus() >= 4) {
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "质检移位单已作业或已完成 不能修改-->" + orderDtoList.get(0).getJobOrderCode());
+                }
 
-            jobOrderId=orderDtoList.get(0).getJobOrderId();
+                jobOrderId = orderDtoList.get(0).getJobOrderId();
+            }
         }
 
         qmsInspectionOrder.setModifiedUserId(user.getUserId());
@@ -813,7 +815,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
         //改了样本数 从新生成质检移位单
         BigDecimal qty = qmsInspectionOrderDets.get(0).getSampleQty();
-        if(StringUtils.isNotEmpty(jobOrderId) && StringUtils.isNotEmpty(qty)) {
+        if(StringUtils.isNotEmpty(jobOrderId) && StringUtils.isNotEmpty(qty) && type!=(byte)0) {
             innerFeignApi.reCreateInnerJobShift(jobOrderId,qty);
         }
         return i;
