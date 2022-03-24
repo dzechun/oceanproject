@@ -368,6 +368,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             searchWmsInnerInventory.setStorageId(outStorageId);
             searchWmsInnerInventory.setLockStatus((byte) 0);
             searchWmsInnerInventory.setJobStatus((byte) 1);
+            searchWmsInnerInventory.setQcLock((byte)1);
             searchWmsInnerInventory.setInspectionOrderCode(orderCode);
             List<WmsInnerInventoryDto> inventoryDtos = innerFeignApi.findList(searchWmsInnerInventory).getData();
             if (StringUtils.isNotEmpty(inventoryDtos)) {
