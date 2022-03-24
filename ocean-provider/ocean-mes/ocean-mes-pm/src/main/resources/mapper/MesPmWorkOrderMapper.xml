@@ -355,7 +355,11 @@
         <foreach collection="list" item="item" index="index" open="" close="" separator=";">
             update mes_pm_work_order
             <set>
-                output_qty = #{item.outputQty}
+                output_qty = #{item.outputQty},
+                pro_line_id = #{item.proLineId},
+                route_id = #{item.routeId},
+                sales_code = #{item.salesCode},
+                sales_order_id = #{item.salesOrderId}
             </set>
             where work_order_id =#{item.workOrderId}
         </foreach>

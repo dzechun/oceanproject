@@ -269,10 +269,22 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
 
     @Override
     public List<OmSalesOrderDto> findAll() {
+        long start = System.currentTimeMillis();
         SysUser currentUserInfo = CurrentUserInfoUtils.getCurrentUserInfo();
         Map<String, Object> map = new HashMap<>();
         map.put("orgId",currentUserInfo.getOrganizationId());
-        List<OmSalesOrderDto> omSalesOrderDtoList = omSalesOrderMapper.findList(map);
+        List<OmSalesOrderDto> omSalesOrderDtoList = omSalesOrderMapper.findAll(map);
+        List<OmSalesOrderDetDto> omSalesOrderDetDtos = omSalesOrderDetMapper.findList(map);
+        for (OmSalesOrderDto salesOrderDto : omSalesOrderDtoList){
+            List<OmSalesOrderDetDto> omSalesOrderDetDtoList = new ArrayList<>();
+            for (OmSalesOrderDetDto salesOrderDetDto : omSalesOrderDetDtos){
+                if (salesOrderDetDto.getSalesOrderId().equals(salesOrderDto.getSalesOrderId())){
+                    omSalesOrderDetDtoList.add(salesOrderDetDto);
+                }
+            }
+            salesOrderDto.setOmSalesOrderDetDtoList(omSalesOrderDetDtoList);
+        }
+        log.info("============== 耗时：" + (System.currentTimeMillis() - start));
         return omSalesOrderDtoList;
     }
 
