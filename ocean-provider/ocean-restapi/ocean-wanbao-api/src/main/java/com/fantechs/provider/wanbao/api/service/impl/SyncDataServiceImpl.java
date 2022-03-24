@@ -580,6 +580,8 @@ public class SyncDataServiceImpl implements SyncDataService {
                         Long supplierId = baseFeignApi.saveForReturnID(baseSupplier).getData();
                         saleOrder.setSupplierId(supplierId.toString());
                         omSalesOrder.setSupplierId(supplierId);
+                        baseSupplier.setSupplierId(supplierId);
+                        baseSuppliers.add(baseSupplier);
                     }
 
                     // 物料

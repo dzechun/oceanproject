@@ -51,6 +51,14 @@
         </collection>
     </resultMap>
 
+    <resultMap id="BaseResultMapDtoByAll" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.om.OmSalesOrderDto">
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
+        <result column="barcode_rule_set_name" jdbcType="VARCHAR" property="barcodeRuleSetName"/>
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+
     <sql id="Base_Column_List">
     so.sales_order_id, so.sales_order_code, so.contract_code, so.supplier_id, so.customer_order_code,
     so.source_order_code, so.source_order_line_number, so.barcode_rule_set_id, so.delivery_type, so.sales_dept,
@@ -134,6 +142,24 @@
                 and so.remark like CONCAT('%',#{remark},'%')
             </if>
         </where>
+        order by so.modified_time desc
+    </select>
+
+    <select id="findAll" parameterType="map" resultMap="BaseResultMapDtoByAll">
+        select
+        <include refid="Base_Column_List"/>,
+        bs.supplier_name,
+        bbrs.barcode_rule_set_name,
+        suc.user_name as create_user_name,
+        bo.organization_name,
+        sumod.user_name as modified_user_name
+        from om_sales_order so
+        left join base_supplier bs on so.supplier_id = bs.supplier_id
+        left join base_barcode_rule_set bbrs on so.barcode_rule_set_id = bbrs.barcode_rule_set_id
+        left join ocean_v2.sys_user suc on so.create_user_id = suc.user_id
+        left join base_organization bo on so.org_id = bo.organization_id
+        left join ocean_v2.sys_user sumod on so.modified_user_id = sumod.user_id
+        where so.org_id = #{orgId}
         order by so.modified_time desc
     </select>
 
