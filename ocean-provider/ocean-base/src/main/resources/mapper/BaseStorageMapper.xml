@@ -347,7 +347,8 @@ order by wii.modified_time desc limit 1
         ORDER BY production_date DESC) a
         LEFT JOIN base_inventory_status bis ON a.inventory_status_id = bis.inventory_status_id
         GROUP BY storage_id,material_id,sales_barcode,option4,inventory_status_id
-        HAVING materialQty &gt;= #{materialQty} and bis.inventory_status_name='合格'
+        HAVING materialQty &gt; #{materialQty} and bis.inventory_status_name='合格'
+        ORDER BY production_date
     </select>
     <select id="findEmptyStorage" resultType="java.lang.Long">
         SELECT storage_id FROM (SELECT storage_id FROM base_storage
