@@ -3,6 +3,7 @@ package com.fantechs.common.base.general.entity.wms.inner;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fantechs.common.base.general.dto.basic.BaseStorageRule;
+import com.fantechs.common.base.general.dto.wms.in.BarPODto;
 import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -288,4 +289,10 @@ public class WmsInnerJobOrder extends ValidGroup implements Serializable {
     private Date releaseTime;
 
     // ========= 20220321 万宝项目上架作业添加释放堆垛功能，增加一下字段  =========
+
+    // ========= 20220324 万宝项目释放堆垛变更，堆垛释放变更在上架作业提交前  =========
+    @Transient
+    @ApiModelProperty(name = "BaseStorageRule",value = "入库规则对象")
+    private List<BarPODto> barCodeList;
+    // ========= 20220324 万宝项目释放堆垛变更，堆垛释放变更在上架作业提交前  =========
 }
