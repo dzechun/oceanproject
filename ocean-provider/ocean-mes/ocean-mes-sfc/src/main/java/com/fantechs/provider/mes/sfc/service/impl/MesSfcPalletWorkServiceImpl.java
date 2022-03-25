@@ -104,7 +104,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         searchWmsInnerInventoryDet.setBarcode(requestPalletWorkScanDto.getBarcode());
         List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
         if (!inventoryDetDtos.isEmpty()){
-            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此条码已入库，不可重复扫码，请检查是否品质重新入库");
+            return new PalletWorkScanDto();
         }
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
