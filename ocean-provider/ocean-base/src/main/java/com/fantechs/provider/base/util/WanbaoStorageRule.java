@@ -171,7 +171,7 @@ public class WanbaoStorageRule {
         if(StringUtils.isEmpty(baseStorageRule.getMaterialId(),baseStorageRule.getQty())){
             throw new BizErrorException(ErrorCodeEnum.GL99990100);
         }
-        List<StorageRuleInventry> storageRuleInventries = wanbaoStorageRule.baseStorageMapper.findOutInv(ControllerUtil.dynamicCondition("materialId",baseStorageRule.getMaterialId(),
+        List<StorageRuleInventry> storageRuleInventries = wanbaoStorageRule.baseStorageMapper.findOutStorage(ControllerUtil.dynamicCondition("materialId",baseStorageRule.getMaterialId(),
                 "salesBarcode",baseStorageRule.getSalesBarcode(),"poCode",baseStorageRule.getPoCode(),"materialQty",baseStorageRule.getQty()));
         if(StringUtils.isEmpty(storageRuleInventries)||storageRuleInventries.size()<1){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"未获取到符合条件的出库库位");

@@ -29,7 +29,7 @@ public interface BaseStorageMapper extends MyMapper<BaseStorage> {
 
     /**
      * 查询小于30天的同批次库存
-     * @param map
+     * @param
      * @return
      */
     List<StorageRuleInventry> findInv(@Param("storageIds") List<BaseStorage>storageIds,@Param("materialId") Long materialId,@Param("salesBarcode") String salesBarcode,@Param("poCode") String poCode,@Param("inventoryStatusId")Long inventoryStatusId);
@@ -42,4 +42,7 @@ public interface BaseStorageMapper extends MyMapper<BaseStorage> {
     List<StorageRuleInventry> findOutInv(Map<String,Object> map);
 
     List<Long> findEmptyStorage(@Param("storageIds") List<BaseStorage>storageIds);
+
+    List<StorageRuleInventry> findOutStorage(Map<String,Object> map);
+
 }
