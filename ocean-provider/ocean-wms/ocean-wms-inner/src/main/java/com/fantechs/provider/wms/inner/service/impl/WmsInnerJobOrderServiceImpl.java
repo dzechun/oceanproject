@@ -2136,6 +2136,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
     @Override
     @Transactional
+    @LcnTransaction
     public int updateShit(Long jobOrderId, BigDecimal ngQty) {
         int i=0;
         SysUser sysUser=currentUser();
@@ -2160,7 +2161,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                                 .andEqualTo("inventoryStatusId",statusList.get(0).getInventoryStatusId());
         List<WmsInnerJobOrderDet> jobOrderDetList = wmsInPutawayOrderDetMapper.selectByExample(example);
         if(jobOrderDetList.size()>0){
-            if(ngQty.compareTo(jobOrderDetList.get(0).getPlanQty())==-1){
+            if(ngQty.compareTo(new BigDecimal(0))==1 && ngQty.compareTo(jobOrderDetList.get(0).getPlanQty())==-1){
                 WmsInnerJobOrderDet wmsInnerJobOrderDet=jobOrderDetList.get(0);
                 wmsInnerJobOrderDet.setPlanQty(ngQty);
                 wmsInnerJobOrderDet.setDistributionQty(ngQty);
@@ -2180,7 +2181,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 newDet.setCreateTime(new Date());
                 i+=wmsInPutawayOrderDetMapper.insertUseGeneratedKeys(newDet);
 
-                SearchWmsInnerInventory searchWmsInnerInventory=new SearchWmsInnerInventory();
+                /*SearchWmsInnerInventory searchWmsInnerInventory=new SearchWmsInnerInventory();
                 searchWmsInnerInventory.setMaterialId(wmsInnerJobOrderDet.getMaterialId());
                 searchWmsInnerInventory.setStorageId(wmsInnerJobOrderDet.getOutStorageId());
                 searchWmsInnerInventory.setLockStatus((byte)0);
@@ -2209,8 +2210,15 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 i+=wmsInnerInventoryService.save(newInnerInventory);
                 // 变更减少原库存
                 innerInventory.setPackingQty(innerInventory.getPackingQty().subtract(newQty));
-                i+=wmsInnerInventoryService.update(innerInventory);
+                i+=wmsInnerInventoryService.update(innerInventory);*/
 
+            }
+            else if(ngQty.compareTo(new BigDecimal(0))==0){
+                WmsInnerJobOrderDet wmsInnerJobOrderDet=jobOrderDetList.get(0);
+                wmsInnerJobOrderDet.setInventoryStatusId(statusOKList.get(0).getInventoryStatusId());
+                wmsInnerJobOrderDet.setModifiedUserId(sysUser.getUserId());
+                wmsInnerJobOrderDet.setModifiedTime(new Date());
+                i=wmsInPutawayOrderDetMapper.updateByPrimaryKeySelective(wmsInnerJobOrderDet);
             }
             else {
                 //不合格数量大于初检的不合格数量报错
