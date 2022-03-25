@@ -219,7 +219,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                             } else {
                                 tab.setMaterialProperty((byte) 0);
                             }
-                            tab.setVoltage(dto.getVoltage());
+//                            tab.setVoltage(dto.getVoltage());
                             if (StringUtils.isNotEmpty(dto.getProductModelId())) {
                                 tab.setProductModelId(Long.valueOf(dto.getProductModelId()));
                             }
