@@ -328,7 +328,15 @@ order by wii.modified_time desc limit 1
         HAVING TIMESTAMPDIFF(DAY,production_date,DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%S'))&lt;30
     </select>
     <select id="findOutInv" resultType="com.fantechs.common.base.general.dto.basic.StorageRuleInventry">
-        SELECT storage_id as 'storageId',material_id as 'materialId',option3 as 'salesBarcode',option4 as 'poCode',sum(material_qty) as 'materialQty',production_date,a.inventory_status_id,bis.inventory_status_name  FROM (SELECT storage_id,material_id,sales_barcode,option4,material_qty,production_date,inventory_status_id
+        SELECT storage_id as 'storageId',
+        material_id as 'materialId',
+        option3 as 'salesBarcode',
+        option4 as 'poCode',
+        sum(material_qty) as 'materialQty',
+        production_date,
+        a.inventory_status_id,
+        bis.inventory_status_name
+        FROM (SELECT storage_id,material_id,sales_barcode,option4,material_qty,production_date,inventory_status_id
         FROM wms_inner_inventory_det
         <where>
             <if test="storageId!=null and storageId!=null">
@@ -345,6 +353,42 @@ order by wii.modified_time desc limit 1
             </if>
         </where>
         ORDER BY production_date DESC) a
+        LEFT JOIN base_inventory_status bis ON a.inventory_status_id = bis.inventory_status_id
+        GROUP BY storage_id,material_id,sales_barcode,option4,inventory_status_id
+        HAVING materialQty &gt;= #{materialQty} and bis.inventory_status_name='合格'
+    </select>
+
+    <select id="findOutStorage" resultType="com.fantechs.common.base.general.dto.basic.StorageRuleInventry">
+        SELECT storage_id as 'storageId',
+        material_id as 'materialId',
+        option3 as 'salesBarcode',
+        option4 as 'poCode',
+        sum(material_qty) as 'materialQty',
+        production_date,
+        a.inventory_status_id,
+        bis.inventory_status_name
+        FROM (SELECT det.storage_id,det.material_id,det.sales_barcode,det.option4,det.material_qty,det.production_date,det.inventory_status_id
+        FROM wms_inner_inventory_det det
+        LEFT JOIN base_storage bs ON det.storage_id=bs.storage_id
+        <where>
+            <if test="storageId!=null and storageId!=null">
+                and storage_id = #{storageId}
+            </if>
+            <if test="materialId!=null and materialId!=''">
+                AND det.material_id = #{materialId}
+                AND det.barcode_status=3
+                AND det.if_stock_lock=0
+                AND bs.storage_code NOT IN ('Z-QC','Z-SX')
+                AND bs.storage_type=1
+            </if>
+            <if test="salesBarcode!=null and salesBarcode!=''">
+                and option3 = #{salesBarcode}
+            </if>
+            <if test="poCode!=null and poCode!=''">
+                and option4 = #{poCode}
+            </if>
+        </where>
+        ORDER BY production_date ASC) a
         LEFT JOIN base_inventory_status bis ON a.inventory_status_id = bis.inventory_status_id
         GROUP BY storage_id,material_id,sales_barcode,option4,inventory_status_id
         HAVING materialQty &gt; #{materialQty} and bis.inventory_status_name='合格'
