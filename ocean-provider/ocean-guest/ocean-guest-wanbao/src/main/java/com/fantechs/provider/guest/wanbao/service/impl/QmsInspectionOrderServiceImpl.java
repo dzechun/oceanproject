@@ -179,6 +179,12 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         Example.Criteria criteria1 = example1.createCriteria();
         criteria1.andEqualTo("inspectionOrderId",inspectionOrderId);
         List<QmsInspectionOrderDetSample> qmsInspectionOrderDetSamples = qmsInspectionOrderDetSampleMapper.selectByExample(example1);
+        for (QmsInspectionOrderDetSample DetSample : qmsInspectionOrderDetSamples) {
+            DetSample.setBarcodeStatus((byte)1);
+            DetSample.setModifiedUserId(user.getUserId());
+            DetSample.setModifiedTime(new Date());
+            qmsInspectionOrderDetSampleMapper.updateByPrimaryKeySelective(DetSample);
+        }
 
         List<QmsInspectionOrderDetSample> inspectionOrderDetSampleList = new LinkedList<>();
         for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
