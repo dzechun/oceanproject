@@ -17,9 +17,9 @@ public class WorkOrderUreportDto implements Serializable {
     @Excel(name = "计划类型", height = 20, width = 30)
     private String type;
 
-    @ApiModelProperty(name="proLineName",value = "产线")
+    @ApiModelProperty(name="proName",value = "产线")
     @Excel(name = "产线", height = 20, width = 30)
-    private String proLineName;
+    private String proName;
 
     @ApiModelProperty(name="workOrderCode",value = "计划名字")
     @Excel(name = "", height = 20, width = 30)
