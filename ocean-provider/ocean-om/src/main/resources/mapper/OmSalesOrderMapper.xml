@@ -96,14 +96,13 @@
             <if test="orgId != null">
                 and so.org_id = #{orgId}
             </if>
+            <if test="supplierName != null and supplierName !=''">
+                and bs.supplier_name LIKE CONCAT('%', #{supplierName}, '%')
+            </if>
 
             <if test="createUserName != null and createUserName !=''">
                 and suc.user_name = #{createUserName}
             </if>
-            <if test="makeOrderUserName != null and makeOrderUserName !=''">
-                and so.make_order_user_name = #{makeOrderUserName}
-            </if>
-
             <if test="auditUserName != null and auditUserName !=''">
                 and so.audit_user_name = #{auditUserName}
             </if>
@@ -133,7 +132,7 @@
                 and so.order_type like CONCAT('%',#{orderType},'%')
             </if>
             <if test="makeOrderUserName!=null and makeOrderUserName!=''">
-                and so.make_order_user_name lile CONCAT('%',#{makeOrderUserName},'%')
+                and so.make_order_user_name like CONCAT('%',#{makeOrderUserName},'%')
             </if>
             <if test="auditUserName!=null and auditUserName!=''">
                 and so.audit_user_name like CONCAT('%',#{auditUserName},'%')
