@@ -159,7 +159,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         criteria1.andIn("inspectionOrderDetId",detIds);
         qmsInspectionOrderDetSampleMapper.deleteByExample(example1);
 
-        return batchQualified(inspectionOrderId);
+        //return batchQualified(inspectionOrderId);
+        return recheckBatchQualified(inspectionOrderId);
     }
 
     @Override
@@ -216,6 +217,64 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
         //处理库存
         this.handleInventory(qmsInspectionOrder.getInspectionOrderCode(),qmsInspectionOrder.getInspectionResult());
+
+        //生成移位单
+        createJobOrderShift(qmsInspectionOrderDetSamples,qmsInspectionOrder,user);
+
+        return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
+    public int recheckBatchQualified(Long inspectionOrderId){
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
+        QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(inspectionOrderId);
+
+        Example example = new Example(QmsInspectionOrderDet.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("inspectionOrderId",inspectionOrderId);
+        List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.selectByExample(example);
+
+        Example example1 = new Example(QmsInspectionOrderDetSample.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("inspectionOrderId",inspectionOrderId);
+        List<QmsInspectionOrderDetSample> qmsInspectionOrderDetSamples = qmsInspectionOrderDetSampleMapper.selectByExample(example1);
+        for (QmsInspectionOrderDetSample DetSample : qmsInspectionOrderDetSamples) {
+            DetSample.setBarcodeStatus((byte)1);
+            DetSample.setModifiedUserId(user.getUserId());
+            DetSample.setModifiedTime(new Date());
+            qmsInspectionOrderDetSampleMapper.updateByPrimaryKeySelective(DetSample);
+        }
+
+        List<QmsInspectionOrderDetSample> inspectionOrderDetSampleList = new LinkedList<>();
+        for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
+            //明细
+            qmsInspectionOrderDet.setBadnessQty(BigDecimal.ZERO);
+            qmsInspectionOrderDet.setInspectionResult((byte)1);
+            qmsInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsInspectionOrderDet);
+
+            //样本
+            for(QmsInspectionOrderDetSample qmsInspectionOrderDetSample : qmsInspectionOrderDetSamples){
+                QmsInspectionOrderDetSample inspectionOrderDetSample = new QmsInspectionOrderDetSample();
+                inspectionOrderDetSample.setInspectionOrderDetId(qmsInspectionOrderDet.getInspectionOrderDetId());
+                inspectionOrderDetSample.setBarcode(qmsInspectionOrderDetSample.getBarcode());
+                inspectionOrderDetSample.setBarcodeStatus((byte)1);
+                inspectionOrderDetSample.setSampleValue("OK");
+                inspectionOrderDetSample.setOrgId(user.getOrganizationId());
+                inspectionOrderDetSample.setInspectionOrderId(inspectionOrderId);
+                inspectionOrderDetSampleList.add(inspectionOrderDetSample);
+            }
+        }
+        if(StringUtils.isNotEmpty(inspectionOrderDetSampleList)) {
+            qmsInspectionOrderDetSampleMapper.insertList(inspectionOrderDetSampleList);
+        }
+
+        qmsInspectionOrder.setInspectionStatus((byte)3);
+        qmsInspectionOrder.setInspectionResult((byte)1);
+        qmsInspectionOrder.setInspectionUserId(user.getUserId());
+        int i = qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);
 
         //生成移位单
         createJobOrderShift(qmsInspectionOrderDetSamples,qmsInspectionOrder,user);
