@@ -91,9 +91,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
     @Override
     public List<WmsInnerJobOrderDto> findList(SearchWmsInnerJobOrder searchWmsInnerJobOrder) {
+        SysUser sysUser = currentUser();
         if(StringUtils.isEmpty(searchWmsInnerJobOrder.getOrgId())) {
-            SysUser sysUser = currentUser();
             searchWmsInnerJobOrder.setOrgId(sysUser.getOrganizationId());
+        }
+        if (searchWmsInnerJobOrder.getJobOrderType() == (byte) 4){
+            searchWmsInnerJobOrder.setUserId(sysUser.getUserId());
         }
         return wmsInPutawayOrderMapper.findList(searchWmsInnerJobOrder);
     }
