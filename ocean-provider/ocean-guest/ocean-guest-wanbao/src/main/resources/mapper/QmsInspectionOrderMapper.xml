@@ -15,6 +15,7 @@
     <result column="order_qty" jdbcType="DECIMAL" property="orderQty" />
     <result column="inspection_standard_id" jdbcType="BIGINT" property="inspectionStandardId" />
     <result column="inspection_way_id" jdbcType="BIGINT" property="inspectionWayId" />
+    <result column="recheck_status" jdbcType="TINYINT" property="recheckStatus" />
     <result column="inspection_status" jdbcType="TINYINT" property="inspectionStatus" />
     <result column="inspection_result" jdbcType="TINYINT" property="inspectionResult" />
     <result column="inspection_user_id" jdbcType="BIGINT" property="inspectionUserId" />
@@ -68,6 +69,7 @@
     qio.inspection_status,
     qio.inspection_result,
     qio.inspection_user_id,
+    qio.recheck_status,
     qio.audit_status,
     qio.audit_dept_id,
     qio.audit_user_id,

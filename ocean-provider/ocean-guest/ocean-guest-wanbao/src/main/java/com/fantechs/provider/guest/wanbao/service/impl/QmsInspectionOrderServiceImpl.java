@@ -144,6 +144,10 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
     public int recheck(Long inspectionOrderId){
+        QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(inspectionOrderId);
+        qmsInspectionOrder.setRecheckStatus((byte)2);
+        qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);
+
         Example example = new Example(QmsInspectionOrderDet.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("inspectionOrderId",inspectionOrderId);
