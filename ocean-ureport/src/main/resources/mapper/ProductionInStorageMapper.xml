@@ -104,6 +104,7 @@
     </select>
     <select id="findOmList" resultMap="BaseResultOmMap">
         SELECT
+        DISTINCT
         bo.organization_name,
         wiid.option3 AS sales_order_code,
         bw.warehouse_name,
@@ -150,7 +151,7 @@
                 and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
             </if>
         </where>
-        GROUP BY wiid.option3
+        GROUP BY wiid.option3, bmp.package_specification_id
     </select>
 
     <select id="findProDetList" resultMap="BaseResultProDetMap">
