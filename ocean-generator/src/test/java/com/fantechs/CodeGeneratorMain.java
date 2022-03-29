@@ -9,7 +9,7 @@ class CodeGeneratorMain {
     private static final String MODEL_NAME = "ITest";
 
     private static final String[] TABLES = {
-            "leisai_product_and_half_order","leisai_ht_product_and_half_order"
+            "esop_work_instruction_electronic_seal"
     };
 
     /**
@@ -27,9 +27,9 @@ class CodeGeneratorMain {
     public static void main(String[] args) {
         CodeGeneratorManager cgm = new CodeGeneratorManager();
 
-        cgm.genCodeWithSimpleName(TABLE);
+//        cgm.genCodeWithSimpleName(TABLE);
 
-		//cgm.genCodeWithDetailName(TABLES);
+		cgm.genCodeWithDetailName(TABLES);
 
 //		cgm.genCodeWithCustomName(TABLE, MODEL_NAME);
     }
