@@ -670,9 +670,9 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                     wmsInnerJobOrderDet.setBatchCode(dto.getBatchCode());
                     wmsInnerJobOrderDet.setPlatformId(dto.getPlatformId());
                     //销售编码
-                    wmsInnerJobOrderDet.setOption1(dto.getSalesCode());
+                    wmsInnerJobOrderDet.setOption2(dto.getSalesCode());
                     //PO
-                    wmsInnerJobOrderDet.setOption2(dto.getOption3());
+                    wmsInnerJobOrderDet.setOption3(dto.getOption3());
                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
                 }
                 wmsInnerJobOrder.setPlatformId(platformId);

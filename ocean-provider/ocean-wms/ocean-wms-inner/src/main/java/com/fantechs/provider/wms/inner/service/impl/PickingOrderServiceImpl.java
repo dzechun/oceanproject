@@ -513,6 +513,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 wmsInnerJobOrder.setOrderStatus((byte)2);
             }
 
+            wmsInnerJobOrder.setWorkingAreaId(null);
             wmsInnerJobOrder.setModifiedTime(new Date());
             wmsInnerJobOrder.setModifiedUserId(sysUser.getUserId());
             wmsInnerJobOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
