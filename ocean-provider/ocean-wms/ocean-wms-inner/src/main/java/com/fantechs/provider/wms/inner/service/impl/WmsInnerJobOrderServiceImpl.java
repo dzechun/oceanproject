@@ -1712,7 +1712,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             }
         }
 
-        //销售出库
+        //万宝出货通知单创建拣货作业单自动分配库存 2022-03-24
         if((StringUtils.isNotEmpty(record.getOrderTypeId()) && record.getOrderTypeId()==1) && record.getJobOrderType()==4){
             //创建已经分配的拣货单
             int i = pickingOrderService.autoDistribution(record.getJobOrderId().toString());

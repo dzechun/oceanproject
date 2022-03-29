@@ -42,6 +42,8 @@ public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializabl
 
     private Byte ifStockLock;
 
+    private Byte lockStatus;
+
     private String productionBatchCode;
 
     private String createUserName;

@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.support.IService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 /**
@@ -29,4 +30,8 @@ public interface WmsInnerInventoryDetService extends IService<WmsInnerInventoryD
      * @return
      */
     List<InStorageMaterialDto> findInventoryDetByStorage(Map<String, Object> map);
+
+    int lock(String ids);
+
+    int unlock(String ids);
 }

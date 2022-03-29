@@ -103,6 +103,13 @@ public class WmsInnerInventoryDet extends ValidGroup implements Serializable {
     private Byte ifStockLock;
 
     /**
+     * 锁定状态(0-否 1-是)
+     */
+    @ApiModelProperty(name = "lockStatus",value = "锁定状态(0-否 1-是)")
+    @Column(name = "lock_status")
+    private Byte lockStatus;
+
+    /**
      * 收货日期
      */
     @ApiModelProperty(name = "receivingDate",value = "收货日期")

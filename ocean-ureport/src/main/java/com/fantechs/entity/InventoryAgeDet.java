@@ -41,4 +41,29 @@ public class InventoryAgeDet implements Serializable {
     @ApiModelProperty(name = "barcodeStatus",value = "条码状态(1-待收货、2-已收货、3-在库、4-已拣选、5-已复核、6-已出库、7-已取消)")
     @Excel(name = "条码状态", height = 20, width = 30,orderNum="3")
     private Byte barcodeStatus;
+
+    /**
+     *  销售条码
+     */
+    @ApiModelProperty(name = "salesBarcode",value = "销售条码")
+    private String  salesBarcode;
+
+    /**
+     *  客户条码
+     */
+    @ApiModelProperty(name = "customerBarcode",value = "客户条码")
+    private String  customerBarcode;
+
+    /**
+     *  销售编码
+     */
+    @ApiModelProperty(name = "salesCode",value = "销售编码")
+    private String  salesCode;
+
+    /**
+     *  PO号
+     */
+    @ApiModelProperty(name = "samePackageCode",value = "PO号")
+    private String  samePackageCode;
+
 }
