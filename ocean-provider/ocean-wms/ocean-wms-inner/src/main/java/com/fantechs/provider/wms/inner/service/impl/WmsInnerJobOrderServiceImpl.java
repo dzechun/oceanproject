@@ -95,7 +95,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         if(StringUtils.isEmpty(searchWmsInnerJobOrder.getOrgId())) {
             searchWmsInnerJobOrder.setOrgId(sysUser.getOrganizationId());
         }
-        if (searchWmsInnerJobOrder.getJobOrderType() == (byte) 4){
+        if (StringUtils.isNotEmpty(searchWmsInnerJobOrder.getJobOrderType()) && searchWmsInnerJobOrder.getJobOrderType() == (byte) 4){
             searchWmsInnerJobOrder.setUserId(sysUser.getUserId());
         }
         return wmsInPutawayOrderMapper.findList(searchWmsInnerJobOrder);
