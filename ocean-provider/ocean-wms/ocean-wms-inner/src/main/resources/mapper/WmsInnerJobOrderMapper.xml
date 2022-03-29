@@ -122,12 +122,16 @@ wipo.option5
         LEFT JOIN base_organization bo ON wipo.org_id = bo.organization_id
         LEFT JOIN wms_inner_job_order_re_mspp wijorm ON wipo.job_order_id = wijorm.job_order_id
         LEFT JOIN wanbao_stacking ws ON wijorm.product_pallet_id = ws.stacking_id
+        <if test="userId != null and userId != ''">
+            LEFT JOIN base_working_area_re_w bwarw ON wipo.working_area_id = bwarw.working_area_id
+            LEFT JOIN base_worker bwork ON bwarw.worker_id = bwork.worker_id
+        </if>
         <where>
             <if test="orgId!=null and orgId!=''">
                 and wipo.org_id = #{orgId}
             </if>
             <if test="userId!=null and userId!=''">
-                and bwr.user_id = #{userId}
+                and bwork.user_id = #{userId}
             </if>
             <if test="option1!=null and option1!=''">
                 and wipo.option1 = #{option1}

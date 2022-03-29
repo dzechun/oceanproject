@@ -112,10 +112,8 @@
         bo.organization_name AS organization_name,
         bpl.pro_name,
         ws.stacking_code AS pallet_code,
-        wipod.option1 AS sales_code,
-        wipod.option2 AS same_package_code,
-        wijo.option3,
-        wijo.option4,
+        wipod.option2 AS sales_code,
+        wipod.option3 AS same_package_code,
         rel.user_name AS release_name
         FROM wms_inner_job_order_det wipod
         LEFT JOIN wms_inner_job_order wijo ON wipod.job_order_id = wijo.job_order_id
@@ -136,7 +134,7 @@
         LEFT JOIN wanbao_stacking ws ON wijorm.product_pallet_id = ws.stacking_id
         LEFT JOIN ocean_v2.sys_user rel ON rel.user_id = wijo.release_user_id
         <if test="userId != null and userId != ''">
-            LEFT JOIN base_working_area_re_w bwarw ON bso.working_area_id = bwarw.working_area_id
+            LEFT JOIN base_working_area_re_w bwarw ON bsi.working_area_id = bwarw.working_area_id
             LEFT JOIN base_worker bwork ON bwarw.worker_id = bwork.worker_id
         </if>
         <where>

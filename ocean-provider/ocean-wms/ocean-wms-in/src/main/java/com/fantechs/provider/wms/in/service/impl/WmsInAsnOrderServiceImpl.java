@@ -931,7 +931,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerJobOrder.setOption5(wmsInAsnOrder.getBaseStorageRule().getWorkOrderQty().toString());
         }
         List<WmsInnerJobOrderDet> list = new ArrayList<>();
-        list.add(WmsInnerJobOrderDet.builder()
+        WmsInnerJobOrderDet orderDet = WmsInnerJobOrderDet.builder()
                 .sourceDetId(wmsInAsnOrderDet.getAsnOrderDetId())
                 .materialOwnerId(wmsInAsnOrder.getMaterialOwnerId())
                 .outStorageId(wmsInAsnOrderDet.getStorageId())
@@ -943,9 +943,13 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 .planQty(wmsInAsnOrderDet.getActualQty())
                 .palletCode(wmsInAsnOrderDet.getPalletCode())
                 .orderStatus((byte) 1)
-                .option1("1")
                 .option1(StringUtils.isNotEmpty(wmsInAsnOrderDet.getSourceOrderId()) ? wmsInAsnOrderDet.getSourceOrderId().toString() : null)
-                .build());
+                .build();
+        if (wmsInAsnOrder.getBaseStorageRule() != null) {
+            orderDet.setOption2(wmsInAsnOrder.getBaseStorageRule().getProLineId() != null ? wmsInAsnOrder.getBaseStorageRule().getProLineId().toString() : null);
+            orderDet.setOption3(wmsInAsnOrder.getBaseStorageRule().getSalesBarcode());
+        }
+        list.add(orderDet);
         wmsInnerJobOrder.setWmsInPutawayOrderDets(list);
         wmsInnerJobOrder.setBarCodeList(barCodeList);
         ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
