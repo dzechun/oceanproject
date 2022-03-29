@@ -110,7 +110,7 @@
                  LEFT JOIN base_material_tab bmt ON bm.material_id = bmt.material_id
                  LEFT JOIN base_product_model bpm ON bmt.product_model_id = bpm.product_model_id
         <where>
-            wijod.actual_qty>0  AND wijo.job_order_type=4 AND wijod.order_status=6
+            wijod.actual_qty>0  AND wijo.job_order_type=4 AND wijod.order_status=5
             <choose>
                 <when test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                     and DATE_FORMAT(wijod.work_end_time,'%y%m') between DATE_FORMAT(#{startTime},'%y%m') and DATE_FORMAT(#{endTime},'%y%m')

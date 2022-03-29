@@ -574,6 +574,21 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         }
         WmsOutDeliveryOrderDto wmsOutDeliveryOrderDto = list.get(0);
 
+        //月台是否已被其他正在作业的拣货单占用
+        SearchWmsInnerJobOrder sWmsInnerJobOrder=new SearchWmsInnerJobOrder();
+        sWmsInnerJobOrder.setJobOrderType((byte)4);
+        sWmsInnerJobOrder.setOrderStatus((byte)4);
+        sWmsInnerJobOrder.setPlatformId(platformId);
+        List<WmsInnerJobOrderDto> innerJobOrderDtos = innerFeignApi.findList(sWmsInnerJobOrder).getData();
+        if(StringUtils.isNotEmpty(innerJobOrderDtos) && innerJobOrderDtos.size()>0){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"月台已被正在作业的拣货单【"+innerJobOrderDtos.get(0).getJobOrderCode()+"】占用 请选择其他月台");
+        }
+
+        //找发货库位
+        SearchBaseStorage searchBaseStorage=new SearchBaseStorage();
+        searchBaseStorage.setStorageType((byte)3);
+        List<BaseStorage> storageList=baseFeignApi.findList(searchBaseStorage).getData();
+
         SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
         searchSysSpecItem.setSpecCode("wmsOutDelivery");
         List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
@@ -641,7 +656,12 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                         wmsInnerJobOrder.setType(0);
                     }
                     wmsInnerJobOrderDet.setSourceDetId(dto.getDeliveryOrderDetId());
-                    wmsInnerJobOrderDet.setInStorageId(dto.getStorageId());
+                    if(StringUtils.isNotEmpty(dto.getStorageId())) {
+                        wmsInnerJobOrderDet.setInStorageId(dto.getStorageId());
+                    }
+                    else if(StringUtils.isNotEmpty(storageList) && storageList.size()>0){
+                        wmsInnerJobOrderDet.setInStorageId(storageList.get(0).getStorageId());
+                    }
                     wmsInnerJobOrderDet.setInventoryStatusId(dto.getInventoryStatusId());
                     wmsInnerJobOrderDet.setMaterialId(dto.getMaterialId());
                     wmsInnerJobOrderDet.setPackingUnitName(dto.getPackingUnitName());

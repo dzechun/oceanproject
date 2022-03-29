@@ -92,4 +92,6 @@ public class SearchWmsInnerJobOrder extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="option1",value = "扩展栏位")
     private String option1;
+
+    private Long platformId;
 }

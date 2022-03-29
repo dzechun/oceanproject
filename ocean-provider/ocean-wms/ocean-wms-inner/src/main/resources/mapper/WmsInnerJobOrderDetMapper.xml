@@ -152,6 +152,7 @@
             </if>
             <if test="nonShiftStorageStatus !=null and nonShiftStorageStatus!=''">
                 and wipod.shift_storage_status != #{nonShiftStorageStatus}
+                and bis.inventory_status_name != '不合格'
             </if>
             <if test="jobOrderType !=null and jobOrderType!= ''">
                 and wijo.job_order_type =#{jobOrderType}

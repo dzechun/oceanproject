@@ -180,6 +180,10 @@ wipo.option5
                 and wipo.order_status!=6
                 and wipo.order_type_id=8
             </if>
+            <if test="platformId!=null and platformId!=''">
+                and wipo.platform_id = #{platformId}
+            </if>
+
         </where>
         order by wipo.create_time desc
     </select>

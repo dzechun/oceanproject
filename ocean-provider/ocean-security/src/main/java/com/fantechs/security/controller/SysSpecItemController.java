@@ -99,6 +99,7 @@ public class SysSpecItemController {
     @ApiOperation(value = "导出程序配置项excel",notes = "导出程序配置项excel",produces = "application/octet-stream")
     public void exportSpecItems(HttpServletResponse response, @ApiParam(value ="输入查询条件",required = false)
                             @RequestBody(required = false) SearchSysSpecItem searchSysSpecItem){
+        Page<Object> page = PageHelper.startPage(searchSysSpecItem.getStartPage(),searchSysSpecItem.getPageSize());
         List<SysSpecItem> list = sysSpecItemService.findList(searchSysSpecItem);
         try {
             // 导出操作

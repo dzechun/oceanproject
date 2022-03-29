@@ -52,4 +52,22 @@ public class SearchInventoryAgeDetUreport extends BaseQuery implements Serializa
     @ApiModelProperty(name = "salesCodeIsNull",value = "销售编码为空（0-否 1-是）")
     private Integer  salesCodeIsNull;
 
+    /**
+     *  厂内码
+     */
+    @ApiModelProperty(name = "barcode",value = "厂内码")
+    private String  barcode;
+
+    /**
+     *  销售条码
+     */
+    @ApiModelProperty(name = "salesBarcode",value = "销售条码")
+    private String  salesBarcode;
+
+    /**
+     *  客户条码
+     */
+    @ApiModelProperty(name = "customerBarcode",value = "客户条码")
+    private String  customerBarcode;
+
 }

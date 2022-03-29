@@ -7,6 +7,7 @@
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
         <result column="qty" jdbcType="DECIMAL" property="qty"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
+        <result column="sub_warehouse_name" jdbcType="VARCHAR" property="subWarehouseName"/>
         <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode"/>
         <result column="storage_id" jdbcType="BIGINT" property="storageId"/>
         <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
@@ -33,6 +34,11 @@
         <result column="serial_number" jdbcType="INTEGER" property="serialNumber"/>
         <result column="barcode" jdbcType="VARCHAR" property="barcode"/>
         <result column="barcode_status" jdbcType="TINYINT" property="barcodeStatus"/>
+
+        <result column="sales_barcode" jdbcType="VARCHAR" property="salesBarcode"/>
+        <result column="customer_barcode" jdbcType="VARCHAR" property="customerBarcode"/>
+        <result column="sales_code" jdbcType="VARCHAR" property="salesCode"/>
+        <result column="same_package_code" jdbcType="VARCHAR" property="samePackageCode"/>
     </resultMap>
 
     <select id="findList" resultMap="BaseResultMap">
@@ -53,7 +59,11 @@
                 wiid.inventory_status_id,
                 wiid.storage_id,
                 bm.material_code,
+                bm.material_name,
                 bm.material_desc,
+                bmt.main_unit AS packing_unit_name,
+                bo.organization_name,
+                wel.logic_name AS sub_warehouse_name,
         <foreach collection="ranges" index="index" item="item">
                 (select count(1) from wms_inner_inventory_det wiid2
                 where wiid2.storage_id = wiid.storage_id
@@ -77,6 +87,7 @@
                  LEFT JOIN base_material bm ON wiid.material_id = bm.material_id
                  LEFT JOIN base_material_tab bmt ON bm.material_id = bmt.material_id
                  LEFT JOIN base_product_model bpm ON bmt.product_model_id = bpm.product_model_id
+                 LEFT JOIN wanbao_erp_logic wel on bs.logic_id = wel.logic_id
                  LEFT JOIN base_organization bo ON wiid.org_id = bo.organization_id,(SELECT @i:=0)j
         <where>
             bs.storage_type = 1
@@ -128,6 +139,9 @@
             <if test="productCategory!=null and productCategory!=''">
                 and bmt.product_category like CONCAT('%',#{productCategory},'%')
             </if>
+            <if test="subWarehouseName!=null and subWarehouseName!=''">
+                and wel.logic_name like CONCAT('%',#{subWarehouseName},'%')
+            </if>
         </where>
         GROUP BY wiid.option4,wiid.option3,wiid.storage_id,wiid.material_id,wiid.inventory_status_id
         <if test="qty!=null">
@@ -139,6 +153,10 @@
         SELECT
         (@i:=@i+1) as serial_number,
         wiid.barcode,
+        wiid.option4 as same_package_code,
+        wiid.option3 as sales_code,
+        wiid.sales_barcode,
+        wiid.customer_barcode,
         wiid.barcode_status,
         wiid.inventory_det_id
         FROM wms_inner_inventory_det wiid,(SELECT @i:=0)j
@@ -155,6 +173,17 @@
             <if test="samePackageCode!=null and samePackageCode!=''">
                 and wiid.option4 like CONCAT('%',#{samePackageCode}, '%')
             </if>
+            <if test="barcode!=null and barcode!=''">
+                and wiid.barcode like CONCAT('%',#{barcode}, '%')
+            </if>
+
+            <if test="salesBarcode!=null and salesBarcode!=''">
+                and wiid.sales_barcode like CONCAT('%',#{salesBarcode}, '%')
+            </if>
+            <if test="customerBarcode!=null and customerBarcode!=''">
+                and wiid.customer_barcode like CONCAT('%',#{customerBarcode}, '%')
+            </if>
+
             <if test="inventoryStatusId!=null and inventoryStatusId!=''">
                 and wiid.inventory_status_id =#{inventoryStatusId}
             </if>
