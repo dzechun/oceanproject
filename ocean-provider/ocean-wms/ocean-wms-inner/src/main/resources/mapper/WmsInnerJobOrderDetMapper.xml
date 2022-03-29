@@ -112,10 +112,8 @@
         bo.organization_name AS organization_name,
         bpl.pro_name,
         ws.stacking_code AS pallet_code,
-        wipod.option1 AS sales_code,
-        wipod.option2 AS same_package_code,
-        wijo.option3,
-        wijo.option4,
+        wijo.option3 AS sales_code,
+        wijo.option4 AS same_package_code,
         rel.user_name AS release_name
         FROM wms_inner_job_order_det wipod
         LEFT JOIN wms_inner_job_order wijo ON wipod.job_order_id = wijo.job_order_id
