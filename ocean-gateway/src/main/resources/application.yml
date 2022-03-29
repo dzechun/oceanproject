@@ -7,7 +7,7 @@ server:
      direct-buffers: true
 spring:
   profiles:
-    active: dev
+    active: xinbao
   application:
     name: @pom.artifactId@
   servlet:
