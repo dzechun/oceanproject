@@ -12,26 +12,16 @@ import java.io.Serializable;
  */
 @Data
 public class SearchOmInStorage extends BaseQuery implements Serializable {
-    @ApiModelProperty(name = "warehouseId",value = "仓库id")
-    private Long warehouseId;
 
-    @ApiModelProperty(name = "materialId",value = "物料")
-    private Long materialId;
-
-    @ApiModelProperty(name = "orgId",value = "组织")
-    private Long orgId;
-
-    @ApiModelProperty(name = "salesOrderId",value = "订单")
-    private Long salesOrderId;
-
-    @ApiModelProperty(name = "supplierId",value = "客户")
-    private Long supplierId;
-
-    private String workOrderCode;
+    private String supplierName;
 
     private String salesOrderCode;
 
     private String materialName;
 
+    private String materialCode;
+
     private String packingUnitName;
+
+    private String warehouseName;
 }

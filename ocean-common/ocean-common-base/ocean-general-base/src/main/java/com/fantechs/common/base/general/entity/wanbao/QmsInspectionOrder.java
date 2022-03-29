@@ -137,6 +137,14 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
     private Byte auditStatus;
 
     /**
+     * 复检状态（1、未复检 2、已复检）
+     */
+    @ApiModelProperty(name="recheckStatus",value = "复检状态（1、未复检 2、已复检）")
+    @Column(name = "recheck_status")
+    //@Excel(name = "复检状态（1、未复检 2、已复检）", height = 20, width = 30,orderNum="16",replace = {"未复检_1", "已复检_2"},needMerge = true)
+    private Byte recheckStatus;
+
+    /**
      * 审核部门ID
      */
     @ApiModelProperty(name="auditDeptId",value = "审核部门ID")
