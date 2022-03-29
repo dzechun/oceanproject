@@ -41,6 +41,13 @@ public interface MesSfcBarcodeProcessMapper extends MyMapper<MesSfcBarcodeProces
     int batchUpdate(List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList);
 
     /**
+     * 批量修改
+     * @param list
+     * @return
+     */
+    int batchUpdateCustomerBarcode(List<MesSfcBarcodeProcess> list);
+
+    /**
      * 人工栈板作业-按PO号分组，统计条码的PO号个数
      * @return
      */
@@ -58,4 +65,11 @@ public interface MesSfcBarcodeProcessMapper extends MyMapper<MesSfcBarcodeProces
      * @return
      */
     String countBarcodeListForMaterial(Map<String, Object> map);
+
+    /**
+     * 万宝同步PQMS数据=通过类别查询条码流程数据
+     * @param labelCategoryId
+     * @return
+     */
+    List<MesSfcBarcodeProcess> findByLabelCategory(Long labelCategoryId);
 }

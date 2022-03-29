@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -128,4 +129,7 @@ public class PalletAutoAsnDto extends WmsInAsnOrderDet implements Serializable {
 
     @ApiModelProperty(name = "samePackageCode" ,value = "PO")
     private String samePackageCode;
+
+    @ApiModelProperty(name = "workOrderQty",value = "工单数量")
+    private BigDecimal workOrderQty;
 }

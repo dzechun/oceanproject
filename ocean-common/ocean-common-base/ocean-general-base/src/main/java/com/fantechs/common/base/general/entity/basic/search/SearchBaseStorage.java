@@ -115,4 +115,7 @@ public class SearchBaseStorage extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name = "logicName",value = "ERP逻辑仓库")
     private String logicName;
+
+    @ApiModelProperty(name = "proName",value = "产线")
+    private String proName;
 }

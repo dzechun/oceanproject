@@ -2,10 +2,7 @@ package com.fantechs.provider.mes.sfc.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.mes.sfc.ExportCustomerBarcodeDto;
-import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
-import com.fantechs.common.base.general.dto.mes.sfc.MesSfcReworkOrderDto;
-import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
+import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcReworkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
@@ -147,6 +144,19 @@ public class MesSfcWorkOrderBarcodeController {
         } catch (Exception e) {
             throw new BizErrorException(e);
         }
+    }
+
+    @ApiOperation("万宝-同步三星客户条码")
+    @PostMapping("/batchSyncBarcode")
+    public ResponseEntity batchSyncBarcode(@ApiParam(value = "必传",required = true) @RequestBody BatchSyncBarcodeDto dto){
+        return ControllerUtil.returnCRUD(mesSfcWorkOrderBarcodeService.batchSyncBarcode(dto));
+    }
+
+    @ApiOperation("万宝-查询条码数据")
+    @PostMapping("/syncFindBarcode")
+    public ResponseEntity<SyncFindBarcodeDto> syncFindBarcode(@ApiParam(value = "必传",required = true) @RequestParam Long labelCategoryId){
+        SyncFindBarcodeDto dto = mesSfcWorkOrderBarcodeService.syncFindBarcode(labelCategoryId);
+        return ControllerUtil.returnDataSuccess(dto, 1);
     }
 
 }

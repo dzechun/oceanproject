@@ -224,7 +224,7 @@ public class QmsInspectionOrderDetSample extends ValidGroup implements Serializa
     /**
      * 条码状态（0-不合格 1-合格）
      */
-    @Transient
+    @Column(name = "barcode_status")
     @ApiModelProperty(name = "barcodeStatus",value = "条码状态（0-不合格 1-合格）")
     private Byte barcodeStatus;
 

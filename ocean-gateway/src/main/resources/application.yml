@@ -17,14 +17,14 @@ spring:
 
 # 添加ribbon的超时时间设置
 ribbon:
-  ReadTimeout: 30000
-  ConnectTimeout: 30000
+  ReadTimeout: 3000000
+  ConnectTimeout: 3000000
 
 #根据服务名配置路由
 zuul:
   host:
-    socket-timeout-millis: 60000
-    connect-timeout-millis: 30000
+    socket-timeout-millis: 6000000
+    connect-timeout-millis: 3000000
   routes:
     ocean-security:               #传统的路由配置,此名称可以自定义
         path: /ocean-security/**  #映射的url
@@ -68,7 +68,7 @@ hystrix:
       execution:
         isolation:
           thread:
-            timeout-in-milliseconds: 30000
+            timeout-in-milliseconds: 6000000
 
 logging:
   level:
@@ -79,4 +79,4 @@ url:
   securityUrl: http://localhost:8768/ocean-security/clientGetToken
 
 constant-base:
-  orgId: 1004
+  orgId: 21

@@ -6,6 +6,7 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.InStorageMaterialDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.support.BaseService;
@@ -147,4 +148,55 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
         return wmsInnerInventoryDetMapper.findInventoryDetByStorage(map);
     }
 
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int lock(String ids) {
+        int i=0;
+        SysUser sysUser=currentUser();
+        String[] arrId = ids.split(",");
+        for (String s : arrId) {
+            Example example = new Example(WmsInnerInventoryDet.class);
+            example.createCriteria()
+                    .andEqualTo("inventoryDetId",s)
+                    .andEqualTo("ifStockLock",0)
+                    .andEqualTo("barcodeStatus",3);
+            WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDetMapper.selectOneByExample(example);
+            if(StringUtils.isEmpty(wmsInnerInventoryDet)){
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已盘点锁定或已出库");
+            }
+            if (wmsInnerInventoryDet.getLockStatus() == 0){
+                wmsInnerInventoryDet.setLockStatus((byte)1);
+                wmsInnerInventoryDet.setModifiedUserId(sysUser.getUserId());
+                wmsInnerInventoryDet.setModifiedTime(new Date());
+                i=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
+            }
+            else {
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"当前库存明细已被锁定");
+            }
+        }
+        return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int unlock(String ids) {
+        int i=0;
+        SysUser sysUser=currentUser();
+        String[] arrId = ids.split(",");
+        for (String s : arrId) {
+            Example example = new Example(WmsInnerInventoryDet.class);
+            example.createCriteria().andEqualTo("inventoryDetId",s);
+            WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDetMapper.selectOneByExample(example);
+            if (wmsInnerInventoryDet.getLockStatus() == 1){
+                wmsInnerInventoryDet.setLockStatus((byte)0);
+                wmsInnerInventoryDet.setModifiedUserId(sysUser.getUserId());
+                wmsInnerInventoryDet.setModifiedTime(new Date());
+                i=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
+            }
+            else {
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"当前库存明细未被锁定");
+            }
+        }
+        return i;
+    }
 }

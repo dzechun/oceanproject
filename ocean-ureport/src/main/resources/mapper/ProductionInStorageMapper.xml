@@ -17,6 +17,7 @@
     <resultMap id="BaseResultOmMap" type="com.fantechs.entity.OmInStorage">
         <result column="organization_name" jdbcType="VARCHAR" property="orgName"/>
         <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode"/>
+        <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode"/>
         <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
@@ -103,66 +104,54 @@
     </select>
     <select id="findOmList" resultMap="BaseResultOmMap">
         SELECT
+        DISTINCT
         bo.organization_name,
-        oso.sales_order_code,
+        wiid.option3 AS sales_order_code,
         bw.warehouse_name,
-        bwa.warehouse_area_code,
         bs.storage_code,
+        bwa.warehouse_area_code,
         bm.material_code,
         bm.material_name,
-        sum(wijod.actual_qty) as 'qty',
-        wiaod.packing_unit_name
-        FROM wms_inner_job_order_det wijod
-        LEFT JOIN wms_inner_job_order wijo ON wijod.job_order_id = wijo.job_order_id
-        LEFT JOIN wms_in_asn_order_det wiaod ON wiaod.asn_order_det_id = wijod.source_det_id
-        LEFT JOIN wms_in_asn_order wiao ON wiaod.asn_order_id = wiao.asn_order_id
-        LEFT JOIN mes_pm_work_order mpwo ON wiaod.source_order_id = mpwo.work_order_id
-        left JOIN om_sales_order oso ON mpwo.sales_order_id = oso.sales_order_id
-        LEFT JOIN base_warehouse bw ON wijod.warehouse_id = bw.warehouse_id
-        LEFT JOIN base_storage bs ON wijod.in_storage_id = bs.storage_id
+        sum( wiid.material_qty ) AS 'qty',
+        bpu.packing_unit_name,
+        sup.supplier_name
+        FROM
+        wms_inner_inventory_det wiid
+        LEFT JOIN base_organization bo ON wiid.org_id = bo.organization_id
+        LEFT JOIN base_storage bs ON wiid.storage_id = bs.storage_id
+        LEFT JOIN base_warehouse bw ON bs.warehouse_id = bw.warehouse_id
         LEFT JOIN base_warehouse_area bwa ON bs.warehouse_area_id = bwa.warehouse_area_id
-        LEFT JOIN base_material bm ON wijod.material_id = bm.material_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON wijod.org_id = bo.organization_id
+        LEFT JOIN base_material bm ON wiid.material_id = bm.material_id
+        LEFT JOIN base_material_package bmp ON bm.material_id = bmp.material_id
+        LEFT JOIN base_packing_unit bpu ON bmp.packing_unit_id = bpu.packing_unit_id
+        LEFT JOIN om_sales_order_det osod ON wiid.option3 = osod.sales_code
+        LEFT JOIN om_sales_order oso ON osod.sales_order_id = oso.sales_order_id
+        LEFT JOIN base_supplier sup ON oso.supplier_id = sup.supplier_id
         <where>
-            wiao.order_type_id = 4 AND wijo.order_type_id=4 AND wijo.order_status=5
-            <if test="warehouseId!=null and warehouseId!=''">
-                and bw.warehouse_id =#{warehouseId}
-            </if>
-            <if test="materialId!=null and materialId!=''">
-                and bm.material_id  = #{materialId}
-            </if>
-            <if test="orgId!=null and orgId!=''">
-                and bo.organization_id =#{orgId}
-            </if>
-            <if test="salesOrderId!=null and salesOrderId!=''">
-                and oso.sales_order_id = #{salesOrderId}
-            </if>
+            wiid.barcode_status = 3 AND wiid.option3 IS NOT NULL
             <if test="salesOrderCode!=null and salesOrderCode!=''">
                 and oso.sales_order_code like CONCAT('%',#{salesOrderCode},'%')
             </if>
-            <if test="workOrderCode!=null and workOrderCode!=''">
-                and mpwo.work_order_code like CONCAT('%',#{workOrderCode},'%')
-            </if>
-            <if test="supplierId!=null and supplierId!=''">
-                and oso.supplier_id = #{supplierId}
-            </if>
-            <if test="salesOrderCode!=null and salesOrderCode!=''">
-                and oso.sales_order_code like CONCAT('%',#{salesOrderCode},'%')
-            </if>
-            <if test="workOrderCode!=null and workOrderCode!=''">
-                and mpwo.work_order_code like CONCAT('%',#{workOrderCode},'%')
+            <if test="supplierName!=null and supplierName!=''">
+                AND sup.supplier_name LIKE CONCAT('%',#{supplierName},'%')
             </if>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-                and date_format(wijod.work_end_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+                and date_format(wiid.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="materialCode!=null and materialCode!=''">
+                and bm.material_code like CONCAT('%',#{materialCode},'%')
             </if>
             <if test="materialName!=null and materialName!=''">
                 and bm.material_name like CONCAT('%',#{materialName},'%')
             </if>
             <if test="packingUnitName!=null and packingUnitName!=''">
-                and wiaod.packing_unit_name like CONCAT('%',#{packingUnitName},'%')
+                and bpu.packing_unit_name like CONCAT('%',#{packingUnitName},'%')
+            </if>
+            <if test="warehouseName!=null and warehouseName!=''">
+                and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
             </if>
         </where>
-        GROUP BY wiaod.org_id,oso.sales_order_id,bw.warehouse_id,bwa.warehouse_area_id,bm.material_id
+        GROUP BY wiid.option3, bmp.package_specification_id
     </select>
 
     <select id="findProDetList" resultMap="BaseResultProDetMap">

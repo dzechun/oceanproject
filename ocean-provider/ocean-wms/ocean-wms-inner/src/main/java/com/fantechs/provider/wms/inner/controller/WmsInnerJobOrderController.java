@@ -143,8 +143,14 @@ public class WmsInnerJobOrderController {
     }
 
     @PostMapping("/reCreateInnerJobShift")
-    @ApiOperation("重新生成质检移位单")
+    @ApiOperation("修改样本数重新处理质检移位单")
     public ResponseEntity reCreateInnerJobShift(@RequestParam Long jobOrderId, @RequestParam BigDecimal qty){
         return ControllerUtil.returnDataSuccess(wmsInPutawayOrderService.reCreateInnerJobShift(jobOrderId,qty),1);
+    }
+
+    @PostMapping("/updateShit")
+    @ApiOperation("复检重新处理质检移位单")
+    public ResponseEntity updateShit(@RequestParam Long jobOrderId, @RequestParam BigDecimal ngQty){
+        return ControllerUtil.returnDataSuccess(wmsInPutawayOrderService.updateShit(jobOrderId,ngQty),1);
     }
 }

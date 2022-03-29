@@ -25,6 +25,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
@@ -71,6 +72,18 @@ public class WmsInnerInventoryDetController {
     public ResponseEntity<WmsInnerInventoryDet> findByDet(@RequestParam String barCode){
         WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDetService.findByOne(barCode);
         return ControllerUtil.returnDataSuccess(wmsInnerInventoryDet, StringUtils.isEmpty(wmsInnerInventoryDet)?0:1);
+    }
+
+    @ApiOperation("锁定")
+    @PostMapping("/lock")
+    public ResponseEntity lock(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
+        return ControllerUtil.returnCRUD(wmsInnerInventoryDetService.lock(ids));
+    }
+
+    @ApiOperation("解锁")
+    @PostMapping("/unlock")
+    public ResponseEntity unlock(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
+        return ControllerUtil.returnCRUD(wmsInnerInventoryDetService.unlock(ids));
     }
 
     @PostMapping(value = "/export")

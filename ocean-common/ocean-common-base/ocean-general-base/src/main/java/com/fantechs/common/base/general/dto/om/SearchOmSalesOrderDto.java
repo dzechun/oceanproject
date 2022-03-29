@@ -59,4 +59,10 @@ public class SearchOmSalesOrderDto extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="remark",value = "备注")
     private String remark;
+
+    /**
+     * 客户
+     */
+    @ApiModelProperty(name="supplierName",value = "客户")
+    private String supplierName;
 }

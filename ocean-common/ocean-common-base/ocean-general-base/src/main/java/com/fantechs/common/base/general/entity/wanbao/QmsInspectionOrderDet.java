@@ -57,10 +57,10 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
     private BigDecimal badnessQty;
 
     /**
-     * 检验结果(0-否 1-是)
+     * 检验结果(0-不合格 1-合格)
      */
-    @ApiModelProperty(name="inspectionResult",value = "检验结果(0-否 1-是)")
-    @Excel(name = "检验结果(0-否 1-是)", height = 20, width = 30,orderNum="14",replace = {"否_0", "是_1"})
+    @ApiModelProperty(name="inspectionResult",value = "检验结果(0-不合格 1-合格)")
+    @Excel(name = "检验结果(0-不合格 1-合格)", height = 20, width = 30,orderNum="14",replace = {"不合格_0", "合格_1"})
     @Column(name = "inspection_result")
     private Byte inspectionResult;
 

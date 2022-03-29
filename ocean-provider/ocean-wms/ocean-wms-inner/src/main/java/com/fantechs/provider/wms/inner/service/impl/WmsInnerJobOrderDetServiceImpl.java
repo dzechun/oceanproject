@@ -40,6 +40,9 @@ public class WmsInnerJobOrderDetServiceImpl extends BaseService<WmsInnerJobOrder
     public List<WmsInnerJobOrderDetDto> findList(SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         searchWmsInnerJobOrderDet.setOrgId(sysUser.getOrganizationId());
+        if (searchWmsInnerJobOrderDet.getJobOrderType() == (byte) 3){
+            searchWmsInnerJobOrderDet.setUserId(sysUser.getUserId());
+        }
         return wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet);
     }
 

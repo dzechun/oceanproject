@@ -15,6 +15,7 @@
     <result column="order_qty" jdbcType="DECIMAL" property="orderQty" />
     <result column="inspection_standard_id" jdbcType="BIGINT" property="inspectionStandardId" />
     <result column="inspection_way_id" jdbcType="BIGINT" property="inspectionWayId" />
+    <result column="recheck_status" jdbcType="TINYINT" property="recheckStatus" />
     <result column="inspection_status" jdbcType="TINYINT" property="inspectionStatus" />
     <result column="inspection_result" jdbcType="TINYINT" property="inspectionResult" />
     <result column="inspection_user_id" jdbcType="BIGINT" property="inspectionUserId" />
@@ -45,6 +46,7 @@
     <result column="customer_name" jdbcType="VARCHAR" property="customerName"/>
     <result column="inspection_standard_name" jdbcType="VARCHAR" property="inspectionStandardName"/>
     <result column="inspection_way_code" jdbcType="VARCHAR" property="inspectionWayCode"/>
+    <result column="inspection_way_desc" jdbcType="VARCHAR" property="inspectionWayDesc"/>
     <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
     <result column="audit_user_name" jdbcType="VARCHAR" property="auditUserName"/>
     <result column="inspection_user_name" jdbcType="VARCHAR" property="inspectionUserName"/>
@@ -67,6 +69,7 @@
     qio.inspection_status,
     qio.inspection_result,
     qio.inspection_user_id,
+    qio.recheck_status,
     qio.audit_status,
     qio.audit_dept_id,
     qio.audit_user_id,
@@ -92,6 +95,7 @@
     bs.supplier_name as customer_name,
     bis.inspection_standard_name,
     biw.inspection_way_code,
+    biw.inspection_way_desc,
     bd.dept_name,su.user_name as audit_user_name,
     sus.user_name as inspection_user_name,
     u.user_name as create_user_name,

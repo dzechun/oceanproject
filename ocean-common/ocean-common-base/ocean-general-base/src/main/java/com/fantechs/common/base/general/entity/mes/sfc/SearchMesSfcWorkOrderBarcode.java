@@ -54,4 +54,10 @@ public class SearchMesSfcWorkOrderBarcode extends BaseQuery implements Serializa
     private String barcodeStatus;
 
     private List<String> barcodeList;
+
+    /**
+     * 工单编码
+     */
+    @ApiModelProperty(name="workOrderCode",value = "工单编码")
+    private String workOrderCode;
 }

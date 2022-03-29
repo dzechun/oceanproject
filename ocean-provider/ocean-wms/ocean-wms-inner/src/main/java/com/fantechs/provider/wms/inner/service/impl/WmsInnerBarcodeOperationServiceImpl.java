@@ -261,7 +261,7 @@ public class WmsInnerBarcodeOperationServiceImpl extends BaseService<WmsInnerBar
             if(StringUtils.isNotEmpty(inventoryDtos) && inventoryDtos.size()>0){
                 WmsInnerInventory wmsInnerInventory=new WmsInnerInventory();
                 wmsInnerInventory.setInventoryId(inventoryDtos.get(0).getInventoryId());
-                wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(new BigDecimal(1)));
+                wmsInnerInventory.setPackingQty(inventoryDtos.get(0).getPackingQty().subtract(new BigDecimal(1)));
                 wmsInnerInventory.setModifiedUserId(sysUser.getUserId());
                 wmsInnerInventory.setModifiedTime(new Date());
                 i=wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
@@ -281,8 +281,6 @@ public class WmsInnerBarcodeOperationServiceImpl extends BaseService<WmsInnerBar
                     orderCode=inspectionOrders.get(0).getInspectionOrderCode();
                 }
             }
-
-
         }
 
         //条码状态更新为 已取消

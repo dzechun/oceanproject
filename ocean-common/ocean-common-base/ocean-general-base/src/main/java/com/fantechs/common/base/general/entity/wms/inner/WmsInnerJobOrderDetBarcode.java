@@ -122,4 +122,32 @@ public class WmsInnerJobOrderDetBarcode extends ValidGroup implements Serializab
     private Byte isDelete;
 
     private static final long serialVersionUID = 1L;
+
+
+
+    /**
+     *  ===============================
+     * 2022-03-24
+     * 万宝项目
+     * 增加上架作业单跟条码关系
+     * 因为堆垛需要在上架作业提交之前释放，导致上架作业单找不到条码，故，有此改动
+     */
+
+    /**
+     * 客户条码
+     */
+    @ApiModelProperty(name="customerBarcode",value = "客户条码")
+    @Excel(name = "客户条码", height = 20, width = 30,orderNum="")
+    @Column(name = "customer_barcode")
+    private String customerBarcode;
+
+    /**
+     * 销售条码
+     */
+    @ApiModelProperty(name="salesBarcode",value = "销售条码")
+    @Excel(name = "销售条码", height = 20, width = 30,orderNum="")
+    @Column(name = "sales_barcode")
+    private String salesBarcode;
+
+    // ===============================
 }

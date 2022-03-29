@@ -30,6 +30,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -92,17 +93,21 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
         QmsInspectionOrderDet qmsInspectionOrderDet = qmsInspectionOrderDetMapper.findDetList(map).get(0);
 
         //未检验的条码默认ok
+        //属于这个单据的条码
         Example example1 = new Example(QmsInspectionOrderDetSample.class);
         Example.Criteria criteria1 = example1.createCriteria();
         criteria1.andEqualTo("inspectionOrderId",qmsInspectionOrderDet.getInspectionOrderId());
         List<QmsInspectionOrderDetSample> inspectionOrderDetSamples = qmsInspectionOrderDetSampleMapper.selectByExample(example1);
-        if (inspectionOrderDetSamples.size() > qmsInspectionOrderDetSampleList.size()) {
+
+        if (inspectionOrderDetSamples.size() >= qmsInspectionOrderDetSampleList.size()) {
             List<String> barcodes = new LinkedList<>();
+            //提交过来的条码
             for (QmsInspectionOrderDetSample qmsInspectionOrderDetSample : qmsInspectionOrderDetSampleList) {
                 barcodes.add(qmsInspectionOrderDetSample.getBarcode());
             }
 
             for (QmsInspectionOrderDetSample inspectionOrderDetSample : inspectionOrderDetSamples){
+                //若属于这个单据的条码没有被提交，则默认set为ok；若提交了则判断是否合格
                 if(!barcodes.contains(inspectionOrderDetSample.getBarcode())){
                     QmsInspectionOrderDetSample qmsInspectionOrderDetSample = new QmsInspectionOrderDetSample();
                     qmsInspectionOrderDetSample.setBarcode(inspectionOrderDetSample.getBarcode());
@@ -110,6 +115,14 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
                     qmsInspectionOrderDetSample.setSampleValue("OK");
                     qmsInspectionOrderDetSample.setOrgId(user.getOrganizationId());
                     qmsInspectionOrderDetSampleList.add(qmsInspectionOrderDetSample);
+                }else {
+                    List<QmsInspectionOrderDetSample> collect = qmsInspectionOrderDetSampleList.stream()
+                            .filter(i -> i.getBarcode().equals(inspectionOrderDetSample.getBarcode()) && StringUtils.isNotEmpty(i.getBadnessPhenotypeId()))
+                            .collect(Collectors.toList());
+                    if(collect.size()>0){
+                        inspectionOrderDetSample.setBarcodeStatus((byte)0);
+                        qmsInspectionOrderDetSampleMapper.updateByPrimaryKeySelective(inspectionOrderDetSample);
+                    }
                 }
             }
         }
@@ -181,18 +194,18 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
     @Override
     public List<QmsInspectionOrderDetSample> findBarcodes(Long inspectionOrderId){
         HashMap<String, Object> map = new HashMap<>();
-        List<QmsInspectionOrderDetSample> detSamples = qmsInspectionOrderDetSampleMapper.findList(map);
+        //List<QmsInspectionOrderDetSample> detSamples = qmsInspectionOrderDetSampleMapper.findList(map);
 
         map.put("inspectionOrderId",inspectionOrderId);
         List<QmsInspectionOrderDetSample> list = qmsInspectionOrderDetSampleMapper.findList(map);
 
-        for (QmsInspectionOrderDetSample qmsInspectionOrderDetSample : list){
+        /*for (QmsInspectionOrderDetSample qmsInspectionOrderDetSample : list){
             for (QmsInspectionOrderDetSample detSample : detSamples){
                 if (qmsInspectionOrderDetSample.getBarcode().equals(detSample.getBarcode()) && StringUtils.isNotEmpty(detSample.getBadnessPhenotypeId())) {
                     qmsInspectionOrderDetSample.setBarcodeStatus((byte) 0);
                 }
             }
-        }
+        }*/
 
         return list;
     }

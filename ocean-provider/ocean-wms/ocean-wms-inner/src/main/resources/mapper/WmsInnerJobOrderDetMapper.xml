@@ -57,6 +57,8 @@
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="platform_name" jdbcType="VARCHAR" property="platformName"/>
         <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
+        <result column="option4" jdbcType="VARCHAR" property="option4"/>
+        <result column="release_name" jdbcType="VARCHAR" property="releaseName"/>
     </resultMap>
     <sql id="BaseColumnList">
         wipod.job_order_det_id,
@@ -89,7 +91,6 @@
         wipod.is_delete,
         wipod.option1,
         wipod.option2,
-        wipod.option3,
         wipod.order_status,
         wipod.shift_storage_status
     </sql>
@@ -110,7 +111,10 @@
         sus.user_name AS modified_user_name,
         bo.organization_name AS organization_name,
         bpl.pro_name,
-        ws.stacking_code AS pallet_code
+        ws.stacking_code AS pallet_code,
+        wijo.option3,
+        wijo.option4,
+        rel.user_name AS release_name
         FROM wms_inner_job_order_det wipod
         LEFT JOIN wms_inner_job_order wijo ON wipod.job_order_id = wijo.job_order_id
         LEFT JOIN base_material_owner bmo ON wipod.material_owner_id = bmo.material_owner_id
@@ -128,7 +132,15 @@
         LEFT JOIN base_pro_line bpl ON mpwo.pro_line_id = bpl.pro_line_id
         LEFT JOIN wms_inner_job_order_re_mspp wijorm ON wijo.job_order_id = wijorm.job_order_id
         LEFT JOIN wanbao_stacking ws ON wijorm.product_pallet_id = ws.stacking_id
+        LEFT JOIN ocean_v2.sys_user rel ON rel.user_id = wijo.release_user_id
+        <if test="userId != null and userId != ''">
+            LEFT JOIN base_working_area_re_w bwarw ON bso.working_area_id = bwarw.working_area_id
+            LEFT JOIN base_worker bwork ON bwarw.worker_id = bwork.worker_id
+        </if>
         <where>
+            <if test="userId !=null and userId!=''">
+                AND bwork.user_id = #{userId}
+            </if>
             <if test="jobOrderId!=null and jobOrderId!=''">
                 and wipod.job_order_id = #{jobOrderId}
             </if>
@@ -147,6 +159,7 @@
             </if>
             <if test="nonShiftStorageStatus !=null and nonShiftStorageStatus!=''">
                 and wipod.shift_storage_status != #{nonShiftStorageStatus}
+                and bis.inventory_status_name != '不合格'
             </if>
             <if test="jobOrderType !=null and jobOrderType!= ''">
                 and wijo.job_order_type =#{jobOrderType}

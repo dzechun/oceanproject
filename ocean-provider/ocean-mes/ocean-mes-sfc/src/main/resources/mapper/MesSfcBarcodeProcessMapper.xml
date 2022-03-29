@@ -190,6 +190,20 @@
     </foreach>
   </update>
 
+  <update id="batchUpdateCustomerBarcode" parameterType="java.util.ArrayList">
+    update mes_sfc_barcode_process
+    SET customer_barcode =
+    <foreach collection="list" item="item" index="index"
+             separator=" " open="case" close="end">
+      when barcode_process_id=#{item.barcodeProcessId} then #{item.customerBarcode}
+    </foreach>
+    where barcode_process_id in
+    <foreach collection="list" index="index" item="item"
+             separator="," open="(" close=")">
+      #{item.barcodeProcessId,jdbcType=BIGINT}
+    </foreach>
+  </update>
+
   <select id="countBarcodeListForPOGroup" parameterType="map" resultType="java.lang.String">
     SELECT COUNT(*) FROM (
     SELECT IFNULL(COUNT(*),0) FROM om_sales_code_re_spc oscrs
@@ -235,5 +249,15 @@
     </where>
     GROUP BY msbp.material_id
     ) t
+  </select>
+
+  <select id="findByLabelCategory" parameterType="long" resultMap="BaseResultMap">
+    SELECT
+      msbp.*
+    FROM
+      mes_sfc_barcode_process msbp
+        LEFT JOIN mes_sfc_work_order_barcode mswob ON msbp.work_order_barcode_id = mswob.work_order_barcode_id
+    WHERE
+      mswob.label_category_id = #{labelCategoryId}
   </select>
 </mapper>
