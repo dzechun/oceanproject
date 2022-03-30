@@ -1,6 +1,8 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -29,6 +31,7 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
@@ -497,6 +500,18 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         dto.setKey(key);
         dto.setCode(record.getMaterialCode());
         dto.setParams(record.getWorkOrderId().toString());
+
+        //传入工单计划生产日期
+        if(StringUtils.isNotEmpty(mesPmWorkOrderDto.getPlanStartTime())){
+            String planDate= DateUtil.format(mesPmWorkOrderDto.getPlanStartTime(), DatePattern.NORM_DATE_PATTERN);
+            String planYear=planDate.substring(0,4);
+            String planMonth=new Integer(planDate.substring(5,7)).toString();
+            String planDay=new Integer(planDate.substring(8,10)).toString();
+            dto.setPlanYear(planYear);
+            dto.setPlanMonth(planMonth);
+            dto.setPlanDay(planDay);
+        }
+
         ResponseEntity<List<String>> rs = baseFeignApi.batchGenerateCode(dto);
         if (rs.getCode() != 0) {
             throw new BizErrorException(rs.getMessage());

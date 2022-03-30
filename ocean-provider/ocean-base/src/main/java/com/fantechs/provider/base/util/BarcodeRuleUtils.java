@@ -205,7 +205,7 @@ public class BarcodeRuleUtils {
      * @param key redis key
      * @return
      */
-    public static List<String> batchAnalysisCode(List<BaseBarcodeRuleSpec> list, String code,String params,Map<String,Object> map, Integer qty, String key){
+    public static List<String> batchAnalysisCode(List<BaseBarcodeRuleSpec> list, String code,String params,Map<String,Object> map, Integer qty, String key,String planYear,String planMonth,String planDay){
         List<String> barcodeList = new ArrayList<>();
 
         Map<String, String> functionResultMap = new HashMap<>();
@@ -365,7 +365,8 @@ public class BarcodeRuleUtils {
                         }
                         sb.append(param);
                     }else {  //月、周、日、周的日、年的日、自定义年、月、日、周
-                        String typeCode = CodeUtils.getTypeCode(specification,customizeValue);
+                        //String typeCode = CodeUtils.getTypeCode(specification,customizeValue);
+                        String typeCode = CodeUtils.getTypeCode(specification,customizeValue,planYear,planMonth,planDay);
                         sb.append(typeCode);
                     }
                 }
