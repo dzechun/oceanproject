@@ -128,6 +128,9 @@
             <if test="option3!=null and option3!=''">
                 and sm.option3 like CONCAT('%',#{option3},'%')
             </if>
+            <if test="voltage!=null and voltage!=''">
+                and bt.voltage LIKE CONCAT('%',#{voltage},'%')
+            </if>
         </where>
         order by sm.create_time desc
     </select>

@@ -97,4 +97,7 @@ public class SearchBaseMaterial extends BaseQuery implements Serializable {
     private String option2;
 
     private String option3;
+
+    @ApiModelProperty(name="voltage" ,value="电压")
+    private String voltage;
 }
