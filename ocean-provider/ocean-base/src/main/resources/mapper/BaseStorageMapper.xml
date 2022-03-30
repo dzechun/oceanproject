@@ -420,6 +420,6 @@ order by wii.modified_time desc limit 1
                     </where>
                     ) a
         WHERE storage_id NOT IN(SELECT in_storage_id FROM wms_inner_job_order_det
-                                WHERE material_id = #{materialId} AND order_status=3)
+                                WHERE order_status=3)
     </select>
 </mapper>
