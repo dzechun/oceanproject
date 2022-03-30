@@ -12,6 +12,9 @@ public class SearchWanbaoStacking extends BaseQuery implements Serializable {
     @ApiModelProperty(name = "proName",value = "产线名称")
     private String proName;
 
+    @ApiModelProperty(name = "proCode",value = "产线编码")
+    private String proCode;
+
     @ApiModelProperty(name="stackingCode",value = "堆垛编码")
     private String stackingCode;
 
