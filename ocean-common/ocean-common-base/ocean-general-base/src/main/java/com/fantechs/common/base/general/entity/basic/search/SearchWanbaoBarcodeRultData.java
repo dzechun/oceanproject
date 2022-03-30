@@ -38,4 +38,7 @@ public class SearchWanbaoBarcodeRultData extends BaseQuery implements Serializab
      */
     @ApiModelProperty(name="identificationCode",value = "识别码")
     private String identificationCode;
+
+    @ApiModelProperty(name="dataStatus",value = "状态")
+    private String dataStatus;
 }
