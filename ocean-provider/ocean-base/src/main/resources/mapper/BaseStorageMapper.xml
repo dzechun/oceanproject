@@ -357,6 +357,21 @@ order by wii.modified_time desc limit 1
                 </if>
             </where>
             ) a
-        WHERE storage_id NOT IN(SELECT storage_id FROM wms_inner_inventory_det WHERE material_qty>0)
+        WHERE storage_id NOT IN(SELECT storage_id FROM wms_inner_inventory_det WHERE material_qty>0 group by storage_id)
+    </select>
+    <select id="findJobOrderStorage" resultType="java.lang.Long">
+        SELECT storage_id FROM
+                (SELECT storage_id FROM base_storage
+                    <where>
+                        <if test="storageIds!=null and storageIds.size()&gt; 0">
+                            and storage_id  in
+                            <foreach collection="storageIds" item="list" open="(" close=")" separator=",">
+                                #{list}
+                            </foreach>
+                        </if>
+                    </where>
+                    ) a
+        WHERE storage_id NOT IN(SELECT in_storage_id FROM wms_inner_job_order_det
+                                WHERE material_id = #{materialId} AND order_status=3)
     </select>
 </mapper>

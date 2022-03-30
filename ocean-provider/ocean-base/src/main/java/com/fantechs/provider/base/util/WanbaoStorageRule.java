@@ -289,6 +289,8 @@ public class WanbaoStorageRule {
         if(StringUtils.isEmpty(storageId) && list.size()>0){
             //筛选没有库存的库位
             List<Long> longs= wanbaoStorageRule.baseStorageMapper.findEmptyStorage(list);
+            //通过物料及库位查询是否拥有已分配未上架的库位占用
+            longs = wanbaoStorageRule.baseStorageMapper.findJobOrderStorage(longs,baseStorageRule.getMaterialId());
             if(StringUtils.isNotEmpty(longs) || longs.size()>0){
                 storageId = longs.get(0);
             }
