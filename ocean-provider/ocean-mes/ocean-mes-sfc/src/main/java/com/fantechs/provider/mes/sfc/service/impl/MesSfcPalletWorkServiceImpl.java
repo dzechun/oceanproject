@@ -105,14 +105,13 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         String samePackageCode = "";
         // 同销售订单栈板的销售订单编码 2022-01-20
         String salesOrderCode = "";
-
         //samePackageCodePallet 同包装编码--栈板包装产品条码对应的PO编码 2020-10-20
         String samePackageCodePallet="";
+        Long workOrderBarcodeId = null;
+        Long workOrderId = null;
 
-        String cartonCode = "";
         // 栈板作业需要绑定的所有产品条码
         List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeList = new ArrayList<>();
-        Long workOrderId = null;
         SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
         searchMesSfcWorkOrderBarcode.setBarcode(requestPalletWorkScanDto.getBarcode());
         if (requestPalletWorkScanDto.getBarcode().length() != 23){
@@ -131,75 +130,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         }
         String barcode = searchMesSfcWorkOrderBarcode.getBarcode();
         List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtoList = mesSfcWorkOrderBarcodeService.findList(searchMesSfcWorkOrderBarcode);
-        if (mesSfcWorkOrderBarcodeDtoList.isEmpty()) {
-            // 不是产品箱码和客户箱码，判断是否为箱码
-            Map<String, Object> map = new HashMap<>();
-            map.put("cartonCode", requestPalletWorkScanDto.getBarcode());
-            List<MesSfcProductCartonDto> mesSfcProductCartonDtoList = mesSfcProductCartonService.findList(map);
-            if (mesSfcProductCartonDtoList.isEmpty()) {
-                throw new BizErrorException(ErrorCodeEnum.PDA40012000);
-            }
-            // 判断对应的包箱是否已关闭
-            if (mesSfcProductCartonDtoList.get(0).getCloseStatus() == 0) {
-                throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "该条码对应的包箱未关闭，请先进行包箱关闭");
-            }
-
-            workOrderId = mesSfcProductCartonDtoList.get(0).getWorkOrderId();
-            // 获取箱号绑定产品条码
-            cartonCode = requestPalletWorkScanDto.getBarcode();
-            Map<String, Object> productCartonDetMap = new HashMap<>();
-            productCartonDetMap.put("productCartonId", mesSfcProductCartonDtoList.get(0).getProductCartonId());
-            List<MesSfcProductCartonDetDto> mesSfcProductCartonDetDtoList = mesSfcProductCartonDetService.findList(productCartonDetMap);
-            for (MesSfcProductCartonDetDto mesSfcProductCartonDetDto : mesSfcProductCartonDetDtoList) {
-                searchMesSfcWorkOrderBarcode.setBarcode(null);
-                searchMesSfcWorkOrderBarcode.setWorkOrderBarcodeId(mesSfcProductCartonDetDto.getWorkOrderBarcodeId());
-                List<MesSfcWorkOrderBarcodeDto> barcodeServiceList = mesSfcWorkOrderBarcodeService.findList(searchMesSfcWorkOrderBarcode);
-                if (barcodeServiceList.isEmpty()){
-                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该包箱关联产品条码不存在");
-                }
-                mesSfcWorkOrderBarcodeList.add(barcodeServiceList.get(0));
-            }
-
-            if(requestPalletWorkScanDto.getPalletType() == 0){
-                // 判断是否同一工单
-                List<MesSfcWorkOrderBarcodeDto> workOrderBarcodeDtos = mesSfcWorkOrderBarcodeService.findByWorkOrderGroup(map);
-                if(workOrderBarcodeDtos.size() > 1){
-                    throw new BizErrorException(ErrorCodeEnum.PDA40012034);
-                }
-            }
-            //扫描的是箱码 判断是否为同一PO 2021-10-20
-            if(requestPalletWorkScanDto.getPalletType() == 2){
-                Map<String, Object> currentmap = new HashMap<>();
-                currentmap.put("workOrderBarcodeId", mesSfcProductCartonDetDtoList.get(0).getWorkOrderBarcodeId());
-                List<MesSfcBarcodeProcessDto> processServiceList = mesSfcBarcodeProcessService.findList(currentmap);
-                if (processServiceList.get(0).getSamePackageCode() == null){
-                    // PDA设置为同PO栈板，如果该条码没有PO号则按同销售订单走
-                    requestPalletWorkScanDto.setPalletType((byte) 3);
-                }else {
-                    // 判断是否为同一PO
-                    List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findByPOGroup(map);
-                    if(mesSfcBarcodeProcessList.size() > 1){
-                        throw new BizErrorException(ErrorCodeEnum.PDA40012034.getCode(),"该包箱条码不属于同个PO，不可扫码");
-                    }else{
-                        samePackageCode=mesSfcBarcodeProcessList.get(0).getSamePackageCode();
-                    }
-                }
-            }
-
-            //扫描的是箱码 判断是否为同一销售订单 2022-01-20
-            if(requestPalletWorkScanDto.getPalletType() == 3){
-                SearchOmSalesOrderDto salesOrderDto = new SearchOmSalesOrderDto();
-                salesOrderDto.setWorkOrderId(workOrderId);
-                List<OmSalesOrderDto> salesOrderDtos = omFeignApi.findList(salesOrderDto).getData();
-                if (salesOrderDtos.isEmpty() || salesOrderDtos.get(0).getSalesOrderCode() == null){
-                    // PDA设置为同销售订单栈板，如果该条码没有销售订单编码则按同料号走
-                    requestPalletWorkScanDto.setPalletType((byte) 1);
-                }else {
-                    salesOrderCode = salesOrderDtos.get(0).getSalesOrderCode();
-                }
-            }
-        } else {
-            Long workOrderBarcodeId = null;
+        List<MesSfcBarcodeProcessDto> processServiceList = new ArrayList<>();
+        if (!mesSfcWorkOrderBarcodeDtoList.isEmpty()) {
             BaseLabelCategory labelCategory = baseFeignApi.findLabelCategoryDetail(mesSfcWorkOrderBarcodeDtoList.get(0).getLabelCategoryId()).getData();
             if (labelCategory.getLabelCategoryCode().equals("01")) {
                 // 产品条码
@@ -207,7 +139,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 barcode = mesSfcWorkOrderBarcodeDtoList.get(0).getBarcode();
                 workOrderId = mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderId();
             } else if (labelCategory.getLabelCategoryCode().equals("02") || labelCategory.getLabelCategoryCode().equals("03")) {
-                // 销售订单条码
+                // 销售订单条码/客户条码
                 Map<String, Object> map = new HashMap<>();
                 map.put("partBarcode", requestPalletWorkScanDto.getBarcode());
                 List<MesSfcKeyPartRelevanceDto> mesSfcKeyPartRelevanceDtoList = mesSfcKeyPartRelevanceService.findList(map);
@@ -221,7 +153,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
             Map<String, Object> map = new HashMap<>();
             map.put("workOrderBarcodeId", workOrderBarcodeId);
-            List<MesSfcBarcodeProcessDto> processServiceList = mesSfcBarcodeProcessService.findList(map);
+            processServiceList = mesSfcBarcodeProcessService.findList(map);
             if(processServiceList == null && processServiceList.size() <= 0){
                 throw new BizErrorException(ErrorCodeEnum.PDA40012000);
             }
@@ -265,7 +197,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 }
             }
 
-            //扫描的是箱码 判断是否为同一销售订单 2022-01-20
+            // 判断是否为同一销售订单 2022-01-20
             if(requestPalletWorkScanDto.getPalletType() == 3){
                 SearchOmSalesOrderDto salesOrderDto = new SearchOmSalesOrderDto();
                 salesOrderDto.setWorkOrderId(workOrderId);
@@ -331,6 +263,16 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         if (!mesPmWorkOrderDto.getProLineId().equals(requestPalletWorkScanDto.getProLineId())){
             throw new BizErrorException(ErrorCodeEnum.PDA40012003.getCode(), "该产品条码产线跟该工位产线不匹配");
         }
+        if (processServiceList.isEmpty() || processServiceList.size() <= 0){
+            Map<String, Object> map = new HashMap<>();
+            map.put("workOrderBarcodeId", workOrderBarcodeId);
+            processServiceList = mesSfcBarcodeProcessService.findList(map);
+        }
+        MesSfcBarcodeProcessDto barcodeProcessDto = processServiceList.get(0);
+        if (!barcodeProcessDto.getNextProcessId().equals(requestPalletWorkScanDto.getProcessId())){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "PDA配置工序与条码工序不匹配");
+        }
+
         // 获取该工位所有未关闭的栈板
         Map<String, Object> productPalletMap = new HashMap<>();
         productPalletMap.put("stationId", requestPalletWorkScanDto.getStationId());
