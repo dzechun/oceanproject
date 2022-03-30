@@ -45,4 +45,6 @@ public interface BaseStorageMapper extends MyMapper<BaseStorage> {
 
     List<StorageRuleInventry> findOutStorage(Map<String,Object> map);
 
+
+    List<Long> findJobOrderStorage(@Param("storageIds") List<Long>storageIds,@Param("materialId") Long materialId);
 }
