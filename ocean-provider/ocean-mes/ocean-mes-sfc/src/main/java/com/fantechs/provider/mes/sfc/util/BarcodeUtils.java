@@ -452,7 +452,7 @@ public class BarcodeUtils {
         }
 
         long five = System.currentTimeMillis();
-        log.info("============== 增加过站记录:"+ (five - four));
+        log.info("============== 投产工序:"+ (five - four));
 
         // 判断当前工序是否为产出工序，且是该条码在工单工序第一次过站，工单产出 +1
         if(StringUtils.isNotEmpty(mesPmWorkOrder.getOutputProcessId())) {
@@ -504,7 +504,7 @@ public class BarcodeUtils {
         }
 
         long six = System.currentTimeMillis();
-        log.info("============== 增加过站记录:"+ (six - five));
+        log.info("============== 产出工序:"+ (six - five));
         log.info("============== 总耗时:"+ (six - start));
         return 1;
     }
