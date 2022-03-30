@@ -90,5 +90,8 @@ public class SearchWmsInnerInventoryDet extends BaseQuery implements Serializabl
     @ApiModelProperty(name="logicCode",value = "ERP逻辑仓编码")
     private String logicCode;
 
+    @ApiModelProperty("库位类型 1 存货 2 收货 3 发货")
+    private Byte storageType;
+
 
 }

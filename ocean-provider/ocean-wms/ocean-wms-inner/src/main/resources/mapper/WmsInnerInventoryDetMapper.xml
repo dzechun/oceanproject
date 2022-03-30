@@ -215,6 +215,9 @@
             <if test="option5!=null and option5!=''">
                 and wiid.option5 like CONCAT('%',#{option5},'%')
             </if>
+            <if test="storageType!=null and storageType!=''">
+                and bs.storage_type = #{storageType}
+            </if>
         </where>
         order by wiid.create_time desc
     </select>
