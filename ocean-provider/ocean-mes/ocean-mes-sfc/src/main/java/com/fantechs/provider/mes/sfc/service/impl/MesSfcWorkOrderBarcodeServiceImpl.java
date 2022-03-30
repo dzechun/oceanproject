@@ -31,7 +31,6 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
-import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
@@ -103,7 +102,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int print(String ids, Byte printType, String printName, String userCode, String password) {
+    public int print(String ids, Byte printType, String printName, String userCode, String password,String printId) {
         if (printType == 2) {
             //获取程序配置项
             SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
@@ -215,14 +214,14 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
 
         }
         for (Map.Entry<Long, PrintDto> m : map.entrySet()) {
-            rabbitProducer.sendPrint(m.getValue());
+            rabbitProducer.sendPrint(m.getValue(),printId);
         }
         return 1;
     }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int printByOrderCode(Long id, Byte barcodeType, String printName, String userCode, String password) {
+    public int printByOrderCode(Long id, Byte barcodeType, String printName, String userCode, String password,String printId) {
         int i=0;
         StringBuilder sb=new StringBuilder();
         Example example=new Example(MesSfcWorkOrderBarcode.class);
@@ -240,7 +239,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 }
             }
 
-            i=this.print(sb.toString(),(byte)2,printName,userCode,password);
+            i=this.print(sb.toString(),(byte)2,printName,userCode,password,printId);
         }
 
         return i;

@@ -256,6 +256,10 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
         if(StringUtils.isEmpty(inventoryDetDtos)){
             throw new BizErrorException("该条码未与该检验单绑定");
         }
+        /*WmsInnerInventoryDetDto wmsInnerInventoryDetDto = inventoryDetDtos.get(0);
+        if("Z-QC".equals(wmsInnerInventoryDetDto.getStorageCode())){
+            throw new BizErrorException("该条码不在质检库位上");
+        }*/
 
         //已扫条码数
         Example example = new Example(QmsInspectionOrderDetSample.class);
