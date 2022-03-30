@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -199,6 +200,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public String saveShiftWorkDetBarcode(SaveShiftWorkDetDto dto) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if (dto.getBarcodes() == null && dto.getBarcodes().size() <= 0) {
@@ -382,6 +384,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
     public int saveJobOrder(SaveShiftJobOrderDto dto) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
 

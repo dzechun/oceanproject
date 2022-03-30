@@ -108,4 +108,12 @@ public interface InnerFeignApi {
     @PostMapping("/wmsInnerJobOrder/reCreateInnerJobShift")
     ResponseEntity reCreateInnerJobShift(@RequestParam Long jobOrderId, @RequestParam BigDecimal qty);
 
+    @ApiOperation(value = "PDA库内移位拣货确认",notes = "PDA库内移位拣货确认")
+    @PostMapping("/pdaWmsInnerShiftWork/saveShiftWorkDetBarcode")
+    ResponseEntity saveShiftWorkDetBarcode(@ApiParam(value = "拣货确认实体", required = true) @RequestBody SaveShiftWorkDetDto dto);
+
+    @ApiOperation(value = "PDA库内移位上架确认",notes = "PDA库内移位上架确认")
+    @PostMapping("/pdaWmsInnerShiftWork/saveJobOrder")
+    ResponseEntity saveJobOrder(@ApiParam(value = "上架确认实体", required = true) @RequestBody SaveShiftJobOrderDto dto);
+
 }
