@@ -193,6 +193,12 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 reprint.setOrgId(sysUser.getOrganizationId());
                 reprint.setIsDelete((byte) 1);
                 mesSfcWorkOrderBarcodeReprintService.save(reprint);
+
+                if (mesSfcWorkOrderBarcode.getBarcodeStatus().equals((byte) 3)){
+                    mesSfcWorkOrderBarcode.setBarcodeStatus((byte) 0);
+                    mesSfcWorkOrderBarcode.setPrintTime(new Date());
+                    this.update(mesSfcWorkOrderBarcode);
+                }
             }
             printModel.setQrCode(mesSfcWorkOrderBarcode.getBarcode());
 
