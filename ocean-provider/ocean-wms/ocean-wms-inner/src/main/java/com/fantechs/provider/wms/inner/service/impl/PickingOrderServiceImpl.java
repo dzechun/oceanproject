@@ -407,6 +407,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         String[] arrId = ids.split(",");
         int num = 0;
         for (String id : arrId) {
+            Long storageId=null;
             List<Long> materialIdList=new ArrayList<>();
             WmsInnerJobOrder wmsInnerJobOrder = wmsInnerJobOrderMapper.selectByPrimaryKey(id);
             if(wmsInnerJobOrder.getOrderStatus()==(byte)3){
@@ -436,6 +437,10 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 }
             }
 
+            if(StringUtils.isEmpty(listMap)){
+                continue;
+            }
+
             log.info("============= 推荐库位库存数据" + JSON.toJSONString(listMap));
 
             //成功自动分配数量
@@ -450,6 +455,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 for (StorageRuleInventry storageRuleInventry : inventryList) {
                     BigDecimal packingQty=storageRuleInventry.getMaterialQty();
                     if(packingQty.compareTo(new BigDecimal(0))==1) {
+                        storageId=storageRuleInventry.getStorageId();
                         if (planQty.compareTo(packingQty) == 1) {
                             //库存不足
                             WmsInnerJobOrderDet newDet = new WmsInnerJobOrderDet();
@@ -513,7 +519,14 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 wmsInnerJobOrder.setOrderStatus((byte)2);
             }
 
-            wmsInnerJobOrder.setWorkingAreaId(null);
+            if(StringUtils.isNotEmpty(storageId)){
+                SearchBaseStorage searchBaseStorage=new SearchBaseStorage();
+                searchBaseStorage.setStorageId(storageId);
+                List<BaseStorage> storageList=baseFeignApi.findList(searchBaseStorage).getData();
+                if(StringUtils.isNotEmpty(storageList) && storageList.size()>0){
+                    wmsInnerJobOrder.setWorkingAreaId(storageList.get(0).getWorkingAreaId());
+                }
+            }
             wmsInnerJobOrder.setModifiedTime(new Date());
             wmsInnerJobOrder.setModifiedUserId(sysUser.getUserId());
             wmsInnerJobOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
@@ -577,16 +590,29 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             if(StringUtils.isEmpty(dto)){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003);
             }
+
+            Long workingAreaId=null;
+            if(StringUtils.isNotEmpty(ws.getOutStorageId())){
+                SearchBaseStorage searchBaseStorage=new SearchBaseStorage();
+                searchBaseStorage.setStorageId(ws.getOutStorageId());
+                List<BaseStorage> storageList=baseFeignApi.findList(searchBaseStorage).getData();
+                if(StringUtils.isNotEmpty(storageList) && storageList.size()>0){
+                    workingAreaId=storageList.get(0).getWorkingAreaId();
+                }
+            }
+
             if(dto.stream().filter(li->li.getOrderStatus()==(byte)3).collect(Collectors.toList()).size()==dto.size()){
                 //更新表头状态
                 wmsInnerJobOrderMapper.updateByPrimaryKeySelective(WmsInnerJobOrder.builder()
                         .jobOrderId(wmsInPutawayOrderDet.getJobOrderId())
                         .orderStatus((byte)3)
+                        .workingAreaId(workingAreaId)
                         .build());
             }else{
                 wmsInnerJobOrderMapper.updateByPrimaryKeySelective(WmsInnerJobOrder.builder()
                         .jobOrderId(wmsInPutawayOrderDet.getJobOrderId())
                         .orderStatus((byte)2)
+                        .workingAreaId(workingAreaId)
                         .build());
             }
         }
