@@ -312,7 +312,7 @@ public class WanbaoStorageRule {
 
             if(StringUtils.isNotEmpty(longs) || longs.size()>0){
                 //通过物料及库位查询是否拥有已分配未上架的库位占用
-                longs = wanbaoStorageRule.baseStorageMapper.findJobOrderStorage(longs,baseStorageRule.getMaterialId());
+                longs = wanbaoStorageRule.baseStorageMapper.findJobOrderStorage(longs);
                 if(longs.size()>0){
                     storageId = longs.get(0);
                 }
