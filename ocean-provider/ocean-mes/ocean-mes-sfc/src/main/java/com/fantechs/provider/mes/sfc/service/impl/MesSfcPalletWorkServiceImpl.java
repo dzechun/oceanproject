@@ -99,13 +99,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
     public PalletWorkScanDto palletWorkScanBarcode(RequestPalletWorkScanDto requestPalletWorkScanDto) throws Exception {
-        // 2022-03-08 判断是否质检完成之后走产线入库
-        SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
-        searchWmsInnerInventoryDet.setBarcode(requestPalletWorkScanDto.getBarcode());
-        List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
-        if (!inventoryDetDtos.isEmpty()){
-            return new PalletWorkScanDto();
-        }
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         //samePackageCode 同包装编码--扫描的箱号产品条码对应的或者扫描的产品条码对应的PO编码 2020-10-20
@@ -136,6 +129,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 }
             }
         }
+        String barcode = searchMesSfcWorkOrderBarcode.getBarcode();
         List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtoList = mesSfcWorkOrderBarcodeService.findList(searchMesSfcWorkOrderBarcode);
         if (mesSfcWorkOrderBarcodeDtoList.isEmpty()) {
             // 不是产品箱码和客户箱码，判断是否为箱码
@@ -210,6 +204,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             if (labelCategory.getLabelCategoryCode().equals("01")) {
                 // 产品条码
                 workOrderBarcodeId = mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderBarcodeId();
+                barcode = mesSfcWorkOrderBarcodeDtoList.get(0).getBarcode();
                 workOrderId = mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderId();
             } else if (labelCategory.getLabelCategoryCode().equals("02") || labelCategory.getLabelCategoryCode().equals("03")) {
                 // 销售订单条码
@@ -221,6 +216,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 }
                 workOrderBarcodeId = mesSfcKeyPartRelevanceDtoList.get(0).getWorkOrderBarcodeId();
                 workOrderId = mesSfcKeyPartRelevanceDtoList.get(0).getWorkOrderId();
+                barcode = mesSfcKeyPartRelevanceDtoList.get(0).getBarcodeCode();
             }
 
             Map<String, Object> map = new HashMap<>();
@@ -314,6 +310,14 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                     mesSfcWorkOrderBarcodeList.add(barcodeServiceList.get(0));
                 }
             }
+        }
+
+        // 2022-03-08 判断是否质检完成之后走产线入库
+        SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
+        searchWmsInnerInventoryDet.setBarcode(barcode);
+        List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
+        if (!inventoryDetDtos.isEmpty()){
+            return new PalletWorkScanDto();
         }
 
         // 获取该条码对应的工单信息

@@ -173,6 +173,12 @@
             <if test="workOrderCode!=null and workOrderCode!='' and codeQueryMark == 1">
                 and swo.work_order_code = #{workOrderCode}
             </if>
+            <if test="logicName!=null and logicName!=''">
+                and wel.logic_name = #{logicName}
+            </if>
+            <if test="salesCode!=null and salesCode!=''">
+                and swo.sales_code = #{salesCode}
+            </if>
             <if test="workOrderId!=null">
                 and swo.work_order_id =#{workOrderId}
             </if>

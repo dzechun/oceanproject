@@ -113,4 +113,10 @@ public class SearchMesPmWorkOrder extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name = "codeQueryMark",value = "编码查询标记(设为1做等值查询)")
     private Integer codeQueryMark;
+
+    @ApiModelProperty(name="logicName" ,value="逻辑仓")
+    private String logicName;
+
+    @ApiModelProperty(name="salesCode" ,value="销售编码")
+    private String salesCode;
 }
