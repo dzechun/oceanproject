@@ -63,6 +63,12 @@
             <if test="materialId!=null and materialId!=''">
                 and bm.material_id = #{materialId}
             </if>
+            <if test="proName!=null and proName!=''">
+                and bpl.pro_name LIKE CONCAT('%',#{proName},'%')
+            </if>
+            <if test="workShopName!=null and workShopName!=''">
+                and bws.work_shop_name LIKE CONCAT('%',#{workShopName},'%')
+            </if>
             <if test="orgId!=null and orgId!=''">
                 and bo.organization_id =#{orgId}
             </if>
