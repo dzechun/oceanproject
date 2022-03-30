@@ -125,7 +125,8 @@ public class BaseBarcodeRuleController {
     @ApiOperation(value = "批量生成条码")
     @PostMapping("/batchGenerateCode")
     public ResponseEntity<List<String>> batchGenerateCode(@RequestBody BatchGenerateCodeDto dto){
-        List<String> barcodeList = BarcodeRuleUtils.batchAnalysisCode(dto.getList(), dto.getCode(), dto.getParams(), null, dto.getQty(), dto.getKey());
+        List<String> barcodeList = BarcodeRuleUtils.batchAnalysisCode(dto.getList(), dto.getCode(), dto.getParams(), null,
+                dto.getQty(), dto.getKey(),dto.getPlanYear(),dto.getPlanMonth(),dto.getPlanDay());
         return ControllerUtil.returnDataSuccess(barcodeList, barcodeList.size());
     }
 

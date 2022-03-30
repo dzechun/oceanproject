@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
@@ -9,8 +10,14 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseStorageRule;
+import com.fantechs.common.base.general.dto.basic.StorageRuleInventry;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessDto;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcKeyPartRelevanceDto;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcKeyPartRelevance;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
@@ -29,6 +36,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
@@ -38,6 +46,7 @@ import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
 import com.fantechs.provider.wms.inner.service.PickingOrderService;
 import com.fantechs.provider.wms.inner.util.InBarcodeUtil;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -52,6 +61,7 @@ import java.util.stream.Collectors;
  * @Date 2021/5/10
  */
 @Service
+@Slf4j
 public class PickingOrderServiceImpl implements PickingOrderService {
 
     @Resource
@@ -70,6 +80,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
     private WmsInnerInventoryDetMapper wmsInnerInventoryDetMapper;
     @Resource
     private SecurityFeignApi securityFeignApi;
+    @Resource
+    private SFCFeignApi sfcFeignApi;
 
     private String REDIS_KEY = "PICKINGID:";
 
@@ -193,8 +205,9 @@ public class PickingOrderServiceImpl implements PickingOrderService {
      */
     private int addInventoryDet(String barcode,String jobOrderCode,WmsInnerJobOrderDet wmsInnerJobOrderDet){
         //获取完工入库单单号
+        String factoryBarcode=this.getFactoryBarcode(barcode);
         Example example = new Example(WmsInnerInventoryDet.class);
-        example.createCriteria().andEqualTo("barcode",barcode).andEqualTo("storageId",wmsInnerJobOrderDet.getOutStorageId())
+        example.createCriteria().andEqualTo("barcode",factoryBarcode).andEqualTo("storageId",wmsInnerJobOrderDet.getOutStorageId())
                 .andEqualTo("materialId",wmsInnerJobOrderDet.getMaterialId())
                 .andEqualTo("barcodeStatus",3)
                 .andEqualTo("orgId",wmsInnerJobOrderDet.getOrgId());
@@ -236,7 +249,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         }else{
             //获取出库单对应的工单
 //            WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet = outFeignApi.detail(wmsInnerJobOrderDet.getSourceDetId()).getData();
-            BigDecimal qty = InBarcodeUtil.pickCheckBarCode(wmsInnerJobOrderDet.getInventoryStatusId(),wmsInnerJobOrderDet.getMaterialId(),barCode);
+            String factoryBarcode = this.getFactoryBarcode(barCode);
+            BigDecimal qty = InBarcodeUtil.pickCheckBarCode(wmsInnerJobOrderDet.getInventoryStatusId(),wmsInnerJobOrderDet.getMaterialId(),factoryBarcode);
             map.put("SN","true");
             map.put("qty",qty);
         }
@@ -248,9 +262,9 @@ public class PickingOrderServiceImpl implements PickingOrderService {
      * @param ids
      * @return
      */
-    @Override
+    //@Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public int autoDistribution(String ids) {
+    public int autoDistributionOld(String ids) {
         SysUser sysUser = currentUser();
         String[] arrId = ids.split(",");
         int num = 0;
@@ -260,7 +274,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 throw new BizErrorException("单据已分配完成");
             }
             Example example = new Example(WmsInnerJobOrderDet.class);
-            example.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrder.getJobOrderId()).andEqualTo("OrderStatus",1);
+            example.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrder.getJobOrderId()).andEqualTo("orderStatus",1);
             List<WmsInnerJobOrderDet> list = wmsInnerJobOrderDetMapper.selectByExample(example);
             //成功自动分配数量
             int success = 0;
@@ -273,7 +287,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 baseStorageRule.setMaterialId(wms.getMaterialId());
                 baseStorageRule.setQty(wms.getPlanQty());
                 baseStorageRule.setSalesBarcode(wms.getOption1());
-                baseStorageRule.setSalesBarcode(wms.getOption2());
+                //baseStorageRule.setSalesBarcode(wms.getOption2());
+                baseStorageRule.setPoCode(wms.getOption2());
                 ResponseEntity<Long> responseEntity = baseFeignApi.outRule(baseStorageRule);
                 if(responseEntity.getCode()!=0){
                     throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
@@ -285,6 +300,9 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     wms.setOrderStatus((byte)3);
                     wms.setModifiedUserId(sysUser.getUserId());
                     wms.setModifiedTime(new Date());
+
+                    //更新明细 2022-03-22
+                    num+=wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wms);
                     //分配库存
                     num += this.DistributionInventory(wmsInnerJobOrder, wms,1,null);
 
@@ -370,6 +388,132 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 wmsInnerJobOrder.setOrderStatus((byte)2);
             }
 //            wmsInnerJobOrder.setOrderStatus((byte)3);
+            wmsInnerJobOrder.setModifiedTime(new Date());
+            wmsInnerJobOrder.setModifiedUserId(sysUser.getUserId());
+            wmsInnerJobOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
+        }
+        return num;
+    }
+
+    /**
+     * 自动分配
+     * @param ids
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int autoDistribution(String ids) {
+        SysUser sysUser = currentUser();
+        String[] arrId = ids.split(",");
+        int num = 0;
+        for (String id : arrId) {
+            List<Long> materialIdList=new ArrayList<>();
+            WmsInnerJobOrder wmsInnerJobOrder = wmsInnerJobOrderMapper.selectByPrimaryKey(id);
+            if(wmsInnerJobOrder.getOrderStatus()==(byte)3){
+                throw new BizErrorException("单据已分配完成");
+            }
+            Example example = new Example(WmsInnerJobOrderDet.class);
+            example.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrder.getJobOrderId())
+                    .andEqualTo("orderStatus",1);
+            List<WmsInnerJobOrderDet> list = wmsInnerJobOrderDetMapper.selectByExample(example);
+            //获取物料相应推荐库位
+            for (WmsInnerJobOrderDet wmsInnerJobOrderDet : list) {
+                Long materialId=wmsInnerJobOrderDet.getMaterialId();
+                if(!materialIdList.contains(materialId)){
+                    materialIdList.add(materialId);
+                }
+            }
+            Map<Long, List<StorageRuleInventry>> listMap = new HashMap<>();
+            for (Long longId : materialIdList) {
+                //推荐库位集合
+                BaseStorageRule baseStorageRule = new BaseStorageRule();
+                baseStorageRule.setMaterialId(longId);
+                baseStorageRule.setQty(BigDecimal.ZERO);
+                ResponseEntity<List<StorageRuleInventry>> responseEntity = baseFeignApi.returnOutStorage(baseStorageRule);
+                List<StorageRuleInventry> inventryDetList=responseEntity.getData();
+                if(StringUtils.isNotEmpty(inventryDetList) && inventryDetList.size()>0){
+                    listMap.put(longId, inventryDetList);
+                }
+            }
+
+            log.info("============= 推荐库位库存数据" + JSON.toJSONString(listMap));
+
+            //成功自动分配数量
+            int success = 0;
+            for (WmsInnerJobOrderDet wms : list) {
+                if(StringUtils.isEmpty(wms)){
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+                }
+                BigDecimal planQty=wms.getPlanQty();
+                Long materialId=wms.getMaterialId();
+                List<StorageRuleInventry> inventryList=listMap.get(materialId);
+                for (StorageRuleInventry storageRuleInventry : inventryList) {
+                    BigDecimal packingQty=storageRuleInventry.getMaterialQty();
+                    if(packingQty.compareTo(new BigDecimal(0))==1) {
+                        if (planQty.compareTo(packingQty) == 1) {
+                            //库存不足
+                            WmsInnerJobOrderDet newDet = new WmsInnerJobOrderDet();
+                            BeanUtil.copyProperties(wms,newDet);
+                            newDet.setJobOrderDetId(null);
+                            newDet.setPlanQty(packingQty);
+                            newDet.setDistributionQty(packingQty);
+                            newDet.setOutStorageId(storageRuleInventry.getStorageId());
+                            newDet.setOrderStatus((byte)3);
+                            num+=wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(newDet);
+
+                            planQty=planQty.subtract(packingQty);
+                            storageRuleInventry.setMaterialQty(new BigDecimal(0));
+
+                            //分配库存
+                            num += this.DistributionInventory(wmsInnerJobOrder, newDet,1,null);
+                        }
+                        else {
+                            //库存足
+                            wms.setPlanQty(planQty);
+                            wms.setDistributionQty(planQty);
+                            wms.setOutStorageId(storageRuleInventry.getStorageId());
+                            wms.setOrderStatus((byte)3);
+                            wms.setModifiedUserId(sysUser.getUserId());
+                            wms.setModifiedTime(new Date());
+                            num += wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wms);
+
+                            planQty=new BigDecimal(0);
+                            storageRuleInventry.setMaterialQty(packingQty.subtract(planQty));
+
+                            log.info("============= 库存足 拣货明细数据" + JSON.toJSONString(wms));
+
+                            //分配库存
+                            num += this.DistributionInventory(wmsInnerJobOrder, wms,1,null);
+                        }
+
+                        if(planQty.compareTo(new BigDecimal(0))<=0){
+                            success++;
+                            break;
+                        }
+
+                    }
+                }
+
+                //所有库存分配完 计划数量仍大于0 更新剩余计划数
+                if(planQty.compareTo(new BigDecimal(0))==1){
+                    wms.setPlanQty(planQty);
+                    wms.setDistributionQty(new BigDecimal(0));
+                    wms.setOrderStatus((byte)1);
+                    wms.setModifiedUserId(sysUser.getUserId());
+                    wms.setModifiedTime(new Date());
+                    num += wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wms);
+                }
+
+            }
+            if(success==0){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"未匹配到可用库位");
+            }else if(success==list.size()){
+                wmsInnerJobOrder.setOrderStatus((byte)3);
+            }else {
+                wmsInnerJobOrder.setOrderStatus((byte)2);
+            }
+
+            wmsInnerJobOrder.setWorkingAreaId(null);
             wmsInnerJobOrder.setModifiedTime(new Date());
             wmsInnerJobOrder.setModifiedUserId(sysUser.getUserId());
             wmsInnerJobOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
@@ -1656,6 +1800,37 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             wmsInnerInventorys.setPackingQty(wmsInnerInventorys.getPackingQty().add(wmsInPutawayOrderDet.getActualQty()));
             wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventorys);
         }
+    }
+
+    // 条码清洗，获取厂内码
+    public String getFactoryBarcode(String barcode){
+        String factoryBarcode = null;
+        if (barcode.length() != 23){
+            // 判断是否三星客户条码
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("wanbaoCheckBarcode");
+            List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if (!specItems.isEmpty()){
+                SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess = new SearchMesSfcBarcodeProcess();
+                searchMesSfcBarcodeProcess.setIsCustomerBarcode(barcode);
+                List<MesSfcBarcodeProcessDto> mesSfcBarcodeProcessDtos = sfcFeignApi.findList(searchMesSfcBarcodeProcess).getData();
+                if (!mesSfcBarcodeProcessDtos.isEmpty()){
+                    factoryBarcode = mesSfcBarcodeProcessDtos.get(0).getBarcode();
+                }
+            }
+        }
+
+        if (factoryBarcode == null) {
+            SearchMesSfcKeyPartRelevance searchMesSfcKeyPartRelevance = new SearchMesSfcKeyPartRelevance();
+            searchMesSfcKeyPartRelevance.setPartBarcode(barcode);
+            List<MesSfcKeyPartRelevanceDto> mesSfcKeyPartRelevanceDtos = sfcFeignApi.findList(searchMesSfcKeyPartRelevance).getData();
+            if (!mesSfcKeyPartRelevanceDtos.isEmpty()) {
+                factoryBarcode = mesSfcKeyPartRelevanceDtos.get(0).getBarcodeCode();
+            }else{
+                factoryBarcode = barcode;
+            }
+        }
+        return factoryBarcode;
     }
 
     /**

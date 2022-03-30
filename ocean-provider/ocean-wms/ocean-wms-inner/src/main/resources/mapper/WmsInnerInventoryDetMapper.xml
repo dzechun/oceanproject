@@ -15,6 +15,7 @@
         <result column="supplier_id" jdbcType="BIGINT" property="supplierId"/>
         <result column="job_status" jdbcType="TINYINT" property="jobStatus"/>
         <result column="if_stock_lock" jdbcType="TINYINT" property="ifStockLock"/>
+        <result column="lock_status" jdbcType="TINYINT" property="lockStatus"/>
         <result column="receiving_date" jdbcType="TIMESTAMP" property="receivingDate"/>
         <result column="asn_code" jdbcType="VARCHAR" property="asnCode"/>
         <result column="deliver_date" jdbcType="TIMESTAMP" property="deliverDate"/>
@@ -66,6 +67,7 @@
         wiid.supplier_id,
         wiid.job_status,
         wiid.if_stock_lock,
+        wiid.lock_status,
         wiid.receiving_date,
         wiid.asn_code,
         wiid.deliver_date,
@@ -167,6 +169,9 @@
             </if>
             <if test="ifStockLock!=null and ifStockLock>=0">
                 and wiid.if_stock_lock = #{ifStockLock}
+            </if>
+            <if test="lockStatus!=null and lockStatus>=0">
+                and wiid.lock_status = #{lockStatus}
             </if>
             <if test="asnCode!=null and asnCode!=''">
                 and wiid.asn_code like CONCAT('%',#{asnCode},'%')

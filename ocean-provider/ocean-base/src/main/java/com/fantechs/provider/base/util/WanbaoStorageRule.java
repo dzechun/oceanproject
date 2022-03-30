@@ -149,15 +149,35 @@ public class WanbaoStorageRule {
      * @return
      */
     public static Long retOutStorage(BaseStorageRule baseStorageRule){
-        if(StringUtils.isEmpty(baseStorageRule.getLogicId(),baseStorageRule.getMaterialId(),baseStorageRule.getQty())){
+//        if(StringUtils.isEmpty(baseStorageRule.getLogicId(),baseStorageRule.getMaterialId(),baseStorageRule.getQty())){
+//            throw new BizErrorException(ErrorCodeEnum.GL99990100);
+//        }
+        if(StringUtils.isEmpty(baseStorageRule.getMaterialId(),baseStorageRule.getQty())){
             throw new BizErrorException(ErrorCodeEnum.GL99990100);
         }
         List<StorageRuleInventry> storageRuleInventries = wanbaoStorageRule.baseStorageMapper.findOutInv(ControllerUtil.dynamicCondition("materialId",baseStorageRule.getMaterialId(),
-                "salesBarcode",baseStorageRule.getSalesBarcode(),"poCode",baseStorageRule.getPoCode()));
+                "salesBarcode",baseStorageRule.getSalesBarcode(),"poCode",baseStorageRule.getPoCode(),"materialQty",baseStorageRule.getQty()));
         if(StringUtils.isEmpty(storageRuleInventries)||storageRuleInventries.size()<1){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"未获取到符合条件的出库库位");
         }
         return  storageRuleInventries.get(0).getStorageId();
+    }
+
+    /**
+     * 出库规则
+     * @return
+     */
+    public static List<StorageRuleInventry> returnOutStorage(BaseStorageRule baseStorageRule){
+        if(StringUtils.isEmpty(baseStorageRule.getMaterialId(),baseStorageRule.getQty())){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100);
+        }
+        List<StorageRuleInventry> storageRuleInventries = wanbaoStorageRule.baseStorageMapper.findOutStorage(ControllerUtil.dynamicCondition("materialId",baseStorageRule.getMaterialId(),
+                "salesBarcode",baseStorageRule.getSalesBarcode(),"poCode",baseStorageRule.getPoCode(),"materialQty",baseStorageRule.getQty()));
+        if(StringUtils.isEmpty(storageRuleInventries)||storageRuleInventries.size()<1){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"未获取到符合条件的出库库位");
+        }
+
+        return  storageRuleInventries;
     }
 
     /**

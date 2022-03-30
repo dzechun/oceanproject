@@ -143,7 +143,7 @@ public class QmsInspectionOrderController {
         }
     }
     @ApiOperation(value = "定时自动新增",notes = "定时自动新增")
-    @GetMapping("/autoAdd")
+    @PostMapping("/autoAdd")
     public ResponseEntity autoAdd() {
         return ControllerUtil.returnCRUD(qmsInspectionOrderService.newAutoAdd());
     }

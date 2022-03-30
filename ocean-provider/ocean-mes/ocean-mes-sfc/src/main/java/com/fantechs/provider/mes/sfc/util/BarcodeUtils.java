@@ -410,6 +410,7 @@ public class BarcodeUtils {
                 // 若是投产工序，则判断是否首条码，若是则更新工单状态为生产中
                 if (mesPmWorkOrder.getWorkOrderStatus() == (byte) 1) {
                     mesPmWorkOrder.setWorkOrderStatus((byte) 3);
+                    mesPmWorkOrder.setActualStartTime(new Date());
 
                     /**
                      * 20211215 bgkun

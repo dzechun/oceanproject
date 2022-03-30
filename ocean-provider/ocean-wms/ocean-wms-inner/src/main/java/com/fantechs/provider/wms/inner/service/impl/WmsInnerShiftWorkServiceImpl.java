@@ -8,6 +8,10 @@ import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
 import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessDto;
+import com.fantechs.common.base.general.dto.mes.sfc.MesSfcKeyPartRelevanceDto;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
+import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcKeyPartRelevance;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
@@ -21,6 +25,7 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
@@ -81,6 +86,9 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
     @Resource
     private SecurityFeignApi securityFeignApi;
 
+    @Resource
+    private SFCFeignApi sfcFeignApi;
+
     @Override
     public List<WmsInnerJobOrderDto> pdaFindList(Map<String, Object> map) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -103,23 +111,12 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         if (StringUtils.isEmpty(dto.getStorageId())) {
             throw new BizErrorException(ErrorCodeEnum.PDA5001003);
         }
+        //获取厂内码
+        String factoryBarcode = getFactoryBarcode(dto.getBarcode());
 
         Map<String, Object> map = new HashMap<>();
         map.put("storageId", dto.getStorageId());
-        map.put("barcode", dto.getBarcode());
-        // 万宝项目-判断是三星客户条码还是厂内码
-        if (dto.getBarcode().length() != 23){
-            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-            searchSysSpecItem.setSpecCode("wanbaoCheckBarcode");
-            List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-            if ("1".equals(specItems.get(0).getParaValue())){
-                if (dto.getBarcode().contains("391-")){
-                    map.put("salesBarcode", dto.getBarcode());
-                }else {
-                    map.put("customerBarcode", dto.getBarcode());
-                }
-            }
-        }
+        map.put("barcode", factoryBarcode);
 
         List<WmsInnerInventoryDetDto> inventoryDetDtos = wmsInnerInventoryDetService.findList(map);
         Long materialId = 0L;
@@ -357,9 +354,10 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             List<WmsInnerJobOrderDetBarcode> jobOrderDetBarcodeList = new ArrayList<>();
             List<WmsInnerHtJobOrderDetBarcode> htJobOrderDetBarcodes = new ArrayList<>();
             for (String barcode : dto.getBarcodes()) {
+                String factoryBarcode = this.getFactoryBarcode(barcode);
                 // 创建条码移位单明细关系
                 WmsInnerJobOrderDetBarcode wmsInnerJobOrderDetBarcode = new WmsInnerJobOrderDetBarcode();
-                wmsInnerJobOrderDetBarcode.setBarcode(barcode);
+                wmsInnerJobOrderDetBarcode.setBarcode(factoryBarcode);
                 wmsInnerJobOrderDetBarcode.setJobOrderDetId(dto.getJobOrderDetId());
                 wmsInnerJobOrderDetBarcode.setStatus((byte) 1);
                 wmsInnerJobOrderDetBarcode.setOrgId(sysUser.getOrganizationId());
@@ -453,11 +451,15 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 //.andEqualTo("qcLock", 0)
                 .andEqualTo("lockStatus", 0);
 //                .andGreaterThan("packingQty", 0);
-        if (StringUtils.isNotEmpty(wmsInnerInventory)){
+        if (StringUtils.isNotEmpty(wmsInnerInventory) && StringUtils.isNotEmpty(shiftType) && shiftType==(byte)1){
             criteria1.andEqualTo("inventoryStatusId", wmsInnerInventory.getInventoryStatusId());
         }
         if(StringUtils.isNotEmpty(shiftType) && shiftType==(byte)1){
             criteria.andEqualTo("qcLock",0);
+        }
+        else if(StringUtils.isNotEmpty(shiftType) && shiftType!=(byte)1){
+            criteria1.andEqualTo("inventoryStatusId", wmsInnerJobOrderDet.getInventoryStatusId());
+            criteria1.andEqualTo("inspectionOrderCode", wmsInnerJobOrderDto.getRelatedOrderCode());
         }
         WmsInnerInventory wmsInnerInventory_old = wmsInnerInventoryMapper.selectOneByExample(example);
         //获取初期数量
@@ -977,5 +979,36 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         }
 
         return totalQty;
+    }
+
+    // 条码清洗，获取厂内码
+    public String getFactoryBarcode(String barcode){
+        String factoryBarcode = null;
+        if (barcode.length() != 23){
+            // 判断是否三星客户条码
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("wanbaoCheckBarcode");
+            List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if (!specItems.isEmpty()){
+                SearchMesSfcBarcodeProcess searchMesSfcBarcodeProcess = new SearchMesSfcBarcodeProcess();
+                searchMesSfcBarcodeProcess.setIsCustomerBarcode(barcode);
+                List<MesSfcBarcodeProcessDto> mesSfcBarcodeProcessDtos = sfcFeignApi.findList(searchMesSfcBarcodeProcess).getData();
+                if (!mesSfcBarcodeProcessDtos.isEmpty()){
+                    factoryBarcode = mesSfcBarcodeProcessDtos.get(0).getBarcode();
+                }
+            }
+        }
+
+        if (factoryBarcode == null) {
+            SearchMesSfcKeyPartRelevance searchMesSfcKeyPartRelevance = new SearchMesSfcKeyPartRelevance();
+            searchMesSfcKeyPartRelevance.setPartBarcode(barcode);
+            List<MesSfcKeyPartRelevanceDto> mesSfcKeyPartRelevanceDtos = sfcFeignApi.findList(searchMesSfcKeyPartRelevance).getData();
+            if (!mesSfcKeyPartRelevanceDtos.isEmpty()) {
+                factoryBarcode = mesSfcKeyPartRelevanceDtos.get(0).getBarcodeCode();
+            }else{
+                factoryBarcode = barcode;
+            }
+        }
+        return factoryBarcode;
     }
 }

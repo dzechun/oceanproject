@@ -68,7 +68,6 @@ public class AuthHeaderFilter extends ZuulFilter {
 			"/ocean-chinafivering-api/webServiceImport/getPoDetails,/ocean-chinafivering-api/webServiceImport/getPartNoInfo,/ocean-chinafivering-api/webServiceImport/getVendorUserNameAndPwd,"+
 			"/ocean-chinafivering-api/webServiceImport/getShelvesNo,/ocean-chinafivering-api/webServiceImport/getSubcontractor,"+
 			"/ocean-chinafivering-api/webServiceImport/getReqDetails,"+
-			"/ocean-guest-wanbao/qmsInspectionOrder/autoAdd,"+
 			"/ocean-fileserver/file/uploadsFiles,/ocean-ureport/productDailyPlan/findBatchList,/ocean-ureport/qmsProcess/findList,/ocean-ureport/qmsProcess/findProcessRateList,/ocean-ureport/qmsProcess/findProcessPassRateList," +
 			"/ocean-ureport/productionLine/findList,/ocean-mulinsen-api/nccBdMaterial/findList,/ocean-ureport/eamEquipmentBorad/findList";
 	private static final String SWAGGER_URI = "/v2/api-docs";

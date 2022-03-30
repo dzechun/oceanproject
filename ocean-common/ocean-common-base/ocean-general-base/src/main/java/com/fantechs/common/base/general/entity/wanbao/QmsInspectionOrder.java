@@ -41,7 +41,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      * 检验单号
      */
     @ApiModelProperty(name="inspectionOrderCode",value = "检验单号")
-    @Excel(name = "检验单号", height = 20, width = 30,orderNum="1")
+    @Excel(name = "检验单号", height = 20, width = 30,orderNum="1",needMerge = true)
     @Column(name = "inspection_order_code")
     private String inspectionOrderCode;
 
@@ -63,7 +63,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      * 销售编码
      */
     @ApiModelProperty(name="salesCode",value = "销售编码")
-    @Excel(name = "销售编码", height = 20, width = 30,orderNum="6")
+    @Excel(name = "销售编码", height = 20, width = 30,orderNum="6",needMerge = true)
     @Column(name = "sales_code")
     private String salesCode;
 
@@ -71,7 +71,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      * PO号
      */
     @ApiModelProperty(name="samePackageCode",value = "PO号")
-    @Excel(name = "PO号", height = 20, width = 30,orderNum="7")
+    @Excel(name = "PO号", height = 20, width = 30,orderNum="7",needMerge = true)
     @Column(name = "same_package_code")
     private String samePackageCode;
 
@@ -79,7 +79,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      * 已入库数量
      */
     @ApiModelProperty(name="inventoryQty",value = "已入库数量")
-    @Excel(name = "已入库数量", height = 20, width = 30,orderNum="9")
+    @Excel(name = "已入库数量", height = 20, width = 30,orderNum="9",needMerge = true)
     @Column(name = "inventory_qty")
     private BigDecimal inventoryQty;
 
@@ -87,7 +87,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      * 单据数量
      */
     @ApiModelProperty(name="orderQty",value = "单据数量")
-    @Excel(name = "单据数量", height = 20, width = 30,orderNum="8")
+    @Excel(name = "单据数量", height = 20, width = 30,orderNum="8",needMerge = true)
     @Column(name = "order_qty")
     private BigDecimal orderQty;
 
@@ -109,7 +109,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      * 检验状态(1-待检验 2-检验中 3-已检验)
      */
     @ApiModelProperty(name="inspectionStatus",value = "检验状态(1-待检验 2-检验中 3-已检验)")
-    @Excel(name = "检验状态(1-待检验 2-检验中 3-已检验)", height = 20, width = 30,orderNum="13",replace = {"待检验_1", "检验中_2", "已检验_3"})
+    @Excel(name = "检验状态(1-待检验 2-检验中 3-已检验)", height = 20, width = 30,orderNum="13",replace = {"待检验_1", "检验中_2", "已检验_3"},needMerge = true)
     @Column(name = "inspection_status")
     private Byte inspectionStatus;
 
@@ -117,7 +117,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      * 检验结果(0-整批不合格 1-整批合格 2-部分不合格)
      */
     @ApiModelProperty(name="inspectionResult",value = "检验结果(0-整批不合格 1-整批合格 2-部分不合格)")
-    @Excel(name = "检验结果(0-整批不合格 1-整批合格 2-部分不合格)", height = 20, width = 30,orderNum="14",replace = {"整批不合格_0", "整批合格_1", "部分不合格_2"})
+    @Excel(name = "检验结果(0-整批不合格 1-整批合格 2-部分不合格)", height = 20, width = 30,orderNum="14",replace = {"整批不合格_0", "整批合格_1", "部分不合格_2"},needMerge = true)
     @Column(name = "inspection_result")
     private Byte inspectionResult;
 
@@ -133,8 +133,16 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="auditStatus",value = "审核状态(0-未审核 1-通过 2-不通过)")
     @Column(name = "audit_status")
-    @Excel(name = "审核状态(0-未审核 1-通过 2-不通过)", height = 20, width = 30,orderNum="16",replace = {"未审核_0", "通过_1", "不通过_2"})
+    @Excel(name = "审核状态(0-未审核 1-通过 2-不通过)", height = 20, width = 30,orderNum="16",replace = {"未审核_0", "通过_1", "不通过_2"},needMerge = true)
     private Byte auditStatus;
+
+    /**
+     * 复检状态（1、未复检 2、已复检）
+     */
+    @ApiModelProperty(name="recheckStatus",value = "复检状态（1、未复检 2、已复检）")
+    @Column(name = "recheck_status")
+    //@Excel(name = "复检状态（1、未复检 2、已复检）", height = 20, width = 30,orderNum="16",replace = {"未复检_1", "已复检_2"},needMerge = true)
+    private Byte recheckStatus;
 
     /**
      * 审核部门ID
@@ -201,7 +209,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      * 创建时间
      */
     @ApiModelProperty(name="createTime",value = "创建时间")
-    @Excel(name = "创建时间", height = 20, width = 30,orderNum="18",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "创建时间", height = 20, width = 30,orderNum="18",exportFormat ="yyyy-MM-dd HH:mm:ss",needMerge = true)
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_time")
     private Date createTime;
@@ -217,7 +225,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      * 修改时间
      */
     @ApiModelProperty(name="modifiedTime",value = "修改时间")
-    @Excel(name = "修改时间", height = 20, width = 30,orderNum="20",exportFormat ="yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "修改时间", height = 20, width = 30,orderNum="20",exportFormat ="yyyy-MM-dd HH:mm:ss",needMerge = true)
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "modified_time")
     private Date modifiedTime;
@@ -234,7 +242,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "创建用户名称")
-    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="19")
+    @Excel(name = "创建用户名称", height = 20, width = 30,orderNum="19",needMerge = true)
     private String createUserName;
 
     /**
@@ -242,7 +250,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "createUserName",value = "修改用户名称")
-    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="21")
+    @Excel(name = "修改用户名称", height = 20, width = 30,orderNum="21",needMerge = true)
     private String modifiedUserName;
 
     /**
@@ -257,7 +265,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "materialCode",value = "产品料号")
-    @Excel(name = "产品料号", height = 20, width = 30,orderNum="2")
+    @Excel(name = "产品料号", height = 20, width = 30,orderNum="2",needMerge = true)
     private String materialCode;
 
     /**
@@ -265,7 +273,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "materialDesc",value = "产品描述")
-    @Excel(name = "产品描述", height = 20, width = 30,orderNum="3")
+    @Excel(name = "产品描述", height = 20, width = 30,orderNum="3",needMerge = true)
     private String materialDesc;
 
     /**
@@ -273,7 +281,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "materialVersion",value = "产品版本")
-    @Excel(name = "产品版本", height = 20, width = 30,orderNum="4")
+    //@Excel(name = "产品版本", height = 20, width = 30,orderNum="4")
     private String materialVersion;
 
     /**
@@ -281,7 +289,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "customerName",value = "客户")
-    @Excel(name = "客户", height = 20, width = 30,orderNum="5")
+    @Excel(name = "客户", height = 20, width = 30,orderNum="5",needMerge = true)
     private String customerName;
 
     /**
@@ -289,16 +297,24 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "inspectionStandardName",value = "检验标准")
-    @Excel(name = "检验标准", height = 20, width = 30,orderNum="12")
+    @Excel(name = "检验标准", height = 20, width = 30,orderNum="12",needMerge = true)
     private String inspectionStandardName;
+
+    /**
+     * 检验方式编码
+     */
+    @Transient
+    @ApiModelProperty(name = "inspectionWayCode",value = "检验方式编码")
+    //@Excel(name = "检验方式", height = 20, width = 30,orderNum="11")
+    private String inspectionWayCode;
 
     /**
      * 检验方式
      */
     @Transient
-    @ApiModelProperty(name = "inspectionWayCode",value = "检验方式")
-    @Excel(name = "检验方式", height = 20, width = 30,orderNum="11")
-    private String inspectionWayCode;
+    @ApiModelProperty(name = "inspectionWayDesc",value = "检验方式")
+    @Excel(name = "检验方式", height = 20, width = 30,orderNum="11",needMerge = true)
+    private String inspectionWayDesc;
 
     /**
      * 审核部门
@@ -312,7 +328,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "auditUserName",value = "审核人")
-    @Excel(name = "审核人", height = 20, width = 30,orderNum="17")
+    @Excel(name = "审核人", height = 20, width = 30,orderNum="17",needMerge = true)
     private String auditUserName;
 
     /**
@@ -320,7 +336,7 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
      */
     @Transient
     @ApiModelProperty(name = "inspectionUserName",value = "检验人")
-    @Excel(name = "检验人", height = 20, width = 30,orderNum="15")
+    @Excel(name = "检验人", height = 20, width = 30,orderNum="15",needMerge = true)
     private String inspectionUserName;
 
     /**

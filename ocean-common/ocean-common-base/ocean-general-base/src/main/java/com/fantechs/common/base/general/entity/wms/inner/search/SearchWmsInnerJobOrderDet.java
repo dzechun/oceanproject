@@ -27,4 +27,6 @@ public class SearchWmsInnerJobOrderDet extends BaseQuery implements Serializable
 
     @ApiModelProperty(name="materialId",value = "物料ID")
     private Long materialId;
+
+    private Long userId;
 }

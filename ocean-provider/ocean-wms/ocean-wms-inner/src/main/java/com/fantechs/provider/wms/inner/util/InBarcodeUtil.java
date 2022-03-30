@@ -11,19 +11,13 @@ import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInAsnOrder;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderReMspp;
+import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
-import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
-import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
-import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
-import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderReMsppMapper;
+import com.fantechs.provider.wms.inner.mapper.*;
 import com.google.common.base.Joiner;
 import org.springframework.stereotype.Component;
 import tk.mybatis.mapper.entity.Example;
@@ -53,6 +47,8 @@ public class InBarcodeUtil {
     @Resource
     private WmsInnerJobOrderReMsppMapper wmsInnerJobOrderReMsppMapper;
     @Resource
+    private WmsInnerJobOrderDetBarcodeMapper wmsInnerJobOrderDetBarcodeMapper;
+    @Resource
     private InFeignApi inFeignApi;
 
     private static InBarcodeUtil inBarcodeUtil;
@@ -66,6 +62,7 @@ public class InBarcodeUtil {
         inBarcodeUtil.wmsInnerJobOrderMapper = wmsInnerJobOrderMapper;
         inBarcodeUtil.wmsInnerJobOrderReMsppMapper = wmsInnerJobOrderReMsppMapper;
         inBarcodeUtil.inFeignApi = inFeignApi;
+        inBarcodeUtil.wmsInnerJobOrderDetBarcodeMapper = wmsInnerJobOrderDetBarcodeMapper;
     }
 
     /**
@@ -168,18 +165,18 @@ public class InBarcodeUtil {
 
     /**
      * 获取栈板绑定工单条码信息
-     * @param jobOrderId
+     * @param jobOrderDetId
      * @return
      */
-    public static String getWorkBarCodeList(Long jobOrderId){
-        Example example = new Example(WmsInnerJobOrderReMspp.class);
-        example.createCriteria().andEqualTo("jobOrderId",jobOrderId);
-        WmsInnerJobOrderReMspp wmsInnerJobOrderReMspp = inBarcodeUtil.wmsInnerJobOrderReMsppMapper.selectOneByExample(example);
-        if(StringUtils.isEmpty(wmsInnerJobOrderReMspp)){
+    public static String getWorkBarCodeList(Long jobOrderDetId){
+        Example example = new Example(WmsInnerJobOrderDetBarcode.class);
+        example.createCriteria().andEqualTo("jobOrderDetId",jobOrderDetId);
+        List<WmsInnerJobOrderDetBarcode> jobOrderDetBarcodeList = inBarcodeUtil.wmsInnerJobOrderDetBarcodeMapper.selectByExample(example);
+        if(jobOrderDetBarcodeList.isEmpty()){
             throw new BizErrorException("信息匹配失败");
         }
+        List<String> barCodeList  = jobOrderDetBarcodeList.stream().map(WmsInnerJobOrderDetBarcode::getBarcode).collect(Collectors.toList());
         //获取栈板绑定
-        List<String> barCodeList = inBarcodeUtil.wmsInnerJobOrderMapper.workBarCodeList(wmsInnerJobOrderReMspp.getProductPalletId());
         if(barCodeList.size()<1){
             throw new BizErrorException("条码信息匹配失败");
         }

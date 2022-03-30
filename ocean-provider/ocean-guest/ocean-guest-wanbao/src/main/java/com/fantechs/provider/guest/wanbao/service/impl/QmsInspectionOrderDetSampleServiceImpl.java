@@ -99,7 +99,7 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
         criteria1.andEqualTo("inspectionOrderId",qmsInspectionOrderDet.getInspectionOrderId());
         List<QmsInspectionOrderDetSample> inspectionOrderDetSamples = qmsInspectionOrderDetSampleMapper.selectByExample(example1);
 
-        if (inspectionOrderDetSamples.size() > qmsInspectionOrderDetSampleList.size()) {
+        if (inspectionOrderDetSamples.size() >= qmsInspectionOrderDetSampleList.size()) {
             List<String> barcodes = new LinkedList<>();
             //提交过来的条码
             for (QmsInspectionOrderDetSample qmsInspectionOrderDetSample : qmsInspectionOrderDetSampleList) {

@@ -51,7 +51,6 @@
             OR we.wip_entity_name LIKE 'ZA%'
             OR we.wip_entity_name LIKE 'ZC%'
             OR we.wip_entity_name LIKE 'ZD%')
-            AND wdj.scheduled_start_date >= TO_DATE('2020-01-01' , 'YYYY-MM-DD' )
             <if test="date != null and date != ''">
                 AND wdj.scheduled_start_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
             </if>

@@ -202,6 +202,111 @@ public class CodeUtils {
         return  ruleType;
     }
 
+    public static  String getTypeCode(String str,String customizeValue,String planYear,String planMonth,String planDay){
+        String ruleType=null;
+        Map<String, Object> map= new HashMap<>();
+        Calendar cal = Calendar.getInstance();
+        if(StringUtils.isNotEmpty(customizeValue)){
+            JSONArray jsonArray = JSONArray.fromObject(customizeValue);
+            for(int i=0;i<jsonArray.size();i++) {
+                JSONObject obj = JSONObject.fromObject(jsonArray.get(i));
+                Iterator it = obj.keys();
+                while (it.hasNext()) {
+                    String key = String.valueOf(it.next());
+                    String value = (String) obj.get(key);
+                    map.put(key, value);
+                }
+            }
+            //map= JsonUtils.jsonToMap(customizeValue);
+        }
+        switch(str){
+            //月
+            case "[M]" :
+                ruleType =new SimpleDateFormat("MM").format(new Date());
+                break;
+            //周
+            case "[W]" :
+                //周固定2位
+                Format format=new DecimalFormat("00");
+                ruleType =  format.format(cal.get(Calendar.WEEK_OF_YEAR));
+                break;
+            //日
+            case "[D]" :
+                ruleType =new SimpleDateFormat("dd").format(new Date());
+                break;
+            //周的日
+            case "[K]" :
+                ruleType =  cal.get(Calendar.DAY_OF_WEEK)+"";
+                break;
+            //年的日
+            case "[A]" :
+                //年的日固定3位
+                Format decimalFormat=new DecimalFormat("000");
+                ruleType =  decimalFormat.format(cal.get(Calendar.DAY_OF_YEAR));
+                break;
+            //自定义年
+            case "[y]" :
+                String year=null;
+                if(StringUtils.isEmpty(planYear)) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+                    year = sdf.format(new Date());
+                }
+                else {
+                    year=planYear;
+                }
+                for(String key : map.keySet()){
+                    if(key.equals(year)){
+                        ruleType = (String) map.get(key);
+                    }
+                }
+                break;
+            //自定义月
+            case "[m]" :
+                String month=null;
+                if(StringUtils.isEmpty(planMonth)) {
+                    int m = cal.get(Calendar.MONTH) + 1;
+                    month = String.valueOf(m);
+                }
+                else{
+                    month=planMonth;
+                }
+                for(String key : map.keySet()){
+                    if(key.equals(month)){
+                        ruleType = (String) map.get(key);
+                    }
+                }
+                break;
+            //自定义日
+            case "[d]" :
+                String day=null;
+                if(StringUtils.isEmpty(planDay)) {
+                    int d = cal.get(Calendar.DAY_OF_MONTH);
+                    day = String.valueOf(d);
+                }
+                else {
+                    day=planDay;
+                }
+                for(String key : map.keySet()){
+                    if(key.equals(day)){
+                        ruleType = (String) map.get(key);
+                    }
+                }
+                break;
+            //自定义周
+            case "[w]" :
+                int w = cal.get(Calendar.WEEK_OF_YEAR);
+                String week = String.valueOf(w);
+                for(String key : map.keySet()){
+                    if(key.equals(week)){
+                        ruleType = (String) map.get(key);
+                    }
+                }
+                break;
+            default :
+        }
+        return  ruleType;
+    }
+
 
     /**
      *

@@ -445,10 +445,10 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
     }
 
 
-    @Override
+    //@Override
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
-    public int createJobOrder(Long id,Long platformId) {
+    public int createJobOrderOld(Long id,Long platformId) {
         Map<String, Object> map = new HashMap<>();
         map.put("deliveryOrderId", id);
         List<WmsOutDeliveryOrderDto> list = wmsOutDeliveryOrderMapper.findList(map);
@@ -542,6 +542,137 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                     wmsInnerJobOrderDet.setOption1(dto.getSalesCode());
                     //PO
                     wmsInnerJobOrderDet.setOption2(dto.getOption3());
+                    wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
+                }
+                wmsInnerJobOrder.setPlatformId(platformId);
+                wmsInnerJobOrder.setWmsInPutawayOrderDets(wmsInnerJobOrderDets);
+
+                //创建作业单
+                ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
+                if (responseEntity.getCode() != 0) {
+                    throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+                }
+            }
+            wmsOutDeliveryOrderDto.setIfCreatedJobOrder((byte)1);
+            wmsOutDeliveryOrderDto.setPlatformId(platformId);
+            wmsOutDeliveryOrderMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDto);
+        } else {
+            throw new BizErrorException("拣货作业单已存在");
+        }
+        return 1;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
+    public int createJobOrder(Long id,Long platformId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("deliveryOrderId", id);
+        List<WmsOutDeliveryOrderDto> list = wmsOutDeliveryOrderMapper.findList(map);
+        if (StringUtils.isEmpty(list)) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003,"无数据");
+        }
+        WmsOutDeliveryOrderDto wmsOutDeliveryOrderDto = list.get(0);
+
+        //月台是否已被其他正在作业的拣货单占用
+        SearchWmsInnerJobOrder sWmsInnerJobOrder=new SearchWmsInnerJobOrder();
+        sWmsInnerJobOrder.setJobOrderType((byte)4);
+        sWmsInnerJobOrder.setOrderStatus((byte)4);
+        sWmsInnerJobOrder.setPlatformId(platformId);
+        List<WmsInnerJobOrderDto> innerJobOrderDtos = innerFeignApi.findList(sWmsInnerJobOrder).getData();
+        if(StringUtils.isNotEmpty(innerJobOrderDtos) && innerJobOrderDtos.size()>0){
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"月台已被正在作业的拣货单【"+innerJobOrderDtos.get(0).getJobOrderCode()+"】占用 请选择其他月台");
+        }
+
+        //找发货库位
+        SearchBaseStorage searchBaseStorage=new SearchBaseStorage();
+        searchBaseStorage.setStorageType((byte)3);
+        List<BaseStorage> storageList=baseFeignApi.findList(searchBaseStorage).getData();
+
+        SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+        searchSysSpecItem.setSpecCode("wmsOutDelivery");
+        List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+        if(!specItems.isEmpty() && "wb".equals(specItems.get(0).getParaValue())){
+            if(wmsOutDeliveryOrderDto.getOrderTypeId().equals(1L) && (wmsOutDeliveryOrderDto.getAuditStatus() == null || wmsOutDeliveryOrderDto.getAuditStatus() != (byte) 1)){
+                throw new BizErrorException(ErrorCodeEnum.UAC10011023, "此销售出库单尚未审核，不允许创建作业单！");
+            }
+        }
+
+        SearchWmsOutDeliveryOrderDet searchWmsOutDeliveryOrderDet = new SearchWmsOutDeliveryOrderDet();
+        searchWmsOutDeliveryOrderDet.setDeliveryOrderId(id);
+        List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetList = wmsOutDeliveryOrderDetMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutDeliveryOrderDet));
+        if (StringUtils.isEmpty(wmsOutDeliveryOrderDetList)) {
+            throw new BizErrorException("出库单明细为空时无法创建作业单");
+        }
+
+        //查询是否创建作业单
+        SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
+        searchWmsInnerJobOrder.setRelatedOrderCode(wmsOutDeliveryOrderDto.getDeliveryOrderCode());
+        searchWmsInnerJobOrder.setCodeQueryMark(1);
+        List<WmsInnerJobOrderDto> wmsInnerJobOrderDtos = innerFeignApi.findList(searchWmsInnerJobOrder).getData();
+        //未创建过作业单则新建
+        if (StringUtils.isEmpty(wmsInnerJobOrderDtos)) {
+            Map<Long, List<WmsOutDeliveryOrderDetDto>> listMap = new HashMap<>();
+            //根据仓库id分组(一个仓库对应一个作业单)
+            for (WmsOutDeliveryOrderDetDto wmsOutDeliveryOrderDetDto : wmsOutDeliveryOrderDetList) {
+                if (listMap.containsKey(wmsOutDeliveryOrderDetDto.getWarehouseId())) {
+                    listMap.get(wmsOutDeliveryOrderDetDto.getWarehouseId()).add(wmsOutDeliveryOrderDetDto);
+                } else {
+                    List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetDtos = new ArrayList<>();
+                    wmsOutDeliveryOrderDetDtos.add(wmsOutDeliveryOrderDetDto);
+                    listMap.put(wmsOutDeliveryOrderDetDto.getWarehouseId(), wmsOutDeliveryOrderDetDtos);
+                }
+            }
+
+            //遍历map
+            for (List<WmsOutDeliveryOrderDetDto> dtoList : listMap.values()) {
+                WmsInnerJobOrder wmsInnerJobOrder = new WmsInnerJobOrder();
+                wmsInnerJobOrder.setSourceOrderId(wmsOutDeliveryOrderDto.getDeliveryOrderId());
+                wmsInnerJobOrder.setMaterialOwnerId(wmsOutDeliveryOrderDto.getMaterialOwnerId());
+                wmsInnerJobOrder.setOrderTypeId(wmsOutDeliveryOrderDto.getOrderTypeId());
+                wmsInnerJobOrder.setRelatedOrderCode(wmsOutDeliveryOrderDto.getDeliveryOrderCode());
+                wmsInnerJobOrder.setJobOrderType((byte) 4);
+                wmsInnerJobOrder.setOrderStatus((byte) 1);
+                wmsInnerJobOrder.setWarehouseId(dtoList.get(0).getWarehouseId());
+                //计算总数量
+                BigDecimal packingSum = dtoList.stream().map(WmsOutDeliveryOrderDet::getPackingQty).reduce(BigDecimal.ZERO, BigDecimal::add);
+                wmsInnerJobOrder.setPlanQty(packingSum);
+
+                if(wmsInnerJobOrder.getOrderTypeId()==8){
+                    if(dtoList.stream().filter(li->StringUtils.isEmpty(li.getPickingStorageId())).collect(Collectors.toList()).size()>0 && dtoList.stream().filter(li->StringUtils.isNotEmpty(li.getPickingStorageId())).collect(Collectors.toList()).size()>0){
+                        throw new BizErrorException("维护所有的拣货库位");
+                    }
+                }
+
+                //作业单明细
+                List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = new ArrayList<>();
+                for (WmsOutDeliveryOrderDetDto dto : dtoList) {
+                    WmsInnerJobOrderDet wmsInnerJobOrderDet = new WmsInnerJobOrderDet();
+                    if(wmsInnerJobOrder.getOrderTypeId()==8 && StringUtils.isNotEmpty(dto.getPickingStorageId())){
+                        wmsInnerJobOrder.setType(1);
+                        wmsInnerJobOrderDet.setOutStorageId(dto.getPickingStorageId());
+                        wmsInnerJobOrderDet.setDistributionQty(dto.getPackingQty());
+                    }else {
+                        wmsInnerJobOrder.setType(0);
+                    }
+                    wmsInnerJobOrderDet.setSourceDetId(dto.getDeliveryOrderDetId());
+                    if(StringUtils.isNotEmpty(dto.getStorageId())) {
+                        wmsInnerJobOrderDet.setInStorageId(dto.getStorageId());
+                    }
+                    else if(StringUtils.isNotEmpty(storageList) && storageList.size()>0){
+                        wmsInnerJobOrderDet.setInStorageId(storageList.get(0).getStorageId());
+                    }
+                    wmsInnerJobOrderDet.setInventoryStatusId(dto.getInventoryStatusId());
+                    wmsInnerJobOrderDet.setMaterialId(dto.getMaterialId());
+                    wmsInnerJobOrderDet.setPackingUnitName(dto.getPackingUnitName());
+                    wmsInnerJobOrderDet.setPlanQty(dto.getPackingQty());
+                    wmsInnerJobOrderDet.setOrderStatus((byte) 1);
+                    wmsInnerJobOrderDet.setBatchCode(dto.getBatchCode());
+                    wmsInnerJobOrderDet.setPlatformId(dto.getPlatformId());
+                    //销售编码
+                    wmsInnerJobOrderDet.setOption2(dto.getSalesCode());
+                    //PO
+                    wmsInnerJobOrderDet.setOption3(dto.getOption3());
                     wmsInnerJobOrderDets.add(wmsInnerJobOrderDet);
                 }
                 wmsInnerJobOrder.setPlatformId(platformId);

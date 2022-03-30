@@ -27,4 +27,13 @@ public class BatchGenerateCodeDto implements Serializable {
 
     @ApiModelProperty(name="params",value = "执行函数参数")
     String params;
+
+    @ApiModelProperty(name="planYear",value = "计划年")
+    String planYear;
+
+    @ApiModelProperty(name="planMonth",value = "计划月")
+    String planMonth;
+
+    @ApiModelProperty(name="planDay",value = "计划日")
+    String planDay;
 }

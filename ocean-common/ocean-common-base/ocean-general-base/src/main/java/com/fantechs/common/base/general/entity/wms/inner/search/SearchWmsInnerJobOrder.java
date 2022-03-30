@@ -67,6 +67,8 @@ public class SearchWmsInnerJobOrder extends BaseQuery implements Serializable {
 
     private Long orgId;
 
+    private Long userId;
+
     /**
      * 是否栈板自动生成(1-是，0-否) PDA标识字段
      */
@@ -92,4 +94,6 @@ public class SearchWmsInnerJobOrder extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name="option1",value = "扩展栏位")
     private String option1;
+
+    private Long platformId;
 }

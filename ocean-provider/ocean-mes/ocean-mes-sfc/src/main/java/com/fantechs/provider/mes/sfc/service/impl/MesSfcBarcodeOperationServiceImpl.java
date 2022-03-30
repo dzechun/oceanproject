@@ -39,6 +39,7 @@ import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcProductCartonMapper;
+import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
 import com.fantechs.provider.mes.sfc.service.*;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -65,6 +66,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     @Resource
     private MesSfcWorkOrderBarcodeService mesSfcWorkOrderBarcodeService;
     @Resource
+    private MesSfcWorkOrderBarcodeMapper mesSfcWorkOrderBarcodeMapper;
+    @Resource
     private MesSfcProductCartonService mesSfcProductCartonService;
     @Resource
     private MesSfcProductCartonDetService mesSfcProductCartonDetService;
@@ -89,12 +92,13 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
     public Boolean pdaCartonWork(PdaCartonWorkDto dto) throws Exception {
+        long start = System.currentTimeMillis();
         // 2022-03-08 判断是否质检完成之后走产线入库
         SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
         searchWmsInnerInventoryDet.setBarcode(dto.getBarCode());
         List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
         if (!inventoryDetDtos.isEmpty()){
-            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此条码已入库，不可重复扫码，请检查是否品质重新入库");
+            return true;
         }
 
         // 获取登录用户
@@ -178,6 +182,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         if (productCartonDetDtos != null && productCartonDetDtos.size() > 0) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012013);
         }
+        long check = System.currentTimeMillis();
+        log.info("=========== 校验部分:" + (check - start));
         //产线
         BaseProLine proLine = baseFeignApi.selectProLinesDetail(mesPmWorkOrder.getProLineId()).getData();
         //工序
@@ -210,12 +216,17 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 throw new BizErrorException(ErrorCodeEnum.PDA40012019, mesPmWorkOrder.getMaterialId(), mesPmWorkOrderById.getMaterialId());
             }
         }
+        long config = System.currentTimeMillis();
+        log.info("=========== 配置部分:" + (config - check));
 
         // 5、是否要扫附件码
         if(dto.getAnnex() && StringUtils.isEmpty(dto.getBarAnnexCode())){
             return false;
         }
         if (dto.getAnnex()) {
+            if (dto.getBarCode().equals(dto.getBarAnnexCode())){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "厂内码与附件码重复扫描");
+            }
             Example example = new Example(MesSfcKeyPartRelevance.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("partBarcode", dto.getBarAnnexCode());
@@ -263,6 +274,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
 
             boolean isBarCode = false;
             if(sfcWorkOrderAnnexBarcodeDtos != null && sfcWorkOrderAnnexBarcodeDtos.size() > 0){
+                if (sfcWorkOrderAnnexBarcodeDtos.get(0).getLabelCategoryId().equals(mesSfcWorkOrderBarcodeMapper.finByTypeId("产品条码"))){
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该附件码为厂内码类型，不可扫码");
+                }
                 for (MesSfcWorkOrderBarcodeDto workOrderBarcodeDto: sfcWorkOrderAnnexBarcodeDtos) {
                     if(workOrderBarcodeDto.getBarcode().equals(dto.getBarAnnexCode())){
                         isBarCode = true;
@@ -480,6 +494,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                         .isDelete((byte) 1)
                         .build());
             }
+            long customer = System.currentTimeMillis();
+            log.info("=========== 客户条码部分:" + (customer - config));
         }
         // 6、判断是否已有箱码，生成箱码
         if (sfcProductCarton == null) {
@@ -494,6 +510,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             // 添加包箱表数据
             sfcProductCarton = saveCarton(cartonCode, user.getUserId(), user.getOrganizationId(), dto.getStationId(), mesPmWorkOrder.getWorkOrderId(), packageSpecificationDto.getPackageSpecificationQuantity(), mesPmWorkOrder.getMaterialId());
         }
+        long carton = System.currentTimeMillis();
+        log.info("=========== 生成箱码部分:" + (carton - config));
         // 7、过站
         UpdateProcessDto updateProcessDto = UpdateProcessDto.builder()
                 .badnessPhenotypeCode("N/A")
@@ -508,7 +526,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 .passCode(sfcProductCarton.getCartonCode())
                 .passCodeType((byte) 1)
                 .build();
-
+        long todo = System.currentTimeMillis();
+        log.info("=========== 过站部分:" + (todo - carton));
         // 保存条码包箱关系
         mesSfcProductCartonDetService.save(MesSfcProductCartonDet.builder()
                 .productCartonId(sfcProductCarton.getProductCartonId())
@@ -545,6 +564,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                                 mesSfcBarcodeProcessList.size()+"" : mesSfcBarcodeProcessList.size()+"尾")
                         .build());
             }
+            long close = System.currentTimeMillis();
+            log.info("=========== 关箱部分:" + (close - todo));
+            log.info("=========== 总耗时:" + (close - start));
 
             /*// 完工入库
             List<Long> cartonIds = new ArrayList<>();
