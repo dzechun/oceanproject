@@ -170,6 +170,8 @@ public class BarcodeUtils {
      * @throws Exception
      */
     public static int updateProcess(UpdateProcessDto dto) throws Exception {
+        log.info("================== 开始 ==================");
+        long start = System.currentTimeMillis();
         // 获取条码
         MesSfcBarcodeProcess mesSfcBarcodeProcess = barcodeUtils.mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
                 .barcode(dto.getBarCode())
@@ -207,6 +209,9 @@ public class BarcodeUtils {
             throw new BizErrorException(ErrorCodeEnum.PDA40012032);
         }
 
+        long one = System.currentTimeMillis();
+        log.info("============== 判断当前工序:"+ (one - start));
+
         BaseProcess baseProcess = processResponseEntity.getData();
         // 更新当前工序
         mesSfcBarcodeProcess.setProcessId(dto.getNowProcessId());
@@ -228,13 +233,7 @@ public class BarcodeUtils {
         if(baseWorkshopSection == null)
             throw new BizErrorException(ErrorCodeEnum.PDA40012035);
 
-//        mesSfcBarcodeProcess.setStationId(baseStation.getStationId());
-//        mesSfcBarcodeProcess.setStationCode(baseStation.getStationCode());
-//        mesSfcBarcodeProcess.setStationName(baseStation.getStationName());
-
         mesSfcBarcodeProcess.setSectionId(baseProcess.getSectionId());//工段id
-//        mesSfcBarcodeProcess.setSectionCode(baseProcess.getSectionCode());//工段code
-//        mesSfcBarcodeProcess.setSectionName(baseProcess.getSectionName());//工段名称
         mesSfcBarcodeProcess.setSectionCode(baseWorkshopSection.getSectionCode());//工段code
         mesSfcBarcodeProcess.setSectionName(baseWorkshopSection.getSectionName());//工段名称
         BaseProLine baseProLine = barcodeUtils.baseFeignApi.getProLineDetail(dto.getProLineId()).getData();
@@ -245,8 +244,11 @@ public class BarcodeUtils {
         mesSfcBarcodeProcess.setProCode(baseProLine.getProCode());
         mesSfcBarcodeProcess.setProName(baseProLine.getProName());
 
+        long two = System.currentTimeMillis();
+        log.info("============== 更新工位、工段、产线:"+ (two - one));
+
+
         //过站次数累加注释
-        //mesSfcBarcodeProcess.setPassStationCount(mesSfcBarcodeProcess.getPassStationCount() != null ? mesSfcBarcodeProcess.getPassStationCount() + 1 : 1);
         //条码在当前工序有几条过站记录 记录工序过站次数开始 2021-10-18
         Map<String, Object> mapExist = new HashMap<>();
         mapExist.put("barcode", dto.getBarCode());
@@ -326,6 +328,9 @@ public class BarcodeUtils {
             }else {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003, "返工条码工艺路线的产出工序不存在或已被删除");
             }
+
+            long three = System.currentTimeMillis();
+            log.info("============== 返工单:"+ (three - two));
         }else {
             if (mesSfcBarcodeProcess.getNextProcessId().equals(mesPmWorkOrder.getOutputProcessId())) {
                 // 产出工序置空下一道工序关信息
@@ -354,6 +359,9 @@ public class BarcodeUtils {
                 mesSfcBarcodeProcess.setNextProcessName(baseProcess.getProcessName());
             }
         }
+
+        long three = System.currentTimeMillis();
+        log.info("============== 设置next工序:"+ (three - two));
 
         //更新条码状态 产品条码状态(0-NG 1-OK)
         if(StringUtils.isNotEmpty(dto.getOpResult()) && "NG".equals(dto.getOpResult()))
@@ -390,22 +398,18 @@ public class BarcodeUtils {
         mesSfcBarcodeProcessRecord.setOption1(dto.getPassTime());
         barcodeUtils.mesSfcBarcodeProcessRecordService.save(mesSfcBarcodeProcessRecord);
 
+        long four = System.currentTimeMillis();
+        log.info("============== 增加过站记录:"+ (four - three));
+
         /**
          * 日期：20211109
          * 条码状态过站变更
          */
         MesSfcWorkOrderBarcode sfcWorkOrderBarcode = barcodeUtils.mesSfcWorkOrderBarcodeService.selectByKey(mesSfcBarcodeProcess.getWorkOrderBarcodeId());
 
-
-//        Map<String, Object> map = new HashMap<>();
-//        map.put("workOrderBarcodeId", dto.getBarCode());
-//        map.put("stationId", dto.getNowStationId());
-//        map.put("processId", dto.getNowProcessId());
-//        List<MesSfcBarcodeProcessRecordDto> mesSfcBarcodeProcessRecordDtoList = barcodeUtils.mesSfcBarcodeProcessRecordService.findList(map);
         // 是否投产工序且是该条码在工单工序第一次过站，工单投产数量 +1 mesSfcBarcodeProcessRecordDtoList.isEmpty()
         if(StringUtils.isNotEmpty(mesPmWorkOrder.getPutIntoProcessId())) {
             if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getNowProcessId()) && mesSfcBarcodeProcessRecordDtoList.size()==0) {
-                //mesPmWorkOrder.setProductionQty(mesPmWorkOrder.getProductionQty().add(BigDecimal.ONE));
                 mesPmWorkOrder.setProductionQty(mesPmWorkOrder.getProductionQty() != null ? mesPmWorkOrder.getProductionQty().add(BigDecimal.ONE) : BigDecimal.ONE);
                 // 若是投产工序，则判断是否首条码，若是则更新工单状态为生产中
                 if (mesPmWorkOrder.getWorkOrderStatus() == (byte) 1) {
@@ -417,7 +421,6 @@ public class BarcodeUtils {
                      * 如果有附件码，变更销售订单条码状态
                      */
                     Map<String, Object> map = new HashMap<>();
-//                    map.put("workOrderId", mesPmWorkOrder.getWorkOrderId());
                     map.put("workOrderBarcodeId", sfcWorkOrderBarcode.getWorkOrderBarcodeId());
                     List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = barcodeUtils.mesSfcKeyPartRelevanceService.findList(map);
                     if (!keyPartRelevanceDtos.isEmpty() && keyPartRelevanceDtos.size() >0){
@@ -437,9 +440,6 @@ public class BarcodeUtils {
                         }
                     }
                 }
-                // huangshuijun 注释此 updateSmtWorkOrder 方法原因：1 过站方式如果是设备调用 获取不了当前用户
-                // 2 调用此方法会把工单BOM删除 大忌
-                //barcodeUtils.pmFeignApi.updateSmtWorkOrder(mesPmWorkOrder);
                 barcodeUtils.pmFeignApi.updatePmWorkOrder(mesPmWorkOrder);
 
                 /**
@@ -450,10 +450,13 @@ public class BarcodeUtils {
                 barcodeUtils.mesSfcWorkOrderBarcodeService.update(sfcWorkOrderBarcode);
             }
         }
+
+        long five = System.currentTimeMillis();
+        log.info("============== 增加过站记录:"+ (five - four));
+
         // 判断当前工序是否为产出工序，且是该条码在工单工序第一次过站，工单产出 +1
         if(StringUtils.isNotEmpty(mesPmWorkOrder.getOutputProcessId())) {
             if (dto.getNowProcessId().equals(mesPmWorkOrder.getOutputProcessId()) && mesSfcBarcodeProcessRecordDtoList.size()==0) {
-                //mesPmWorkOrder.setOutputQty(BigDecimal.ONE.add(mesPmWorkOrder.getOutputQty()));
                 mesPmWorkOrder.setOutputQty(mesPmWorkOrder.getOutputQty() != null ? BigDecimal.ONE.add(mesPmWorkOrder.getOutputQty()) : BigDecimal.ONE);
                 if (mesPmWorkOrder.getOutputQty().compareTo(mesPmWorkOrder.getWorkOrderQty()) == 0) {
                     // 产出数量等于工单数量，工单完工
@@ -462,9 +465,6 @@ public class BarcodeUtils {
                     mesPmWorkOrder.setModifiedTime(new Date());
                     mesPmWorkOrder.setModifiedUserId(dto.getOperatorUserId());
                 }
-                // huangshuijun 注释此 updateSmtWorkOrder 方法原因：1 过站方式如果是设备调用 获取不了当前用户
-                // 2 调用此方法会把工单BOM删除 大忌
-                //barcodeUtils.pmFeignApi.updateSmtWorkOrder(mesPmWorkOrder);
                 barcodeUtils.pmFeignApi.updatePmWorkOrder(mesPmWorkOrder);
 
                 /**
@@ -479,7 +479,6 @@ public class BarcodeUtils {
                  * 如果有附件码，变更销售订单条码状态
                  */
                 Map<String, Object> map = new HashMap<>();
-//                map.put("workOrderId", mesPmWorkOrder.getWorkOrderId());
                 map.put("workOrderBarcodeId", sfcWorkOrderBarcode.getWorkOrderBarcodeId());
                 List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = barcodeUtils.mesSfcKeyPartRelevanceService.findList(map);
                 if (!keyPartRelevanceDtos.isEmpty() && keyPartRelevanceDtos.size() >0){
@@ -503,6 +502,10 @@ public class BarcodeUtils {
                 }
             }
         }
+
+        long six = System.currentTimeMillis();
+        log.info("============== 增加过站记录:"+ (six - five));
+        log.info("============== 总耗时:"+ (six - start));
         return 1;
     }
 

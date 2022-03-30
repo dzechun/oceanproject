@@ -182,8 +182,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         if (productCartonDetDtos != null && productCartonDetDtos.size() > 0) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012013);
         }
-        long check = System.currentTimeMillis();
-        log.info("=========== 校验部分:" + (check - start));
         //产线
         BaseProLine proLine = baseFeignApi.selectProLinesDetail(mesPmWorkOrder.getProLineId()).getData();
         //工序
@@ -216,8 +214,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 throw new BizErrorException(ErrorCodeEnum.PDA40012019, mesPmWorkOrder.getMaterialId(), mesPmWorkOrderById.getMaterialId());
             }
         }
-        long config = System.currentTimeMillis();
-        log.info("=========== 配置部分:" + (config - check));
 
         // 5、是否要扫附件码
         if(dto.getAnnex() && StringUtils.isEmpty(dto.getBarAnnexCode())){
@@ -494,8 +490,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                         .isDelete((byte) 1)
                         .build());
             }
-            long customer = System.currentTimeMillis();
-            log.info("=========== 客户条码部分:" + (customer - config));
         }
         // 6、判断是否已有箱码，生成箱码
         if (sfcProductCarton == null) {
@@ -510,8 +504,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             // 添加包箱表数据
             sfcProductCarton = saveCarton(cartonCode, user.getUserId(), user.getOrganizationId(), dto.getStationId(), mesPmWorkOrder.getWorkOrderId(), packageSpecificationDto.getPackageSpecificationQuantity(), mesPmWorkOrder.getMaterialId());
         }
-        long carton = System.currentTimeMillis();
-        log.info("=========== 生成箱码部分:" + (carton - config));
         // 7、过站
         UpdateProcessDto updateProcessDto = UpdateProcessDto.builder()
                 .badnessPhenotypeCode("N/A")
@@ -526,8 +518,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 .passCode(sfcProductCarton.getCartonCode())
                 .passCodeType((byte) 1)
                 .build();
-        long todo = System.currentTimeMillis();
-        log.info("=========== 过站部分:" + (todo - carton));
         // 保存条码包箱关系
         mesSfcProductCartonDetService.save(MesSfcProductCartonDet.builder()
                 .productCartonId(sfcProductCarton.getProductCartonId())
@@ -565,7 +555,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                         .build());
             }
             long close = System.currentTimeMillis();
-            log.info("=========== 关箱部分:" + (close - todo));
             log.info("=========== 总耗时:" + (close - start));
 
             /*// 完工入库
