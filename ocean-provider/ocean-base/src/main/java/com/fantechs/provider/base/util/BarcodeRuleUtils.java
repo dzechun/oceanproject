@@ -228,7 +228,8 @@ public class BarcodeRuleUtils {
             log.info("key:"+key+"============ lastBarCode:"+lastBarCode + "================");
 
             //获取最大流水号
-            String maxCode = getMaxSerialNumber(list, lastBarCode);
+            //String maxCode = getMaxSerialNumber(list, lastBarCode);
+            String maxCode = getMaxSerialNumber(list, lastBarCode, planYear, planMonth, planDay);
 
             log.info("最大流水号1:"+maxCode+"============");
 
@@ -443,11 +444,57 @@ public class BarcodeRuleUtils {
         return maxSerialNumber;
     }
 
+    public static String getMaxSerialNumber(List<BaseBarcodeRuleSpec> list, String maxCode,String planYear,String planMonth,String planDay){
+        int sum=0;
+        String maxSerialNumber=null;
+        for (BaseBarcodeRuleSpec baseBarcodeRuleSpec : list) {
+            String specification = baseBarcodeRuleSpec.getSpecification();
+            String customizeValue = baseBarcodeRuleSpec.getCustomizeValue();
+            int length =0;
+            if("[G]".equals(specification)){
+                length=customizeValue.length();
+            }else {
+                length = baseBarcodeRuleSpec.getBarcodeLength();
+                if(StringUtils.isNotEmpty(maxCode)){
+                    Boolean bool = getNewDate(specification,customizeValue,sum,sum+length,maxCode, planYear, planMonth, planDay);
+                    if(!bool){
+                        return null;
+                    }
+                }
+            }
+            if("[S]".equals(specification)||"[F]".equals(specification)||"[b]".equals(specification)||"[c]".equals(specification)){
+                if(StringUtils.isNotEmpty(maxCode)){
+                    if(sum+length>maxCode.length() || sum>maxCode.length()){
+                        //maxSerialNumber = maxCode+"1";
+                        return null;
+                    }else{
+                        maxSerialNumber = maxCode.substring(sum, sum + length);
+                    }
+
+                }
+            }
+            sum+=length;
+        }
+        return maxSerialNumber;
+    }
+
     private static boolean getNewDate(String specification,String customizeValue,int beginIndex,int endIndex,String maxCode){
         if("[M]".equals(specification)||"[W]".equals(specification)||"[D]".equals(specification)||"[K]".equals(specification)
                 ||"[A]".equals(specification)||"[y]".equals(specification)||"[m]".equals(specification)||"[d]".equals(specification)||"[w]".equals(specification)){
             String data = maxCode.substring(beginIndex,endIndex);
             String newData = CodeUtils.getTypeCode(specification,customizeValue);
+            if(!data.equals(newData)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean getNewDate(String specification,String customizeValue,int beginIndex,int endIndex,String maxCode,String planYear,String planMonth,String planDay){
+        if("[M]".equals(specification)||"[W]".equals(specification)||"[D]".equals(specification)||"[K]".equals(specification)
+                ||"[A]".equals(specification)||"[y]".equals(specification)||"[m]".equals(specification)||"[d]".equals(specification)||"[w]".equals(specification)){
+            String data = maxCode.substring(beginIndex,endIndex);
+            String newData = CodeUtils.getTypeCode(specification,customizeValue, planYear, planMonth, planDay);
             if(!data.equals(newData)){
                 return false;
             }
