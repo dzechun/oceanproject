@@ -224,8 +224,13 @@ public class BarcodeRuleUtils {
                 Object redisRuleData = barcodeRuleUtils.redisUtil.get(key);
                 lastBarCode = String.valueOf(redisRuleData);
             }
+
+            log.info("key:"+key+"============ lastBarCode:"+lastBarCode + "================");
+
             //获取最大流水号
             String maxCode = getMaxSerialNumber(list, lastBarCode);
+
+            log.info("最大流水号1:"+maxCode+"============");
 
             StringBuilder sb=new StringBuilder();
             Calendar cal= Calendar.getInstance();
@@ -369,6 +374,8 @@ public class BarcodeRuleUtils {
                         String typeCode = CodeUtils.getTypeCode(specification,customizeValue,planYear,planMonth,planDay);
                         sb.append(typeCode);
                     }
+
+                    log.info("最大流水号2:"+maxCode+"============");
                 }
             }
             // 更新redis最新条码

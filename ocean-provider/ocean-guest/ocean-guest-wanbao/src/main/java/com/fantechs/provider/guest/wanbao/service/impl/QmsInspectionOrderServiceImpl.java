@@ -3,7 +3,9 @@ package com.fantechs.provider.guest.wanbao.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
+import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseTabDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessDto;
@@ -11,10 +13,7 @@ import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodePr
 import com.fantechs.common.base.general.dto.om.OmSalesCodeReSpcDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
+import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.om.search.SearchOmSalesCodeReSpc;
@@ -404,10 +403,25 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             innerFeignApi.updateShit(jobOrderDtoList.get(0).getJobOrderId(),ngQty);
 
         } else {
+            //移位作业扫码提交参数
+            SaveShiftWorkDetDto saveShiftWorkDetDto=new SaveShiftWorkDetDto();
+            List<String> barcodes=new ArrayList<>();
+            for (QmsInspectionOrderDetSample item : list) {
+                barcodes.add(item.getBarcode());
+            }
+            saveShiftWorkDetDto.setBarcodes(barcodes);
+            saveShiftWorkDetDto.setMaterialQty(new BigDecimal(list.size()));
+
+            //移位作业上架参数
+            SaveShiftJobOrderDto saveShiftJobOrderDto=new SaveShiftJobOrderDto();
+
+
             //找成品检验对应的质检移位单
             searchWmsInnerJobOrder.setOption1("qmsToInnerJobShift");
             jobOrderDtoList = innerFeignApi.findList(searchWmsInnerJobOrder).getData();
             if (StringUtils.isNotEmpty(jobOrderDtoList) && jobOrderDtoList.size() > 0) {
+                saveShiftWorkDetDto.setJobOrderId(jobOrderDtoList.get(0).getJobOrderId());
+
                 SearchWmsInnerJobOrderDet sDet = new SearchWmsInnerJobOrderDet();
                 sDet.setJobOrderId(jobOrderDtoList.get(0).getJobOrderId());
                 List<WmsInnerJobOrderDetDto> detDtoList = innerFeignApi.findList(sDet).getData();
@@ -415,11 +429,20 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                     inStorageId = detDtoList.get(0).getOutStorageId();
                     outStorageId = detDtoList.get(0).getInStorageId();
 
+                    saveShiftWorkDetDto.setJobOrderDetId(detDtoList.get(0).getJobOrderDetId());
+                    saveShiftWorkDetDto.setMaterialId(detDtoList.get(0).getMaterialId());
+                    saveShiftWorkDetDto.setStorageId(detDtoList.get(0).getOutStorageId());
+
+                    saveShiftJobOrderDto.setJobOrderDetId(detDtoList.get(0).getJobOrderDetId());
+                    saveShiftJobOrderDto.setStorageId(detDtoList.get(0).getInStorageId());
+
                     SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
                     searchBaseStorage.setStorageId(inStorageId);
                     List<BaseStorage> storageDtoList = baseFeignApi.findList(searchBaseStorage).getData();
                     if (StringUtils.isNotEmpty(storageDtoList) && storageDtoList.size() > 0) {
                         warehouseId = storageDtoList.get(0).getWarehouseId();
+
+                        saveShiftWorkDetDto.setWarehouseId(warehouseId);
                     }
                 }
             }
@@ -543,6 +566,10 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 }
             }
 
+            //质检移位单自动扫码提交 上架提交
+            SearchSysSpecItem searchSysSpecItem=new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("autoConfirmShift");
+            //List<SysSpecItem> sysSpecItemList=s
         }
 
         return i;
