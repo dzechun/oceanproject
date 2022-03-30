@@ -1205,6 +1205,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
                 SearchWmsInnerInventoryDet searchQualifiedInventoryDet = new SearchWmsInnerInventoryDet();
                 searchQualifiedInventoryDet.setMaterialCode(detDtos.get(0).getMaterialCode());
+                searchQualifiedInventoryDet.setStorageType((byte)1);
 
                 SearchQmsInspectionOrder searchQmsInspectionOrder = new SearchQmsInspectionOrder();
                 searchQmsInspectionOrder.setMaterialCode(detDtos.get(0).getMaterialCode());
@@ -1275,6 +1276,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         searchWmsInnerInventoryDet1.setLogicCode("C149");
         searchWmsInnerInventoryDet1.setNotEqualMark(0);
         searchWmsInnerInventoryDet1.setIfInspectionOrderCodeNull(1);
+        searchWmsInnerInventoryDet1.setStorageType((byte)1);
+
         List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos1 = innerFeignApi.findList(searchWmsInnerInventoryDet1).getData();
         Map<String, List<WmsInnerInventoryDetDto>> collect1 = new HashMap<>();
         for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : wmsInnerInventoryDetDtos1) {
