@@ -284,6 +284,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
         searchBaseInventoryStatus.setOrgId(user.getOrganizationId());
         searchBaseInventoryStatus.setInventoryStatusName("合格");
+        searchBaseInventoryStatus.setNameQueryMark(1);
         List<BaseInventoryStatus> inventoryStatus = baseFeignApi.findList(searchBaseInventoryStatus).getData();
         if (StringUtils.isEmpty(inventoryStatus))
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "未找到库存的合格状态");
