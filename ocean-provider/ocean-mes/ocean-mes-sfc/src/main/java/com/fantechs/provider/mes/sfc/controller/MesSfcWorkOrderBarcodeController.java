@@ -3,7 +3,6 @@ package com.fantechs.provider.mes.sfc.controller;
 import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
-import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcReworkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -13,9 +12,9 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,8 +57,8 @@ public class MesSfcWorkOrderBarcodeController {
     @PostMapping("/print")
     public ResponseEntity print(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids,
                                 @ApiParam(value = "打印类型（1，打印，2，补打）",required = true)@RequestParam Byte printType,@RequestParam String printName,
-                                @RequestParam String userCode,@RequestParam String password){
-        return ControllerUtil.returnCRUD(mesSfcWorkOrderBarcodeService.print(ids,printType,printName,userCode,password));
+                                @RequestParam String userCode,@RequestParam String password,@RequestParam String printId){
+        return ControllerUtil.returnCRUD(mesSfcWorkOrderBarcodeService.print(ids,printType,printName,userCode,password,printId));
     }
 
     @ApiOperation("按单据补打")
@@ -68,8 +67,9 @@ public class MesSfcWorkOrderBarcodeController {
                                 @ApiParam(value = "条码类型（2，工单条码 5，销售订单条码）",required = true)@RequestParam Byte barcodeType,
                                            @RequestParam String printName,
                                            @RequestParam String userCode,
-                                           @RequestParam String password){
-        return ControllerUtil.returnCRUD(mesSfcWorkOrderBarcodeService.printByOrderCode(id,barcodeType,printName,userCode,password));
+                                           @RequestParam String password,
+                                           @RequestParam String printId){
+        return ControllerUtil.returnCRUD(mesSfcWorkOrderBarcodeService.printByOrderCode(id,barcodeType,printName,userCode,password,printId));
     }
 
     @ApiOperation("规则解析及标签模版")

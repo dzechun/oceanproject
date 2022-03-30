@@ -18,7 +18,7 @@ import java.util.Map;
 public interface MesSfcWorkOrderBarcodeService extends IService<MesSfcWorkOrderBarcode> {
     List<MesSfcWorkOrderBarcodeDto> findList(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode);
 
-    int print(String ids,Byte printType,String printName,String userCode,String password);
+    int print(String ids,Byte printType,String printName,String userCode,String password,String printId);
 
     LabelRuteDto findLabelRute(Long workOrderId, Byte barcodeType);
 
@@ -68,7 +68,7 @@ public interface MesSfcWorkOrderBarcodeService extends IService<MesSfcWorkOrderB
      */
     List<MesSfcWorkOrderBarcode> wanbaoFindCustomerBarcode(Long salesOrderDetId);
 
-    int printByOrderCode(Long id,Byte barcodeType,String printName,String userCode,String password);
+    int printByOrderCode(Long id,Byte barcodeType,String printName,String userCode,String password,String printId);
 
     /**
      * 同步PQMS系统，批量处理条码数据
