@@ -16,7 +16,7 @@
     </resultMap>
     <resultMap id="BaseResultOmMap" type="com.fantechs.entity.OmInStorage">
         <result column="organization_name" jdbcType="VARCHAR" property="orgName"/>
-        <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode"/>
+        <result column="sales_code" jdbcType="VARCHAR" property="salesCode"/>
         <result column="supplier_name" jdbcType="VARCHAR" property="supplierName"/>
         <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName"/>
         <result column="warehouse_area_code" jdbcType="VARCHAR" property="warehouseAreaCode"/>
@@ -63,6 +63,12 @@
             <if test="materialId!=null and materialId!=''">
                 and bm.material_id = #{materialId}
             </if>
+            <if test="proName!=null and proName!=''">
+                and bpl.pro_name LIKE CONCAT('%',#{proName},'%')
+            </if>
+            <if test="workShopName!=null and workShopName!=''">
+                and bws.work_shop_name LIKE CONCAT('%',#{workShopName},'%')
+            </if>
             <if test="orgId!=null and orgId!=''">
                 and bo.organization_id =#{orgId}
             </if>
@@ -106,7 +112,7 @@
         SELECT
         DISTINCT
         bo.organization_name,
-        wiid.option3 AS sales_order_code,
+        wiid.option3 AS sales_code,
         bw.warehouse_name,
         bs.storage_code,
         bwa.warehouse_area_code,
@@ -129,8 +135,8 @@
         LEFT JOIN base_supplier sup ON oso.supplier_id = sup.supplier_id
         <where>
             wiid.barcode_status = 3 AND wiid.option3 IS NOT NULL
-            <if test="salesOrderCode!=null and salesOrderCode!=''">
-                and oso.sales_order_code like CONCAT('%',#{salesOrderCode},'%')
+            <if test="salesCode!=null and salesCode!=''">
+                and wiid.option3 like CONCAT('%',#{salesCode},'%')
             </if>
             <if test="supplierName!=null and supplierName!=''">
                 AND sup.supplier_name LIKE CONCAT('%',#{supplierName},'%')
@@ -149,6 +155,9 @@
             </if>
             <if test="warehouseName!=null and warehouseName!=''">
                 and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
+            </if>
+            <if test="storageCode!=null and storageCode!=''">
+                and bs.storage_code like CONCAT('%',#{storageCode},'%')
             </if>
         </where>
         GROUP BY wiid.option3, bmp.package_specification_id

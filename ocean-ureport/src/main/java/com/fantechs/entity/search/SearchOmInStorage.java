@@ -15,7 +15,7 @@ public class SearchOmInStorage extends BaseQuery implements Serializable {
 
     private String supplierName;
 
-    private String salesOrderCode;
+    private String salesCode;
 
     private String materialName;
 
@@ -24,4 +24,6 @@ public class SearchOmInStorage extends BaseQuery implements Serializable {
     private String packingUnitName;
 
     private String warehouseName;
+
+    private String storageCode;
 }

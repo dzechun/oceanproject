@@ -31,9 +31,9 @@ public class OmInStorage implements Serializable {
     /**
      *生产订单号
      */
-    @ApiModelProperty(name = "salesOrderCode",value = "生产订单号")
-    @Excel(name = "生产订单号", height = 20, width = 30,orderNum="3")
-    private String salesOrderCode;
+    @ApiModelProperty(name = "salesCode",value = "销售编码")
+    @Excel(name = "销售编码", height = 20, width = 30,orderNum="3")
+    private String salesCode;
 
     /**
      * 客户

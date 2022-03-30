@@ -61,4 +61,10 @@ public class SearchProductionInStorage extends BaseQuery implements Serializable
      */
     @ApiModelProperty(name = "packingUnitName",value = "单位")
     private String  packingUnitName;
+
+    @ApiModelProperty(name = "proName",value = "产线")
+    private String proName;
+
+    @ApiModelProperty(name = "workShopName",value = "车间")
+    private String workShopName;
 }
