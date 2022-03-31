@@ -55,6 +55,7 @@
                 and type=#{type}
             </if>
         </where>
+        order by mpwo.plan_start_time desc
     </select>
     <select id="findBarcodeList" resultMap="barcode_column_list">
         SELECT
