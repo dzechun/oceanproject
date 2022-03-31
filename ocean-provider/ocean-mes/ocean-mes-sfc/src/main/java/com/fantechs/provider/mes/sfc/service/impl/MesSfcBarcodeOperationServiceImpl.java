@@ -19,15 +19,13 @@ import com.fantechs.common.base.general.dto.wms.in.BarPODto;
 import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.entity.basic.*;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialOwner;
-import com.fantechs.common.base.general.entity.basic.search.SearchBasePackageSpecification;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseSignature;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
+import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderProcessReWo;
 import com.fantechs.common.base.general.entity.mes.sfc.*;
 import com.fantechs.common.base.general.entity.om.OmSalesCodeReSpc;
 import com.fantechs.common.base.general.entity.om.search.SearchOmSalesCodeReSpc;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -35,6 +33,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
+import com.fantechs.provider.api.qms.QmsFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
@@ -87,6 +86,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     InFeignApi inFeignApi;
     @Resource
     InnerFeignApi innerFeignApi;
+    @Resource
+    QmsFeignApi qmsFeignApi;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -98,6 +99,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         searchWmsInnerInventoryDet.setBarcode(dto.getBarCode());
         List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
         if (!inventoryDetDtos.isEmpty()){
+            this.scanBarocodeByQmsFinish(dto.getBarCode(), inventoryDetDtos.get(0));
             return true;
         }
 
@@ -955,6 +957,38 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 inFeignApi.palletAutoAsnOrder(palletAutoAsnDto);
             }
         }
+    }
+
+
+    /**
+     * @param barcode
+     * @date 2022-03-31
+     * 品质完成条码走产线入库，在包箱作业处理业务
+     * 1、将不合格的条码库存状态变为合格
+     * 2、反写成品检验单检验结果
+     * 3、反写检验单明细条码样本值
+     * 4、拆分移位单明细
+     */
+    private void scanBarocodeByQmsFinish(String barcode, WmsInnerInventoryDetDto dto){
+
+        // 反写成品检验单检验结果、检验单明细条码样本值、拆分移位单明细
+        qmsFeignApi.recheckByBarcode(barcode);
+
+        // 将不合格的条码库存状态变为合格
+        WmsInnerInventoryDet inventoryDet = new WmsInnerInventoryDet();
+        BeanUtils.copyProperties(dto, inventoryDet);
+        List<BaseInventoryStatus> inventoryStatusList = baseFeignApi.findList(new SearchBaseInventoryStatus()).getData();
+        boolean flag = true;
+        for (BaseInventoryStatus inventoryStatus : inventoryStatusList){
+            if (inventoryStatus.getInventoryStatusName().equals("合格")){
+                inventoryDet.setInventoryStatusId(inventoryStatus.getInventoryStatusId());
+                flag = false;
+            }
+        }
+        if (flag){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "合格的库存状态不存在或已被删除，请检查");
+        }
+        innerFeignApi.update(inventoryDet);
     }
 
     // endregion

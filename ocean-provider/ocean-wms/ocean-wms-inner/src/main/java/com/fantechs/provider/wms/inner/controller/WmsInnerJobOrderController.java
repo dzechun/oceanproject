@@ -153,4 +153,10 @@ public class WmsInnerJobOrderController {
     public ResponseEntity updateShit(@RequestParam Long jobOrderId, @RequestParam BigDecimal ngQty){
         return ControllerUtil.returnDataSuccess(wmsInPutawayOrderService.updateShit(jobOrderId,ngQty),1);
     }
+
+    @PostMapping("/autoRecheck")
+    @ApiOperation("走产线自动复检，拆明细")
+    public ResponseEntity autoRecheck(@RequestParam String relatedOrderCode){
+        return ControllerUtil.returnCRUD(wmsInPutawayOrderService.autoRecheck(relatedOrderCode));
+    }
 }

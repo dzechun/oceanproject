@@ -14,7 +14,7 @@
         <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
         <result column="sales_man_name" jdbcType="VARCHAR" property="salesManName" />
         <result column="sales_code" jdbcType="VARCHAR" property="salesCode" />
-        <result column="actual_despatch_time" jdbcType="TIMESTAMP" property="actualDespatchTime" />
+        <result column="actual_despatch_date" jdbcType="TIMESTAMP" property="actualDespatchDate" />
         <result column="container_number" jdbcType="VARCHAR" property="containerNumber" />
         <result column="clearance_locale" jdbcType="VARCHAR" property="clearanceLocale" />
         <result column="origin_harbor" jdbcType="VARCHAR" property="originHarbor" />
@@ -190,7 +190,7 @@
             wiid.option1 AS customer_name,
             wiid.option2 AS sales_man_name,
             wiid.option3 AS sales_code,
-            wodo.actual_despatch_time,
+            wodo2.actual_despatch_date,
             wodo.container_number,
             wodo.clearance_locale,
             wodo.origin_harbor,
@@ -198,7 +198,7 @@
             bse.transport_category_id,
             '销售发货' AS shipment_type,
             '普通装柜' AS loading_type,
-            COUNT(wiid.material_qty) AS qty
+            SUM(wiid.material_qty) AS qty
         FROM
             wms_out_despatch_order_re_jo wodorj
                 LEFT JOIN wms_inner_job_order wijo ON wodorj.job_order_id = wijo.job_order_id

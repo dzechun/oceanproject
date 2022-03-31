@@ -53,6 +53,12 @@ public class QmsInspectionOrderController {
         return ControllerUtil.returnCRUD(qmsInspectionOrderService.recheck(inspectionOrderId));
     }
 
+    @ApiOperation("条码走产线，自动复检")
+    @PostMapping("/recheckByBarcode")
+    public ResponseEntity recheckByBarcode(@ApiParam(value = "条码",required = true) @RequestParam @NotNull(message="条码不能为空") String barcode) {
+        return ControllerUtil.returnCRUD(qmsInspectionOrderService.recheckByBarcode(barcode));
+    }
+
     @ApiOperation("PDA提交")
     @PostMapping("/PDASubmit")
     public ResponseEntity PDASubmit(@ApiParam(value = "检验单id",required = true) @RequestParam @NotNull(message="检验单id不能为空") Long inspectionOrderId) {

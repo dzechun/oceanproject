@@ -114,4 +114,11 @@ public interface WmsInnerJobOrderService extends IService<WmsInnerJobOrder> {
      * @return
      */
     int releaseStacking(Long jobOrderId);
+
+    /**
+     * 包箱作业-品质检验后走产线自动复检
+     * @param relatedOrderCode
+     * @return
+     */
+    int autoRecheck(String relatedOrderCode);
 }

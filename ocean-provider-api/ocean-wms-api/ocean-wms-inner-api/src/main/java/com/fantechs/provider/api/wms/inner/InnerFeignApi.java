@@ -116,4 +116,8 @@ public interface InnerFeignApi {
     @PostMapping("/pdaWmsInnerShiftWork/saveJobOrder")
     ResponseEntity saveJobOrder(@ApiParam(value = "上架确认实体", required = true) @RequestBody SaveShiftJobOrderDto dto);
 
+    @PostMapping("/wmsInnerJobOrder/autoRecheck")
+    @ApiOperation("走产线自动复检，拆明细")
+    ResponseEntity autoRecheck(@RequestParam String relatedOrderCode);
+
 }

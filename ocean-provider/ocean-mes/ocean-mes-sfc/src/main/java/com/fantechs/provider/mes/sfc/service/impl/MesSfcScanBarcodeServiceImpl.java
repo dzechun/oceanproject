@@ -30,41 +30,4 @@ public class MesSfcScanBarcodeServiceImpl implements MesSfcScanBarcodeService {
         return baseExecuteResultDto;
     }
 
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public BaseExecuteResultDto chkSnRouting(RestapiChkSNRoutingApiDto restapiChkSNRoutingApiDto) throws Exception {
-        BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
-        try {
-            baseExecuteResultDto=BarcodeUtils.ChkSnRouting(restapiChkSNRoutingApiDto);
-            if(baseExecuteResultDto.getIsSuccess()==false)
-                throw new Exception(baseExecuteResultDto.getFailMsg());
-        }
-        catch (Exception ex){
-            baseExecuteResultDto.setIsSuccess(false);
-            baseExecuteResultDto.setFailMsg(ex.getMessage());
-        }
-
-        return baseExecuteResultDto;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    //@LcnTransaction
-    public BaseExecuteResultDto snDataTransfer(RestapiSNDataTransferApiDto restapiSNDataTransferApiDto) throws Exception {
-        BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
-        try {
-            baseExecuteResultDto=BarcodeUtils.SnDataTransfer(restapiSNDataTransferApiDto);
-            if(baseExecuteResultDto.getIsSuccess()==false)
-                throw new Exception(baseExecuteResultDto.getFailMsg());
-
-        }
-        catch (Exception ex){
-            baseExecuteResultDto.setIsSuccess(false);
-            baseExecuteResultDto.setFailMsg(ex.getMessage());
-        }
-
-        return baseExecuteResultDto;
-    }
-
 }
