@@ -40,6 +40,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
+import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.guest.wanbao.mapper.QmsHtInspectionOrderMapper;
@@ -85,6 +86,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     private InnerFeignApi innerFeignApi;
     @Resource
     private SFCFeignApi sfcFeignApi;
+    @Resource
+    private SecurityFeignApi securityFeignApi;
     @Resource
     private QmsInspectionOrderDetServiceImpl qmsInspectionOrderDetService;
 
@@ -569,7 +572,14 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             //质检移位单自动扫码提交 上架提交
             SearchSysSpecItem searchSysSpecItem=new SearchSysSpecItem();
             searchSysSpecItem.setSpecCode("autoConfirmShift");
-            //List<SysSpecItem> sysSpecItemList=s
+            List<SysSpecItem> sysSpecItemList=securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            if(StringUtils.isNotEmpty(sysSpecItemList) && sysSpecItemList.size()>0){
+                SysSpecItem sysSpecItem=sysSpecItemList.get(0);
+                if(sysSpecItem.getParaValue()=="1"){
+                    innerFeignApi.saveShiftWorkDetBarcode(saveShiftWorkDetDto);
+                    innerFeignApi.saveJobOrder(saveShiftJobOrderDto);
+                }
+            }
         }
 
         return i;
