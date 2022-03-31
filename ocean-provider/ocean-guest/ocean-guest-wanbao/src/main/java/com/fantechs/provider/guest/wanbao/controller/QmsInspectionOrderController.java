@@ -89,6 +89,12 @@ public class QmsInspectionOrderController {
         return ControllerUtil.returnCRUD(qmsInspectionOrderService.thirdInspection(qmsInspectionOrder));
     }
 
+    @ApiOperation("免检")
+    @PostMapping("/exemption")
+    public ResponseEntity exemption(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=QmsInspectionOrder.update.class) QmsInspectionOrder qmsInspectionOrder) {
+        return ControllerUtil.returnCRUD(qmsInspectionOrderService.exemption(qmsInspectionOrder));
+    }
+
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated QmsInspectionOrder qmsInspectionOrder) {
@@ -137,7 +143,7 @@ public class QmsInspectionOrderController {
     List<QmsInspectionOrder> list = qmsInspectionOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrder));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "成品检验单信息", QmsInspectionOrder.class, "成品检验单.xls", response);
+        EasyPoiUtils.exportExcel(list, "成品检验单导出信息表", "成品检验单导出信息表", QmsInspectionOrder.class, "成品检验单导出信息表.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }

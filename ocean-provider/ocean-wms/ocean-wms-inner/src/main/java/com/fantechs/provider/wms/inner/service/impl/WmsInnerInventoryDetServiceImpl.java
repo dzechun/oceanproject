@@ -167,7 +167,8 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
             if (StringUtils.isEmpty(wmsInnerInventoryDet)) {
                 throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "条码已盘点锁定或已出库");
             }
-            if (wmsInnerInventoryDet.getLockStatus() == 0) {
+
+            if (StringUtils.isEmpty(wmsInnerInventoryDet.getLockStatus()) || wmsInnerInventoryDet.getLockStatus() == 0) {
                 wmsInnerInventoryDet.setLockStatus((byte) 1);
                 wmsInnerInventoryDet.setModifiedUserId(sysUser.getUserId());
                 wmsInnerInventoryDet.setModifiedTime(new Date());
@@ -189,7 +190,7 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
             Example example = new Example(WmsInnerInventoryDet.class);
             example.createCriteria().andEqualTo("inventoryDetId", s);
             WmsInnerInventoryDet wmsInnerInventoryDet = wmsInnerInventoryDetMapper.selectOneByExample(example);
-            if (wmsInnerInventoryDet.getLockStatus() == 1) {
+            if (StringUtils.isNotEmpty(wmsInnerInventoryDet.getLockStatus()) && wmsInnerInventoryDet.getLockStatus() == 1) {
                 wmsInnerInventoryDet.setLockStatus((byte) 0);
                 wmsInnerInventoryDet.setModifiedUserId(sysUser.getUserId());
                 wmsInnerInventoryDet.setModifiedTime(new Date());

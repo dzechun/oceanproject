@@ -24,6 +24,7 @@
     <result column="audit_user_id" jdbcType="BIGINT" property="auditUserId" />
     <result column="audit_remark" jdbcType="VARCHAR" property="auditRemark" />
     <result column="if_third_inspection" jdbcType="TINYINT" property="ifThirdInspection" />
+    <result column="inspection_type" jdbcType="TINYINT" property="inspectionType" />
     <result column="access_url" jdbcType="VARCHAR" property="accessUrl" />
     <result column="status" jdbcType="TINYINT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -75,6 +76,7 @@
     qio.audit_user_id,
     qio.audit_remark,
     qio.if_third_inspection,
+    qio.inspection_type,
     qio.access_url,
     qio.`status`,
     qio.remark,

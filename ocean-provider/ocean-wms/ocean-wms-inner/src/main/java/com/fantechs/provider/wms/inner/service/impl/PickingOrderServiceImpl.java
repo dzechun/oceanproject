@@ -443,7 +443,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 searchWmsInnerInventory.setJobStatus((byte)1);
                 searchWmsInnerInventory.setStorageCode("Z-SX");
                 searchWmsInnerInventory.setInventoryStatusName("合格");
-                List<WmsInnerInventoryDto> innerInventoryList=wmsInnerInventoryService.findList(ControllerUtil.dynamicCondition(searchWmsInnerInventory));
+                List<WmsInnerInventoryDto> innerInventoryList=wmsInnerInventoryService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerInventory));
                 if(StringUtils.isNotEmpty(innerInventoryList) && innerInventoryList.size()>0){
                     storageRuleInventry.setMaterialId(longId);
                     storageRuleInventry.setStorageId(innerInventoryList.get(0).getStorageId());
@@ -541,11 +541,9 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 }
 
             }
-            if(success==0){
-                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"未匹配到可用库位");
-            }else if(success==list.size()){
+            if(success==list.size()){
                 wmsInnerJobOrder.setOrderStatus((byte)3);
-            }else {
+            }else if(success>0) {
                 wmsInnerJobOrder.setOrderStatus((byte)2);
             }
 
