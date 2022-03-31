@@ -173,6 +173,13 @@ public class QmsInspectionOrder extends ValidGroup implements Serializable {
     private Byte ifThirdInspection;
 
     /**
+     * 检验类型（1、免检 2、第三方检验）
+     */
+    @ApiModelProperty(name="inspectionType",value = "检验类型（1、免检 2、第三方检验）")
+    @Column(name = "inspection_type")
+    private Byte inspectionType;
+
+    /**
      * 访问路径
      */
     @ApiModelProperty(name="accessUrl",value = "访问路径")

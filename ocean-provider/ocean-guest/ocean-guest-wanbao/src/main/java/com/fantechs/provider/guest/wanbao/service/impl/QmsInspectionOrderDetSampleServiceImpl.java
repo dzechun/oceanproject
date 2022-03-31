@@ -265,8 +265,7 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
         Example example = new Example(QmsInspectionOrderDetSample.class);
         Example.Criteria criteria2 = example.createCriteria();
         criteria2.andEqualTo("inspectionOrderId",qmsInspectionOrderDetSample.getInspectionOrderId());
-        List<QmsInspectionOrderDetSample> qmsInspectionOrderDetSamples = qmsInspectionOrderDetSampleMapper.selectByExample(example);
-        int size = qmsInspectionOrderDetSamples.size();
+        int size = qmsInspectionOrderDetSampleMapper.selectCountByExample(example);
 
         //样本数
         Example example1 = new Example(QmsInspectionOrderDet.class);
@@ -281,14 +280,15 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
             }
         }
 
-        example.clear();
+        //优化速度 ：PDA端检验
+        /*example.clear();
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("barcode",qmsInspectionOrderDetSample.getBarcode())
                 .andEqualTo("inspectionOrderId",qmsInspectionOrderDetSample.getInspectionOrderId());
         QmsInspectionOrderDetSample inspectionOrderDetSample = qmsInspectionOrderDetSampleMapper.selectOneByExample(example);
         if(StringUtils.isNotEmpty(inspectionOrderDetSample)){
             throw new BizErrorException("已存在该条码，请勿重复扫描");
-        }
+        }*/
 
         qmsInspectionOrderDetSample.setFactoryBarcode(factoryBarcode);
         qmsInspectionOrderDetSample.setCreateUserId(user.getUserId());

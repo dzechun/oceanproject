@@ -126,6 +126,78 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public int exemption(QmsInspectionOrder qmsInspectionOrder) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
+        Example example = new Example(QmsInspectionOrderDet.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("inspectionOrderId",qmsInspectionOrder.getInspectionOrderId());
+        List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.selectByExample(example);
+
+        Example example1 = new Example(QmsInspectionOrderDetSample.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("inspectionOrderId",qmsInspectionOrder.getInspectionOrderId());
+        List<QmsInspectionOrderDetSample> qmsInspectionOrderDetSamples = qmsInspectionOrderDetSampleMapper.selectByExample(example1);
+        for (QmsInspectionOrderDetSample DetSample : qmsInspectionOrderDetSamples) {
+            DetSample.setBarcodeStatus((byte)1);
+            DetSample.setModifiedUserId(user.getUserId());
+            DetSample.setModifiedTime(new Date());
+            qmsInspectionOrderDetSampleMapper.updateByPrimaryKeySelective(DetSample);
+        }
+
+        List<QmsInspectionOrderDetSample> inspectionOrderDetSampleList = new LinkedList<>();
+        for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
+            //明细
+            qmsInspectionOrderDet.setBadnessQty(BigDecimal.ZERO);
+            qmsInspectionOrderDet.setInspectionResult((byte)1);
+            qmsInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsInspectionOrderDet);
+
+            //样本
+            /*for(QmsInspectionOrderDetSample qmsInspectionOrderDetSample : qmsInspectionOrderDetSamples){
+                QmsInspectionOrderDetSample inspectionOrderDetSample = new QmsInspectionOrderDetSample();
+                inspectionOrderDetSample.setInspectionOrderDetId(qmsInspectionOrderDet.getInspectionOrderDetId());
+                inspectionOrderDetSample.setBarcode(qmsInspectionOrderDetSample.getBarcode());
+                inspectionOrderDetSample.setBarcodeStatus((byte)1);
+                inspectionOrderDetSample.setSampleValue("OK");
+                inspectionOrderDetSample.setOrgId(user.getOrganizationId());
+                inspectionOrderDetSampleList.add(inspectionOrderDetSample);
+            }*/
+        }
+        if(StringUtils.isNotEmpty(inspectionOrderDetSampleList)) {
+            qmsInspectionOrderDetSampleMapper.insertList(inspectionOrderDetSampleList);
+        }
+
+        qmsInspectionOrder.setInspectionStatus((byte)3);
+        qmsInspectionOrder.setInspectionResult((byte)1);
+        qmsInspectionOrder.setInspectionUserId(user.getUserId());
+        qmsInspectionOrder.setInspectionType((byte)1);
+        int i = qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);
+
+        //处理库存
+        SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
+        searchBaseInventoryStatus.setInventoryStatusName("合格");
+        searchBaseInventoryStatus.setNameQueryMark(1);
+        List<BaseInventoryStatus> inventoryStatus = baseFeignApi.findList(searchBaseInventoryStatus).getData();
+        if (StringUtils.isEmpty(inventoryStatus))
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "未找到库存的合格状态");
+
+        SearchWmsInnerInventoryDet  searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
+        searchWmsInnerInventoryDet.setPageSize(999);
+        searchWmsInnerInventoryDet.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
+        List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
+        if(StringUtils.isNotEmpty(inventoryDetDtos)) {
+            for (WmsInnerInventoryDetDto wmsInnerInventoryDetDto : inventoryDetDtos) {
+                wmsInnerInventoryDetDto.setInventoryStatusId(inventoryStatus.get(0).getInventoryStatusId());
+                wmsInnerInventoryDetDto.setQcDate(new Date());
+                innerFeignApi.update(wmsInnerInventoryDetDto);
+            }
+        }
+
+        return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public int updateSampleQty(Long inspectionOrderId,BigDecimal sampleQty){
         int i = 0;
         Example example = new Example(QmsInspectionOrderDet.class);
@@ -207,7 +279,6 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 inspectionOrderDetSample.setBarcodeStatus((byte)1);
                 inspectionOrderDetSample.setSampleValue("OK");
                 inspectionOrderDetSample.setOrgId(user.getOrganizationId());
-                inspectionOrderDetSample.setInspectionOrderId(inspectionOrderId);
                 inspectionOrderDetSampleList.add(inspectionOrderDetSample);
             }
         }
@@ -269,7 +340,6 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 inspectionOrderDetSample.setBarcodeStatus((byte)1);
                 inspectionOrderDetSample.setSampleValue("OK");
                 inspectionOrderDetSample.setOrgId(user.getOrganizationId());
-                inspectionOrderDetSample.setInspectionOrderId(inspectionOrderId);
                 inspectionOrderDetSampleList.add(inspectionOrderDetSample);
             }
         }
@@ -342,7 +412,6 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                     inspectionOrderDetSample.setBarcode(qmsInspectionOrderDetSample.getBarcode());
                     inspectionOrderDetSample.setSampleValue("OK");
                     inspectionOrderDetSample.setOrgId(user.getOrganizationId());
-                    inspectionOrderDetSample.setInspectionOrderId(inspectionOrderId);
                     inspectionOrderDetSampleList.add(inspectionOrderDetSample);
                 }
             }
@@ -714,6 +783,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
         qmsInspectionOrder.setIfThirdInspection(StringUtils.isEmpty(qmsInspectionOrder.getIfThirdInspection()) ? 1 :qmsInspectionOrder.getIfThirdInspection());
         qmsInspectionOrder.setInspectionStatus((byte)3);
+        qmsInspectionOrder.setInspectionType((byte)2);
         qmsInspectionOrder.setInspectionUserId(user.getUserId());
         qmsInspectionOrder.setModifiedUserId(user.getUserId());
         qmsInspectionOrder.setModifiedTime(new Date());

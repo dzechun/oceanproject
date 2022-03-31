@@ -40,4 +40,6 @@ public interface QmsInspectionOrderService extends IService<QmsInspectionOrder> 
      * @return
      */
     int qmsInspectToInnerJobShift(String ids);
+
+    int exemption(QmsInspectionOrder qmsInspectionOrder);
 }
