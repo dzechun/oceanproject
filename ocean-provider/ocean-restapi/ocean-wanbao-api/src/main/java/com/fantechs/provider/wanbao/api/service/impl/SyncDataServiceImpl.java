@@ -296,6 +296,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                 // 记录日志
                 apiLog.setResponseData("平台默认工艺路线不存在，不同步工单数据");
                 logList.add(apiLog);
+                securityFeignApi.batchAdd(logList);
                 return;
             }
             // 条码规则集合
@@ -304,6 +305,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                 // 记录日志
                 apiLog.setResponseData("平台默认条码规则集合不存在，不同步工单数据");
                 logList.add(apiLog);
+                securityFeignApi.batchAdd(logList);
                 return;
             }
             // 工艺路线工序关系
@@ -312,6 +314,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                 // 记录日志
                 apiLog.setResponseData("工艺路线工序关系数据不存在，不同步工单数据");
                 logList.add(apiLog);
+                securityFeignApi.batchAdd(logList);
                 return;
             }
             long current22 = System.currentTimeMillis();
