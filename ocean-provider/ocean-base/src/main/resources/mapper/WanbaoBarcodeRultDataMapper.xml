@@ -85,6 +85,9 @@
       <if test="customerModel!=null and customerModel!=''">
         and spm.product_model_code like CONCAT('%', #{customerModel}, '%')
       </if>
+      <if test="dataStatus!=null and dataStatus!=''">
+        and wbrd.data_status = #{dataStatus}
+      </if>
       <if test="status!=null">
         and wbrd.status=#{status}
       </if>

@@ -77,6 +77,9 @@
       <if test="proName != null">
         AND bpl.pro_name like CONCAT('%', #{proName}, '%')
       </if>
+      <if test="proCode != null">
+        AND bpl.pro_code like CONCAT('%', #{proCode}, '%')
+      </if>
       <if test="proLineId != null">
         AND bpl.pro_line_id = #{proLineId}
       </if>

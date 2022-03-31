@@ -27,5 +27,5 @@ public class SearchBasePackingUnit extends BaseQuery implements Serializable {
      * 是否主要(0否，1是)
      */
     @ApiModelProperty(name="isChief",value = "是否主要(0否，1是)")
-    private Byte isChief;
+    private String isChief;
 }
