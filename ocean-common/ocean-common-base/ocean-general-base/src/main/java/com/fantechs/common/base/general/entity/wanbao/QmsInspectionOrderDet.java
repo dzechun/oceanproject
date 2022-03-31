@@ -186,7 +186,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      */
     @Column(name = "aql_value")
     @ApiModelProperty(name = "aqlValue",value = "AQL值")
-    @Excel(name = "AQL值", height = 20, width = 30,orderNum="10")
+    //@Excel(name = "AQL值", height = 20, width = 30,orderNum="10")
     private BigDecimal aqlValue;
 
     /**
@@ -194,7 +194,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      */
     @Column(name = "ac_value")
     @ApiModelProperty(name = "acValue",value = "AC值")
-    @Excel(name = "AC值", height = 20, width = 30,orderNum="11")
+    //@Excel(name = "AC值", height = 20, width = 30,orderNum="11")
     private Integer acValue;
 
     /**
@@ -202,7 +202,7 @@ public class QmsInspectionOrderDet extends ValidGroup implements Serializable {
      */
     @Column(name = "re_value")
     @ApiModelProperty(name = "reValue",value = "RE值")
-    @Excel(name = "RE值", height = 20, width = 30,orderNum="12")
+    //@Excel(name = "RE值", height = 20, width = 30,orderNum="12")
     private Integer reValue;
 
     /**

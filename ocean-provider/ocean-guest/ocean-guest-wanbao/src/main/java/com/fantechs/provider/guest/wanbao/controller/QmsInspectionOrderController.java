@@ -137,7 +137,7 @@ public class QmsInspectionOrderController {
     List<QmsInspectionOrder> list = qmsInspectionOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrder));
     try {
         // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "成品检验单信息", QmsInspectionOrder.class, "成品检验单.xls", response);
+        EasyPoiUtils.exportExcel(list, "成品检验单导出信息表", "成品检验单导出信息表", QmsInspectionOrder.class, "成品检验单导出信息表.xls", response);
         } catch (Exception e) {
         throw new BizErrorException(e);
         }
