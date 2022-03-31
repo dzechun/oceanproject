@@ -86,19 +86,16 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
             }
             cleanBarcodeDto.setOrderBarCode(barcodeProcess.getBarcode());
         }else {
-            MesSfcBarcodeProcess barcodeProcess = new MesSfcBarcodeProcess();
             for (String str : barcodeArr){
                 if (str.length() == 23){
                     criteria.andEqualTo("barcode", str);
                     List<MesSfcBarcodeProcess> mesSfcBarcodeProcesses = barcodeProcessService.selectByExample(example);
                     if (!mesSfcBarcodeProcesses.isEmpty()){
-                        barcodeProcess = mesSfcBarcodeProcesses.get(0);
-                        cleanBarcodeDto.setOrderBarCode(barcodeProcess.getBarcode());
+                        cleanBarcodeDto.setOrderBarCode(mesSfcBarcodeProcesses.get(0).getBarcode());
                     }
                 }else if (str.contains("391-")){
                     cleanBarcodeDto.setSalesBarcode(str);
                 }else {
-
                     cleanBarcodeDto.setCutsomerBarcode(str);
                 }
             }
@@ -108,35 +105,6 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
             if (barcodeArr.length >= 3){
                 if(StringUtils.isEmpty(cleanBarcodeDto.getOrderBarCode()) || StringUtils.isEmpty(cleanBarcodeDto.getSalesBarcode())){
                     throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "平台中不存在此销售条码，不允许操作");
-                }
-            }
-            if (!StringUtils.isEmpty(cleanBarcodeDto.getCutsomerBarcode())){
-                // 匹配特征码字段
-                SearchBaseSignature baseSignature = new SearchBaseSignature();
-                baseSignature.setMaterialCode(barcodeProcess.getMaterialCode());
-                // 查找物料特征码
-                List<BaseSignature> signatureList = baseFeignApi.findSignatureList(baseSignature).getData();
-                if (signatureList.isEmpty()){
-                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码中客户条码与特征码不匹配，不允许操作");
-                }
-                 boolean flag = false;
-                int totalNum = 0;
-                for (BaseSignature signature : signatureList){
-                    // 校验附件码是否符合特征码规则
-                    Pattern pattern = Pattern.compile(signature.getSignatureRegex());
-                    Matcher matcher = pattern.matcher(cleanBarcodeDto.getCutsomerBarcode());
-                    if (!matcher.matches()) {
-                        // 该附件码不满足特征码，检查零件料号特征码
-                        totalNum ++;
-                        if (totalNum == signatureList.size()){
-                            throw new BizErrorException(ErrorCodeEnum.PDA40012028.getCode(), "该条码不符合特征码规则");
-                        }
-                        continue;
-                    }
-                    flag = true;
-                }
-                if (!flag){
-                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码中客户条码与特征码不匹配，不允许操作");
                 }
             }
         }
