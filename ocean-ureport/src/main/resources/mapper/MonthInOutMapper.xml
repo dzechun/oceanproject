@@ -26,9 +26,18 @@
     </resultMap>
 <!--    月入报表-->
     <select id="findInList" resultMap="base_column_list_in">
-        SELECT oso.sales_user_name 'salesUserName',bs.region_name 'regionName',bs.country_name 'countryName',oso.supplier_id 'supplierId',bs.supplier_name 'supplierName',
-        bmt.brand_name 'brandName',bmt.product_category 'productCategory',bpm.product_model_code 'productModelCode',mpwo.material_id 'materialId',bm.material_code 'materialCode',
-        bm.material_desc 'materialDesc',count(*) 'qty',mspcd.create_time 'inDate'
+        SELECT oso.sales_user_name 'salesUserName',
+        bs.region_name 'regionName',
+        bs.country_name 'countryName',
+        oso.supplier_id 'supplierId',
+        bs.supplier_name 'supplierName',
+        bmt.brand_name 'brandName',
+        bmt.product_category 'productCategory',
+        bpm.product_model_code 'productModelCode',
+        mpwo.material_id 'materialId',
+        bm.material_code 'materialCode',
+        bm.material_desc 'materialDesc',
+        count(*) 'qty',mspcd.create_time 'inDate'
         FROM mes_sfc_product_carton_det mspcd
         LEFT JOIN mes_sfc_work_order_barcode mswob ON mspcd.work_order_barcode_id = mswob.work_order_barcode_id
         LEFT JOIN mes_pm_work_order mpwo ON mswob.work_order_id = mpwo.work_order_id
@@ -37,7 +46,9 @@
         LEFT JOIN base_material bm ON mpwo.material_id = bm.material_id
         LEFT JOIN base_material_tab bmt ON bm.material_id = bmt.material_id
         LEFT JOIN base_product_model bpm ON bmt.product_model_id = bpm.product_model_id
+        LEFT JOIN wms_inner_inventory_det wiid on mswob.barcode=wiid.barcode
         <where>
+            wiid.barcode is not null
             <choose>
                 <when test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
                     and DATE_FORMAT(mspcd.create_time,'%y%m') between DATE_FORMAT(#{startTime},'%y%m') and DATE_FORMAT(#{endTime},'%y%m')

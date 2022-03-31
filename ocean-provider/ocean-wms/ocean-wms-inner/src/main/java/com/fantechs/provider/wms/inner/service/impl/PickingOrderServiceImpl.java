@@ -15,6 +15,7 @@ import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcKeyPartRelevanceDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcKeyPartRelevance;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
@@ -26,11 +27,13 @@ import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrderReJo;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.RedisUtil;
@@ -44,6 +47,7 @@ import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
 import com.fantechs.provider.wms.inner.service.PickingOrderService;
+import com.fantechs.provider.wms.inner.service.WmsInnerInventoryService;
 import com.fantechs.provider.wms.inner.util.InBarcodeUtil;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -82,6 +86,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
     private SecurityFeignApi securityFeignApi;
     @Resource
     private SFCFeignApi sfcFeignApi;
+    @Resource
+    private WmsInnerInventoryService wmsInnerInventoryService;
 
     private String REDIS_KEY = "PICKINGID:";
 
@@ -426,12 +432,36 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             }
             Map<Long, List<StorageRuleInventry>> listMap = new HashMap<>();
             for (Long longId : materialIdList) {
+                List<StorageRuleInventry> inventryDetList=new ArrayList<>();
+                //三星质检库位
+                StorageRuleInventry storageRuleInventry=new StorageRuleInventry();
+                SearchWmsInnerInventory searchWmsInnerInventory=new SearchWmsInnerInventory();
+                searchWmsInnerInventory.setMaterialId(longId);
+                searchWmsInnerInventory.setLockStatus((byte)0);
+                searchWmsInnerInventory.setStockLock((byte)0);
+                searchWmsInnerInventory.setQcLock((byte)0);
+                searchWmsInnerInventory.setJobStatus((byte)1);
+                searchWmsInnerInventory.setStorageCode("Z-SX");
+                searchWmsInnerInventory.setInventoryStatusName("合格");
+                List<WmsInnerInventoryDto> innerInventoryList=wmsInnerInventoryService.findList(ControllerUtil.dynamicCondition(searchWmsInnerInventory));
+                if(StringUtils.isNotEmpty(innerInventoryList) && innerInventoryList.size()>0){
+                    storageRuleInventry.setMaterialId(longId);
+                    storageRuleInventry.setStorageId(innerInventoryList.get(0).getStorageId());
+                    storageRuleInventry.setMaterialQty(innerInventoryList.get(0).getPackingQty());
+                    inventryDetList.add(storageRuleInventry);
+                }
+
                 //推荐库位集合
                 BaseStorageRule baseStorageRule = new BaseStorageRule();
                 baseStorageRule.setMaterialId(longId);
                 baseStorageRule.setQty(BigDecimal.ZERO);
                 ResponseEntity<List<StorageRuleInventry>> responseEntity = baseFeignApi.returnOutStorage(baseStorageRule);
-                List<StorageRuleInventry> inventryDetList=responseEntity.getData();
+                List<StorageRuleInventry> detList=responseEntity.getData();
+                if(StringUtils.isNotEmpty(detList) && detList.size()>0){
+                    for (StorageRuleInventry ruleInventry : detList) {
+                        inventryDetList.add(ruleInventry);
+                    }
+                }
                 if(StringUtils.isNotEmpty(inventryDetList) && inventryDetList.size()>0){
                     listMap.put(longId, inventryDetList);
                 }
