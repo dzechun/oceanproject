@@ -131,7 +131,7 @@ wipo.option5
                 and wipo.org_id = #{orgId}
             </if>
             <if test="userId!=null and userId!=''">
-                and bwork.user_id = #{userId}
+                and (bwork.user_id = #{userId} or wipo.working_area_id is null)
             </if>
             <if test="option1!=null and option1!=''">
                 and wipo.option1 = #{option1}
