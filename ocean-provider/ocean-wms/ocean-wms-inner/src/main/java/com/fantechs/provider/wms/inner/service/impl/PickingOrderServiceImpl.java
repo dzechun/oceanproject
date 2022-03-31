@@ -411,7 +411,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
     public int autoDistribution(String ids) {
         SysUser sysUser = currentUser();
         String[] arrId = ids.split(",");
-        int num = 0;
+        log.info("============= ids" + JSON.toJSONString(arrId));
+        int num = 1;
         for (String id : arrId) {
             Long storageId=null;
             List<Long> materialIdList=new ArrayList<>();
@@ -419,10 +420,12 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             if(wmsInnerJobOrder.getOrderStatus()==(byte)3){
                 throw new BizErrorException("单据已分配完成");
             }
+            log.info("============= 查询拣货列表 ======================");
             Example example = new Example(WmsInnerJobOrderDet.class);
             example.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrder.getJobOrderId())
                     .andEqualTo("orderStatus",1);
             List<WmsInnerJobOrderDet> list = wmsInnerJobOrderDetMapper.selectByExample(example);
+            log.info("============= 查询拣货明细 ======================");
             //获取物料相应推荐库位
             for (WmsInnerJobOrderDet wmsInnerJobOrderDet : list) {
                 Long materialId=wmsInnerJobOrderDet.getMaterialId();
@@ -467,7 +470,10 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 }
             }
 
+            log.info("============= 查询推荐库位明细 ======================");
+
             if(StringUtils.isEmpty(listMap)){
+                log.info("============= 继续循环下一条数据 ======================");
                 continue;
             }
 
@@ -482,6 +488,9 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 BigDecimal planQty=wms.getPlanQty();
                 Long materialId=wms.getMaterialId();
                 List<StorageRuleInventry> inventryList=listMap.get(materialId);
+                if(StringUtils.isEmpty(inventryList) || inventryList.size()<=0){
+                    continue;
+                }
                 for (StorageRuleInventry storageRuleInventry : inventryList) {
                     BigDecimal packingQty=storageRuleInventry.getMaterialQty();
                     if(packingQty.compareTo(new BigDecimal(0))==1) {

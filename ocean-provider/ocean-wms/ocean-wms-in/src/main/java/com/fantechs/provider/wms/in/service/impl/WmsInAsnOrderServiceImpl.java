@@ -1051,6 +1051,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
             wmsInnerInventoryDet.setOption5(palletAutoAsnDto.getWorkOrderCode());
 
             wmsInnerInventoryDet.setIfStockLock((byte) 0);
+            wmsInnerInventoryDet.setLockStatus((byte)0);
             wmsInnerInventoryDets.add(wmsInnerInventoryDet);
             ResponseEntity responseEntity = innerFeignApi.add(wmsInnerInventoryDets);
             if (responseEntity.getCode() != 0) {

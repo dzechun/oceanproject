@@ -114,11 +114,16 @@ public class InBarcodeUtil {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         //查询库存明细是否存在改条码
         Example example = new Example(WmsInnerInventoryDet.class);
-        example.createCriteria().andEqualTo("materialId",materialId).andEqualTo("barcode",barCode).andEqualTo("orgId",sysUser.getOrganizationId())
+        example.createCriteria().andEqualTo("materialId",materialId)
+                .andEqualTo("barcode",barCode)
+                .andEqualTo("orgId",sysUser.getOrganizationId())
                 .andEqualTo("barcodeStatus",3);
         List<WmsInnerInventoryDet> list = inBarcodeUtil.wmsInnerInventoryDetMapper.selectByExample(example);
         if(list.size()<1){
             throw new BizErrorException("条码不存在");
+        }
+        if(StringUtils.isNotEmpty(list.get(0).getLockStatus()) && list.get(0).getLockStatus()==(byte)1){
+            throw new BizErrorException("条码处于锁定状态 此条码不能拣货出库");
         }
         if (StringUtils.isNotEmpty(inventoryStatusId)){
             list = list.stream().filter(li->li.getInventoryStatusId().equals(inventoryStatusId)).collect(Collectors.toList());

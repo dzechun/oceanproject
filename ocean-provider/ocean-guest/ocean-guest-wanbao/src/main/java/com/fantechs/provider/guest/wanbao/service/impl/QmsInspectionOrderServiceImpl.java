@@ -576,7 +576,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             if(StringUtils.isNotEmpty(sysSpecItemList) && sysSpecItemList.size()>0){
                 SysSpecItem sysSpecItem=sysSpecItemList.get(0);
                 if(sysSpecItem.getParaValue()=="1"){
+                    log.info("============= 质检移位单扫码提交参数=================="+JSON.toJSONString(saveShiftWorkDetDto));
                     innerFeignApi.saveShiftWorkDetBarcode(saveShiftWorkDetDto);
+                    log.info("============= 质检移位单上架参数=================="+JSON.toJSONString(saveShiftJobOrderDto));
                     innerFeignApi.saveJobOrder(saveShiftJobOrderDto);
                 }
             }
