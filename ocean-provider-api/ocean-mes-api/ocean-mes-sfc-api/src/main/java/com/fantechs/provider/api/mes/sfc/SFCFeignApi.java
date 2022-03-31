@@ -80,14 +80,6 @@ public interface SFCFeignApi {
     @PostMapping("/mesSfcScanBarcode/chkLogUserInfo")
     ResponseEntity<BaseExecuteResultDto> chkLogUserInfo(@ApiParam(value = "用户登录参数")@RequestBody RestapiChkLogUserInfoApiDto restapiChkLogUserInfoApiDto);
 
-    @ApiOperation("过站作业-过站信息校验")
-    @PostMapping("/mesSfcScanBarcode/chkSnRouting")
-    ResponseEntity<BaseExecuteResultDto> chkSnRouting(@ApiParam(value = "过站参数")@RequestBody RestapiChkSNRoutingApiDto restapiChkSNRoutingApiDto);
-
-    @ApiOperation("过站作业-条码过站")
-    @PostMapping("/mesSfcScanBarcode/snDataTransfer")
-    ResponseEntity<BaseExecuteResultDto> snDataTransfer(@ApiParam(value = "过站参数")@RequestBody RestapiSNDataTransferApiDto restapiSNDataTransferApiDto);
-
     @ApiOperation("更新产品条码过站表")
     @PostMapping("/mesSfcBarcodeProcess/update")
     ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody MesSfcBarcodeProcess mesSfcBarcodeProcess);

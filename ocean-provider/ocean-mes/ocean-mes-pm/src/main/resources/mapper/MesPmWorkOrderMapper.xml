@@ -229,7 +229,7 @@
             </if>
             and swo.is_delete = 1
         </where>
-        order by swo.modified_time desc
+        order by swo.plan_start_time desc
     </select>
 
     <select id="findAll" resultMap="BaseResultMap">

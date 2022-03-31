@@ -14,18 +14,4 @@ public interface MesSfcScanBarcodeService {
      */
     BaseExecuteResultDto chkLogUserInfo(RestapiChkLogUserInfoApiDto restapiChkLogUserInfoApiDto) throws Exception;
 
-    /**
-     * 过站信息验证
-     * @param restapiChkSNRoutingApiDto
-     * @return
-     */
-    BaseExecuteResultDto chkSnRouting(RestapiChkSNRoutingApiDto restapiChkSNRoutingApiDto) throws Exception;
-
-    /**
-     * 条码过站
-     * @param restapiSNDataTransferApiDto
-     * @return
-     */
-    BaseExecuteResultDto snDataTransfer(RestapiSNDataTransferApiDto restapiSNDataTransferApiDto) throws Exception;
-
 }

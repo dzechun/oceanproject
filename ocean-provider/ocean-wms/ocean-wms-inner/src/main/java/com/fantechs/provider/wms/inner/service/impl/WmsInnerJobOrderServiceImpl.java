@@ -2256,6 +2256,63 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         return wmsInPutawayOrderMapper.updateByPrimaryKey(wmsInnerJobOrder);
     }
 
+    @Override
+    public int autoRecheck(String relatedOrderCode) {
+        SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
+        searchWmsInnerJobOrder.setRelatedOrderCode(relatedOrderCode);
+        searchWmsInnerJobOrder.setOption1("qmsCommit");
+        List<WmsInnerJobOrderDto> wmsInnerJobOrderDtos = wmsInPutawayOrderMapper.findList(searchWmsInnerJobOrder);
+        if (wmsInnerJobOrderDtos.isEmpty()){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "品质后移位单不存在，不可操作");
+        }
+        WmsInnerJobOrderDto innerJobOrderDto = wmsInnerJobOrderDtos.get(0);
+
+        List<BaseInventoryStatus> inventoryStatusList = baseFeignApi.findList(new SearchBaseInventoryStatus()).getData();
+        Long ok_inventoryStatusId = null;
+        Long ng_inventoryStatusId = null;
+        for (BaseInventoryStatus inventoryStatus : inventoryStatusList){
+            if (inventoryStatus.getInventoryStatusName().equals("不合格")){
+                ng_inventoryStatusId = inventoryStatus.getInventoryStatusId();
+            }
+            if (inventoryStatus.getInventoryStatusName().equals("合格")){
+                ok_inventoryStatusId = inventoryStatus.getInventoryStatusId();
+            }
+        }
+        Example example = new Example(WmsInnerJobOrderDet.class);
+        example.createCriteria().andEqualTo("jobOrderId", innerJobOrderDto.getJobOrderId());
+        List<WmsInnerJobOrderDet> jobOrderDetList = wmsInPutawayOrderDetMapper.selectByExample(example);
+        WmsInnerJobOrderDet ng_jobOrderDet = new WmsInnerJobOrderDet();
+        WmsInnerJobOrderDet ok_jobOrderDet = new WmsInnerJobOrderDet();
+        for (WmsInnerJobOrderDet item : jobOrderDetList){
+            if (item.getInventoryStatusId().equals(ng_inventoryStatusId)){
+                ng_jobOrderDet = item;
+            }
+            if (item.getInventoryStatusId().equals(ok_inventoryStatusId) && item.getActualQty() == null){
+                ok_jobOrderDet = item;
+            }
+        }
+        int num = 0;
+        if (ok_jobOrderDet.getJobOrderDetId() != null){
+            ok_jobOrderDet.setPlanQty(ok_jobOrderDet.getPlanQty().add(BigDecimal.ONE));
+            ok_jobOrderDet.setDistributionQty(ok_jobOrderDet.getDistributionQty().add(BigDecimal.ONE));
+            num += wmsInPutawayOrderDetMapper.updateByPrimaryKey(ok_jobOrderDet);
+        }else {
+            WmsInnerJobOrderDet newJobOrderDet = new WmsInnerJobOrderDet();
+            BeanUtil.copyProperties(ng_jobOrderDet, newJobOrderDet);
+            newJobOrderDet.setPlanQty(BigDecimal.ONE);
+            newJobOrderDet.setDistributionQty(BigDecimal.ONE);
+            num += wmsInPutawayOrderDetMapper.insert(newJobOrderDet);
+        }
+        if (ng_jobOrderDet.getPlanQty().compareTo(BigDecimal.ONE) == 0){
+            num += wmsInPutawayOrderDetMapper.delete(ng_jobOrderDet);
+        }else {
+            ng_jobOrderDet.setPlanQty(ng_jobOrderDet.getPlanQty().subtract(BigDecimal.ONE));
+            ng_jobOrderDet.setDistributionQty(ng_jobOrderDet.getDistributionQty().subtract(BigDecimal.ONE));
+            num += wmsInPutawayOrderDetMapper.updateByPrimaryKey(ng_jobOrderDet);
+        }
+        return num>0?1:0;
+    }
+
     /**
      * 获取当前登录用户
      *

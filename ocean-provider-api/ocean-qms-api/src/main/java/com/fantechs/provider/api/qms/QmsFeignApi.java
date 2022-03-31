@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @FeignClient(name = "ocean-qms")
@@ -28,5 +29,9 @@ public interface QmsFeignApi {
     @ApiOperation("获取pda质检列表")
     @PostMapping("/qmsPdaInspection/findList")
     ResponseEntity<List<QmsPdaInspectionDto>> findList(@ApiParam(value = "查询对象") @RequestBody SearchQmsPdaInspection searchQmsPdaInspection);
+
+    @ApiOperation("条码走产线，自动复检")
+    @PostMapping("/qmsInspectionOrder/recheckByBarcode")
+    ResponseEntity recheckByBarcode(@ApiParam(value = "条码",required = true) @RequestParam @NotNull(message="条码不能为空") String barcode);
 }
 

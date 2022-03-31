@@ -85,6 +85,9 @@
       <if test="status!=null">
         and qiods.status = #{status}
       </if>
+      <if test="factoryBarcode!=null and factoryBarcode !=''">
+        and qiods.factory_barcode = #{factoryBarcode}
+      </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(qiods.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>

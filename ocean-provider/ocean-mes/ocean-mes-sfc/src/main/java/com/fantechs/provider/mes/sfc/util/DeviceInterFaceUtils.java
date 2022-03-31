@@ -24,7 +24,6 @@ import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrde
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.eam.EamFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
@@ -49,8 +48,6 @@ public class DeviceInterFaceUtils {
     private SecurityFeignApi securityFeignApi;
     @Resource
     private PMFeignApi pmFeignApi;
-    @Resource
-    private EamFeignApi eamFeignApi;
     @Resource
     private OMFeignApi omFeignApi;
     @Resource
@@ -190,49 +187,6 @@ public class DeviceInterFaceUtils {
         return baseProductBomDtoList;
     }
 
-    /*
-     *获取设备绑定产品信息
-     */
-    public ResponseEntity<List<EamEquipmentMaterialDto>> getEquipmentMaterialList(SearchEamEquipmentMaterial searchEamEquipmentMaterial){
-        ResponseEntity<List<EamEquipmentMaterialDto>> eamEquipmentMaterialDtoList=null;
-        eamEquipmentMaterialDtoList = eamFeignApi.findEquipmentMaterialDtoList(searchEamEquipmentMaterial);
-        return eamEquipmentMaterialDtoList;
-    }
-
-    /*
-     *获取设备条码信息
-     */
-    public ResponseEntity<List<EamEquipmentBarcode>> findEamEquipmentBarCodeList(SearchEamEquipmentBarcode searchEamEquipmentBarcode){
-        ResponseEntity<List<EamEquipmentBarcode>> eamEquipmentBarcodeList=null;
-        eamEquipmentBarcodeList = eamFeignApi.findEamEquipmentBarCodeList(searchEamEquipmentBarcode);
-        return eamEquipmentBarcodeList;
-    }
-
-    /*
-     *获取治具绑定产品信息
-     */
-    public ResponseEntity<List<EamJigMaterialDto>> getJigMaterialDtoList(SearchEamJigMaterial searchEamJigMaterial){
-        ResponseEntity<List<EamJigMaterialDto>> eamJigMaterialDtoList=null;
-        eamJigMaterialDtoList = eamFeignApi.findList(searchEamJigMaterial);
-        return eamJigMaterialDtoList;
-    }
-
-    /*
-     * 获取治具条码信息
-     * */
-    public ResponseEntity<List<EamJigBarcodeDto>> getJigBarCode(SearchEamJigBarcode searchEamJigBarcode){
-        ResponseEntity<List<EamJigBarcodeDto>> eamJigBarcodeDtoList=null;
-        eamJigBarcodeDtoList = eamFeignApi.findList(searchEamJigBarcode);
-        return eamJigBarcodeDtoList;
-    }
-    /*
-     * 获取设备信息
-     * */
-    public ResponseEntity<List<EamEquipmentDto>> getEamEquipment(SearchEamEquipment searchEamEquipment){
-        ResponseEntity<List<EamEquipmentDto>> eamEquipmentDtoList=null;
-        eamEquipmentDtoList = eamFeignApi.findList(searchEamEquipment);
-        return eamEquipmentDtoList;
-    }
     /*
      * 获取系统配置项信息
      * */

@@ -32,10 +32,10 @@ public class ShipmentDetDto implements Serializable {
     @Excel(name = "销售编码", height = 20, width = 30,orderNum="5")
     private String salesCode;
 
-    @ApiModelProperty(name="actualDespatchTime",value = "实际发车时间")
+    @ApiModelProperty(name="actualDespatchDate",value = "实际发车时间")
     @Excel(name = "实际发车时间", height = 20, width = 30,orderNum="6",exportFormat ="yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
-    private Date actualDespatchTime;
+    private Date actualDespatchDate;
 
     @ApiModelProperty(name="containerNumber",value = "柜号")
     @Excel(name = "柜号", height = 20, width = 30,orderNum="7")

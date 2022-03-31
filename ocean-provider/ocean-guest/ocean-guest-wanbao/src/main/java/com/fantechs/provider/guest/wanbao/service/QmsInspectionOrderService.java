@@ -40,4 +40,13 @@ public interface QmsInspectionOrderService extends IService<QmsInspectionOrder> 
      * @return
      */
     int qmsInspectToInnerJobShift(String ids);
+
+    int exemption(QmsInspectionOrder qmsInspectionOrder);
+
+    /**
+     * 条码走产线，自动复检
+     * @param barcode
+     * @return
+     */
+    int recheckByBarcode(String barcode);
 }
