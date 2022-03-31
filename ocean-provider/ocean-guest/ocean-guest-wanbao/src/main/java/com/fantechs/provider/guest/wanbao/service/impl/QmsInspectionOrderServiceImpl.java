@@ -23,7 +23,6 @@ import com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrderDetSampl
 import com.fantechs.common.base.general.entity.wanbao.history.QmsHtInspectionOrder;
 import com.fantechs.common.base.general.entity.wanbao.search.SearchQmsInspectionOrder;
 import com.fantechs.common.base.general.entity.wanbao.search.SearchQmsInspectionOrderDet;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
@@ -1354,15 +1353,16 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                     }
 
                     //库存、库存明细写入检验单号
-                    writeInspectionOrderCode(qmsInspectionOrder1, detDtos, qualified, noQualified);
+               //     writeInspectionOrderCode(qmsInspectionOrder1, detDtos, qualified, noQualified);
                 }else{
                     //新建检验单
                     qmsInspectionOrder1.setMaterialId(detDtos.get(0).getMaterialId());
                     qmsInspectionOrder1.setOrderQty(new BigDecimal(detDtos.size()));
                     qmsInspectionOrder1.setInventoryQty(new BigDecimal(detDtos.size()));
                     createQmsInspectionOrder(qmsInspectionOrder1, detDtos);
-
                 }
+                //库存、库存明细写入检验单号
+                writeInspectionOrderCode(qmsInspectionOrder1, detDtos, qualified, noQualified);
             }
         }
         return 1;
