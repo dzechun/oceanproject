@@ -1,5 +1,6 @@
 package com.fantechs.provider.guest.wanbao.service.impl;
 
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
@@ -9,10 +10,12 @@ import com.fantechs.common.base.general.dto.mes.sfc.MesSfcKeyPartRelevanceDto;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcKeyPartRelevance;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrder;
 import com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrderDet;
 import com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrderDetSample;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -193,6 +196,21 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
 
     @Override
     public List<QmsInspectionOrderDetSample> findBarcodes(Long inspectionOrderId){
+        //增加是否产生质检移位单判断 开始
+        QmsInspectionOrder qmsInspectionOrder=qmsInspectionOrderMapper.selectByPrimaryKey(inspectionOrderId);
+        if(StringUtils.isEmpty(qmsInspectionOrder)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012005);
+        }
+        String inspectionOrderCode=qmsInspectionOrder.getInspectionOrderCode();
+        SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
+        searchWmsInnerJobOrder.setRelatedOrderCode(inspectionOrderCode);
+        searchWmsInnerJobOrder.setOption1("qmsToInnerJobShift");
+        List<WmsInnerJobOrderDto> jobOrderDtoList = innerFeignApi.findList(searchWmsInnerJobOrder).getData();
+        if(StringUtils.isEmpty(jobOrderDtoList) || jobOrderDtoList.size()<=0){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"成品检验单【"+inspectionOrderCode+"】未生成质检移位单 不能操作");
+        }
+        //增加是否产生质检移位单判断 结束
+
         HashMap<String, Object> map = new HashMap<>();
         //List<QmsInspectionOrderDetSample> detSamples = qmsInspectionOrderDetSampleMapper.findList(map);
 
