@@ -77,12 +77,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.fantechs.provider.api.qms</groupId>
-            <artifactId>ocean-qms-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.fantechs.provider.materialapi.imes</groupId>
             <artifactId>ocean-imes-materialapi</artifactId>
             <version>0.0.1-SNAPSHOT</version>

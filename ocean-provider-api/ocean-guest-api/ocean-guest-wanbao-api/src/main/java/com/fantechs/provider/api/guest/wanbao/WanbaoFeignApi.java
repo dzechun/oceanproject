@@ -41,4 +41,8 @@ public interface WanbaoFeignApi {
     @PostMapping("/wanbaoStacking/detail")
     ResponseEntity<WanbaoStacking> detail(@ApiParam(value = "ID",required = true)@RequestParam @NotNull(message="id不能为空") Long id);
 
+    @ApiOperation("条码走产线，自动复检")
+    @PostMapping("/qmsInspectionOrder/recheckByBarcode")
+    ResponseEntity recheckByBarcode(@ApiParam(value = "条码",required = true) @RequestParam @NotNull(message="条码不能为空") String barcode);
+
 }

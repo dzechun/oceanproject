@@ -31,9 +31,9 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.guest.wanbao.WanbaoFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
-import com.fantechs.provider.api.qms.QmsFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
@@ -87,7 +87,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     @Resource
     InnerFeignApi innerFeignApi;
     @Resource
-    QmsFeignApi qmsFeignApi;
+    WanbaoFeignApi wanbaoFeignApi;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -972,7 +972,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     private void scanBarocodeByQmsFinish(String barcode, WmsInnerInventoryDetDto dto){
 
         // 反写成品检验单检验结果、检验单明细条码样本值、拆分移位单明细
-        qmsFeignApi.recheckByBarcode(barcode);
+        wanbaoFeignApi.recheckByBarcode(barcode);
 
         // 将不合格的条码库存状态变为合格
         WmsInnerInventoryDet inventoryDet = new WmsInnerInventoryDet();
