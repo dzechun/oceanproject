@@ -1494,6 +1494,9 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             wmsInnerJobOrderDet.setActualQty(wmsInnerJobOrderDet.getActualQty().add(wmsInnerInventoryDet.getMaterialQty()));
             qty = qty.add(wmsInnerInventoryDet.getMaterialQty());
         }
+        if(wmsInnerJobOrderDet.getActualQty().compareTo(wmsInnerJobOrderDet.getDistributionQty())==1){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"出货数量不能大于分配数量");
+        }
         //拣货数量等于分配数量时更改未已经完成状态待发运
         if(wmsInnerJobOrderDet.getActualQty().compareTo(wmsInnerJobOrderDet.getDistributionQty())==0){
             wmsInnerJobOrderDet.setOrderStatus((byte)5);
