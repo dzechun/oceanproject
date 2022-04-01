@@ -11,6 +11,7 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
 import com.fantechs.common.base.general.dto.basic.BaseLabelMaterialDto;
 import com.fantechs.common.base.general.dto.basic.BatchGenerateCodeDto;
+import com.fantechs.common.base.general.dto.basic.imports.BaseWorkShiftImport;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
@@ -57,6 +58,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Mr.Lei on 2021/04/07.
@@ -288,6 +290,61 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         dto.setWorkOrderBarcodes(orderBarcodeDtos);
         dto.setBarcodeProcesses(sfcBarcodeProcesses);
         return dto;
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public Map<String, Object> importExcel(List<ImportCustomerBarcodeDto> list) {
+        Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
+        int success = 0;  //记录操作成功数
+        List<Integer> fail = new ArrayList<>();  //记录操作失败行数
+        HashMap<String, List<ImportCustomerBarcodeDto>> map = list.stream().collect(Collectors.groupingBy(ImportCustomerBarcodeDto::getSalesCode, HashMap::new, Collectors.toList()));
+        List<OmSalesOrderDetDto> orderDetDtos = new ArrayList<>();
+        map.forEach((key, value) -> {
+            SearchOmSalesOrderDetDto detDto = new SearchOmSalesOrderDetDto();
+            detDto.setSalesCode(value.get(0).getSalesCode());
+            List<OmSalesOrderDetDto> salesOrderDetDtoList = omFeignApi.findList(detDto).getData();
+            if (salesOrderDetDtoList.isEmpty()){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "销售编码:" + value.get(0).getSalesCode() + "在系统中不存在，不可操作");
+            }
+            if (value.size() > 1){
+                Example example = new Example(MesSfcWorkOrderBarcode.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("option3", salesOrderDetDtoList.get(0).getSalesOrderDetId())
+                        .andEqualTo("workOrderId", salesOrderDetDtoList.get(0).getSalesOrderDetId());
+                int countByExample = this.selectCountByExample(example);
+                if (countByExample>0) {
+                    throw new BizErrorException(ErrorCodeEnum.OPT20012004.getCode(), "销售编码:" + value.get(0).getSalesCode() + "下的客户条码还未删除，不能保存");
+                }
+            }
+            orderDetDtos.addAll(salesOrderDetDtoList);
+        });
+        for (int i = 0; i < list.size(); i++){
+            ImportCustomerBarcodeDto dto = list.get(i);
+            // 计算固定值
+            String fixedValue = this.longestCommonPrefix(new String[]{dto.getStartCode(), dto.getEndCode()});
+            // 获取销售订单明细
+            Long salesOrderDetId = null;
+            for (OmSalesOrderDetDto item : orderDetDtos){
+                if (item.getSalesCode().equals(dto.getSalesCode())){
+                    salesOrderDetId = item.getSalesOrderDetId();
+                    break;
+                }
+            }
+            if (salesOrderDetId == null){
+                fail.add(i + 4);
+                continue;
+            }
+
+            // 生成条码
+            String initialValue = dto.getStartCode().substring(fixedValue.length());
+            String finalValue = dto.getEndCode().substring(fixedValue.length());
+            this.wanbaoAddCustomerBarcode(salesOrderDetId, fixedValue, initialValue, finalValue, true);
+            success += 1;
+        }
+        resultMap.put("操作成功总数", success);
+        resultMap.put("操作失败行数", fail);
+        return resultMap;
     }
 
     @Override
@@ -621,16 +678,19 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     }
 
     @Override
-    public List<String> wanbaoAddCustomerBarcode(Long salesOrderDetId, String fixedValue, String initialValue, String finalValue) {
+    @Transactional(rollbackFor = RuntimeException.class)
+    public List<String> wanbaoAddCustomerBarcode(Long salesOrderDetId, String fixedValue, String initialValue, String finalValue, boolean isImport) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        // 保存固定值/初始值/最终值
-        Example example = new Example(MesSfcWorkOrderBarcode.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("option3", salesOrderDetId);
-        List<MesSfcWorkOrderBarcode> list = this.selectByExample(example);
-        if (!list.isEmpty()) {
-            throw new BizErrorException(ErrorCodeEnum.OPT20012004.getCode(), "该销售明细单下的客户条码还未删除，不能保存");
+        if (!isImport){
+            Example example = new Example(MesSfcWorkOrderBarcode.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("option3", salesOrderDetId).andEqualTo("workOrderId", salesOrderDetId);
+            int countByExample = this.selectCountByExample(example);
+            if (countByExample>0) {
+                throw new BizErrorException(ErrorCodeEnum.OPT20012004.getCode(), "该销售明细单下的客户条码还未删除，不能保存");
+            }
         }
+        // 保存固定值/初始值/最终值
         OmSalesOrderDet salesOrderDet = new OmSalesOrderDet();
         salesOrderDet.setSalesOrderDetId(salesOrderDetId);
         salesOrderDet.setFixedValue(fixedValue);
@@ -702,5 +762,29 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             sb.append(baseBarcodeRuleSpec.getSpecification());
         }
         return sb.toString();
+    }
+
+    /**
+     * 获取数组中最长公共前缀
+     * @param strs
+     * @return
+     */
+    private String longestCommonPrefix(String[] strs) {
+        String ret = "";
+
+        if(strs.length == 0) return ret;
+        if(strs.length == 1) return strs[0];
+
+        ret = strs[0];
+
+        for(int i = 1; i < strs.length; i++){
+            while (!strs[i].startsWith(ret)){ //判断与第一个元素的相同字符
+                ret = ret.substring(0, ret.length()-1);
+                if (ret.length() == 0){
+                    return "";
+                }
+            }
+        }
+        return ret;
     }
 }
