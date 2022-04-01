@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.guest.wanbao.mapper.QmsInspectionOrderDetSampleBeforeRecheckMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrderDetSampleBeforeRecheck">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="inspection_order_det_sample_before_recheck_id" jdbcType="BIGINT" property="inspectionOrderDetSampleBeforeRecheckId" />
+    <result column="inspection_order_det_id" jdbcType="BIGINT" property="inspectionOrderDetId" />
+    <result column="inspection_order_id" jdbcType="BIGINT" property="inspectionOrderId" />
+    <result column="barcode" jdbcType="VARCHAR" property="barcode" />
+    <result column="barcode_status" jdbcType="TINYINT" property="barcodeStatus" />
+    <result column="factory_barcode" jdbcType="VARCHAR" property="factoryBarcode" />
+    <result column="sample_value" jdbcType="VARCHAR" property="sampleValue" />
+    <result column="badness_phenotype_id" jdbcType="BIGINT" property="badnessPhenotypeId" />
+    <result column="badness_phenotype_desc" jdbcType="VARCHAR" property="badnessPhenotypeDesc" />
+    <result column="duty_user_id" jdbcType="BIGINT" property="dutyUserId" />
+    <result column="duty_user_name" jdbcType="VARCHAR" property="dutyUserName" />
+    <result column="duty_user_dept_id" jdbcType="BIGINT" property="dutyUserDeptId" />
+    <result column="cause_analyse" jdbcType="VARCHAR" property="causeAnalyse" />
+    <result column="improve_method" jdbcType="VARCHAR" property="improveMethod" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    <result column="badness_phenotype_code" jdbcType="VARCHAR" property="badnessPhenotypeCode"/>
+    <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    qiods.inspection_order_det_sample_before_recheck_id,
+    qiods.inspection_order_det_id,
+    qiods.inspection_order_id,
+    qiods.barcode,
+    qiods.barcode_status,
+    qiods.factory_barcode,
+    qiods.sample_value,
+    qiods.badness_phenotype_id,
+    qiods.badness_phenotype_desc,
+    qiods.duty_user_name,
+    qiods.duty_user_dept_id,
+    qiods.cause_analyse,
+    qiods.improve_method,
+    qiods.`status`,
+    qiods.remark,
+    qiods.org_id,
+    qiods.create_user_id,
+    qiods.create_time,
+    qiods.modified_user_id,
+    qiods.modified_time,
+    qiods.is_delete,
+    qiods.option1,
+    qiods.option2,
+    qiods.option3
+  </sql>
+
+  <select id="findList" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>,
+    bbp.badness_phenotype_code,bd.dept_name,
+    u.user_name as create_user_name,
+    s.user_name as modified_user_name,
+    bo.organization_name
+    from fantech_imes_v2.qms_inspection_order_det_sample_before_recheck qiods
+    left join fantech_imes_v2.base_badness_phenotype bbp on qiods.badness_phenotype_id=bbp.badness_phenotype_id
+    left join fantech_imes_v2.base_dept bd ON qiods.duty_user_dept_id = bd.dept_id
+    left join ocean_v2.sys_user u on qiods.create_user_id=u.user_id
+    left join ocean_v2.sys_user s on qiods.modified_user_id=s.user_id
+    left join fantech_imes_v2.base_organization bo ON qiods.org_id = bo.organization_id
+    <where>
+      <if test="inspectionOrderDetId != null">
+        and qiods.inspection_order_det_id = #{inspectionOrderDetId}
+      </if>
+      <if test="inspectionOrderId != null">
+        and qiods.inspection_order_id = #{inspectionOrderId}
+      </if>
+      <if test="status!=null">
+        and qiods.status = #{status}
+      </if>
+      <if test="factoryBarcode!=null and factoryBarcode !=''">
+        and qiods.factory_barcode = #{factoryBarcode}
+      </if>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(qiods.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="orgId!=null">
+        and qiods.org_id=#{orgId}
+      </if>
+    </where>
+    order by qiods.create_time desc
+  </select>
+</mapper>

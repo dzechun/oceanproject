@@ -14,6 +14,7 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrder;
 import com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrderDet;
 import com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrderDetSample;
+import com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrderDetSampleBeforeRecheck;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.support.BaseService;
@@ -23,9 +24,11 @@ import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.guest.wanbao.mapper.QmsInspectionOrderDetMapper;
+import com.fantechs.provider.guest.wanbao.mapper.QmsInspectionOrderDetSampleBeforeRecheckMapper;
 import com.fantechs.provider.guest.wanbao.mapper.QmsInspectionOrderDetSampleMapper;
 import com.fantechs.provider.guest.wanbao.mapper.QmsInspectionOrderMapper;
 import com.fantechs.provider.guest.wanbao.service.QmsInspectionOrderDetSampleService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -54,6 +57,8 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
     private SecurityFeignApi securityFeignApi;
     @Resource
     private SFCFeignApi sfcFeignApi;
+    @Resource
+    private QmsInspectionOrderDetSampleBeforeRecheckMapper qmsInspectionOrderDetSampleBeforeRecheckMapper;
 
     @Override
     public List<QmsInspectionOrderDetSample> findList(Map<String, Object> map) {
@@ -132,6 +137,7 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
 
         int i = 0;
         int badnessQty = 0;//不良数量
+        List<QmsInspectionOrderDetSampleBeforeRecheck> sampleBeforeRechecks = new LinkedList<>();
         for (QmsInspectionOrderDetSample qmsInspectionOrderDetSample : qmsInspectionOrderDetSampleList){
             qmsInspectionOrderDetSample.setCreateUserId(user.getUserId());
             qmsInspectionOrderDetSample.setCreateTime(new Date());
@@ -141,10 +147,18 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
             qmsInspectionOrderDetSample.setOrgId(user.getOrganizationId());
             if(StringUtils.isNotEmpty(qmsInspectionOrderDetSample.getBadnessPhenotypeId())){
                 badnessQty++;
+
+                //把不良的条码信息保存起来
+                QmsInspectionOrderDetSampleBeforeRecheck sampleBeforeRecheck = new QmsInspectionOrderDetSampleBeforeRecheck();
+                BeanUtils.copyProperties(qmsInspectionOrderDetSample, sampleBeforeRecheck);
+                sampleBeforeRecheck.setInspectionOrderId(qmsInspectionOrderDet.getInspectionOrderId());
+                sampleBeforeRechecks.add(sampleBeforeRecheck);
             }
         }
         i = qmsInspectionOrderDetSampleMapper.insertList(qmsInspectionOrderDetSampleList);
-
+        if(StringUtils.isNotEmpty(sampleBeforeRechecks)){
+            qmsInspectionOrderDetSampleBeforeRecheckMapper.insertList(sampleBeforeRechecks);
+        }
 
         //返写不良数量、检验结果
         qmsInspectionOrderDet.setBadnessQty(new BigDecimal(badnessQty));
