@@ -25,7 +25,6 @@
         <module>ocean-ews</module>    <!-- 预警模块  定时任务调度器-->
         <module>ocean-om</module>    <!-- 订单管理 -->
         <module>ocean-qms</module>    <!-- 质量管理 -->
-        <module>ocean-eam</module>    <!-- 设备管理 -->
         <module>ocean-guest</module>   <!-- 定制化模块 -->
     </modules>
 </project>
