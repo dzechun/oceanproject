@@ -174,7 +174,7 @@
                 and swo.work_order_code = #{workOrderCode}
             </if>
             <if test="logicName!=null and logicName!=''">
-                and wel.logic_name = #{logicName}
+                and wel.logic_name = like CONCAT('%', #{logicName}, '%')
             </if>
             <if test="salesCode!=null and salesCode!=''">
                 and swo.sales_code = #{salesCode}
