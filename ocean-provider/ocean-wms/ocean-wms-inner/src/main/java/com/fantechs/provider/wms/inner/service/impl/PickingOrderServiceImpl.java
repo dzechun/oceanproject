@@ -1463,7 +1463,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("materialId",wmsInnerJobOrderDet.getMaterialId())
                 .andEqualTo("storageId",wmsInnerJobOrderDet.getOutStorageId())
-                .andEqualTo("barcodeStatus",3)
+                //.andEqualTo("barcodeStatus",3)
                 .andEqualTo("orgId",sysUser.getOrganizationId());
         //weekend组合 厂内码、销售条码、客户条码查询
         Weekend<WmsInnerInventoryDet> weekend = new Weekend<>(WmsInnerInventoryDet.class);
@@ -1479,6 +1479,11 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         }
         BigDecimal qty = BigDecimal.ZERO;
         for (WmsInnerInventoryDet wmsInnerInventoryDet : wmsInnerInventoryDets) {
+            if(wmsInnerInventoryDet.getBarcodeStatus()==4){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"条码："+barCode+"已出库，重复扫码");
+            }else if(wmsInnerInventoryDet.getBarcodeStatus()!=3){
+                throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"条码："+barCode+"不在库内，请核查库存");
+            }
             wmsInnerInventoryDet.setStorageId(wmsInnerJobOrderDet.getInStorageId());
             wmsInnerInventoryDet.setDeliveryOrderCode(wmsInnerJobOrder.getJobOrderCode());
             wmsInnerInventoryDet.setDeliverDate(new Date());
