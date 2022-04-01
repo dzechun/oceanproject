@@ -13,6 +13,7 @@
     <result column="factory_barcode" jdbcType="VARCHAR" property="factoryBarcode" />
     <result column="sample_value" jdbcType="VARCHAR" property="sampleValue" />
     <result column="badness_phenotype_id" jdbcType="BIGINT" property="badnessPhenotypeId" />
+    <result column="badness_phenotype_desc" jdbcType="VARCHAR" property="badnessPhenotypeDesc" />
     <result column="duty_user_name" jdbcType="VARCHAR" property="dutyUserName" />
     <result column="duty_user_dept_id" jdbcType="BIGINT" property="dutyUserDeptId" />
     <result column="cause_analyse" jdbcType="VARCHAR" property="causeAnalyse" />
@@ -33,7 +34,6 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     <result column="badness_phenotype_code" jdbcType="VARCHAR" property="badnessPhenotypeCode"/>
-    <result column="badness_phenotype_desc" jdbcType="VARCHAR" property="badnessPhenotypeDesc"/>
     <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
   </resultMap>
 
@@ -46,6 +46,7 @@
     qiods.factory_barcode,
     qiods.sample_value,
     qiods.badness_phenotype_id,
+    qiods.badness_phenotype_desc,
     qiods.duty_user_name,
     qiods.duty_user_dept_id,
     qiods.cause_analyse,
@@ -65,7 +66,7 @@
 
   <select id="findList" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>,
-    bbp.badness_phenotype_code,bbp.badness_phenotype_desc,bd.dept_name,
+    bbp.badness_phenotype_code,bd.dept_name,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name

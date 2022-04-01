@@ -209,7 +209,7 @@ public class QmsInspectionOrderDetSample extends ValidGroup implements Serializa
     /**
      * 不良现象描述
      */
-    @Transient
+    @Column(name = "badness_phenotype_desc")
     @ApiModelProperty(name = "badnessPhenotypeDesc",value = "不良现象描述")
     private String badnessPhenotypeDesc;
 
