@@ -72,5 +72,5 @@ public interface PickingOrderService {
      * @param jobOrderDetId
      * @return
      */
-    BigDecimal chechBarcodeToWanbao(String barCode,Long jobOrderDetId);
+    BigDecimal chechkBarcodeToWanbao(String barCode,Long jobOrderDetId);
 }

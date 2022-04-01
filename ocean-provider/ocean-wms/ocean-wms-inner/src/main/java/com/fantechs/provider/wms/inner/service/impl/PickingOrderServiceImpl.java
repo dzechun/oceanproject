@@ -1446,7 +1446,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public BigDecimal chechBarcodeToWanbao(String barCode, Long jobOrderDetId) {
+    public BigDecimal chechkBarcodeToWanbao(String barCode, Long jobOrderDetId) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderDetMapper.selectByPrimaryKey(jobOrderDetId);
         if(StringUtils.isEmpty(wmsInnerJobOrderDet)){
@@ -1495,7 +1495,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             qty = qty.add(wmsInnerInventoryDet.getMaterialQty());
         }
         //拣货数量等于分配数量时更改未已经完成状态待发运
-        if(wmsInnerJobOrderDet.getActualQty().compareTo(wmsInnerJobOrderDet.getDistributionQty())==1){
+        if(wmsInnerJobOrderDet.getActualQty().compareTo(wmsInnerJobOrderDet.getDistributionQty())==0){
             wmsInnerJobOrderDet.setOrderStatus((byte)5);
         }else {
             wmsInnerJobOrderDet.setOrderStatus((byte)4);

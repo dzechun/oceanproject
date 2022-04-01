@@ -141,6 +141,6 @@ public class PDAWmsInnerJobOrderController {
     @PostMapping("/scanBarcodeCommit")
     public ResponseEntity<BigDecimal> scanBarcodeCommit(@ApiParam(value = "条码")@RequestParam String barCode,
                                             @ApiParam(value = "明细id")@RequestParam Long jobOrderDetId){
-        return ControllerUtil.returnDataSuccess(pickingOrderService.chechBarcodeToWanbao(barCode,jobOrderDetId),1);
+        return ControllerUtil.returnDataSuccess(pickingOrderService.chechkBarcodeToWanbao(barCode,jobOrderDetId),1);
     }
 }
