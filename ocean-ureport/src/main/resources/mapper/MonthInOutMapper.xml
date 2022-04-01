@@ -74,6 +74,7 @@
             </if>
         </where>
         GROUP BY oso.sales_user_name,oso.supplier_id,mpwo.material_id
+        order by mspcd.create_time desc
     </select>
 <!--    月入条码明细-->
     <select id="findInListBarCode" resultType="java.lang.String">
@@ -147,6 +148,7 @@
             </if>
         </where>
         GROUP BY oso.sales_user_name,oso.supplier_id,wijod.material_id
+        order by wijod.work_end_time desc
     </select>
 <!--    月出条码明细-->
     <select id="findOutListBarCode" resultType="java.lang.String">
@@ -246,5 +248,6 @@
         GROUP BY
             wiid.option3,
             wodo2.delivery_order_code
+        order by wodo2.actual_despatch_date
     </select>
 </mapper>
