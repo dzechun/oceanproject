@@ -65,4 +65,12 @@ public interface PickingOrderService {
     Map<String ,Object> checkBarcode(String barCode, Long jobOrderDetId);
 
     int sealOrder(List<Long> outDeliveryOrderIds,Byte type);
+
+    /**
+     * 万宝条码校验
+     * @param barCode
+     * @param jobOrderDetId
+     * @return
+     */
+    BigDecimal chechBarcodeToWanbao(String barCode,Long jobOrderDetId);
 }

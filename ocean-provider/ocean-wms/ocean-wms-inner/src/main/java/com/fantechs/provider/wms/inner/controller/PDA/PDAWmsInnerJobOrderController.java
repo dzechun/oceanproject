@@ -136,4 +136,11 @@ public class PDAWmsInnerJobOrderController {
     public ResponseEntity releaseStacking(@ApiParam(value = "作业单id")@RequestParam Long jobOrderId){
         return ControllerUtil.returnCRUD(wmsInnerJobOrderService.releaseStacking(jobOrderId));
     }
+
+    @ApiOperation("万宝-拣货作业扫码自动提交")
+    @PostMapping("/scanBarcodeCommit")
+    public ResponseEntity<BigDecimal> scanBarcodeCommit(@ApiParam(value = "条码")@RequestParam String barCode,
+                                            @ApiParam(value = "明细id")@RequestParam Long jobOrderDetId){
+        return ControllerUtil.returnDataSuccess(pickingOrderService.chechBarcodeToWanbao(barCode,jobOrderDetId),1);
+    }
 }
