@@ -252,11 +252,14 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("inspectionOrderId",inspectionOrderId);
         List<QmsInspectionOrderDet> qmsInspectionOrderDets = qmsInspectionOrderDetMapper.selectByExample(example);
+        //log.info("============= 检验项目数据" + JSON.toJSONString(qmsInspectionOrderDets));
 
         Example example1 = new Example(QmsInspectionOrderDetSample.class);
         Example.Criteria criteria1 = example1.createCriteria();
         criteria1.andEqualTo("inspectionOrderId",inspectionOrderId);
         List<QmsInspectionOrderDetSample> qmsInspectionOrderDetSamples = qmsInspectionOrderDetSampleMapper.selectByExample(example1);
+        log.info("============= 扫码条码数据" + JSON.toJSONString(qmsInspectionOrderDetSamples));
+
         for (QmsInspectionOrderDetSample DetSample : qmsInspectionOrderDetSamples) {
             DetSample.setBarcodeStatus((byte)1);
             DetSample.setModifiedUserId(user.getUserId());
@@ -372,6 +375,23 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             }
         }
 
+        //检验结果返写回库存
+        SearchWmsInnerInventory  searchWmsInnerInventory = new SearchWmsInnerInventory();
+        searchWmsInnerInventory.setInspectionOrderCode(inspectionOrderCode);
+        searchWmsInnerInventory.setQcLock((byte)1);
+        ResponseEntity<List<WmsInnerInventoryDto>> innerInventoryDtoList = innerFeignApi.findList(searchWmsInnerInventory);
+        if(StringUtils.isEmpty(innerInventoryDtoList.getData())){
+            throw new BizErrorException("未查询到对应库存信息");
+        }
+
+        List<WmsInnerInventoryDto> inventoryDtoList=innerInventoryDtoList.getData();
+        for (WmsInnerInventoryDto innerInventoryDto : inventoryDtoList) {
+            innerInventoryDto.setQcLock((byte)0);
+            innerInventoryDto.setInventoryStatusId(inventoryStatus.get(0).getInventoryStatusId());
+            innerInventoryDto.setModifiedTime(new Date());
+            innerFeignApi.update(innerInventoryDto);
+        }
+
         //生成移位单
         createJobOrderShift(qmsInspectionOrderDetSamples,qmsInspectionOrder,user);
 
@@ -473,6 +493,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             BigDecimal ngQty = new BigDecimal(ngQualifiedBarcodes.size());
             innerFeignApi.updateShit(jobOrderDtoList.get(0).getJobOrderId(),ngQty);
 
+            log.info("============= 复检移位单处理==========================");
+
         } else {
             //移位作业扫码提交参数
             SaveShiftWorkDetDto saveShiftWorkDetDto=new SaveShiftWorkDetDto();
@@ -485,7 +507,6 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
             //移位作业上架参数
             SaveShiftJobOrderDto saveShiftJobOrderDto=new SaveShiftJobOrderDto();
-
 
             //找成品检验对应的质检移位单
             searchWmsInnerJobOrder.setOption1("qmsToInnerJobShift");
@@ -515,6 +536,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
                         saveShiftWorkDetDto.setWarehouseId(warehouseId);
                     }
+
+                    log.info("============= 第一阶段移位单处理==========================");
                 }
             }
             //库存状态
@@ -551,6 +574,22 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 shiftType = 3;
             }
 
+            //质检移位单自动扫码提交 上架提交
+            SearchSysSpecItem searchSysSpecItem=new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("autoConfirmShift");
+            List<SysSpecItem> sysSpecItemList=securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            log.info("============= 程序配置项信息" + JSON.toJSONString(sysSpecItemList));
+
+            if(StringUtils.isNotEmpty(sysSpecItemList) && sysSpecItemList.size()>0){
+                SysSpecItem sysSpecItem=sysSpecItemList.get(0);
+                if(sysSpecItem.getParaValue().equals("1") && jobOrderDtoList.get(0).getOrderStatus()==(byte)3){
+                    log.info("============= 质检移位单扫码提交参数=================="+JSON.toJSONString(saveShiftWorkDetDto));
+                    innerFeignApi.saveShiftWorkDetBarcode(saveShiftWorkDetDto);
+                    log.info("============= 质检移位单上架参数=================="+JSON.toJSONString(saveShiftJobOrderDto));
+                    innerFeignApi.saveJobOrder(saveShiftJobOrderDto);
+                }
+            }
+
             SearchWmsInnerInventory searchWmsInnerInventory = new SearchWmsInnerInventory();
             searchWmsInnerInventory.setMaterialId(materialId);
             searchWmsInnerInventory.setStorageId(outStorageId);
@@ -558,10 +597,12 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             searchWmsInnerInventory.setJobStatus((byte) 1);
             searchWmsInnerInventory.setInspectionOrderCode(orderCode);
             List<WmsInnerInventoryDto> inventoryDtos = innerFeignApi.findList(searchWmsInnerInventory).getData();
+            log.info("============= 原始库存数据" + JSON.toJSONString(inventoryDtos));
+
             if (StringUtils.isNotEmpty(inventoryDtos)) {
                 List<WmsInnerInventoryDto> dtoList=inventoryDtos.stream().filter(item -> item.getPackingQty() != null && item.getPackingQty().compareTo(new BigDecimal(0))==1).collect(Collectors.toList());
 
-                log.info("============= 库存数据" + JSON.toJSONString(dtoList));
+                log.info("============= 库存大于零库存数据" + JSON.toJSONString(dtoList));
 
                 //存在合格的库存才生成移位单
                 List<QmsInspectionOrderDetSample> ngQualifiedBarcodes = list.stream().filter(item -> item.getBarcodeStatus() != null && item.getBarcodeStatus() == 0).collect(Collectors.toList());
@@ -634,20 +675,6 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 ResponseEntity responseEntity = innerFeignApi.add(wmsInnerJobOrder);
                 if (responseEntity.getCode() != 0) {
                     throw new BizErrorException("生成质检移位单失败");
-                }
-            }
-
-            //质检移位单自动扫码提交 上架提交
-            SearchSysSpecItem searchSysSpecItem=new SearchSysSpecItem();
-            searchSysSpecItem.setSpecCode("autoConfirmShift");
-            List<SysSpecItem> sysSpecItemList=securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-            if(StringUtils.isNotEmpty(sysSpecItemList) && sysSpecItemList.size()>0){
-                SysSpecItem sysSpecItem=sysSpecItemList.get(0);
-                if(sysSpecItem.getParaValue()=="1"){
-                    log.info("============= 质检移位单扫码提交参数=================="+JSON.toJSONString(saveShiftWorkDetDto));
-                    innerFeignApi.saveShiftWorkDetBarcode(saveShiftWorkDetDto);
-                    log.info("============= 质检移位单上架参数=================="+JSON.toJSONString(saveShiftJobOrderDto));
-                    innerFeignApi.saveJobOrder(saveShiftJobOrderDto);
                 }
             }
         }
