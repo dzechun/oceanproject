@@ -18,7 +18,6 @@ import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcKeyPartRe
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
-import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
@@ -54,6 +53,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
+import tk.mybatis.mapper.weekend.Weekend;
+import tk.mybatis.mapper.weekend.WeekendCriteria;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -1441,6 +1442,93 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             }
         }
         return  num;
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public BigDecimal chechBarcodeToWanbao(String barCode, Long jobOrderDetId) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderDetMapper.selectByPrimaryKey(jobOrderDetId);
+        if(StringUtils.isEmpty(wmsInnerJobOrderDet)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404);
+        }
+        if(wmsInnerJobOrderDet.getOrderStatus()==5){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"单据扫描已完成，重复作业");
+        }
+        WmsInnerJobOrder wmsInnerJobOrder = wmsInnerJobOrderMapper.selectByPrimaryKey(wmsInnerJobOrderDet.getJobOrderId());
+        if(StringUtils.isEmpty(wmsInnerJobOrder)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404);
+        }
+        Example example = new Example(WmsInnerInventoryDet.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("materialId",wmsInnerJobOrderDet.getMaterialId())
+                .andEqualTo("storageId",wmsInnerJobOrderDet.getOutStorageId())
+                .andEqualTo("barcodeStatus",3)
+                .andEqualTo("orgId",sysUser.getOrganizationId());
+        //weekend组合 厂内码、销售条码、客户条码查询
+        Weekend<WmsInnerInventoryDet> weekend = new Weekend<>(WmsInnerInventoryDet.class);
+        WeekendCriteria<WmsInnerInventoryDet,Object> weekendCriteria = weekend.weekendCriteria();
+        weekendCriteria.orEqualTo(WmsInnerInventoryDet::getBarcode,barCode).orEqualTo(WmsInnerInventoryDet::getSalesBarcode,barCode).orEqualTo(WmsInnerInventoryDet::getCustomerBarcode,barCode);
+        weekend.and(criteria);
+        List<WmsInnerInventoryDet> wmsInnerInventoryDets = wmsInnerInventoryDetMapper.selectByExample(weekend);
+        if(wmsInnerInventoryDets.size()<1){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"条码:"+barCode+"匹配失败!");
+        }
+        if(StringUtils.isEmpty(wmsInnerJobOrderDet.getActualQty())){
+            wmsInnerJobOrderDet.setActualQty(BigDecimal.ZERO);
+        }
+        BigDecimal qty = BigDecimal.ZERO;
+        for (WmsInnerInventoryDet wmsInnerInventoryDet : wmsInnerInventoryDets) {
+            wmsInnerInventoryDet.setStorageId(wmsInnerJobOrderDet.getInStorageId());
+            wmsInnerInventoryDet.setDeliveryOrderCode(wmsInnerJobOrder.getJobOrderCode());
+            wmsInnerInventoryDet.setDeliverDate(new Date());
+            wmsInnerInventoryDet.setBarcodeStatus((byte)4);
+            wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wmsInnerInventoryDet);
+
+            //累加出货数量
+            wmsInnerJobOrderDet.setActualQty(wmsInnerJobOrderDet.getActualQty().add(wmsInnerInventoryDet.getMaterialQty()));
+            qty = qty.add(wmsInnerInventoryDet.getMaterialQty());
+        }
+        //拣货数量等于分配数量时更改未已经完成状态待发运
+        if(wmsInnerJobOrderDet.getActualQty().compareTo(wmsInnerJobOrderDet.getDistributionQty())==1){
+            wmsInnerJobOrderDet.setOrderStatus((byte)5);
+        }else {
+            wmsInnerJobOrderDet.setOrderStatus((byte)4);
+        }
+        wmsInnerJobOrderDet.setModifiedTime(new Date());
+        wmsInnerJobOrderDet.setModifiedUserId(sysUser.getUserId());
+        wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInnerJobOrderDet);
+
+        //更改库存
+        WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = new WmsInnerJobOrderDetDto();
+        BeanUtil.copyProperties(wmsInnerJobOrderDet,wmsInnerJobOrderDetDto);
+        wmsInnerJobOrderDetDto.setActualQty(qty);
+        this.Inventory(wmsInnerJobOrderDetDto,wmsInnerJobOrderDetDto);
+
+        //更改表头状态
+        if(wmsInnerJobOrderDet.getOrderStatus()==4){
+            wmsInnerJobOrder.setOrderStatus((byte)4);
+        }else {
+            example = new Example(WmsInnerJobOrderDet.class);
+            example.createCriteria().andEqualTo("jobOrderId",wmsInnerJobOrder.getJobOrderId());
+            List<WmsInnerJobOrderDet> detList = wmsInnerJobOrderDetMapper.selectByExample(example);
+            if(detList.stream().filter(y->y.getOrderStatus()==5).collect(Collectors.toList()).size()==detList.size()){
+                wmsInnerJobOrder.setOrderStatus((byte)5);
+            }else {
+                wmsInnerJobOrder.setOrderStatus((byte)4);
+            }
+        }
+        wmsInnerJobOrder.setModifiedTime(new Date());
+        wmsInnerJobOrder.setModifiedUserId(sysUser.getUserId());
+        wmsInnerJobOrderMapper.updateByPrimaryKeySelective(wmsInnerJobOrder);
+
+        //反写出库单拣货数量
+        this.writeDeliveryOrderQty(wmsInnerJobOrderDet);
+//        List<String> list = wmsInnerInventoryDets.stream().map(WmsInnerInventoryDet::getBarcode).collect(Collectors.toList());
+//        String barcodes = list.stream().map(String::valueOf).collect(Collectors.joining(","));
+//        BigDecimal qty = wmsInnerInventoryDets.stream().map(e -> e.getMaterialQty()).reduce(BigDecimal::add).get();
+//        Map<String,Object> map = new HashMap<>();
+        return qty;
     }
 
     /**
