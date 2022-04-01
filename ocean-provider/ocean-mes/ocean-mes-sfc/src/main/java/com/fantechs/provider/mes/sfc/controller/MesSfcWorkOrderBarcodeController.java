@@ -1,7 +1,9 @@
 package com.fantechs.provider.mes.sfc.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.imports.BaseAddressImport;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
@@ -17,6 +19,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  *  条码打印接口
@@ -105,7 +109,7 @@ public class MesSfcWorkOrderBarcodeController {
                                                                  @ApiParam(value = "固定值",required = true) @RequestParam String fixedValue,
                                                                  @ApiParam(value = "初始值",required = true) @RequestParam String initialValue,
                                                                  @ApiParam(value = "最终值",required = true) @RequestParam String finalValue){
-        List<String> list = mesSfcWorkOrderBarcodeService.wanbaoAddCustomerBarcode(salesOrderDetId, fixedValue, initialValue, finalValue);
+        List<String> list = mesSfcWorkOrderBarcodeService.wanbaoAddCustomerBarcode(salesOrderDetId, fixedValue, initialValue, finalValue, false);
         return ControllerUtil.returnDataSuccess(list, list.size());
     }
 
@@ -157,6 +161,26 @@ public class MesSfcWorkOrderBarcodeController {
     public ResponseEntity<SyncFindBarcodeDto> syncFindBarcode(@ApiParam(value = "必传",required = true) @RequestParam Long labelCategoryId){
         SyncFindBarcodeDto dto = mesSfcWorkOrderBarcodeService.syncFindBarcode(labelCategoryId);
         return ControllerUtil.returnDataSuccess(dto, 1);
+    }
+
+
+    /**
+     * 从excel导入数据
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/import")
+    @ApiOperation(value = "从excel导入客户条码",notes = "从excel导入客户条码")
+    public ResponseEntity importExcel(@ApiParam(value ="输入excel文件",required = true)
+                                      @RequestPart(value="file") MultipartFile file){
+        try {
+            // 导入操作
+            List<ImportCustomerBarcodeDto> list = EasyPoiUtils.importExcel(file, 2, 1, ImportCustomerBarcodeDto.class);
+            Map<String, Object> resultMap = mesSfcWorkOrderBarcodeService.importExcel(list);
+            return ControllerUtil.returnDataSuccess("操作结果集",resultMap);
+        } catch (Exception e) {
+            return ControllerUtil.returnFail(e.getMessage(), ErrorCodeEnum.OPT20012002.getCode());
+        }
     }
 
 }

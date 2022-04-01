@@ -51,7 +51,7 @@ public interface MesSfcWorkOrderBarcodeService extends IService<MesSfcWorkOrderB
      * @param finalValue
      * @return
      */
-    List<String> wanbaoAddCustomerBarcode(Long salesOrderDetId, String fixedValue, String initialValue, String finalValue);
+    List<String> wanbaoAddCustomerBarcode(Long salesOrderDetId, String fixedValue, String initialValue, String finalValue, boolean isImport);
 
     /**
      * 万宝项目删除客户条码
@@ -83,5 +83,12 @@ public interface MesSfcWorkOrderBarcodeService extends IService<MesSfcWorkOrderB
      * @return
      */
     SyncFindBarcodeDto syncFindBarcode(Long labelCategoryId);
+
+
+    /**
+     * 导入客户条码
+     * @param list
+     */
+    Map<String, Object> importExcel(List<ImportCustomerBarcodeDto> list);
 
 }
