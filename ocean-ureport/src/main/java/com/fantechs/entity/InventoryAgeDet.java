@@ -1,11 +1,14 @@
 package com.fantechs.entity;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.alibaba.fastjson.annotation.JSONField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Id;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @Author lzw
@@ -65,5 +68,9 @@ public class InventoryAgeDet implements Serializable {
      */
     @ApiModelProperty(name = "samePackageCode",value = "PO号")
     private String  samePackageCode;
+
+    @ApiModelProperty(name="createTime",value = "创建时间")
+    @JSONField(format ="yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
 
 }
