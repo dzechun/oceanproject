@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fantechs.provider.guest.wanbao.mapper.QmsInspectionOrderDetSampleMapper">
-  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrderDetSample">
+<mapper namespace="com.fantechs.provider.guest.wanbao.mapper.QmsInspectionOrderDetSampleBeforeRecheckMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrderDetSampleBeforeRecheck">
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="inspection_order_det_sample_id" jdbcType="BIGINT" property="inspectionOrderDetSampleId" />
+    <id column="inspection_order_det_sample_before_recheck_id" jdbcType="BIGINT" property="inspectionOrderDetSampleBeforeRecheckId" />
     <result column="inspection_order_det_id" jdbcType="BIGINT" property="inspectionOrderDetId" />
     <result column="inspection_order_id" jdbcType="BIGINT" property="inspectionOrderId" />
     <result column="barcode" jdbcType="VARCHAR" property="barcode" />
@@ -14,6 +14,7 @@
     <result column="sample_value" jdbcType="VARCHAR" property="sampleValue" />
     <result column="badness_phenotype_id" jdbcType="BIGINT" property="badnessPhenotypeId" />
     <result column="badness_phenotype_desc" jdbcType="VARCHAR" property="badnessPhenotypeDesc" />
+    <result column="duty_user_id" jdbcType="BIGINT" property="dutyUserId" />
     <result column="duty_user_name" jdbcType="VARCHAR" property="dutyUserName" />
     <result column="duty_user_dept_id" jdbcType="BIGINT" property="dutyUserDeptId" />
     <result column="cause_analyse" jdbcType="VARCHAR" property="causeAnalyse" />
@@ -38,7 +39,7 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    qiods.inspection_order_det_sample_id,
+    qiods.inspection_order_det_sample_before_recheck_id,
     qiods.inspection_order_det_id,
     qiods.inspection_order_id,
     qiods.barcode,
@@ -70,7 +71,7 @@
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
     bo.organization_name
-    from fantech_imes_v2.qms_inspection_order_det_sample qiods
+    from fantech_imes_v2.qms_inspection_order_det_sample_before_recheck qiods
     left join fantech_imes_v2.base_badness_phenotype bbp on qiods.badness_phenotype_id=bbp.badness_phenotype_id
     left join fantech_imes_v2.base_dept bd ON qiods.duty_user_dept_id = bd.dept_id
     left join ocean_v2.sys_user u on qiods.create_user_id=u.user_id

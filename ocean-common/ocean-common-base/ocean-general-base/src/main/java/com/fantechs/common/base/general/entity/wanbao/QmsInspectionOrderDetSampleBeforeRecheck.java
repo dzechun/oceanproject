@@ -17,22 +17,22 @@ import java.util.Date;
 ;
 
 /**
- * 检验单明细样本值表
- * qms_inspection_order_det_sample
+ * 复检前检验单明细样本值表
+ * qms_inspection_order_det_sample_before_recheck
  * @author admin
- * @date 2021-05-25 10:24:14
+ * @date 2022-04-01 17:26:40
  */
 @Data
-@Table(name = "qms_inspection_order_det_sample")
-public class QmsInspectionOrderDetSample extends ValidGroup implements Serializable {
+@Table(name = "qms_inspection_order_det_sample_before_recheck")
+public class QmsInspectionOrderDetSampleBeforeRecheck extends ValidGroup implements Serializable {
     /**
-     * 检验单明细样本值ID
+     * 复检前检验单明细样本值ID
      */
-    @ApiModelProperty(name="inspectionOrderDetSampleId",value = "检验单明细样本值ID")
-    @Excel(name = "检验单明细样本值ID", height = 20, width = 30,orderNum="") 
+    @ApiModelProperty(name="inspectionOrderDetSampleBeforeRecheckId",value = "复检前检验单明细样本值ID")
+    @Excel(name = "复检前检验单明细样本值ID", height = 20, width = 30,orderNum="") 
     @Id
-    @Column(name = "inspection_order_det_sample_id")
-    private Long inspectionOrderDetSampleId;
+    @Column(name = "inspection_order_det_sample_before_recheck_id")
+    private Long inspectionOrderDetSampleBeforeRecheckId;
 
     /**
      * 检验单明细ID
@@ -46,7 +46,7 @@ public class QmsInspectionOrderDetSample extends ValidGroup implements Serializa
      * 检验单ID
      */
     @ApiModelProperty(name="inspectionOrderId",value = "检验单ID")
-    @Excel(name = "检验单ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "检验单ID", height = 20, width = 30,orderNum="") 
     @Column(name = "inspection_order_id")
     private Long inspectionOrderId;
 
@@ -58,9 +58,18 @@ public class QmsInspectionOrderDetSample extends ValidGroup implements Serializa
     private String barcode;
 
     /**
+     * 条码状态（0-不合格 1-合格）
+     */
+    @ApiModelProperty(name="barcodeStatus",value = "条码状态（0-不合格 1-合格）")
+    @Excel(name = "条码状态（0-不合格 1-合格）", height = 20, width = 30,orderNum="") 
+    @Column(name = "barcode_status")
+    private Byte barcodeStatus;
+
+    /**
      * 厂内码
      */
     @ApiModelProperty(name="factoryBarcode",value = "厂内码")
+    @Excel(name = "厂内码", height = 20, width = 30,orderNum="") 
     @Column(name = "factory_barcode")
     private String factoryBarcode;
 
@@ -81,10 +90,26 @@ public class QmsInspectionOrderDetSample extends ValidGroup implements Serializa
     private Long badnessPhenotypeId;
 
     /**
+     * 不良现象描述
+     */
+    @ApiModelProperty(name="badnessPhenotypeDesc",value = "不良现象描述")
+    @Excel(name = "不良现象描述", height = 20, width = 30,orderNum="") 
+    @Column(name = "badness_phenotype_desc")
+    private String badnessPhenotypeDesc;
+
+    /**
+     * 责任人用户ID
+     */
+    @ApiModelProperty(name="dutyUserId",value = "责任人用户ID")
+    @Excel(name = "责任人用户ID", height = 20, width = 30,orderNum="") 
+    @Column(name = "duty_user_id")
+    private Long dutyUserId;
+
+    /**
      * 责任人名称
      */
     @ApiModelProperty(name="dutyUserName",value = "责任人名称")
-    @Excel(name = "责任人名称", height = 20, width = 30,orderNum="")
+    @Excel(name = "责任人名称", height = 20, width = 30,orderNum="") 
     @Column(name = "duty_user_name")
     private String dutyUserName;
 
@@ -92,7 +117,7 @@ public class QmsInspectionOrderDetSample extends ValidGroup implements Serializa
      * 责任部门ID
      */
     @ApiModelProperty(name="dutyUserDeptId",value = "责任部门ID")
-    @Excel(name = "不良现象ID", height = 20, width = 30,orderNum="")
+    @Excel(name = "责任部门ID", height = 20, width = 30,orderNum="") 
     @Column(name = "duty_user_dept_id")
     private Long dutyUserDeptId;
 
@@ -100,7 +125,7 @@ public class QmsInspectionOrderDetSample extends ValidGroup implements Serializa
      * 原因分析
      */
     @ApiModelProperty(name="causeAnalyse",value = "原因分析")
-    @Excel(name = "原因分析", height = 20, width = 30,orderNum="")
+    @Excel(name = "原因分析", height = 20, width = 30,orderNum="") 
     @Column(name = "cause_analyse")
     private String causeAnalyse;
 
@@ -108,7 +133,7 @@ public class QmsInspectionOrderDetSample extends ValidGroup implements Serializa
      * 改善对策
      */
     @ApiModelProperty(name="improveMethod",value = "改善对策")
-    @Excel(name = "改善对策", height = 20, width = 30,orderNum="")
+    @Excel(name = "改善对策", height = 20, width = 30,orderNum="") 
     @Column(name = "improve_method")
     private String improveMethod;
 
@@ -176,6 +201,12 @@ public class QmsInspectionOrderDetSample extends ValidGroup implements Serializa
     @Column(name = "is_delete")
     private Byte isDelete;
 
+    private String option1;
+
+    private String option2;
+
+    private String option3;
+
     /**
      * 创建用户名称
      */
@@ -207,13 +238,6 @@ public class QmsInspectionOrderDetSample extends ValidGroup implements Serializa
     private String badnessPhenotypeCode;
 
     /**
-     * 不良现象描述
-     */
-    @Column(name = "badness_phenotype_desc")
-    @ApiModelProperty(name = "badnessPhenotypeDesc",value = "不良现象描述")
-    private String badnessPhenotypeDesc;
-
-    /**
      * 责任部门名称
      */
     @Transient
@@ -221,18 +245,6 @@ public class QmsInspectionOrderDetSample extends ValidGroup implements Serializa
     @Excel(name = "责任部门名称", height = 20, width = 30,orderNum="13")
     private String deptName;
 
-    /**
-     * 条码状态（0-不合格 1-合格）
-     */
-    @Column(name = "barcode_status")
-    @ApiModelProperty(name = "barcodeStatus",value = "条码状态（0-不合格 1-合格）")
-    private Byte barcodeStatus;
-
-    private String option1;
-
-    private String option2;
-
-    private String option3;
 
     private static final long serialVersionUID = 1L;
 }
