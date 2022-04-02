@@ -970,16 +970,19 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
      * 4、拆分移位单明细
      */
     private void scanBarocodeByQmsFinish(String barcode, WmsInnerInventoryDetDto dto){
-
-        // 反写成品检验单检验结果、检验单明细条码样本值、拆分移位单明细
-        wanbaoFeignApi.recheckByBarcode(barcode);
-
-        // 将不合格的条码库存状态变为合格
         WmsInnerInventoryDet inventoryDet = new WmsInnerInventoryDet();
         BeanUtils.copyProperties(dto, inventoryDet);
+        if (inventoryDet.getInspectionOrderCode() == null){
+            return;
+        }
+
+        // 将不合格的条码库存状态变为合格
         List<BaseInventoryStatus> inventoryStatusList = baseFeignApi.findList(new SearchBaseInventoryStatus()).getData();
         boolean flag = true;
         for (BaseInventoryStatus inventoryStatus : inventoryStatusList){
+            if (inventoryStatus.getInventoryStatusName().equals("待检") && inventoryDet.getInventoryStatusId().equals(inventoryStatus.getInventoryStatusId())){
+                return;
+            }
             if (inventoryStatus.getInventoryStatusName().equals("合格")){
                 inventoryDet.setInventoryStatusId(inventoryStatus.getInventoryStatusId());
                 flag = false;
@@ -989,6 +992,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "合格的库存状态不存在或已被删除，请检查");
         }
         innerFeignApi.update(inventoryDet);
+
+        // 反写成品检验单检验结果、检验单明细条码样本值、拆分移位单明细
+        wanbaoFeignApi.recheckByBarcode(barcode);
     }
 
     // endregion
