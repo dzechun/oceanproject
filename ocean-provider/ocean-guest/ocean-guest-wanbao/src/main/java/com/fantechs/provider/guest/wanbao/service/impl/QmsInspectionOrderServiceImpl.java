@@ -575,6 +575,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             }
 
             //质检移位单自动扫码提交 上架提交
+            Long inventoryId=null;
             SearchSysSpecItem searchSysSpecItem=new SearchSysSpecItem();
             searchSysSpecItem.setSpecCode("autoConfirmShift");
             List<SysSpecItem> sysSpecItemList=securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
@@ -586,9 +587,13 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                     log.info("============= 质检移位单扫码提交参数=================="+JSON.toJSONString(saveShiftWorkDetDto));
                     innerFeignApi.saveShiftWorkDetBarcode(saveShiftWorkDetDto);
                     log.info("============= 质检移位单上架参数=================="+JSON.toJSONString(saveShiftJobOrderDto));
-                    innerFeignApi.saveJobOrder(saveShiftJobOrderDto);
+                    //innerFeignApi.saveJobOrder(saveShiftJobOrderDto);
+                    ResponseEntity<Long> entityLong= innerFeignApi.saveJobOrderReturnId(saveShiftJobOrderDto);
+                    inventoryId=entityLong.getData();
                 }
             }
+
+            log.info("============= 质检移位单上架返回库存ID-->" + inventoryId.toString());
 
             SearchWmsInnerInventory searchWmsInnerInventory = new SearchWmsInnerInventory();
             searchWmsInnerInventory.setMaterialId(materialId);
@@ -597,12 +602,15 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             searchWmsInnerInventory.setJobStatus((byte) 1);
             searchWmsInnerInventory.setInspectionOrderCode(orderCode);
             List<WmsInnerInventoryDto> inventoryDtos = innerFeignApi.findList(searchWmsInnerInventory).getData();
+            log.info("============= 查询库存数据参数" + JSON.toJSONString(searchWmsInnerInventory));
             log.info("============= 原始库存数据" + JSON.toJSONString(inventoryDtos));
 
-            if (StringUtils.isNotEmpty(inventoryDtos)) {
+            if (StringUtils.isNotEmpty(inventoryId)) {
                 List<WmsInnerInventoryDto> dtoList=inventoryDtos.stream().filter(item -> item.getPackingQty() != null && item.getPackingQty().compareTo(new BigDecimal(0))==1).collect(Collectors.toList());
 
-                log.info("============= 库存大于零库存数据" + JSON.toJSONString(dtoList));
+                //log.info("============= 开始生成二阶段质检移位单" + JSON.toJSONString(dtoList));
+
+                log.info("======================== 开始生成二阶段质检移位单=========================");
 
                 //存在合格的库存才生成移位单
                 List<QmsInspectionOrderDetSample> ngQualifiedBarcodes = list.stream().filter(item -> item.getBarcodeStatus() != null && item.getBarcodeStatus() == 0).collect(Collectors.toList());
@@ -631,7 +639,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                     wmsInnerJobOrderDet.setOutStorageId(outStorageId);
                     wmsInnerJobOrderDet.setInStorageId(inStorageId);
                     if(dtoList.size()>0) {
-                        wmsInnerJobOrderDet.setSourceDetId(dtoList.get(0).getInventoryId());
+                        //wmsInnerJobOrderDet.setSourceDetId(dtoList.get(0).getInventoryId());
+                        wmsInnerJobOrderDet.setSourceDetId(inventoryId);
                     }
                     wmsInnerJobOrderDet.setOrderStatus((byte) 3);
                     if (statusList.size() > 0) {
@@ -654,7 +663,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                     wmsInnerJobOrderDet.setOutStorageId(outStorageId);
                     wmsInnerJobOrderDet.setInStorageId(inStorageId);
                     if(dtoList.size()>0) {
-                        wmsInnerJobOrderDet.setSourceDetId(dtoList.get(0).getInventoryId());
+                        //wmsInnerJobOrderDet.setSourceDetId(dtoList.get(0).getInventoryId());
+                        wmsInnerJobOrderDet.setSourceDetId(inventoryId);
                     }
                     wmsInnerJobOrderDet.setOrderStatus((byte) 3);
                     if (statusList.size() > 0) {
@@ -676,6 +686,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 if (responseEntity.getCode() != 0) {
                     throw new BizErrorException("生成质检移位单失败");
                 }
+
+                log.info("======================== 生成二阶段质检移位单结束=========================");
             }
         }
 

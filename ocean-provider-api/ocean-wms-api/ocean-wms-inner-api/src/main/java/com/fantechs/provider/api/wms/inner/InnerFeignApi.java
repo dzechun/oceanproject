@@ -120,4 +120,8 @@ public interface InnerFeignApi {
     @ApiOperation("走产线自动复检，拆明细")
     ResponseEntity autoRecheck(@RequestParam String relatedOrderCode);
 
+    @ApiOperation(value = "库内移位上架确认",notes = "库内移位上架确认")
+    @PostMapping("/pdaWmsInnerShiftWork/saveJobOrderReturnId")
+    ResponseEntity<Long> saveJobOrderReturnId(@ApiParam(value = "上架确认实体", required = true) @RequestBody SaveShiftJobOrderDto dto);
+
 }

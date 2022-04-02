@@ -59,4 +59,11 @@ public interface WmsInnerShiftWorkService {
      * @return
      */
     int batchShiftWork(BatchSiftWorkDto dto);
+
+    /**
+     * 移位作业上架确认
+     * @param dto
+     * @return
+     */
+    Long saveJobOrderReturnId(SaveShiftJobOrderDto dto);
 }
