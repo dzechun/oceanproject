@@ -23,6 +23,7 @@ import com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrderDetSampl
 import com.fantechs.common.base.general.entity.wanbao.history.QmsHtInspectionOrder;
 import com.fantechs.common.base.general.entity.wanbao.search.SearchQmsInspectionOrder;
 import com.fantechs.common.base.general.entity.wanbao.search.SearchQmsInspectionOrderDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
@@ -173,7 +174,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         qmsInspectionOrder.setInspectionType((byte)1);
         int i = qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);
 
-        //处理库存
+        //处理库存:库存状态改为合格
         SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
         searchBaseInventoryStatus.setInventoryStatusName("合格");
         searchBaseInventoryStatus.setNameQueryMark(1);
@@ -181,6 +182,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         if (StringUtils.isEmpty(inventoryStatus))
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "未找到库存的合格状态");
 
+        //库存明细
         SearchWmsInnerInventoryDet  searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
         searchWmsInnerInventoryDet.setPageSize(999);
         searchWmsInnerInventoryDet.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
@@ -191,6 +193,42 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 wmsInnerInventoryDetDto.setQcDate(new Date());
                 innerFeignApi.update(wmsInnerInventoryDetDto);
             }
+        }
+
+        //库存
+        SearchWmsInnerInventory  searchWmsInnerInventory = new SearchWmsInnerInventory();
+        searchWmsInnerInventory.setInspectionOrderCode(qmsInspectionOrder.getInspectionOrderCode());
+        searchWmsInnerInventory.setQcLock((byte)1);
+        List<WmsInnerInventoryDto> innerInventoryDtoList = innerFeignApi.findList(searchWmsInnerInventory).getData();
+        if(StringUtils.isEmpty(innerInventoryDtoList)){
+            throw new BizErrorException("未查询到对应库存信息");
+        }
+        WmsInnerInventoryDto wmsInnerInventoryDto = innerInventoryDtoList.get(0);
+
+        //合并库存
+        Map<String,Object> map = new HashMap<>();
+        map.put("materialId",wmsInnerInventoryDto.getMaterialId());
+        map.put("warehouseId",wmsInnerInventoryDto.getWarehouseId());
+        map.put("storageId",wmsInnerInventoryDto.getStorageId());
+        map.put("batchCode",wmsInnerInventoryDto.getBatchCode());
+        map.put("inventoryStatusId",inventoryStatus.get(0).getInventoryStatusId());
+        map.put("jobStatus",1);
+        map.put("lockStatus",0);
+        map.put("qcLock",0);
+        map.put("stockLock",0);
+        WmsInnerInventory wmsInnerInventory = innerFeignApi.selectOneByExample(map).getData();
+        if (StringUtils.isNotEmpty(wmsInnerInventory)) {
+            WmsInnerInventoryDto innerInventoryDto = new WmsInnerInventoryDto();
+            BeanUtils.copyProperties(wmsInnerInventory,innerInventoryDto);
+            innerInventoryDto.setQcLock((byte)0);
+            innerInventoryDto.setPackingQty(innerInventoryDto.getPackingQty().add(wmsInnerInventoryDto.getPackingQty()));
+            innerFeignApi.update(innerInventoryDto);
+            wmsInnerInventoryDto.setPackingQty(BigDecimal.ZERO);
+            innerFeignApi.update(wmsInnerInventoryDto);
+        }else{
+            wmsInnerInventoryDto.setQcLock((byte)0);
+            wmsInnerInventoryDto.setInventoryStatusId(inventoryStatus.get(0).getInventoryStatusId());
+            innerFeignApi.update(wmsInnerInventoryDto);
         }
 
         return i;
