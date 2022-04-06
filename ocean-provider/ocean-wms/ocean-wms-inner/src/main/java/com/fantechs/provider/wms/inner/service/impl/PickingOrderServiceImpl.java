@@ -523,8 +523,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                             wms.setModifiedTime(new Date());
                             num += wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wms);
 
-                            planQty=new BigDecimal(0);
                             storageRuleInventry.setMaterialQty(packingQty.subtract(planQty));
+                            planQty=new BigDecimal(0);
 
                             log.info("============= 库存足 拣货明细数据" + JSON.toJSONString(wms));
 
