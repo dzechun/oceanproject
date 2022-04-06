@@ -32,4 +32,7 @@ public class RequestPalletWorkScanDto {
 
     @ApiModelProperty(name = "printName", value = "打印机名称")
     private String printName;
+
+    @ApiModelProperty(name = "isReadHead", value = "是否读头")
+    private Boolean isReadHead;
 }
