@@ -52,7 +52,7 @@
             OR we.wip_entity_name LIKE 'ZC%'
             OR we.wip_entity_name LIKE 'ZD%')
             <if test="date != null and date != ''">
-                AND wdj.scheduled_start_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
+                AND wdj.last_update_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
             </if>
             <if test="workOrderCode != null and workOrderCode != ''">
                 AND we.wip_entity_name = #{workOrderCode}
