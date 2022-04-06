@@ -36,4 +36,7 @@ public class PalletWorkByManualOperationDto implements Serializable {
     @ApiModelProperty(name="stackingCode",value = "堆垛编码")
     private String stackingCode;
 
+    @ApiModelProperty(name = "isReadHead", value = "是否读头")
+    private Boolean isReadHead;
+
 }
