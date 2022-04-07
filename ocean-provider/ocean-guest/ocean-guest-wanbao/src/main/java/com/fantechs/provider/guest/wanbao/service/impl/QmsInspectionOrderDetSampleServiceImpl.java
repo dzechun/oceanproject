@@ -326,7 +326,6 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
         }*/
 
         qmsInspectionOrderDetSample.setFactoryBarcode(factoryBarcode);
-        qmsInspectionOrderDetSample.setBarcodeStatus((byte) 1);
         qmsInspectionOrderDetSample.setCreateUserId(user.getUserId());
         qmsInspectionOrderDetSample.setCreateTime(new Date());
         qmsInspectionOrderDetSample.setModifiedUserId(user.getUserId());
