@@ -858,12 +858,12 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     public int thirdInspection(QmsInspectionOrder qmsInspectionOrder) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
-        handleInventory(qmsInspectionOrder.getInspectionOrderCode(),qmsInspectionOrder.getInspectionResult());
+        //handleInventory(qmsInspectionOrder.getInspectionOrderCode(),qmsInspectionOrder.getInspectionResult());
 
         qmsInspectionOrder.setIfThirdInspection(StringUtils.isEmpty(qmsInspectionOrder.getIfThirdInspection()) ? 1 :qmsInspectionOrder.getIfThirdInspection());
-        qmsInspectionOrder.setInspectionStatus((byte)3);
+        //qmsInspectionOrder.setInspectionStatus((byte)3);
         qmsInspectionOrder.setInspectionType((byte)2);
-        qmsInspectionOrder.setInspectionUserId(user.getUserId());
+        //qmsInspectionOrder.setInspectionUserId(user.getUserId());
         qmsInspectionOrder.setModifiedUserId(user.getUserId());
         qmsInspectionOrder.setModifiedTime(new Date());
         return qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);
