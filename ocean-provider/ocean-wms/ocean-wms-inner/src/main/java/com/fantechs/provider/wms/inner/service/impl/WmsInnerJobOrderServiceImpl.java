@@ -2299,6 +2299,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         }else {
             WmsInnerJobOrderDet newJobOrderDet = new WmsInnerJobOrderDet();
             BeanUtil.copyProperties(ng_jobOrderDet, newJobOrderDet);
+            newJobOrderDet.setJobOrderDetId(null);
             newJobOrderDet.setPlanQty(BigDecimal.ONE);
             newJobOrderDet.setDistributionQty(BigDecimal.ONE);
             num += wmsInPutawayOrderDetMapper.insert(newJobOrderDet);

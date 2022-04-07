@@ -879,12 +879,12 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     public int thirdInspection(QmsInspectionOrder qmsInspectionOrder) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
-        handleInventory(qmsInspectionOrder.getInspectionOrderCode(),qmsInspectionOrder.getInspectionResult());
+        //handleInventory(qmsInspectionOrder.getInspectionOrderCode(),qmsInspectionOrder.getInspectionResult());
 
         qmsInspectionOrder.setIfThirdInspection(StringUtils.isEmpty(qmsInspectionOrder.getIfThirdInspection()) ? 1 :qmsInspectionOrder.getIfThirdInspection());
-        qmsInspectionOrder.setInspectionStatus((byte)3);
+        //qmsInspectionOrder.setInspectionStatus((byte)3);
         qmsInspectionOrder.setInspectionType((byte)2);
-        qmsInspectionOrder.setInspectionUserId(user.getUserId());
+        //qmsInspectionOrder.setInspectionUserId(user.getUserId());
         qmsInspectionOrder.setModifiedUserId(user.getUserId());
         qmsInspectionOrder.setModifiedTime(new Date());
         return qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);
@@ -1836,30 +1836,52 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int recheckByBarcode(String barcode) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        log.info("===================== recheckByBarcode开始执行 =====================");
         Map<String, Object> map = new HashMap<>();
-        map.put("factoryBarcode", "barcode");
-        map.put("sampleValue", "NG");
+        map.put("factoryBarcode", barcode);
+        map.put("barcodeStatus", 0);
         List<QmsInspectionOrderDetSample> orderDetSamples = qmsInspectionOrderDetSampleMapper.findList(map);
+        log.info("===================== orderDetSamples： " + JSON.toJSONString(orderDetSamples));
         if (orderDetSamples.isEmpty()){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此条码不是质检条码");
         }
         // 修改样本值
-        QmsInspectionOrderDetSample orderDetSample = orderDetSamples.get(0);
-        orderDetSample.setSampleValue("OK");
-        int num = qmsInspectionOrderDetSampleMapper.updateByPrimaryKeySelective(orderDetSample);
+        Long inspectionOrderId = null;
+        for (QmsInspectionOrderDetSample orderDetSample : orderDetSamples){
+            orderDetSample.setBarcodeStatus((byte) 1);
+            if (StringUtils.isNotEmpty(orderDetSample.getSampleValue()) && StringUtils.isNotEmpty(orderDetSample.getBadnessPhenotypeId())){
+                orderDetSample.setSampleValue("OK");
+                orderDetSample.setBadnessPhenotypeId(null);
+                orderDetSample.setBadnessPhenotypeDesc(null);
+            }else {
+                inspectionOrderId = orderDetSample.getInspectionOrderId();
+            }
+            orderDetSample.setModifiedUserId(user.getUserId());
+            orderDetSample.setModifiedTime(new Date());
+        }
+        int num = qmsInspectionOrderDetSampleMapper.batchUpdate(orderDetSamples);
 
+        log.info("===================== inspectionOrderId: " + inspectionOrderId);
         // 修改成品检验单表头状态
         QmsInspectionOrderDetSample detSample = new QmsInspectionOrderDetSample();
-        detSample.setInspectionOrderId(orderDetSample.getInspectionOrderId());
+        detSample.setInspectionOrderId(inspectionOrderId);
         detSample.setSampleValue("NG");
         int count = qmsInspectionOrderDetSampleMapper.selectCount(detSample);
-        QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(orderDetSample.getInspectionOrderId());
+        QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(inspectionOrderId);
+
+        log.info("===================== 数量 " + (count - 1));
         if ((count - 1) == 0){
             qmsInspectionOrder.setRecheckStatus((byte) 2);
             qmsInspectionOrder.setInspectionResult((byte) 1);
-            qmsInspectionOrderMapper.updateByPrimaryKeySelective(qmsInspectionOrder);
+            qmsInspectionOrderMapper.updateByPrimaryKey(qmsInspectionOrder);
+        }
+        if ((count - 1) > 0){
+            qmsInspectionOrder.setInspectionResult((byte) 2);
+            qmsInspectionOrderMapper.updateByPrimaryKey(qmsInspectionOrder);
         }
         innerFeignApi.autoRecheck(qmsInspectionOrder.getInspectionOrderCode());
+        log.info("===================== recheckByBarcode结束 =====================");
         return num;
     }
 }

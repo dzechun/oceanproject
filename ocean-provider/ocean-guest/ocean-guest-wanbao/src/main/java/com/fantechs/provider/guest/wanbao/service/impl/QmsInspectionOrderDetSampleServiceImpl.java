@@ -112,6 +112,15 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
             //提交过来的条码
             for (QmsInspectionOrderDetSample qmsInspectionOrderDetSample : qmsInspectionOrderDetSampleList) {
                 barcodes.add(qmsInspectionOrderDetSample.getBarcode());
+                QmsInspectionOrderDetSample detSample = inspectionOrderDetSamples.stream()
+                        .filter(item -> item.getBarcode().equals(qmsInspectionOrderDetSample.getBarcode()))
+                        .findFirst()
+                        .get();
+                qmsInspectionOrderDetSample.setFactoryBarcode(detSample.getFactoryBarcode());
+                if (StringUtils.isNotEmpty(detSample.getBadnessPhenotypeId())){
+                    detSample.setBarcodeStatus((byte)0);
+                    qmsInspectionOrderDetSampleMapper.updateByPrimaryKeySelective(detSample);
+                }
             }
 
             for (QmsInspectionOrderDetSample inspectionOrderDetSample : inspectionOrderDetSamples){
@@ -119,18 +128,12 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
                 if(!barcodes.contains(inspectionOrderDetSample.getBarcode())){
                     QmsInspectionOrderDetSample qmsInspectionOrderDetSample = new QmsInspectionOrderDetSample();
                     qmsInspectionOrderDetSample.setBarcode(inspectionOrderDetSample.getBarcode());
+                    qmsInspectionOrderDetSample.setFactoryBarcode(inspectionOrderDetSample.getFactoryBarcode());
                     qmsInspectionOrderDetSample.setInspectionOrderDetId(inspectionOrderDetId);
                     qmsInspectionOrderDetSample.setSampleValue("OK");
+                    qmsInspectionOrderDetSample.setBarcodeStatus((byte) 1);
                     qmsInspectionOrderDetSample.setOrgId(user.getOrganizationId());
                     qmsInspectionOrderDetSampleList.add(qmsInspectionOrderDetSample);
-                }else {
-                    List<QmsInspectionOrderDetSample> collect = qmsInspectionOrderDetSampleList.stream()
-                            .filter(i -> i.getBarcode().equals(inspectionOrderDetSample.getBarcode()) && StringUtils.isNotEmpty(i.getBadnessPhenotypeId()))
-                            .collect(Collectors.toList());
-                    if(collect.size()>0){
-                        inspectionOrderDetSample.setBarcodeStatus((byte)0);
-                        qmsInspectionOrderDetSampleMapper.updateByPrimaryKeySelective(inspectionOrderDetSample);
-                    }
                 }
             }
         }

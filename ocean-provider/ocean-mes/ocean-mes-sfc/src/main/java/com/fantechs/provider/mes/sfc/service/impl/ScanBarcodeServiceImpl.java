@@ -1,11 +1,9 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.mes.sfc.CleanBarcodeDto;
-import com.fantechs.common.base.general.dto.mes.sfc.PdaCartonWorkDto;
-import com.fantechs.common.base.general.dto.mes.sfc.RequestPalletWorkScanDto;
-import com.fantechs.common.base.general.dto.mes.sfc.ScanBarcodeDto;
+import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.entity.basic.BaseSignature;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSignature;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
@@ -39,7 +37,7 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
     private BaseFeignApi baseFeignApi;
 
     @Override
-    public int doScan(ScanBarcodeDto scanBarcodeDto) throws Exception {
+    public WanbaoStackingMQDto doScan(ScanBarcodeDto scanBarcodeDto) throws Exception {
         /**
          * 1、清洗条码
          * 条码类型有：厂内码、销售条码、客户条码（包含三星SN条码）
@@ -143,16 +141,24 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
             dto.setProcessId(scanBarcodeDto.getProcessId());
             dto.setProLineId(scanBarcodeDto.getProLineId());
             dto.setBarcode(cleanBarcodeDto.getOrderBarCode());
+            dto.setMaxPalletNum(1);
             dto.setCheckdaliyOrder((byte) 0);
             dto.setPrintBarcode((byte) 0);
             dto.setPalletType((byte) 2);
-            dto.setIsReadHead(true);
-            mesSfcPalletWorkService.palletWorkScanBarcode(dto);
+//            dto.setIsReadHead(true);
+            PalletWorkScanDto scanDto = mesSfcPalletWorkService.palletWorkScanBarcode(dto);
+
+            /*WanbaoStackingMQDto wanbaoStackingMQDto = new WanbaoStackingMQDto();
+            wanbaoStackingMQDto.setCode(0);
+            wanbaoStackingMQDto.setStackingCode(scanDto.getPalletCode());
+            String stackingLine = scanDto.getPalletCode().substring(scanDto.getPalletCode().length() - 1);
+            wanbaoStackingMQDto.setStackingLine(stackingLine);
+            return  wanbaoStackingMQDto;*/
         }else if ("3".equals(scanBarcodeDto.getType())){
             // 出库
 
         }
-        return 1;
+        return new WanbaoStackingMQDto();
     }
 
 }

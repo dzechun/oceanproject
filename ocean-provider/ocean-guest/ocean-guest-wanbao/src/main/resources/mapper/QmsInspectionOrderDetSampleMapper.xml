@@ -98,4 +98,17 @@
     </where>
     order by qiods.create_time desc
   </select>
+
+  <update id="batchUpdate" parameterType="java.util.List">
+    <foreach collection="list" item="item" separator=";">
+      update qms_inspection_order_det_sample qiods set
+      qiods.barcode_status = #{item.barcodeStatus},
+      qiods.sample_value = #{item.sampleValue},
+      qiods.badness_phenotype_id = #{item.badnessPhenotypeId},
+      qiods.badness_phenotype_desc = #{item.badnessPhenotypeDesc},
+      qiods.modified_user_id = #{item.modifiedUserId},
+      qiods.modified_time = #{item.modifiedTime}
+      where qiods.inspection_order_det_sample_id = #{item.inspectionOrderDetSampleId}
+    </foreach>
+  </update>
 </mapper>

@@ -340,7 +340,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         // 查找条码生成规则配置，生成新的栈板码
         if (isPallet) {
             if (mesSfcProductPalletDtoList.size() >= requestPalletWorkScanDto.getMaxPalletNum()) {
-                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "当前栈板可操作已达上限，该条码不属于正在操作的" + mesSfcProductPalletDtoList.size() + "个栈板，最大栈板操作数量" + requestPalletWorkScanDto.getMaxPalletNum());
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "当前栈板可操作已达上限，最大栈板操作数量：" + requestPalletWorkScanDto.getMaxPalletNum());
             }
 
             SearchBasePackageSpecification searchBasePackageSpecification = new SearchBasePackageSpecification();
@@ -489,6 +489,9 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             mesSfcProductPalletDetService.save(mesSfcProductPalletDet);
         }
 
+        // 构建返回值
+        PalletWorkScanDto palletWorkScanDto = new PalletWorkScanDto();
+
         /**
          * @date 2022-04-06
          * 调用人工堆垛方法，完成该流程形成数据闭环，并且A线要驱动分舵机
@@ -527,12 +530,12 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             }
             dto.setStackingCode(stackingList.get(0).getStackingCode());
             this.workByManualOperation(dto);
-        }
 
-        // 构建返回值
-        PalletWorkScanDto palletWorkScanDto = new PalletWorkScanDto();
+            palletWorkScanDto.setPalletCode(dto.getStackingCode());
+        }else {
+            palletWorkScanDto.setPalletCode(palletCode);
+        }
         palletWorkScanDto.setProductPalletId(mesSfcProductPallet.getProductPalletId());
-        palletWorkScanDto.setPalletCode(palletCode);
         palletWorkScanDto.setWorkOrderCode(mesPmWorkOrderDto.getWorkOrderCode());
         palletWorkScanDto.setMaterialCode(mesPmWorkOrderDto.getMaterialCode());
         palletWorkScanDto.setMaterialDesc(mesPmWorkOrderDto.getMaterialDesc());
@@ -609,7 +612,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             this.beforePalletAutoAsnOrder(stackingList.get(0).getStackingId(), user.getOrganizationId(), dto.getWanbaoBarcodeDtos(), barcodeList, mesSfcWorkOrderBarcodeDtoList);
 
             // A产线，发送堆垛数据至MQ
-            if (stackingList.get(0).getProCode().equals("A")){
+            if (stackingList.get(0).getProCode().equals("A") && (dto.getIsReadHead() == null || !dto.getIsReadHead())){
                 WanbaoStackingMQDto wanbaoStackingMQDto = new WanbaoStackingMQDto();
                 wanbaoStackingMQDto.setCode(0);
                 wanbaoStackingMQDto.setStackingCode(stackingList.get(0).getStackingCode());
