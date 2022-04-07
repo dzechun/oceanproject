@@ -249,6 +249,9 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
 
             i=this.print(sb.toString(),(byte)2,printName,userCode,password,printId);
         }
+        else{
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未产生条码 无需补打");
+        }
 
         return i;
     }

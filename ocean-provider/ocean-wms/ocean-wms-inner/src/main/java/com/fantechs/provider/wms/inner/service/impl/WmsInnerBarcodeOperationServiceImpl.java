@@ -242,7 +242,7 @@ public class WmsInnerBarcodeOperationServiceImpl extends BaseService<WmsInnerBar
                 if(StringUtils.isNotEmpty(detDtoList) && detDtoList.size()>0){
                     WmsInnerJobOrderDet wmsInnerJobOrderDet=new WmsInnerJobOrderDet();
                     wmsInnerJobOrderDet.setJobOrderDetId(detDtoList.get(0).getJobOrderDetId());
-                    wmsInnerJobOrderDet.setActualQty(wmsInnerJobOrderDet.getActualQty().subtract(new BigDecimal(1)));
+                    wmsInnerJobOrderDet.setActualQty(detDtoList.get(0).getActualQty().subtract(new BigDecimal(1)));
                     wmsInnerJobOrderDet.setModifiedUserId(sysUser.getUserId());
                     wmsInnerJobOrderDet.setModifiedTime(new Date());
                     i=wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInnerJobOrderDet);
@@ -255,6 +255,8 @@ public class WmsInnerBarcodeOperationServiceImpl extends BaseService<WmsInnerBar
             searchWmsInnerInventory.setMaterialId(barcodeDet.getMaterialId());
             searchWmsInnerInventory.setStorageId(barcodeDet.getStorageId());
             searchWmsInnerInventory.setLockStatus((byte)0);
+            searchWmsInnerInventory.setStockLock((byte)0);
+            searchWmsInnerInventory.setQcLock((byte)0);
             searchWmsInnerInventory.setJobStatus((byte)1);
             searchWmsInnerInventory.setInventoryStatusName("合格");
             List<WmsInnerInventoryDto> inventoryDtos=wmsInnerInventoryService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerInventory));
@@ -269,7 +271,7 @@ public class WmsInnerBarcodeOperationServiceImpl extends BaseService<WmsInnerBar
 
             //找质检单号
             SearchQmsInspectionOrderDetSample sDetSample=new SearchQmsInspectionOrderDetSample();
-            sDetSample.setBarcode(barcode);
+            sDetSample.setFactoryBarcode(barcode);
             sDetSample.setOrgId(sysUser.getOrganizationId());
             List<QmsInspectionOrderDetSample> detSampleList=wanbaoFeignApi.findList(sDetSample).getData();
             if(StringUtils.isNotEmpty(detSampleList) && detSampleList.size()>0){
