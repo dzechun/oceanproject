@@ -537,6 +537,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             //移位作业扫码提交参数
             SaveShiftWorkDetDto saveShiftWorkDetDto=new SaveShiftWorkDetDto();
             List<String> barcodes=new ArrayList<>();
+            Long sourceDetId=null;//第一阶段质检移位单移出库位的库存ID
             for (QmsInspectionOrderDetSample item : list) {
                 barcodes.add(item.getBarcode());
             }
@@ -558,6 +559,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 if (StringUtils.isNotEmpty(detDtoList) && detDtoList.size() > 0) {
                     inStorageId = detDtoList.get(0).getOutStorageId();
                     outStorageId = detDtoList.get(0).getInStorageId();
+                    sourceDetId=detDtoList.get(0).getSourceDetId();
 
                     saveShiftWorkDetDto.setJobOrderDetId(detDtoList.get(0).getJobOrderDetId());
                     saveShiftWorkDetDto.setMaterialId(detDtoList.get(0).getMaterialId());
@@ -610,6 +612,22 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 inStorageId = storageDtoList.get(0).getStorageId();
                 warehouseId = storageDtoList.get(0).getWarehouseId();
                 shiftType = 3;
+            }
+
+            //部分不合格 除样本数数量外 原库位库存更新为合格
+            if(StringUtils.isNotEmpty(sourceDetId) && qmsInspectionOrder.getInspectionResult()==(byte)2){
+                List<BaseInventoryStatus> statusList = inventoryStatusList.stream().filter(item -> item.getInventoryStatusName().equals("合格")).collect(Collectors.toList());
+                SearchWmsInnerInventory  searchWmsInnerInventory = new SearchWmsInnerInventory();
+                searchWmsInnerInventory.setInventoryId(sourceDetId);
+                List<WmsInnerInventoryDto> innerInventoryDtoList = innerFeignApi.findList(searchWmsInnerInventory).getData();
+                WmsInnerInventoryDto wmsInnerInventoryDto=new WmsInnerInventoryDto();
+                if(StringUtils.isNotEmpty(innerInventoryDtoList) && innerInventoryDtoList.size()>0){
+                    wmsInnerInventoryDto=innerInventoryDtoList.get(0);
+                    wmsInnerInventoryDto.setInventoryStatusId(statusList.get(0).getInventoryStatusId());
+                    wmsInnerInventoryDto.setModifiedTime(new Date());
+                    innerFeignApi.update(wmsInnerInventoryDto);
+                }
+
             }
 
             //质检移位单自动扫码提交 上架提交
@@ -726,6 +744,8 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 }
 
                 log.info("======================== 生成二阶段质检移位单结束=========================");
+
+
             }
         }
 
@@ -771,6 +791,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
         //检验结果返写回库存
         SearchWmsInnerInventory  searchWmsInnerInventory = new SearchWmsInnerInventory();
+        searchWmsInnerInventory.setJobStatus((byte)1);
         searchWmsInnerInventory.setInspectionOrderCode(inspectionOrderCode);
         ResponseEntity<List<WmsInnerInventoryDto>> innerInventoryDtoList = innerFeignApi.findList(searchWmsInnerInventory);
         if(StringUtils.isEmpty(innerInventoryDtoList.getData())){
