@@ -1629,6 +1629,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 newInnerInventory.setCreateUserId(sysUser.getUserId());
                 newInnerInventory.setParentInventoryId(innerInventory.getInventoryId());
                 newInnerInventory.setRelevanceOrderCode(record.getJobOrderCode());
+                newInnerInventory.setInventoryStatusId(wmsInPutawayOrderDet.getInventoryStatusId());
                 wmsInnerInventoryService.save(newInnerInventory);
                 // 变更减少原库存
                 innerInventory.setPackingQty(innerInventory.getPackingQty().subtract(wmsInPutawayOrderDet.getPlanQty()));
