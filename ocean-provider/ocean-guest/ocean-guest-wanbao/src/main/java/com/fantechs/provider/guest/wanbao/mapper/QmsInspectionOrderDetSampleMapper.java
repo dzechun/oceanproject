@@ -10,4 +10,11 @@ import java.util.Map;
 @Mapper
 public interface QmsInspectionOrderDetSampleMapper extends MyMapper<QmsInspectionOrderDetSample> {
     List<QmsInspectionOrderDetSample> findList(Map<String, Object> map);
+
+    /**
+     * 批量修改部分字段
+     * @param list
+     * @return
+     */
+    int batchUpdate(List<QmsInspectionOrderDetSample> list);
 }
