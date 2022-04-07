@@ -415,6 +415,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         log.info("============= ids" + JSON.toJSONString(arrId));
         int num = 1;
         for (String id : arrId) {
+            Boolean isFlat=false;
             Long storageId=null;
             List<Long> materialIdList=new ArrayList<>();
             WmsInnerJobOrder wmsInnerJobOrder = wmsInnerJobOrderMapper.selectByPrimaryKey(id);
@@ -448,6 +449,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                 searchWmsInnerInventory.setStorageCode("Z-SX");
                 searchWmsInnerInventory.setInventoryStatusName("合格");
                 List<WmsInnerInventoryDto> innerInventoryList=wmsInnerInventoryService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerInventory));
+                log.info("============= 三星质检库位库存数据 " + JSON.toJSONString(innerInventoryList));
+
                 if(StringUtils.isNotEmpty(innerInventoryList) && innerInventoryList.size()>0){
                     storageRuleInventry.setMaterialId(longId);
                     storageRuleInventry.setStorageId(innerInventoryList.get(0).getStorageId());
@@ -510,6 +513,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                             planQty=planQty.subtract(packingQty);
                             storageRuleInventry.setMaterialQty(new BigDecimal(0));
 
+                            isFlat=true;
+
                             //分配库存
                             num += this.DistributionInventory(wmsInnerJobOrder, newDet,1,null);
                         }
@@ -527,6 +532,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                             planQty=new BigDecimal(0);
 
                             log.info("============= 库存足 拣货明细数据" + JSON.toJSONString(wms));
+
+                            isFlat=true;
 
                             //分配库存
                             num += this.DistributionInventory(wmsInnerJobOrder, wms,1,null);
@@ -553,7 +560,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             }
             if(success==list.size()){
                 wmsInnerJobOrder.setOrderStatus((byte)3);
-            }else if(success>0) {
+            }else if(isFlat) {
                 wmsInnerJobOrder.setOrderStatus((byte)2);
             }
 
@@ -1484,6 +1491,11 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             }else if(wmsInnerInventoryDet.getBarcodeStatus()!=3){
                 throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"条码："+barCode+"不在库内，请核查库存");
             }
+
+            if(StringUtils.isNotEmpty(wmsInnerInventoryDet.getLockStatus()) && wmsInnerInventoryDet.getLockStatus()==(byte)1){
+                throw new BizErrorException("条码处于锁定状态 此条码不能拣货出库-->"+barCode);
+            }
+
             wmsInnerInventoryDet.setStorageId(wmsInnerJobOrderDet.getInStorageId());
             wmsInnerInventoryDet.setDeliveryOrderCode(wmsInnerJobOrder.getJobOrderCode());
             wmsInnerInventoryDet.setDeliverDate(new Date());

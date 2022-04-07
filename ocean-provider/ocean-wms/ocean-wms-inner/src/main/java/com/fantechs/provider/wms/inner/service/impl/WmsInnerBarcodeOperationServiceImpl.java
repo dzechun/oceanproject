@@ -242,7 +242,7 @@ public class WmsInnerBarcodeOperationServiceImpl extends BaseService<WmsInnerBar
                 if(StringUtils.isNotEmpty(detDtoList) && detDtoList.size()>0){
                     WmsInnerJobOrderDet wmsInnerJobOrderDet=new WmsInnerJobOrderDet();
                     wmsInnerJobOrderDet.setJobOrderDetId(detDtoList.get(0).getJobOrderDetId());
-                    wmsInnerJobOrderDet.setActualQty(wmsInnerJobOrderDet.getActualQty().subtract(new BigDecimal(1)));
+                    wmsInnerJobOrderDet.setActualQty(detDtoList.get(0).getActualQty().subtract(new BigDecimal(1)));
                     wmsInnerJobOrderDet.setModifiedUserId(sysUser.getUserId());
                     wmsInnerJobOrderDet.setModifiedTime(new Date());
                     i=wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInnerJobOrderDet);
