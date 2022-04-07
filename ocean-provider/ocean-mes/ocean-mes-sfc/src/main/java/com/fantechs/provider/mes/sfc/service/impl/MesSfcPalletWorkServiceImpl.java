@@ -489,6 +489,46 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             mesSfcProductPalletDetService.save(mesSfcProductPalletDet);
         }
 
+        /**
+         * @date 2022-04-06
+         * 调用人工堆垛方法，完成该流程形成数据闭环，并且A线要驱动分舵机
+         */
+        if (requestPalletWorkScanDto.getIsReadHead() != null && requestPalletWorkScanDto.getIsReadHead()){
+            PalletWorkByManualOperationDto dto = new PalletWorkByManualOperationDto();
+            BeanUtil.copyProperties(requestPalletWorkScanDto, dto);
+            List<WanbaoBarcodeDto> list = new ArrayList<>();
+            WanbaoBarcodeDto wanbaoBarcodeDto = new WanbaoBarcodeDto();
+            wanbaoBarcodeDto.setBarcode(barcode);
+            // 产品条码
+            Map<String, Object> mapKeyPart = new HashMap<>();
+            mapKeyPart.put("barcodeCode", barcode);
+            List<MesSfcKeyPartRelevanceDto> mesSfcKeyPartRelevanceDtoList = mesSfcKeyPartRelevanceService.findList(mapKeyPart);
+            if (!mesSfcKeyPartRelevanceDtoList.isEmpty()) {
+                for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : mesSfcKeyPartRelevanceDtoList){
+                    BaseLabelCategory keyPartLabelCategory = baseFeignApi.findLabelCategoryDetail(keyPartRelevanceDto.getLabelCategoryId()).getData();
+                    if (keyPartLabelCategory.getLabelCategoryCode().equals("02")) {
+                        // 销售订单条码
+                        wanbaoBarcodeDto.setSalesBarcode(keyPartRelevanceDto.getPartBarcode());
+                    }else if (keyPartLabelCategory.getLabelCategoryCode().equals("03")){
+                        // 客户条码
+                        wanbaoBarcodeDto.setCustomerBarcode(keyPartRelevanceDto.getPartBarcode());
+                    }
+                }
+            }
+            list.add(wanbaoBarcodeDto);
+            dto.setWanbaoBarcodeDtos(list);
+
+            mapKeyPart.clear();
+            mapKeyPart.put("usageStatus", 2);
+            mapKeyPart.put("proName", dto.getStackingCode());
+            List<WanbaoStackingDto> stackingList = mesSfcProductPalletService.findStackingList(mapKeyPart);
+            if (stackingList.isEmpty()){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "暂无空闲堆垛，请处理");
+            }
+            dto.setStackingCode(stackingList.get(0).getStackingCode());
+            this.workByManualOperation(dto);
+        }
+
         // 构建返回值
         PalletWorkScanDto palletWorkScanDto = new PalletWorkScanDto();
         palletWorkScanDto.setProductPalletId(mesSfcProductPallet.getProductPalletId());

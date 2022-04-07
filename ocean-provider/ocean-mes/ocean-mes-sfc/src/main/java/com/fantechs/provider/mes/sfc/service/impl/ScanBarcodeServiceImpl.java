@@ -146,6 +146,7 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
             dto.setCheckdaliyOrder((byte) 0);
             dto.setPrintBarcode((byte) 0);
             dto.setPalletType((byte) 2);
+            dto.setIsReadHead(true);
             mesSfcPalletWorkService.palletWorkScanBarcode(dto);
         }else if ("3".equals(scanBarcodeDto.getType())){
             // 出库
