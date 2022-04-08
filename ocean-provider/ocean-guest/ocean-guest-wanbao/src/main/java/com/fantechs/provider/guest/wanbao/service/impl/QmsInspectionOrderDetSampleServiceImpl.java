@@ -176,6 +176,8 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
                 || qmsInspectionOrderDet.getBadnessQty().compareTo(new BigDecimal(qmsInspectionOrderDet.getReValue())) == 1) {
             qmsInspectionOrderDet.setInspectionResult((byte) 0);
         }
+        qmsInspectionOrderDet.setModifiedTime(new Date());
+        qmsInspectionOrderDet.setModifiedUserId(user.getUserId());
         qmsInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsInspectionOrderDet);
 
         //更新检验状态
