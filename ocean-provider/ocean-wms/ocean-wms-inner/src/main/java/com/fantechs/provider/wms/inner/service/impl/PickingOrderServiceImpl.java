@@ -1512,7 +1512,11 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         //拣货数量等于分配数量时更改未已经完成状态待发运
         if(wmsInnerJobOrderDet.getActualQty().compareTo(wmsInnerJobOrderDet.getDistributionQty())==0){
             wmsInnerJobOrderDet.setOrderStatus((byte)5);
+            wmsInnerJobOrderDet.setWorkEndTime(new Date());
         }else {
+            if(StringUtils.isEmpty(wmsInnerJobOrderDet.getWorkStartTime())){
+                wmsInnerJobOrderDet.setWorkStartTime(new Date());
+            }
             wmsInnerJobOrderDet.setOrderStatus((byte)4);
         }
         wmsInnerJobOrderDet.setModifiedTime(new Date());
@@ -1527,6 +1531,9 @@ public class PickingOrderServiceImpl implements PickingOrderService {
 
         //更改表头状态
         if(wmsInnerJobOrderDet.getOrderStatus()==4){
+            if(StringUtils.isEmpty(wmsInnerJobOrder.getWorkStartTime())){
+                wmsInnerJobOrder.setWorkStartTime(new Date());
+            }
             wmsInnerJobOrder.setOrderStatus((byte)4);
         }else {
             example = new Example(WmsInnerJobOrderDet.class);

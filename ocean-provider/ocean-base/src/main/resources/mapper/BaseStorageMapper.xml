@@ -422,4 +422,12 @@ order by wii.modified_time desc limit 1
         WHERE storage_id NOT IN(SELECT in_storage_id FROM wms_inner_job_order_det
                                 WHERE order_status=3 and in_storage_id is not null group by in_storage_id)
     </select>
+    <select id="findJobOrderStorageInMaterial" resultType="java.lang.Long">
+        SELECT in_storage_id FROM wms_inner_job_order_det
+        WHERE order_status=3 and material_id=#{materialId} and in_storage_id in
+        <foreach collection="storageIds" item="list" open="(" close=") " separator=",">
+            #{list}
+        </foreach>
+        group by in_storage_id
+    </select>
 </mapper>

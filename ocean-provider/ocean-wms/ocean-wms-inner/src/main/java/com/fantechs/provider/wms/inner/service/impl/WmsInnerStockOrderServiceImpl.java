@@ -76,7 +76,7 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
         int num = wmsInventoryVerificationMapper.insertUseGeneratedKeys(record);
         //库位盘点/全盘
         if(record.getStockType()==(byte)1 || record.getStockType()==(byte)3){
-            if(record.getStockType()==(byte)1 && (StringUtils.isNotEmpty(record.getMaxStorageCount()) && record.getMaxStorageCount()> record.getStorageList().size())){
+            if(record.getStockType()==(byte)1 && (StringUtils.isNotEmpty(record.getMaxStorageCount()) && record.getMaxStorageCount() < record.getStorageList().size())){
                 throw new BizErrorException("所选库位数不能大于最大库位数");
             }
             //盘点类型：库位盘点
@@ -295,8 +295,12 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 //获取库位名称
                 Example example = new Example(WmsInnerInventory.class);
                 //盘点锁 0 否 1 是
-                example.createCriteria().andEqualTo("warehouseId",warehouseId).andEqualTo("storageId",storageId).andEqualTo("stockLock",0)
-                        .andGreaterThan("packingQty",0).andEqualTo("jobStatus",1).andEqualTo("orgId",sysUser.getOrganizationId())
+                example.createCriteria().andEqualTo("warehouseId",warehouseId)
+                        .andEqualTo("storageId",storageId)
+                        .andEqualTo("stockLock",0)
+                        .andGreaterThan("packingQty",0)
+                        .andEqualTo("jobStatus",1)
+                        .andEqualTo("orgId",sysUser.getOrganizationId())
                         .andEqualTo("qcLock", 0)
                         .andEqualTo("lockStatus", 0);
                 //获取库位库存
