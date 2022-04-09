@@ -62,7 +62,15 @@ public class MesSfcWorkOrderBarcodeController {
     public ResponseEntity print(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids,
                                 @ApiParam(value = "打印类型（1，打印，2，补打）",required = true)@RequestParam Byte printType,@RequestParam String printName,
                                 @RequestParam String userCode,@RequestParam String password,@RequestParam String printId){
-        return ControllerUtil.returnCRUD(mesSfcWorkOrderBarcodeService.print(ids,printType,printName,userCode,password,printId));
+        return ControllerUtil.returnCRUD(mesSfcWorkOrderBarcodeService.print_rewrite(ids,printType,printName,userCode,password,printId));
+    }
+
+    @ApiOperation("测试新的打印功能")
+    @PostMapping("/rewrite")
+    public ResponseEntity rewrite(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids,
+                                @ApiParam(value = "打印类型（1，打印，2，补打）",required = true)@RequestParam Byte printType,@RequestParam String printName,
+                                @RequestParam String userCode,@RequestParam String password,@RequestParam String printId){
+        return ControllerUtil.returnCRUD(mesSfcWorkOrderBarcodeService.print_rewrite(ids, printType, printName, userCode, password, printId));
     }
 
     @ApiOperation("按单据补打")
