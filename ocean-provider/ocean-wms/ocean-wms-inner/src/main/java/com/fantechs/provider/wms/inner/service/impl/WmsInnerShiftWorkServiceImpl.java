@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.fastjson.JSON;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
@@ -610,6 +611,8 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             throw new BizErrorException("上架失败");
         }
 
+        log.info("============= 移位单上架确认参数===================" + JSON.toJSONString(dto));
+
         SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
         searchWmsInnerJobOrder.setJobOrderId(wmsInnerJobOrderDet.getJobOrderId());
         WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder).get(0);
@@ -634,6 +637,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             criteria.andEqualTo("qcLock",0);
         }
         WmsInnerInventory wmsInnerInventory = wmsInnerInventoryMapper.selectOneByExample(example);
+        log.info("============= 移位单明细待出库存===================" + JSON.toJSONString(wmsInnerInventory));
         example.clear();
         Example.Criteria criteria1 = example.createCriteria().andEqualTo("materialId", oldDto.getMaterialId())
                 .andEqualTo("warehouseId", oldDto.getWarehouseId())
@@ -654,6 +658,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             criteria1.andEqualTo("inspectionOrderCode", wmsInnerJobOrderDto.getRelatedOrderCode());
         }
         WmsInnerInventory wmsInnerInventory_old = wmsInnerInventoryMapper.selectOneByExample(example);
+        log.info("============= 移位单明细移入库位库存===================" + JSON.toJSONString(wmsInnerInventory_old));
         //获取初期数量
         WmsInnerInventory innerInventory = wmsInnerInventoryMapper.selectByPrimaryKey(wmsInnerInventory.getParentInventoryId());
         if(StringUtils.isEmpty(innerInventory.getPackingQty())){
