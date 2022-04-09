@@ -308,6 +308,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         List<QmsInspectionOrderDetSample> inspectionOrderDetSampleList = new LinkedList<>();
         for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
             //明细
+            qmsInspectionOrderDet.setUnitName("台");
             qmsInspectionOrderDet.setBadnessQty(BigDecimal.ZERO);
             qmsInspectionOrderDet.setInspectionResult((byte)1);
             qmsInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsInspectionOrderDet);
@@ -453,14 +454,21 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         Example.Criteria criteria1 = example1.createCriteria();
         criteria1.andEqualTo("inspectionOrderId",inspectionOrderId);
         List<QmsInspectionOrderDetSample> qmsInspectionOrderDetSamples = qmsInspectionOrderDetSampleMapper.selectByExample(example1);
+        for(QmsInspectionOrderDetSample qmsInspectionOrderDetSample : qmsInspectionOrderDetSamples){
+            //若barcodeStatus为空，则认为合格
+            if(StringUtils.isEmpty(qmsInspectionOrderDetSample.getBarcodeStatus())){
+                qmsInspectionOrderDetSample.setBarcodeStatus((byte)1);
+                qmsInspectionOrderDetSampleMapper.updateByPrimaryKeySelective(qmsInspectionOrderDetSample);
+            }
+        }
 
         List<QmsInspectionOrderDetSample> inspectionOrderDetSampleList = new LinkedList<>();
         for (QmsInspectionOrderDet qmsInspectionOrderDet : qmsInspectionOrderDets){
             //明细
+            qmsInspectionOrderDet.setUnitName("台");//万宝：提交时加上单位
             if(StringUtils.isEmpty(qmsInspectionOrderDet.getInspectionResult())) {
                 qmsInspectionOrderDet.setBadnessQty(BigDecimal.ZERO);
                 qmsInspectionOrderDet.setInspectionResult((byte) 1);
-                qmsInspectionOrderDet.setUnitName("台");
                 qmsInspectionOrderDetMapper.updateByPrimaryKeySelective(qmsInspectionOrderDet);
 
                 //样本
