@@ -30,6 +30,7 @@ import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
+import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetBarcodeMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
 import com.fantechs.provider.wms.inner.service.*;
@@ -66,6 +67,9 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
 
     @Resource
     WmsInnerJobOrderDetMapper wmsInnerJobOrderDetMapper;
+
+    @Resource
+    WmsInnerJobOrderDetBarcodeMapper wmsInnerJobOrderDetBarcodeMapper;
 
     @Resource
     WmsInnerJobOrderDetBarcodeService wmsInnerJobOrderDetBarcodeService;
@@ -152,10 +156,29 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
         }
         //移位类型(1-正常移位单 2-质检移位单 3-三星移位单)
         Byte shiftType=null;
+        List<WmsInnerJobOrderDet> detList=new ArrayList<>();
         if(StringUtils.isNotEmpty(dto.getJobOrderDetId())) {
             WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderDetMapper.selectByPrimaryKey(dto.getJobOrderDetId());
             WmsInnerJobOrder wmsInnerJobOrder=wmsInnerJobOrderMapper.selectByPrimaryKey(wmsInnerJobOrderDet.getJobOrderId());
             shiftType=wmsInnerJobOrder.getShiftType();
+
+            Example example = new Example(WmsInnerJobOrderDet.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("jobOrderId",wmsInnerJobOrder.getJobOrderId());
+            detList=wmsInnerJobOrderDetMapper.selectByExample(example);
+        }
+        if(detList.size()>0){
+            for (WmsInnerJobOrderDet wmsInnerJobOrderDet : detList) {
+                Long jobOrderDetId=wmsInnerJobOrderDet.getJobOrderDetId();
+                Example example = new Example(WmsInnerJobOrderDetBarcode.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("jobOrderDetId",jobOrderDetId);
+                criteria.andEqualTo("barcode",factoryBarcode);
+                WmsInnerJobOrderDetBarcode detBarcode=wmsInnerJobOrderDetBarcodeMapper.selectOneByExample(example);
+                if(StringUtils.isNotEmpty(detBarcode)){
+                    throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"条码已扫描-->"+dto.getBarcode());
+                }
+            }
         }
 
         // 查询库存信息，同一库位跟同物料有且只有一条数据

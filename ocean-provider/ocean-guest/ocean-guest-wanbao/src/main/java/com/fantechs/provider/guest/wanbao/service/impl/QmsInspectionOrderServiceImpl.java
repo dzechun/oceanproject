@@ -1406,11 +1406,14 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         searchWmsInnerInventoryDet.setBarcodeStatus("3");
         searchWmsInnerInventoryDet.setLogicCode("C149");
         searchWmsInnerInventoryDet.setNotEqualMark(1);
+        //加上质检单号为空作为条件 存在质检中的质检单
+        searchWmsInnerInventoryDet.setIfInspectionOrderCodeNull(1);
         List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
+
+        //List<WmsInnerInventoryDetDto> innerInventoryDetDtos=wmsInnerInventoryDetDtos.stream().filter(item -> item.getInspectionOrderCode()==null).collect(Collectors.toList());
 
         //库存明细按PO和销售订单号和物料进行分组
         Map<String, List<WmsInnerInventoryDetDto>> collect = newGroupInventoryDet(wmsInnerInventoryDetDtos);
-
         if(StringUtils.isNotEmpty(collect)) {
             Set<String> codes = collect.keySet();
             for (String code : codes) {
