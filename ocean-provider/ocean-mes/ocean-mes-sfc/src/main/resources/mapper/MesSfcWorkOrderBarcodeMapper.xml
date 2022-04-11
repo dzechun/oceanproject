@@ -296,6 +296,10 @@
             update mes_sfc_work_order_barcode
             <set>
                 barcode_status = #{item.barcodeStatus}
+                <if test="item.barcodeStatus != null">
+                    ,
+                    print_time = #{item.printTime}
+                </if>
             </set>
             where work_order_barcode_id =#{item.workOrderBarcodeId}
         </foreach>

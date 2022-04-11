@@ -974,8 +974,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                     barPODtos.add(barPODto);
                 }
             });
-            log.info("========= wanbaoBarcodeDtos:" + JSON.toJSONString(wanbaoBarcodeDtos));
-            log.info("========= barPODtos:" + JSON.toJSONString(barPODtos));
             palletAutoAsnDto.setBarCodeList(barPODtos);
             //完工入库
             SearchBaseMaterialOwner searchBaseMaterialOwner = new SearchBaseMaterialOwner();
@@ -1003,17 +1001,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             }
             inFeignApi.palletAutoAsnOrder(palletAutoAsnDto);
         }
-    }
-
-    public Boolean judgeSamePOPallet(Long stationId) {
-        List<MesSfcProductPalletDto> list = mesSfcProductPalletService.findList(ControllerUtil.dynamicConditionByEntity(SearchMesSfcProductPallet.builder()
-                .stationId(stationId)
-                .closeStatus((byte) 0)
-                .build()));
-        if(list.size()>0){
-            return false;
-        }
-        return true;
     }
 
     // endregion

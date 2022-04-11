@@ -19,6 +19,7 @@ public interface MesSfcWorkOrderBarcodeService extends IService<MesSfcWorkOrderB
     List<MesSfcWorkOrderBarcodeDto> findList(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode);
 
     int print(String ids,Byte printType,String printName,String userCode,String password,String printId);
+    int print_rewrite(String ids,Byte printType,String printName,String userCode,String password,String printId);
 
     LabelRuteDto findLabelRute(Long workOrderId, Byte barcodeType);
 
