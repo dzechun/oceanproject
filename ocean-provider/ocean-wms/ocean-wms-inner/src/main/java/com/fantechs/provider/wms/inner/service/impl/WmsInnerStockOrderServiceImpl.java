@@ -491,7 +491,11 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                 //盘点
                 if(wmsInventoryVerification.getProjectType()==(byte)1){
                     //是否存在差异量 不存在则解锁库存盘点锁 存在则进行复盘
-                    if(!StringUtils.isEmpty(wmsInventoryVerificationDet.getVarianceQty()) || wmsInventoryVerificationDet.getVarianceQty().compareTo(BigDecimal.ZERO)==0){
+                    /*if(!StringUtils.isEmpty(wmsInventoryVerificationDet.getVarianceQty()) || wmsInventoryVerificationDet.getVarianceQty().compareTo(BigDecimal.ZERO)==0){
+                        wmsInventoryVerificationDets.add(wmsInventoryVerificationDet);
+                    }*/
+
+                    if(StringUtils.isEmpty(wmsInventoryVerificationDet.getVarianceQty()) || wmsInventoryVerificationDet.getVarianceQty().compareTo(BigDecimal.ZERO)==0){
                         wmsInventoryVerificationDets.add(wmsInventoryVerificationDet);
                     }
                 }
