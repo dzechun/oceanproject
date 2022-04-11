@@ -493,7 +493,8 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
     @Transactional(rollbackFor = RuntimeException.class)
     public int update(WmsInnerInitStock entity) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        if(entity.getOrderStatus()>1){
+        WmsInnerInitStock innerInitStock = wmsInnerInitStockMapper.selectByPrimaryKey(entity.getInitStockId());
+        if(innerInitStock.getOrderStatus()>1){
             throw new BizErrorException("已盘点，无法修改");
         }
         entity.setModifiedTime(new Date());
