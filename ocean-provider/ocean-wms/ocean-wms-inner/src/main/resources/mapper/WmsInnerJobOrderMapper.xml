@@ -197,7 +197,8 @@ wipo.option5
 
     <!--  移位单查询  -->
     <select id="findShiftList" resultMap="BaseResultMapDto" parameterType="java.util.Map">
-        SELECT <include refid="BaseColumnList"/>,bw.warehouse_name
+        SELECT <include refid="BaseColumnList"/>,bw.warehouse_name,
+        (SELECT IFNULL(SUM(wipod.actual_qty),0) FROM wms_inner_job_order_det wipod where wipod.job_order_id = wipo.job_order_id) as actual_qty
         FROM wms_inner_job_order wipo
         LEFT JOIN base_warehouse bw ON wipo.warehouse_id = bw.warehouse_id
         <where>
