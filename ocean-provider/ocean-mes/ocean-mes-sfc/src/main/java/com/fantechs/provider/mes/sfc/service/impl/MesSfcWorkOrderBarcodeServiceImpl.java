@@ -457,12 +457,12 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
 
     @Override
     public SyncFindBarcodeDto syncFindBarcode(Long labelCategoryId) {
-        SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
-        searchMesSfcWorkOrderBarcode.setLabelCategoryId(labelCategoryId);
-        List<MesSfcWorkOrderBarcodeDto> orderBarcodeDtos = this.findList(searchMesSfcWorkOrderBarcode);
+        Example example = new Example(MesSfcWorkOrderBarcode.class);
+        example.createCriteria().andEqualTo("labelCategoryId", labelCategoryId);
+        List<MesSfcWorkOrderBarcode> workOrderBarcodes = this.selectByExample(example);
         List<MesSfcBarcodeProcess> sfcBarcodeProcesses = mesSfcBarcodeProcessMapper.findByLabelCategory(labelCategoryId);
         SyncFindBarcodeDto dto = new SyncFindBarcodeDto();
-        dto.setWorkOrderBarcodes(orderBarcodeDtos);
+        dto.setWorkOrderBarcodes(workOrderBarcodes);
         dto.setBarcodeProcesses(sfcBarcodeProcesses);
         return dto;
     }
