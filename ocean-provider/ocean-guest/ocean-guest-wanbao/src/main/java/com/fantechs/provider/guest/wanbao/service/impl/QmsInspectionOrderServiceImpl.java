@@ -631,9 +631,38 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 WmsInnerInventoryDto wmsInnerInventoryDto=new WmsInnerInventoryDto();
                 if(StringUtils.isNotEmpty(innerInventoryDtoList) && innerInventoryDtoList.size()>0){
                     wmsInnerInventoryDto=innerInventoryDtoList.get(0);
-                    wmsInnerInventoryDto.setInventoryStatusId(statusList.get(0).getInventoryStatusId());
-                    wmsInnerInventoryDto.setModifiedTime(new Date());
-                    innerFeignApi.update(wmsInnerInventoryDto);
+                    SearchWmsInnerInventory  searchWmsInnerInventory1 = new SearchWmsInnerInventory();
+                    searchWmsInnerInventory1.setWarehouseId(wmsInnerInventoryDto.getWarehouseId());
+                    searchWmsInnerInventory1.setStorageId(wmsInnerInventoryDto.getStorageId());
+                    searchWmsInnerInventory1.setMaterialId(wmsInnerInventoryDto.getMaterialId());
+                    searchWmsInnerInventory1.setBatchCode(wmsInnerInventoryDto.getBatchCode());
+                    searchWmsInnerInventory1.setJobStatus((byte)1);
+                    searchWmsInnerInventory1.setStockLock((byte)0);
+                    searchWmsInnerInventory1.setQcLock((byte)0);
+                    searchWmsInnerInventory1.setLockStatus((byte)0);
+                    searchWmsInnerInventory1.setInspectionOrderCode(wmsInnerInventoryDto.getInspectionOrderCode());
+                    searchWmsInnerInventory1.setInventoryStatusId(wmsInnerInventoryDto.getInventoryStatusId());
+                    List<WmsInnerInventoryDto> innerInventoryDtoList1 = innerFeignApi.findList(searchWmsInnerInventory1).getData();
+                    if(StringUtils.isNotEmpty(innerInventoryDtoList1) && innerInventoryDtoList1.size()>0){
+                        WmsInnerInventoryDto wmsInnerInventoryDto1=new WmsInnerInventoryDto();
+                        wmsInnerInventoryDto1=innerInventoryDtoList1.get(0);
+                        wmsInnerInventoryDto1.setPackingQty(wmsInnerInventoryDto1.getPackingQty() != null ? wmsInnerInventoryDto1.getPackingQty().add(wmsInnerInventoryDto.getPackingQty()) : wmsInnerInventoryDto.getPackingQty());
+                        wmsInnerInventoryDto1.setModifiedTime(new Date());
+                        innerFeignApi.update(wmsInnerInventoryDto1);
+
+                        //
+                        wmsInnerInventoryDto.setPackingQty(BigDecimal.ZERO);
+                        wmsInnerInventoryDto.setModifiedTime(new Date());
+                        wmsInnerInventoryDto.setInspectionOrderCode(null);
+                        innerFeignApi.update(wmsInnerInventoryDto);
+                    }
+                    else {
+                        wmsInnerInventoryDto.setInventoryStatusId(statusList.get(0).getInventoryStatusId());
+                        wmsInnerInventoryDto.setQcLock((byte)0);
+                        wmsInnerInventoryDto.setModifiedTime(new Date());
+                        innerFeignApi.update(wmsInnerInventoryDto);
+                    }
+
                 }
 
             }
@@ -1406,11 +1435,14 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         searchWmsInnerInventoryDet.setBarcodeStatus("3");
         searchWmsInnerInventoryDet.setLogicCode("C149");
         searchWmsInnerInventoryDet.setNotEqualMark(1);
+        //加上质检单号为空作为条件 存在质检中的质检单
+        searchWmsInnerInventoryDet.setIfInspectionOrderCodeNull(1);
         List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
+
+        //List<WmsInnerInventoryDetDto> innerInventoryDetDtos=wmsInnerInventoryDetDtos.stream().filter(item -> item.getInspectionOrderCode()==null).collect(Collectors.toList());
 
         //库存明细按PO和销售订单号和物料进行分组
         Map<String, List<WmsInnerInventoryDetDto>> collect = newGroupInventoryDet(wmsInnerInventoryDetDtos);
-
         if(StringUtils.isNotEmpty(collect)) {
             Set<String> codes = collect.keySet();
             for (String code : codes) {

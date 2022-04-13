@@ -116,7 +116,7 @@ public class SyncDataServiceImpl implements SyncDataService {
         JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
         Map<String, Object> map = new HashMap<>();
         if ("0".equals(jsonObject.get("all"))) {
-            map.put("date", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
+            map.put("date", DateUtil.format(DateUtil.yesterday(), DatePattern.NORM_DATE_PATTERN));
         }
         // 同步数据
         List<MiddleMaterial> middleMaterials = middleMaterialMapper.findMaterialData(map);
@@ -274,7 +274,7 @@ public class SyncDataServiceImpl implements SyncDataService {
             map.put("workOrderCode", workOrderCode);
         } else {
             if ("0".equals(jsonObject.get("all"))) {
-                map.put("date", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
+                map.put("date", DateUtil.format(DateUtil.yesterday(), DatePattern.NORM_DATE_PATTERN));
             }
         }
         List<MiddleOrder> workOrders = middleOrderMapper.findOrderData(map);
@@ -509,7 +509,7 @@ public class SyncDataServiceImpl implements SyncDataService {
         JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
         Map<String, Object> map = new HashMap<>();
         if ("0".equals(jsonObject.get("all"))) {
-            map.put("date", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
+            map.put("date", DateUtil.format(DateUtil.yesterday(), DatePattern.NORM_DATE_PATTERN));
         }
 
         // 执行查询前调用函数执行存储过程
@@ -682,7 +682,7 @@ public class SyncDataServiceImpl implements SyncDataService {
         JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
         Map<String, Object> map = new HashMap<>();
         if ("0".equals(jsonObject.get("all"))) {
-            map.put("date", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
+            map.put("date", DateUtil.format(DateUtil.yesterday(), DatePattern.NORM_DATE_PATTERN));
         }
 
         // 执行查询前调用函数执行存储过程
@@ -842,7 +842,7 @@ public class SyncDataServiceImpl implements SyncDataService {
         if (flag) {
             JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
             if ("0".equals(jsonObject.get("all"))) {
-                map.put("date", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
+                map.put("date", DateUtil.format(DateUtil.yesterday(), DatePattern.NORM_DATE_PATTERN));
             } else {
                 map.put("date", "2021-09-01");
             }

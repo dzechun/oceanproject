@@ -3,6 +3,8 @@ package com.fantechs.provider.mes.sfc.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -44,6 +46,7 @@ import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeReprintServic
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import com.fantechs.provider.mes.sfc.util.RabbitProducer;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -229,6 +232,176 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    public int print_rewrite(String ids, Byte printType, String printName, String userCode, String password, String printId) {
+        // 1、补打校验是否有权限
+        if (printType == 2) {
+            //获取程序配置项
+            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
+            searchSysSpecItem.setSpecCode("ReprintCode");
+            List<SysSpecItem> itemList = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            String isRoot = itemList.get(0).getParaValue().trim();
+            if (isRoot.equals("true")) {
+                String hashPass = mesSfcWorkOrderBarcodeMapper.findSysUser(userCode);
+                if (StringUtils.isEmpty(hashPass)) {
+                    throw new BizErrorException("用户无权限，请联系管理员");
+                }
+                BCryptPasswordEncoder bcryptPasswordEncoder = new BCryptPasswordEncoder();
+                boolean flag = bcryptPasswordEncoder.matches(password, hashPass);
+                if (!flag) {
+                    throw new BizErrorException("密码错误");
+                }
+            }
+        }
+        if (StringUtils.isEmpty(ids, printName)) {
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(), "参数传递错误");
+        }
+        if (StringUtils.isEmpty(printName)) {
+            throw new BizErrorException("请设置打印机名称");
+        }
+        String[] arrId = ids.split(",");
+        if (arrId.length <= 0){
+            throw new BizErrorException("未选中条码或条码未产生");
+        }
+        // 2、查询当前打印任务所有条码
+        Example example = new Example(MesSfcWorkOrderBarcode.class);
+        example.createCriteria().andIn("workOrderBarcodeId", Arrays.asList(arrId));
+        List<MesSfcWorkOrderBarcode> workOrderBarcodes = mesSfcWorkOrderBarcodeMapper.selectByExample(example);
+        if (workOrderBarcodes.isEmpty()){
+            throw new BizErrorException("条码不存在系统或已被删除");
+        }
+
+        // 3、查询模版信息
+        MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode = workOrderBarcodes.get(0);
+        LabelRuteDto labelRuteDto = null;
+        Byte barcodeType = null;
+        if (mesSfcWorkOrderBarcode.getLabelCategoryId() == 56) {
+            // 获取工单类别模版
+            labelRuteDto = mesSfcWorkOrderBarcodeMapper.findRule("01", mesSfcWorkOrderBarcode.getWorkOrderId());
+            barcodeType = (byte) 2;
+        } else if (mesSfcWorkOrderBarcode.getLabelCategoryId() == 57 && "4".equals(mesSfcWorkOrderBarcode.getOption1())) {
+            // 获取销售类别模版
+            labelRuteDto = mesSfcWorkOrderBarcodeMapper.findRule("02", mesSfcWorkOrderBarcode.getWorkOrderId());
+            barcodeType = (byte) 4;
+        } else if (mesSfcWorkOrderBarcode.getLabelCategoryId() == 57 && "5".equals(mesSfcWorkOrderBarcode.getOption1())) {
+            labelRuteDto = mesSfcWorkOrderBarcodeMapper.findOmRule(mesSfcWorkOrderBarcode.getWorkOrderId());
+            barcodeType = (byte) 1;
+        }
+        if (StringUtils.isEmpty(labelRuteDto)){
+            // 获取默认模版
+            if (barcodeType == (byte) 2) {
+                labelRuteDto = mesSfcWorkOrderBarcodeMapper.DefaultLabel("01");
+            }else if (barcodeType == (byte) 4) {
+                labelRuteDto = mesSfcWorkOrderBarcodeMapper.DefaultLabel("02");
+            }
+        }
+        if (StringUtils.isEmpty(labelRuteDto)) {
+            throw new BizErrorException("未匹配到模版");
+        }
+
+        // 4、查询是否有模版视图
+        String labelView = mesSfcWorkOrderBarcodeMapper.findLabelView(labelRuteDto.getLabelCode());
+        if (StringUtils.isEmpty(labelView)) {
+            throw new BizErrorException("未查询到模版视图");
+        }
+
+        PrintModel printModel = mesSfcWorkOrderBarcodeMapper.findPrintModel(ControllerUtil.dynamicCondition("labelCode", labelRuteDto.getLabelCode(), "id", mesSfcWorkOrderBarcode.getWorkOrderBarcodeId()));
+        if (StringUtils.isEmpty(printModel)) {
+            throw new BizErrorException("获取视图数据信息失败，请检查视图");
+        }
+        if (StringUtils.isEmpty(labelRuteDto.getSize())) {
+            labelRuteDto.setSize(1);
+        }
+        printModel.setSize(labelRuteDto.getSize());
+        if (StringUtils.isEmpty(labelRuteDto)) {
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "获取标签信息失败");
+        }
+
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        // 5、循环条码
+        List<PrintModel> printModelList = new ArrayList<>();
+        List<MesSfcWorkOrderBarcodeReprint> reprintAddList = new ArrayList<>();
+        List<MesSfcWorkOrderBarcode> updateList = new ArrayList<>();
+        for (MesSfcWorkOrderBarcode barcode : workOrderBarcodes){
+
+            if (printType == 1) {
+                barcode.setBarcodeStatus((byte) 0);
+            } else if (printType == 2) {
+                MesSfcWorkOrderBarcodeReprint reprint = new MesSfcWorkOrderBarcodeReprint();
+                reprint.setWorkOrderBarcodeId(barcode.getWorkOrderBarcodeId());
+                reprint.setBarcodeCode(barcode.getBarcode());
+                reprint.setBarcodeType(barcodeType);
+                reprint.setCreateTime(new Date());
+                reprint.setCreateUserId(sysUser.getUserId());
+                reprint.setModifiedTime(new Date());
+                reprint.setModifiedUserId(sysUser.getUserId());
+                reprint.setReprintTime(new Date());
+                reprint.setReprintUserId(sysUser.getUserId());
+                reprint.setOrgId(sysUser.getOrganizationId());
+                reprint.setIsDelete((byte) 1);
+                reprintAddList.add(reprint);
+
+                if (barcode.getBarcodeStatus().equals((byte) 3)){
+                    barcode.setBarcodeStatus((byte) 0);
+                }
+            }
+            barcode.setPrintTime(new Date());
+            updateList.add(barcode);
+
+            // 打印条码集合
+            PrintModel res = new PrintModel();
+            BeanUtil.copyProperties(printModel, res);
+            res.setQrCode(barcode.getBarcode());
+            printModelList.add(res);
+        }
+        // 批量新增补打条码
+        if (printType == 2 && !reprintAddList.isEmpty()){
+            mesSfcWorkOrderBarcodeReprintService.batchSave(reprintAddList);
+        }
+
+        // 批量修改条码状态
+        if (!updateList.isEmpty()){
+            this.batchUpdate(updateList);
+        }
+
+        // 6、构造打印条码结构
+        if (!printModelList.isEmpty()){
+            List<PrintModel> list = new ArrayList<>();
+            // 万宝项目 打印条码只有一式一联，一式两联，一式四联
+            if (labelRuteDto.getSize() == 1) {
+                // 两个条码一组
+                List<List<PrintModel>> fixedGrouping = fixedGrouping(printModelList, 2);
+                for (List<PrintModel> item : fixedGrouping){
+                    PrintModel source = item.get(0);
+                    if (item.size() == 2){
+                        source = buildPrintModel(source, item.get(1));
+                    }else {
+                        source = buildPrintModel(source, null);
+                    }
+                    list.add(source);
+                }
+            }else if (labelRuteDto.getSize() == 2 || labelRuteDto.getSize() == 4) {
+                for (PrintModel source : printModelList){
+                    PrintModel target = new PrintModel();
+                    BeanUtil.copyProperties(source, target);
+                    source = buildPrintModel(source, target);
+                    list.add(source);
+                }
+            }
+
+            // 构造数据并往mq塞数据
+            PrintDto printDto = new PrintDto();
+            printDto.setLabelName(labelRuteDto.getLabelName() + ".btw");
+            printDto.setLabelVersion(labelRuteDto.getLabelVersion());
+            printDto.setPrintName(printName);
+            printDto.setPrintModelList(list);
+            log.info("================== PrintDto : " + JSON.toJSONString(printDto));
+            rabbitProducer.sendPrint(printDto,printId);
+        }
+        return 1;
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public int printByOrderCode(Long id, Byte barcodeType, String printName, String userCode, String password,String printId) {
         int i=0;
         StringBuilder sb=new StringBuilder();
@@ -265,7 +438,6 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             for (BatchSyncBarcodeSaveDto entity : dto.getList()){
                 // 保存条码表并返回ID
                 mesSfcWorkOrderBarcodeMapper.insertUseGeneratedKeys(entity.getWorkOrderBarcode());
-                log.info("========= 同步PQMS条码数据，保存条码表并返回ID:" + entity.getWorkOrderBarcode().getWorkOrderBarcodeId());
 
                 MesSfcBarcodeProcess barcodeProcess = entity.getBarcodeProcess();
                 barcodeProcess.setWorkOrderBarcodeId(entity.getWorkOrderBarcode().getWorkOrderBarcodeId());
@@ -759,16 +931,11 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     }
 
 
-    public String sub(List<BaseBarcodeRuleSpec> list) {
-        StringBuffer sb = new StringBuffer();
-        for (BaseBarcodeRuleSpec baseBarcodeRuleSpec : list) {
-            sb.append(baseBarcodeRuleSpec.getSpecification());
-        }
-        return sb.toString();
-    }
+    // region 私有方法
 
     /**
      * 获取数组中最长公共前缀
+     *
      * @param strs
      * @return
      */
@@ -790,4 +957,107 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         }
         return ret;
     }
+
+    /**
+     * 将一组数据固定分组，每组n个元素
+     *
+     * @param source 要分组的数据源
+     * @param n      每组n个元素
+     * @return
+     */
+    private List<List<PrintModel>> fixedGrouping(List<PrintModel> source, int n) {
+        if (null == source || source.size() == 0 || n <= 0)
+            return null;
+        List<List<PrintModel>> result = new ArrayList<List<PrintModel>>();
+        int remainder = source.size() % n;
+        int size = (source.size() / n);
+        for (int i = 0; i < size; i++) {
+            List<PrintModel> subset = null;
+            subset = source.subList(i * n, (i + 1) * n);
+            result.add(subset);
+        }
+        if (remainder > 0) {
+            List<PrintModel> subset = null;
+            subset = source.subList(size * n, size * n + remainder);
+            result.add(subset);
+        }
+        return result;
+    }
+
+    /**
+     * 构造打印条码模板结构
+     * @param source
+     * @param target
+     */
+    private PrintModel buildPrintModel(PrintModel source, PrintModel target){
+        if (target == null){
+            // 若条码是单数，最后一个条码的字段数据不能为null，要赋值为""
+            if (source.getOption1() != null){
+                source.setSecond1("");
+            }
+            if (source.getOption2() != null){
+                source.setSecond2("");
+            }
+            if (source.getOption3() != null){
+                source.setSecond3("");
+            }
+            if (source.getOption4() != null){
+                source.setSecond4("");
+            }
+            if (source.getOption5() != null){
+                source.setSecond5("");
+            }
+            if (source.getOption6() != null){
+                source.setSecond6("");
+            }
+            if (source.getOption7() != null){
+                source.setSecond7("");
+            }
+            if (source.getOption8() != null){
+                source.setSecond8("");
+            }
+            if (source.getOption9() != null){
+                source.setSecond9("");
+            }
+            if (source.getOption10() != null){
+                source.setSecond10("");
+            }
+            if (source.getOption11() != null){
+                source.setSecond11("");
+            }
+            if (source.getOption12() != null){
+                source.setSecond12("");
+            }
+            if (source.getOption13() != null){
+                source.setSecond13("");
+            }
+            if (source.getOption14() != null){
+                source.setSecond14("");
+            }
+            if (source.getOption15() != null){
+                source.setSecond15("");
+            }
+            source.setSecondQrCode("");
+        }else {
+            source.setSecond1(target.getOption1());
+            source.setSecond2(target.getOption2());
+            source.setSecond3(target.getOption3());
+            source.setSecond4(target.getOption4());
+            source.setSecond5(target.getOption5());
+            source.setSecond6(target.getOption6());
+            source.setSecond7(target.getOption7());
+            source.setSecond8(target.getOption8());
+            source.setSecond9(target.getOption9());
+            source.setSecond10(target.getOption10());
+            source.setSecond11(target.getOption11());
+            source.setSecond12(target.getOption12());
+            source.setSecond13(target.getOption13());
+            source.setSecond14(target.getOption14());
+            source.setSecond15(target.getOption15());
+            source.setSecondQrCode(target.getQrCode());
+        }
+        return source;
+    }
+
+    // endregion
 }

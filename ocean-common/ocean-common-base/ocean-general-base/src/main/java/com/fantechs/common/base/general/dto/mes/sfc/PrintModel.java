@@ -72,4 +72,43 @@ public class PrintModel implements Serializable {
 
     @ApiModelProperty(name = "packingQty",value = "装箱数量")
     private String packingQty;
+
+
+
+    // ========== 2022-04-09 变更条码打印结构，迎合打印模板 ==========
+
+    // 第二条码
+    private String secondQrCode;
+
+    @ApiModelProperty(name = "second1",value = "打印字段1")
+    private String second1;
+    @ApiModelProperty(name = "second2",value = "打印字段2")
+    private String second2;
+    @ApiModelProperty(name = "second3",value = "打印字段3")
+    private String second3;
+    @ApiModelProperty(name = "second4",value = "打印字段4")
+    private String second4;
+    @ApiModelProperty(name = "second5",value = "打印字段5")
+    private String second5;
+    @ApiModelProperty(name = "second6",value = "打印字段6")
+    private String second6;
+    @ApiModelProperty(name = "second7",value = "打印字段7")
+    private String second7;
+    @ApiModelProperty(name = "second8",value = "打印字段8")
+    private String second8;
+    @ApiModelProperty(name = "second9",value = "打印字段9")
+    private String second9;
+    @ApiModelProperty(name = "second10",value = "打印字段10")
+    private String second10;
+    @ApiModelProperty(name = "second11",value = "打印字段11")
+    private String second11;
+    @ApiModelProperty(name = "second12",value = "打印字段12")
+    private String second12;
+    @ApiModelProperty(name = "second13",value = "打印字段13")
+    private String second13;
+    @ApiModelProperty(name = "second14",value = "打印字段14")
+    private String second14;
+    @ApiModelProperty(name = "second15",value = "打印字段15")
+    private String second15;
+
 }
