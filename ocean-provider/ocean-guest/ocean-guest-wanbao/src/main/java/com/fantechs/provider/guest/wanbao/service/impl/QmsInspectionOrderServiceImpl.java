@@ -1888,12 +1888,14 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         }
         // 修改样本值
         Long inspectionOrderId = null;
+        List<Long> inspectionOrderDetIds = new ArrayList<>();
         for (QmsInspectionOrderDetSample orderDetSample : orderDetSamples){
             orderDetSample.setBarcodeStatus((byte) 1);
             if (StringUtils.isNotEmpty(orderDetSample.getSampleValue()) && StringUtils.isNotEmpty(orderDetSample.getBadnessPhenotypeId())){
                 orderDetSample.setSampleValue("OK");
                 orderDetSample.setBadnessPhenotypeId(null);
                 orderDetSample.setBadnessPhenotypeDesc(null);
+                inspectionOrderDetIds.add(orderDetSample.getInspectionOrderDetId());
             }else {
                 inspectionOrderId = orderDetSample.getInspectionOrderId();
             }
@@ -1901,6 +1903,22 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             orderDetSample.setModifiedTime(new Date());
         }
         int num = qmsInspectionOrderDetSampleMapper.batchUpdate(orderDetSamples);
+
+        //扣减该条码所有检验项目不良数量以及变更其状态
+        map.clear();
+        map.put("list", inspectionOrderDetIds);
+        List<QmsInspectionOrderDet> detList = qmsInspectionOrderDetMapper.findDetList(map);
+        for (QmsInspectionOrderDet det : detList){
+            BigDecimal subtract = det.getBadnessQty().subtract(BigDecimal.ONE);
+            if (subtract.compareTo(BigDecimal.valueOf(det.getAcValue())) < 1){
+                det.setInspectionResult((byte) 1);
+            }
+            det.setBadnessQty(subtract);
+            det.setModifiedTime(new Date());
+            det.setModifiedUserId(user.getUserId());
+        }
+        qmsInspectionOrderDetMapper.batchUpdate(detList);
+
 
         log.info("===================== inspectionOrderId: " + inspectionOrderId);
         // 修改成品检验单表头状态
@@ -1911,12 +1929,12 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(inspectionOrderId);
 
         log.info("===================== 数量 " + (count - 1));
-        if ((count - 1) == 0){
+        if (count == 0){
             qmsInspectionOrder.setRecheckStatus((byte) 2);
             qmsInspectionOrder.setInspectionResult((byte) 1);
             qmsInspectionOrderMapper.updateByPrimaryKey(qmsInspectionOrder);
         }
-        if ((count - 1) > 0){
+        if (count > 0){
             qmsInspectionOrder.setInspectionResult((byte) 2);
             qmsInspectionOrderMapper.updateByPrimaryKey(qmsInspectionOrder);
         }
