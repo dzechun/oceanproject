@@ -117,6 +117,8 @@ public class SyncDataServiceImpl implements SyncDataService {
         Map<String, Object> map = new HashMap<>();
         if ("0".equals(jsonObject.get("all"))) {
             map.put("date", DateUtil.format(DateUtil.yesterday(), DatePattern.NORM_DATE_PATTERN));
+        }else if ("1".equals(jsonObject.get("all"))) {
+            map.put("date", jsonObject.get("syncDate"));
         }
         // 同步数据
         List<MiddleMaterial> middleMaterials = middleMaterialMapper.findMaterialData(map);
@@ -275,6 +277,8 @@ public class SyncDataServiceImpl implements SyncDataService {
         } else {
             if ("0".equals(jsonObject.get("all"))) {
                 map.put("date", DateUtil.format(DateUtil.yesterday(), DatePattern.NORM_DATE_PATTERN));
+            }else if ("1".equals(jsonObject.get("all"))) {
+                map.put("date", jsonObject.get("syncDate"));
             }
         }
         List<MiddleOrder> workOrders = middleOrderMapper.findOrderData(map);
@@ -510,6 +514,8 @@ public class SyncDataServiceImpl implements SyncDataService {
         Map<String, Object> map = new HashMap<>();
         if ("0".equals(jsonObject.get("all"))) {
             map.put("date", DateUtil.format(DateUtil.yesterday(), DatePattern.NORM_DATE_PATTERN));
+        }else if ("1".equals(jsonObject.get("all"))) {
+            map.put("date", jsonObject.get("syncDate"));
         }
 
         // 执行查询前调用函数执行存储过程
@@ -683,6 +689,8 @@ public class SyncDataServiceImpl implements SyncDataService {
         Map<String, Object> map = new HashMap<>();
         if ("0".equals(jsonObject.get("all"))) {
             map.put("date", DateUtil.format(DateUtil.yesterday(), DatePattern.NORM_DATE_PATTERN));
+        }else if ("1".equals(jsonObject.get("all"))) {
+            map.put("date", jsonObject.get("syncDate"));
         }
 
         // 执行查询前调用函数执行存储过程
@@ -843,12 +851,13 @@ public class SyncDataServiceImpl implements SyncDataService {
             JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
             if ("0".equals(jsonObject.get("all"))) {
                 map.put("date", DateUtil.format(DateUtil.yesterday(), DatePattern.NORM_DATE_PATTERN));
-            } else {
-                map.put("date", "2021-09-01");
+            }else if ("1".equals(jsonObject.get("all"))) {
+                map.put("date", jsonObject.get("syncDate"));
             }
+            log.info("=========== jsonObject: " + JSON.toJSONString(jsonObject));
         }
         long time1 = System.currentTimeMillis();
-        log.info("=========== tiem1: " + (time1-start));
+        log.info("=========== tiem1: " + (time1-start) + "  ========  map: " + JSON.toJSONString(map));
         // 执行查询
         DynamicDataSourceHolder.putDataSouce("thirdary");
         List<MiddleProduct> barcodeDatas = middleProductMapper.findBarcodeData(map);
@@ -924,7 +933,7 @@ public class SyncDataServiceImpl implements SyncDataService {
             log.info("=========== 查询om: " + (time4-time3));
             // 条码
             SyncFindBarcodeDto findBarcodeDto = sfcFeignApi.syncFindBarcode(labelCategoryId).getData();
-            List<MesSfcWorkOrderBarcodeDto> workOrderBarcodeDtos = findBarcodeDto.getWorkOrderBarcodes();
+            List<MesSfcWorkOrderBarcode> workOrderBarcodeDtos = findBarcodeDto.getWorkOrderBarcodes();
 
             // 条码流程表
             List<MesSfcBarcodeProcess> sfcBarcodeProcesses = findBarcodeDto.getBarcodeProcesses();
@@ -958,7 +967,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                 // 匹配条码
                 boolean hasBarcode = false;
                 boolean isUsed = false;
-                for (MesSfcWorkOrderBarcodeDto dto : workOrderBarcodeDtos) {
+                for (MesSfcWorkOrderBarcode dto : workOrderBarcodeDtos) {
                     if (dto.getBarcode().equals(middleProduct.getBarcode())) {
                         if (dto.getBarcodeStatus().equals((byte) 1) || dto.getBarcodeStatus().equals((byte) 2)) {
                             isUsed = true;
