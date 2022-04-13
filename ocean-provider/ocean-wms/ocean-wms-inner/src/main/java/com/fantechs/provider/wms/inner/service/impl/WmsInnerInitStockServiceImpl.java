@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -126,6 +127,7 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
                 //客户条码
                 initStockCheckBarCode.setType((byte)4);
                 initStockCheckBarCode.setClientBarcode(barCode);
+                criteria.andEqualTo("clientBarcode1",barCode).orEqualTo("clientBarcode2",barCode).orEqualTo("clientBarcode3",barCode);
             }else {
                 initStockCheckBarCode.setType((byte)3);
                 //三星厂内码
@@ -134,7 +136,6 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
                 initStockCheckBarCode.setClientBarcode(responseEntity.getData().get(0).getCustomerBarcode());
                 barCode = initStockCheckBarCode.getInPlantBarcode();
             }
-            criteria.andEqualTo("clientBarcode1",barCode).orEqualTo("clientBarcode2",barCode).orEqualTo("clientBarcode3",barCode);
         }
 
         List<WmsInnerInitStockBarcode> wmsInnerInitStockBarcodes = wmsInnerInitStockBarcodeMapper.selectByExample(example);
