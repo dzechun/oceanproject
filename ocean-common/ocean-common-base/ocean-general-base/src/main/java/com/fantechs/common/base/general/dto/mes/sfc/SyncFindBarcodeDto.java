@@ -15,5 +15,5 @@ public class SyncFindBarcodeDto implements Serializable {
 
     private List<MesSfcBarcodeProcess> barcodeProcesses;
 
-    private List<MesSfcWorkOrderBarcodeDto> workOrderBarcodes;
+    private List<MesSfcWorkOrderBarcode> workOrderBarcodes;
 }
