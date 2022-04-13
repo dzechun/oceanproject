@@ -4,12 +4,17 @@ import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintDto;
 import com.fantechs.provider.mes.sfc.config.RabbitConfig;
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.core.ChannelCallback;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 
 /**
@@ -21,6 +26,8 @@ import java.io.IOException;
 public class RabbitProducer {
     @Autowired
     private AmqpTemplate rabbitTemplate;
+    @Resource
+    private RabbitAdmin rabbitAdmin;
 
     public void sendDemoQueue(byte[] bytes) throws IOException {
         this.rabbitTemplate.convertAndSend("demoQueue", bytes);
@@ -66,6 +73,25 @@ public class RabbitProducer {
      * @param printDto
      */
     public void sendPrint(PrintDto printDto,String id){
+
+        try {
+            Queue queue = new Queue(RabbitConfig.QUEUE_NAME_FILE+":"+id,true,false,false,null);
+            FanoutExchange fanoutExchange = new FanoutExchange(RabbitConfig.DIRECT_EXCHANGE);
+            rabbitAdmin.declareQueue(queue);
+            rabbitAdmin.declareBinding(BindingBuilder.bind(queue).to(fanoutExchange));
+        }catch (Exception e){
+            log.error("队列已存在或者异常:"+e.getMessage());
+        }
+
+        AMQP.Queue.DeclareOk declareOk = rabbitAdmin.getRabbitTemplate().execute(
+                new ChannelCallback<AMQP.Queue.DeclareOk>() {
+                    @Override
+                    public AMQP.Queue.DeclareOk doInRabbit(Channel channel)
+                            throws Exception {
+                        return channel.queueDeclarePassive(RabbitConfig.QUEUE_NAME_FILE+":"+id);
+                    }
+                });
+
         String json = JSONObject.toJSONString(printDto);
         byte[] bytes = json.getBytes();
         byte[] ibytes = new byte[1+bytes.length];
