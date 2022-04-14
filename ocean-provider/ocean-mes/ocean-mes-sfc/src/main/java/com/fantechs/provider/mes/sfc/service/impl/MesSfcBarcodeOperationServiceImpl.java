@@ -174,7 +174,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 throw new BizErrorException("该产品条码已不良 不可继续");
             }
         }else {
-            throw new BizErrorException(ErrorCodeEnum.PDA40012002, orderBarcodeDto.getBarcode());
+            throw new BizErrorException(ErrorCodeEnum.PDA40012002);
         }
 
         // 2、校验条码是否关联包箱
