@@ -118,7 +118,7 @@
       qiod.inspection_result = #{item.inspectionResult},
       qiod.modified_user_id = #{item.modifiedUserId},
       qiod.modified_time = #{item.modifiedTime}
-      where qiods.inspection_order_det_sample_id = #{item.inspectionOrderDetSampleId}
+      where qiod.inspection_order_det_id = #{item.inspectionOrderDetId}
     </foreach>
   </update>
 </mapper>

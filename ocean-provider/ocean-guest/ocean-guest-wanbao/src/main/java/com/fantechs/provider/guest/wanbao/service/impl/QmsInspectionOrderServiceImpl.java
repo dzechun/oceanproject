@@ -1922,20 +1922,19 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
         log.info("===================== inspectionOrderId: " + inspectionOrderId);
         // 修改成品检验单表头状态
-        QmsInspectionOrderDetSample detSample = new QmsInspectionOrderDetSample();
-        detSample.setInspectionOrderId(inspectionOrderId);
-        detSample.setSampleValue("NG");
-        int count = qmsInspectionOrderDetSampleMapper.selectCount(detSample);
+        Example example = new Example(QmsInspectionOrderDetSample.class);
+        example.createCriteria().andEqualTo("sampleValue", "NG").andIn("inspectionOrderDetId", inspectionOrderDetIds);
+        int count = qmsInspectionOrderDetSampleMapper.selectCountByExample(example);
         QmsInspectionOrder qmsInspectionOrder = qmsInspectionOrderMapper.selectByPrimaryKey(inspectionOrderId);
 
         log.info("===================== 数量 " + (count - 1));
         if (count == 0){
             qmsInspectionOrder.setRecheckStatus((byte) 2);
-            qmsInspectionOrder.setInspectionResult((byte) 1);
             qmsInspectionOrderMapper.updateByPrimaryKey(qmsInspectionOrder);
         }
         if (count > 0){
             qmsInspectionOrder.setInspectionResult((byte) 2);
+            qmsInspectionOrder.setInspectionResult((byte) 1);
             qmsInspectionOrderMapper.updateByPrimaryKey(qmsInspectionOrder);
         }
         innerFeignApi.autoRecheck(qmsInspectionOrder.getInspectionOrderCode());
