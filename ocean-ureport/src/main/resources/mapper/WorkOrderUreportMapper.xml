@@ -39,8 +39,8 @@
             <if test="materialCode!=null and materialCode!=''">
                 AND bm.material_code like CONCAT('%',#{materialCode},'%')
             </if>
-            <if test="proName!=null and proName!=''">
-                AND bpl.pro_name like CONCAT('%',#{proName},'%')
+            <if test="proLineName!=null and proLineName!=''">
+                AND bpl.pro_name like CONCAT('%',#{proLineName},'%')
             </if>
             <if test="workOrderCode!=null and workOrderCode!=''">
                 AND mpwo.work_order_code like CONCAT('%',#{workOrderCode},'%')
@@ -49,10 +49,13 @@
                 AND bpm.product_model_code like CONCAT('%',#{productModelCode},'%')
             </if>
             <if test="workOrderStatus!=null and workOrderStatus!=''">
-                AND mpwo.work_order_status = #{productModelCode}
+                AND mpwo.work_order_status = #{workOrderStatus}
             </if>
-            <if test="type!=null and type!=''">
-                and type=#{type}
+            <if test="type!=null and type!='' and type='三星计划'">
+                AND INSTR( bm.material_name, '三星' )>1
+            </if>
+            <if test="type!=null and type!='' and type='万宝计划'">
+                AND INSTR( bm.material_name, '三星' )=0
             </if>
         </where>
         order by mpwo.plan_start_time desc
