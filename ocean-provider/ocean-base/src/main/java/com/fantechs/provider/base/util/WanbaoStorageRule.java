@@ -313,16 +313,14 @@ public class WanbaoStorageRule {
         if(StringUtils.isEmpty(storageId) && list.size()>0){
             //筛选没有库存的库位
             List<Long> longs= wanbaoStorageRule.baseStorageMapper.findEmptyStorage(list);
-            log.info("没有库存的库位："+JsonUtils.objectToJson(longs));
             if(StringUtils.isNotEmpty(longs) || longs.size()>0){
                 //通过物料及库位查询是否拥有已分配未上架的库位占用 相同货品占用库位放入一起
                 //先通过货品及可分配库位查询是否存在未上架的库位
-                longs = wanbaoStorageRule.baseStorageMapper.findJobOrderStorageInMaterial(baseStorageRule.getMaterialId(),longs);
-                log.info("同货品相同库位："+JsonUtils.objectToJson(longs));
-                if(longs.size()<1){
-                    log.info("条件："+JsonUtils.objectToJson(longs));
+                List<Long> strLongs = wanbaoStorageRule.baseStorageMapper.findJobOrderStorageInMaterial(baseStorageRule.getMaterialId(),longs);
+                if(strLongs.size()<1){
                     longs = wanbaoStorageRule.baseStorageMapper.findJobOrderStorage(longs);
-                    log.info("去除占用库位："+JsonUtils.objectToJson(longs));
+                }else {
+                    longs = strLongs;
                 }
                 if(longs.size()>0){
                     storageId = longs.get(0);
