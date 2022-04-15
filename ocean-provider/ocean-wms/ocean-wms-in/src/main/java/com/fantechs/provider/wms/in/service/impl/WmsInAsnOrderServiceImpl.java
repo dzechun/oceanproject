@@ -946,8 +946,8 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
                 .option1(StringUtils.isNotEmpty(wmsInAsnOrderDet.getSourceOrderId()) ? wmsInAsnOrderDet.getSourceOrderId().toString() : null)
                 .build();
         if (wmsInAsnOrder.getBaseStorageRule() != null) {
-            orderDet.setOption2(wmsInAsnOrder.getBaseStorageRule().getProLineId() != null ? wmsInAsnOrder.getBaseStorageRule().getProLineId().toString() : null);
-            orderDet.setOption3(wmsInAsnOrder.getBaseStorageRule().getSalesBarcode());
+            orderDet.setOption2(wmsInAsnOrder.getBaseStorageRule().getSalesBarcode());
+            orderDet.setOption3(wmsInAsnOrder.getBaseStorageRule().getPoCode());
         }
         list.add(orderDet);
         wmsInnerJobOrder.setWmsInPutawayOrderDets(list);
