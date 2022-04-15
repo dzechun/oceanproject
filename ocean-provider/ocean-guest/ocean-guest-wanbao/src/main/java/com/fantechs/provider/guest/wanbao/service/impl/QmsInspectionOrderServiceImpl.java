@@ -127,6 +127,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
     public int exemption(QmsInspectionOrder qmsInspectionOrder) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
