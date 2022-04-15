@@ -1,6 +1,8 @@
 package com.fantechs.provider.mes.sfc.config;
 
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -46,6 +48,13 @@ public class RabbitConfig {
     @Bean
     public Binding fanoutBinding1() {
         return BindingBuilder.bind(topicQueue1()).to(topicExchange()).with("lzc.message");
+    }
+
+    @Bean
+    public RabbitAdmin rabbitAdmin(CachingConnectionFactory cachingConnectionFactory){
+        RabbitAdmin rabbitAdmin = new RabbitAdmin(cachingConnectionFactory);
+        rabbitAdmin.setIgnoreDeclarationExceptions(true);
+        return rabbitAdmin;
     }
 
     /**

@@ -84,7 +84,6 @@
                 and spm.org_id=#{orgId}
             </if>
         </where>
-        GROUP BY spm.product_model_code
         order by spm.create_time desc
     </select>
 </mapper>

@@ -420,7 +420,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 }
             }
 
-            i=this.print(sb.toString(),(byte)2,printName,userCode,password,printId);
+            i=this.print_rewrite(sb.toString(),(byte)2,printName,userCode,password,printId);
         }
         else{
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未产生条码 无需补打");
@@ -457,12 +457,12 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
 
     @Override
     public SyncFindBarcodeDto syncFindBarcode(Long labelCategoryId) {
-        SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
-        searchMesSfcWorkOrderBarcode.setLabelCategoryId(labelCategoryId);
-        List<MesSfcWorkOrderBarcodeDto> orderBarcodeDtos = this.findList(searchMesSfcWorkOrderBarcode);
+        Example example = new Example(MesSfcWorkOrderBarcode.class);
+        example.createCriteria().andEqualTo("labelCategoryId", labelCategoryId);
+        List<MesSfcWorkOrderBarcode> workOrderBarcodes = this.selectByExample(example);
         List<MesSfcBarcodeProcess> sfcBarcodeProcesses = mesSfcBarcodeProcessMapper.findByLabelCategory(labelCategoryId);
         SyncFindBarcodeDto dto = new SyncFindBarcodeDto();
-        dto.setWorkOrderBarcodes(orderBarcodeDtos);
+        dto.setWorkOrderBarcodes(workOrderBarcodes);
         dto.setBarcodeProcesses(sfcBarcodeProcesses);
         return dto;
     }

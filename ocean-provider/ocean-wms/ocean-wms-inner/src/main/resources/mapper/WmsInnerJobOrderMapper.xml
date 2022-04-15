@@ -190,7 +190,9 @@ wipo.option5
             <if test="platformId!=null and platformId!=''">
                 and wipo.platform_id = #{platformId}
             </if>
-
+            <if test="platformName!=null and platformName!=''">
+                and bp.platform_name LIKE CONCAT('%',#{platformName},'%')
+            </if>
         </where>
         order by wipo.create_time desc
     </select>

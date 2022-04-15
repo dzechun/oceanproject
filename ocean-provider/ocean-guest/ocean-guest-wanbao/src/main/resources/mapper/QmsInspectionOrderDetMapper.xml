@@ -93,6 +93,11 @@
       <if test="inspectionOrderDetId != null">
         and qiod.inspection_order_det_id = #{inspectionOrderDetId}
       </if>
+      <if test="list != null">
+        <foreach collection="list" index="index" item="item" open="and qiod.inspection_order_det_id in (" close=")" separator=",">
+          #{item}
+        </foreach>
+      </if>
       <if test="status!=null">
         and qiod.status = #{status}
       </if>
@@ -105,4 +110,15 @@
     </where>
     order by qiod.modified_time desc
   </select>
+
+  <update id="batchUpdate" parameterType="java.util.List">
+    <foreach collection="list" item="item" separator=";">
+      update qms_inspection_order_det qiod set
+      qiod.badness_qty = #{item.badnessQty},
+      qiod.inspection_result = #{item.inspectionResult},
+      qiod.modified_user_id = #{item.modifiedUserId},
+      qiod.modified_time = #{item.modifiedTime}
+      where qiod.inspection_order_det_id = #{item.inspectionOrderDetId}
+    </foreach>
+  </update>
 </mapper>
