@@ -51,10 +51,10 @@
             <if test="workOrderStatus!=null and workOrderStatus!=''">
                 AND mpwo.work_order_status = #{workOrderStatus}
             </if>
-            <if test="type!=null and type!='' and type='三星计划'">
+            <if test="type!=null and type=='三星计划'">
                 AND INSTR( bm.material_name, '三星' )>1
             </if>
-            <if test="type!=null and type!='' and type='万宝计划'">
+            <if test="type!=null and type=='万宝计划'">
                 AND INSTR( bm.material_name, '三星' )=0
             </if>
         </where>
