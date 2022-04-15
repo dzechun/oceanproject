@@ -125,4 +125,14 @@
                               LEFT JOIN base_label_category blc ON bl.label_category_id = blc.label_category_id
         WHERE blm.material_id=#{materialId} AND blc.label_category_id=#{categoryId} AND blm.org_id=#{orgId}
     </select>
+
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="item" separator=";">
+            update base_label_material blm set
+            blm.once_print_count = #{item.oncePrintCount},
+            blm.modified_user_id = #{item.modifiedUserId},
+            blm.modified_time = #{item.modifiedTime}
+            where blm.label_material_id = #{item.labelMaterialId}
+        </foreach>
+    </update>
 </mapper>

@@ -1,5 +1,6 @@
 package com.fantechs.provider.base.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -161,6 +162,7 @@ public class BaseLabelMaterialServiceImpl extends BaseService<BaseLabelMaterial>
         LinkedList<BaseLabelMaterial> list = new LinkedList<>();
         LinkedList<BaseHtLabelMaterial> htList = new LinkedList<>();
         LinkedList<BaseLabelMaterialImport> labelMaterialImports = new LinkedList<>();
+        LinkedList<BaseLabelMaterial> updateList = new LinkedList<>();
 
         for (int i = 0; i < baseLabelMaterialImports.size(); i++) {
             BaseLabelMaterialImport baseLabelMaterialImport = baseLabelMaterialImports.get(i);
@@ -212,23 +214,12 @@ public class BaseLabelMaterialServiceImpl extends BaseService<BaseLabelMaterial>
                 baseLabelMaterialImport.setProcessId(baseProcess.getProcessId());
             }
 
-            //判断编码是否重复
-            Example example = new Example(BaseLabelMaterial.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("orgId", currentUser.getOrganizationId())
-                    .andEqualTo("materialId",baseLabelMaterialImport.getMaterialId())
-                    .andEqualTo("labelId",baseLabelMaterialImport.getLabelId());
-            if (StringUtils.isNotEmpty(baseLabelMaterialMapper.selectOneByExample(example))){
-                fail.add(i+4);
-                continue;
-            }
-
             //判断集合中是否存在该条数据
             boolean tag = false;
             if (StringUtils.isNotEmpty(labelMaterialImports)){
                 for (BaseLabelMaterialImport labelMaterialImport: labelMaterialImports) {
                     if (materialCode.equals(labelMaterialImport.getMaterialCode())
-                       &&labelCode.equals(labelMaterialImport.getLabelCode())){
+                            &&labelCode.equals(labelMaterialImport.getLabelCode())){
                         tag = true;
                         break;
                     }
@@ -239,7 +230,21 @@ public class BaseLabelMaterialServiceImpl extends BaseService<BaseLabelMaterial>
                 continue;
             }
 
-            labelMaterialImports.add(baseLabelMaterialImport);
+            //判断编码是否重复
+            Example example = new Example(BaseLabelMaterial.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("orgId", currentUser.getOrganizationId())
+                    .andEqualTo("materialId",baseLabelMaterialImport.getMaterialId())
+                    .andEqualTo("labelId",baseLabelMaterialImport.getLabelId());
+            BaseLabelMaterial labelMaterial = baseLabelMaterialMapper.selectOneByExample(example);
+            if (StringUtils.isNotEmpty(labelMaterial)){
+                labelMaterial.setOncePrintCount(baseLabelMaterialImport.getOncePrintCount());
+                labelMaterial.setModifiedTime(new Date());
+                labelMaterial.setModifiedUserId(currentUser.getUserId());
+                updateList.add(labelMaterial);
+            }else {
+                labelMaterialImports.add(baseLabelMaterialImport);
+            }
         }
 
         if (StringUtils.isNotEmpty(labelMaterialImports)){
@@ -266,6 +271,9 @@ public class BaseLabelMaterialServiceImpl extends BaseService<BaseLabelMaterial>
                 }
                 baseHtLabelMaterialMapper.insertList(htList);
             }
+        }
+        if (StringUtils.isNotEmpty(updateList)){
+            baseLabelMaterialMapper.batchUpdate(updateList);
         }
 
         resultMap.put("操作成功总数",success);

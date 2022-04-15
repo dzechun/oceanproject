@@ -13,4 +13,6 @@ public interface BaseLabelMaterialMapper extends MyMapper<BaseLabelMaterial> {
     List<BaseLabelMaterialDto> findList(Map<String, Object> map);
 
     List<BaseLabelMaterial> findEqualLabel(Map<String,Object> map);
+
+    int batchUpdate(List<BaseLabelMaterial> list);
 }
