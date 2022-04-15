@@ -320,7 +320,9 @@ public class WanbaoStorageRule {
                 longs = wanbaoStorageRule.baseStorageMapper.findJobOrderStorageInMaterial(baseStorageRule.getMaterialId(),longs);
                 log.info("同货品相同库位："+JsonUtils.objectToJson(longs));
                 if(longs.size()<1){
+                    log.info("条件："+JsonUtils.objectToJson(longs));
                     longs = wanbaoStorageRule.baseStorageMapper.findJobOrderStorage(longs);
+                    log.info("去除占用库位："+JsonUtils.objectToJson(longs));
                 }
                 if(longs.size()>0){
                     storageId = longs.get(0);
