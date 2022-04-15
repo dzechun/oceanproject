@@ -9,6 +9,7 @@ import com.fantechs.common.base.general.entity.basic.BaseProLine;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.BaseStorageCapacity;
 import com.fantechs.common.base.response.ControllerUtil;
+import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.base.mapper.*;
 import lombok.extern.slf4j.Slf4j;
@@ -63,6 +64,7 @@ public class WanbaoStorageRule {
      */
     public static Long retInStorage(BaseStorageRule baseStorageRule){
         if(StringUtils.isEmpty(baseStorageRule.getLogicId(),baseStorageRule.getMaterialId(),baseStorageRule.getQty(),baseStorageRule.getInventoryStatusId())){
+            log.error("参数为空");
             throw new BizErrorException(ErrorCodeEnum.GL99990100);
         }
         //根据仓库产线查询库位
@@ -70,8 +72,10 @@ public class WanbaoStorageRule {
         example.createCriteria().andEqualTo("logicId",baseStorageRule.getLogicId()).andEqualTo("proLineId",baseStorageRule.getProLineId());
         List<BaseStorage> baseStorageList = wanbaoStorageRule.baseStorageMapper.selectByExample(example);
         if(StringUtils.isEmpty(baseStorageList) || baseStorageList.size()<1){
+            log.info("未查询到逻辑仓："+baseStorageRule.getLogicId()+"产线："+baseStorageRule.getProLineId());
             return publicStorage(baseStorageRule);
         }
+        log.info("库位："+ JsonUtils.objectToJson(baseStorageList));
         //是否MC产品
         BaseMaterial baseMaterial = wanbaoStorageRule.baseMaterialMapper.selectByPrimaryKey(baseStorageRule.getMaterialId());
         if(StringUtils.isEmpty(baseMaterial)){
