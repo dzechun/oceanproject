@@ -71,6 +71,7 @@ public class BaseMaterialSupplier extends ValidGroup implements Serializable {
      */
     @ApiModelProperty(name="supplierProductModel",value = "客户产品型号")
     @Column(name = "supplier_product_model")
+    @Excel(name = "客户产品型号", height = 20, width = 30,orderNum="11")
     private String supplierProductModel;
 
     /**

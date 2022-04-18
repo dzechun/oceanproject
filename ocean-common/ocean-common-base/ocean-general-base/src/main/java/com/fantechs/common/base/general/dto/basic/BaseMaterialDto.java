@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.io.Serializable;
 
@@ -40,5 +41,21 @@ public class BaseMaterialDto extends BaseMaterial implements Serializable {
     @Transient
     @ApiModelProperty(name = "organizationName",value = "组织名称")
     private String organizationName;
+
+    /**
+     * 电压
+     */
+    @Transient
+    @ApiModelProperty(name="voltage",value = "电压")
+    @Excel(name = "电压", height = 20, width = 30)
+    private String voltage;
+
+    /**
+     *  客户型号编码
+     */
+    @Transient
+    @ApiModelProperty(name="productModelCode",value = "客户型号编码")
+    @Excel(name = "客户型号", height = 20, width = 30)
+    private String productModelCode;
 
 }

@@ -30,6 +30,8 @@
         <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
         <result column="barcode_rule_name" jdbcType="VARCHAR" property="barcodeRuleSetName"/>
         <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+        <result column="voltage" jdbcType="VARCHAR" property="voltage"/>
+        <result column="product_model_code" jdbcType="VARCHAR" property="productModelCode"/>
     </resultMap>
     <sql id="Base_Column_List">
         sm.material_id,
@@ -59,14 +61,17 @@
             resultMap="BaseResultMapDto">
         select<include refid="Base_Column_List"/>,
         su.user_name AS create_user_name, sus.user_name AS modified_user_name,
-        bo.organization_name
+        bo.organization_name,
+        bt.voltage,
+        bpm.product_model_code
         from fantech_imes_v2.base_material sm
         left join ocean_v2.sys_user su on sm.create_user_id=su.user_id
         left join ocean_v2.sys_user sus on sm.modified_user_id=sus.user_id
-        LEFT JOIN fantech_imes_v2.base_barcode_rule_set sbrs on sm.barcode_rule_set_id = sbrs.barcode_rule_set_id
-        LEFT JOIN fantech_imes_v2.base_organization bo ON sm.org_id = bo.organization_id
-        LEFT JOIN fantech_imes_v2.base_material_tab bt on sm.material_id = bt.material_id
-        LEFT JOIN fantech_imes_v2.base_material_category bmc on bmc.material_category_id = bt.material_category_id
+        LEFT JOIN base_barcode_rule_set sbrs on sm.barcode_rule_set_id = sbrs.barcode_rule_set_id
+        LEFT JOIN base_organization bo ON sm.org_id = bo.organization_id
+        LEFT JOIN base_material_tab bt on sm.material_id = bt.material_id
+        LEFT JOIN base_material_category bmc on bmc.material_category_id = bt.material_category_id
+        LEFT JOIN base_product_model bpm ON bpm.product_model_id = bt.product_model_id
         <where>
             <if test="materialProperty!=null">
                 and bt.material_property=#{materialProperty}
