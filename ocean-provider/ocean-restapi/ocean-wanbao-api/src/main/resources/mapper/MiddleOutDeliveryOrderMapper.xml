@@ -79,7 +79,6 @@
             sh.so_header_id = sl.so_header_id
             AND sld.so_line_id = sl.so_line_id
             AND msib.inventory_item_id = sld.product_item_id
-            AND sl.po_number like '%.1'
             <if test="date != null and date != ''">
                 and sh.last_update_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
             </if>
