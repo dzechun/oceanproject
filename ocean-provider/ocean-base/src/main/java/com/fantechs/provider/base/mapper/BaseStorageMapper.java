@@ -48,5 +48,5 @@ public interface BaseStorageMapper extends MyMapper<BaseStorage> {
 
     List<Long> findJobOrderStorage(@Param("storageIds") List<Long>storageIds);
 
-    List<Long> findJobOrderStorageInMaterial(@Param("materialId") Long materialId ,@Param("storageIds")List<Long> storageIds);
+    List<Long> findJobOrderStorageInMaterial(@Param("materialId") Long materialId,@Param("poCode")String poCode,@Param("salesBarcode")String salesBarcode ,@Param("storageIds")List<Long> storageIds);
 }

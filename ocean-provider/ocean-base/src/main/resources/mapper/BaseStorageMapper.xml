@@ -424,7 +424,7 @@ order by wii.modified_time desc limit 1
     </select>
     <select id="findJobOrderStorageInMaterial" resultType="java.lang.Long">
         SELECT in_storage_id FROM wms_inner_job_order_det
-        WHERE order_status=3 and material_id=#{materialId} and in_storage_id in
+        WHERE order_status=3 and material_id=#{materialId} and job_order_id in(select job_order_id From wms_inner_job_order where option3=#{poCode} and option4=#{salesBarcode} ) and in_storage_id in
         <foreach collection="storageIds" item="list" open="(" close=") " separator=",">
             #{list}
         </foreach>

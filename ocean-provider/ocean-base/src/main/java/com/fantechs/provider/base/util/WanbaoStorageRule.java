@@ -316,7 +316,7 @@ public class WanbaoStorageRule {
             if(StringUtils.isNotEmpty(longs) || longs.size()>0){
                 //通过物料及库位查询是否拥有已分配未上架的库位占用 相同货品占用库位放入一起
                 //先通过货品及可分配库位查询是否存在未上架的库位
-                List<Long> strLongs = wanbaoStorageRule.baseStorageMapper.findJobOrderStorageInMaterial(baseStorageRule.getMaterialId(),longs);
+                List<Long> strLongs = wanbaoStorageRule.baseStorageMapper.findJobOrderStorageInMaterial(baseStorageRule.getMaterialId(),baseStorageRule.getPoCode(),baseStorageRule.getSalesBarcode(),longs);
                 if(strLongs.size()<1){
                     longs = wanbaoStorageRule.baseStorageMapper.findJobOrderStorage(longs);
                 }else {
