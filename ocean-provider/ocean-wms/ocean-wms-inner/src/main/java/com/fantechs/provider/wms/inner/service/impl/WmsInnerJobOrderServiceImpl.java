@@ -12,7 +12,10 @@ import com.fantechs.common.base.general.dto.basic.BaseStorageRule;
 import com.fantechs.common.base.general.dto.basic.BaseWorkerDto;
 import com.fantechs.common.base.general.dto.wms.in.BarPODto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInAsnOrderDto;
-import com.fantechs.common.base.general.dto.wms.inner.*;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.entity.basic.BaseInventoryStatus;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
@@ -42,7 +45,6 @@ import com.fantechs.provider.wms.inner.service.*;
 import com.fantechs.provider.wms.inner.util.InBarcodeUtil;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -156,6 +158,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             WmsInnerJobOrder wmsInnerJobOrder = wmsInPutawayOrderMapper.selectByPrimaryKey(id);
             if (wmsInnerJobOrder.getOrderStatus() > (byte) 2) {
                 throw new BizErrorException("单据已分配完成");
+            }
+            if(StringUtils.isEmpty(wmsInnerJobOrder.getOption1(),wmsInnerJobOrder.getOption2())){
+                throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"请检查单据数据源,逻辑仓库、产线不能为空");
             }
             Example example = new Example(WmsInnerJobOrderDet.class);
             example.createCriteria().andEqualTo("jobOrderId", wmsInnerJobOrder.getJobOrderId()).andEqualTo("orderStatus",1);
