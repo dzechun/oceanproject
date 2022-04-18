@@ -22,11 +22,7 @@
             msib.ITEM_TYPE AS material_property,
             msib.last_update_date AS modified_time,
             msib.WIP_SUPPLY_LOCATOR_ID AS middle_material_id,
-            substr(
-            msib.description,
-            INSTR( msib.description, '/', 1, 1 ) + 1,
-            INSTR( msib.description, '/', 1, 2 ) - INSTR( msib.description, '/', 1, 1 ) - 1
-            ) AS product_model_code,
+            mde3.element_value AS product_model_code,
             mde2.element_value AS voltage
         FROM
         INV.mtl_system_items_b msib
@@ -34,6 +30,7 @@
         LEFT JOIN APPS.fnd_common_lookups fc ON msib.item_type = fc.lookup_code
         LEFT JOIN APPS.po_buyers_val_v pbv ON msib.buyer_id = pbv.employee_id
         LEFT JOIN APPS.mtl_descr_element_values mde2 ON mde2.inventory_item_id = msib.inventory_item_id AND mde2.element_name = '电压频率'
+        LEFT JOIN APPS.mtl_descr_element_values mde3 ON mde3.inventory_item_id = msib.inventory_item_id AND mde3.element_name = '客户型号'
         <where>
             msib.organization_id in (83, 82, 105)
             AND msib.inventory_item_status_code = 'Active'
