@@ -521,6 +521,7 @@ public class SyncDataServiceImpl implements SyncDataService {
         // 执行查询前调用函数执行存储过程
         middleSaleOrderMapper.setPolicy();
         List<MiddleSaleOrder> salesOrders = middleSaleOrderMapper.findSaleOrderData(map);
+        log.info("=========== salesOrderDtos: " + JSON.toJSONString(salesOrders));
         if (!salesOrders.isEmpty()) {
             // 记录日志
             long start = System.currentTimeMillis();
