@@ -210,7 +210,7 @@
     LEFT JOIN mes_sfc_barcode_process msbp ON oscrs.material_id = msbp.material_id
     <where>
       <if test="barcodeList != null">
-        <foreach collection="barcodeList" index="index" item="item" open="and msbp.barcode in (" close=")"
+        <foreach collection="barcodeList" index="index" item="item" open="msbp.barcode in (" close=")"
                  separator=",">
           #{item}
         </foreach>
@@ -224,11 +224,10 @@
     SELECT COUNT(*) FROM (
     SELECT IFNULL(COUNT(*),0) FROM om_sales_order_det osod
     LEFT JOIN mes_pm_work_order mpwo ON osod.sales_order_id = mpwo.sales_order_id
-    LEFT JOIN mes_sfc_barcode_process msbp ON mpwo.work_order_id = msbp.work_order_id AND msbp.material_id =
-    osod.material_id
+    LEFT JOIN mes_sfc_barcode_process msbp ON mpwo.work_order_id = msbp.work_order_id AND msbp.material_id = osod.material_id
     <where>
       <if test="barcodeList != null">
-        <foreach collection="barcodeList" index="index" item="item" open="and msbp.barcode in (" close=")"
+        <foreach collection="barcodeList" index="index" item="item" open="msbp.barcode in (" close=")"
                  separator=",">
           #{item}
         </foreach>
@@ -242,7 +241,7 @@
     SELECT COUNT(1) FROM (SELECT * FROM mes_sfc_barcode_process msbp
     <where>
       <if test="barcodeList != null">
-        <foreach collection="barcodeList" index="index" item="item" open="and msbp.barcode in (" close=")" separator=",">
+        <foreach collection="barcodeList" index="index" item="item" open="msbp.barcode in (" close=")" separator=",">
           #{item}
         </foreach>
       </if>
