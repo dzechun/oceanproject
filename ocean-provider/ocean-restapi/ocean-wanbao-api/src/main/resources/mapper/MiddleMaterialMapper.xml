@@ -15,7 +15,7 @@
     </resultMap>
 
     <select id="findMaterialData" parameterType="map" resultMap="BaseResultMap">
-       SELECT
+       SELECT DISTINCT
             msib.segment1 AS material_code,
             msib.description AS material_name,
             msib.description AS material_desc,
