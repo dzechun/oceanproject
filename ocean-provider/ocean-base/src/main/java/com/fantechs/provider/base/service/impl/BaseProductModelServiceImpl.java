@@ -164,47 +164,9 @@ public class BaseProductModelServiceImpl extends BaseService<BaseProductModel> i
             BaseProductModelImport baseProductModelImport = baseProductModelImports.get(i);
             String productModelCode = baseProductModelImport.getProductModelCode();
             String productModelName = baseProductModelImport.getProductModelName();
-            String productFamilyCode = baseProductModelImport.getProductFamilyCode();
             if (StringUtils.isEmpty(
-                    productModelCode, productModelName, productFamilyCode
+                    productModelCode, productModelName
             )) {
-                fail.add(i + 4);
-                continue;
-            }
-
-            //判断编码是否重复
-            Example example = new Example(BaseProductModel.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("organizationId", currentUser.getOrganizationId());
-            criteria.andEqualTo("productModelCode", productModelCode);
-            if (StringUtils.isNotEmpty(baseProductModelMapper.selectOneByExample(example))) {
-                fail.add(i + 4);
-                continue;
-            }
-
-            //判断产品族是否存在
-            if (StringUtils.isNotEmpty(productFamilyCode)){
-                SearchBaseProductFamily searchBaseProductFamily = new SearchBaseProductFamily();
-                searchBaseProductFamily.setProductFamilyCode(productFamilyCode);
-                searchBaseProductFamily.setCodeQueryMark((byte) 1);
-                List<BaseProductFamilyDto> baseProductFamilyDtos = baseProductFamilyMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseProductFamily));
-                if (StringUtils.isEmpty(baseProductFamilyDtos)) {
-                    fail.add(i + 4);
-                    continue;
-                }
-                baseProductModelImport.setProductFamilyId(baseProductFamilyDtos.get(0).getProductFamilyId());
-            }
-
-           //判断集合中是否存在重复数据
-            boolean tag = false;
-            if (StringUtils.isNotEmpty(baseProductModelImports1)){
-                for (BaseProductModelImport productModelImport : baseProductModelImports1) {
-                    if (productModelImport.getProductModelCode().equals(productModelCode)){
-                        tag = true;
-                    }
-                }
-            }
-            if (tag){
                 fail.add(i + 4);
                 continue;
             }
