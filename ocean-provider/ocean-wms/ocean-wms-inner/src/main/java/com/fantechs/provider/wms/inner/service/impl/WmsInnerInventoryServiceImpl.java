@@ -5,11 +5,8 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
-import com.fantechs.common.base.general.entity.basic.BaseBadnessCategory;
-import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessCategory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.history.WmsHtInnerInventory;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -145,6 +142,9 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
         }
         if(!StringUtils.isEmpty(map.get("inventoryStatusId"))){
             criteria.andEqualTo("inventoryStatusId",map.get("inventoryStatusId"));
+        }
+        if(map.containsKey("jobOrderDetId") && StringUtils.isNotEmpty(map.get("jobOrderDetId"))){
+            criteria.andEqualTo("jobOrderDetId",map.get("jobOrderDetId"));
         }
         criteria.andEqualTo("stockLock", 0).andEqualTo("qcLock", 0).andEqualTo("lockStatus", 0);
         criteria.andEqualTo("orgId",sysUser.getOrganizationId());

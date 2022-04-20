@@ -325,20 +325,11 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 wmsInPutawayOrderDetMapper.updateByPrimaryKeySelective(det);
                 //分配库存
 
-//                SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
-//                searchWmsInnerJobOrder.setJobOrderId(wms.getJobOrderId());
-//                WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInPutawayOrderMapper.findList(searchWmsInnerJobOrder).get(0);
-//                SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
-//                searchWmsInnerJobOrderDet.setJobOrderDetId(wms.getJobOrderDetId());
-//                WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
-                log.error("===============================进入更改库存==========================");
                 WmsInnerJobOrderDto wmsInnerJobOrderDto = new WmsInnerJobOrderDto();
                 BeanUtil.copyProperties(wms,wmsInnerJobOrderDto);
                 WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = new WmsInnerJobOrderDetDto();
                 BeanUtil.copyProperties(det,wmsInnerJobOrderDetDto);
-
                 num += this.updateInventory(wmsInnerJobOrderDto, wmsInnerJobOrderDetDto);
-                log.error("===============================更改库存结束==========================");
                 success++;
             }
         }
@@ -1847,21 +1838,13 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      */
     private int updateInventory(WmsInnerJobOrderDto wmsInnerJobOrderDto, WmsInnerJobOrderDet wmsInnerJobOrderDet) {
         SysUser sysUser = currentUser();
-//        WmsInAsnOrderDto wmsInAsnOrderDto = inFeignApi.findList(SearchWmsInAsnOrder.builder()
-//                .asnOrderId(wmsInnerJobOrderDto.getSourceOrderId())
-//                .build()).getData().get(0);
-//
-//        WmsInAsnOrderDetDto wmsInAsnOrderDetDto = inFeignApi.findDetList(SearchWmsInAsnOrderDet.builder()
-//                .asnOrderDetId(wmsInnerJobOrderDet.getSourceDetId())
-//                .build()).getData().get(0);
-
         //旧
         Example example = new Example(WmsInnerInventory.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("relevanceOrderCode", wmsInnerJobOrderDto.getRelatedOrderCode()).andEqualTo("materialId", wmsInnerJobOrderDet.getMaterialId())
                 .andEqualTo("warehouseId", wmsInnerJobOrderDet.getWarehouseId()).andEqualTo("storageId", wmsInnerJobOrderDet.getOutStorageId())
                 .andEqualTo("inventoryStatusId", wmsInnerJobOrderDet.getInventoryStatusId());
-        if (!StringUtils.isEmpty(wmsInnerJobOrderDet.getBatchCode())) {
+        if (StringUtils.isNotEmpty(wmsInnerJobOrderDet.getBatchCode())) {
             criteria.andEqualTo("batchCode", wmsInnerJobOrderDet.getBatchCode());
         }
         criteria.andEqualTo("jobOrderDetId",wmsInnerJobOrderDet.getSourceDetId());
@@ -1912,6 +1895,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             inv.setCreateTime(new Date());
             inv.setModifiedTime(new Date());
             inv.setModifiedUserId(sysUser.getUserId());
+
             return wmsInnerInventoryMapper.insertSelective(inv);
         } else {
             //原库存
