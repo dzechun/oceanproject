@@ -1,7 +1,6 @@
 package com.fantechs.provider.wms.in.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.alibaba.fastjson.JSON;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -42,7 +41,6 @@ import com.fantechs.provider.wms.in.mapper.WmsInAsnOrderMapper;
 import com.fantechs.provider.wms.in.mapper.WmsInHtAsnOrderDetMapper;
 import com.fantechs.provider.wms.in.mapper.WmsInHtAsnOrderMapper;
 import com.fantechs.provider.wms.in.service.WmsInAsnOrderService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -462,6 +460,7 @@ public class WmsInAsnOrderServiceImpl extends BaseService<WmsInAsnOrder> impleme
         map.put("warehouseId", wmsInAsnOrderDetDto.getWarehouseId());
         map.put("storageId", wmsInAsnOrderDetDto.getStorageId());
         map.put("inventoryStatusId", wmsInAsnOrderDetDto.getInventoryStatusId());
+        map.put("jobOrderDetId",wmsInAsnOrderDetDto.getAsnOrderDetId());
         WmsInnerInventory wmsInnerInventory = innerFeignApi.selectOneByExample(map).getData();
         if (StringUtils.isEmpty(wmsInnerInventory)) {
             //添加库存
