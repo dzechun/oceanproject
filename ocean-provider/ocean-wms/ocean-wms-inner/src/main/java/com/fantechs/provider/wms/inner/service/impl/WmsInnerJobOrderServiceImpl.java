@@ -331,12 +331,14 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 //                SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
 //                searchWmsInnerJobOrderDet.setJobOrderDetId(wms.getJobOrderDetId());
 //                WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = wmsInPutawayOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
+                log.error("===============================进入更改库存==========================");
                 WmsInnerJobOrderDto wmsInnerJobOrderDto = new WmsInnerJobOrderDto();
                 BeanUtil.copyProperties(wms,wmsInnerJobOrderDto);
                 WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = new WmsInnerJobOrderDetDto();
                 BeanUtil.copyProperties(det,wmsInnerJobOrderDetDto);
 
                 num += this.updateInventory(wmsInnerJobOrderDto, wmsInnerJobOrderDetDto);
+                log.error("===============================更改库存结束==========================");
                 success++;
             }
         }
@@ -362,10 +364,8 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         wms.setModifiedTime(new Date());
         wms.setModifiedUserId(wmsInnerJobOrder.getCreateUserId());
         num += wmsInPutawayOrderMapper.updateByPrimaryKeySelective(wms);
-        logger.info("====================堆垛自动分配（start）========================");
         logger.info("success:"+success+"              list:"+list.size());
         logger.info(wmsInnerJobOrder.toString());
-        logger.info("====================堆垛自动分配（end）========================");
         return num;
     }
     /**
