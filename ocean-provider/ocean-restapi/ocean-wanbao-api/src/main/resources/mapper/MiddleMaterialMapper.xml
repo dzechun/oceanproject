@@ -15,7 +15,7 @@
     </resultMap>
 
     <select id="findMaterialData" parameterType="map" resultMap="BaseResultMap">
-       SELECT
+       SELECT DISTINCT
             msib.segment1 AS material_code,
             msib.description AS material_name,
             msib.description AS material_desc,
@@ -40,6 +40,8 @@
             AND t.category_set_id = 1
             AND msib.description NOT LIKE '%回用%'
             AND msib.description NOT LIKE '%出口产品%'
+            AND msib.description NOT LIKE '%停%'
+            AND msib.last_updated_by = '1283'
             <if test="date != null and date != ''">
                 AND msib.last_update_date >= TO_DATE( #{date} , 'YYYY-MM-DD' )
             </if>

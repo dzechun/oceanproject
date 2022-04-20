@@ -572,19 +572,20 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             // 校验同一配置作业
             map.clear();
             map.put("barcodeList", barcodeList);
-            if (dto.getPalletType() == 2){
+            byte palletType = dto.getPalletType();
+            if (palletType == 2){
                 String count = mesSfcBarcodeProcessService.countBarcodeListForPOGroup(map);
-                if (count != null && Integer.parseInt(count) > 1){
-                    dto.setPalletType((byte) 3);
+                if (count != null && Integer.parseInt(count) != 1){
+                    palletType = (byte) 3;
                 }
             }
-            if (dto.getPalletType() == 3){
+            if (palletType == 3){
                 String count = mesSfcBarcodeProcessService.countBarcodeListForSalesOrder(map);
-                if (count != null && Integer.parseInt(count) > 1){
-                    dto.setPalletType((byte) 1);
+                if (count != null && Integer.parseInt(count) != 1){
+                    palletType = (byte) 1;
                 }
             }
-            if (dto.getPalletType() == 1){
+            if (palletType == 1){
                 // 同料号
                 String count = mesSfcBarcodeProcessService.countBarcodeListForMaterial(map);
                 if (count != null && Integer.parseInt(count) > 1){

@@ -49,8 +49,7 @@
     </select>
 
     <select id="findOutDeliveryData" parameterType="map" resultMap="BaseResultMap">
-        SELECT
-        DISTINCT(sld.so_line_id),
+        SELECT DISTINCT
         sh.so_number AS delivery_order_code,
         sh.schedule_ship_date AS plan_despatch_date,
         sh.actual_ship_date AS actual_despatch_date,
@@ -98,7 +97,8 @@
         sp.quantity AS packing_qty,
         sp.real_quantity AS dispatch_qty,
         sp.source_no AS related_order_code_1,
-        sh.INV_NUM AS out_order_code
+        sh.INV_NUM AS out_order_code,
+        ao.operatorname AS sales_name
         FROM
         EOS.crm_lg_sor_header sh,
         EOS.crm_lg_sor_product sp,

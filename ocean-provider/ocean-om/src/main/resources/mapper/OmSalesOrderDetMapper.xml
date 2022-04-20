@@ -107,16 +107,16 @@
                 and sod.sales_order_id = #{salesOrderId}
             </if>
             <if test="materialCode != null">
-                and bm.material_code = #{materialCode}
+                and bm.material_code like CONCAT('%',#{materialCode},'%')
             </if>
-            <if test="salesOrderCode != null">
-                and oso.sales_order_code = #{salesOrderCode}
+            <if test="salesOrderCode != null and salesOrderCode != ''">
+                and oso.sales_order_code like CONCAT('%',#{salesOrderCode},'%')
             </if>
             <if test="salesOrderDetId!=null and salesOrderDetId!=''">
                 and sod.sales_order_det_id = #{salesOrderDetId}
             </if>
             <if test="salesCode != null">
-                and sod.sales_code = #{salesCode}
+                and sod.sales_code like CONCAT('%',#{salesCode},'%')
             </if>
         </where>
         order by oso.modified_time desc,sod.customer_order_line_number,oso.sales_order_code asc
