@@ -144,7 +144,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
 
                     WmsInnerInventoryDet wmsInnerInventoryDet = new WmsInnerInventoryDet();
                     wmsInnerInventoryDet.setDeliveryOrderCode(wmsInnerJobOrder.getJobOrderCode());
-                    wmsInnerInventoryDet.setStorageId(wmsInnerJobOrderDetDto.getOutStorageId());
+                    wmsInnerInventoryDet.setStorageId(wmsInnerJobOrderDetDto.getInStorageId());
                     wmsInnerInventoryDet.setMaterialQty(wmsInnerJobOrderDetDto.getActualQty());
                     wmsInnerInventoryDet.setBarcodeStatus((byte)6);
                     rs = innerFeignApi.subtract(wmsInnerInventoryDet);
