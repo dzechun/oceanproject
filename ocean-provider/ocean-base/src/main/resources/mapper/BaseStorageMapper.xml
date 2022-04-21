@@ -424,10 +424,34 @@ order by wii.modified_time desc limit 1
     </select>
     <select id="findJobOrderStorageInMaterial" resultType="java.lang.Long">
         SELECT in_storage_id FROM wms_inner_job_order_det
-        WHERE order_status=3 and material_id=#{materialId} and job_order_id in(select job_order_id From wms_inner_job_order where option3=#{poCode} and option4=#{salesBarcode} ) and in_storage_id in
-        <foreach collection="storageIds" item="list" open="(" close=") " separator=",">
-            #{list}
-        </foreach>
+        <where>
+            order_status=3 and material_id=#{materialId}
+             <if test="poCode!=null or salesBarcode!=null">
+                 and job_order_id in(select job_order_id From wms_inner_job_order
+                 <where>
+                     <choose>
+                         <when test="poCode!=null and poCode!=''">
+                             and option4=#{poCode}
+                         </when>
+                         <otherwise>
+                             and option4 is null
+                         </otherwise>
+                     </choose>
+                     <choose>
+                         <when test="salesBarcode!=null and salesBarcode!=''">
+                             and option3=#{salesBarcode}
+                         </when>
+                         <otherwise>
+                             and option3 is null
+                         </otherwise>
+                     </choose>
+                 </where>)
+             </if>
+             and in_storage_id in
+            <foreach collection="storageIds" item="list" open="(" close=") " separator=",">
+                #{list}
+            </foreach>
+        </where>
         group by in_storage_id
     </select>
 </mapper>
