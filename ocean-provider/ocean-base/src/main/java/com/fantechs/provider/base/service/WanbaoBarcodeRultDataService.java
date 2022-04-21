@@ -16,4 +16,11 @@ public interface WanbaoBarcodeRultDataService extends IService<WanbaoBarcodeRult
     List<WanbaoBarcodeRultDataDto> findList(Map<String, Object> map);
 
     Map<String, Object> importExcel(List<WanbaoBarcodeRultDataImportDto> list);
+
+    /**
+     * 同步物料时占用识别码
+     * @param list
+     * @return
+     */
+    int updateByMaterial(List<Long> list);
 }

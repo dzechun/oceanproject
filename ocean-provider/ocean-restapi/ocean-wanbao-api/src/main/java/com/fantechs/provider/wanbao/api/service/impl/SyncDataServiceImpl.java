@@ -154,7 +154,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                     break;
                 }
             }
-
+            List<Long> addMaterialIds = new ArrayList<>();
             for (MiddleMaterial dto : list) {
                 long MaterialCount = baseMaterials.stream().filter(item -> item.getMaterialCode().equals(dto.getMaterialCode())).count();
                 if (MaterialCount <= 0) {
@@ -184,7 +184,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                     BaseMaterial baseMaterial = baseFeignApi.saveByApi(material).getData();
                     dto.setMaterialId(baseMaterial.getMaterialId().toString());
                     dto.setMiddleMaterialId(UUIDUtils.getUUID());
-
+                    addMaterialIds.add(baseMaterial.getMaterialId());
                     //新增物料页签
                     BaseTab tab = new BaseTab();
                     BeanUtil.copyProperties(dto, tab);
@@ -230,6 +230,11 @@ public class SyncDataServiceImpl implements SyncDataService {
                         }
                     }
                 }
+            }
+
+            // 新增的物料预先绑定识别码
+            if (!addMaterialIds.isEmpty()){
+                baseFeignApi.updateByMaterial(addMaterialIds);
             }
 
             // 记录日志

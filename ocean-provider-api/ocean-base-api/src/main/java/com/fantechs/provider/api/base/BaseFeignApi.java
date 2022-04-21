@@ -629,4 +629,9 @@ public interface BaseFeignApi {
     @ApiOperation(value = "出库规则",notes = "出库规则")
     @PostMapping("/storageRule/returnOutStorage")
     ResponseEntity<List<StorageRuleInventry>> returnOutStorage(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseStorageRule baseStorageRule);
+
+
+    @ApiOperation("同步物料时批量修改识别码")
+    @PostMapping("/wanbaoBarcodeRultData/updateByMaterial")
+    ResponseEntity updateByMaterial(@ApiParam(value = "对象，Id必传",required = true)@RequestBody List<Long> list);
 }
