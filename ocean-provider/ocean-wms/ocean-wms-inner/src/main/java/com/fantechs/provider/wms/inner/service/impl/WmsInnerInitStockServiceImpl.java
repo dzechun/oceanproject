@@ -1,7 +1,6 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -13,11 +12,9 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInitStockDto;
 import com.fantechs.common.base.general.dto.wms.inner.imports.InitStockImport;
 import com.fantechs.common.base.general.entity.basic.BaseInventoryStatus;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
-import com.fantechs.common.base.general.entity.basic.BaseSignature;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInventoryStatus;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseSignature;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.wms.inner.*;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -39,8 +36,6 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -147,9 +142,13 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
                     if(wmsInnerInitStockDet.getProductType()==2){
                         //获取长度最
                         String clientCode = null;
-                        if(wmsInnerInitStockBarcode.getClientBarcode1().length()<wmsInnerInitStockBarcode.getClientBarcode2().length() && wmsInnerInitStockBarcode.getClientBarcode1().length()<wmsInnerInitStockBarcode.getClientBarcode3().length()){
+                        if(StringUtils.isNotEmpty(wmsInnerInitStockBarcode.getClientBarcode1(), wmsInnerInitStockBarcode.getClientBarcode2(), wmsInnerInitStockBarcode.getClientBarcode3())
+                                && wmsInnerInitStockBarcode.getClientBarcode1().length()<wmsInnerInitStockBarcode.getClientBarcode2().length()
+                                && wmsInnerInitStockBarcode.getClientBarcode1().length()<wmsInnerInitStockBarcode.getClientBarcode3().length()){
                             clientCode = wmsInnerInitStockBarcode.getClientBarcode1();
-                        }else if(wmsInnerInitStockBarcode.getClientBarcode2().length()<wmsInnerInitStockBarcode.getClientBarcode1().length() && wmsInnerInitStockBarcode.getClientBarcode2().length()<wmsInnerInitStockBarcode.getClientBarcode3().length()){
+                        }else if(StringUtils.isNotEmpty(wmsInnerInitStockBarcode.getClientBarcode1(), wmsInnerInitStockBarcode.getClientBarcode2(), wmsInnerInitStockBarcode.getClientBarcode3())
+                                && wmsInnerInitStockBarcode.getClientBarcode2().length()<wmsInnerInitStockBarcode.getClientBarcode1().length()
+                                && wmsInnerInitStockBarcode.getClientBarcode2().length()<wmsInnerInitStockBarcode.getClientBarcode3().length()){
                             clientCode = wmsInnerInitStockBarcode.getClientBarcode2();
                         }else{
                             clientCode = wmsInnerInitStockBarcode.getClientBarcode3();
