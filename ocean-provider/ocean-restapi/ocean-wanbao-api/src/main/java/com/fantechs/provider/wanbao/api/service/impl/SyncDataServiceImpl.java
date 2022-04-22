@@ -12,19 +12,15 @@ import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.general.dto.basic.*;
 import com.fantechs.common.base.general.dto.mes.sfc.BatchSyncBarcodeDto;
 import com.fantechs.common.base.general.dto.mes.sfc.BatchSyncBarcodeSaveDto;
-import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
-import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
 import com.fantechs.common.base.general.dto.mes.sfc.SyncFindBarcodeDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.basic.*;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSet;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
-import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrder;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -126,11 +122,14 @@ public class SyncDataServiceImpl implements SyncDataService {
 
         if (!middleMaterials.isEmpty()) {
             long start = System.currentTimeMillis();
-            Map<String, List<MiddleMaterial>> collect = middleMaterials.stream().collect(Collectors.groupingBy(MiddleMaterial::getMaterialCode));
             List<MiddleMaterial> list = new ArrayList<>();
-            collect.forEach((key, value) -> {
-                list.add(value.get(0));
-            });
+            for (MiddleMaterial item : middleMaterials){
+                String substring = item.getVoltage().substring(item.getVoltage().length() - 1);
+                if (substring.equals("～") || substring.equals("~")){
+                    item.setVoltage(item.getVoltage().substring(0, item.getVoltage().length() - 1));
+                }
+                list.add(item);
+            }
 
             // 1、保存平台库
             WanbaoBaseBySyncDto wanbaoBaseBySyncDto = baseFeignApi.findBySyncMaterial().getData();
