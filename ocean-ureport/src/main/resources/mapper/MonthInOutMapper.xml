@@ -187,32 +187,35 @@
 <!--  发货明细报表  -->
     <select id="findShipmentDet" resultMap="shipmentDet_column_list">
         SELECT
-            wodo2.delivery_order_code,
-            bm.material_code,
-            wiid.option1 AS customer_name,
-            wiid.option2 AS sales_man_name,
-            wiid.option3 AS sales_code,
-            wodo2.actual_despatch_date,
-            wodo.container_number,
-            wodo.clearance_locale,
-            wodo.origin_harbor,
-            bse.shipment_enterprise_name,
-            bse.transport_category_id,
-            '销售发货' AS shipment_type,
-            '普通装柜' AS loading_type,
-            SUM(wiid.material_qty) AS qty
+        wodo.delivery_order_code,
+        wodo.container_number,
+        wodo.declaration_location AS clearance_locale,
+        wodo.port_from AS origin_harbor,
+        wodo.sales_name AS sales_man_name,
+        bs.supplier_name AS customer_name,
+        bm.material_code,
+        wijo.job_order_code,
+        despatch.despatch_order_code,
+        despatch.actual_despatch_time AS actual_despatch_date,
+        bse.shipment_enterprise_name,
+        bse.transport_category_id,
+        '销售发货' AS shipment_type,
+        '普通装柜' AS loading_type,
+        wiid.option3 AS sales_code,
+        SUM( wiid.material_qty ) AS qty
         FROM
-            wms_out_despatch_order_re_jo wodorj
-                LEFT JOIN wms_inner_job_order wijo ON wodorj.job_order_id = wijo.job_order_id
-                LEFT JOIN wms_out_despatch_order wodo ON wodo.despatch_order_id = wodorj.despatch_order_id
-                LEFT JOIN base_shipment_enterprise bse ON wodo.shipment_enterprise_id = bse.shipment_enterprise_id
-                LEFT JOIN wms_out_delivery_order wodo2 ON wijo.source_order_id = wodo2.delivery_order_id
-                LEFT JOIN wms_inner_inventory_det wiid ON wodo2.delivery_order_code = wiid.delivery_order_code
-                LEFT JOIN base_material bm ON wiid.material_id = bm.material_id
+        wms_out_delivery_order wodo
+        LEFT JOIN wms_inner_job_order wijo ON wijo.source_order_id = wodo.delivery_order_id
+        LEFT JOIN wms_out_despatch_order_re_jo wodorj ON wijo.job_order_id = wodorj.job_order_id
+        LEFT JOIN wms_out_despatch_order despatch ON despatch.despatch_order_id = wodorj.despatch_order_id
+        LEFT JOIN base_shipment_enterprise bse ON despatch.shipment_enterprise_id = bse.shipment_enterprise_id
+        LEFT JOIN wms_inner_inventory_det wiid ON wijo.job_order_code = wiid.delivery_order_code
+        LEFT JOIN base_material bm ON wiid.material_id = bm.material_id
+        LEFT JOIN base_supplier bs ON wodo.supplier_id = bs.supplier_id
         <where>
             wodorj.org_id = #{orgId}
             <if test="deliveryOrderCode != null and deliveryOrderCode != ''">
-                AND wodo2.delivery_order_code LIKE CONCAT('%', #{deliveryOrderCode}, '%')
+                AND wodo.delivery_order_code LIKE CONCAT('%', #{deliveryOrderCode}, '%')
             </if>
             <if test="materialCode != null and materialCode != ''">
                 AND bm.material_code LIKE CONCAT('%', #{materialCode}, '%')
@@ -226,17 +229,17 @@
             <if test="salesCode != null and salesCode != ''">
                 AND wiid.option3 LIKE CONCAT('%', #{salesCode}, '%')
             </if>
-            <if test="actualDespatchTime != null">
-                and date_format(wodo.actual_despatch_time, '%Y-%m-%d') =#{actualDespatchTime}
+            <if test="actualDespatchTime != null and actualDespatchTime != ''">
+                and date_format(despatch.actual_despatch_time, '%Y-%m-%d') =#{actualDespatchTime}
             </if>
             <if test="clearanceLocale != null and clearanceLocale != ''">
-                AND wodo.clearance_locale LIKE CONCAT('%', #{clearanceLocale}, '%')
+                AND wodo.declaration_location LIKE CONCAT('%', #{clearanceLocale}, '%')
             </if>
             <if test="containerNumber != null and containerNumber != ''">
                 AND wodo.container_number LIKE CONCAT('%', #{containerNumber}, '%')
             </if>
             <if test="originHarbor != null and originHarbor != ''">
-                AND wodo.origin_harbor LIKE CONCAT('%', #{originHarbor}, '%')
+                AND wodo.port_from LIKE CONCAT('%', #{originHarbor}, '%')
             </if>
             <if test="shipmentEnterpriseName != null and shipmentEnterpriseName != ''">
                 AND bse.shipment_enterprise_name LIKE CONCAT('%', #{shipmentEnterpriseName}, '%')
@@ -245,9 +248,6 @@
                 AND bse.transport_category_id = #{transportCategoryId}
             </if>
         </where>
-        GROUP BY
-            wiid.option3,
-            wodo2.delivery_order_code
-        order by wodo2.actual_despatch_date desc
+        order by despatch.actual_despatch_time desc
     </select>
 </mapper>
