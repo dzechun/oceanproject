@@ -90,14 +90,14 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
             initStockCheckBarCode.setInPlantBarcode(barCode);
             criteria.andEqualTo("inPlantBarcode",barCode);
             String code = barCode.substring(0,1);
-            if(isInPlantBarCode && code.equals("9")){
+            if(isInPlantBarCode && "9".equals(code)){
                 //梅州厂内码
                 //首位转换 3 第五位替换成 0
                 StringBuilder sb = new StringBuilder(barCode);
                 sb.replace(0,1,"3");
                 sb.replace(4,5,"0");
                 barCode = sb.toString();
-            }else if(isInPlantBarCode && code.equals("8")){
+            }else if(isInPlantBarCode && "8".equals(code)){
                 //民权厂内码
                 //首位转换成3
                 StringBuilder sb = new StringBuilder(barCode);
