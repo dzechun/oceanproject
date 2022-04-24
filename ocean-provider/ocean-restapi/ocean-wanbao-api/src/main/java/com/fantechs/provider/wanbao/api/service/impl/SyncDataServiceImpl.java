@@ -782,7 +782,7 @@ public class SyncDataServiceImpl implements SyncDataService {
         if (flag) {
             JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
             if ("0".equals(jsonObject.get("all"))) {
-                map.put("date", DateUtil.format(DateUtil.yesterday(), DatePattern.NORM_DATE_PATTERN));
+                map.put("date", DateUtil.format(DateUtil.date(), DatePattern.NORM_DATE_PATTERN));
             }else if ("1".equals(jsonObject.get("all"))) {
                 map.put("date", jsonObject.get("syncDate"));
             }
