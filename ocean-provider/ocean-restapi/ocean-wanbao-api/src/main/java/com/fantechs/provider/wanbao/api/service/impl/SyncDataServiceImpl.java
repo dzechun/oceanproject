@@ -94,19 +94,10 @@ public class SyncDataServiceImpl implements SyncDataService {
         List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
 
         List<SysApiLog> logList = new ArrayList<>();
-        SysApiLog apiLog = new SysApiLog();
-        apiLog.setCreateTime(new Date());
-        apiLog.setThirdpartySysName("万宝数据库对接");
-        apiLog.setCallType((byte) 1);
-        apiLog.setCallResult((byte) 0);
-        apiLog.setApiModule("ocean-wanbao-api");
-        apiLog.setApiUrl("查询数据库-同步物料");
-        apiLog.setOrgId(sysUser.getOrganizationId());
-
         if (specItems.isEmpty()) {
             // 记录日志
-            apiLog.setResponseData("获取平台同步数据配置项不存在，不同步数据");
-            logList.add(apiLog);
+            logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步物料", "获取平台同步数据配置项不存在，不同步数据", null));
+            securityFeignApi.batchAdd(logList);
             return;
         }
         JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
@@ -141,8 +132,8 @@ public class SyncDataServiceImpl implements SyncDataService {
             List<BaseBarcodeRuleSetDto> ruleSetDtos = wanbaoBaseBySyncDto.getBarcodeRuleSetDtoList();
             if (ruleSetDtos.isEmpty()) {
                 // 记录日志
-                apiLog.setResponseData("平台默认条码规则集合不存在，不同步工单数据");
-                logList.add(apiLog);
+                logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步物料", "平台默认条码规则集合不存在，不同步工单数据", null));
+                securityFeignApi.batchAdd(logList);
                 return;
             }
 
@@ -237,10 +228,7 @@ public class SyncDataServiceImpl implements SyncDataService {
             }
 
             // 记录日志
-            apiLog.setResponseData("万宝数据库-同步物料");
-            apiLog.setRequestTime(new Date());
-            apiLog.setConsumeTime(new BigDecimal(System.currentTimeMillis() - start));
-            logList.add(apiLog);
+            logList.add(build(sysUser.getOrganizationId(), (byte) 1, "查询数据库-同步物料", null, new BigDecimal(System.currentTimeMillis() - start)));
         }
         if (!logList.isEmpty()) {
             securityFeignApi.batchAdd(logList);
@@ -258,20 +246,10 @@ public class SyncDataServiceImpl implements SyncDataService {
 
         // 记录日志
         List<SysApiLog> logList = new ArrayList<>();
-        SysApiLog apiLog = new SysApiLog();
-        apiLog.setCreateTime(new Date());
-        apiLog.setThirdpartySysName("万宝数据库对接");
-        apiLog.setCallType((byte) 1);
-        apiLog.setCallResult((byte) 0);
-        apiLog.setApiModule("ocean-wanbao-api");
-        apiLog.setApiUrl("查询数据库-同步生产订单");
-        apiLog.setOrgId(sysUser.getOrganizationId());
-
         if (specItems.isEmpty()) {
             // 记录日志
-            apiLog.setResponseData("获取平台同步数据配置项不存在，不同步数据");
-            logList.add(apiLog);
-            logList.add(apiLog);
+            logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步生产订单", "获取平台同步数据配置项不存在，不同步数据", null));
+            securityFeignApi.batchAdd(logList);
             return;
         }
         JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
@@ -302,8 +280,7 @@ public class SyncDataServiceImpl implements SyncDataService {
             List<BaseRoute> baseRoutes = wanbaoBaseBySyncDto.getRouteList();
             if (baseRoutes.isEmpty()) {
                 // 记录日志
-                apiLog.setResponseData("平台默认工艺路线不存在，不同步工单数据");
-                logList.add(apiLog);
+                logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步生产订单", "平台默认工艺路线不存在，不同步工单数据", null));
                 securityFeignApi.batchAdd(logList);
                 return;
             }
@@ -311,8 +288,7 @@ public class SyncDataServiceImpl implements SyncDataService {
             List<BaseBarcodeRuleSetDto> ruleSetDtos = wanbaoBaseBySyncDto.getBarcodeRuleSetDtoList();
             if (ruleSetDtos.isEmpty()) {
                 // 记录日志
-                apiLog.setResponseData("平台默认条码规则集合不存在，不同步工单数据");
-                logList.add(apiLog);
+                logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步生产订单", "平台默认条码规则集合不存在，不同步工单数据", null));
                 securityFeignApi.batchAdd(logList);
                 return;
             }
@@ -320,8 +296,7 @@ public class SyncDataServiceImpl implements SyncDataService {
             List<BaseRouteProcess> routeProcessList = wanbaoBaseBySyncDto.getRouteProcessList();
             if (routeProcessList.isEmpty()) {
                 // 记录日志
-                apiLog.setResponseData("工艺路线工序关系数据不存在，不同步工单数据");
-                logList.add(apiLog);
+                logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步生产订单", "工艺路线工序关系数据不存在，不同步工单数据", null));
                 securityFeignApi.batchAdd(logList);
                 return;
             }
@@ -395,8 +370,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                 }
                 if (baseRouteProcess.isEmpty()) {
                     // 记录日志
-                    apiLog.setResponseData("工艺路线工序关系数据不存在，不同步工单数据");
-                    logList.add(apiLog);
+                    logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步生产订单", "工艺路线工序关系数据不存在，不同步工单数据", null));
                     continue;
                 }
                 workOrder.setRouteId(routeId);
@@ -415,8 +389,7 @@ public class SyncDataServiceImpl implements SyncDataService {
 
                 // 物料
                 if (StringUtils.isEmpty(order.getMaterialCode())) {
-                    apiLog.setResponseData(order.getWorkOrderCode() + "此生产订单数据中物料编码为空，不同步此条订单数据");
-                    logList.add(apiLog);
+                    logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步生产订单", order.getWorkOrderCode() + "此生产订单数据中物料编码为空，不同步此条订单数据", null));
                     continue;
                 }
                 for (BaseMaterial item : baseMaterials) {
@@ -428,8 +401,7 @@ public class SyncDataServiceImpl implements SyncDataService {
 
                 if (StringUtils.isEmpty(workOrder.getMaterialId())) {
                     // 记录日志
-                    apiLog.setResponseData(order.getWorkOrderCode() + "此订单编号在系统中没有匹配的物料" + order.getMaterialCode() + "，不同步此条订单数据");
-                    logList.add(apiLog);
+                    logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步生产订单", order.getWorkOrderCode() + "此订单编号在系统中没有匹配的物料" + order.getMaterialCode() + "，不同步此条订单数据", null));
                     continue;
                 }
 
@@ -476,9 +448,7 @@ public class SyncDataServiceImpl implements SyncDataService {
             if (!updateList.isEmpty()) {
                 pmFeignApi.batchUpdate(updateList);
             }
-            apiLog.setRequestTime(new Date());
-            apiLog.setConsumeTime(new BigDecimal(System.currentTimeMillis() - start));
-            logList.add(apiLog);
+            logList.add(build(sysUser.getOrganizationId(), (byte) 1, "查询数据库-同步生产订单", null, new BigDecimal(System.currentTimeMillis() - start)));
             if (!logList.isEmpty()) {
                 securityFeignApi.batchAdd(logList);
             }
@@ -499,19 +469,10 @@ public class SyncDataServiceImpl implements SyncDataService {
 
         // 记录日志
         List<SysApiLog> logList = new ArrayList<>();
-        SysApiLog apiLog = new SysApiLog();
-        apiLog.setCreateTime(new Date());
-        apiLog.setThirdpartySysName("万宝数据库对接");
-        apiLog.setCallType((byte) 1);
-        apiLog.setCallResult((byte) 0);
-        apiLog.setApiModule("ocean-wanbao-api");
-        apiLog.setApiUrl("查询数据库-同步销售订单");
-        apiLog.setOrgId(sysUser.getOrganizationId());
-
         if (specItems.isEmpty()) {
             // 记录日志
-            apiLog.setResponseData("获取平台同步数据配置项不存在，不同步数据");
-            logList.add(apiLog);
+            logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步销售订单", "获取平台同步数据配置项不存在，不同步数据", null));
+            securityFeignApi.batchAdd(logList);
             return;
         }
         JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
@@ -538,8 +499,8 @@ public class SyncDataServiceImpl implements SyncDataService {
             List<BaseBarcodeRuleSetDto> ruleSetDtos = wanbaoBaseBySyncDto.getBarcodeRuleSetDtoList();
             if (ruleSetDtos.isEmpty()) {
                 // 记录日志
-                apiLog.setResponseData("平台默认条码规则集合不存在，不同步工单数据");
-                logList.add(apiLog);
+                logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步销售订单", "平台默认条码规则集合不存在，不同步数据", null));
+                securityFeignApi.batchAdd(logList);
                 return;
             }
             // 销售订单
@@ -555,7 +516,6 @@ public class SyncDataServiceImpl implements SyncDataService {
                     orders.add(itemvalue.get(0));
                 });
 
-
                 OmSalesOrderDto omSalesOrder = new OmSalesOrderDto();
                 BeanUtil.copyProperties(orders.get(0), omSalesOrder);
                 for (BaseBarcodeRuleSetDto ruleSetDto : ruleSetDtos) {
@@ -570,8 +530,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                     // 客户编码
                     if (StringUtils.isEmpty(saleOrder.getSupplierCode())) {
                         // 记录日志
-                        apiLog.setResponseData(saleOrder.getSalesOrderCode() + "此销售订单客户编码为空，不同步此条订单数据");
-                        logList.add(apiLog);
+                        logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步销售订单", "此销售订单客户编码为空，不同步此条订单数据", null));
                         break;
                     }
                     for (BaseSupplier supplier : baseSuppliers) {
@@ -598,8 +557,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                     // 物料
                     if (StringUtils.isEmpty(saleOrder.getMaterialCode())) {
                         // 记录日志
-                        apiLog.setResponseData(saleOrder.getSalesOrderCode() + "此销售订单物料编码为空，不同步此条订单数据");
-                        logList.add(apiLog);
+                        logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步销售订单", saleOrder.getSalesOrderCode() + "此销售订单物料编码为空，不同步此条订单数据", null));
                         break;
                     }
                     for (BaseMaterial material : baseMaterials) {
@@ -610,8 +568,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                     }
                     if (StringUtils.isEmpty(saleOrder.getMaterialId())) {
                         // 记录日志
-                        apiLog.setResponseData(saleOrder.getSalesOrderCode() + "此销售订单编号在系统中不存在此物料编码" + saleOrder.getMaterialCode() + "，不同步此条订单数据");
-                        logList.add(apiLog);
+                        logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步销售订单", saleOrder.getSalesOrderCode() + "此销售订单编号在系统中不存在此物料编码" + saleOrder.getMaterialCode() + "，不同步此条订单数据", null));
                         break;
                     }
                     OmSalesOrderDetDto detDto = new OmSalesOrderDetDto();
@@ -657,9 +614,7 @@ public class SyncDataServiceImpl implements SyncDataService {
 //                DynamicDataSourceHolder.removeDataSource();
 //            }
 
-            apiLog.setRequestTime(new Date());
-            apiLog.setConsumeTime(new BigDecimal(System.currentTimeMillis() - start));
-            logList.add(apiLog);
+            logList.add(build(sysUser.getOrganizationId(), (byte) 1, "查询数据库-同步销售订单", null, new BigDecimal(System.currentTimeMillis() - start)));
         }
         if (!logList.isEmpty()) {
             securityFeignApi.batchAdd(logList);
@@ -675,19 +630,10 @@ public class SyncDataServiceImpl implements SyncDataService {
         List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
 
         List<SysApiLog> logList = new ArrayList<>();
-        SysApiLog apiLog = new SysApiLog();
-        apiLog.setCreateTime(new Date());
-        apiLog.setThirdpartySysName("万宝数据库对接");
-        apiLog.setCallType((byte) 1);
-        apiLog.setCallResult((byte) 0);
-        apiLog.setApiModule("ocean-wanbao-api");
-        apiLog.setApiUrl("查询数据库-同步出库单");//出货通知单
-        apiLog.setOrgId(sysUser.getOrganizationId());
-
         if (specItems.isEmpty()) {
             // 记录日志
-            apiLog.setResponseData("获取平台同步数据配置项不存在，不同步数据");
-            logList.add(apiLog);
+            logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步出库单", "平台默认条码规则集合不存在，不同步数据", null));
+            securityFeignApi.batchAdd(logList);
             return;
         }
         JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
@@ -736,11 +682,6 @@ public class SyncDataServiceImpl implements SyncDataService {
                 order.setIfCreatedJobOrder((byte) 0);
 
                 // 客户编码
-                if (StringUtils.isEmpty(value.get(0).getCustomerCode())) {
-                    // 记录日志
-                    apiLog.setResponseData(value.get(0).getCustomerCode() + "此销售订单客户编码为空，不同步此条出库单订单数据");
-                    logList.add(apiLog);
-                }
                 for (BaseSupplier supplier : baseSuppliers) {
                     if (supplier.getSupplierCode().equals(value.get(0).getCustomerCode())) {
                         order.setSupplierId(supplier.getSupplierId());
@@ -767,8 +708,7 @@ public class SyncDataServiceImpl implements SyncDataService {
 
                     // 物料
                     if (StringUtils.isEmpty(item.getMaterialCode())) {
-                        apiLog.setResponseData(item.getDeliveryOrderCode() + "此出货通知书数据中物料编码为空，不同步此条数据");
-                        logList.add(apiLog);
+                        logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步出库单", item.getDeliveryOrderCode() + "此出货通知书数据中物料编码为空，不同步此条数据", null));
                         continue;
                     }
                     for (BaseMaterial material : baseMaterials) {
@@ -779,8 +719,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                     }
                     if (StringUtils.isEmpty(orderDet.getMaterialId())) {
                         // 记录日志
-                        apiLog.setResponseData(item.getDeliveryOrderCode() + "此出货通知书编号在系统中没有匹配的物料" + item.getMaterialCode() + "，不同步此条数据");
-                        logList.add(apiLog);
+                        logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步出库单", item.getDeliveryOrderCode() + "此出货通知书编号在系统中没有匹配的物料" + item.getMaterialCode() + "，不同步此条数据", null));
                         continue;
                     }
                     wmsOutDeliveryOrderDetList.add(orderDet);
@@ -814,9 +753,7 @@ public class SyncDataServiceImpl implements SyncDataService {
 //                DynamicDataSourceHolder.removeDataSource();
 //            }
 
-            apiLog.setRequestTime(new Date());
-            apiLog.setConsumeTime(new BigDecimal(System.currentTimeMillis() - start));
-            logList.add(apiLog);
+            logList.add(build(sysUser.getOrganizationId(), (byte) 1, "查询数据库-同步出库单", null, new BigDecimal(System.currentTimeMillis() - start)));
         }
         if (!logList.isEmpty()) {
             securityFeignApi.batchAdd(logList);
@@ -826,7 +763,6 @@ public class SyncDataServiceImpl implements SyncDataService {
     @Override
     public void syncBarcodeData(boolean flag) {
         long start = System.currentTimeMillis();
-
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
 
         SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
@@ -835,19 +771,10 @@ public class SyncDataServiceImpl implements SyncDataService {
 
         // 记录日志
         List<SysApiLog> logList = new ArrayList<>();
-        SysApiLog apiLog = new SysApiLog();
-        apiLog.setCreateTime(new Date());
-        apiLog.setThirdpartySysName("万宝数据库对接");
-        apiLog.setCallType((byte) 1);
-        apiLog.setCallResult((byte) 0);
-        apiLog.setApiModule("ocean-wanbao-api");
-        apiLog.setApiUrl("查询数据库-同步产品条码");
-        apiLog.setOrgId(sysUser.getOrganizationId());
-
         if (StringUtils.isEmpty(specItems)) {
             // 记录日志
-            apiLog.setResponseData("获取平台同步数据配置项不存在，不同步数据");
-            logList.add(apiLog);
+            logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步产品条码", "平台默认条码规则集合不存在，不同步数据", null));
+            securityFeignApi.batchAdd(logList);
             return;
         }
         Map<String, Object> map = new HashMap<>();
@@ -883,8 +810,8 @@ public class SyncDataServiceImpl implements SyncDataService {
                 }
             }
             if (StringUtils.isEmpty(proLine.getProLineId())) {
-                apiLog.setResponseData("同步PQMS数据失败，系统中为A的编码产线不存在或已被删除");
-                logList.add(apiLog);
+                logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步产品条码", "同步PQMS数据失败，系统中为A的编码产线不存在或已被删除", null));
+                securityFeignApi.batchAdd(logList);
                 return;
             }
 
@@ -898,8 +825,8 @@ public class SyncDataServiceImpl implements SyncDataService {
                 }
             }
             if (labelCategoryId == null){
-                apiLog.setResponseData("同步PQMS数据失败，系统中厂内码标签类别数据不存在或已被删除");
-                logList.add(apiLog);
+                logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步产品条码", "同步PQMS数据失败，系统中厂内码标签类别数据不存在或已被删除", null));
+                securityFeignApi.batchAdd(logList);
                 return;
             }
 
@@ -913,8 +840,8 @@ public class SyncDataServiceImpl implements SyncDataService {
                 }
             }
             if (StringUtils.isEmpty(productProcessRoute.getProductProcessRouteId())) {
-                apiLog.setResponseData("同步PQMS数据失败，系统中A线的产品工艺路线数据不存在或已被删除");
-                logList.add(apiLog);
+                logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步产品条码", "同步PQMS数据失败，系统中A线的产品工艺路线数据不存在或已被删除", null));
+                securityFeignApi.batchAdd(logList);
                 return;
             }
             List<BaseRouteProcess> routeProcessList = syncDto.getRouteProcessList();
@@ -925,8 +852,8 @@ public class SyncDataServiceImpl implements SyncDataService {
                 }
             }
             if (list.isEmpty()) {
-                apiLog.setResponseData("同步PQMS数据失败，系统中A线的产品工艺路线与工序数据不存在或已被删除");
-                logList.add(apiLog);
+                logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步产品条码", "同步PQMS数据失败，系统中A线的产品工艺路线与工序数据不存在或已被删除", null));
+                securityFeignApi.batchAdd(logList);
                 return;
             }
             BaseRouteProcess routeProcess = list.stream().sorted(Comparator.comparing(BaseRouteProcess::getOrderNum)).findFirst().get();
@@ -964,8 +891,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                     }
                 }
                 if (StringUtils.isEmpty(workOrder.getWorkOrderCode())) {
-                    apiLog.setResponseData("同步PQMS数据失败，PQMS条码" + middleProduct.getBarcode() + "的工单：" + middleProduct.getWorkOrderCode() + "在系统中不存在，不同步此条码");
-                    logList.add(apiLog);
+                    logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步产品条码", "同步PQMS数据失败，PQMS条码" + middleProduct.getBarcode() + "的工单：" + middleProduct.getWorkOrderCode() + "在系统中不存在，不同步此条码", null));
                     continue;
                 }
 
@@ -1063,9 +989,7 @@ public class SyncDataServiceImpl implements SyncDataService {
 //           }
 //           DynamicDataSourceHolder.removeDataSource();
 
-            apiLog.setRequestTime(new Date());
-            apiLog.setConsumeTime(new BigDecimal(System.currentTimeMillis() - start));
-            logList.add(apiLog);
+            logList.add(build(sysUser.getOrganizationId(), (byte) 1, "查询数据库-同步产品条码", null, new BigDecimal(System.currentTimeMillis() - start)));
         }
         if (!logList.isEmpty()) {
             securityFeignApi.batchAdd(logList);
@@ -1074,4 +998,23 @@ public class SyncDataServiceImpl implements SyncDataService {
         log.info("=========== 总耗时: " + (time8-start));
     }
 
+
+    private SysApiLog build(Long orgId, Byte callResult, String apiUrl, String responseData, BigDecimal consumeTime){
+        SysApiLog apiLog = new SysApiLog();
+        apiLog.setCreateTime(new Date());
+        apiLog.setRequestTime(new Date());
+        apiLog.setThirdpartySysName("万宝数据库对接");
+        apiLog.setCallType((byte) 1);
+        apiLog.setCallResult(callResult);
+        apiLog.setApiModule("ocean-wanbao-api");
+        apiLog.setApiUrl(apiUrl);
+        apiLog.setOrgId(orgId);
+        if (StringUtils.isNotEmpty(responseData)){
+            apiLog.setResponseData(responseData);
+        }
+        if (consumeTime != null){
+            apiLog.setConsumeTime(consumeTime);
+        }
+        return apiLog;
+    }
 }
