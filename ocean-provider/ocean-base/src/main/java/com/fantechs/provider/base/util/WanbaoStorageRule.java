@@ -308,15 +308,21 @@ public class WanbaoStorageRule {
         }
         //筛选空库位 根据上架动线号升序
         if(StringUtils.isNotEmpty(storageRuleInventries) || storageRuleInventries.size()>0){
-            list = list.stream().filter(x-> x.getStorageId().longValue()!=storageRuleInventries.listIterator().next().getStorageId().longValue()).sorted(Comparator.comparing(BaseStorage::getPutawayMoveLineNo)).collect(Collectors.toList());
+            for (StorageRuleInventry storageRuleInventry : storageRuleInventries) {
+                list = list.stream().filter(y->y.getStorageId().longValue()!=storageRuleInventry.getStorageId().longValue()).collect(Collectors.toList());
+            }
+            list = list.stream().sorted(Comparator.comparing(BaseStorage::getPutawayMoveLineNo)).collect(Collectors.toList());
         }
+        log.error("筛选空库位：======="+JsonUtils.objectToJson(list));
         if(StringUtils.isEmpty(storageId) && list.size()>0){
             //筛选没有库存的库位
             List<Long> longs= wanbaoStorageRule.baseStorageMapper.findEmptyStorage(list);
             if(StringUtils.isNotEmpty(longs) || longs.size()>0){
                 //通过物料及库位查询是否拥有已分配未上架的库位占用 相同货品占用库位放入一起
                 //先通过货品及可分配库位查询是否存在未上架的库位
+                log.error("查询条件============="+JsonUtils.objectToJson(longs));
                 List<Long> strLongs = wanbaoStorageRule.baseStorageMapper.findJobOrderStorageInMaterial(baseStorageRule.getMaterialId(),baseStorageRule.getPoCode(),baseStorageRule.getSalesBarcode(),longs);
+                log.error("查询上架占用库位=============="+JsonUtils.objectToJson(strLongs));
                 if(strLongs.size()<1){
                     longs = wanbaoStorageRule.baseStorageMapper.findJobOrderStorage(longs);
                 }else {
