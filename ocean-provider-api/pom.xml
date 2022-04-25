@@ -23,7 +23,6 @@
         <module>ocean-wms-api</module>
         <module>ocean-mes-api</module>
         <module>ocean-qms-api</module>
-        <module>ocean-bcm-api</module>
         <module>ocean-guest-api</module>
         <module>ocean-restapi-api</module>
     </modules>

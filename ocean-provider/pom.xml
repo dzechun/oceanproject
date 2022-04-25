@@ -20,7 +20,6 @@
         <module>ocean-restapi</module> <!-- API接口服务 -->
         <module>ocean-mes</module>    <!-- mes服务 -->
         <module>ocean-wms</module>    <!-- wms服务 -->
-        <module>ocean-bcm</module>     <!-- 条码管理模块 -->
         <module>ocean-base</module>    <!-- 基础模块 -->
         <module>ocean-ews</module>    <!-- 预警模块  定时任务调度器-->
         <module>ocean-om</module>    <!-- 订单管理 -->

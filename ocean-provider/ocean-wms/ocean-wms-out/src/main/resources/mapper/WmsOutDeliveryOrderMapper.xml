@@ -50,6 +50,10 @@
     <result column="option1" jdbcType="VARCHAR" property="option1" />
     <result column="option2" jdbcType="VARCHAR" property="option2" />
     <result column="option3" jdbcType="VARCHAR" property="option3" />
+    <result column="port_from" jdbcType="VARCHAR" property="portFrom" />
+    <result column="declaration_location" jdbcType="VARCHAR" property="declarationLocation" />
+    <result column="container_number" jdbcType="VARCHAR" property="containerNumber" />
+    <result column="sales_name" jdbcType="VARCHAR" property="salesName" />
   </resultMap>
 
   <resultMap id="BaseResultMapDTO" extends="BaseResultMap"
@@ -110,7 +114,11 @@
     wodo.is_delete,
     wodo.option1,
     wodo.option2,
-    wodo.option3
+    wodo.option3,
+    wodo.port_from,
+    wodo.declaration_location,
+    wodo.container_number,
+    wodo.sales_name
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDTO" parameterType="map">

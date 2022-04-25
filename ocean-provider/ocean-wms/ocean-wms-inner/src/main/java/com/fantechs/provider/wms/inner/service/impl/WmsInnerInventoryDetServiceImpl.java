@@ -1,5 +1,6 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -100,6 +101,7 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
         }
         criteria.andEqualTo("orgId", sysUser.getOrganizationId());
         List<WmsInnerInventoryDet> wms = wmsInnerInventoryDetMapper.selectByExample(example);
+        logger.info("============== wmsInnerInventoryDet:" + JSON.toJSONString(wmsInnerInventoryDet) + "============ wms： " + JSON.toJSONString(wms));
         BigDecimal qty = wmsInnerInventoryDet.getMaterialQty();
         int num = 0;
         for (WmsInnerInventoryDet wm : wms) {
@@ -115,7 +117,10 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
                 }
                 qty.subtract(wmsInnerInventoryDet.getMaterialQty());
             }
-            wm.setBarcodeStatus((byte) 6);
+            wm.setBarcodeStatus(wmsInnerInventoryDet.getBarcodeStatus());
+            wm.setModifiedTime(new Date());
+            wm.setModifiedUserId(sysUser.getUserId());
+            logger.info("============== wm:" + JSON.toJSONString(wm));
             num += wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(wm);
         }
         return num;

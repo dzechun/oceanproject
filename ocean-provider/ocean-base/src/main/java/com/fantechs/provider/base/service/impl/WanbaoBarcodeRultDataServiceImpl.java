@@ -20,6 +20,7 @@ import com.fantechs.provider.base.util.InsertConsumer;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -157,5 +158,29 @@ public class WanbaoBarcodeRultDataServiceImpl extends BaseService<WanbaoBarcodeR
         resultMap.put("操作成功总数",success);
         resultMap.put("操作失败行数",fail);
         return resultMap;
+    }
+
+    @Override
+    public int updateByMaterial(List<Long> list) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
+        Example example = new Example(WanbaoBarcodeRultData.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("dataStatus", (byte) 0);
+        List<WanbaoBarcodeRultData> rultDataList = wanbaoBarcodeRultDataMapper.selectByExample(example);
+
+        List<WanbaoBarcodeRultData> updateList = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            WanbaoBarcodeRultData rultData = rultDataList.get(i);
+            rultData.setMaterialId(list.get(i).toString());
+            rultData.setDataStatus((byte) 1);
+            rultData.setModifiedUserId(user.getUserId());
+            rultData.setModifiedTime(new Date());
+            updateList.add(rultData);
+        }
+        if (!updateList.isEmpty()){
+            return wanbaoBarcodeRultDataMapper.batchUpdate(updateList);
+        }
+        return 0;
     }
 }

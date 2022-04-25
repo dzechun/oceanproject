@@ -168,12 +168,53 @@ public class WmsInnerBarcodeOperationServiceImpl extends BaseService<WmsInnerBar
         oldBarcode.setModifiedTime(new Date());
         i=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(oldBarcode);
 
+        // 旧箱原库存+1
+        Example inventotyExample = new Example(WmsInnerInventory.class);
+        Example.Criteria inventotyCriteria = inventotyExample.createCriteria();
+        inventotyCriteria.andEqualTo("materialId", oldBarcode.getMaterialId())
+                .andEqualTo("storageId", oldBarcode.getStorageId())
+                .andEqualTo("relevanceOrderCode", oldBarcode.getDeliveryOrderCode())
+                .andEqualTo("stockLock", 0)
+                .andEqualTo("lockStatus", 0);
+        List<WmsInnerInventory> wmsInnerInventoryList_old = wmsInnerInventoryMapper.selectByExample(inventotyExample);
+        WmsInnerInventory wmsInnerInventory_old_status0 = new WmsInnerInventory();
+        WmsInnerInventory wmsInnerInventory_old_status1 = new WmsInnerInventory();
+        for (WmsInnerInventory innerInventory : wmsInnerInventoryList_old){
+            if (innerInventory.getJobStatus().equals((byte) 0)){
+                wmsInnerInventory_old_status0 = innerInventory;
+            }else {
+                wmsInnerInventory_old_status1 = innerInventory;
+            }
+        }
+        if (wmsInnerInventory_old_status0 != null) {
+            wmsInnerInventory_old_status0.setPackingQty(wmsInnerInventory_old_status0.getPackingQty().add(BigDecimal.ONE));
+            wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory_old_status0);
+        }else {
+            wmsInnerInventory_old_status1.setInventoryId(null);
+            wmsInnerInventory_old_status1.setJobStatus((byte) 0);
+            wmsInnerInventoryMapper.insert(wmsInnerInventory_old_status1);
+        }
+
         //替换条码处理
         newBarcode.setBarcodeStatus((byte)4);//已拣选
         newBarcode.setDeliveryOrderCode(oldBarcode.getDeliveryOrderCode());//更新出库单号
         newBarcode.setModifiedUserId(sysUser.getUserId());
         newBarcode.setModifiedTime(new Date());
         i+=wmsInnerInventoryDetMapper.updateByPrimaryKeySelective(newBarcode);
+
+        // 新箱原库存-1
+        example.clear();
+        inventotyCriteria = inventotyExample.createCriteria();
+        inventotyCriteria.andEqualTo("materialId", newBarcode.getMaterialId())
+                .andEqualTo("storageId", newBarcode.getStorageId())
+                .andEqualTo("relevanceOrderCode", newBarcode.getDeliveryOrderCode())
+                .andEqualTo("jobStatus", (byte) 1)
+                .andEqualTo("stockLock", 0)
+                .andEqualTo("lockStatus", 0)
+                .andGreaterThan("packingQty", 0);
+        WmsInnerInventory wmsInnerInventory_new = wmsInnerInventoryMapper.selectOneByExample(example);
+        wmsInnerInventory_new.setPackingQty(wmsInnerInventory_new.getPackingQty().subtract(BigDecimal.ONE));
+        wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory_new);
 
         //查询拣货单
         SearchWmsInnerJobOrder searchWmsInnerJobOrder=new SearchWmsInnerJobOrder();

@@ -22,6 +22,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseMaterialService;
+import com.fantechs.provider.base.service.WanbaoBarcodeRultDataService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,6 +68,8 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
     private BaseInspectionItemMapper baseInspectionItemMapper;
     @Resource
     private SecurityFeignApi securityFeignApi;
+    @Resource
+    private WanbaoBarcodeRultDataService wanbaoBarcodeRultDataService;
 
     @Override
     public List<BaseMaterialDto> findList(Map<String, Object> map){
@@ -177,6 +180,11 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
         BaseHtMaterial baseHtMaterial = new BaseHtMaterial();
         BeanUtils.copyProperties(baseMaterial, baseHtMaterial);
         baseHtMaterialMapper.insertSelective(baseHtMaterial);
+
+        // 万宝项目新增物料时占用识别码
+        List<Long> list = new ArrayList<>();
+        list.add(baseMaterial.getMaterialId());
+        wanbaoBarcodeRultDataService.updateByMaterial(list);
         return i;
     }
 
@@ -568,6 +576,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
         }
 
         if (StringUtils.isNotEmpty(materialImports)){
+            List<Long> addMaterialIds = new ArrayList<>();
             for (BaseMaterialImport materialImport : materialImports) {
                 BaseMaterial baseMaterial = new BaseMaterial();
                 BeanUtils.copyProperties(materialImport, baseMaterial);
@@ -588,10 +597,17 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
                 BaseHtMaterial baseHtMaterial = new BaseHtMaterial();
                 BeanUtils.copyProperties(baseMaterial, baseHtMaterial);
                 htList.add(baseHtMaterial);
+
+                addMaterialIds.add(baseMaterial.getMaterialId());
             }
 
             baseHtMaterialMapper.insertList(htList);
             baseTabMapper.insertList(baseTabs);
+
+            // 万宝项目新增物料时占用识别码
+            if (!addMaterialIds.isEmpty()){
+                wanbaoBarcodeRultDataService.updateByMaterial(addMaterialIds);
+            }
         }
 
 

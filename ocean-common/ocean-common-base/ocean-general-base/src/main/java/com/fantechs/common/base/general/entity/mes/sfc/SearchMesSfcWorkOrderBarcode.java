@@ -1,5 +1,6 @@
 package com.fantechs.common.base.general.entity.mes.sfc;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.List;
 
@@ -60,4 +62,11 @@ public class SearchMesSfcWorkOrderBarcode extends BaseQuery implements Serializa
      */
     @ApiModelProperty(name="workOrderCode",value = "工单编码")
     private String workOrderCode;
+
+
+    @ApiModelProperty(name="materialCode" ,value="物料编码")
+    private String materialCode;
+
+    @ApiModelProperty(name="materialName" ,value="物料名称")
+    private String materialName;
 }

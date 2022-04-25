@@ -476,8 +476,8 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
                 .andEqualTo("jobStatus", (byte) 1)
                 .andEqualTo("stockLock", 0)
                 //.andEqualTo("qcLock", 0)
-                .andEqualTo("lockStatus", 0);
-//                .andGreaterThan("packingQty", 0);
+                .andEqualTo("lockStatus", 0)
+                .andGreaterThan("packingQty", 0);
         if (StringUtils.isNotEmpty(wmsInnerInventory) && StringUtils.isNotEmpty(shiftType) && shiftType==(byte)1){
             criteria1.andEqualTo("inventoryStatusId", wmsInnerInventory.getInventoryStatusId());
         }

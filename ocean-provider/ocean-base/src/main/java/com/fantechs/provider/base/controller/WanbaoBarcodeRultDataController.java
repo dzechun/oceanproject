@@ -58,6 +58,12 @@ public class WanbaoBarcodeRultDataController {
         return ControllerUtil.returnCRUD(wanbaoBarcodeRultDataService.update(wanbaoBarcodeRultData));
     }
 
+    @ApiOperation("同步物料时批量修改识别码")
+    @PostMapping("/updateByMaterial")
+    public ResponseEntity updateByMaterial(@ApiParam(value = "对象，Id必传",required = true)@RequestBody List<Long> list) {
+        return ControllerUtil.returnCRUD(wanbaoBarcodeRultDataService.updateByMaterial(list));
+    }
+
     @ApiOperation("获取详情")
     @PostMapping("/detail")
     public ResponseEntity<WanbaoBarcodeRultData> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {

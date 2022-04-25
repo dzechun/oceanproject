@@ -119,7 +119,6 @@
             </otherwise>
         </choose>
         left join om_sales_order_det sod on mswob.work_order_id = sod.sales_order_det_id
-
         left join base_material bms on sod.material_id = bms.material_id
         left join base_label_category blc on mswob.label_category_id = blc.label_category_id
         LEFT JOIN mes_sfc_barcode_process msbp ON mswob.work_order_barcode_id = msbp.work_order_barcode_id
@@ -130,6 +129,12 @@
             </if>
             <if test="workOrderCode != null and workOrderCode !=''">
                 and mswob.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+            </if>
+            <if test="materialCode != null and materialCode !=''">
+                and bm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="materialName != null and materialName !=''">
+                and bm.material_name like CONCAT('%', #{materialName}, '%')
             </if>
             <if test="labelCategoryId != null">
                 and mswob.label_category_id = #{labelCategoryId}
@@ -386,5 +391,12 @@
 
     <select id="findLabelView" resultType="java.lang.String">
         SELECT TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_SCHEMA= 'fantech_imes_v2' AND TABLE_NAME = #{labelCode}
+    </select>
+
+    <select id="selectPartField" parameterType="long" resultMap="BaseResultMap">
+        SELECT mswob.barcode, mswob.barcode_status
+        FROM mes_sfc_work_order_barcode mswob
+        WHERE
+            mswob.label_category_id = #{labelCategoryId}
     </select>
 </mapper>
