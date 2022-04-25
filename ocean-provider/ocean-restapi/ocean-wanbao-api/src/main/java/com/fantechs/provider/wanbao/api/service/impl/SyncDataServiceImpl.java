@@ -1,6 +1,7 @@
 package com.fantechs.provider.wanbao.api.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
@@ -782,7 +783,7 @@ public class SyncDataServiceImpl implements SyncDataService {
         if (flag) {
             JSONObject jsonObject = JSON.parseObject(specItems.get(0).getParaValue());
             if ("0".equals(jsonObject.get("all"))) {
-                map.put("date", DateUtil.format(DateUtil.date(), DatePattern.NORM_DATE_PATTERN));
+                map.put("date", DateUtil.format(DateUtil.offset(new Date(), DateField.HOUR, -1), DatePattern.NORM_DATETIME_FORMAT));
             }else if ("1".equals(jsonObject.get("all"))) {
                 map.put("date", jsonObject.get("syncDate"));
             }
@@ -973,9 +974,13 @@ public class SyncDataServiceImpl implements SyncDataService {
             // 批量处理
             log.info("============ updateBarcodeProcess: " + updateBarcodeProcess.size());
             log.info("============ saveList: " + saveList.size());
-            if (updateBarcodeProcess.size() > 0 || saveList.size() > 0) {
+            if (updateBarcodeProcess.size() > 0) {
                 BatchSyncBarcodeDto batchSyncBarcodeDto = new BatchSyncBarcodeDto();
                 batchSyncBarcodeDto.setUpdateList(updateBarcodeProcess);
+                sfcFeignApi.batchSyncBarcode(batchSyncBarcodeDto);
+            }
+            if (saveList.size() > 0){
+                BatchSyncBarcodeDto batchSyncBarcodeDto = new BatchSyncBarcodeDto();
                 batchSyncBarcodeDto.setList(saveList);
                 sfcFeignApi.batchSyncBarcode(batchSyncBarcodeDto);
             }

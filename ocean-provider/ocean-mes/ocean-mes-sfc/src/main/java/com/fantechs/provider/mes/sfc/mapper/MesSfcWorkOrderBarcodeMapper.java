@@ -1,17 +1,14 @@
 package com.fantechs.provider.mes.sfc.mapper;
 
-import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
+import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
 import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
-import com.fantechs.common.base.general.entity.basic.BaseLabel;
-import com.fantechs.common.base.general.entity.basic.BaseLabelCategory;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -59,4 +56,6 @@ public interface MesSfcWorkOrderBarcodeMapper extends MyMapper<MesSfcWorkOrderBa
     String findSysUser(@Param("userCode")String userCode);
 
     String findLabelView(@Param("labelCode")String labelCode);
+
+    List<MesSfcWorkOrderBarcode> selectPartField(Long labelCategoryId);
 }

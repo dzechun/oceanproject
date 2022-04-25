@@ -4,7 +4,6 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -13,7 +12,6 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
 import com.fantechs.common.base.general.dto.basic.BaseLabelMaterialDto;
 import com.fantechs.common.base.general.dto.basic.BatchGenerateCodeDto;
-import com.fantechs.common.base.general.dto.basic.imports.BaseWorkShiftImport;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
@@ -46,7 +44,6 @@ import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeReprintServic
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import com.fantechs.provider.mes.sfc.util.RabbitProducer;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -457,10 +454,12 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
 
     @Override
     public SyncFindBarcodeDto syncFindBarcode(Long labelCategoryId) {
-        Example example = new Example(MesSfcWorkOrderBarcode.class);
-        example.createCriteria().andEqualTo("labelCategoryId", labelCategoryId);
-        List<MesSfcWorkOrderBarcode> workOrderBarcodes = this.selectByExample(example);
+        long start = System.currentTimeMillis();
+        List<MesSfcWorkOrderBarcode> workOrderBarcodes = mesSfcWorkOrderBarcodeMapper.selectPartField(labelCategoryId);
+        log.info("======== 查询条码表：" + (System.currentTimeMillis() - start));
+        long start1 = System.currentTimeMillis();
         List<MesSfcBarcodeProcess> sfcBarcodeProcesses = mesSfcBarcodeProcessMapper.findByLabelCategory(labelCategoryId);
+        log.info("======== 查询条码过站表：" + (System.currentTimeMillis() - start1));
         SyncFindBarcodeDto dto = new SyncFindBarcodeDto();
         dto.setWorkOrderBarcodes(workOrderBarcodes);
         dto.setBarcodeProcesses(sfcBarcodeProcesses);
