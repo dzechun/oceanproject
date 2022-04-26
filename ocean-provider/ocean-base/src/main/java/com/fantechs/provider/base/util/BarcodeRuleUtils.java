@@ -209,6 +209,8 @@ public class BarcodeRuleUtils {
         List<String> barcodeList = new ArrayList<>();
 
         Map<String, String> functionResultMap = new HashMap<>();
+
+        long forSpecTime = System.currentTimeMillis();
         for (BaseBarcodeRuleSpec baseBarcodeRuleSpec : list) {
             //自定义函数名称
             String functionName = baseBarcodeRuleSpec.getCustomizeName();
@@ -217,6 +219,9 @@ public class BarcodeRuleUtils {
                 functionResultMap.put(functionName, param);
             }
         }
+        log.info("for执行函数循环 执行总时长 : {}毫秒)",(System.currentTimeMillis() - forSpecTime));
+
+        long forqtyTime = System.currentTimeMillis();
         for (Integer item = 0; item < qty; item++) {
             String lastBarCode = null;
             boolean hasKey = barcodeRuleUtils.redisUtil.hasKey(key);
@@ -384,6 +389,7 @@ public class BarcodeRuleUtils {
             log.info("key:"+key+"============value:"+sb + "================redis 返回值:" + b);
             barcodeList.add(sb.toString());
         }
+        log.info("for执行循环 执行总时长 : {}毫秒)",(System.currentTimeMillis() - forqtyTime));
 
         return barcodeList;
     }

@@ -399,4 +399,12 @@
         WHERE
             mswob.label_category_id = #{labelCategoryId}
     </select>
+
+    <select id="selectMaxWorkOrderBarcodeId" resultType="long">
+        select MAx(work_order_barcode_id) from  mes_sfc_work_order_barcode
+    </select>
+
+    <select id="setAutoIncrement">
+        alter table mes_sfc_work_order_barcode AUTO_INCREMENT= #{autoIncrementId};
+    </select>
 </mapper>

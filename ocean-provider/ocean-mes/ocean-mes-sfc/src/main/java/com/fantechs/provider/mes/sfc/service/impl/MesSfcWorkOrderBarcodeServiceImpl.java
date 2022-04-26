@@ -1,6 +1,7 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
@@ -47,6 +48,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -639,6 +641,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public List<MesSfcWorkOrderBarcode> add(MesSfcWorkOrderBarcode record) {
+        long startTime = System.currentTimeMillis();
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
 //        if(record.getBarcodeType()==(byte)4){
 //            MesPmWorkOrder mesPmWorkOrder = pmFeignApi.workOrderDetail(record.getWorkOrderId()).getData();
@@ -672,6 +675,8 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         }
         //判断条码产生数量不能大于工单数量
         Integer count = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getLabelCategoryId(), record.getWorkOrderId());
+        logger.info("工单相关查询 执行总时长 : {}毫秒)",(System.currentTimeMillis() - startTime));
+
         if (count + record.getQty() > record.getWorkOrderQty().doubleValue()) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012009);
         }
@@ -681,7 +686,11 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         LabelRuteDto labelRuteDto = record.getLabelRuteDto();
         SearchBaseBarcodeRuleSpec searchBaseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
         searchBaseBarcodeRuleSpec.setBarcodeRuleId(labelRuteDto.getBarcodeRuleId());
+
+        long findSpecTime = System.currentTimeMillis();
         ResponseEntity<List<BaseBarcodeRuleSpec>> responseEntity = baseFeignApi.findSpec(searchBaseBarcodeRuleSpec);
+        logger.info("查询条码规则配置 执行总时长 : {}毫秒)",(System.currentTimeMillis() - findSpecTime));
+
         if (responseEntity.getCode() != 0) {
             throw new BizErrorException(responseEntity.getMessage());
         }
@@ -748,13 +757,23 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             dto.setPlanDay(planDay);
         }
 
+        long selectTime = System.currentTimeMillis();
         ResponseEntity<List<String>> rs = baseFeignApi.batchGenerateCode(dto);
         if (rs.getCode() != 0) {
             throw new BizErrorException(rs.getMessage());
         }
+        logger.info("批量生成条码 执行总时长 : {}毫秒)",(System.currentTimeMillis() - selectTime));
+
+        List<MesSfcWorkOrderBarcode> mesSfcWorkOrderBarcodes = new ArrayList<>();
+        //获取最大值id
+        Long workOrderBarcodeId =  mesSfcWorkOrderBarcodeMapper.selectMaxWorkOrderBarcodeId();
+        int i = 0;
+
+        long forTime = System.currentTimeMillis();
         List<MesSfcBarcodeProcess> processList = new ArrayList<>();
         for (String barcode : rs.getData()) {
-            record.setWorkOrderBarcodeId(null);
+            i++;
+            //record.setWorkOrderBarcodeId(null);
             //Integer max = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getBarcodeType(),record.getWorkOrderId())
             record.setBarcode(barcode);
 
@@ -779,7 +798,8 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             record.setModifiedUserId(sysUser.getUserId());
             record.setOrgId(sysUser.getOrganizationId());
             record.setCreateBarcodeTime(new Date());
-            mesSfcWorkOrderBarcodeMapper.insertUseGeneratedKeys(record);
+            record.setWorkOrderBarcodeId(workOrderBarcodeId + i);
+            mesSfcWorkOrderBarcodes.add(record);
 
             MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode = new MesSfcWorkOrderBarcode();
             BeanUtil.copyProperties(record, mesSfcWorkOrderBarcode);
@@ -811,10 +831,22 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
 
             mesSfcWorkOrderBarcodeList.add(mesSfcWorkOrderBarcode);
         }
+        if(CollectionUtil.isNotEmpty(mesSfcWorkOrderBarcodes)){
+            //批量生成
+            mesSfcWorkOrderBarcodeMapper.insertList(mesSfcWorkOrderBarcodes);
+            //设置自增id的初始值
+            mesSfcWorkOrderBarcodeMapper.setAutoIncrement(i);
+        }
+
+        logger.info("fro循环 执行总时长 : {}毫秒)",(System.currentTimeMillis() - forTime));
+
         // 批量保存条码过站表
         if (!processList.isEmpty()) {
+            long insertListTime = System.currentTimeMillis();
             mesSfcBarcodeProcessMapper.insertList(processList);
+            logger.info("批量保存条码过站表 执行总时长 : {}毫秒)",(System.currentTimeMillis() - insertListTime));
         }
+        logger.info("新增条码 执行总时长 : {}毫秒)",(System.currentTimeMillis() - startTime));
         return mesSfcWorkOrderBarcodeList;
     }
 
