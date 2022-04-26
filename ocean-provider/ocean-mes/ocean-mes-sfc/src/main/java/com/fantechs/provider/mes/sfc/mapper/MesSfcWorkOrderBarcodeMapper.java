@@ -3,6 +3,7 @@ package com.fantechs.provider.mes.sfc.mapper;
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcWorkOrderBarcodeDto;
 import com.fantechs.common.base.general.dto.mes.sfc.PrintModel;
+import com.fantechs.common.base.general.dto.mes.sfc.SyncWorkOrderBarcodeDto;
 import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
@@ -57,7 +58,7 @@ public interface MesSfcWorkOrderBarcodeMapper extends MyMapper<MesSfcWorkOrderBa
 
     String findLabelView(@Param("labelCode")String labelCode);
 
-    List<MesSfcWorkOrderBarcode> selectPartField(Long labelCategoryId);
+    List<SyncWorkOrderBarcodeDto> selectPartField(Long labelCategoryId);
 
     Long selectMaxWorkOrderBarcodeId();
 

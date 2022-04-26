@@ -76,6 +76,12 @@
     <result column="product_family_name" jdbcType="VARCHAR" property="productFamilyName" />
   </resultMap>
 
+  <resultMap id="SyncBarcodeProcessDto" type="com.fantechs.common.base.general.dto.mes.sfc.SyncBarcodeProcessDto">
+    <result column="barcode_process_id" jdbcType="BIGINT" property="barcodeProcessId" />
+    <result column="barcode" jdbcType="VARCHAR" property="barcode" />
+    <result column="customer_barcode" jdbcType="VARCHAR" property="customerBarcode" />
+  </resultMap>
+
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
     SELECT
     msbp.*,
@@ -250,11 +256,11 @@
     ) t
   </select>
 
-  <select id="findByLabelCategory" parameterType="long" resultMap="BaseResultMap">
+  <select id="findByLabelCategory" parameterType="long" resultType="com.fantechs.common.base.general.dto.mes.sfc.SyncBarcodeProcessDto">
     SELECT
-      msbp.barcode_process_id,
+      msbp.barcode_process_id as barcodeProcessId,
       msbp.barcode,
-      msbp.customer_barcode
+      msbp.customer_barcode as customerBarcode
     FROM
       mes_sfc_barcode_process msbp
         LEFT JOIN mes_sfc_work_order_barcode mswob ON msbp.work_order_barcode_id = mswob.work_order_barcode_id

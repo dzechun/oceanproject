@@ -393,8 +393,8 @@
         SELECT TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_SCHEMA= 'fantech_imes_v2' AND TABLE_NAME = #{labelCode}
     </select>
 
-    <select id="selectPartField" parameterType="long" resultMap="BaseResultMap">
-        SELECT mswob.barcode, mswob.barcode_status
+    <select id="selectPartField" parameterType="long" resultType="com.fantechs.common.base.general.dto.mes.sfc.SyncWorkOrderBarcodeDto">
+        SELECT mswob.barcode, mswob.barcode_status as barcodeStatus
         FROM mes_sfc_work_order_barcode mswob
         WHERE
             mswob.label_category_id = #{labelCategoryId}

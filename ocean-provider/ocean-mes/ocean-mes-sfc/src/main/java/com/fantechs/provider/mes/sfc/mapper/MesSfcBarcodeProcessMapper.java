@@ -1,6 +1,7 @@
 package com.fantechs.provider.mes.sfc.mapper;
 
 import com.fantechs.common.base.general.dto.mes.sfc.MesSfcBarcodeProcessDto;
+import com.fantechs.common.base.general.dto.mes.sfc.SyncBarcodeProcessDto;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -71,5 +72,5 @@ public interface MesSfcBarcodeProcessMapper extends MyMapper<MesSfcBarcodeProces
      * @param labelCategoryId
      * @return
      */
-    List<MesSfcBarcodeProcess> findByLabelCategory(Long labelCategoryId);
+    List<SyncBarcodeProcessDto> findByLabelCategory(Long labelCategoryId);
 }

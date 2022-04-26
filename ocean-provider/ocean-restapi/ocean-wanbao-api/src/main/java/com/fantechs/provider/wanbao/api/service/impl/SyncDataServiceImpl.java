@@ -11,9 +11,7 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.general.dto.basic.*;
-import com.fantechs.common.base.general.dto.mes.sfc.BatchSyncBarcodeDto;
-import com.fantechs.common.base.general.dto.mes.sfc.BatchSyncBarcodeSaveDto;
-import com.fantechs.common.base.general.dto.mes.sfc.SyncFindBarcodeDto;
+import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
@@ -790,16 +788,16 @@ public class SyncDataServiceImpl implements SyncDataService {
             log.info("=========== jsonObject: " + JSON.toJSONString(jsonObject));
         }
         long time1 = System.currentTimeMillis();
-        log.info("=========== tiem1: " + (time1-start) + "  ========  map: " + JSON.toJSONString(map));
+        log.info("=========== 同步前耗时: " + (time1-start));
         // 执行查询
         DynamicDataSourceHolder.putDataSouce("thirdary");
         List<MiddleProduct> barcodeDatas = middleProductMapper.findBarcodeData(map);
-        log.info("============== 同步PQMS数据barcodeDatas: " + barcodeDatas.size());
+        log.info("============== PQMS数据量: " + barcodeDatas.size());
         DynamicDataSourceHolder.removeDataSource();
         long time2 = System.currentTimeMillis();
-        log.info("=========== 同步三星PQMS: " + (time2-time1));
+        log.info("=========== 查询三星PQMS耗时: " + (time2-time1));
         if (!barcodeDatas.isEmpty()) {
-            log.info("============ 开始同步PQMS数据");
+            log.info("============ 开始同步PQMS数据 ============");
             WanbaoBaseBySyncDto syncDto = baseFeignApi.findBySyncBarcodeData().getData();
             // 产线
             BaseProLine proLine = new BaseProLine();
@@ -859,22 +857,20 @@ public class SyncDataServiceImpl implements SyncDataService {
             }
             BaseRouteProcess routeProcess = list.stream().sorted(Comparator.comparing(BaseRouteProcess::getOrderNum)).findFirst().get();
             long time3 = System.currentTimeMillis();
-            log.info("=========== 查询base: " + (time3-time2));
+            log.info("=========== 查询base耗时: " + (time3-time2));
             // 工单
             List<MesPmWorkOrder> workOrders = pmFeignApi.findWorkOrderAll().getData();
             long time4 = System.currentTimeMillis();
-            log.info("=========== 查询om: " + (time4-time3));
+            log.info("=========== 查询om耗时: " + (time4-time3));
             // 条码
             SyncFindBarcodeDto findBarcodeDto = sfcFeignApi.syncFindBarcode(labelCategoryId).getData();
-            List<MesSfcWorkOrderBarcode> workOrderBarcodeDtos = findBarcodeDto.getWorkOrderBarcodes();
+            List<SyncWorkOrderBarcodeDto> workOrderBarcodeDtos = findBarcodeDto.getWorkOrderBarcodes();
 
             // 条码流程表
-            List<MesSfcBarcodeProcess> sfcBarcodeProcesses = findBarcodeDto.getBarcodeProcesses();
+            List<SyncBarcodeProcessDto> sfcBarcodeProcesses = findBarcodeDto.getBarcodeProcesses();
 
-            log.info("============ sfcBarcodeProcesses: " + sfcBarcodeProcesses.size());
-            log.info("============ workOrderBarcodeDtos: " + workOrderBarcodeDtos.size());
             long time5 = System.currentTimeMillis();
-            log.info("=========== 查询sfc: " + (time5-time4));
+            log.info("=========== 查询sfc耗时: " + (time5-time4));
             // 记录日志
             List<MesSfcBarcodeProcess> updateBarcodeProcess = new ArrayList<>();
             List<BatchSyncBarcodeSaveDto> saveList = new ArrayList<>();
@@ -899,7 +895,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                 // 匹配条码
                 boolean hasBarcode = false;
                 boolean isUsed = false;
-                for (MesSfcWorkOrderBarcode dto : workOrderBarcodeDtos) {
+                for (SyncWorkOrderBarcodeDto dto : workOrderBarcodeDtos) {
                     if (dto.getBarcode().equals(middleProduct.getBarcode())) {
                         if (dto.getBarcodeStatus().equals((byte) 1) || dto.getBarcodeStatus().equals((byte) 2)) {
                             isUsed = true;
@@ -961,31 +957,31 @@ public class SyncDataServiceImpl implements SyncDataService {
                     saveList.add(batchSyncBarcodeSaveDto);
                 } else {
                     // 修改条码流程表三星客户条码
-                    for (MesSfcBarcodeProcess entity : sfcBarcodeProcesses) {
+                    for (SyncBarcodeProcessDto entity : sfcBarcodeProcesses) {
                         if (entity.getBarcode().equals(middleProduct.getBarcode()) && !isUsed) {
                             entity.setCustomerBarcode(middleProduct.getCustomerBarcode());
-                            updateBarcodeProcess.add(entity);
+                            MesSfcBarcodeProcess process = new MesSfcBarcodeProcess();
+                            BeanUtil.copyProperties(entity, process);
+                            updateBarcodeProcess.add(process);
                         }
                     }
                 }
             }
             long time6 = System.currentTimeMillis();
-            log.info("=========== 循环处理: " + (time6-time5));
+            log.info("=========== 循环处理耗时: " + (time6-time5));
             // 批量处理
-            log.info("============ updateBarcodeProcess: " + updateBarcodeProcess.size());
-            log.info("============ saveList: " + saveList.size());
             if (updateBarcodeProcess.size() > 0) {
                 BatchSyncBarcodeDto batchSyncBarcodeDto = new BatchSyncBarcodeDto();
                 batchSyncBarcodeDto.setUpdateList(updateBarcodeProcess);
                 sfcFeignApi.batchSyncBarcode(batchSyncBarcodeDto);
             }
-            if (saveList.size() > 0){
+            if (saveList.size() > 0) {
                 BatchSyncBarcodeDto batchSyncBarcodeDto = new BatchSyncBarcodeDto();
                 batchSyncBarcodeDto.setList(saveList);
                 sfcFeignApi.batchSyncBarcode(batchSyncBarcodeDto);
             }
             long time7 = System.currentTimeMillis();
-            log.info("=========== 批量处理插入: " + (time7-time6));
+            log.info("=========== 批量处理插入耗时: " + (time7-time6));
 
             // 保存中间库
 //           DynamicDataSourceHolder.putDataSouce("secondary");

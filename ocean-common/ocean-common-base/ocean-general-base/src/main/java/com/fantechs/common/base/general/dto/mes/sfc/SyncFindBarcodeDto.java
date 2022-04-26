@@ -1,8 +1,5 @@
 package com.fantechs.common.base.general.dto.mes.sfc;
 
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +10,7 @@ import java.util.List;
 @Setter
 public class SyncFindBarcodeDto implements Serializable {
 
-    private List<MesSfcBarcodeProcess> barcodeProcesses;
+    private List<SyncBarcodeProcessDto> barcodeProcesses;
 
-    private List<MesSfcWorkOrderBarcode> workOrderBarcodes;
+    private List<SyncWorkOrderBarcodeDto> workOrderBarcodes;
 }

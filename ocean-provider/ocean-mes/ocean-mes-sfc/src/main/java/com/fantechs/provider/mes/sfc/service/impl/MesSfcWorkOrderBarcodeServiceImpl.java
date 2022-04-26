@@ -431,8 +431,10 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchSyncBarcode(BatchSyncBarcodeDto dto) {
+        log.info("======= 新增集合: " + JSON.toJSONString(dto.getList()));
+        log.info("======= 修改集合: " + JSON.toJSONString(dto.getUpdateList()));
         // 1、批量新增部分
-        if (dto.getList().size() > 0){
+        if (StringUtils.isNotEmpty(dto.getList())){
             List<MesSfcBarcodeProcess> list = new ArrayList<>();
             for (BatchSyncBarcodeSaveDto entity : dto.getList()){
                 // 保存条码表并返回ID
@@ -448,7 +450,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         }
 
         // 2、批量修改部分
-        if (dto.getUpdateList().size() > 0){
+        if (StringUtils.isNotEmpty(dto.getUpdateList())){
             mesSfcBarcodeProcessMapper.batchUpdateCustomerBarcode(dto.getUpdateList());
         }
         return 1;
@@ -457,10 +459,10 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     @Override
     public SyncFindBarcodeDto syncFindBarcode(Long labelCategoryId) {
         long start = System.currentTimeMillis();
-        List<MesSfcWorkOrderBarcode> workOrderBarcodes = mesSfcWorkOrderBarcodeMapper.selectPartField(labelCategoryId);
-        log.info("======== 查询条码表：" + (System.currentTimeMillis() - start));
+        List<SyncWorkOrderBarcodeDto> workOrderBarcodes = mesSfcWorkOrderBarcodeMapper.selectPartField(labelCategoryId);
         long start1 = System.currentTimeMillis();
-        List<MesSfcBarcodeProcess> sfcBarcodeProcesses = mesSfcBarcodeProcessMapper.findByLabelCategory(labelCategoryId);
+        List<SyncBarcodeProcessDto> sfcBarcodeProcesses = mesSfcBarcodeProcessMapper.findByLabelCategory(labelCategoryId);
+        log.info("======== 查询条码表：" + (start1 - start));
         log.info("======== 查询条码过站表：" + (System.currentTimeMillis() - start1));
         SyncFindBarcodeDto dto = new SyncFindBarcodeDto();
         dto.setWorkOrderBarcodes(workOrderBarcodes);
