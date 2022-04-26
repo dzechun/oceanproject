@@ -777,6 +777,8 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             i++;
             //record.setWorkOrderBarcodeId(null);
             //Integer max = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getBarcodeType(),record.getWorkOrderId())
+            MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode = new MesSfcWorkOrderBarcode();
+            BeanUtil.copyProperties(record, mesSfcWorkOrderBarcode);
             record.setBarcode(barcode);
 
             if (StringUtils.isNotEmpty(record.getOption1()) && record.getOption1().equals("5")) {
@@ -793,18 +795,16 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             }
 
             //待打印状态
-            record.setBarcodeStatus((byte) 3);
-            record.setCreateTime(new Date());
-            record.setCreateUserId(sysUser.getUserId());
-            record.setModifiedTime(new Date());
-            record.setModifiedUserId(sysUser.getUserId());
-            record.setOrgId(sysUser.getOrganizationId());
-            record.setCreateBarcodeTime(new Date());
-            record.setWorkOrderBarcodeId(workOrderBarcodeId + i);
-            mesSfcWorkOrderBarcodes.add(record);
+            mesSfcWorkOrderBarcode.setBarcodeStatus((byte) 3);
+            mesSfcWorkOrderBarcode.setCreateTime(new Date());
+            mesSfcWorkOrderBarcode.setCreateUserId(sysUser.getUserId());
+            mesSfcWorkOrderBarcode.setModifiedTime(new Date());
+            mesSfcWorkOrderBarcode.setModifiedUserId(sysUser.getUserId());
+            mesSfcWorkOrderBarcode.setOrgId(sysUser.getOrganizationId());
+            mesSfcWorkOrderBarcode.setCreateBarcodeTime(new Date());
+            mesSfcWorkOrderBarcode.setWorkOrderBarcodeId(workOrderBarcodeId + i);
+            mesSfcWorkOrderBarcodes.add(mesSfcWorkOrderBarcode);
 
-            MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode = new MesSfcWorkOrderBarcode();
-            BeanUtil.copyProperties(record, mesSfcWorkOrderBarcode);
             if (labelRuteDto.getBarcodeType() == (byte) 1) {
                 //生成条码过站记录
                 MesSfcBarcodeProcess mesSfcBarcodeProcess = new MesSfcBarcodeProcess();
