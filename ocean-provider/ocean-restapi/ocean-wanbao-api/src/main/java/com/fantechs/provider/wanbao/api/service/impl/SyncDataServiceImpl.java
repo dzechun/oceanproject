@@ -227,7 +227,7 @@ public class SyncDataServiceImpl implements SyncDataService {
             }
 
             // 记录日志
-            logList.add(build(sysUser.getOrganizationId(), (byte) 1, "查询数据库-同步物料", null, new BigDecimal(System.currentTimeMillis() - start)));
+            logList.add(build(sysUser.getOrganizationId(), (byte) 1, "查询数据库-同步物料", JSON.toJSONString(middleMaterials), new BigDecimal(System.currentTimeMillis() - start)));
         }
         if (!logList.isEmpty()) {
             securityFeignApi.batchAdd(logList);
@@ -447,7 +447,7 @@ public class SyncDataServiceImpl implements SyncDataService {
             if (!updateList.isEmpty()) {
                 pmFeignApi.batchUpdate(updateList);
             }
-            logList.add(build(sysUser.getOrganizationId(), (byte) 1, "查询数据库-同步生产订单", null, new BigDecimal(System.currentTimeMillis() - start)));
+            logList.add(build(sysUser.getOrganizationId(), (byte) 1, "查询数据库-同步生产订单", JSON.toJSONString(workOrders), new BigDecimal(System.currentTimeMillis() - start)));
             if (!logList.isEmpty()) {
                 securityFeignApi.batchAdd(logList);
             }
@@ -613,7 +613,7 @@ public class SyncDataServiceImpl implements SyncDataService {
 //                DynamicDataSourceHolder.removeDataSource();
 //            }
 
-            logList.add(build(sysUser.getOrganizationId(), (byte) 1, "查询数据库-同步销售订单", null, new BigDecimal(System.currentTimeMillis() - start)));
+            logList.add(build(sysUser.getOrganizationId(), (byte) 1, "查询数据库-同步销售订单", JSON.toJSONString(salesOrders), new BigDecimal(System.currentTimeMillis() - start)));
         }
         if (!logList.isEmpty()) {
             securityFeignApi.batchAdd(logList);
@@ -752,7 +752,7 @@ public class SyncDataServiceImpl implements SyncDataService {
 //                DynamicDataSourceHolder.removeDataSource();
 //            }
 
-            logList.add(build(sysUser.getOrganizationId(), (byte) 1, "查询数据库-同步出库单", null, new BigDecimal(System.currentTimeMillis() - start)));
+            logList.add(build(sysUser.getOrganizationId(), (byte) 1, "查询数据库-同步出库单", JSON.toJSONString(listMap), new BigDecimal(System.currentTimeMillis() - start)));
         }
         if (!logList.isEmpty()) {
             securityFeignApi.batchAdd(logList);
@@ -990,7 +990,7 @@ public class SyncDataServiceImpl implements SyncDataService {
 //           }
 //           DynamicDataSourceHolder.removeDataSource();
 
-            logList.add(build(sysUser.getOrganizationId(), (byte) 1, "查询数据库-同步产品条码", null, new BigDecimal(System.currentTimeMillis() - start)));
+            logList.add(build(sysUser.getOrganizationId(), (byte) 1, "查询数据库-同步产品条码", JSON.toJSONString(barcodeDatas), new BigDecimal(System.currentTimeMillis() - start)));
         }
         if (!logList.isEmpty()) {
             securityFeignApi.batchAdd(logList);
@@ -1010,10 +1010,8 @@ public class SyncDataServiceImpl implements SyncDataService {
         apiLog.setApiModule("ocean-wanbao-api");
         apiLog.setApiUrl(apiUrl);
         apiLog.setOrgId(orgId);
-        if (StringUtils.isNotEmpty(responseData)){
-            apiLog.setResponseData(responseData);
-        }
-        if (consumeTime != null){
+        apiLog.setResponseData(responseData);
+        if (StringUtils.isNotEmpty(consumeTime)){
             apiLog.setConsumeTime(consumeTime);
         }
         return apiLog;
