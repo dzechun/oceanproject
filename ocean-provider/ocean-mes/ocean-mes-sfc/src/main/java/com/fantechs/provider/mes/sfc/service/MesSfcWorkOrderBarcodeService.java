@@ -83,7 +83,7 @@ public interface MesSfcWorkOrderBarcodeService extends IService<MesSfcWorkOrderB
      * @param labelCategoryId
      * @return
      */
-    SyncFindBarcodeDto syncFindBarcode(Long labelCategoryId);
+    SyncFindBarcodeDto syncFindBarcode(Long labelCategoryId, List<String> barcodeList);
 
 
     /**

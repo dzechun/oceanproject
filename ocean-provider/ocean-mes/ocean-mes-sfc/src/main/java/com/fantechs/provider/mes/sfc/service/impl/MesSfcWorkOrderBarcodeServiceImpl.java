@@ -48,7 +48,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -431,24 +430,6 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public int batchSyncBarcode(BatchSyncBarcodeDto dto) {
-        log.info("======= 新增集合: " + JSON.toJSONString(dto.getList()));
-        log.info("======= 修改集合: " + JSON.toJSONString(dto.getUpdateList()));
-        // 1、批量新增部分
-        if (StringUtils.isNotEmpty(dto.getList())){
-            List<MesSfcBarcodeProcess> list = new ArrayList<>();
-            for (BatchSyncBarcodeSaveDto entity : dto.getList()){
-                // 保存条码表并返回ID
-                mesSfcWorkOrderBarcodeMapper.insertUseGeneratedKeys(entity.getWorkOrderBarcode());
-
-                MesSfcBarcodeProcess barcodeProcess = entity.getBarcodeProcess();
-                barcodeProcess.setWorkOrderBarcodeId(entity.getWorkOrderBarcode().getWorkOrderBarcodeId());
-                list.add(barcodeProcess);
-            }
-
-            // 批量保存条码流程表
-            mesSfcBarcodeProcessMapper.insertList(list);
-        }
-
         // 2、批量修改部分
         if (StringUtils.isNotEmpty(dto.getUpdateList())){
             mesSfcBarcodeProcessMapper.batchUpdateCustomerBarcode(dto.getUpdateList());
@@ -457,15 +438,17 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     }
 
     @Override
-    public SyncFindBarcodeDto syncFindBarcode(Long labelCategoryId) {
+    public SyncFindBarcodeDto syncFindBarcode(Long labelCategoryId, List<String> barcodeList) {
         long start = System.currentTimeMillis();
-        List<SyncWorkOrderBarcodeDto> workOrderBarcodes = mesSfcWorkOrderBarcodeMapper.selectPartField(labelCategoryId);
+        Map<String, Object> map = new HashMap<>();
+        map.put("labelCategoryId", labelCategoryId);
+        map.put("barcodeList", barcodeList);
+        List<SyncWorkOrderBarcodeDto> workOrderBarcodes = mesSfcWorkOrderBarcodeMapper.selectPartField(map);
         long start1 = System.currentTimeMillis();
-        List<SyncBarcodeProcessDto> sfcBarcodeProcesses = mesSfcBarcodeProcessMapper.findByLabelCategory(labelCategoryId);
+        List<SyncBarcodeProcessDto> sfcBarcodeProcesses = mesSfcBarcodeProcessMapper.findByLabelCategory(map);
         log.info("======== 查询条码表：" + (start1 - start));
         log.info("======== 查询条码过站表：" + (System.currentTimeMillis() - start1));
         SyncFindBarcodeDto dto = new SyncFindBarcodeDto();
-        dto.setWorkOrderBarcodes(workOrderBarcodes);
         dto.setBarcodeProcesses(sfcBarcodeProcesses);
         return dto;
     }
@@ -779,21 +762,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             //Integer max = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getBarcodeType(),record.getWorkOrderId())
             MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode = new MesSfcWorkOrderBarcode();
             BeanUtil.copyProperties(record, mesSfcWorkOrderBarcode);
-            record.setBarcode(barcode);
-
-            if (StringUtils.isNotEmpty(record.getOption1()) && record.getOption1().equals("5")) {
-                //判断是否已经打完
-                BigDecimal barCodeTotalQty = mesSfcWorkOrderBarcodeMapper.saleOrderTotalQty(ControllerUtil.dynamicCondition("type", 1,
-                        "salesOrderId", record.getSalesOrderId(),
-                        "barcodeTypeId", record.getLabelCategoryId()));
-                BigDecimal salesTotalQty = mesSfcWorkOrderBarcodeMapper.saleOrderTotalQty(ControllerUtil.dynamicCondition("type", 1, "salesOrderId", record.getSalesOrderId()));
-                if (barCodeTotalQty.compareTo(BigDecimal.ZERO) != 0 && salesTotalQty.compareTo(barCodeTotalQty) == 0) {
-                    log.info("=========== redis 失效了");
-                    //三秒后失效
-                    redisUtil.expire(key, 3);
-                }
-            }
-
+            mesSfcWorkOrderBarcode.setBarcode(barcode);
             //待打印状态
             mesSfcWorkOrderBarcode.setBarcodeStatus((byte) 3);
             mesSfcWorkOrderBarcode.setCreateTime(new Date());
@@ -832,6 +801,18 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             }
 
             mesSfcWorkOrderBarcodeList.add(mesSfcWorkOrderBarcode);
+        }
+        if (StringUtils.isNotEmpty(record.getOption1()) && record.getOption1().equals("5")) {
+            //判断是否已经打完
+            BigDecimal barCodeTotalQty = mesSfcWorkOrderBarcodeMapper.saleOrderTotalQty(ControllerUtil.dynamicCondition("type", 1,
+                    "salesOrderId", record.getSalesOrderId(),
+                    "barcodeTypeId", record.getLabelCategoryId()));
+            BigDecimal salesTotalQty = mesSfcWorkOrderBarcodeMapper.saleOrderTotalQty(ControllerUtil.dynamicCondition("type", 1, "salesOrderId", record.getSalesOrderId()));
+            if (barCodeTotalQty.compareTo(BigDecimal.ZERO) != 0 && salesTotalQty.compareTo(barCodeTotalQty) == 0) {
+                log.info("=========== redis 失效了");
+                //三秒后失效
+                redisUtil.expire(key, 3);
+            }
         }
         if(CollectionUtil.isNotEmpty(mesSfcWorkOrderBarcodes)){
             //批量生成

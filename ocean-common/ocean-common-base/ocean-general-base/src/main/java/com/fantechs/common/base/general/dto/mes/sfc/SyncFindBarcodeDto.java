@@ -11,6 +11,4 @@ import java.util.List;
 public class SyncFindBarcodeDto implements Serializable {
 
     private List<SyncBarcodeProcessDto> barcodeProcesses;
-
-    private List<SyncWorkOrderBarcodeDto> workOrderBarcodes;
 }

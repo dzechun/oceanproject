@@ -9,7 +9,5 @@ import java.util.List;
 @Data
 public class BatchSyncBarcodeDto implements Serializable {
 
-    private List<BatchSyncBarcodeSaveDto> list;
-
     private List<MesSfcBarcodeProcess> updateList;
 }

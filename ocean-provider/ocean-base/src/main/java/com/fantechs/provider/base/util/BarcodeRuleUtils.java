@@ -394,6 +394,48 @@ public class BarcodeRuleUtils {
         return barcodeList;
     }
 
+    public static List<String> batchAnalysisCodeByWanbao(List<BaseBarcodeRuleSpec> list, String code,String params,Map<String,Object> map, Integer qty, String key,String planYear,String planMonth,String planDay) {
+        long starttime = System.currentTimeMillis();
+
+        String lastBarCode = null;
+        boolean hasKey = barcodeRuleUtils.redisUtil.hasKey(key);
+        if(hasKey){
+            Object redisRuleData = barcodeRuleUtils.redisUtil.get(key);
+            lastBarCode = String.valueOf(redisRuleData);
+        }else {
+            List<String> barcodes = batchAnalysisCode(list, code, params, map, 1, key, planYear, planMonth, planDay);
+            lastBarCode = barcodes.get(0);
+        }
+        log.info("key:"+key+"============ lastBarCode:"+ lastBarCode + "========= hasKey: " + hasKey);
+        //获取最大流水号
+        String maxCode = getMaxSerialNumber(list, lastBarCode, planYear, planMonth, planDay);
+        // 批量生成条码
+        Integer start = Integer.valueOf(maxCode) == 1 ? 0 : Integer.valueOf(maxCode);
+        String fixedValue = lastBarCode.substring(0, lastBarCode.length() - maxCode.length());
+        log.info("======最大流水号:" + maxCode + "============ 固定值:" + fixedValue + "====== qty: " + qty);
+        String returnBarcode = null;
+        List<String> barcodeStrList = new ArrayList<>();
+        for (int i = 1; i <= qty; i++) {
+            String str = String.valueOf((start + i));
+            while (true) {
+                if (maxCode.length() == str.length()) {
+                    break;
+                }
+                str = "0" + str;
+            }
+            log.info("======= barcode : " + fixedValue + str);
+            barcodeStrList.add(fixedValue + str);
+            if (i == qty){
+                returnBarcode = fixedValue + str;
+            }
+        }
+        log.info("======== barcodeStrList: " + JSON.toJSON(barcodeStrList));
+        // 更新redis最新条码
+        boolean b = barcodeRuleUtils.redisUtil.set(key, returnBarcode);
+        log.info("============== 生成条码耗时：" + (System.currentTimeMillis() - starttime));
+        return barcodeStrList;
+    }
+
     private static synchronized String generateStreamCode(String maxCode, StringBuilder sb, Integer barcodeLength, Integer initialValue, String customizeCode, String step) {
         if (StringUtils.isEmpty(maxCode)) {
             maxCode = changeCode(barcodeLength, initialValue);

@@ -19,7 +19,6 @@ import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrder;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -863,9 +862,8 @@ public class SyncDataServiceImpl implements SyncDataService {
             long time4 = System.currentTimeMillis();
             log.info("=========== 查询om耗时: " + (time4-time3));
             // 条码
-            SyncFindBarcodeDto findBarcodeDto = sfcFeignApi.syncFindBarcode(labelCategoryId).getData();
-            List<SyncWorkOrderBarcodeDto> workOrderBarcodeDtos = findBarcodeDto.getWorkOrderBarcodes();
-
+            List<String> barcodeList = barcodeDatas.stream().map(MiddleProduct::getBarcode).collect(Collectors.toList());
+            SyncFindBarcodeDto findBarcodeDto = sfcFeignApi.syncFindBarcode(labelCategoryId, barcodeList).getData();
             // 条码流程表
             List<SyncBarcodeProcessDto> sfcBarcodeProcesses = findBarcodeDto.getBarcodeProcesses();
 
@@ -873,7 +871,6 @@ public class SyncDataServiceImpl implements SyncDataService {
             log.info("=========== 查询sfc耗时: " + (time5-time4));
             // 记录日志
             List<MesSfcBarcodeProcess> updateBarcodeProcess = new ArrayList<>();
-            List<BatchSyncBarcodeSaveDto> saveList = new ArrayList<>();
             for (MiddleProduct middleProduct : barcodeDatas) {
                 if (StringUtils.isEmpty(middleProduct) || StringUtils.isEmpty(middleProduct.getCustomerBarcode()) || StringUtils.isEmpty(middleProduct.getBarcode())) {
                     continue;
@@ -893,77 +890,13 @@ public class SyncDataServiceImpl implements SyncDataService {
                 }
 
                 // 匹配条码
-                boolean hasBarcode = false;
-                boolean isUsed = false;
-                for (SyncWorkOrderBarcodeDto dto : workOrderBarcodeDtos) {
-                    if (dto.getBarcode().equals(middleProduct.getBarcode())) {
-                        if (dto.getBarcodeStatus().equals((byte) 1) || dto.getBarcodeStatus().equals((byte) 2)) {
-                            isUsed = true;
-                        }
-                        hasBarcode = true;
-                        break;
-                    }
-                }
-
-                if (!hasBarcode) {
-                    // 保存条码表
-                    MesSfcWorkOrderBarcode workOrderBarcode = new MesSfcWorkOrderBarcode();
-                    workOrderBarcode.setBarcode(middleProduct.getBarcode());
-                    workOrderBarcode.setLabelCategoryId(labelCategoryId);
-                    workOrderBarcode.setOption1("2");
-                    workOrderBarcode.setWorkOrderId(workOrder.getWorkOrderId());
-                    workOrderBarcode.setWorkOrderCode(workOrder.getWorkOrderCode());
-                    workOrderBarcode.setBarcodeStatus((byte) 0);
-                    workOrderBarcode.setPrintTime(new Date());
-                    workOrderBarcode.setCreateTime(new Date());
-                    workOrderBarcode.setCreateUserId(sysUser.getUserId());
-                    workOrderBarcode.setModifiedTime(new Date());
-                    workOrderBarcode.setModifiedUserId(sysUser.getUserId());
-                    workOrderBarcode.setOrgId(sysUser.getOrganizationId());
-                    workOrderBarcode.setCreateBarcodeTime(new Date());
-                    workOrderBarcode.setIsDelete((byte) 1);
-
-                    // 保存条码流程表
-                    MesSfcBarcodeProcess mesSfcBarcodeProcess = new MesSfcBarcodeProcess();
-                    mesSfcBarcodeProcess.setWorkOrderId(workOrder.getWorkOrderId());
-                    mesSfcBarcodeProcess.setWorkOrderCode(workOrder.getWorkOrderCode());
-                    mesSfcBarcodeProcess.setCustomerBarcode(middleProduct.getCustomerBarcode());
-                    mesSfcBarcodeProcess.setBarcodeType((byte) 2);
-                    mesSfcBarcodeProcess.setBarcode(middleProduct.getBarcode());
-                    mesSfcBarcodeProcess.setProLineId(proLine.getProLineId());
-                    mesSfcBarcodeProcess.setProcessCode(routeProcess.getProcessCode());
-                    mesSfcBarcodeProcess.setMaterialId(workOrder.getMaterialId());
-                    mesSfcBarcodeProcess.setMaterialCode(middleProduct.getMaterialCode());
-                    mesSfcBarcodeProcess.setMaterialName(productProcessRoute.getMaterialName());
-                    mesSfcBarcodeProcess.setRouteId(productProcessRoute.getRouteId());
-                    mesSfcBarcodeProcess.setRouteCode(productProcessRoute.getRouteCode());
-                    mesSfcBarcodeProcess.setRouteName(productProcessRoute.getRouteName());
-                    mesSfcBarcodeProcess.setProcessId(routeProcess.getProcessId());
-                    mesSfcBarcodeProcess.setProcessName(routeProcess.getProcessName());
-                    mesSfcBarcodeProcess.setNextProcessId(routeProcess.getProcessId());
-                    mesSfcBarcodeProcess.setNextProcessName(routeProcess.getProcessName());
-                    mesSfcBarcodeProcess.setSectionId(routeProcess.getSectionId());
-                    mesSfcBarcodeProcess.setSectionName(routeProcess.getSectionName());
-                    mesSfcBarcodeProcess.setCreateTime(new Date());
-                    mesSfcBarcodeProcess.setCreateUserId(sysUser.getUserId());
-                    mesSfcBarcodeProcess.setModifiedTime(new Date());
-                    mesSfcBarcodeProcess.setModifiedUserId(sysUser.getUserId());
-                    mesSfcBarcodeProcess.setOrgId(sysUser.getOrganizationId());
-                    mesSfcBarcodeProcess.setIsDelete((byte) 1);
-
-                    BatchSyncBarcodeSaveDto batchSyncBarcodeSaveDto = new BatchSyncBarcodeSaveDto();
-                    batchSyncBarcodeSaveDto.setBarcodeProcess(mesSfcBarcodeProcess);
-                    batchSyncBarcodeSaveDto.setWorkOrderBarcode(workOrderBarcode);
-                    saveList.add(batchSyncBarcodeSaveDto);
-                } else {
-                    // 修改条码流程表三星客户条码
-                    for (SyncBarcodeProcessDto entity : sfcBarcodeProcesses) {
-                        if (entity.getBarcode().equals(middleProduct.getBarcode()) && !isUsed) {
-                            entity.setCustomerBarcode(middleProduct.getCustomerBarcode());
-                            MesSfcBarcodeProcess process = new MesSfcBarcodeProcess();
-                            BeanUtil.copyProperties(entity, process);
-                            updateBarcodeProcess.add(process);
-                        }
+                // 修改条码流程表三星客户条码
+                for (SyncBarcodeProcessDto entity : sfcBarcodeProcesses) {
+                    if (entity.getBarcode().equals(middleProduct.getBarcode()) && !middleProduct.getCustomerBarcode().equals(entity.getCustomerBarcode())) {
+                        entity.setCustomerBarcode(middleProduct.getCustomerBarcode());
+                        MesSfcBarcodeProcess process = new MesSfcBarcodeProcess();
+                        BeanUtil.copyProperties(entity, process);
+                        updateBarcodeProcess.add(process);
                     }
                 }
             }
@@ -973,11 +906,6 @@ public class SyncDataServiceImpl implements SyncDataService {
             if (updateBarcodeProcess.size() > 0) {
                 BatchSyncBarcodeDto batchSyncBarcodeDto = new BatchSyncBarcodeDto();
                 batchSyncBarcodeDto.setUpdateList(updateBarcodeProcess);
-                sfcFeignApi.batchSyncBarcode(batchSyncBarcodeDto);
-            }
-            if (saveList.size() > 0) {
-                BatchSyncBarcodeDto batchSyncBarcodeDto = new BatchSyncBarcodeDto();
-                batchSyncBarcodeDto.setList(saveList);
                 sfcFeignApi.batchSyncBarcode(batchSyncBarcodeDto);
             }
             long time7 = System.currentTimeMillis();

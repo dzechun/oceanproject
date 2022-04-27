@@ -266,5 +266,8 @@
         LEFT JOIN mes_sfc_work_order_barcode mswob ON msbp.work_order_barcode_id = mswob.work_order_barcode_id
     WHERE
       mswob.label_category_id = #{labelCategoryId}
+    <foreach collection="barcodeList" index="index" item="item" open="AND mswob.barcode IN (" close=")" separator=",">
+      #{item}
+    </foreach>
   </select>
 </mapper>

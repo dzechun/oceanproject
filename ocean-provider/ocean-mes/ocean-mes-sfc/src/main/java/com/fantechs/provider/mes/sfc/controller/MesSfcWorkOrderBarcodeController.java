@@ -3,7 +3,6 @@ package com.fantechs.provider.mes.sfc.controller;
 import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.imports.BaseAddressImport;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
@@ -166,8 +165,8 @@ public class MesSfcWorkOrderBarcodeController {
 
     @ApiOperation("万宝-查询条码数据")
     @PostMapping("/syncFindBarcode")
-    public ResponseEntity<SyncFindBarcodeDto> syncFindBarcode(@ApiParam(value = "必传",required = true) @RequestParam Long labelCategoryId){
-        SyncFindBarcodeDto dto = mesSfcWorkOrderBarcodeService.syncFindBarcode(labelCategoryId);
+    public ResponseEntity<SyncFindBarcodeDto> syncFindBarcode(@ApiParam(value = "必传",required = true) @RequestParam Long labelCategoryId, @ApiParam(value = "条码集合", required = true) @RequestParam List<String> barcodeList){
+        SyncFindBarcodeDto dto = mesSfcWorkOrderBarcodeService.syncFindBarcode(labelCategoryId, barcodeList);
         return ControllerUtil.returnDataSuccess(dto, 1);
     }
 

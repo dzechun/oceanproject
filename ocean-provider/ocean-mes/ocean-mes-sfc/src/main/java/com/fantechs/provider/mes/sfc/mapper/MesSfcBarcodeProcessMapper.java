@@ -69,8 +69,7 @@ public interface MesSfcBarcodeProcessMapper extends MyMapper<MesSfcBarcodeProces
 
     /**
      * 万宝同步PQMS数据=通过类别查询条码流程数据
-     * @param labelCategoryId
      * @return
      */
-    List<SyncBarcodeProcessDto> findByLabelCategory(Long labelCategoryId);
+    List<SyncBarcodeProcessDto> findByLabelCategory(Map<String, Object> map);
 }

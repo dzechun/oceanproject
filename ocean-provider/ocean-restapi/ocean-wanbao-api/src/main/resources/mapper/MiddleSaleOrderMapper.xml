@@ -63,7 +63,7 @@
             AND mh.mo_status = '审批通过'
             AND mld.LINE_NUMBER LIKE '%.1'
             <if test="date != null and date != ''">
-                and mh.order_date >= TO_DATE(#{date} , 'YYYY-MM-DD' )
+                and mh.LAST_UPDATE_DATE >= TO_DATE(#{date} , 'YYYY-MM-DD' )
             </if>
         </where>
     </select>

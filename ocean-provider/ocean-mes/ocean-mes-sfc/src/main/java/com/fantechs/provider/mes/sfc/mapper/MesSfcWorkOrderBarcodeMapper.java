@@ -58,7 +58,7 @@ public interface MesSfcWorkOrderBarcodeMapper extends MyMapper<MesSfcWorkOrderBa
 
     String findLabelView(@Param("labelCode")String labelCode);
 
-    List<SyncWorkOrderBarcodeDto> selectPartField(Long labelCategoryId);
+    List<SyncWorkOrderBarcodeDto> selectPartField(Map<String, Object> map);
 
     Long selectMaxWorkOrderBarcodeId();
 
