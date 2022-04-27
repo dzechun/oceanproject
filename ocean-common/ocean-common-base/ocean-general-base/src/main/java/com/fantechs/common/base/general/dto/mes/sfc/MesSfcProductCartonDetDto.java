@@ -8,4 +8,5 @@ import java.io.Serializable;
 
 @Data
 public class MesSfcProductCartonDetDto extends MesSfcProductCartonDet implements Serializable {
+    private  Byte  closeStatus;
 }
