@@ -312,6 +312,7 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
                     wmsInnerInventoryDet.setInventoryStatusId(rs.getData().get(0).getInventoryStatusId());
                     wmsInnerInventoryDet.setSalesBarcode(wmsInnerInitStockBarcode.getSalesBarcode());
                     wmsInnerInventoryDet.setCustomerBarcode(clientCode);
+                    wmsInnerInventoryDet.setProductionDate(new Date());
                     wmsInnerInventoryDetMapper.insertSelective(wmsInnerInventoryDet);
                 }
             }
