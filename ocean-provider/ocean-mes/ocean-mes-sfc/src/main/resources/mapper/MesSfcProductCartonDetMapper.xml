@@ -2,9 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fantechs.provider.mes.sfc.mapper.MesSfcProductCartonDetMapper">
   <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductCartonDet">
-    <!--
-      WARNING - @mbg.generated
-    -->
     <id column="product_carton_det_id" jdbcType="BIGINT" property="productCartonDetId" />
     <result column="product_carton_id" jdbcType="BIGINT" property="productCartonId" />
     <result column="work_order_barcode_id" jdbcType="BIGINT" property="workOrderBarcodeId" />
@@ -21,6 +18,9 @@
   </resultMap>
 
   <resultMap id="BaseResultDtoMap" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.mes.sfc.MesSfcProductCartonDetDto">
+
+    <result column="close_status" jdbcType="TINYINT" property="closeStatus" />
+
   </resultMap>
 
   <resultMap id="BaseResultDto" type="com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto">
@@ -49,8 +49,9 @@
   </sql>
 
   <select id="findList" resultMap="BaseResultDtoMap" parameterType="map">
-    select <include refid="BaseColumnList"/>
+    select <include refid="BaseColumnList"/>,mspc.close_status
     FROM mes_sfc_product_carton_det mspcd
+    LEFT JOIN mes_sfc_product_carton mspc  on  mspcd.product_carton_id = mspc.product_carton_id
     <where>
       <if test="productCartonId != null">
         and mspcd.product_carton_id = #{productCartonId}
