@@ -94,6 +94,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     @LcnTransaction
     public Boolean pdaCartonWork(PdaCartonWorkDto dto) throws Exception {
         long start = System.currentTimeMillis();
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+
         // 2022-03-08 判断是否质检完成之后走产线入库
         SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
         searchWmsInnerInventoryDet.setBarcode(dto.getBarCode());
@@ -103,27 +105,20 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             return true;
         }
 
-        // 获取登录用户
-        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         String customerBarcode = null;
         if (dto.getBarCode().length() != 23){
             // 万宝项目-判断是三星客户条码还是厂内码
-            SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-            searchSysSpecItem.setSpecCode("wanbaoCheckBarcode");
-            List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-            if (!specItems.isEmpty() && "1".equals(specItems.get(0).getParaValue())){
                 Example example = new Example(MesSfcBarcodeProcess.class);
                 Example.Criteria criteria = example.createCriteria();
                 criteria.andLike("customerBarcode", dto.getBarCode() + "%");
                 List<MesSfcBarcodeProcess> mesSfcBarcodeProcesses = mesSfcBarcodeProcessService.selectByExample(example);
-                if (mesSfcBarcodeProcesses.isEmpty()){
+                if (mesSfcBarcodeProcesses.isEmpty()) {
                     throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码BarcodeUtils：" + dto.getBarCode() + "在系统中不存在");
                 }
                 customerBarcode = dto.getBarCode();
                 MesSfcBarcodeProcess barcodeProcess = mesSfcBarcodeProcesses.get(0);
                 dto.setBarCode(barcodeProcess.getBarcode());
-            }
         }
 
         //条码生产订单条码表
@@ -161,20 +156,19 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 .barcode(dto.getBarCode())
                 .nextProcessId(dto.getProcessId())
                 .build());
-        if (mesSfcBarcodeProcess != null) {
-            if (!mesSfcBarcodeProcess.getProLineId().equals(dto.getProLineId())){
-                throw new BizErrorException(ErrorCodeEnum.PDA40012003.getCode(), "该产品条码产线跟该工位产线不匹配");
-            }
-            // 已完成所有过站工序
-            if (mesSfcBarcodeProcess.getNextProcessId().equals(0L)){
-                throw new BizErrorException(ErrorCodeEnum.PDA40012003.getCode(), "该产品条码已完成所有工序过站");
-            }
-            //是否已不良
-            if (StringUtils.isNotEmpty(mesSfcBarcodeProcess.getBarcodeStatus()) && mesSfcBarcodeProcess.getBarcodeStatus().equals((byte)0)){
-                throw new BizErrorException("该产品条码已不良 不可继续");
-            }
-        }else {
+        if(StringUtils.isEmpty(mesSfcBarcodeProcess)){
             throw new BizErrorException(ErrorCodeEnum.PDA40012002);
+        }
+        if (!mesSfcBarcodeProcess.getProLineId().equals(dto.getProLineId())){
+            throw new BizErrorException(ErrorCodeEnum.PDA40012003.getCode(), "该产品条码产线跟该工位产线不匹配");
+        }
+        // 已完成所有过站工序
+        if (mesSfcBarcodeProcess.getNextProcessId().equals(0L)){
+            throw new BizErrorException(ErrorCodeEnum.PDA40012003.getCode(), "该产品条码已完成所有工序过站");
+        }
+        //是否已不良
+        if (StringUtils.isNotEmpty(mesSfcBarcodeProcess.getBarcodeStatus()) && mesSfcBarcodeProcess.getBarcodeStatus().equals((byte)0)){
+            throw new BizErrorException("该产品条码已不良 不可继续");
         }
 
         // 2、校验条码是否关联包箱
@@ -218,10 +212,10 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         }
 
         // 5、是否要扫附件码
-        if(dto.getAnnex() && StringUtils.isEmpty(dto.getBarAnnexCode())){
-            return false;
-        }
         if (dto.getAnnex()) {
+            if(StringUtils.isEmpty(dto.getBarAnnexCode())){
+                return false;
+            }
             if (dto.getBarCode().equals(dto.getBarAnnexCode())){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "厂内码与附件码重复扫描");
             }
@@ -282,7 +276,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     }
                 }
             }
-            boolean iswork = false;
+            boolean isWork = false;
             if (!isBarCode) {
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该附件码不存在系统中");
             } else {
@@ -330,7 +324,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                                 .createUserId(user.getUserId())
                                 .isDelete((byte) 1)
                                 .build());
-                        iswork = false;
+                        isWork = false;
 
                         /**
                          * 万宝特性要求
@@ -375,15 +369,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     }
                 }
             }
-            if (iswork) {
-                // 有附件码未作业，直接返回
+            // 有附件码未作业或有附件码并且已作业，直接返回
+            if (isWork||keyPartRelevanceDtos.size() + 1 < usageQty.intValue()) {
                 return false;
-            }else {
-                // 有附件码并且已作业
-                if(keyPartRelevanceDtos.size() + 1 < usageQty.intValue()){
-                    // 但是附件数量不满足工单清单用量，直接返回
-                    return false;
-                }
             }
         }else {
             if (StringUtils.isNotEmpty(customerBarcode)){
