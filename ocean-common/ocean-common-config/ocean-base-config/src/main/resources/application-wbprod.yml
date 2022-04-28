@@ -40,7 +40,7 @@ spring:
         allow:
         deny:
   redis:
-    host: localhost
+    host: 192.168.5.89
     port: 6379
     password: qwe!@#
   jackson:
@@ -49,7 +49,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 127.0.0.1:8848
+        server-addr: 192.168.5.89:8848
   servlet:
     multipart:
       max-file-size: 500MB
@@ -67,7 +67,7 @@ eureka:
     #status-page-url: http://${spring.cloud.client.ip-address}:${server.port}/swagger-ui.html
   client:
     service-url:
-      defaultZone: http://root:root@localhost:8761/eureka/
+      defaultZone: http://root:root@192.168.5.89:8761/eureka/
 ribbon:
   eureka:
     enabled: true
@@ -78,7 +78,7 @@ ribbon:
 
 tx-lcn:
   client:
-    manager-address: 127.0.0.1:8070
+    manager-address: 192.168.5.89:8070
 
 feign:
   hystrix:
