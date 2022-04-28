@@ -436,6 +436,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
             BaseMaterialImport baseMaterialImport = baseMaterialImports.get(i);
 
             String materialCode = baseMaterialImport.getMaterialCode();
+            String materialName = baseMaterialImport.getMaterialName();
             String labelCode = baseMaterialImport.getLabelCode();//标签代码
             String supplierCode = baseMaterialImport.getSupplierCode();//供应商代码
             String inspectionItemCode = baseMaterialImport.getInspectionItemCode();//检验项目单号
@@ -447,8 +448,8 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
             Integer transferQuantity = baseMaterialImport.getTransferQuantity();//转移批量
 
             if (StringUtils.isEmpty(
-                    materialCode,transferQuantity
-            ) || transferQuantity <= 0){
+                materialCode,materialName
+            )){
                 fail.add(i+4);
                 continue;
             }
