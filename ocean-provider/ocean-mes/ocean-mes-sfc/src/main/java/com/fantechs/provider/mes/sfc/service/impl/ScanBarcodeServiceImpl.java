@@ -1,27 +1,22 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderMaterialRePDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderProcessReWoDto;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
-import com.fantechs.common.base.general.entity.basic.BaseSignature;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseSignature;
+import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderProcessReWo;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
+import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.mes.sfc.service.MesSfcBarcodeOperationService;
-import com.fantechs.provider.mes.sfc.service.MesSfcBarcodeProcessService;
-import com.fantechs.provider.mes.sfc.service.MesSfcPalletWorkService;
-import com.fantechs.provider.mes.sfc.service.ScanBarcodeService;
+import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.mes.sfc.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @Slf4j
@@ -34,7 +29,9 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
     @Resource
     private MesSfcPalletWorkService mesSfcPalletWorkService;
     @Resource
-    private BaseFeignApi baseFeignApi;
+    private MesSfcWorkOrderBarcodeService mesSfcWorkOrderBarcodeService;
+    @Resource
+    private PMFeignApi pmFeignApi;
 
     @Override
     public WanbaoStackingMQDto doScan(ScanBarcodeDto scanBarcodeDto) throws Exception {
@@ -60,12 +57,15 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
          *
          * 3、 条码清洗依据如下：
          *      条码长度为23位且前12位是物料编码 -> 厂内码
-         *      前缀为391-的 -> 销售条码
-         *      剩余条码中，取位数最少移位去校验特征码表中特征码字段，一致的 -> 客户条码
+         *      前缀为391-或391D的 -> 销售条码
+         *      生产订单明细下的客户条码 -> 客户条码
          */
+
+        // 清洗条码
         CleanBarcodeDto cleanBarcodeDto = new CleanBarcodeDto();
         Example example = new Example(MesSfcBarcodeProcess.class);
         Example.Criteria criteria = example.createCriteria();
+        SearchMesPmWorkOrderProcessReWo searchMesPmWorkOrderProcessReWo = new SearchMesPmWorkOrderProcessReWo();
         if (barcodeArr.length == 1){
             // 判断是厂内码还是三星客户条码
             if (barcodeArr[0].length() == 23){
@@ -78,31 +78,71 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
             if (mesSfcBarcodeProcesses.isEmpty()){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码BarcodeUtils：" + barcodeArr[0] + "在系统中不存在");
             }
-            MesSfcBarcodeProcess barcodeProcess = mesSfcBarcodeProcesses.get(0);
-            if(StringUtils.isNotEmpty(barcodeProcess.getCustomerBarcode())){
-                cleanBarcodeDto.setCutsomerBarcode(barcodeProcess.getCustomerBarcode());
-            }
-            cleanBarcodeDto.setOrderBarCode(barcodeProcess.getBarcode());
+            cleanBarcodeDto.setOrderBarCode(mesSfcBarcodeProcesses.get(0).getBarcode());
+            searchMesPmWorkOrderProcessReWo.setMaterialId(mesSfcBarcodeProcesses.get(0).getMaterialId().toString());
+            searchMesPmWorkOrderProcessReWo.setWorkOrderId(mesSfcBarcodeProcesses.get(0).getWorkOrderId().toString());
         }else {
             for (String str : barcodeArr){
                 if (str.length() == 23){
                     criteria.andEqualTo("barcode", str);
                     List<MesSfcBarcodeProcess> mesSfcBarcodeProcesses = barcodeProcessService.selectByExample(example);
                     if (!mesSfcBarcodeProcesses.isEmpty()){
+                        if (StringUtils.isNotEmpty(cleanBarcodeDto.getOrderBarCode())){
+                            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "已扫条码中存在两个或以上厂内码，不允许操作");
+                        }
                         cleanBarcodeDto.setOrderBarCode(mesSfcBarcodeProcesses.get(0).getBarcode());
+                        searchMesPmWorkOrderProcessReWo.setMaterialId(mesSfcBarcodeProcesses.get(0).getMaterialId().toString());
+                        searchMesPmWorkOrderProcessReWo.setWorkOrderId(mesSfcBarcodeProcesses.get(0).getWorkOrderId().toString());
                     }
-                }else if (str.contains("391-")){
-                    cleanBarcodeDto.setSalesBarcode(str);
-                }else {
-                    cleanBarcodeDto.setCutsomerBarcode(str);
+                }else if ("1".equals(scanBarcodeDto.getType())){
+                    // 打包工序需清洗销售订单条码/客户条码，入库下线工序则不需要
+                    if (str.contains("391-") || str.contains("391D")){
+                        if (StringUtils.isNotEmpty(cleanBarcodeDto.getSalesBarcode())){
+                            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "已扫条码中存在两个或以上销售条码，不允许操作");
+                        }
+                        cleanBarcodeDto.setSalesBarcode(str);
+                    }else {
+                        // TODO 查找生产单客户条码
+                        List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtos = mesSfcWorkOrderBarcodeService
+                                .findList(SearchMesSfcWorkOrderBarcode.builder()
+                                        .barcode(str)
+                                        .labelCategoryId(mesSfcWorkOrderBarcodeService.finByTypeId("客户条码"))
+                                        .build());
+                        if (mesSfcWorkOrderBarcodeDtos != null){
+                            cleanBarcodeDto.setCutsomerBarcode(str);
+                        }
+                    }
                 }
             }
-            if(StringUtils.isEmpty(cleanBarcodeDto.getOrderBarCode())){
-                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "平台中不存在此条码，不允许操作");
+        }
+        if(StringUtils.isEmpty(cleanBarcodeDto.getOrderBarCode())){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "未扫描到厂内码");
+        }
+
+        boolean isCheckCustBarcode = false, isCheckSalesBarcode = false;
+        // 入库下线工序不需要校验工单关键物料清单，只有打包工序需要
+        if (barcodeArr.length == 1 && "1".equals(scanBarcodeDto.getType())){
+            // 判断工单关键物料清单
+            searchMesPmWorkOrderProcessReWo.setProcessId(scanBarcodeDto.getProcessId().toString());
+            List<MesPmWorkOrderProcessReWoDto> pmWorkOrderProcessReWoDtoList = pmFeignApi.findPmWorkOrderProcessReWoList(searchMesPmWorkOrderProcessReWo).getData();
+            if (pmWorkOrderProcessReWoDtoList == null || pmWorkOrderProcessReWoDtoList.size() <= 0) {
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "未配置工单关键物料清单");
             }
-            if (barcodeArr.length >= 3){
-                if(StringUtils.isEmpty(cleanBarcodeDto.getOrderBarCode()) || StringUtils.isEmpty(cleanBarcodeDto.getSalesBarcode())){
-                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "平台中不存在此销售条码，不允许操作");
+            MesPmWorkOrderProcessReWoDto pmWorkOrderProcessReWoDto = pmWorkOrderProcessReWoDtoList.get(0);
+            List<MesPmWorkOrderMaterialRePDto> pmWorkOrderMaterialRePDtoList = pmWorkOrderProcessReWoDto.getList();
+            for (MesPmWorkOrderMaterialRePDto workOrderMaterialRePDto : pmWorkOrderMaterialRePDtoList) {
+                if ("02".equals(workOrderMaterialRePDto.getLabelCategoryCode())){
+                    if (StringUtils.isEmpty(cleanBarcodeDto.getSalesBarcode())){
+                        throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "未扫描到销售订单条码");
+                    }
+                    // 销售订单条码必扫
+                    isCheckSalesBarcode = true;
+                }else if ("03".equals(workOrderMaterialRePDto.getLabelCategoryCode())){
+                    if (StringUtils.isEmpty(cleanBarcodeDto.getCutsomerBarcode())){
+                        throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "未扫描到客户条码");
+                    }
+                    // 客户条码必扫
+                    isCheckCustBarcode = true;
                 }
             }
         }
@@ -121,14 +161,14 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
             dto.setCheckOrNot(false);
             dto.setPrint(false);
             dto.setPackType("1");
-            if (StringUtils.isNotEmpty(cleanBarcodeDto.getCutsomerBarcode()) || StringUtils.isNotEmpty(cleanBarcodeDto.getSalesBarcode())){
+            if (isCheckSalesBarcode || isCheckCustBarcode){
                 dto.setAnnex(true);
-                if (StringUtils.isNotEmpty(cleanBarcodeDto.getCutsomerBarcode())){
-                    dto.setBarAnnexCode(cleanBarcodeDto.getCutsomerBarcode());
+                if (isCheckSalesBarcode){
+                    dto.setBarAnnexCode(cleanBarcodeDto.getSalesBarcode());
                     mesSfcBarcodeOperationService.pdaCartonWork(dto);
                 }
-                if (StringUtils.isNotEmpty(cleanBarcodeDto.getSalesBarcode())){
-                    dto.setBarAnnexCode(cleanBarcodeDto.getSalesBarcode());
+                if (isCheckCustBarcode){
+                    dto.setBarAnnexCode(cleanBarcodeDto.getCutsomerBarcode());
                     mesSfcBarcodeOperationService.pdaCartonWork(dto);
                 }
             }else {

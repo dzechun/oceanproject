@@ -1,9 +1,5 @@
 package com.fantechs.provider.mes.sfc.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.general.dto.mes.sfc.PdaCartonWorkDto;
-import com.fantechs.common.base.general.dto.mes.sfc.RequestPalletWorkScanDto;
 import com.fantechs.common.base.general.dto.mes.sfc.ScanBarcodeDto;
 import com.fantechs.common.base.general.dto.mes.sfc.WanbaoStackingMQDto;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
@@ -15,8 +11,6 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseStation;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.mes.sfc.service.MesSfcBarcodeOperationService;
-import com.fantechs.provider.mes.sfc.service.MesSfcPalletWorkService;
 import com.fantechs.provider.mes.sfc.service.ScanBarcodeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -49,10 +43,6 @@ public class ScanBarcodeController {
     public ResponseEntity doScan(@ApiParam(value = "条码", required = true) @RequestBody ScanBarcodeDto scanBarcodeDto) throws Exception {
 
         WanbaoStackingMQDto wanbaoStackingMQDto = scanBarcodeService.doScan(scanBarcodeDto);
-        /*if ("2".equals(scanBarcodeDto.getType())){
-            return ControllerUtil.returnDataSuccess("成功", JSON.toJSONString(wanbaoStackingMQDto));
-        }*/
-
         return ControllerUtil.returnSuccess();
     }
 
