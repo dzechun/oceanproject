@@ -2,8 +2,6 @@ package com.fantechs.provider.mes.sfc.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.date.DatePattern;
-import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
@@ -734,18 +732,18 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         dto.setCode(record.getMaterialCode());
         dto.setParams(record.getWorkOrderId().toString());
 
-        //传入工单计划生产日期
-        if (StringUtils.isNotEmpty(mesPmWorkOrderDto.getPlanStartTime())) {
-            String planDate = DateUtil.format(mesPmWorkOrderDto.getPlanStartTime(), DatePattern.NORM_DATE_PATTERN);
-            String planYear = planDate.substring(0, 4);
-            String planMonth = new Integer(planDate.substring(5, 7)).toString();
-            String planDay = new Integer(planDate.substring(8, 10)).toString();
-            dto.setPlanYear(planYear);
-            dto.setPlanMonth(planMonth);
-            dto.setPlanDay(planDay);
-            key = barcodeRulList.get(0).getBarcodeRule() + orgIDStr + ":" + record.getMaterialCode() + planYear + planMonth;
-            dto.setKey(key);
-        }
+//        //传入工单计划生产日期
+//        if (StringUtils.isNotEmpty(mesPmWorkOrderDto.getPlanStartTime())) {
+//            String planDate = DateUtil.format(mesPmWorkOrderDto.getPlanStartTime(), DatePattern.NORM_DATE_PATTERN);
+//            String planYear = planDate.substring(0, 4);
+//            String planMonth = new Integer(planDate.substring(5, 7)).toString();
+//            String planDay = new Integer(planDate.substring(8, 10)).toString();
+//            dto.setPlanYear(planYear);
+//            dto.setPlanMonth(planMonth);
+//            dto.setPlanDay(planDay);
+//            key = barcodeRulList.get(0).getBarcodeRule() + orgIDStr + ":" + record.getMaterialCode() + planYear + planMonth;
+//            dto.setKey(key);
+//        }
 
         long selectTime = System.currentTimeMillis();
         ResponseEntity<List<String>> rs = baseFeignApi.batchGenerateCode(dto);

@@ -126,7 +126,7 @@ public class BaseBarcodeRuleController {
     @PostMapping("/batchGenerateCode")
     public ResponseEntity<List<String>> batchGenerateCode(@RequestBody BatchGenerateCodeDto dto){
         List<String> barcodeList = BarcodeRuleUtils.batchAnalysisCodeByWanbao(dto.getList(), dto.getCode(), dto.getParams(), null,
-                dto.getQty(), dto.getKey(),dto.getPlanYear(),dto.getPlanMonth(),dto.getPlanDay());
+                dto.getQty(), dto.getKey());
         return ControllerUtil.returnDataSuccess(barcodeList, barcodeList.size());
     }
 
