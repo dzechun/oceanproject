@@ -106,12 +106,14 @@
         </if>
       wbrd.identification_code = #{item.identificationCode},
       wbrd.data_status = #{item.dataStatus},
-      wbrd.create_user_id = #{item.createUserId},
-      wbrd.create_time = #{item.createTime},
+      <if test="item.createUserId != null">
+        wbrd.create_user_id = #{item.createUserId},
+        wbrd.create_time = #{item.createTime},
+        wbrd.status = #{item.status},
+        wbrd.org_id = #{item.orgId},
+      </if>
       wbrd.modified_user_id = #{item.modifiedUserId},
-      wbrd.modified_time = #{item.modifiedTime},
-      wbrd.status = #{item.status},
-      wbrd.org_id = #{item.orgId}
+      wbrd.modified_time = #{item.modifiedTime}
       where wbrd.barcode_rult_data_id = #{item.barcodeRultDataId}
     </foreach>
   </update>

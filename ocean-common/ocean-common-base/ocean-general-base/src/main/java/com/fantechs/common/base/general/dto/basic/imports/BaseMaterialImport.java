@@ -24,6 +24,14 @@ public class BaseMaterialImport implements Serializable {
     @ApiModelProperty(name="materialName" ,value="物料名称")
     private String materialName;
 
+    @Excel(name = "外购产品料号", height = 20, width = 30)
+    @ApiModelProperty(name="option1" ,value="外购产品料号")
+    private String option1;
+
+    @Excel(name = "电压", height = 20, width = 30)
+    @ApiModelProperty(name="voltage" ,value="电压")
+    private String voltage;
+
     /**
      * 物料描述
      */

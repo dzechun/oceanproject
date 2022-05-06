@@ -446,9 +446,10 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
             String productModelCode = baseMaterialImport.getProductModelCode();//产品型号编码
             String barcodeRuleSetCode = baseMaterialImport.getBarcodeRuleSetCode();//条码规则集合编码
             Integer transferQuantity = baseMaterialImport.getTransferQuantity();//转移批量
+            String voltage = baseMaterialImport.getVoltage();
 
             if (StringUtils.isEmpty(
-                materialCode,materialName
+                materialCode,materialName,voltage,productModelCode
             )){
                 fail.add(i+4);
                 continue;
@@ -537,11 +538,24 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
                 Example example3 = new Example(BaseProductModel.class);
                 Example.Criteria criteria3 = example3.createCriteria();
                 criteria3.andEqualTo("organizationId", currentUser.getOrganizationId());
-                criteria3.andEqualTo("productModelCode",productModelCode);
-                BaseProductModel baseProductModel = baseProductModelMapper.selectOneByExample(example3);
-                if (StringUtils.isEmpty(baseProductModel)){
-                    fail.add(i+4);
-                    continue;
+                criteria3.andEqualTo("productModelCode", productModelCode);
+                criteria3.andEqualTo("productModelDesc", materialCode);
+                List<BaseProductModel> baseProductModels = baseProductModelMapper.selectByExample(example3);
+                BaseProductModel baseProductModel = new BaseProductModel();
+                if (StringUtils.isEmpty(baseProductModels)){
+                    baseProductModel.setProductModelCode(productModelCode);
+                    baseProductModel.setProductModelName(productModelCode);
+                    baseProductModel.setProductModelDesc(materialCode);
+                    baseProductModel.setCreateTime(new Date());
+                    baseProductModel.setModifiedTime(new Date());
+                    baseProductModel.setCreateUserId(currentUser.getUserId());
+                    baseProductModel.setModifiedUserId(currentUser.getUserId());
+                    baseProductModel.setIsDelete((byte) 1);
+                    baseProductModel.setStatus(1);
+                    baseProductModel.setOrganizationId(currentUser.getOrganizationId());
+                    baseProductModelMapper.insertUseGeneratedKeys(baseProductModel);
+                }else {
+                    baseProductModel = baseProductModels.get(0);
                 }
                 baseMaterialImport.setProductModelId(baseProductModel.getProductModelId());
             }
