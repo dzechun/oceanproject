@@ -51,4 +51,23 @@
     </where>
     order by wsd.create_time desc
   </select>
+
+  <select id="findStackingByAuto" parameterType="long" resultType="com.fantechs.common.base.general.dto.wanbao.WanbaoAutoStackingDto">
+    SELECT
+      ws.stacking_id as stackingId,
+      ws.stacking_code as stackingCode,
+      wsd.barcode,
+      wsd.customer_barcode as customerBarcode,
+      wsd.sales_barcode as salesBarcode,
+      bm.material_code as materialCode,
+      bm.material_name as materialName
+    FROM
+      wanbao_stacking_det wsd
+        LEFT JOIN wanbao_stacking ws ON wsd.stacking_id = ws.stacking_id
+        LEFT JOIN mes_sfc_barcode_process msbp ON wsd.barcode = msbp.barcode
+        LEFT JOIN base_material bm ON msbp.material_id = bm.material_id
+    WHERE
+      ws.usage_status = 1
+      AND ws.pro_line_id = #{proLineId}
+  </select>
 </mapper>

@@ -4,6 +4,7 @@ import com.fantechs.common.base.general.dto.mes.sfc.PalletWorkByManualOperationD
 import com.fantechs.common.base.general.dto.mes.sfc.PalletWorkScanDto;
 import com.fantechs.common.base.general.dto.mes.sfc.RequestPalletWorkScanDto;
 import com.fantechs.common.base.general.dto.mes.sfc.ScanByManualOperationDto;
+import com.fantechs.common.base.general.dto.wanbao.WanbaoAutoStackingListDto;
 
 import java.util.List;
 
@@ -45,4 +46,25 @@ public interface MesSfcPalletWorkService {
 
 
     Boolean testStacking(String code);
+
+    /**
+     * 堆码作业发送MQ
+     * @param stackCode
+     */
+    void sendMQByStacking(String stackCode);
+
+    /**
+     * 万宝-堆垛作业（A线）
+     * @param dto
+     * @return
+     * @throws Exception
+     */
+    int workByAuto(WanbaoAutoStackingListDto dto) throws Exception;
+
+    /**
+     * 校验条码同PO/销售明细/物料
+     * @param barcodeList
+     * @return
+     */
+    boolean checkBarCode(List<String> barcodeList);
 }

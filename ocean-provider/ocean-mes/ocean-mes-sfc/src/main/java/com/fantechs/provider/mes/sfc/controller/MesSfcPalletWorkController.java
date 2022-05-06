@@ -4,6 +4,7 @@ import com.fantechs.common.base.general.dto.mes.sfc.PalletWorkByManualOperationD
 import com.fantechs.common.base.general.dto.mes.sfc.PalletWorkScanDto;
 import com.fantechs.common.base.general.dto.mes.sfc.RequestPalletWorkScanDto;
 import com.fantechs.common.base.general.dto.mes.sfc.ScanByManualOperationDto;
+import com.fantechs.common.base.general.dto.wanbao.WanbaoAutoStackingListDto;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.mes.sfc.service.MesSfcPalletWorkService;
@@ -52,6 +53,14 @@ public class MesSfcPalletWorkController {
     public ResponseEntity<Integer> workByManualOperation(
             @ApiParam(value = "条码", required = true) @RequestBody PalletWorkByManualOperationDto dto) throws Exception {
         int i = mesSfcPalletWorkService.workByManualOperation(dto);
+        return ControllerUtil.returnCRUD(i);
+    }
+
+    @PostMapping("/workByAuto")
+    @ApiOperation("堆垛作业提交(A线), 提供给万宝定制化包使用")
+    public ResponseEntity<Integer> workByAuto(
+            @ApiParam(value = "条码", required = true) @RequestBody WanbaoAutoStackingListDto dto) throws Exception {
+        int i = mesSfcPalletWorkService.workByAuto(dto);
         return ControllerUtil.returnCRUD(i);
     }
 
@@ -116,6 +125,19 @@ public class MesSfcPalletWorkController {
     @ApiOperation("修改栈板状态为已转移")
     public ResponseEntity updateMoveStatus(@ApiParam(value = "产品栈板ID", required = true) @RequestParam Long productPalletId){
         return ControllerUtil.returnCRUD(mesSfcPalletWorkService.updateMoveStatus(productPalletId));
+    }
+
+    @PostMapping("/sendMQByStacking")
+    @ApiOperation("堆码作业发送MQ")
+    public ResponseEntity sendMQByStacking(@ApiParam(value = "堆垛号", required = true) @RequestParam String stackCode) throws Exception {
+        mesSfcPalletWorkService.sendMQByStacking(stackCode);
+        return ControllerUtil.returnSuccess();
+    }
+
+    @PostMapping("/checkBarCode")
+    @ApiOperation("校验条码同PO/销售明细/物料")
+    public ResponseEntity<Boolean> checkBarCode(@ApiParam(value = "条码列表", required = true) @RequestBody List<String> barcodeList) {
+        return ControllerUtil.returnSuccess("成功", mesSfcPalletWorkService.checkBarCode(barcodeList));
     }
 
 }

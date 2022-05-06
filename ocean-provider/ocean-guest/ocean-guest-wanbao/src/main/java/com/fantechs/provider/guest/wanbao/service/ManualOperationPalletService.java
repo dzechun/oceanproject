@@ -2,6 +2,8 @@ package com.fantechs.provider.guest.wanbao.service;
 
 import com.fantechs.common.base.general.dto.mes.sfc.PalletWorkByManualOperationDto;
 import com.fantechs.common.base.general.dto.mes.sfc.ScanByManualOperationDto;
+import com.fantechs.common.base.general.dto.mes.sfc.StackingWorkByAutoDto;
+import com.fantechs.common.base.general.dto.wanbao.WanbaoAutoStackingListDto;
 import com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDto;
 
 import java.util.List;
@@ -31,4 +33,32 @@ public interface ManualOperationPalletService {
      * @return
      */
     List<WanbaoStackingDto> scanStackingCode(String stackingCode, Long proLineId);
+
+    /**
+     * 万宝-栈板扫堆垛码（A线）
+     * @param dto
+     * @return
+     */
+    int scanStackingCodeByAuto(StackingWorkByAutoDto dto);
+
+    /**
+     * 查找空闲并且有条码的堆垛
+     * @return
+     */
+    List<WanbaoAutoStackingListDto> findStackingByAuto(Long proLineId);
+
+    /**
+     * 堆垛提交（A线）
+     * @param dto
+     * @return
+     */
+    int workByAuto(WanbaoAutoStackingListDto dto);
+
+    /**
+     * 切换堆垛
+     * @param oldId
+     * @param newId
+     * @return
+     */
+    int changeStacking(Long oldId, Long newId);
 }

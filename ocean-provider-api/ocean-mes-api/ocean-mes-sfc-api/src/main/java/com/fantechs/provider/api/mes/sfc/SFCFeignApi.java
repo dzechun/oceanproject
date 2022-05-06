@@ -4,6 +4,7 @@ import com.fantechs.common.base.general.dto.basic.BaseExecuteResultDto;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.*;
 import com.fantechs.common.base.general.dto.restapi.RestapiChkLogUserInfoApiDto;
+import com.fantechs.common.base.general.dto.wanbao.WanbaoAutoStackingListDto;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
@@ -99,4 +100,16 @@ public interface SFCFeignApi {
     @ApiOperation("万宝-查询条码数据")
     @PostMapping("/mesSfcWorkOrderBarcode/syncFindBarcode")
     ResponseEntity<SyncFindBarcodeDto> syncFindBarcode(@ApiParam(value = "必传",required = true) @RequestParam Long labelCategoryId, @ApiParam(value = "条码集合", required = true) @RequestParam List<String> barcodeList);
+
+    @PostMapping("/mesSfcPalletWork/sendMQByStacking")
+    @ApiOperation("堆码作业发送MQ")
+    ResponseEntity sendMQByStacking(@ApiParam(value = "堆垛号", required = true) @RequestParam String stackCode);
+
+    @PostMapping("/mesSfcPalletWork/workByAuto")
+    @ApiOperation("栈板作业提交(人工)")
+    ResponseEntity<Integer> workByAuto(@ApiParam(value = "条码", required = true) @RequestBody WanbaoAutoStackingListDto dto);
+
+    @PostMapping("/mesSfcPalletWork/checkBarCode")
+    @ApiOperation("堆码作业发送MQ")
+    ResponseEntity<Boolean> checkBarCode(@ApiParam(value = "堆垛号", required = true) @RequestBody List<String> barcodeList);
 }

@@ -2,13 +2,20 @@ package com.fantechs.provider.guest.wanbao.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.PalletWorkByManualOperationDto;
 import com.fantechs.common.base.general.dto.mes.sfc.ScanByManualOperationDto;
+import com.fantechs.common.base.general.dto.mes.sfc.StackingWorkByAutoDto;
+import com.fantechs.common.base.general.dto.mes.sfc.WanbaoBarcodeDto;
+import com.fantechs.common.base.general.dto.wanbao.WanbaoAutoStackingDto;
+import com.fantechs.common.base.general.dto.wanbao.WanbaoAutoStackingListDto;
 import com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDetDto;
 import com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDto;
 import com.fantechs.common.base.general.entity.wanbao.WanbaoStacking;
+import com.fantechs.common.base.general.entity.wanbao.WanbaoStackingDet;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.guest.wanbao.service.ManualOperationPalletService;
@@ -16,12 +23,12 @@ import com.fantechs.provider.guest.wanbao.service.WanbaoStackingDetService;
 import com.fantechs.provider.guest.wanbao.service.WanbaoStackingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -90,9 +97,7 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
     @Override
     public List<WanbaoStackingDto> scanStackingCode(String stackingCode, Long proLineId) {
         Map<String, Object> map = new HashMap<>();
-        if (StringUtils.isNotEmpty(stackingCode)){
-            map.put("stackingCode", stackingCode);
-        }
+        map.put("stackingCode", stackingCode);
         map.put("proLineId", proLineId);
         map.put("usageStatus", 1);
         List<WanbaoStackingDto> stackingDtos = stackingService.findList(map);
@@ -101,4 +106,122 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
         }
         return stackingDtos;
     }
+
+    @Override
+    public int scanStackingCodeByAuto(StackingWorkByAutoDto dto) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (StringUtils.isEmpty(dto.getStackingCode())){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "未扫描到堆垛，请重新扫码");
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("stackingCode", dto.getStackingCode());
+        map.put("proLineId", dto.getProLineId());
+        map.put("usageStatus", 1);
+        List<WanbaoStackingDto> stackingDtos = stackingService.findList(map);
+        if (stackingDtos.isEmpty()){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛编码在平台中不存在或已被删除");
+        }
+        WanbaoStackingDto stackingDto = stackingDtos.get(0);
+        if (!stackingDtos.get(0).getProLineId().equals(dto.getProLineId())){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛编码跟配置产线不匹配");
+        }
+        if (stackingDtos.get(0).getUsageStatus() == 2){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛正在使用中，请更换独堆垛");
+        }
+        if (stackingDtos.get(0).getStatus() == 0){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛无效，请重新扫码");
+        }
+        // 容量校验
+        map.clear();
+        map.put("stackingId", stackingDto.getStackingId());
+        List<WanbaoStackingDetDto> stackingDetDtos = stackingDetService.findList(map);
+        if (!stackingDetDtos.isEmpty() && new BigDecimal(stackingDetDtos.size()).compareTo(stackingDto.getMaxCapacity()) > -1){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), dto.getStackingCode() + "堆垛容量已满，请扫其他堆垛");
+        }
+        int count = 1 + stackingDetDtos.size();
+        if (new BigDecimal(count).compareTo(stackingDto.getMaxCapacity()) == 1){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛编码容量存放不下当前提交数量");
+        }
+
+        // 校验条码同PO/销售明细/物料
+        List<String> barcodeList = stackingDetDtos.stream().map(WanbaoStackingDet::getBarcode).collect(Collectors.toList());
+        barcodeList.add(dto.getWanbaoBarcodeDto().getBarcode());
+        Boolean aBoolean = sfcFeignApi.checkBarCode(barcodeList).getData();
+        if (aBoolean){
+            // 发送mq
+            sfcFeignApi.sendMQByStacking(dto.getStackingCode());
+
+            // 保存条码堆垛关系
+            WanbaoStackingDet stackingDet = new WanbaoStackingDet();
+            WanbaoBarcodeDto barcodeDto = dto.getWanbaoBarcodeDto();
+            BeanUtil.copyProperties(barcodeDto, stackingDet);
+            stackingDet.setStackingId(stackingDto.getStackingId());
+            stackingDet.setStatus((byte) 1);
+            stackingDet.setOrgId(user.getOrganizationId());
+            stackingDet.setCreateTime(new Date());
+            stackingDet.setCreateUserId(user.getUserId());
+            stackingDet.setModifiedTime(new Date());
+            stackingDet.setModifiedUserId(user.getUserId());
+            stackingDet.setIsDelete((byte) 1);
+            return stackingDetService.save(stackingDet);
+        }
+        return 0;
+    }
+
+    /**
+     * 查找空闲并且有条码的堆垛
+     *
+     * @param proLineId
+     * @return
+     */
+    @Override
+    public List<WanbaoAutoStackingListDto> findStackingByAuto(Long proLineId) {
+        List<WanbaoAutoStackingDto> stackingDtos = stackingDetService.findStackingByAuto(proLineId);
+        Map<String, List<WanbaoAutoStackingDto>> map = stackingDtos.stream().collect(Collectors.groupingBy(WanbaoAutoStackingDto::getStackingCode));
+        List<WanbaoAutoStackingListDto> list = new ArrayList<>();
+        map.forEach((key, value) -> {
+            WanbaoAutoStackingListDto listDto = new WanbaoAutoStackingListDto();
+            WanbaoAutoStackingDto autoStackingDto = value.get(0);
+            BeanUtil.copyProperties(autoStackingDto, listDto);
+            listDto.setCount(value.size());
+            listDto.setList(value);
+            list.add(listDto);
+        });
+        return list;
+    }
+
+    /**
+     * 堆垛提交（A线）
+     *
+     * @param dto
+     * @return
+     */
+    @Override
+    public int workByAuto(WanbaoAutoStackingListDto dto) {
+        return sfcFeignApi.workByAuto(dto).getData();
+    }
+
+    /**
+     * 切换堆垛
+     *
+     * @param oldId
+     * @param newId
+     * @return
+     */
+    @Override
+    public int changeStacking(Long oldId, Long newId) {
+        WanbaoStacking stacking = stackingService.selectByKey(newId);
+        if (stacking.getUsageStatus() != 1){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "新堆垛已使用,请更换其他堆垛");
+        }
+        Example example = new Example(WanbaoStackingDet.class);
+        example.createCriteria().andEqualTo("stackingId", oldId);
+        List<WanbaoStackingDet> dets = stackingDetService.selectByExample(example);
+        for (WanbaoStackingDet det : dets){
+            det.setStackingId(newId);
+            stackingDetService.update(det);
+        }
+        return 1;
+    }
+
 }

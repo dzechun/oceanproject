@@ -3,6 +3,7 @@ package com.fantechs.provider.guest.wanbao.service.impl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.wanbao.WanbaoAutoStackingDto;
 import com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDetDto;
 import com.fantechs.common.base.general.entity.wanbao.WanbaoStacking;
 import com.fantechs.common.base.general.entity.wanbao.WanbaoStackingDet;
@@ -67,5 +68,16 @@ public class WanbaoStackingDetServiceImpl extends BaseService<WanbaoStackingDet>
         stacking.setUsageStatus((byte) 2);
         wanbaoStackingService.update(stacking);
         return wanbaoStackingDetMapper.insertList(list);
+    }
+
+    /**
+     * 查找空闲并且有条码的堆垛
+     *
+     * @param proLineId
+     * @return
+     */
+    @Override
+    public List<WanbaoAutoStackingDto> findStackingByAuto(Long proLineId) {
+        return wanbaoStackingDetMapper.findStackingByAuto(proLineId);
     }
 }
