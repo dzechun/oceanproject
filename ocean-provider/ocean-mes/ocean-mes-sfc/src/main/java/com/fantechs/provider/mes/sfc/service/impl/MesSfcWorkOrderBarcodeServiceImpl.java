@@ -2,6 +2,8 @@ package com.fantechs.provider.mes.sfc.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
@@ -719,7 +721,11 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         // 不同组织使用同一个编码规则可能产生相同的条码 key值在原有基础上加组织ID作为键值 huangshuijun 2021-10-08
         String orgIDStr = sysUser.getOrganizationId().toString();
 
-        String key = barcodeRulList.get(0).getBarcodeRule() + orgIDStr + ":" + record.getMaterialCode();
+        String planDate = DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN);
+        String planYear = planDate.substring(0, 4);
+        String planMonth = new Integer(planDate.substring(5, 7)).toString();
+        String planDay = new Integer(planDate.substring(8, 10)).toString();
+        String key = barcodeRulList.get(0).getBarcodeRule() + orgIDStr + ":" + record.getMaterialCode() + planYear + planMonth;
         //万宝销售条码打印 按销售订单更新流水号
         if (StringUtils.isNotEmpty(record.getOption1()) && record.getOption1().equals("5")) {
             key = barcodeRulList.get(0).getBarcodeRule() + orgIDStr + ":" + record.getSalesOrderDetId().toString();
@@ -731,6 +737,9 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         dto.setKey(key);
         dto.setCode(record.getMaterialCode());
         dto.setParams(record.getWorkOrderId().toString());
+        dto.setPlanYear(planYear);
+        dto.setPlanMonth(planMonth);
+        dto.setPlanDay(planDay);
 
 //        //传入工单计划生产日期
 //        if (StringUtils.isNotEmpty(mesPmWorkOrderDto.getPlanStartTime())) {

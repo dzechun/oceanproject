@@ -638,10 +638,11 @@ public class BarcodeRuleUtils {
         log.info("key:"+key+"============ lastBarCode:"+ lastBarCode + "========= hasKey: " + hasKey);
         //获取最大流水号
         String maxCode = getMaxSerialNumber(list, lastBarCode);
+        log.info("======最大流水号:" + maxCode);
         // 批量生成条码
-        Integer start = (StringUtils.isEmpty(maxCode) || Integer.valueOf(maxCode) == 1) ? 0 : Integer.valueOf(maxCode);
+        Integer start = (StringUtils.isEmpty(maxCode) || Integer.parseInt(maxCode) == 1) ? 0 : Integer.parseInt(maxCode);
         String fixedValue = lastBarCode.substring(0, lastBarCode.length() - maxCode.length());
-        log.info("======最大流水号:" + maxCode + "============ 固定值:" + fixedValue + "====== qty: " + qty);
+        log.info("============ 固定值:" + fixedValue + "====== qty: " + qty);
         String returnBarcode = null;
         List<String> barcodeStrList = new ArrayList<>();
         for (int i = 1; i <= qty; i++) {
