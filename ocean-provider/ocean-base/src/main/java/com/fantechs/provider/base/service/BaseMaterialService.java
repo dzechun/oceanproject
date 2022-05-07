@@ -14,6 +14,13 @@ public interface BaseMaterialService extends IService<BaseMaterial>{
 
     List<BaseMaterialDto> findList(Map<String, Object> map);
 
+    /**
+     * 初始化盘点-单表查询物料信息
+     * @param map
+     * @return
+     */
+    List<BaseMaterial> findListByInitInventory(Map<String, Object> map);
+
     List<BaseMaterialDto> findAll(Map<String, Object> map);
 
     //根据编码进行批量更新
