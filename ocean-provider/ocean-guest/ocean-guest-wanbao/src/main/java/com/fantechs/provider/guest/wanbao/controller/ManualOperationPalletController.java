@@ -81,8 +81,8 @@ public class ManualOperationPalletController {
 
     @PostMapping("/deleteStackingBarcode")
     @ApiOperation("在堆垛移除该条码(A线)")
-    public ResponseEntity deleteStackingBarcode(@ApiParam(value = "堆垛ID", required = true) @RequestParam Long stackingId, @ApiParam(value = "条码", required = true) @RequestParam String barcode){
-        int i = palletService.deleteStackingBarcode(stackingId, barcode);
+    public ResponseEntity deleteStackingBarcode(@ApiParam(value = "堆垛条码明细ID", required = true) @RequestParam Long stackingDetId){
+        int i = palletService.deleteStackingBarcode(stackingDetId);
         return ControllerUtil.returnCRUD(i);
     }
 
