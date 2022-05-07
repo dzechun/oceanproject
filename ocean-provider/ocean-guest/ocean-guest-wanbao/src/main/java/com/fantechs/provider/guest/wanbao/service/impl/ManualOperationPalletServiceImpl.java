@@ -224,4 +224,20 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
         return 1;
     }
 
+    /**
+     * 移除堆垛上的条码
+     *
+     * @param stackingId
+     * @param barcode
+     * @return
+     */
+    @Override
+    public int deleteStackingBarcode(Long stackingId, String barcode) {
+        Example example = new Example(WanbaoStackingDet.class);
+        example.createCriteria().andEqualTo("stackingId", stackingId)
+                .andEqualTo("barcode", barcode);
+        int i = stackingDetService.deleteByExample(example);
+        return i;
+    }
+
 }

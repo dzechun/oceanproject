@@ -61,4 +61,12 @@ public interface ManualOperationPalletService {
      * @return
      */
     int changeStacking(Long oldId, Long newId);
+
+    /**
+     * 移除堆垛上的条码
+     * @param stackingId
+     * @param barcode
+     * @return
+     */
+    int deleteStackingBarcode(Long stackingId, String barcode);
 }
