@@ -213,7 +213,6 @@
   <select id="countBarcodeListForPOGroup" parameterType="map" resultType="java.lang.String">
     SELECT COUNT(*) FROM (
     SELECT IFNULL(COUNT(*),0) FROM mes_sfc_barcode_process msbp
-    GROUP BY msbp.sales_code_re_spc_id
     <where>
      msbp.sales_code_re_spc_id IS NOT NULL
       <if test="barcodeList != null">
@@ -223,7 +222,7 @@
         </foreach>
       </if>
     </where>
-    GROUP BY oscrs.same_package_code
+    GROUP BY msbp.sales_code_re_spc_id
     ) t
   </select>
 
