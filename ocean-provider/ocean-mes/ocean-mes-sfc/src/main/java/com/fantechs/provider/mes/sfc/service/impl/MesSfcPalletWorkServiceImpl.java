@@ -17,6 +17,8 @@ import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcProductPallet;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
 import com.fantechs.common.base.general.dto.om.SearchOmSalesOrderDto;
+import com.fantechs.common.base.general.dto.wanbao.WanbaoAutoStackingDto;
+import com.fantechs.common.base.general.dto.wanbao.WanbaoAutoStackingListDto;
 import com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDto;
 import com.fantechs.common.base.general.dto.wms.in.BarPODto;
 import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
@@ -951,6 +953,99 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         }
     }
 
+    /**
+     * 堆码作业发送MQ
+     *
+     * @param stackCode
+     */
+    @Override
+    public void sendMQByStacking(String stackCode) {
+        try {
+            WanbaoStackingMQDto wanbaoStackingMQDto = new WanbaoStackingMQDto();
+            wanbaoStackingMQDto.setCode(0);
+            wanbaoStackingMQDto.setStackingCode(stackCode);
+            String stackingLine = stackCode.substring(stackCode.length() - 1);
+            wanbaoStackingMQDto.setStackingLine(stackingLine);
+            // 发送堆垛号至mq
+            rabbitProducer.sendStacking(JSON.toJSONString(wanbaoStackingMQDto));
+        }catch (Exception e){
+            WanbaoStackingMQDto wanbaoStackingMQDto = new WanbaoStackingMQDto();
+            wanbaoStackingMQDto.setCode(500);
+            // 发送堆垛号至mq
+            rabbitProducer.sendStacking(JSON.toJSONString(wanbaoStackingMQDto));
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), e.getMessage());
+        }
+    }
+
+    /**
+     * 万宝-堆垛作业（A线）
+     *
+     * @param dto
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public int workByAuto(WanbaoAutoStackingListDto dto) throws Exception {
+
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        if (dto.getList() == null || dto.getList().isEmpty()){
+            throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "条码集合为空，请扫码");
+        }
+        List<String> barcodeList = dto.getList().stream().map(WanbaoAutoStackingDto::getBarcode).collect(Collectors.toList());
+        SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
+        searchMesSfcWorkOrderBarcode.setBarcodeList(barcodeList);
+        List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtoList = mesSfcWorkOrderBarcodeService.findList(searchMesSfcWorkOrderBarcode);
+        if (mesSfcWorkOrderBarcodeDtoList.isEmpty()) {
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码不存在或已被删除");
+        }
+
+        List<WanbaoBarcodeDto> list = new ArrayList<>();
+        for (WanbaoAutoStackingDto stackingDet : dto.getList()) {
+            WanbaoBarcodeDto wanbaoBarcodeDto = new WanbaoBarcodeDto();
+            BeanUtil.copyProperties(stackingDet, wanbaoBarcodeDto);
+            for (MesSfcWorkOrderBarcodeDto workOrderBarcodeDto : mesSfcWorkOrderBarcodeDtoList){
+                if (workOrderBarcodeDto.getBarcode().equals(wanbaoBarcodeDto.getBarcode())){
+                    wanbaoBarcodeDto.setWorkOrderId(workOrderBarcodeDto.getWorkOrderId());
+                    break;
+                }
+            }
+            list.add(wanbaoBarcodeDto);
+        }
+
+        // 完工入库以及上架作业
+        this.beforePalletAutoAsnOrder(dto.getStackingId(), user.getOrganizationId(), list, barcodeList, mesSfcWorkOrderBarcodeDtoList);
+
+        return 1;
+    }
+
+    /**
+     * 校验条码同PO/销售明细/物料
+     * @param barcodeList
+     * @return
+     */
+    @Override
+    public boolean checkBarCode(List<String> barcodeList) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("barcodeList", barcodeList);
+        String count = mesSfcBarcodeProcessService.countBarcodeListForPOGroup(map);
+        if (StringUtils.isNotEmpty(count) && Integer.parseInt(count) > 1){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该条码与堆垛上其他条码不属于同个PO，请重新扫码");
+        }
+        if (StringUtils.isNotEmpty(count) && Integer.parseInt(count) < 1){
+            count = mesSfcBarcodeProcessService.countBarcodeListForSalesOrder(map);
+            if (StringUtils.isNotEmpty(count) && Integer.parseInt(count) > 1){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该条码与堆垛上其他条码不属于同销售编码，请重新扫码");
+            }
+            if (StringUtils.isNotEmpty(count) && Integer.parseInt(count) < 1){
+                count = mesSfcBarcodeProcessService.countBarcodeListForMaterial(map);
+                if (StringUtils.isNotEmpty(count) && Integer.parseInt(count) > 1){
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该条码与堆垛上其他条码不属于同物料，请重新扫码");
+                }
+            }
+        }
+        return true;
+    }
+
     // region 私有方法
 
     /**
@@ -1013,4 +1108,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             inFeignApi.palletAutoAsnOrder(palletAutoAsnDto);
         }
     }
+
+    // endregion
 }

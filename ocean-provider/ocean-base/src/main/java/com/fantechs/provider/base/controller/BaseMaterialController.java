@@ -59,6 +59,13 @@ public class BaseMaterialController {
         return ControllerUtil.returnDataSuccess(smtMaterials,(int)page.getTotal());
     }
 
+    @ApiOperation("初始化盘点-单表查询物料信息")
+    @PostMapping("/findListByInitInventory")
+    public ResponseEntity<List<BaseMaterial>> findListByInitInventory(@ApiParam(value = "查询对象")@RequestBody SearchBaseMaterial searchBaseMaterial){
+        List<BaseMaterial> smtMaterials = baseMaterialService.findListByInitInventory(ControllerUtil.dynamicConditionByEntity(searchBaseMaterial));
+        return ControllerUtil.returnDataSuccess(smtMaterials, smtMaterials.size());
+    }
+
     @ApiOperation("根据条件查询物料信息列表")
     @PostMapping("/getAll")
     public ResponseEntity<List<BaseMaterialDto>> getAll(){

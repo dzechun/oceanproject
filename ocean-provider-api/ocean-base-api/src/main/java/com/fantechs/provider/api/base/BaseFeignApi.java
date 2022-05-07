@@ -100,6 +100,10 @@ public interface BaseFeignApi {
     @PostMapping("/baseMaterial/findList")
     ResponseEntity<List<BaseMaterial>> findList(@ApiParam(value = "查询对象") @RequestBody SearchBaseMaterial searchBaseMaterial);
 
+    @ApiOperation("初始化盘点-单表查询物料信息")
+    @PostMapping("/baseMaterial/findListByInitInventory")
+    ResponseEntity<List<BaseMaterial>> findListByInitInventory(@ApiParam(value = "查询对象") @RequestBody SearchBaseMaterial searchBaseMaterial);
+
     @ApiOperation("根据条件查询物料信息列表")
     @PostMapping("/baseMaterial/getAll")
     ResponseEntity<List<BaseMaterial>> findMaterialAll();

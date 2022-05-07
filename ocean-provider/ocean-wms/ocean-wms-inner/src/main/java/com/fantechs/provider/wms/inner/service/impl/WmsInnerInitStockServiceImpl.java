@@ -89,22 +89,22 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
             initStockCheckBarCode.setType((byte)1);
             initStockCheckBarCode.setInPlantBarcode(barCode);
             criteria.andEqualTo("inPlantBarcode",barCode);
-            String code = barCode.substring(0,1);
-            if(isInPlantBarCode && "9".equals(code)){
-                //梅州厂内码
-                //首位转换 3 第五位替换成 0
-                StringBuilder sb = new StringBuilder(barCode);
-                sb.replace(0,1,"3");
-                sb.replace(4,5,"0");
-                barCode = sb.toString();
-            }else if(isInPlantBarCode && "8".equals(code)){
-                //民权厂内码
-                //首位转换成3
-                StringBuilder sb = new StringBuilder(barCode);
-                sb.replace(0,1,"3");
-                barCode = sb.toString();
-            }
-        } else if (barCode.contains("391-")){
+//            String code = barCode.substring(0,1);
+//            if(isInPlantBarCode && "9".equals(code)){
+//                //梅州厂内码
+//                //首位转换 3 第五位替换成 0
+//                StringBuilder sb = new StringBuilder(barCode);
+//                sb.replace(0,1,"3");
+//                sb.replace(4,5,"0");
+//                barCode = sb.toString();
+//            }else if(isInPlantBarCode && "8".equals(code)){
+//                //民权厂内码
+//                //首位转换成3
+//                StringBuilder sb = new StringBuilder(barCode);
+//                sb.replace(0,1,"3");
+//                barCode = sb.toString();
+//            }
+        } else if (barCode.contains("391-") || barCode.contains("391D")){
             //销售条码 返回 2
             initStockCheckBarCode.setType((byte)2);
             initStockCheckBarCode.setSalesBarcode(barCode);
@@ -171,8 +171,8 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
             String materialCode = barCode.substring(0,12);
             SearchBaseMaterial searchBaseMaterial = new SearchBaseMaterial();
             searchBaseMaterial.setMaterialCode(materialCode);
-            searchBaseMaterial.setCodeQueryMark(1);
-            ResponseEntity<List<BaseMaterial>> responseEntity = baseFeignApi.findList(searchBaseMaterial);
+            searchBaseMaterial.setOption1(materialCode);
+            ResponseEntity<List<BaseMaterial>> responseEntity = baseFeignApi.findListByInitInventory(searchBaseMaterial);
             if(responseEntity.getCode()!=0){
                 throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
             }

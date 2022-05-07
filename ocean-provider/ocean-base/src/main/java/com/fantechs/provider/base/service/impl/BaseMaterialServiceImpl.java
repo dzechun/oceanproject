@@ -126,6 +126,20 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
         return smtMaterialDtos;
     }
 
+    /**
+     * 初始化盘点-单表查询物料信息
+     * @param map
+     * @return
+     */
+    @Override
+    public List<BaseMaterial> findListByInitInventory(Map<String, Object> map) {
+        Example example = new Example(BaseMaterial.class);
+        example.createCriteria().orEqualTo("materialCode", map.get("materialCode"))
+                .orEqualTo("option1", map.get("option1"));
+        List<BaseMaterial> materials = baseMaterialMapper.selectByExample(example);
+        return materials;
+    }
+
     @Override
     public List<BaseMaterialDto> findAll(Map<String, Object> map) {
         if(StringUtils.isEmpty(map.get("organizationId"))) {
