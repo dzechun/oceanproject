@@ -134,8 +134,8 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
     @Override
     public List<BaseMaterial> findListByInitInventory(Map<String, Object> map) {
         Example example = new Example(BaseMaterial.class);
-        example.createCriteria().andEqualTo("materialCode", map.get("materialCode"))
-                .andEqualTo("option1", map.get("option1"));
+        example.createCriteria().orEqualTo("materialCode", map.get("materialCode"))
+                .orEqualTo("option1", map.get("option1"));
         List<BaseMaterial> materials = baseMaterialMapper.selectByExample(example);
         return materials;
     }
