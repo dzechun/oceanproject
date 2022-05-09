@@ -144,9 +144,16 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
         }
 
         // 校验条码同PO/销售明细/物料
-        List<String> barcodeList = stackingDetDtos.stream().map(WanbaoStackingDet::getBarcode).collect(Collectors.toList());
+        List<String> barcodeList = new ArrayList<>();
+        if (StringUtils.isNotEmpty(stackingDetDtos)){
+            barcodeList = stackingDetDtos.stream().map(WanbaoStackingDet::getBarcode).collect(Collectors.toList());
+        }
         barcodeList.add(dto.getWanbaoBarcodeDto().getBarcode());
-        Boolean aBoolean = sfcFeignApi.checkBarCode(barcodeList).getData();
+        ResponseEntity<Boolean> response = sfcFeignApi.checkBarCode(barcodeList);
+        if (response.getCode() != 0){
+            throw new BizErrorException(response.getCode(), response.getMessage());
+        }
+        Boolean aBoolean = response.getData();
         if (aBoolean){
             // 发送mq
             sfcFeignApi.sendMQByStacking(dto.getStackingCode());
