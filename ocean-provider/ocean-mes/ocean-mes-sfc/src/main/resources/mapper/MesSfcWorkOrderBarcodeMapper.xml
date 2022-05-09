@@ -184,6 +184,78 @@
         </choose>
 
     </select>
+
+    <select id="findListByReprint" resultMap="BaseResultDtoMap"
+            parameterType="com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode">
+        SELECT
+            mswob.barcode,
+            <choose>
+                <when test="barcodeType==3 or barcodeType==4">
+                    oso.sales_order_code as 'work_order_code',
+                </when>
+                <otherwise>
+                    mswob.work_order_code,
+                </otherwise>
+            </choose>
+            mswob.barcode_status,
+            blc.label_category_name,
+            bm.material_code,
+            bm.material_name,
+            COUNT( mswobr.work_order_barcode_reprint_id ) AS reprint_count,
+            mswob.print_time,
+            mswob.create_barcode_time
+        FROM
+            mes_sfc_work_order_barcode mswob
+            <choose>
+                <when test="barcodeType==3 or barcodeType==4">
+                    LEFT JOIN om_sales_order_det osod ON mswob.work_order_id = osod.sales_order_det_id
+                    LEFT JOIN om_sales_order oso on osod.sales_order_id = oso.sales_order_id
+                    LEFT JOIN base_material bm on osod.material_id = bm.material_id
+                </when>
+                <otherwise>
+                    LEFT JOIN mes_pm_work_order mpwo ON mswob.work_order_id = mpwo.work_order_id
+                    LEFT JOIN base_material bm on mpwo.material_id = bm.material_id
+                </otherwise>
+            </choose>
+                LEFT JOIN mes_sfc_work_order_barcode_reprint mswobr ON mswob.work_order_barcode_id = mswobr.work_order_barcode_id
+                LEFT JOIN base_label_category blc ON mswob.label_category_id = blc.label_category_id
+        <where>
+            <if test="workOrderCode != null and workOrderCode !=''">
+                and mswob.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+            </if>
+            <if test="barcode != null and barcode != ''">
+                and mswob.barcode like CONCAT('%', #{barcode}, '%')
+            </if>
+            <if test="barcodeStatus!=null and barcodeStatus!=''">
+                and mswob.barcode_status = #{barcodeStatus}
+            </if>
+            <if test="barcodeType!=null and barcodeType!=''">
+                <choose>
+                    <when test="barcodeType==1">
+                        and blc.label_category_name = '工单流转卡'
+                    </when>
+                    <when test="barcodeType==2">
+                        and blc.label_category_name = '产品条码'
+                    </when>
+                    <when test="barcodeType==3">
+                        and blc.label_category_name = '客户条码'
+                    </when>
+                    <when test="barcodeType==4">
+                        and blc.label_category_name = '销售订单条码'
+                    </when>
+                </choose>
+            </if>
+            <if test="materialCode != null and materialCode !=''">
+                and bm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="materialName != null and materialName !=''">
+                and bm.material_name like CONCAT('%', #{materialName}, '%')
+            </if>
+        </where>
+        GROUP BY
+            mswob.work_order_barcode_id
+    </select>
+
     <select id="findMaxCode" resultType="java.lang.String">
         select barcode
         FROM mes_sfc_work_order_barcode

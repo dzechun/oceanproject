@@ -52,7 +52,7 @@ public class MesSfcWorkOrderBarcodeController {
     @PostMapping("/findList")
     public ResponseEntity<List<MesSfcWorkOrderBarcodeDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode) {
         Page<Object> page = PageHelper.startPage(searchMesSfcWorkOrderBarcode.getStartPage(),searchMesSfcWorkOrderBarcode.getPageSize());
-        List<MesSfcWorkOrderBarcodeDto> list = mesSfcWorkOrderBarcodeService.findList(searchMesSfcWorkOrderBarcode);
+        List<MesSfcWorkOrderBarcodeDto> list = mesSfcWorkOrderBarcodeService.findListByReprint(searchMesSfcWorkOrderBarcode);
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
