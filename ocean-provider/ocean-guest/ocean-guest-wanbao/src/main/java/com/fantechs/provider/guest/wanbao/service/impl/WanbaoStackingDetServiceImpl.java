@@ -4,7 +4,6 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wanbao.WanbaoAutoStackingDto;
-import com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDetDto;
 import com.fantechs.common.base.general.entity.wanbao.WanbaoStacking;
 import com.fantechs.common.base.general.entity.wanbao.WanbaoStackingDet;
 import com.fantechs.common.base.support.BaseService;
@@ -31,7 +30,7 @@ public class WanbaoStackingDetServiceImpl extends BaseService<WanbaoStackingDet>
     private WanbaoStackingService wanbaoStackingService;
 
     @Override
-    public List<WanbaoStackingDetDto> findList(Map<String, Object> map) {
+    public List<WanbaoStackingDet> findList(Map<String, Object> map) {
         return wanbaoStackingDetMapper.findList(map);
     }
 

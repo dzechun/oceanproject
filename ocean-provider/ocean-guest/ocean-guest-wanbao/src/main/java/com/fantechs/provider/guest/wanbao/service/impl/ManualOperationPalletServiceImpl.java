@@ -10,7 +10,6 @@ import com.fantechs.common.base.general.dto.mes.sfc.StackingWorkByAutoDto;
 import com.fantechs.common.base.general.dto.mes.sfc.WanbaoBarcodeDto;
 import com.fantechs.common.base.general.dto.wanbao.WanbaoAutoStackingDto;
 import com.fantechs.common.base.general.dto.wanbao.WanbaoAutoStackingListDto;
-import com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDetDto;
 import com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDto;
 import com.fantechs.common.base.general.entity.wanbao.WanbaoStacking;
 import com.fantechs.common.base.general.entity.wanbao.WanbaoStackingDet;
@@ -65,7 +64,7 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
         // 容量校验
         map.clear();
         map.put("stackingId", stackingDto.getStackingId());
-        List<WanbaoStackingDetDto> stackingDetDtos = stackingDetService.findList(map);
+        List<WanbaoStackingDet> stackingDetDtos = stackingDetService.findList(map);
         if (!stackingDetDtos.isEmpty() && new BigDecimal(stackingDetDtos.size()).compareTo(stackingDto.getMaxCapacity()) > -1){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛编码容量已满，不可继续操作");
         }
@@ -134,7 +133,7 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
         // 容量校验
         map.clear();
         map.put("stackingId", stackingDto.getStackingId());
-        List<WanbaoStackingDetDto> stackingDetDtos = stackingDetService.findList(map);
+        List<WanbaoStackingDet> stackingDetDtos = stackingDetService.findList(map);
         if (!stackingDetDtos.isEmpty() && new BigDecimal(stackingDetDtos.size()).compareTo(stackingDto.getMaxCapacity()) > -1){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), dto.getStackingCode() + "堆垛容量已满，请扫其他堆垛");
         }
