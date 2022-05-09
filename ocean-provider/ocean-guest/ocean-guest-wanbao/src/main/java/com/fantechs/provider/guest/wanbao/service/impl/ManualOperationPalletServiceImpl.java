@@ -141,6 +141,12 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
         if (new BigDecimal(count).compareTo(stackingDto.getMaxCapacity()) == 1){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛编码容量存放不下当前提交数量");
         }
+        Example example = new Example(WanbaoStackingDet.class);
+        example.createCriteria().andEqualTo("barcode", dto.getWanbaoBarcodeDto().getBarcode());
+        int countBarcodeExistNum = stackingDetService.selectCountByExample(example);
+        if (countBarcodeExistNum > 0){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "重复扫码");
+        }
 
         // 校验条码同PO/销售明细/物料
         List<String> barcodeList = new ArrayList<>();
