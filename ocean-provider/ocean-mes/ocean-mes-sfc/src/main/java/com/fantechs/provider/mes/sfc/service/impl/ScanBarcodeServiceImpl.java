@@ -121,7 +121,7 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
 
         boolean isCheckCustBarcode = false, isCheckSalesBarcode = false;
         // 入库下线工序不需要校验工单关键物料清单，只有打包工序需要
-        if (barcodeArr.length == 1 && "1".equals(scanBarcodeDto.getType())){
+        if ("1".equals(scanBarcodeDto.getType())){
             // 判断工单关键物料清单
             searchMesPmWorkOrderProcessReWo.setProcessId(scanBarcodeDto.getProcessId().toString());
             List<MesPmWorkOrderProcessReWoDto> pmWorkOrderProcessReWoDtoList = pmFeignApi.findPmWorkOrderProcessReWoList(searchMesPmWorkOrderProcessReWo).getData();
