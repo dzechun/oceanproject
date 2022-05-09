@@ -210,7 +210,7 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
      */
     @Override
     public int workByAuto(WanbaoAutoStackingListDto dto) {
-        return sfcFeignApi.workByAuto(dto).getData();
+        return sfcFeignApi.workByAuto(dto).getCode() == 0?1:0;
     }
 
     /**
@@ -245,7 +245,7 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
     @Override
     public int deleteStackingBarcode(Long stackingDetId) {
         WanbaoStackingDet stackingDet = stackingDetService.selectByKey(stackingDetId);
-        WanbaoStacking stacking = stackingService.selectByKey(stackingDetId);
+        WanbaoStacking stacking = stackingService.selectByKey(stackingDet.getStackingId());
         if (stacking.getUsageStatus() == 2){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛已提交，不可移除条码");
         }
