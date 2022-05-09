@@ -187,6 +187,9 @@ public class WmsInnerBarcodeOperationServiceImpl extends BaseService<WmsInnerBar
             }
         }
         if (wmsInnerInventory_old_status0 != null) {
+            if(StringUtils.isEmpty(wmsInnerInventory_old_status0.getPackingQty())){
+                wmsInnerInventory_old_status0.setPackingQty(BigDecimal.ZERO);
+            }
             wmsInnerInventory_old_status0.setPackingQty(wmsInnerInventory_old_status0.getPackingQty().add(BigDecimal.ONE));
             wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory_old_status0);
         }else {

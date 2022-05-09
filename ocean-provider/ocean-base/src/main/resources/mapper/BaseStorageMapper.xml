@@ -359,7 +359,10 @@ order by wii.modified_time desc limit 1
     </select>
 
     <select id="findOutStorage" resultType="com.fantechs.common.base.general.dto.basic.StorageRuleInventry">
-        SELECT a.storage_id as 'storageId',
+        SELECT storageId,materialId,salesBarcode,poCode,materialQty,
+        production_date,inventory_status_id,inventory_status_name
+        FROM
+        (SELECT a.storage_id as 'storageId',
         a.material_id as 'materialId',
         a.option3 as 'salesBarcode',
         a.option4 as 'poCode',
@@ -392,7 +395,8 @@ order by wii.modified_time desc limit 1
         LEFT JOIN base_inventory_status bis ON a.inventory_status_id = bis.inventory_status_id
         GROUP BY a.storage_id,a.material_id,a.option3,option4,a.inventory_status_id
         HAVING materialQty &gt; #{materialQty} and bis.inventory_status_name='合格'
-        ORDER BY a.production_date
+        ORDER BY a.production_date) b
+        ORDER BY date_format(b.production_date, '%Y-%m-%d') ASC,b.materialQty ASC
     </select>
     <select id="findEmptyStorage" resultType="java.lang.Long">
         SELECT storage_id FROM (SELECT storage_id FROM base_storage
