@@ -18,6 +18,7 @@ import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcKeyPartRe
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
@@ -470,7 +471,35 @@ public class PickingOrderServiceImpl implements PickingOrderService {
                     }
                 }
                 if(StringUtils.isNotEmpty(inventryDetList) && inventryDetList.size()>0){
-                    listMap.put(longId, inventryDetList);
+                    //对库存明细数量进行处理 排除掉已分配的库存数量
+                    for (StorageRuleInventry ruleInventry : inventryDetList) {
+                        Long storageIdS=ruleInventry.getStorageId();
+                        Long materialIdS=ruleInventry.getMaterialId();
+
+                        BigDecimal totalQty=null;
+
+                        Example exampleInventory = new Example(WmsInnerInventory.class);
+                        Example.Criteria criteriaInventory = exampleInventory.createCriteria();
+                        criteriaInventory.andEqualTo("materialId",materialIdS);
+                        criteriaInventory.andEqualTo("jobStatus",(byte)1);
+                        criteriaInventory.andEqualTo("storageId",storageIdS).andGreaterThan("packingQty",0).andEqualTo("orgId",sysUser.getOrganizationId());
+                        criteriaInventory.andEqualTo("stockLock",0).andEqualTo("qcLock",0).andEqualTo("lockStatus",0);
+                        //inventoryStatusId: 137, inventoryStatusCode: null, inventoryStatusName: "合格"
+                        criteriaInventory.andEqualTo("inventoryStatusId",137);
+                        List<WmsInnerInventory> wmsInnerInventoryList = wmsInnerInventoryMapper.selectByExample(exampleInventory);
+                        if(StringUtils.isNotEmpty(wmsInnerInventoryList) && wmsInnerInventoryList.size()>0) {
+                            totalQty = wmsInnerInventoryList.stream().map(WmsInnerInventory::getPackingQty).reduce(BigDecimal.ZERO, BigDecimal::add);
+                        }
+                        if(StringUtils.isNotEmpty(totalQty) && totalQty.compareTo(BigDecimal.ZERO)==1){
+                            ruleInventry.setMaterialQty(totalQty);
+                        }
+                        else {
+                            ruleInventry.setMaterialQty(BigDecimal.ZERO);
+                        }
+                    }
+                    //List<WmsInnerMaterialBarcodeDto> barcodeListCarton = barcodeDtos.stream().filter(u -> ((StringUtils.isEmpty(u.getBarcode())?"":u.getBarcode())=="")).collect(Collectors.toList());
+                    List<StorageRuleInventry> inventryDetListOK=inventryDetList.stream().filter(u -> ((u.getMaterialQty().compareTo(BigDecimal.ZERO)==1))).collect(Collectors.toList());
+                    listMap.put(longId, inventryDetListOK);
                 }
             }
 

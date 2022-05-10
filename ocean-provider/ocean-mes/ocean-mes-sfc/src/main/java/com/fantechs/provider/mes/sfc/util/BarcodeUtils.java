@@ -408,38 +408,39 @@ public class BarcodeUtils {
         // 是否投产工序且是该条码在工单工序第一次过站，工单投产数量 +1 mesSfcBarcodeProcessRecordDtoList.isEmpty()
         if(StringUtils.isNotEmpty(mesPmWorkOrder.getPutIntoProcessId())) {
             if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getNowProcessId()) && mesSfcBarcodeProcessRecordDtoList.size()==0) {
+
+                /**
+                 * 20211215 bgkun
+                 * 如果有附件码，变更销售订单条码状态
+                 */
+                Map<String, Object> map = new HashMap<>();
+                map.put("workOrderBarcodeId", sfcWorkOrderBarcode.getWorkOrderBarcodeId());
+                List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = barcodeUtils.mesSfcKeyPartRelevanceService.findList(map);
+                if (!keyPartRelevanceDtos.isEmpty() && keyPartRelevanceDtos.size() >0){
+                    List<MesSfcWorkOrderBarcode> barcodes = new ArrayList<>();
+                    for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : keyPartRelevanceDtos){
+                        if (keyPartRelevanceDto.getPartBarcode() != null && mesSfcBarcodeProcess.getCustomerBarcode() == null){
+                            SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
+                            searchMesSfcWorkOrderBarcode.setBarcode(keyPartRelevanceDto.getPartBarcode());
+                            List<MesSfcWorkOrderBarcodeDto> barcodeDtos = barcodeUtils.mesSfcWorkOrderBarcodeService.findList(searchMesSfcWorkOrderBarcode);
+                            if (!barcodeDtos.isEmpty()){
+                                MesSfcWorkOrderBarcode barcode = new MesSfcWorkOrderBarcode();
+                                barcode.setWorkOrderBarcodeId(barcodeDtos.get(0).getWorkOrderBarcodeId());
+                                barcode.setBarcodeStatus((byte) 1);
+                                barcodes.add(barcode);
+                            }
+                        }
+                    }
+                    if (barcodes.size() > 0){
+                        barcodeUtils.mesSfcWorkOrderBarcodeService.batchUpdate(barcodes);
+                    }
+                }
+
                 mesPmWorkOrder.setProductionQty(mesPmWorkOrder.getProductionQty() != null ? mesPmWorkOrder.getProductionQty().add(BigDecimal.ONE) : BigDecimal.ONE);
                 // 若是投产工序，则判断是否首条码，若是则更新工单状态为生产中
                 if (mesPmWorkOrder.getWorkOrderStatus() == (byte) 1) {
                     mesPmWorkOrder.setWorkOrderStatus((byte) 3);
                     mesPmWorkOrder.setActualStartTime(new Date());
-
-                    /**
-                     * 20211215 bgkun
-                     * 如果有附件码，变更销售订单条码状态
-                     */
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("workOrderBarcodeId", sfcWorkOrderBarcode.getWorkOrderBarcodeId());
-                    List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = barcodeUtils.mesSfcKeyPartRelevanceService.findList(map);
-                    if (!keyPartRelevanceDtos.isEmpty() && keyPartRelevanceDtos.size() >0){
-                        List<MesSfcWorkOrderBarcode> barcodes = new ArrayList<>();
-                        for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : keyPartRelevanceDtos){
-                            if (keyPartRelevanceDto.getPartBarcode() != null && mesSfcBarcodeProcess.getCustomerBarcode() == null){
-                                SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
-                                searchMesSfcWorkOrderBarcode.setBarcode(keyPartRelevanceDto.getPartBarcode());
-                                List<MesSfcWorkOrderBarcodeDto> barcodeDtos = barcodeUtils.mesSfcWorkOrderBarcodeService.findList(searchMesSfcWorkOrderBarcode);
-                                if (!barcodeDtos.isEmpty()){
-                                    MesSfcWorkOrderBarcode barcode = new MesSfcWorkOrderBarcode();
-                                    barcode.setWorkOrderBarcodeId(barcodeDtos.get(0).getWorkOrderBarcodeId());
-                                    barcode.setBarcodeStatus((byte) 1);
-                                    barcodes.add(barcode);
-                                }
-                            }
-                        }
-                        if (barcodes.size() > 0){
-                            barcodeUtils.mesSfcWorkOrderBarcodeService.batchUpdate(barcodes);
-                        }
-                    }
                 }
                 barcodeUtils.pmFeignApi.updatePmWorkOrder(mesPmWorkOrder);
 
