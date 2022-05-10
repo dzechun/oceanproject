@@ -354,6 +354,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         palletWorkScanDto.setClosePalletNum(BigDecimal.ONE);
         palletWorkScanDto.setNowPackageSpecQty(BigDecimal.ONE);
         palletWorkScanDto.setScanCartonNum(1);
+
+        log.info("====== 栈板总耗时：" + (System.currentTimeMillis() - startTime));
         return palletWorkScanDto;
     }
 
