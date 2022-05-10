@@ -52,9 +52,9 @@ public class ManualOperationPalletController {
 
     @PostMapping("/scanStackingCodeByAuto")
     @ApiOperation("堆码作业扫堆垛编码(A线)")
-    public ResponseEntity<List<WanbaoStackingDto>> scanStackingCodeByAuto(@ApiParam(value = "条码", required = true) @RequestBody StackingWorkByAutoDto dto) {
+    public ResponseEntity scanStackingCodeByAuto(@ApiParam(value = "条码", required = true) @RequestBody StackingWorkByAutoDto dto) {
         int i = palletService.scanStackingCodeByAuto(dto);
-        return ControllerUtil.returnCRUD(i);
+        return ControllerUtil.returnSuccess("成功", "true");
     }
 
     @PostMapping("/findStackingByAuto")

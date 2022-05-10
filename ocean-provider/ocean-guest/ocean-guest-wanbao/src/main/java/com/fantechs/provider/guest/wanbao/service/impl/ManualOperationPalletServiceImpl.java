@@ -159,25 +159,25 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
             throw new BizErrorException(response.getCode(), response.getMessage());
         }
         Boolean aBoolean = response.getData();
-        if (aBoolean){
-            // 发送mq
-            sfcFeignApi.sendMQByStacking(dto.getStackingCode());
-
-            // 保存条码堆垛关系
-            WanbaoStackingDet stackingDet = new WanbaoStackingDet();
-            WanbaoBarcodeDto barcodeDto = dto.getWanbaoBarcodeDto();
-            BeanUtil.copyProperties(barcodeDto, stackingDet);
-            stackingDet.setStackingId(stackingDto.getStackingId());
-            stackingDet.setStatus((byte) 1);
-            stackingDet.setOrgId(user.getOrganizationId());
-            stackingDet.setCreateTime(new Date());
-            stackingDet.setCreateUserId(user.getUserId());
-            stackingDet.setModifiedTime(new Date());
-            stackingDet.setModifiedUserId(user.getUserId());
-            stackingDet.setIsDelete((byte) 1);
-            return stackingDetService.save(stackingDet);
+        if (!aBoolean){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), response.getMessage());
         }
-        return 0;
+        // 发送mq
+        sfcFeignApi.sendMQByStacking(dto.getStackingCode());
+
+        // 保存条码堆垛关系
+        WanbaoStackingDet stackingDet = new WanbaoStackingDet();
+        WanbaoBarcodeDto barcodeDto = dto.getWanbaoBarcodeDto();
+        BeanUtil.copyProperties(barcodeDto, stackingDet);
+        stackingDet.setStackingId(stackingDto.getStackingId());
+        stackingDet.setStatus((byte) 1);
+        stackingDet.setOrgId(user.getOrganizationId());
+        stackingDet.setCreateTime(new Date());
+        stackingDet.setCreateUserId(user.getUserId());
+        stackingDet.setModifiedTime(new Date());
+        stackingDet.setModifiedUserId(user.getUserId());
+        stackingDet.setIsDelete((byte) 1);
+        return stackingDetService.save(stackingDet);
     }
 
     /**
