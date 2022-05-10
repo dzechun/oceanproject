@@ -105,6 +105,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             return true;
         }
 
+        long InventoryDet = System.currentTimeMillis();
+        log.info("===========查询库存明细耗时===================:" + (InventoryDet - start));
 
         String customerBarcode = null;
         if (dto.getBarCode().length() != 23){
@@ -121,6 +123,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 dto.setBarCode(barcodeProcess.getBarcode());
         }
 
+        long custBarcode = System.currentTimeMillis();
+        log.info("===========判断是三星客户条码还是厂内码耗时===================:" + (custBarcode-InventoryDet));
+
         //条码生产订单条码表
         List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtos = mesSfcWorkOrderBarcodeService
                 .findList(SearchMesSfcWorkOrderBarcode.builder()
@@ -132,6 +137,10 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         if (mesSfcWorkOrderBarcodeDtos.size() > 1) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012001);
         }
+
+        long WorkOrderBarcode = System.currentTimeMillis();
+        log.info("===========查询生产订单条码表耗时===================:" + (WorkOrderBarcode-custBarcode));
+
         /*
          * 流转卡状态(0-待投产 1-投产中 2-已完成 3-待打印)
          */
@@ -171,6 +180,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             throw new BizErrorException("该产品条码已不良 不可继续");
         }
 
+        long BarcodeProcess = System.currentTimeMillis();
+        log.info("===========查询条码对应过站记录信息耗时===================:" + (BarcodeProcess-WorkOrderBarcode));
+
         // 2、校验条码是否关联包箱
         Map<String, Object> map = new HashMap<>();
         map.put("workOrderBarcodeId", orderBarcodeDto.getWorkOrderBarcodeId());
@@ -178,6 +190,10 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         if (productCartonDetDtos != null && productCartonDetDtos.size() > 0) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012013);
         }
+
+        long CartonDetDto = System.currentTimeMillis();
+        log.info("===========查询包箱明细耗时===================:" + (CartonDetDto-BarcodeProcess));
+
         //产线
         BaseProLine proLine = baseFeignApi.selectProLinesDetail(mesPmWorkOrder.getProLineId()).getData();
         //工序
@@ -210,6 +226,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 throw new BizErrorException(ErrorCodeEnum.PDA40012019, mesPmWorkOrder.getMaterialId(), mesPmWorkOrderById.getMaterialId());
             }
         }
+
+        long CartonDto = System.currentTimeMillis();
+        log.info("===========查询包箱 判断同一工单 同一料号包箱耗时===================:" + (CartonDto-CartonDetDto));
 
         // 5、是否要扫附件码
         if (dto.getAnnex()) {
@@ -369,6 +388,10 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     }
                 }
             }
+
+            long getAnnex = System.currentTimeMillis();
+            log.info("===========扫描附件码耗时===================:" + (getAnnex-CartonDto));
+
             // 有附件码未作业或有附件码并且已作业，直接返回
             if (isWork||keyPartRelevanceDtos.size() + 1 < usageQty.intValue()) {
                 return false;
