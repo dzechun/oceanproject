@@ -104,6 +104,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     @Transactional(rollbackFor = Exception.class)
     @LcnTransaction
     public PalletWorkScanDto palletWorkScanBarcode(RequestPalletWorkScanDto requestPalletWorkScanDto) throws Exception {
+        long curretTime = System.currentTimeMillis();
         Long startTime = System.currentTimeMillis();
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -355,7 +356,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         palletWorkScanDto.setNowPackageSpecQty(BigDecimal.ONE);
         palletWorkScanDto.setScanCartonNum(1);
 
-        log.info("====== 栈板总耗时：" + (System.currentTimeMillis() - startTime));
+        log.info("====== 栈板总耗时：" + (System.currentTimeMillis() - curretTime));
         return palletWorkScanDto;
     }
 
@@ -949,7 +950,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
      */
     private Map<String, Object> cleanBarcode(String barcode) {
         Map<String, Object> map = new HashMap<>();
-
+        long start = System.currentTimeMillis();
         if (barcode.length() != 23) {
             // 判断是否三星客户条码
             Example example = new Example(MesSfcBarcodeProcess.class);
@@ -960,8 +961,23 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 map.put("barcode", barcode);
                 map.put("workOrderBarcodeId", mesSfcBarcodeProcesses.get(0).getWorkOrderBarcodeId().toString());
                 map.put("workOrderId", mesSfcBarcodeProcesses.get(0).getWorkOrderId().toString());
+                log.info("=========== 查询三星UK码耗时：" + (System.currentTimeMillis() - start));
                 return map;
             }
+        }
+
+        if (barcode.contains("391-") || barcode.contains("391D")){
+            // 销售条码
+            map.put("partBarcode", barcode);
+            List<MesSfcKeyPartRelevanceDto> mesSfcKeyPartRelevanceDtoList = mesSfcKeyPartRelevanceService.findList(map);
+            if (mesSfcKeyPartRelevanceDtoList.isEmpty()) {
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该条码未绑定产品条码");
+            }
+            map.put("barcode", mesSfcKeyPartRelevanceDtoList.get(0).getBarcodeCode());
+            map.put("workOrderBarcodeId", mesSfcKeyPartRelevanceDtoList.get(0).getWorkOrderBarcodeId().toString());
+            map.put("workOrderId", mesSfcKeyPartRelevanceDtoList.get(0).getWorkOrderId().toString());
+            log.info("=========== 查询销售条码耗时：" + (System.currentTimeMillis() - start));
+            return map;
         }
 
         SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
@@ -970,13 +986,17 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         if (mesSfcWorkOrderBarcodeDtoList.isEmpty()) {
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该条码不存在系统或已被删除");
         }
+        log.info("=========== 查询条码耗时：" + (System.currentTimeMillis() - start));
+        long time = System.currentTimeMillis();
         BaseLabelCategory labelCategory = baseFeignApi.findLabelCategoryDetail(mesSfcWorkOrderBarcodeDtoList.get(0).getLabelCategoryId()).getData();
+        log.info("=========== 查询标签类型耗时：" + (System.currentTimeMillis() - time));
+
+        time = System.currentTimeMillis();
         if (labelCategory.getLabelCategoryCode().equals("01")) {
             // 产内码
             map.put("barcode", mesSfcWorkOrderBarcodeDtoList.get(0).getBarcode());
             map.put("workOrderBarcodeId", mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderBarcodeId().toString());
             map.put("workOrderId", mesSfcWorkOrderBarcodeDtoList.get(0).getWorkOrderId().toString());
-
         } else {
             // 附件码
             map.put("partBarcode", barcode);
@@ -987,6 +1007,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             map.put("barcode", mesSfcKeyPartRelevanceDtoList.get(0).getBarcodeCode());
             map.put("workOrderBarcodeId", mesSfcKeyPartRelevanceDtoList.get(0).getWorkOrderBarcodeId().toString());
             map.put("workOrderId", mesSfcKeyPartRelevanceDtoList.get(0).getWorkOrderId().toString());
+            log.info("=========== 查询附件码耗时：" + (System.currentTimeMillis() - time));
         }
         return map;
     }
