@@ -1,5 +1,6 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderMaterialRePDto;
@@ -102,7 +103,6 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
                         }
                         cleanBarcodeDto.setSalesBarcode(str);
                     }else {
-                        // TODO 查找生产单客户条码
                         List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtos = mesSfcWorkOrderBarcodeService
                                 .findList(SearchMesSfcWorkOrderBarcode.builder()
                                         .barcode(str)
@@ -130,6 +130,7 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
             }
             MesPmWorkOrderProcessReWoDto pmWorkOrderProcessReWoDto = pmWorkOrderProcessReWoDtoList.get(0);
             List<MesPmWorkOrderMaterialRePDto> pmWorkOrderMaterialRePDtoList = pmWorkOrderProcessReWoDto.getList();
+            log.info("===================== pmWorkOrderMaterialRePDtoList:" + JSON.toJSONString(pmWorkOrderMaterialRePDtoList));
             for (MesPmWorkOrderMaterialRePDto workOrderMaterialRePDto : pmWorkOrderMaterialRePDtoList) {
                 if ("02".equals(workOrderMaterialRePDto.getLabelCategoryCode())){
                     if (StringUtils.isEmpty(cleanBarcodeDto.getSalesBarcode())){
@@ -146,7 +147,7 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
                 }
             }
         }
-
+        log.info("===================== isCheckSalesBarcode:" + isCheckSalesBarcode + "=========== isCheckCustBarcode: " + isCheckCustBarcode);
         /**
          * 4、判断包箱作业、栈板作业，区分方法
          */

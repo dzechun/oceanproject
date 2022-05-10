@@ -254,6 +254,14 @@
         </where>
         GROUP BY
             mswob.work_order_barcode_id
+        <choose>
+            <when test="barcodeType==3 or barcodeType==4">
+                order by oso.sales_order_code desc, mswob.barcode desc
+            </when>
+            <otherwise>
+                order by mswob.create_time desc,mswob.work_order_code desc, mswob.barcode desc
+            </otherwise>
+        </choose>
     </select>
 
     <select id="findMaxCode" resultType="java.lang.String">

@@ -1,25 +1,21 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
-import com.fantechs.common.base.general.dto.basic.BaseMaterialPackageDto;
 import com.fantechs.common.base.general.dto.basic.BasePackageSpecificationDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderMaterialRePDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderProcessReWoDto;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
 import com.fantechs.common.base.general.dto.om.OmSalesCodeReSpcDto;
-import com.fantechs.common.base.general.dto.wms.in.BarPODto;
-import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.entity.basic.*;
-import com.fantechs.common.base.general.entity.basic.search.*;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseInventoryStatus;
+import com.fantechs.common.base.general.entity.basic.search.SearchBasePackageSpecification;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderProcessReWo;
 import com.fantechs.common.base.general.entity.mes.sfc.*;
@@ -50,8 +46,6 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
