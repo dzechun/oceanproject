@@ -323,7 +323,7 @@ order by wii.modified_time desc limit 1
                 and option4 = #{poCode}
             </if>
         </where>
-        ORDER BY production_date DESC) a
+        ORDER BY production_date desc,modified_time DESC) a
         GROUP BY storage_id,material_id,option3,option4
         HAVING TIMESTAMPDIFF(DAY,production_date,DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%S'))&lt;30
     </select>
