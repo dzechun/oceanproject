@@ -207,7 +207,19 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         WmsInnerInventoryDto wmsInnerInventoryDto = innerInventoryDtoList.get(0);
 
         //合并库存
-        Map<String,Object> map = new HashMap<>();
+        SearchWmsInnerInventory sWmsInnerInventory = new SearchWmsInnerInventory();
+        sWmsInnerInventory.setMaterialId(wmsInnerInventoryDto.getMaterialId());
+        sWmsInnerInventory.setWarehouseId(wmsInnerInventoryDto.getWarehouseId());
+        sWmsInnerInventory.setStorageId(wmsInnerInventoryDto.getStorageId());
+        sWmsInnerInventory.setBatchCode(wmsInnerInventoryDto.getBatchCode());
+        sWmsInnerInventory.setInventoryStatusId(inventoryStatus.get(0).getInventoryStatusId());
+        sWmsInnerInventory.setJobStatus((byte)1);
+        sWmsInnerInventory.setLockStatus((byte)0);
+        sWmsInnerInventory.setQcLock((byte)0);
+        sWmsInnerInventory.setStockLock((byte)0);
+        List<WmsInnerInventoryDto> inventoryDtos = innerFeignApi.findList(sWmsInnerInventory).getData();
+
+        /*Map<String,Object> map = new HashMap<>();
         map.put("materialId",wmsInnerInventoryDto.getMaterialId());
         map.put("warehouseId",wmsInnerInventoryDto.getWarehouseId());
         map.put("storageId",wmsInnerInventoryDto.getStorageId());
@@ -217,8 +229,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         map.put("lockStatus",0);
         map.put("qcLock",0);
         map.put("stockLock",0);
-        WmsInnerInventory wmsInnerInventory = innerFeignApi.selectOneByExample(map).getData();
-        if (StringUtils.isNotEmpty(wmsInnerInventory)) {
+        WmsInnerInventory wmsInnerInventory = innerFeignApi.selectOneByExample(map).getData();*/
+        if (StringUtils.isNotEmpty(inventoryDtos)) {
+            WmsInnerInventoryDto wmsInnerInventory = inventoryDtos.get(0);
             WmsInnerInventoryDto innerInventoryDto = new WmsInnerInventoryDto();
             BeanUtils.copyProperties(wmsInnerInventory,innerInventoryDto);
             innerInventoryDto.setQcLock((byte)0);
@@ -687,7 +700,6 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 }
             }
 
-            log.info("============= 质检移位单上架返回库存ID-->" + inventoryId.toString());
 
             /*SearchWmsInnerInventory searchWmsInnerInventory = new SearchWmsInnerInventory();
             searchWmsInnerInventory.setMaterialId(materialId);
@@ -703,6 +715,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 //List<WmsInnerInventoryDto> dtoList=inventoryDtos.stream().filter(item -> item.getPackingQty() != null && item.getPackingQty().compareTo(new BigDecimal(0))==1).collect(Collectors.toList());
 
                 //log.info("============= 开始生成二阶段质检移位单" + JSON.toJSONString(dtoList));
+                log.info("============= 质检移位单上架返回库存ID-->" + inventoryId.toString());
 
                 log.info("======================== 开始生成二阶段质检移位单=========================");
 
