@@ -164,9 +164,17 @@ public class BarcodeUtils {
         log.info("================== 开始 ==================");
         long start = System.currentTimeMillis();
         // 获取条码
-        MesSfcBarcodeProcess mesSfcBarcodeProcess = barcodeUtils.mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
-                .barcode(dto.getBarCode())
-                .build());
+        MesSfcBarcodeProcess mesSfcBarcodeProcess=null;
+        if(StringUtils.isNotEmpty(dto.getWorkOrderBarcodeId())){
+            mesSfcBarcodeProcess = barcodeUtils.mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
+                    .workOrderBarcodeId(dto.getWorkOrderBarcodeId())
+                    .build());
+        }
+        else if(StringUtils.isEmpty(dto.getWorkOrderBarcodeId()) && StringUtils.isNotEmpty(dto.getBarCode())) {
+            mesSfcBarcodeProcess = barcodeUtils.mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
+                    .barcode(dto.getBarCode())
+                    .build());
+        }
         ResponseEntity<List<BaseRouteProcess>> responseEntity = barcodeUtils.baseFeignApi.findConfigureRout(dto.getRouteId());
         if (responseEntity.getCode() != 0) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012008);
@@ -181,8 +189,9 @@ public class BarcodeUtils {
             // 若入参当前扫码工序ID跟过站表下一工序ID不一致
             // 则判断过站表下一工序是否必过工序
             if (!dto.getNowProcessId().equals(mesSfcBarcodeProcess.getNextProcessId())) {
+                MesSfcBarcodeProcess mesSfcBarcodeProcessOptional=mesSfcBarcodeProcess;
                 Optional<BaseRouteProcess> routeProcessOptional = routeProcessList.stream()
-                        .filter(i -> mesSfcBarcodeProcess.getNextProcessId().equals(i.getProcessId()))
+                        .filter(i -> mesSfcBarcodeProcessOptional.getNextProcessId().equals(i.getProcessId()))
                         .findFirst();
                 if (!routeProcessOptional.isPresent()) {
                     throw new BizErrorException(ErrorCodeEnum.PDA40012009, mesSfcBarcodeProcess.getNextProcessName());

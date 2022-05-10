@@ -572,8 +572,13 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         }
 
         // 条码对应过站记录信息
-        MesSfcBarcodeProcess mesSfcBarcodeProcess = mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
+        /*MesSfcBarcodeProcess mesSfcBarcodeProcess = mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
                 .barcode(dto.getBarCode())
+                .nextProcessId(dto.getProcessId())
+                .build());*/
+
+        MesSfcBarcodeProcess mesSfcBarcodeProcess = mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
+                .workOrderBarcodeId(orderBarcodeDto.getWorkOrderBarcodeId())
                 .nextProcessId(dto.getProcessId())
                 .build());
         if(StringUtils.isEmpty(mesSfcBarcodeProcess)){
@@ -876,6 +881,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 .nowStationId(dto.getStationId())
                 .workOrderId(mesPmWorkOrder.getWorkOrderId())
                 .passCode(sfcProductCarton.getCartonCode())
+                .workOrderBarcodeId(orderBarcodeDto.getWorkOrderBarcodeId())
                 .passCodeType((byte) 1)
                 .build();
         // 保存条码包箱关系
