@@ -19,6 +19,13 @@ import java.util.Map;
 public interface MesSfcWorkOrderBarcodeService extends IService<MesSfcWorkOrderBarcode> {
     List<MesSfcWorkOrderBarcodeDto> findList(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode);
 
+    /**
+     * 补打查询列表
+     * @param searchMesSfcWorkOrderBarcode
+     * @return
+     */
+    List<MesSfcWorkOrderBarcodeDto> findListByReprint(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode);
+
     int print(String ids,Byte printType,String printName,String userCode,String password,String printId);
     int print_rewrite(String ids,Byte printType,String printName,String userCode,String password,String printId);
 

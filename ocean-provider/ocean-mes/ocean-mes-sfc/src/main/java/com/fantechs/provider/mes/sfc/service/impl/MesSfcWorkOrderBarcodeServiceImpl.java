@@ -97,6 +97,17 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     }
 
     /**
+     * 补打查询列表
+     *
+     * @param searchMesSfcWorkOrderBarcode
+     * @return
+     */
+    @Override
+    public List<MesSfcWorkOrderBarcodeDto> findListByReprint(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode) {
+        return mesSfcWorkOrderBarcodeMapper.findListByReprint(searchMesSfcWorkOrderBarcode);
+    }
+
+    /**
      * 打印/补打条码
      *
      * @param ids       条码唯一标识

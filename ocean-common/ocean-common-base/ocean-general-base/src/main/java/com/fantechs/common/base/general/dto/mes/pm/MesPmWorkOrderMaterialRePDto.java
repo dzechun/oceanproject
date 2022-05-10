@@ -23,7 +23,7 @@ public class MesPmWorkOrderMaterialRePDto extends MesPmWorkOrderMaterialReP impl
      */
     @Transient
     @ApiModelProperty(value = "标签类别编码",example = "标签类别编码")
-    private Byte labelCategoryCode;
+    private String labelCategoryCode;
 
     /**
      * 零件料号

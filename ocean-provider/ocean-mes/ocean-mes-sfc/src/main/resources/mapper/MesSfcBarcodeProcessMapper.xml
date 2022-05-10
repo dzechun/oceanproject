@@ -214,9 +214,8 @@
     SELECT COUNT(*) FROM (
     SELECT IFNULL(COUNT(*),0) FROM mes_sfc_barcode_process msbp
     <where>
-     msbp.sales_code_re_spc_id IS NOT NULL
       <if test="barcodeList != null">
-        <foreach collection="barcodeList" index="index" item="item" open="AND msbp.barcode in (" close=")"
+        <foreach collection="barcodeList" index="index" item="item" open="msbp.barcode in (" close=")"
                  separator=",">
           #{item}
         </foreach>

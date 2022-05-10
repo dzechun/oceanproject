@@ -34,7 +34,7 @@
     <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
     <result column="label_category_name" jdbcType="VARCHAR" property="labelCategoryName" />
-    <result column="label_category_code" jdbcType="TINYINT" property="labelCategoryCode" />
+    <result column="label_category_code" jdbcType="VARCHAR" property="labelCategoryCode" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -51,7 +51,7 @@
   </sql>
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
-    select <include refid="Base_Column_List"></include>,bm.material_code,bm.material_name,bm.material_version,sbm.material_code AS 'sub_material_code'
+    select <include refid="Base_Column_List"></include>,bm.material_code,bm.material_name,bm.material_version,sbm.material_code AS 'sub_material_code',blc.label_category_code
     from mes_pm_work_order_material_re_p mpwomrp
     LEFT JOIN ocean_v2.sys_user su ON mpwomrp.create_user_id = su.user_id
     LEFT JOIN ocean_v2.sys_user sus ON mpwomrp.modified_user_id = sus.user_id

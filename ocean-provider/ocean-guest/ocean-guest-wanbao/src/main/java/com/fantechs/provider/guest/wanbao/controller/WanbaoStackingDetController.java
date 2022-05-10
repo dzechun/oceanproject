@@ -72,16 +72,16 @@ public class WanbaoStackingDetController {
 
     @ApiOperation("列表")
     @PostMapping("/findList")
-    public ResponseEntity<List<WanbaoStackingDetDto>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWanbaoStackingDet searchWanbaoStackingDet) {
+    public ResponseEntity<List<WanbaoStackingDet>> findList(@ApiParam(value = "查询对象")@RequestBody SearchWanbaoStackingDet searchWanbaoStackingDet) {
         Page<Object> page = PageHelper.startPage(searchWanbaoStackingDet.getStartPage(),searchWanbaoStackingDet.getPageSize());
-        List<WanbaoStackingDetDto> list = wanbaoStackingDetService.findList(ControllerUtil.dynamicConditionByEntity(searchWanbaoStackingDet));
+        List<WanbaoStackingDet> list = wanbaoStackingDetService.findList(ControllerUtil.dynamicConditionByEntity(searchWanbaoStackingDet));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
     @ApiOperation("列表(不分页)")
     @PostMapping("/findAll")
-    public ResponseEntity<List<WanbaoStackingDetDto>> findAll(@ApiParam(value = "查询对象") @RequestBody SearchWanbaoStackingDet searchWanbaoStackingDet) {
-        List<WanbaoStackingDetDto> list = wanbaoStackingDetService.findList(ControllerUtil.dynamicConditionByEntity(searchWanbaoStackingDet));
+    public ResponseEntity<List<WanbaoStackingDet>> findAll(@ApiParam(value = "查询对象") @RequestBody SearchWanbaoStackingDet searchWanbaoStackingDet) {
+        List<WanbaoStackingDet> list = wanbaoStackingDetService.findList(ControllerUtil.dynamicConditionByEntity(searchWanbaoStackingDet));
         return ControllerUtil.returnDataSuccess(list, list.size());
     }
 
@@ -90,7 +90,7 @@ public class WanbaoStackingDetController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchWanbaoStackingDet searchWanbaoStackingDet){
-    List<WanbaoStackingDetDto> list = wanbaoStackingDetService.findList(ControllerUtil.dynamicConditionByEntity(searchWanbaoStackingDet));
+    List<WanbaoStackingDet> list = wanbaoStackingDetService.findList(ControllerUtil.dynamicConditionByEntity(searchWanbaoStackingDet));
     try {
         // 导出操作
         EasyPoiUtils.exportExcel(list, "导出信息", "WanbaoStackingDet信息", WanbaoStackingDetDto.class, "WanbaoStackingDet.xls", response);

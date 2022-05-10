@@ -10,7 +10,6 @@ import com.fantechs.common.base.general.dto.mes.sfc.StackingWorkByAutoDto;
 import com.fantechs.common.base.general.dto.mes.sfc.WanbaoBarcodeDto;
 import com.fantechs.common.base.general.dto.wanbao.WanbaoAutoStackingDto;
 import com.fantechs.common.base.general.dto.wanbao.WanbaoAutoStackingListDto;
-import com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDetDto;
 import com.fantechs.common.base.general.dto.wanbao.WanbaoStackingDto;
 import com.fantechs.common.base.general.entity.wanbao.WanbaoStacking;
 import com.fantechs.common.base.general.entity.wanbao.WanbaoStackingDet;
@@ -65,7 +64,7 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
         // 容量校验
         map.clear();
         map.put("stackingId", stackingDto.getStackingId());
-        List<WanbaoStackingDetDto> stackingDetDtos = stackingDetService.findList(map);
+        List<WanbaoStackingDet> stackingDetDtos = stackingDetService.findList(map);
         if (!stackingDetDtos.isEmpty() && new BigDecimal(stackingDetDtos.size()).compareTo(stackingDto.getMaxCapacity()) > -1){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛编码容量已满，不可继续操作");
         }
@@ -134,13 +133,19 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
         // 容量校验
         map.clear();
         map.put("stackingId", stackingDto.getStackingId());
-        List<WanbaoStackingDetDto> stackingDetDtos = stackingDetService.findList(map);
+        List<WanbaoStackingDet> stackingDetDtos = stackingDetService.findList(map);
         if (!stackingDetDtos.isEmpty() && new BigDecimal(stackingDetDtos.size()).compareTo(stackingDto.getMaxCapacity()) > -1){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), dto.getStackingCode() + "堆垛容量已满，请扫其他堆垛");
         }
         int count = 1 + stackingDetDtos.size();
         if (new BigDecimal(count).compareTo(stackingDto.getMaxCapacity()) == 1){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛编码容量存放不下当前提交数量");
+        }
+        Example example = new Example(WanbaoStackingDet.class);
+        example.createCriteria().andEqualTo("barcode", dto.getWanbaoBarcodeDto().getBarcode());
+        int countBarcodeExistNum = stackingDetService.selectCountByExample(example);
+        if (countBarcodeExistNum > 0){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "重复扫码");
         }
 
         // 校验条码同PO/销售明细/物料
@@ -154,25 +159,25 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
             throw new BizErrorException(response.getCode(), response.getMessage());
         }
         Boolean aBoolean = response.getData();
-        if (aBoolean){
-            // 发送mq
-            sfcFeignApi.sendMQByStacking(dto.getStackingCode());
-
-            // 保存条码堆垛关系
-            WanbaoStackingDet stackingDet = new WanbaoStackingDet();
-            WanbaoBarcodeDto barcodeDto = dto.getWanbaoBarcodeDto();
-            BeanUtil.copyProperties(barcodeDto, stackingDet);
-            stackingDet.setStackingId(stackingDto.getStackingId());
-            stackingDet.setStatus((byte) 1);
-            stackingDet.setOrgId(user.getOrganizationId());
-            stackingDet.setCreateTime(new Date());
-            stackingDet.setCreateUserId(user.getUserId());
-            stackingDet.setModifiedTime(new Date());
-            stackingDet.setModifiedUserId(user.getUserId());
-            stackingDet.setIsDelete((byte) 1);
-            return stackingDetService.save(stackingDet);
+        if (!aBoolean){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), response.getMessage());
         }
-        return 0;
+        // 发送mq
+        sfcFeignApi.sendMQByStacking(dto.getStackingCode());
+
+        // 保存条码堆垛关系
+        WanbaoStackingDet stackingDet = new WanbaoStackingDet();
+        WanbaoBarcodeDto barcodeDto = dto.getWanbaoBarcodeDto();
+        BeanUtil.copyProperties(barcodeDto, stackingDet);
+        stackingDet.setStackingId(stackingDto.getStackingId());
+        stackingDet.setStatus((byte) 1);
+        stackingDet.setOrgId(user.getOrganizationId());
+        stackingDet.setCreateTime(new Date());
+        stackingDet.setCreateUserId(user.getUserId());
+        stackingDet.setModifiedTime(new Date());
+        stackingDet.setModifiedUserId(user.getUserId());
+        stackingDet.setIsDelete((byte) 1);
+        return stackingDetService.save(stackingDet);
     }
 
     /**
@@ -205,7 +210,7 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
      */
     @Override
     public int workByAuto(WanbaoAutoStackingListDto dto) {
-        return sfcFeignApi.workByAuto(dto).getData();
+        return sfcFeignApi.workByAuto(dto).getCode() == 0?1:0;
     }
 
     /**
@@ -240,7 +245,7 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
     @Override
     public int deleteStackingBarcode(Long stackingDetId) {
         WanbaoStackingDet stackingDet = stackingDetService.selectByKey(stackingDetId);
-        WanbaoStacking stacking = stackingService.selectByKey(stackingDetId);
+        WanbaoStacking stacking = stackingService.selectByKey(stackingDet.getStackingId());
         if (stacking.getUsageStatus() == 2){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛已提交，不可移除条码");
         }
