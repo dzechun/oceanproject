@@ -45,7 +45,6 @@ import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeReprintService;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import com.fantechs.provider.mes.sfc.util.RabbitProducer;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -377,7 +376,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         // 6、构造打印条码结构
         if (!printModelList.isEmpty()) {
             List<PrintModel> list = new ArrayList<>();
-            // 万宝项目 打印条码只有一式一联，一式两联，一式四联
+            // 万宝项目 打印条码只有一式一联，一式两联，一式四联，一式六联
             if (labelRuteDto.getSize() == 1) {
                 // 两个条码一组
                 List<List<PrintModel>> fixedGrouping = fixedGrouping(printModelList, 2);
@@ -390,7 +389,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                     }
                     list.add(source);
                 }
-            } else if (labelRuteDto.getSize() == 2 || labelRuteDto.getSize() == 4) {
+            } else if (labelRuteDto.getSize() % 2 == 0) {
                 for (PrintModel source : printModelList) {
                     PrintModel target = new PrintModel();
                     BeanUtil.copyProperties(source, target);
