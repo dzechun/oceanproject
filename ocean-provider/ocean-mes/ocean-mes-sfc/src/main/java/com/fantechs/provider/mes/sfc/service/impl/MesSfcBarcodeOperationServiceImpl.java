@@ -704,9 +704,15 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             }
 
             // 查找该附件码是否存在系统中
+            /*List<MesSfcWorkOrderBarcodeDto> sfcWorkOrderAnnexBarcodeDtos = mesSfcWorkOrderBarcodeService
+                    .findList(SearchMesSfcWorkOrderBarcode.builder()
+                            .barcode(dto.getBarAnnexCode())
+                            .build());*/
+
             List<MesSfcWorkOrderBarcodeDto> sfcWorkOrderAnnexBarcodeDtos = mesSfcWorkOrderBarcodeService
                     .findList(SearchMesSfcWorkOrderBarcode.builder()
                             .barcode(dto.getBarAnnexCode())
+                            .barcodeType((byte)3)
                             .build());
 
             boolean isBarCode = false;
@@ -727,6 +733,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             } else {
                 // 条码
                 for (MesSfcWorkOrderBarcodeDto barcodeDto : sfcWorkOrderAnnexBarcodeDtos) {
+                    if(barcodeDto.getMaterialId().toString().equals(mesPmWorkOrder.getMaterialId().toString())==false){
+                        throw new Exception("附件码对应物料ID和厂内码对应物料ID不一致");
+                    }
                     int material_count = 0;
                     for (MesPmWorkOrderMaterialRePDto pmWorkOrderMaterialRePDto : pmWorkOrderMaterialRePDtoList) {
                         if (barcodeDto.getLabelCategoryId().equals(pmWorkOrderMaterialRePDto.getLabelCategoryId())) {
