@@ -74,8 +74,9 @@ public class ManualOperationPalletController {
 
     @PostMapping("/changeStacking")
     @ApiOperation("切换堆垛(A线)")
-    public ResponseEntity changeStacking(@ApiParam(value = "原堆垛ID", required = true) @RequestParam Long oldId, @ApiParam(value = "新堆垛ID", required = true) @RequestParam Long newId){
-        int i = palletService.changeStacking(oldId, newId);
+    public ResponseEntity changeStacking(@ApiParam(value = "新堆垛ID", required = true) @RequestParam Long newId,
+                                         @ApiParam(value = "堆垛明细ID", required = true) @RequestParam Long stackingDetId){
+        int i = palletService.changeStacking(newId, stackingDetId);
         return ControllerUtil.returnCRUD(i);
     }
 

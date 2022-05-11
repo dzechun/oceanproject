@@ -56,11 +56,11 @@ public interface ManualOperationPalletService {
 
     /**
      * 切换堆垛
-     * @param oldId
      * @param newId
+     * @param stackingDetId
      * @return
      */
-    int changeStacking(Long oldId, Long newId);
+    int changeStacking(Long newId, Long stackingDetId);
 
     /**
      * 移除堆垛上的条码
