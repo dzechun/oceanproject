@@ -33,6 +33,7 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
@@ -44,6 +45,7 @@ import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeReprintService;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import com.fantechs.provider.mes.sfc.util.RabbitProducer;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -465,6 +467,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public Map<String, Object> importExcel(List<ImportCustomerBarcodeDto> list) {
+        log.info("======== 导入数据 ==========：" + JsonUtils.objectToJson(list));
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
