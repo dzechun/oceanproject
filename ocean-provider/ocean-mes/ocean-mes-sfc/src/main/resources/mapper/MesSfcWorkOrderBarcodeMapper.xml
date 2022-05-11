@@ -188,6 +188,7 @@
     <select id="findListByReprint" resultMap="BaseResultDtoMap"
             parameterType="com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode">
         SELECT
+            mswob.work_order_barcode_id,
             mswob.barcode,
             <choose>
                 <when test="barcodeType==3 or barcodeType==4">
