@@ -428,15 +428,13 @@ public class SyncDataServiceImpl implements SyncDataService {
                     // 修改订单
                     updateList.add(workOrder);
                 } else {
-                    Map<Long, List<MesPmWorkOrder>> listMap = workOrderDtos.stream().filter(item -> item.getMaterialId().equals(workOrder.getMaterialId())).collect(Collectors.groupingBy(MesPmWorkOrder::getLogicId));
+                    Map<Long, List<MesPmWorkOrder>> listMap = workOrderDtos.stream().filter(item -> item.getMaterialId().equals(workOrder.getMaterialId()) && item.getLogicId() != null).collect(Collectors.groupingBy(MesPmWorkOrder::getLogicId));
                     // 同个物料的离散任务中存在多个逻辑仓或没有的，不处理，有且只有一个的时候赋值
+                    log.info("================= 逻辑仓listMap:" + workOrderDtos.stream().filter(item -> item.getMaterialId().equals(workOrder.getMaterialId()) && item.getLogicId() != null).collect(Collectors.toList()));
                     if (listMap.size() == 1){
                         listMap.forEach((key, value) -> {
-                            logList.add(build(sysUser.getOrganizationId(), (byte) 1, "查询数据库-同步生产订单", "离散任务" + workOrder.getWorkOrderCode() + "写入逻辑仓：" + key, null));
                             workOrder.setLogicId(key);
                         });
-                    }else {
-                        logList.add(build(sysUser.getOrganizationId(), (byte) 1, "查询数据库-同步生产订单", "物料" + workOrder.getMaterialId() + "的工单逻辑仓数量为: " + listMap.size(), null));
                     }
                     // 新增订单
                     addList.add(workOrder);
