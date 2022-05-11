@@ -597,7 +597,11 @@ public class BarcodeRuleUtils {
         //获取最大流水号
         String maxCode = getMaxSerialNumber(list, lastBarCode, planYear, planMonth, planDay);
         // 批量生成条码
-        Integer start = (StringUtils.isEmpty(maxCode) || Integer.valueOf(maxCode) == 1) ? 0 : Integer.valueOf(maxCode);
+        Integer start = 0;
+        if (hasKey){
+            start = Integer.valueOf(maxCode);
+        }
+        log.info("======= start:" + start);
         String fixedValue = lastBarCode.substring(0, lastBarCode.length() - maxCode.length());
         log.info("======最大流水号:" + maxCode + "============ 固定值:" + fixedValue + "====== qty: " + qty);
         String returnBarcode = null;
