@@ -13,5 +13,7 @@ public interface MesSfcKeyPartRelevanceMapper extends MyMapper<MesSfcKeyPartRele
 
     List<MesSfcKeyPartRelevanceDto> findList(Map<String, Object> map);
 
+    List<MesSfcKeyPartRelevanceDto> findListByPallet(Map<String, Object> map);
+
     List<MesSfcKeyPartRelevanceDto> findListForGroup(Map<String, Object> map);
 }

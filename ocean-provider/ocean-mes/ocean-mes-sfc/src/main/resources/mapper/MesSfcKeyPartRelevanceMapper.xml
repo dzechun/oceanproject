@@ -119,6 +119,22 @@
     </where>
   </select>
 
+  <select id="findListByPallet" resultMap="BaseResultDtoMap" parameterType="map">
+    select
+    mskpr.work_order_id,
+    mskpr.work_order_barcode_id,
+    mskpr.barcode_code
+    FROM mes_sfc_key_part_relevance mskpr
+    <where>
+      <if test="partBarcode != null and partBarcode != ''">
+        and mskpr.part_barcode = #{partBarcode}
+      </if>
+      <if test="barcodeCode != null and barcodeCode != ''">
+        and mskpr.barcode_code = #{barcodeCode}
+      </if>
+    </where>
+  </select>
+
   <select id="findListForGroup" resultMap="BaseResultDtoMap" parameterType="map">
     select <include refid="BaseColumnList"/>
     FROM mes_sfc_key_part_relevance mskpr
