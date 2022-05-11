@@ -159,7 +159,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
         startTime = System.currentTimeMillis();
         // 更新过站/过站记录信息
-        log.info("================== 更新过站开始 ==================");
         long start = System.currentTimeMillis();
 
         // 工艺路线与工艺
@@ -969,7 +968,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         if (barcode.contains("391-") || barcode.contains("391D")){
             // 销售条码
             map.put("partBarcode", barcode);
-            List<MesSfcKeyPartRelevanceDto> mesSfcKeyPartRelevanceDtoList = mesSfcKeyPartRelevanceService.findList(map);
+            List<MesSfcKeyPartRelevanceDto> mesSfcKeyPartRelevanceDtoList = mesSfcKeyPartRelevanceService.findListByPallet(map);
             if (mesSfcKeyPartRelevanceDtoList.isEmpty()) {
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该条码未绑定产品条码");
             }
@@ -1000,7 +999,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         } else {
             // 附件码
             map.put("partBarcode", barcode);
-            List<MesSfcKeyPartRelevanceDto> mesSfcKeyPartRelevanceDtoList = mesSfcKeyPartRelevanceService.findList(map);
+            List<MesSfcKeyPartRelevanceDto> mesSfcKeyPartRelevanceDtoList = mesSfcKeyPartRelevanceService.findListByPallet(map);
             if (mesSfcKeyPartRelevanceDtoList.isEmpty()) {
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该条码未绑定产品条码");
             }
