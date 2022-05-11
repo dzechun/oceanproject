@@ -210,6 +210,9 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
      */
     @Override
     public int workByAuto(WanbaoAutoStackingListDto dto) {
+        WanbaoStacking stacking = stackingService.selectByKey(dto.getStackingId());
+        stacking.setUsageStatus((byte) 2);
+        stackingService.update(stacking);
         return sfcFeignApi.workByAuto(dto).getCode() == 0?1:0;
     }
 
