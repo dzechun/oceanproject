@@ -42,6 +42,7 @@
       <result column="option8" jdbcType="VARCHAR" property="option8" />
       <result column="option9" jdbcType="VARCHAR" property="option9" />
       <result column="option10" jdbcType="VARCHAR" property="option10" />
+      <result column="sales_code" jdbcType="VARCHAR" property="salesCode" />
   </resultMap>
 
   <resultMap id="BaseResultMapDTO" extends="BaseResultMap"
@@ -70,8 +71,8 @@
     wodod.order_det_id,
     wodod.warehouse_id,
     wodod.storage_id,
-wodod.platform_id,
-wodod.picking_storage_id,
+    wodod.platform_id,
+    wodod.picking_storage_id,
     wodod.inventory_status_id,
     wodod.line_number,
     wodod.material_id,
@@ -90,17 +91,18 @@ wodod.picking_storage_id,
     wodod.create_time,
     wodod.modified_user_id,
     wodod.modified_time,
+    wodod.sales_code,
     wodod.is_delete,
     wodod.option1,
     wodod.option2,
     wodod.option3,
-wodod.option4,
+    wodod.option4,
     wodod.option5,
     wodod.option6,
-wodod.option7,
+    wodod.option7,
     wodod.option8,
     wodod.option9,
-wodod.option10
+    wodod.option10
   </sql>
 
   <select id="findList" resultMap="BaseResultMapDTO" parameterType="map">
