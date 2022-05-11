@@ -187,8 +187,8 @@ public class WmsInnerInitStockServiceImpl extends BaseService<WmsInnerInitStock>
                     //查询是否重复
                     example.clear();
                     criteria.andEqualTo("inPlantBarcode",barCode);
-                    WmsInnerInitStockBarcode wmsInnerInitStockBarcode = wmsInnerInitStockBarcodeMapper.selectOneByExample(example);
-                    if(StringUtils.isNotEmpty(wmsInnerInitStockBarcode)){
+                    int i = wmsInnerInitStockBarcodeMapper.selectCountByExample(example);
+                    if(i > 0){
                         throw new BizErrorException("重复扫码");
                     }
                     initStockCheckBarCode.setClientBarcode(null);
