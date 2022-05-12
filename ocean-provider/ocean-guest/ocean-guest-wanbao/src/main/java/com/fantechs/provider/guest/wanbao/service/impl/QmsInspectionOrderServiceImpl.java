@@ -527,7 +527,9 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         return i;
     }
 
-    private int createJobOrderShift(List<QmsInspectionOrderDetSample> list,QmsInspectionOrder qmsInspectionOrder,SysUser user) {
+    @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
+    public int createJobOrderShift(List<QmsInspectionOrderDetSample> list,QmsInspectionOrder qmsInspectionOrder,SysUser user) {
         int i = 1;
         String barcode = list.get(0).getFactoryBarcode();
         Long materialId = qmsInspectionOrder.getMaterialId();
@@ -1290,6 +1292,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
             innerInventoryDto.setInventoryStatusId(inventoryStatusList.get(0).getInventoryStatusId());
             innerInventoryDto.setModifiedTime(new Date());
             innerFeignApi.update(innerInventoryDto);
+            log.info("修改的库存id："+innerInventoryDto.getInventoryId()+",库存状态id："+innerInventoryDto.getInventoryStatusId());
         }
 
         //检验结果返写回库存明细
@@ -1302,6 +1305,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                 wmsInnerInventoryDetDto.setInventoryStatusId(inventoryStatusList.get(0).getInventoryStatusId());
                 wmsInnerInventoryDetDto.setQcDate(new Date());
                 innerFeignApi.update(wmsInnerInventoryDetDto);
+                log.info("修改的库存条码："+wmsInnerInventoryDetDto.getBarcode()+",库存状态id："+wmsInnerInventoryDetDto.getInventoryStatusId());
             }
         }
 
