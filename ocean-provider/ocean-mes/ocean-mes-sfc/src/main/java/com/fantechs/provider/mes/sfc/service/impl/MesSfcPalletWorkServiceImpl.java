@@ -137,6 +137,9 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "配置产线与条码产线不一致");
         }
         MesSfcBarcodeProcessDto barcodeProcessDto = processServiceList.get(0);
+        if (barcodeProcessDto.getNextProcessId().equals(0)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码已完成过站，不可重复扫码");
+        }
         if (!barcodeProcessDto.getNextProcessId().equals(requestPalletWorkScanDto.getProcessId())) {
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "PDA配置工序与条码工序不匹配");
         }
