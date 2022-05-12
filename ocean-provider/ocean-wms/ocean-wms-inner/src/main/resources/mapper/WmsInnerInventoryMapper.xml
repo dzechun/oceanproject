@@ -212,9 +212,6 @@ wii.option5
     <if test="warehouseId!=null and warehouseId!=''">
       and wii.warehouse_id = #{warehouseId}
     </if>
-    <if test="storageCode!=null and storageCode!=''">
-      and bs.storage_code = #{storageCode}
-    </if>
       <if test="orgId!=null and orgId!=''">
         and wii.org_id = #{orgId}
       </if>

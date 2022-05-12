@@ -109,7 +109,17 @@
                 and wiaod.packing_unit_name like CONCAT('%',#{packingUnitName},'%')
             </if>
         </where>
-        GROUP BY wiaod.org_id,mpwo.work_order_id,bw.warehouse_id,bwa.warehouse_area_id,bm.material_id,wijod.in_storage_id
+        GROUP BY bo.organization_name,
+        mpwo.work_order_code,
+        oso.sales_order_code,
+        bws.work_shop_name,
+        bpl.pro_name,
+        bw.warehouse_name,
+        bwa.warehouse_area_code,
+        bs.storage_code,
+        bm.material_code,
+        bm.material_name,
+        wiaod.packing_unit_name
     </select>
     <select id="findOmList" resultMap="BaseResultOmMap">
         SELECT
