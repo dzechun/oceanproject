@@ -99,6 +99,9 @@
             <if test="storageCode!=null and storageCode!=''">
                 and bs.storage_code like CONCAT('%',#{storageCode},'%')
             </if>
+            <if test="materialCode!=null and materialCode!=''">
+                and bm.material_code like CONCAT('%',#{materialCode},'%')
+            </if>
             <if test="materialName!=null and materialName!=''">
                 and bm.material_name like CONCAT('%',#{materialName},'%')
             </if>
@@ -106,7 +109,7 @@
                 and wiaod.packing_unit_name like CONCAT('%',#{packingUnitName},'%')
             </if>
         </where>
-        GROUP BY wiaod.org_id,mpwo.work_order_id,bw.warehouse_id,bwa.warehouse_area_id,bm.material_id
+        GROUP BY wiaod.org_id,mpwo.work_order_id,bw.warehouse_id,bwa.warehouse_area_id,bm.material_id,wijod.in_storage_id
     </select>
     <select id="findOmList" resultMap="BaseResultOmMap">
         SELECT

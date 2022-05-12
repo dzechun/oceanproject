@@ -162,7 +162,7 @@ wii.option5
         and wii.storage_id = #{storageId}
       </if>
       <if test="storageName!=null and storageName != ''">
-        and bs.storage_code like CONCAT("%",#{storageName},"%")
+        and bs.storage_name like CONCAT("%",#{storageName},"%")
       </if>
         <if test="storageCode!=null and storageCode!=''">
           and bs.storage_code like CONCAT("%",#{storageCode},"%")
