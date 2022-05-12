@@ -153,7 +153,7 @@
                 and wiid.customer_barcode like CONCAT('%',#{customerBarcode},'%')
             </if>
             <if test="storageCode!=null and storageCode!=''">
-                and bs.storage_code = #{storageCode}
+                and bs.storage_code like CONCAT('%',#{storageCode},'%')
             </if>
             <if test="materialQty!=null and materialQty!=''">
                 and wiid.material_qty = #{materialQty}

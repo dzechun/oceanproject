@@ -9,7 +9,6 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseMaterialOwnerDto;
-import com.fantechs.common.base.general.dto.om.OmSalesCodeReSpcDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
@@ -279,7 +278,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                 wmsOutDeliveryOrderDet.setModifiedUserId(user.getUserId());
                 wmsOutDeliveryOrderDet.setOrgId(user.getOrganizationId());
                 //增加保存明细销售编码 2022-03-16
-                wmsOutDeliveryOrderDet.setSalesCode(wmsOutDeliveryOrder.getSalesCode());
+                wmsOutDeliveryOrderDet.setSalesCode(wmsOutDeliveryOrderDet.getSalesCode());
 
                 if(StringUtils.isEmpty(wmsOutDeliveryOrderDet.getWarehouseId())){
                     wmsOutDeliveryOrderDet.setWarehouseId(warehouseId);
@@ -351,7 +350,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
                 wmsOutDeliveryOrderDet.setOrgId(user.getOrganizationId());
 
                 //增加保存明细销售编码 2022-03-16
-                wmsOutDeliveryOrderDet.setSalesCode(wmsOutDeliveryOrder.getSalesCode());
+                wmsOutDeliveryOrderDet.setSalesCode(wmsOutDeliveryOrderDet.getSalesCode());
 
                 if(StringUtils.isEmpty(wmsOutDeliveryOrderDet.getWarehouseId())){
                     wmsOutDeliveryOrderDet.setWarehouseId(warehouseId);

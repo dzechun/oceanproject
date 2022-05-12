@@ -150,17 +150,17 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
 
         // 校验条码同PO/销售明细/物料
         List<String> barcodeList = new ArrayList<>();
+        barcodeList.add(dto.getWanbaoBarcodeDto().getBarcode());
         if (StringUtils.isNotEmpty(stackingDetDtos)){
             barcodeList = stackingDetDtos.stream().map(WanbaoStackingDet::getBarcode).collect(Collectors.toList());
-        }
-        barcodeList.add(dto.getWanbaoBarcodeDto().getBarcode());
-        ResponseEntity<Boolean> response = sfcFeignApi.checkBarCode(barcodeList);
-        if (response.getCode() != 0){
-            throw new BizErrorException(response.getCode(), response.getMessage());
-        }
-        Boolean aBoolean = response.getData();
-        if (!aBoolean){
-            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), response.getMessage());
+            ResponseEntity<Boolean> response = sfcFeignApi.checkBarCode(barcodeList);
+            if (response.getCode() != 0){
+                throw new BizErrorException(response.getCode(), response.getMessage());
+            }
+            Boolean aBoolean = response.getData();
+            if (!aBoolean){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), response.getMessage());
+            }
         }
         // 发送mq
         sfcFeignApi.sendMQByStacking(dto.getStackingCode());
@@ -210,6 +210,9 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
      */
     @Override
     public int workByAuto(WanbaoAutoStackingListDto dto) {
+        WanbaoStacking stacking = stackingService.selectByKey(dto.getStackingId());
+        stacking.setUsageStatus((byte) 2);
+        stackingService.update(stacking);
         return sfcFeignApi.workByAuto(dto).getCode() == 0?1:0;
     }
 
@@ -218,22 +221,35 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
      *
      * @param oldId
      * @param newId
+     * @param stackingDetId
      * @return
      */
     @Override
-    public int changeStacking(Long oldId, Long newId) {
+    public int changeStacking(Long newId, Long stackingDetId) {
         WanbaoStacking stacking = stackingService.selectByKey(newId);
         if (stacking.getUsageStatus() != 1){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "新堆垛已使用,请更换其他堆垛");
         }
+        List<String> barcodeList = new ArrayList<>();
+        WanbaoStackingDet stackingDet = stackingDetService.selectByKey(stackingDetId);
+
         Example example = new Example(WanbaoStackingDet.class);
-        example.createCriteria().andEqualTo("stackingId", oldId);
-        List<WanbaoStackingDet> dets = stackingDetService.selectByExample(example);
-        for (WanbaoStackingDet det : dets){
-            det.setStackingId(newId);
-            stackingDetService.update(det);
+        example.createCriteria().andEqualTo("stackingId", newId);
+        List<WanbaoStackingDet> stackingDets = stackingDetService.selectByExample(example);
+        if (StringUtils.isNotEmpty(stackingDets)){
+            barcodeList = stackingDets.stream().map(WanbaoStackingDet::getBarcode).collect(Collectors.toList());
+            barcodeList.add(stackingDet.getBarcode());
+            ResponseEntity<Boolean> response = sfcFeignApi.checkBarCode(barcodeList);
+            if (response.getCode() != 0){
+                throw new BizErrorException(response.getCode(), response.getMessage());
+            }
+            Boolean aBoolean = response.getData();
+            if (!aBoolean){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), response.getMessage());
+            }
         }
-        return 1;
+        stackingDet.setStackingId(newId);
+        return stackingDetService.update(stackingDet);
     }
 
     /**

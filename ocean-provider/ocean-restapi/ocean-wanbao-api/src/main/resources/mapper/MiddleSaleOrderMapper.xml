@@ -62,6 +62,7 @@
             AND mh.mo_number IS NOT null
             AND mh.mo_status = '审批通过'
             AND mld.LINE_NUMBER LIKE '%.1'
+            AND mh.order_type_name = '整机批量订单'
             <if test="date != null and date != ''">
                 and mh.LAST_UPDATE_DATE >= TO_DATE(#{date} , 'YYYY-MM-DD' )
             </if>

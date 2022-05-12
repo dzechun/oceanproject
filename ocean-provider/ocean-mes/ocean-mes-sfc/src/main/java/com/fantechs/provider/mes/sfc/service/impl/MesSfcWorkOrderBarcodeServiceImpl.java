@@ -33,6 +33,7 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
@@ -375,7 +376,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         // 6、构造打印条码结构
         if (!printModelList.isEmpty()) {
             List<PrintModel> list = new ArrayList<>();
-            // 万宝项目 打印条码只有一式一联，一式两联，一式四联
+            // 万宝项目 打印条码只有一式一联，一式两联，一式四联，一式六联
             if (labelRuteDto.getSize() == 1) {
                 // 两个条码一组
                 List<List<PrintModel>> fixedGrouping = fixedGrouping(printModelList, 2);
@@ -388,7 +389,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                     }
                     list.add(source);
                 }
-            } else if (labelRuteDto.getSize() == 2 || labelRuteDto.getSize() == 4) {
+            } else if (labelRuteDto.getSize() % 2 == 0) {
                 for (PrintModel source : printModelList) {
                     PrintModel target = new PrintModel();
                     BeanUtil.copyProperties(source, target);
@@ -465,15 +466,22 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public Map<String, Object> importExcel(List<ImportCustomerBarcodeDto> list) {
+        log.info("======== 导入数据 ==========：" + JsonUtils.objectToJson(list));
+        list = list.stream().filter(u -> StringUtils.isNotEmpty(u.getSalesCode())).collect(Collectors.toList());
         Map<String, Object> resultMap = new HashMap<>();  //封装操作结果
         int success = 0;  //记录操作成功数
         List<Integer> fail = new ArrayList<>();  //记录操作失败行数
         HashMap<String, List<ImportCustomerBarcodeDto>> map = list.stream().collect(Collectors.groupingBy(ImportCustomerBarcodeDto::getSalesCode, HashMap::new, Collectors.toList()));
+        //log.info("======== 导入数据 map ==========：" + JsonUtils.objectToJson(map));
         List<OmSalesOrderDetDto> orderDetDtos = new ArrayList<>();
         map.forEach((key, value) -> {
             SearchOmSalesOrderDetDto detDto = new SearchOmSalesOrderDetDto();
+            //log.info("======== 导入数据 value ==========：" + JsonUtils.objectToJson(value));
             detDto.setSalesCode(value.get(0).getSalesCode());
+            //log.info("======== 导入数据 detDto ==========：" + JsonUtils.objectToJson(detDto));
+
             List<OmSalesOrderDetDto> salesOrderDetDtoList = omFeignApi.findList(detDto).getData();
+            //log.info("======== 查询数据 salesOrderDetDtoList ==========：" + JsonUtils.objectToJson(salesOrderDetDtoList));
             if (salesOrderDetDtoList.isEmpty()) {
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "销售编码:" + value.get(0).getSalesCode() + "在系统中不存在，不可操作");
             }
@@ -486,13 +494,21 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 if (countByExample > 0) {
                     throw new BizErrorException(ErrorCodeEnum.OPT20012004.getCode(), "销售编码:" + value.get(0).getSalesCode() + "下的客户条码还未删除，不能保存");
                 }
+                //log.info("======== 导入数据 countByExample ==========：" + JsonUtils.objectToJson(countByExample));
             }
             orderDetDtos.addAll(salesOrderDetDtoList);
         });
         for (int i = 0; i < list.size(); i++) {
             ImportCustomerBarcodeDto dto = list.get(i);
+            String startCode=dto.getStartCode().trim();
+            String endCode=dto.getEndCode().trim();
+            if(startCode.equals(endCode)){
+                continue;
+            }
             // 计算固定值
-            String fixedValue = this.longestCommonPrefix(new String[]{dto.getStartCode(), dto.getEndCode()});
+            //String fixedValue = this.longestCommonPrefix(new String[]{dto.getStartCode(), dto.getEndCode()});
+            String fixedValue = this.longestCommonPrefix(new String[]{startCode, endCode});
+            log.info("======== 计算固定值 fixedValue ==========："+fixedValue);
             // 获取销售订单明细
             Long salesOrderDetId = null;
             for (OmSalesOrderDetDto item : orderDetDtos) {
@@ -507,9 +523,14 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             }
 
             // 生成条码
-            String initialValue = dto.getStartCode().substring(fixedValue.length());
-            String finalValue = dto.getEndCode().substring(fixedValue.length());
+            //String initialValue = dto.getStartCode().substring(fixedValue.length());
+            String initialValue = startCode.substring(fixedValue.length());
+            log.info("======== 生成条码 initialValue ==========："+initialValue);
+            //String finalValue = dto.getEndCode().substring(fixedValue.length());
+            String finalValue = endCode.substring(fixedValue.length());
+            log.info("======== 生成条码 finalValue ==========："+finalValue);
             this.wanbaoAddCustomerBarcode(salesOrderDetId, fixedValue, initialValue, finalValue, true);
+            log.info("======== 最后生成条码 ==========：");
             success += 1;
         }
         resultMap.put("操作成功总数", success);

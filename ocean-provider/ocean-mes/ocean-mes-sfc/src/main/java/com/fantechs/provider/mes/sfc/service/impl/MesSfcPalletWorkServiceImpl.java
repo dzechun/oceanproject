@@ -137,6 +137,9 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "配置产线与条码产线不一致");
         }
         MesSfcBarcodeProcessDto barcodeProcessDto = processServiceList.get(0);
+        if (barcodeProcessDto.getNextProcessId().equals(0)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码已完成过站，不可重复扫码");
+        }
         if (!barcodeProcessDto.getNextProcessId().equals(requestPalletWorkScanDto.getProcessId())) {
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "PDA配置工序与条码工序不匹配");
         }
@@ -159,7 +162,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
         startTime = System.currentTimeMillis();
         // 更新过站/过站记录信息
-        log.info("================== 更新过站开始 ==================");
         long start = System.currentTimeMillis();
 
         // 工艺路线与工艺
@@ -969,7 +971,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         if (barcode.contains("391-") || barcode.contains("391D")){
             // 销售条码
             map.put("partBarcode", barcode);
-            List<MesSfcKeyPartRelevanceDto> mesSfcKeyPartRelevanceDtoList = mesSfcKeyPartRelevanceService.findList(map);
+            List<MesSfcKeyPartRelevanceDto> mesSfcKeyPartRelevanceDtoList = mesSfcKeyPartRelevanceService.findListByPallet(map);
             if (mesSfcKeyPartRelevanceDtoList.isEmpty()) {
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该条码未绑定产品条码");
             }
@@ -1000,7 +1002,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         } else {
             // 附件码
             map.put("partBarcode", barcode);
-            List<MesSfcKeyPartRelevanceDto> mesSfcKeyPartRelevanceDtoList = mesSfcKeyPartRelevanceService.findList(map);
+            List<MesSfcKeyPartRelevanceDto> mesSfcKeyPartRelevanceDtoList = mesSfcKeyPartRelevanceService.findListByPallet(map);
             if (mesSfcKeyPartRelevanceDtoList.isEmpty()) {
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该条码未绑定产品条码");
             }

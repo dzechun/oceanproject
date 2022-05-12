@@ -266,6 +266,7 @@
         swo.remark,
         swo.contract_no,
         swo.batch_code,
+        swo.logic_id,
         swo.option1,
         swo.option2,
         swo.option3

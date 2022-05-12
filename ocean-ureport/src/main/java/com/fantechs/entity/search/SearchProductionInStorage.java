@@ -57,6 +57,12 @@ public class SearchProductionInStorage extends BaseQuery implements Serializable
     private String materialName;
 
     /**
+     *物料编码
+     */
+    @ApiModelProperty(name = "materialCode",value = "物料编码")
+    private String materialCode;
+
+    /**
      *单位
      */
     @ApiModelProperty(name = "packingUnitName",value = "单位")

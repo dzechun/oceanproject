@@ -727,6 +727,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             } else {
                 // 条码
                 for (MesSfcWorkOrderBarcodeDto barcodeDto : sfcWorkOrderAnnexBarcodeDtos) {
+//                    if(barcodeDto.getMaterialId().toString().equals(mesPmWorkOrder.getMaterialId().toString())==false){
+//                        throw new Exception("附件码对应物料ID和厂内码对应物料ID不一致");
+//                    }
                     int material_count = 0;
                     for (MesPmWorkOrderMaterialRePDto pmWorkOrderMaterialRePDto : pmWorkOrderMaterialRePDtoList) {
                         if (barcodeDto.getLabelCategoryId().equals(pmWorkOrderMaterialRePDto.getLabelCategoryId())) {
