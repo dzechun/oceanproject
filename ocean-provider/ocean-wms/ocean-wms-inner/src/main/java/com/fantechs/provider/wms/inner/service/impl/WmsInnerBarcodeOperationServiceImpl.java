@@ -291,6 +291,25 @@ public class WmsInnerBarcodeOperationServiceImpl extends BaseService<WmsInnerBar
                     wmsInnerJobOrderDet.setModifiedTime(new Date());
                     i=wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInnerJobOrderDet);
                 }
+                if(detDtoList.get(0).getOrderStatus()==(byte)5){
+                    // 如果是待发运状态 扣减发货库位库存
+                    SearchWmsInnerInventory searchWmsInnerInventory=new SearchWmsInnerInventory();
+                    searchWmsInnerInventory.setMaterialId(barcodeDet.getMaterialId());
+                    searchWmsInnerInventory.setStorageId(detDtoList.get(0).getInStorageId());
+                    searchWmsInnerInventory.setLockStatus((byte)0);
+                    searchWmsInnerInventory.setStockLock((byte)0);
+                    searchWmsInnerInventory.setQcLock((byte)0);
+                    searchWmsInnerInventory.setJobStatus((byte)2);
+                    List<WmsInnerInventoryDto> inventoryDtos=wmsInnerInventoryService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerInventory));
+                    if(StringUtils.isNotEmpty(inventoryDtos) && inventoryDtos.size()>0){
+                        WmsInnerInventory wmsInnerInventory=new WmsInnerInventory();
+                        wmsInnerInventory.setInventoryId(inventoryDtos.get(0).getInventoryId());
+                        wmsInnerInventory.setPackingQty(inventoryDtos.get(0).getPackingQty().subtract(new BigDecimal(1)));
+                        wmsInnerInventory.setModifiedUserId(sysUser.getUserId());
+                        wmsInnerInventory.setModifiedTime(new Date());
+                        i=wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
+                    }
+                }
             }
         }
         else {

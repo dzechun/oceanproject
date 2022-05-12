@@ -667,20 +667,21 @@ public class WmsInnerStockOrderServiceImpl extends BaseService<WmsInnerStockOrde
                         .andEqualTo("ifStockLock",lockType==(byte) 2?0:1)
                         .andEqualTo("orgId",sysUser.getOrganizationId())
                         //.andEqualTo("jobStatus",3)
-                        .andNotEqualTo("barcodeStatus",3)
+                        .andNotEqualTo("barcodeStatus",3);
                         //.andEqualTo("qcLock", 0)
-                        .andEqualTo("batchCode",wmsInnerStockOrderDet.getBatchCode());
+                        //.andEqualTo("batchCode",wmsInnerStockOrderDet.getBatchCode());
                 List<WmsInnerInventoryDet> wmsInnerInventoryDets = wmsInnerInventoryDetMapper.selectByExample(example);
 
                 for (WmsInnerInventory wmsInnerInventory : wmsInnerInventories) {
                     if(lockType==1){
                         //合并库存
                         example.clear();
+                        example = new Example(WmsInnerInventory.class);
                         criteria = example.createCriteria();
                         criteria.andEqualTo("warehouseId",wmsInventoryVerification.getWarehouseId())
                                 .andEqualTo("storageId",wmsInnerStockOrderDet.getStorageId())
-                                .andEqualTo("materialId\",wmsInnerStockOrderDet.getMaterialId())\n" +
-                                        "                                .andEqualTo(\"stockLock",0)
+                                .andEqualTo("materialId",wmsInnerStockOrderDet.getMaterialId())
+                                .andEqualTo("stockLock",0)
                                 .andEqualTo("orgId",sysUser.getOrganizationId())
                                 .andEqualTo("jobStatus",1)
                                 .andEqualTo("qcLock",0)
