@@ -354,6 +354,7 @@ public class WmsInnerShiftWorkServiceImpl implements WmsInnerShiftWorkService {
             wmsInnerJobOrderDet.setOrderStatus((byte) 4);
             wmsInnerJobOrderDet.setShiftStorageStatus((byte) 3);
             wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(wmsInnerJobOrderDet);
+            dto.setJobOrderDetId(wmsInnerJobOrderDet.getJobOrderDetId());
             WmsInnerHtJobOrderDet innerHtJobOrderDet = new WmsInnerHtJobOrderDet();
             BeanUtil.copyProperties(wmsInnerJobOrderDet, innerHtJobOrderDet);
             wmsInnerHtJobOrderDetService.save(innerHtJobOrderDet);
