@@ -698,6 +698,10 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
                     log.info("============= 质检移位单上架参数=================="+JSON.toJSONString(saveShiftJobOrderDto));
                     //innerFeignApi.saveJobOrder(saveShiftJobOrderDto);
                     ResponseEntity<Long> entityLong= innerFeignApi.saveJobOrderReturnId(saveShiftJobOrderDto);
+                    log.info("===================返回结果================"+entityLong.toString());
+                    if (entityLong.getCode() != 0) {
+                        throw new BizErrorException(entityLong.getMessage());
+                    }
                     inventoryId=entityLong.getData();
                 }
             }
