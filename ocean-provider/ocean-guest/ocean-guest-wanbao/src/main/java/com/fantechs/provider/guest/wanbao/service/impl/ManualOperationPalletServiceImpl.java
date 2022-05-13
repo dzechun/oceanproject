@@ -239,6 +239,11 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
         List<WanbaoStackingDet> stackingDets = stackingDetService.selectByExample(example);
         log.info("========= stackingDets:" + JSON.toJSONString(stackingDets));
         if (StringUtils.isNotEmpty(stackingDets)){
+            WanbaoStacking newstacking = stackingService.selectByKey(stackingDets.get(0).getStackingId());
+            if (new BigDecimal(stackingDets.size() + 1).compareTo(newstacking.getMaxCapacity()) == 1){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛编码容量存放不下当前提交数量");
+            }
+
             barcodeList = stackingDets.stream().map(WanbaoStackingDet::getBarcode).collect(Collectors.toList());
             barcodeList.add(stackingDet.getBarcode());
 
