@@ -835,13 +835,16 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         if (StringUtils.isNotEmpty(count) && Integer.parseInt(count) > 1) {
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该条码与堆垛上其他条码不属于同个PO，请重新扫码");
         }
+        log.info("======== count1:" + count);
         if (StringUtils.isNotEmpty(count) && Integer.parseInt(count) < 1) {
             count = mesSfcBarcodeProcessService.countBarcodeListForSalesOrder(map);
+            log.info("======== count2:" + count);
             if (StringUtils.isNotEmpty(count) && Integer.parseInt(count) > 1) {
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该条码与堆垛上其他条码不属于同销售编码，请重新扫码");
             }
             if (StringUtils.isNotEmpty(count) && Integer.parseInt(count) < 1) {
                 count = mesSfcBarcodeProcessService.countBarcodeListForMaterial(map);
+                log.info("======== count3:" + count);
                 if (StringUtils.isNotEmpty(count) && Integer.parseInt(count) > 1) {
                     throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该条码与堆垛上其他条码不属于同物料，请重新扫码");
                 }

@@ -1,6 +1,7 @@
 package com.fantechs.provider.guest.wanbao.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -236,14 +237,17 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
         Example example = new Example(WanbaoStackingDet.class);
         example.createCriteria().andEqualTo("stackingId", newId);
         List<WanbaoStackingDet> stackingDets = stackingDetService.selectByExample(example);
+        log.info("========= stackingDets:" + JSON.toJSONString(stackingDets));
         if (StringUtils.isNotEmpty(stackingDets)){
             barcodeList = stackingDets.stream().map(WanbaoStackingDet::getBarcode).collect(Collectors.toList());
             barcodeList.add(stackingDet.getBarcode());
+
             ResponseEntity<Boolean> response = sfcFeignApi.checkBarCode(barcodeList);
             if (response.getCode() != 0){
                 throw new BizErrorException(response.getCode(), response.getMessage());
             }
             Boolean aBoolean = response.getData();
+            log.info("========= aBoolean:" + aBoolean);
             if (!aBoolean){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), response.getMessage());
             }

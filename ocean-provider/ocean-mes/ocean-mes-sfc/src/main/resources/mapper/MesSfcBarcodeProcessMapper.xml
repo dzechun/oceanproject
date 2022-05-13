@@ -221,7 +221,9 @@
         </foreach>
       </if>
     </where>
-    GROUP BY msbp.sales_code_re_spc_id
+    GROUP BY
+        msbp.sales_code_re_spc_id,
+        msbp.material_id
     ) t
   </select>
 
