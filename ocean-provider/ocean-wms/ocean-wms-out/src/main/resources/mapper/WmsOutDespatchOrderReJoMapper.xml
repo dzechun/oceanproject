@@ -48,7 +48,8 @@ wodor.modified_time,
 wodor.is_delete
   </sql>
     <select id="findList" resultMap="BaseResultMapDto">
-      SELECT <include refid="Base_Column_list"/>,wijo.order_status,bmo.material_owner_name,bw.warehouse_name,wijo.job_order_code,wijo.related_order_code,wijo.actual_qty,
+      SELECT <include refid="Base_Column_list"/>,wijo.order_status,bmo.material_owner_name,bw.warehouse_name,wijo.job_order_code,wijo.related_order_code,
+      (select sum(det.actual_qty) from wms_inner_job_order_det det where det.job_order_id=wijo.job_order_id) as actual_qty,
     wodo.consignee as consignee_name,wodo.link_man_name,wodo.link_man_phone,wodo.fax_number,wodo.e_mail_address,wodo.detailed_address,
       su.user_name AS create_user_name,sus.user_name AS modified_user_name,bo.organization_name AS organization_Name
       FROM wms_out_despatch_order_re_jo wodor
