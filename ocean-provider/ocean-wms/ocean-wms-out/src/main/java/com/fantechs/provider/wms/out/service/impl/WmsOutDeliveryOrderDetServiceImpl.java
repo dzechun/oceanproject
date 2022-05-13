@@ -34,7 +34,7 @@ public class WmsOutDeliveryOrderDetServiceImpl extends BaseService<WmsOutDeliver
         if(StringUtils.isEmpty(wms.getPickingQty())){
             wms.setPickingQty(BigDecimal.ZERO);
         }
-        wms.setPickingQty(wms.getPickingQty().add(entity.getPickingQty()));
+        wms.setPickingQty(entity.getPickingQty());
         return super.update(wms);
     }
 }
