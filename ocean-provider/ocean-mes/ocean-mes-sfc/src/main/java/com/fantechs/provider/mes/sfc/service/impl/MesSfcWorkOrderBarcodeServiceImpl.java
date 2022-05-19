@@ -606,7 +606,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 break;
         }
         if (StringUtils.isEmpty(labelRuteDto) || StringUtils.isEmpty(labelRuteDto.getBarcodeRuleId())) {
-            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), barcodeType == 2 ? "匹配工单条码规则失败" : "匹配到销售订单条码规则失败");
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), barcodeType == 2 ? "未绑定离散任务模板" : "未绑定销售订单模板");
         }
         return labelRuteDto;
     }

@@ -1,6 +1,7 @@
 package com.fantechs.provider.guest.wanbao.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -150,9 +151,9 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
 
         // 校验条码同PO/销售明细/物料
         List<String> barcodeList = new ArrayList<>();
-        barcodeList.add(dto.getWanbaoBarcodeDto().getBarcode());
         if (StringUtils.isNotEmpty(stackingDetDtos)){
             barcodeList = stackingDetDtos.stream().map(WanbaoStackingDet::getBarcode).collect(Collectors.toList());
+            barcodeList.add(dto.getWanbaoBarcodeDto().getBarcode());
             ResponseEntity<Boolean> response = sfcFeignApi.checkBarCode(barcodeList);
             if (response.getCode() != 0){
                 throw new BizErrorException(response.getCode(), response.getMessage());
@@ -236,14 +237,22 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
         Example example = new Example(WanbaoStackingDet.class);
         example.createCriteria().andEqualTo("stackingId", newId);
         List<WanbaoStackingDet> stackingDets = stackingDetService.selectByExample(example);
+        log.info("========= stackingDets:" + JSON.toJSONString(stackingDets));
         if (StringUtils.isNotEmpty(stackingDets)){
+            WanbaoStacking newstacking = stackingService.selectByKey(stackingDets.get(0).getStackingId());
+            if (new BigDecimal(stackingDets.size() + 1).compareTo(newstacking.getMaxCapacity()) == 1){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛编码容量存放不下当前提交数量");
+            }
+
             barcodeList = stackingDets.stream().map(WanbaoStackingDet::getBarcode).collect(Collectors.toList());
             barcodeList.add(stackingDet.getBarcode());
+
             ResponseEntity<Boolean> response = sfcFeignApi.checkBarCode(barcodeList);
             if (response.getCode() != 0){
                 throw new BizErrorException(response.getCode(), response.getMessage());
             }
             Boolean aBoolean = response.getData();
+            log.info("========= aBoolean:" + aBoolean);
             if (!aBoolean){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), response.getMessage());
             }

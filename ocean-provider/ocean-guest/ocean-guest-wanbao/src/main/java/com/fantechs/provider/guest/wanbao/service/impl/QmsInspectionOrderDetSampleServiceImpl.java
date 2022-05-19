@@ -15,6 +15,7 @@ import com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrder;
 import com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrderDet;
 import com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrderDetSample;
 import com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrderDetSampleBeforeRecheck;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.support.BaseService;
@@ -297,10 +298,29 @@ public class QmsInspectionOrderDetSampleServiceImpl extends BaseService<QmsInspe
         if(StringUtils.isEmpty(inventoryDetDtos)){
             throw new BizErrorException("该条码未与该检验单绑定");
         }
-        /*WmsInnerInventoryDetDto wmsInnerInventoryDetDto = inventoryDetDtos.get(0);
-        if("Z-QC".equals(wmsInnerInventoryDetDto.getStorageCode())){
+        WmsInnerInventoryDetDto wmsInnerInventoryDetDto = inventoryDetDtos.get(0);
+        /*if("Z-QC".equals(wmsInnerInventoryDetDto.getStorageCode())){
             throw new BizErrorException("该条码不在质检库位上");
         }*/
+
+        //校验条码的库位与移位单的移出库位是否一致
+        SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
+        searchWmsInnerJobOrder.setRelatedOrderCode(qmsInspectionOrder.getInspectionOrderCode());
+        searchWmsInnerJobOrder.setOption1("qmsToInnerJobShift");
+        List<WmsInnerJobOrderDto> jobOrderDtoList = innerFeignApi.findList(searchWmsInnerJobOrder).getData();
+        if(StringUtils.isEmpty(jobOrderDtoList)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012005.getCode(),"成品检验单【"+qmsInspectionOrder.getInspectionOrderCode()+"】未生成质检移位单 不能操作");
+        }
+        WmsInnerJobOrderDto wmsInnerJobOrderDto = jobOrderDtoList.get(0);
+        List<WmsInnerJobOrderDet> wmsInPutawayOrderDets = wmsInnerJobOrderDto.getWmsInPutawayOrderDets();
+        if(StringUtils.isEmpty(wmsInPutawayOrderDets)){
+            throw new BizErrorException("质检移位单明细为空");
+        }
+        Long outStorageId = wmsInPutawayOrderDets.get(0).getOutStorageId();
+        if(!outStorageId.equals(wmsInnerInventoryDetDto.getStorageId())){
+            throw new BizErrorException("只能扫描质检移位单明细移出库位上的条码");
+        }
+
 
         //已扫条码数
         Example example = new Example(QmsInspectionOrderDetSample.class);

@@ -360,11 +360,12 @@
 
     <update id="batchUpdate" parameterType="java.util.ArrayList">
         update mes_pm_work_order
-        SET output_qty =
-        <foreach collection="list" item="item" index="index"
-                 separator=" " open="case" close="end">
-            when work_order_id=#{item.workOrderId} then #{item.outputQty}
-        </foreach>,
+        SET
+<!--         output_qty =-->
+<!--        <foreach collection="list" item="item" index="index"-->
+<!--                 separator=" " open="case" close="end">-->
+<!--            when work_order_id=#{item.workOrderId} then #{item.outputQty}-->
+<!--        </foreach>,-->
         pro_line_id =
         <foreach collection="list" item="item" index="index"
                  separator=" " open="case" close="end">
