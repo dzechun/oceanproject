@@ -12,6 +12,14 @@ public class ProcessRecordUreportDto implements Serializable {
     @Excel(name = "产线", height = 20, width = 30)
     private String proName;
 
+    @ApiModelProperty(name="materialCode",value = "物料编码")
+    @Excel(name = "物料编码", height = 20, width = 30)
+    private String materialCode;
+
+    @ApiModelProperty(name="materialName",value = "物料名称")
+    @Excel(name = "物料名称", height = 20, width = 30)
+    private String materialName;
+
     @ApiModelProperty(name="userName",value = "操作人")
     @Excel(name = "操作人", height = 20, width = 30)
     private String userName;
