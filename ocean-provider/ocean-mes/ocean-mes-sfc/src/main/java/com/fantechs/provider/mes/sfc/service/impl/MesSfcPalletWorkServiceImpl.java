@@ -320,6 +320,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         MesSfcBarcodeProcessRecord mesSfcBarcodeProcessRecord = new MesSfcBarcodeProcessRecord();
         BeanUtils.copyProperties(barcodeProcessDto, mesSfcBarcodeProcessRecord);
         mesSfcBarcodeProcessRecord.setOperatorUserId(user.getUserId());
+        mesSfcBarcodeProcessRecord.setCreateTime(new Date());
         mesSfcBarcodeProcessRecord.setModifiedTime(new Date());
         mesSfcBarcodeProcessRecord.setModifiedUserId(user.getUserId());
         mesSfcBarcodeProcessRecordService.save(mesSfcBarcodeProcessRecord);
