@@ -23,8 +23,9 @@ public class ProcessRecordUreportServiceImpl implements ProcessRecordUreportServ
 
     @Override
     public List<ProcessRecordUreportDto> findList(Map<String, Object> map) {
-        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        map.put("orgId", sysUser.getOrganizationId());
+//        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+//        map.put("orgId", sysUser.getOrganizationId());
+
         if(StringUtils.isEmpty(map.get("finishDate"))){
             map.put("finishDate", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
         }

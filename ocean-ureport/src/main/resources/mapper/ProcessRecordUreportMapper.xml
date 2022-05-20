@@ -38,9 +38,7 @@
             <if test="userName != null and userName != ''">
                 and su.user_name = #{userName}
             </if>
-            <if test="orgId != null and orgId != ''">
-                and msbpr.org_id = #{orgId}
-            </if>
+
         </where>
         GROUP BY
         bpl.pro_name,

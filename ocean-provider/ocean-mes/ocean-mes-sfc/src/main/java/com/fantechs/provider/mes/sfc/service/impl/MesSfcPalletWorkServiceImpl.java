@@ -33,7 +33,7 @@ import com.fantechs.common.base.general.entity.wanbao.WanbaoStackingDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
-import com.fantechs.common.base.utils.BeanUtils;
+//import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
@@ -48,6 +48,8 @@ import com.fantechs.provider.mes.sfc.service.*;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
 import com.fantechs.provider.mes.sfc.util.RabbitProducer;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+//import com.fantechs.common.base.utils.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -314,6 +316,13 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         log.info("============== 增加过站记录:" + (four - three));
         log.info("============ 更新过站信息耗时：" + (System.currentTimeMillis() - startTime));
 
+        // 增加过站记录 2022-05-20
+        MesSfcBarcodeProcessRecord mesSfcBarcodeProcessRecord = new MesSfcBarcodeProcessRecord();
+        BeanUtils.copyProperties(barcodeProcessDto, mesSfcBarcodeProcessRecord);
+        mesSfcBarcodeProcessRecord.setOperatorUserId(user.getUserId());
+        mesSfcBarcodeProcessRecord.setModifiedTime(new Date());
+        mesSfcBarcodeProcessRecord.setModifiedUserId(user.getUserId());
+        mesSfcBarcodeProcessRecordService.save(mesSfcBarcodeProcessRecord);
 
         // 万宝项目一包一，生成栈板
         MesSfcProductPallet mesSfcProductPallet = new MesSfcProductPallet();
@@ -601,7 +610,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         List<MesSfcProductPalletDto> mesSfcProductPalletDtoList = mesSfcProductPalletService.findList(map);
         for (MesSfcProductPalletDto mesSfcProductPalletDto : mesSfcProductPalletDtoList) {
             PalletWorkScanDto palletWorkScanDto = new PalletWorkScanDto();
-            BeanUtils.autoFillEqFields(mesSfcProductPalletDto, palletWorkScanDto);
+            BeanUtils.copyProperties(mesSfcProductPalletDto, palletWorkScanDto);
             map.clear();
             map.put("workOrderId", mesSfcProductPalletDto.getWorkOrderId());
             map.put("closeStatus", 1);
