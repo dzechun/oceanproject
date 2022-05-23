@@ -122,26 +122,30 @@ eweel.execute_result_message
       <if test="warningEventIdCode!=null and warningEventIdCode!=''">
         and ewec.warning_event_id_code like CONCAT('%',#{warningEventIdCode},'%')
       </if>
-     <if test="warningEventName!=null and warningEventName!=''">
-       and ewec.warning_event_name like CONCAT('%',#{warningEventName},'%')
-     </if>
-    <if test="notificationMethod!=null and notificationMethod!=''">
-      and ewpc.notification_method = #{notificationMethod}
-    </if>
-    <if test="executeResult!=null and executeResult!=''">
-      and eweel.execute_result = #{executeResult}
-    </if>
-    <if test="messagePushResult!=null and messagePushResult!=''">
-      and eweep.message_push_result = #{messagePushResult}
-    </if>
-    <if test="handleResult!=null and handleResult!=''">
-      and eweel.handle_result = #{handleResult}
-    </if>
-    <if test="personnelLevel!=null and personnelLevel!=''">
-      eweep.personnel_level = #{personnelLevel}
-    </if>
+      <if test="warningEventName!=null and warningEventName!=''">
+        and ewec.warning_event_name like CONCAT('%',#{warningEventName},'%')
+      </if>
+      <if test="notificationMethod!=null and notificationMethod!=''">
+        and ewpc.notification_method = #{notificationMethod}
+      </if>
+      <if test="executeResult!=null and executeResult!=''">
+        and eweel.execute_result = #{executeResult}
+      </if>
+      <if test="messagePushResult!=null and messagePushResult!=''">
+        and eweep.message_push_result = #{messagePushResult}
+      </if>
+      <if test="handleResult!=null and handleResult!=''">
+        and eweel.handle_result = #{handleResult}
+      </if>
+      <if test="personnelLevel!=null and personnelLevel!=''">
+        eweep.personnel_level = #{personnelLevel}
+      </if>
       <if test="startTime!= null and endTime!= null">
         and date_format(eweep.handle_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <!-- 全表单查询 -->
+      <if test="query != null">
+        and #FULL_FROM_QUERY
       </if>
     </where>
   </select>

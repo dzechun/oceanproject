@@ -95,6 +95,10 @@
             <if test="samePackageCode != null and samePackageCode != ''">
                 and oscrs.same_package_code like CONCAT('%', #{samePackageCode}, '%')
             </if>
+            <!-- 全表单查询 -->
+            <if test="query != null">
+                and #FULL_FROM_QUERY
+            </if>
         </where>
         ORDER BY oscrs.create_time DESC
     </select>

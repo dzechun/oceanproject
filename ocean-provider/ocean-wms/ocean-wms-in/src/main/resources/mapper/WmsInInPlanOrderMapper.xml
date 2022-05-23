@@ -118,6 +118,10 @@
             <if test="planEndTime1 != null and planEndTime1 != '' and planEndTime2 != null and planEndTime2 != ''">
                 and date_format(wiipo.plan_end_time, '%Y-%m-%d') BETWEEN #{planEndTime1} AND #{planEndTime2}
             </if>
+            <!-- 全表单查询 -->
+            <if test="query != null">
+                and #FULL_FROM_QUERY
+            </if>
         </where>
         order by wiipo.create_time desc
     </select>

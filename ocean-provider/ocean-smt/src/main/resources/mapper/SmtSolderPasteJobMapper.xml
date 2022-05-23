@@ -62,7 +62,13 @@ spj.modified_time
     left join sys_user u on spj.create_user_id=u.user_id
     left join sys_user s on spj.modified_user_id=s.user_id
     left join base_organization bo ON spj.org_id = bo.organization_id
-    where spj.org_id =#{orgId}
-order BY spj.create_time desc
+    <where>
+      spj.org_id =#{orgId}
+      <!-- 全表单查询 -->
+      <if test="query != null">
+        and #FULL_FROM_QUERY
+      </if>
+    </where>
+    order BY spj.create_time desc
   </select>
 </mapper>

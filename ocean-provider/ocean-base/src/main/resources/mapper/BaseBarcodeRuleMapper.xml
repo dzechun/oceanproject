@@ -75,6 +75,10 @@
       <if test="orgId!=null">
         and sbr.org_id=#{orgId}
       </if>
+      <!-- 全表单查询 -->
+      <if test="query != null">
+        and #FULL_FROM_QUERY
+      </if>
     </where>
     order by sbr.create_time desc
   </select>

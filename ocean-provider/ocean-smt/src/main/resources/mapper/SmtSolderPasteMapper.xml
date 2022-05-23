@@ -33,25 +33,25 @@
     <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
   </resultMap>
   <sql id="Base_Column_List">
-ssp.solder_paste_id,
-ssp.material_id,
-ssp.t_back_time,
-ssp.stir_time,
-ssp.open_time_limit,
-ssp.not_open_time_limit,
-ssp.return_ice_time,
-ssp.expiration_date,
-ssp.status,
-ssp.remark,
-ssp.org_id,
-ssp.create_user_id,
-ssp.create_time,
-ssp.modified_user_id,
-ssp.modified_time,
-ssp.is_delete,
-ssp.option1,
-ssp.option2,
-ssp.option3
+    ssp.solder_paste_id,
+    ssp.material_id,
+    ssp.t_back_time,
+    ssp.stir_time,
+    ssp.open_time_limit,
+    ssp.not_open_time_limit,
+    ssp.return_ice_time,
+    ssp.expiration_date,
+    ssp.status,
+    ssp.remark,
+    ssp.org_id,
+    ssp.create_user_id,
+    ssp.create_time,
+    ssp.modified_user_id,
+    ssp.modified_time,
+    ssp.is_delete,
+    ssp.option1,
+    ssp.option2,
+    ssp.option3
   </sql>
   <select id="findList" resultMap="BaseResultMapDto">
     select <include refid="Base_Column_List"/>,bm.material_code,bm.material_name,
@@ -63,21 +63,27 @@ ssp.option3
     left join sys_user u on ssp.create_user_id=u.user_id
     left join sys_user s on ssp.modified_user_id=s.user_id
     left join base_organization bo ON ssp.org_id = bo.organization_id
-<where>
-  <if test="materialCode!=null and materialCode!=''">
-    and bm.material_code like CONCAT('%',#{materialCode},'%')
-  </if>
-<if test="materialName!=null and materialName!=''">
-  and bm.material_name like CONCAT('%',#{materialName},'%')
-</if>
-<if test="solderPasteId!=null and solderPasteId!=''">
-  and ssp.solder_paste_id = #{solderPasteId}
-</if>
-<if test="orgId!=null and orgId!=''">
-  and ssp.org_id = #{orgId}
-</if>
-</where>
-order by ssp.create_time desc
+    <where>
+      <if test="materialCode!=null and materialCode!=''">
+        and bm.material_code like CONCAT('%',#{materialCode},'%')
+      </if>
+      <if test="materialName!=null and materialName!=''">
+        and bm.material_name like CONCAT('%',#{materialName},'%')
+      </if>
+      <if test="solderPasteId!=null and solderPasteId!=''">
+        and ssp.solder_paste_id = #{solderPasteId}
+      </if>
+      <if test="orgId!=null and orgId!=''">
+        and ssp.org_id = #{orgId}
+      </if>
+
+      <!-- 全表单查询 -->
+      <if test="query != null">
+        and #FULL_FROM_QUERY
+      </if>
+
+    </where>
+    order by ssp.create_time desc
   </select>
   <select id="findInvDet" resultType="java.util.Map">
     select material_barcode_id,material_id From wms_inner_material_barcode where barcode=#{barcode}

@@ -92,6 +92,10 @@
             <if test="remark != null and remark!=''">
                 and widto.remark like CONCAT('%', #{remark}, '%')
             </if>
+            <!-- 全表单查询 -->
+            <if test="query != null">
+                and #FULL_FROM_QUERY
+            </if>
         </where>
         order by widto.create_time desc
     </select>

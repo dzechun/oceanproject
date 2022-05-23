@@ -83,6 +83,10 @@
       <if test="orgId!=null">
         and bpki.org_id=#{orgId}
       </if>
+      <!-- 全表单查询 -->
+      <if test="query != null">
+        and #FULL_FROM_QUERY
+      </if>
     </where>
     order by bpki.create_time desc
   </select>

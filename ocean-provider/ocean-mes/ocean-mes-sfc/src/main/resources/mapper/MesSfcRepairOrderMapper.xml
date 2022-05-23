@@ -128,6 +128,10 @@
       <if test="SNCode != null and SNCode!=''">
         and ( mpwo.barcode = #{SNCode} or mpwo.semi_product_barcode = #{SNCode} )
       </if>
+      <!-- 全表单查询 -->
+      <if test="query != null">
+        and #FULL_FROM_QUERY
+      </if>
     </where>
     order by msro.create_time desc
   </select>

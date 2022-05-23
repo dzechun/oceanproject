@@ -49,14 +49,18 @@
         <if test="startTime != null and endTime != null">
             and date_format(bbc.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
         </if>
-      <if test="badnessCategoryCode != null and badnessCategoryCode != ''">
+        <if test="badnessCategoryCode != null and badnessCategoryCode != ''">
         and bbc.badness_category_code like CONCAT('%',#{badnessCategoryCode},'%')
-      </if>
-      <if test="badnessCategoryDesc != null and badnessCategoryDesc != ''">
+        </if>
+        <if test="badnessCategoryDesc != null and badnessCategoryDesc != ''">
         and bbc.badness_category_desc like CONCAT('%',#{badnessCategoryDesc},'%')
-      </if>
+        </if>
         <if test="orgId!=null">
             and bbc.org_id=#{orgId}
+        </if>
+        <!-- 全表单查询 -->
+        <if test="query != null">
+            and #FULL_FROM_QUERY
         </if>
     </where>
       order by bbc.create_time desc

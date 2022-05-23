@@ -68,29 +68,33 @@ select <include refid="BaseColumnMap"/>,bw.warehouse_name,bmo.material_owner_nam
     LEFT JOIN sys_user su ON bbr.create_user_id = su.user_id
     LEFT JOIN sys_user sus ON bbr.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON bbr.org_id = bo.organization_id
-<where>
-  <if test="warehouseName !=null and warehouseName!=''">
-    and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
-  </if>
- <if test="materialOwnerName !=null and materialOwnerName!=''">
-   and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')
- </if>
-<if test="batchRulesName !=null and batchRulesName!=''">
-  and bbr.batch_rules_name like CONCAT('%',#{batchRulesName},'%')
-</if>
-  <if test="startTime != null and endTime != null">
-    and date_format(bbr.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
-  </if>
-<if test="status !=null">
-  and bbr.status = #{status}
-</if>
-<if test="createUserName !='' and createUserName!=null">
-  and su.user_name like concat('%',#{createUserName},'%')
-</if>
-  <if test="orgId!=null">
-    and bbr.org_id=#{orgId}
-  </if>
-</where>
-order by bbr.create_time desc
+    <where>
+      <if test="warehouseName !=null and warehouseName!=''">
+        and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
+      </if>
+       <if test="materialOwnerName !=null and materialOwnerName!=''">
+         and bmo.material_owner_name like CONCAT('%',#{materialOwnerName},'%')
+       </if>
+      <if test="batchRulesName !=null and batchRulesName!=''">
+        and bbr.batch_rules_name like CONCAT('%',#{batchRulesName},'%')
+      </if>
+      <if test="startTime != null and endTime != null">
+        and date_format(bbr.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
+      </if>
+      <if test="status !=null">
+        and bbr.status = #{status}
+      </if>
+      <if test="createUserName !='' and createUserName!=null">
+        and su.user_name like concat('%',#{createUserName},'%')
+      </if>
+      <if test="orgId!=null">
+        and bbr.org_id=#{orgId}
+      </if>
+      <!-- 全表单查询 -->
+      <if test="query != null">
+        and #FULL_FROM_QUERY
+      </if>
+    </where>
+    order by bbr.create_time desc
   </select>
 </mapper>

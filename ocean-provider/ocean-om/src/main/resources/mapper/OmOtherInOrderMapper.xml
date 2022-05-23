@@ -90,6 +90,10 @@
             <if test="startTime != null and endTime != null ">
                 and date_format(oio.order_date, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d')  AND date_format(#{endTime}, '%Y-%m-%d')
             </if>
+            <!-- 全表单查询 -->
+            <if test="query != null">
+                and #FULL_FROM_QUERY
+            </if>
         </where>
         order by oio.create_time desc
     </select>

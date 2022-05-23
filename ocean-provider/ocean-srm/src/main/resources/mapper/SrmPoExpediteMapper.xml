@@ -123,6 +123,10 @@
       <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
         and date_format(spe.create_time, '%Y-%m-%d') between #{startTime} and #{endTime}
       </if>
+      <!-- 全表单查询 -->
+      <if test="query != null">
+        and #FULL_FROM_QUERY
+      </if>
     </where>
     order by spe.create_time desc
   </select>

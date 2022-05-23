@@ -103,6 +103,10 @@
         and date_format(opro.create_time, '%Y-%m-%d') <![CDATA[ >= ]]> #{startTime}
         and date_format(opro.create_time, '%Y-%m-%d') <![CDATA[ <= ]]> #{endTime}
       </if>
+      <!-- 全表单查询 -->
+      <if test="query != null">
+        and #FULL_FROM_QUERY
+      </if>
     </where>
     order by opro.create_time desc
   </select>

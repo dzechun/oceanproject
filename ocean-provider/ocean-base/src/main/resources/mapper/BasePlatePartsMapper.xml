@@ -88,6 +88,10 @@
       <if test="ifCustomized!=null">
         and bpp.if_customized=#{ifCustomized}
       </if>
+      <!-- 全表单查询 -->
+      <if test="query != null">
+        and #FULL_FROM_QUERY
+      </if>
     </where>
     order by create_time desc
   </select>

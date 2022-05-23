@@ -90,7 +90,10 @@
       <if test="yieldType!=null and yieldType!=''">
         and bpy.yield_type = #{yieldType}
       </if>
-
+      <!-- 全表单查询 -->
+      <if test="query != null">
+        and #FULL_FROM_QUERY
+      </if>
     </where>
     order by bpy.create_time desc
   </select>

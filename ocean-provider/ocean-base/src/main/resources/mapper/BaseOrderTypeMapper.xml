@@ -90,6 +90,10 @@
       <if test="orgId!=null">
         and (bot.org_id=#{orgId} or bot.org_id is null)
       </if>
+      <!-- 全表单查询 -->
+      <if test="query != null">
+        and #FULL_FROM_QUERY
+      </if>
     </where>
     order by bot.create_time desc
   </select>
