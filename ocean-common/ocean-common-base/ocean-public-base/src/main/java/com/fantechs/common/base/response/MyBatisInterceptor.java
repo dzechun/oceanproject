@@ -1,15 +1,12 @@
 package com.fantechs.common.base.response;
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import com.fantechs.common.base.dto.Query;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.select.FromItem;
-import net.sf.jsqlparser.statement.select.PlainSelect;
-import net.sf.jsqlparser.statement.select.Select;
-import net.sf.jsqlparser.statement.select.SelectBody;
+import net.sf.jsqlparser.statement.select.*;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.executor.statement.RoutingStatementHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
@@ -23,12 +20,13 @@ import org.springframework.util.StringUtils;
 import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.sql.Connection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
- * mybatis 拦截器
+ * mybatis 拦截器(重写Sql)
+ *
+ * @author keguang
+ * @date 2022/05/20
  */
 @Intercepts(
         {@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
@@ -37,25 +35,28 @@ public class MyBatisInterceptor implements Interceptor {
     private static Logger logger = LoggerFactory.getLogger(MyBatisInterceptor.class);
 
     private static final String PARAM_NAME = "query";
-    private static final String BOUNDSQL_NAME = "sql";
-    private static final String FULL_FROM_QUERY= "#FULL_FROM_QUERY";
+    private static final String BOUND_SQL_NAME = "sql";
+    private static final String FULL_FROM_QUERY = "#FULL_FROM_QUERY";
+    private static final String PAGE_STR = "select count(0) from (";
+    private static final String CONDITION_SQL = " 1 = 1 ";
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        // 重写全表单查询Sql
+        //重写全表单查询Sql
         RoutingStatementHandler targetObject = (RoutingStatementHandler) invocation.getTarget();
-        Object sd = invocation.proceed();
         if (ObjectUtil.isNotNull(targetObject)) {
             ParameterHandler parameterHandler = targetObject.getParameterHandler();
             if (ObjectUtil.isNotNull(parameterHandler)) {
-                HashMap parameterObject = (HashMap) parameterHandler.getParameterObject();
-                if (!CollectionUtils.isEmpty(parameterObject) && !StringUtils.isEmpty(parameterObject.get(PARAM_NAME))) {
+                HashMap<String, String> hashMapParam = convertHashMap(parameterHandler);
+                if (!CollectionUtils.isEmpty(hashMapParam) && !StringUtils.isEmpty(hashMapParam.get(PARAM_NAME))) {
                     BoundSql boundSql = targetObject.getBoundSql();
                     String sql = boundSql.getSql().trim();
-                    String updateSql = overrideSql(parameterObject, boundSql.getSql().trim());
-                    Field field = boundSql.getClass().getDeclaredField(BOUNDSQL_NAME);
-                    field.setAccessible(true);
-                    field.set(boundSql, updateSql);
+                    if (sql.contains(FULL_FROM_QUERY)) {
+                        String updateSql = overrideSql(hashMapParam, boundSql.getSql().trim());
+                        Field field = boundSql.getClass().getDeclaredField(BOUND_SQL_NAME);
+                        field.setAccessible(true);
+                        field.set(boundSql, updateSql);
+                    }
                 }
             }
         }
@@ -69,101 +70,145 @@ public class MyBatisInterceptor implements Interceptor {
      * @param sql
      * @return
      */
-    private String overrideSql(HashMap parameterObject, String sql) {
+    private String overrideSql(HashMap<String, String> parameterObject, String sql) {
         try {
-            logger.info("进入重写全表单查询param：{}", parameterObject);
-            StringBuffer sb = new StringBuffer();
-            String totalSql = "select count(0) from";
-            if (sql.toLowerCase().contains(totalSql)) {
+            logger.info("进入重写全表单查询parameterObject：{}", parameterObject);
+            if (sql.toLowerCase().contains(PAGE_STR)) {
                 //分页查询统计总数的Sql
-                logger.info("进入重写分页统计总数的sql");
-                overrideTotalNumSql(sb, parameterObject, sql);
+                logger.info("进入重写分页统计总数的sql：{}", sql);
+                return sql.replace(FULL_FROM_QUERY, overrideSqlCondition(parameterObject, sql, 1));
             } else {
                 //查询具体字段的Sql
-                logger.info("进入重写分页查询列表的sql");
-                overrideListSql(sb, parameterObject, sql);
+                logger.info("进入重写分页查询列表的sql：{}", sql);
+                return sql.replace(FULL_FROM_QUERY, overrideSqlCondition(parameterObject, sql, 2));
             }
-            return sql;
         } catch (Exception e) {
-            logger.error("重写Sql语句异常，取消重写", e.getMessage());
-            return sql;
+            logger.error("重写Sql语句异常，取消重写：{}", e.getMessage());
+            return sql.replace(FULL_FROM_QUERY, CONDITION_SQL);
         }
     }
 
     /**
-     * 重写分页统计总数的sql
+     * 重写全表单
+     * <p>
+     * <p>
+     * Sql语句的条件
      *
-     * @param sb
      * @param parameterObject
      * @param sql
      * @return
      */
-    private StringBuffer overrideTotalNumSql(StringBuffer sb, HashMap parameterObject, String sql) throws Exception {
-
-        //小写sql,用于匹配
-        String lowerCaseSql = sql.toLowerCase();
-        String strSql = sql.replace(FULL_FROM_QUERY,"");
-        List<String> filedList =  selectItems(strSql);
-        Statement statement = CCJSqlParserUtil.parse(new StringReader(strSql));
-        if(ObjectUtil.isNotNull(statement)){
-
+    private String overrideSqlCondition(HashMap<String, String> parameterObject, String sql, Integer type) throws JSQLParserException {
+        // 小写sql,用于匹配
+        StringBuilder sb = new StringBuilder();
+        sb.append(CONDITION_SQL);
+        String strSql = sql.replace(FULL_FROM_QUERY, CONDITION_SQL);
+        List<String> filedList;
+        if (type == 1) {
+            // 获取分页统计总数Sql语句的字段名称列表
+            filedList = selectItemsTotal(strSql);
+        } else {
+            // 获取分页查询列表的Sql语句的字段名称列表
+            filedList = selectItemsList(strSql);
         }
-        return sb;
+        if (ObjectUtil.isNotNull(filedList)) {
+            //匹对前端传进来的条件
+            Object strParam = parameterObject.get(PARAM_NAME);
+            if (ObjectUtil.isNotNull(strParam)) {
+                HashMap<String, Query> queryMap = (HashMap<String, Query>) strParam;
+                for (Map.Entry<String, Query> entry : queryMap.entrySet()) {
+                    if (ObjectUtil.isNotNull(entry.getValue())) {
+                        for (String filed : filedList) {
+                            // 将字段去表名、转驼峰
+                            String filedName = StrUtil.toCamelCase(filed);
+                            String point = ".";
+                            if (filedName.contains(point)) {
+                                filedName = filedName.replace(filedName.substring(0, filedName.indexOf(point) + 1), "");
+                            }
+
+                            //判断条件，进行匹对
+                            if (filedName.contains(entry.getKey())) {
+                                Query query = entry.getValue();
+                                sb.append(" ").append(query.getJoinQuery()).append(" ");
+                                if (filedName.toLowerCase().contains("as")) {
+                                    sb.append(" ").append(filed.substring(0, filed.indexOf(" "))).append(" ");
+                                } else {
+                                    sb.append(" ").append(filed).append(" ");
+                                }
+                                sb.append(" ").append(query.getSql()).append(" ");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return sb.toString();
     }
 
     /**
-     * 重写分页查询列表的sql
+     * 查询sql字段名称
      *
-     * @param sb
-     * @param parameterObject
-     * @param sql
+     * @param sql sql语句
      * @return
+     * @throws JSQLParserException
      */
-    private StringBuffer overrideListSql(StringBuffer sb, HashMap parameterObject, String sql) throws JSQLParserException {
-        String lowerCaseSql = sql.toLowerCase();
-        Statement statement = CCJSqlParserUtil.parse(new StringReader(sql));
-        if (statement instanceof Select) {
-            Select isTatement = (Select) statement;
-            System.out.println();
-        }
-
-        return sb;
-    }
-
-
-
-    /**
-     *
-     *@Description: 查询sql字段
-     *@Author: ywj
-     *@Param: [sql]
-     *@Return: java.util.List<java.lang.String>
-     *@Date: 2020/12/25 15:03
-     **/
-    public static List<String> selectItems(String sql)
-            throws JSQLParserException, NoSuchFieldException {
+    public static List<String> selectItemsTotal(String sql)
+            throws JSQLParserException {
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         Select select = (Select) parserManager.parse(new StringReader(sql));
         PlainSelect plain = (PlainSelect) select.getSelectBody();
-        FromItem  fromItem = plain.getFromItem();
-        Object object = fromItem.getClass().getDeclaredField("Select");
-        Select select1 =  (Select) object;
-        SelectBody plainSelect = select1.getSelectBody();
-//        List<SelectItem> selectItems = plainSelect.getSelectItems();
-//        List<String> strItems = new ArrayList<>();
-//        if (selectItems != null) {
-//            for (SelectItem item : selectItems) {
-//                strItems.add(item.toString());
-//            }
-//        }
-        return null;
+        FromItem fromItem = plain.getFromItem();
+
+        String tableName = fromItem.getAlias().getName();
+        String strSql = sql.replace(PAGE_STR, "").replace(") " + tableName, "");
+        CCJSqlParserManager parserManager1 = new CCJSqlParserManager();
+        Select select1 = (Select) parserManager1.parse(new StringReader(strSql));
+        PlainSelect plain1 = (PlainSelect) select1.getSelectBody();
+        List<SelectItem> selectItems = plain1.getSelectItems();
+        List<String> strItems = new ArrayList<>();
+        if (selectItems != null) {
+            for (SelectItem item : selectItems) {
+                strItems.add(item.toString());
+            }
+        }
+        return strItems;
     }
 
+    /**
+     * @Description: 查询sql字段
+     * @Author: ywj
+     * @Param: [sql]
+     * @Return: java.util.List<java.lang.String>
+     * @Date: 2020/12/25 15:03
+     **/
+    public static List<String> selectItemsList(String sql)
+            throws JSQLParserException {
+        CCJSqlParserManager parserManager = new CCJSqlParserManager();
+        Select select = (Select) parserManager.parse(new StringReader(sql));
+        PlainSelect plain = (PlainSelect) select.getSelectBody();
+        List<SelectItem> selectItems = plain.getSelectItems();
+        List<String> strItems = new ArrayList<>();
+        if (selectItems != null) {
+            for (SelectItem item : selectItems) {
+                strItems.add(item.toString());
+            }
+        }
+        return strItems;
+    }
 
-
-
-
-
+    /**
+     * 入参转换到HashMap
+     * @param parameterHandler
+     * @return
+     */
+    public static HashMap<String, String> convertHashMap(ParameterHandler parameterHandler) {
+        try {
+            return (HashMap) parameterHandler.getParameterObject();
+        } catch (Exception e) {
+            logger.error("全表单查询入参转换异常，此报错可以忽略！");
+            return null;
+        }
+    }
 
     @Override
     public Object plugin(Object target) {
@@ -172,6 +217,5 @@ public class MyBatisInterceptor implements Interceptor {
 
     @Override
     public void setProperties(Properties properties) {
-
     }
 }
