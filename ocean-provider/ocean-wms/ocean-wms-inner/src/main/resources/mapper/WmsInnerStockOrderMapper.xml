@@ -111,12 +111,16 @@
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(wiv.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
-    <if test="createUserName !=null and createUserName!=''">
-      and su.user_name like CONCAT('%',#{createUserName},'%')
-    </if>
-    <if test="isPda==true">
-      and wiv.order_status in (2,3) and wiv.stock_mode = 1
-    </if>
+      <if test="createUserName !=null and createUserName!=''">
+        and su.user_name like CONCAT('%',#{createUserName},'%')
+      </if>
+      <if test="isPda==true">
+        and wiv.order_status in (2,3) and wiv.stock_mode = 1
+      </if>
+      <!-- 全表单查询 -->
+      <if test="query != null">
+        and #FULL_FROM_QUERY
+      </if>
     </where>
     order by wiv.create_time desc
   </select>

@@ -68,28 +68,32 @@ wipro.option3
       <if test="planReceivingOrderId !=null and planReceivingOrderId!=''">
         and wipro.plan_receiving_order_id = #{planReceivingOrderId}
       </if>
-     <if test="coreSourceSysOrderTypeCode!=null and coreSourceSysOrderTypeCode!=''">
+      <if test="coreSourceSysOrderTypeCode!=null and coreSourceSysOrderTypeCode!=''">
         and wipro.core_source_sys_order_type_code like CONCAT('%',#{coreSourceSysOrderTypeCode},'%')
-     </if>
-    <if test="sourceSysOrderTypeCode!=null and sourceSysOrderTypeCode!=''">
-      and wipro.source_sys_order_type_code like CONCAT('%',#{sourceSysOrderTypeCode},'%')
-    </if>
-    <if test="sysOrderTypeCode!=null and sysOrderTypeCode!=''">
-      and wipro.sys_order_type_code = #{sysOrderTypeCode}
-    </if>
-    <if test="planReceivingOrderCode!=null and planReceivingOrderCode!=''">
-      and wipro.plan_receiving_order_code like CONCAT('%',#{planReceivingOrderCode},'%')
-    </if>
-    <if test="warehouseName!=null and warehouseName!=''">
-      and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
-    </if>
+      </if>
+      <if test="sourceSysOrderTypeCode!=null and sourceSysOrderTypeCode!=''">
+        and wipro.source_sys_order_type_code like CONCAT('%',#{sourceSysOrderTypeCode},'%')
+      </if>
+      <if test="sysOrderTypeCode!=null and sysOrderTypeCode!=''">
+        and wipro.sys_order_type_code = #{sysOrderTypeCode}
+      </if>
+      <if test="planReceivingOrderCode!=null and planReceivingOrderCode!=''">
+        and wipro.plan_receiving_order_code like CONCAT('%',#{planReceivingOrderCode},'%')
+      </if>
+      <if test="warehouseName!=null and warehouseName!=''">
+        and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
+      </if>
       <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
         and date_format(wipro.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
       </if>
-    <if test="orderStatus!=null and orderStatus!=''">
-      and wipro.order_status = #{orderStatus}
-    </if>
+      <if test="orderStatus!=null and orderStatus!=''">
+        and wipro.order_status = #{orderStatus}
+      </if>
+      <!-- 全表单查询 -->
+      <if test="query != null">
+        and #FULL_FROM_QUERY
+      </if>
     </where>
-order by wipro.create_time desc
+    order by wipro.create_time desc
   </select>
 </mapper>

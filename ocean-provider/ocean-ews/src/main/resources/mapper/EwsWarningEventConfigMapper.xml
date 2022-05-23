@@ -64,20 +64,24 @@ ewec.option3
     LEFT JOIN sys_user sus ON ewec.modified_user_id = sus.user_id
     LEFT JOIN base_organization bo ON ewec.org_id = bo.organization_id
     <where>
-        <if test="warningEventConfigId!=null and warningEventConfigId!=''">
-          and ewec.warning_event_config_id = #{warningEventConfigId}
-        </if>
-        <if test="warningEventIdCode!=null and warningEventIdCode!=''">
-          and ewec.warning_event_id_code like CONCAT('%',#{warningEventIdCode},'%')
-        </if>
-        <if test="warningEventName!=null and warningEventName!=''">
-          and ewec.warning_event_name like CONCAT('%',#{warningEventName},'%')
-        </if>
+      <if test="warningEventConfigId!=null and warningEventConfigId!=''">
+        and ewec.warning_event_config_id = #{warningEventConfigId}
+      </if>
+      <if test="warningEventIdCode!=null and warningEventIdCode!=''">
+        and ewec.warning_event_id_code like CONCAT('%',#{warningEventIdCode},'%')
+      </if>
+      <if test="warningEventName!=null and warningEventName!=''">
+        and ewec.warning_event_name like CONCAT('%',#{warningEventName},'%')
+      </if>
       <if test="warningEventDesc!=null and warningEventDesc!=''">
         and ewec.warning_event_desc like CONCAT('%',#{warningEventDesc},'%')
       </if>
       <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
         and date_format(ewec.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <!-- 全表单查询 -->
+      <if test="query != null">
+        and #FULL_FROM_QUERY
       </if>
     </where>
     order by ewec.create_time desc

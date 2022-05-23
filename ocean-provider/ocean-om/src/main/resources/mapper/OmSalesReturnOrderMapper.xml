@@ -97,6 +97,10 @@
             <if test="completeDate!=null">
                 and date_format(osro.complete_date,'%Y-%m-%d') = date_format(#{completeDate}, '%Y-%m-%d')
             </if>
+            <!-- 全表单查询 -->
+            <if test="query != null">
+                and #FULL_FROM_QUERY
+            </if>
         </where>
         order by osro.create_time desc
     </select>

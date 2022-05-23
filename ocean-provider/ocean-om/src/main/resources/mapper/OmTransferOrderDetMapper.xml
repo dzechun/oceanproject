@@ -98,6 +98,10 @@
             <if test="transferOrderId!=null and transferOrderId!=''">
                 and otod.transfer_order_id = #{transferOrderId}
             </if>
+            <!-- 全表单查询 -->
+            <if test="query != null">
+                and #FULL_FROM_QUERY
+            </if>
         </where>
     </select>
 

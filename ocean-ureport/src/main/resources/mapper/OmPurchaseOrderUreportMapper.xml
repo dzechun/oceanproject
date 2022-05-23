@@ -67,6 +67,10 @@
             <if test="supplierId!=null">
                 and opo.supplier_id=#{supplierId}
             </if>
+            <!-- 全表单查询 -->
+            <if test="query != null">
+                and #FULL_FROM_QUERY
+            </if>
         </where>
         order by opo.create_time desc
     </select>

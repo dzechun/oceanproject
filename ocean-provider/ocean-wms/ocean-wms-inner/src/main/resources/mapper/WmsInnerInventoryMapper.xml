@@ -249,6 +249,10 @@
             <if test="inventoryId!=null and inventoryId != ''">
                 and wii.inventory_id = #{inventoryId}
             </if>
+            <!-- 全表单查询 -->
+            <if test="query != null">
+                and #FULL_FROM_QUERY
+            </if>
         </where>
         <if test="isStorage!=null and isStorage!='' and isStorage==1">
 --             group by wii.storage_id

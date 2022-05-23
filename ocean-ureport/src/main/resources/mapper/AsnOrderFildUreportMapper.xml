@@ -122,6 +122,10 @@
             <if test="supplierId!=null">
                 and wiao.supplier_id=#{supplierId}
             </if>
+            <!-- 全表单查询 -->
+            <if test="query != null">
+                and #FULL_FROM_QUERY
+            </if>
         </where>
     </select>
 

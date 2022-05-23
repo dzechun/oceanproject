@@ -68,7 +68,10 @@
         <if test="warehouseName!=null and warehouseName!=''">
             and bw.warehouse_name like CONCAT('%', #{warehouseName}, '%')
         </if>
-
+        <!-- 全表单查询 -->
+        <if test="query != null">
+            and #FULL_FROM_QUERY
+        </if>
     </where>
     order by sc.create_time desc
   </select>
