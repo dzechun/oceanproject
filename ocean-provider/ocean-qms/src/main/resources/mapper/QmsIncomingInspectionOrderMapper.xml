@@ -140,7 +140,7 @@
     d.create_user_name,
     d.modified_user_name,
     d.organization_name,
-    total_material_qty
+    d.total_material_qty
     from (
     select <include refid="Base_Column_List"></include>,
     bm.material_code,bm.material_name,bm.material_desc,bm.material_version,
