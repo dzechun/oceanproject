@@ -130,6 +130,10 @@
             <if test="proName!=null and proName!=''">
                 and bpl.pro_name like CONCAT('%', #{proName}, '%')
             </if>
+            <!-- 全表单查询 -->
+            <if test="query != null">
+                and #FULL_FROM_QUERY
+            </if>
         </where>
         order by ewr.modified_time desc
     </select>

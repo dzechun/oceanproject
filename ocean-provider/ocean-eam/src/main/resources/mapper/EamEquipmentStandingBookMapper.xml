@@ -92,6 +92,10 @@
         <if test="equipmentBarcode!=null and equipmentBarcode!=''">
             and eeb.equipment_barcode  like CONCAT('%', #{equipmentBarcode}, '%')
         </if>
+        <!-- 全表单查询 -->
+        <if test="query != null">
+            and #FULL_FROM_QUERY
+        </if>
     </where>
       order by eesb.create_time desc
   </select>

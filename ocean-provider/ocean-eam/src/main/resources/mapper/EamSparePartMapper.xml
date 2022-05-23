@@ -115,6 +115,10 @@
       <if test="orgId!=null and orgId!= ''">
         and esp.org_id=#{orgId}
       </if>
+      <!-- 全表单查询 -->
+      <if test="query != null">
+        and #FULL_FROM_QUERY
+      </if>
     </where>
     order by esp.create_time desc
   </select>

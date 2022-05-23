@@ -95,6 +95,10 @@
       <if test="query != null and query.createTime != null ">
         ${query.createTime.joinQuery} date_format(spdo.create_time, '%Y-%m-%d') ${query.createTime.sql}
       </if>
+      <!-- 全表单查询 -->
+      <if test="query != null">
+        and #FULL_FROM_QUERY
+      </if>
     </where>
     order by spdo.create_time desc
   </select>
