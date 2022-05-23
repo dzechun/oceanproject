@@ -115,7 +115,7 @@
       </foreach>
     </if>
     </where>
-    GROUP BY mpwo.work_order_id
+    GROUP BY mpwo.material_id
   </select>
 
 </mapper>
