@@ -47,12 +47,12 @@ public class MyBatisInterceptor implements Interceptor {
         if (ObjectUtil.isNotNull(targetObject)) {
             ParameterHandler parameterHandler = targetObject.getParameterHandler();
             if (ObjectUtil.isNotNull(parameterHandler)) {
-                HashMap<String, String> parameterObject = (HashMap) parameterHandler.getParameterObject();
-                if (!CollectionUtils.isEmpty(parameterObject) && !StringUtils.isEmpty(parameterObject.get(PARAM_NAME))) {
+                HashMap<String, String> hashMapParam = convertHashMap(parameterHandler);
+                if (!CollectionUtils.isEmpty(hashMapParam) && !StringUtils.isEmpty(hashMapParam.get(PARAM_NAME))) {
                     BoundSql boundSql = targetObject.getBoundSql();
                     String sql = boundSql.getSql().trim();
                     if (sql.contains(FULL_FROM_QUERY)) {
-                        String updateSql = overrideSql(parameterObject, boundSql.getSql().trim());
+                        String updateSql = overrideSql(hashMapParam, boundSql.getSql().trim());
                         Field field = boundSql.getClass().getDeclaredField(BOUND_SQL_NAME);
                         field.setAccessible(true);
                         field.set(boundSql, updateSql);
@@ -90,8 +90,8 @@ public class MyBatisInterceptor implements Interceptor {
 
     /**
      * 重写全表单
-     *
-     *
+     * <p>
+     * <p>
      * Sql语句的条件
      *
      * @param parameterObject
@@ -196,6 +196,19 @@ public class MyBatisInterceptor implements Interceptor {
         return strItems;
     }
 
+    /**
+     * 入参转换到HashMap
+     * @param parameterHandler
+     * @return
+     */
+    public static HashMap<String, String> convertHashMap(ParameterHandler parameterHandler) {
+        try {
+            return (HashMap) parameterHandler.getParameterObject();
+        } catch (Exception e) {
+            logger.error("全表单查询入参转换异常，此报错可以忽略！");
+            return null;
+        }
+    }
 
     @Override
     public Object plugin(Object target) {

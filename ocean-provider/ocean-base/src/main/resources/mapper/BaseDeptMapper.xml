@@ -74,14 +74,15 @@
       <if test="factoryId!=null and factoryId!=''">
         and sd.factory_id=#{factoryId}
       </if>
-<!--      <if test="parentId!=null and parentId!=''">-->
-<!--        and sd.parent_id=#{parentId}-->
-<!--      </if>-->
       <if test="status!=null">
         and sd.status=#{status}
       </if>
       <if test="orgId!=null">
         and sd.org_id=#{orgId}
+      </if>
+      <!-- 全表单查询 -->
+      <if test="query != null">
+        and #FULL_FROM_QUERY
       </if>
     </where>
     order by sd.create_time desc

@@ -87,6 +87,10 @@
             <if test="orgId!=null">
                 and ws.org_id=#{orgId}
             </if>
+            <!-- 全表单查询 -->
+            <if test="query != null">
+                and #FULL_FROM_QUERY
+            </if>
         </where>
         order by create_time desc
     </select>

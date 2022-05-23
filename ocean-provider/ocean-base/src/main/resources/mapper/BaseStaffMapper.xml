@@ -118,6 +118,10 @@
                 and bs.staff_id NOT IN (SELECT bsp.staff_id FROM base_staff_process bsp WHERE bsp.process_id=#{processId})
                 and bs.status=1
             </if>
+            <!-- 全表单查询 -->
+            <if test="query != null">
+                and #FULL_FROM_QUERY
+            </if>
         </where>
         order by create_time desc
     </select>
