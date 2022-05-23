@@ -94,7 +94,54 @@
   </sql>
 
   <select id="findList" parameterType="map" resultMap="BaseResultMapDto">
-    select * from (
+    select
+    d.incoming_inspection_order_id,
+    d.source_id,
+    d.core_source_id,
+    d.source_big_type,
+    d.source_order_code,
+    d.core_source_order_code,
+    d.core_source_sys_order_type_code,
+    d.source_sys_order_type_code,
+    d.sys_order_type_code,
+    d.incoming_inspection_order_code,
+    d.material_id,
+    d.supplier_id,
+    d.warehouse_id,
+    d.order_qty,
+    d.inspection_standard_id,
+    d.inspection_way_id,
+    d.inspection_status,
+    d.inspection_result,
+    d.mrb_result,
+    d.file_id,
+    d.`status`,
+    d.remark,
+    d.org_id,
+    d.create_user_id,
+    d.create_time,
+    d.modified_user_id,
+    d.modified_time,
+    d.is_delete,
+    d.option1,
+    d.option2,
+    d.option3,
+    d.material_code,
+    d.material_name,
+    d.material_desc,
+    d.material_version,
+    d.main_unit,
+    d.product_model_name,
+    d.supplier_name,
+    d.warehouse_name,
+    d.inspection_way_desc,
+    d.inspection_standard_name,
+    d.access_url,
+    d.create_user_name,
+    d.modified_user_name,
+    d.organization_name,
+    total_material_qty
+    from (
     select <include refid="Base_Column_List"></include>,
     bm.material_code,bm.material_name,bm.material_desc,bm.material_version,
     bmt.main_unit,bpm.product_model_name,
@@ -177,6 +224,10 @@
     <where>
       <if test="ifFiltrate!=null and ifFiltrate == 1">
         (d.total_material_qty &lt; d.order_qty || d.total_material_qty is null)
+      </if>
+      <!-- 全表单查询 -->
+      <if test="query != null">
+        and #FULL_FROM_QUERY
       </if>
     </where>
   </select>
