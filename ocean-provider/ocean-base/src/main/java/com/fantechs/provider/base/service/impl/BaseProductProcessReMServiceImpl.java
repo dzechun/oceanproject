@@ -304,6 +304,17 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
             }
             baseProductProcessReMImport.setProcessId(baseProcess.getProcessId());
 
+            //判断是否重复
+            Example example = new Example(BaseProductProcessReM.class);
+            example.createCriteria()
+                    .andEqualTo("materialId", baseMaterial.getMaterialId())
+                    .andEqualTo("processId", baseProcess.getProcessId());
+            List<BaseProductProcessReM> baseProductProcessReMS = baseProductProcessReMMapper.selectByExample(example);
+            if (StringUtils.isNotEmpty(baseProductProcessReMS)) {
+                fail.add(i + 4);
+                continue;
+            }
+
             // 物料/条码
             String materialCode = baseProductProcessReMImport.getMaterialCode();
             String labelCategoryCode = baseProductProcessReMImport.getLabelCategoryCode();
@@ -391,6 +402,9 @@ public class BaseProductProcessReMServiceImpl extends BaseService<BaseProductPro
                     //新增工序物料清单数据
                     LinkedList<BaseProductMaterialReP> baseProductMaterialRePList = new LinkedList<>();
                     for (BaseProductProcessReMImport baseProductProcessReMImport : baseProductProcessReMImports2) {
+                        if(StringUtils.isEmpty(baseProductProcessReMImport.getScanType())){
+                            continue;
+                        }
                         if(StringUtils.isNotEmpty(baseProductProcessReMImport.getMaterialCode())
                             && baseProductProcessReMImport.getScanType()==1) {
                             BaseProductMaterialReP baseProductMaterialReP = new BaseProductMaterialReP();
