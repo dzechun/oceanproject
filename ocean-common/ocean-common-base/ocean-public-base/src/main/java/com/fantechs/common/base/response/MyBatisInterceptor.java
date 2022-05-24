@@ -47,7 +47,7 @@ public class MyBatisInterceptor implements Interceptor {
         if (ObjectUtil.isNotNull(targetObject)) {
             ParameterHandler parameterHandler = targetObject.getParameterHandler();
             if (ObjectUtil.isNotNull(parameterHandler)) {
-                HashMap<String, String> hashMapParam = convertHashMap(parameterHandler);
+                HashMap<String, Object> hashMapParam = convertHashMap(parameterHandler);
                 if (!CollectionUtils.isEmpty(hashMapParam) && !StringUtils.isEmpty(hashMapParam.get(PARAM_NAME))) {
                     BoundSql boundSql = targetObject.getBoundSql();
                     String sql = boundSql.getSql().trim();
@@ -70,7 +70,7 @@ public class MyBatisInterceptor implements Interceptor {
      * @param sql
      * @return
      */
-    private String overrideSql(HashMap<String, String> parameterObject, String sql) {
+    private String overrideSql(HashMap<String, Object> parameterObject, String sql) {
         try {
             logger.info("进入重写全表单查询parameterObject：{}", parameterObject);
             if (sql.toLowerCase().contains(PAGE_STR)) {
@@ -98,7 +98,7 @@ public class MyBatisInterceptor implements Interceptor {
      * @param sql
      * @return
      */
-    private String overrideSqlCondition(HashMap<String, String> parameterObject, String sql, Integer type) throws JSQLParserException {
+    private String overrideSqlCondition(HashMap<String, Object> parameterObject, String sql, Integer type) throws JSQLParserException {
         // 小写sql,用于匹配
         StringBuilder sb = new StringBuilder();
         sb.append(CONDITION_SQL);
@@ -201,19 +201,20 @@ public class MyBatisInterceptor implements Interceptor {
      * @param parameterHandler
      * @return
      */
-    public static HashMap<String, String> convertHashMap(ParameterHandler parameterHandler) throws IllegalAccessException  {
+    public static HashMap<String, Object> convertHashMap(ParameterHandler parameterHandler) throws IllegalAccessException  {
         try {
             return (HashMap) parameterHandler.getParameterObject();
         } catch (Exception e) {
             logger.error("全表单查询入参转换异常，此报错可以忽略！");
-            HashMap<String, String> hashMap = new HashMap<>();
+            HashMap<String, Object> hashMap = new HashMap<>();
             Field[] fields = parameterHandler.getParameterObject().getClass().getDeclaredFields();
             for (Field field : fields) {
                 field.setAccessible(true);
                 if(PARAM_NAME.equals(field.getName())){
-                    hashMap.put(field.getName(), String.valueOf(field.get(parameterHandler.getParameterObject())));
+                    hashMap.put(field.getName(), field.get(parameterHandler.getParameterObject()));
                 }
             }
+
             return hashMap;
         }
     }
