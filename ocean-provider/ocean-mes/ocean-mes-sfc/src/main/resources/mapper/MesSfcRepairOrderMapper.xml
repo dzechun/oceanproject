@@ -78,7 +78,7 @@
 
   <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
     select <include refid="BaseColumnList"/>,
-    mpwo.work_order_code,bm.material_code,bm.material_code,bm.material_desc,bmt.material_property,
+    mpwo.work_order_code,bm.material_code,bm.material_desc,bmt.material_property,
     bpl.pro_name,br.route_name,bbp.process_name as bad_process_name,cbp.process_name as current_process_name,
     u.user_name as create_user_name,
     s.user_name as modified_user_name,
