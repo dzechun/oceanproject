@@ -201,12 +201,20 @@ public class MyBatisInterceptor implements Interceptor {
      * @param parameterHandler
      * @return
      */
-    public static HashMap<String, String> convertHashMap(ParameterHandler parameterHandler) {
+    public static HashMap<String, String> convertHashMap(ParameterHandler parameterHandler) throws IllegalAccessException  {
         try {
             return (HashMap) parameterHandler.getParameterObject();
         } catch (Exception e) {
             logger.error("全表单查询入参转换异常，此报错可以忽略！");
-            return null;
+            HashMap<String, String> hashMap = new HashMap<>();
+            Field[] fields = parameterHandler.getParameterObject().getClass().getDeclaredFields();
+            for (Field field : fields) {
+                field.setAccessible(true);
+                if(PARAM_NAME.equals(field.getName())){
+                    hashMap.put(field.getName(), String.valueOf(field.get(parameterHandler.getParameterObject())));
+                }
+            }
+            return hashMap;
         }
     }
 

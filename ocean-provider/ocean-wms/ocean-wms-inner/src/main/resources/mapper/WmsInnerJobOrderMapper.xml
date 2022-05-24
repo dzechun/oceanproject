@@ -72,7 +72,44 @@
         WHEN 'MES-WO' THEN '生产订单' WHEN 'SRM-ASN' THEN '预收货通知单' ELSE '' END AS core_order_type_name
 
     </sql>
+
+    <sql id="BaseColumnFindList">
+        t.job_order_id,
+        t.core_source_sys_order_type_code,
+        t.source_sys_order_type_code,
+        t.source_big_type,
+        t.warehouse_id,
+        t.worker_id,
+        t.job_order_code,
+        t.job_order_type,
+        t.work_start_time,
+        t.work_endt_time,
+        t.order_status,
+        t.status,
+        t.remark,
+        t.org_id,
+        t.create_user_id,
+        t.create_time,
+        t.modified_user_id,
+        t.modified_time,
+        t.is_delete,
+        t.option1,
+        t.option2,
+        t.option3,
+        t.core_order_type_name,
+        t.warehouse_name,
+        t.work_name,
+        t.create_user_name,
+        t.modified_user_name,
+        t.organization_Name,
+        t.plan_qty,
+        t.distribution_qty,
+        t.actual_qty
+    </sql>
     <select id="findList" resultMap="BaseResultMapDto" parameterType="java.util.Map">
+        select
+        <include refid="BaseColumnFindList"/>
+        from (
         SELECT<include refid="BaseColumnList"/>,
         bw.warehouse_name,
         wr.user_name as work_name,
@@ -133,12 +170,16 @@
                     #{orderStatus}
                 </foreach>
             </if>
+
+        </where>
+        order by wipo.create_time desc
+        ) t
+        <where>
             <!-- 全表单查询 -->
             <if test="query != null">
                 and #FULL_FROM_QUERY
             </if>
         </where>
-        order by wipo.create_time desc
     </select>
 
     <!--  移位单查询  -->

@@ -1,13 +1,12 @@
 package com.fantechs.common.base.general.entity.wms.inner.search;
 
-import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.fantechs.common.base.dto.BaseQuery;
+import com.fantechs.common.base.dto.Query;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Transient;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 
 @Data
@@ -77,6 +76,9 @@ public class SearchWmsInnerJobOrder extends BaseQuery implements Serializable {
      */
     @ApiModelProperty(name = "codeQueryMark",value = "查询方式标记")
     private Integer codeQueryMark;
+
+    @ApiModelProperty(name = "query",value = "")
+    private HashMap<String, Query> query;
 
     private Long jobOrderId;
 
