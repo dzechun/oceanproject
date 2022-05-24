@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Mapper
 public interface WmsInnerJobOrderMapper extends MyMapper<WmsInnerJobOrder> {
-    List<WmsInnerJobOrderDto> findList(SearchWmsInnerJobOrder searchWmsInnerJobOrder);
+    List<WmsInnerJobOrderDto> findList(Map<String, Object> map);
 
     /**
      * 移位单查询

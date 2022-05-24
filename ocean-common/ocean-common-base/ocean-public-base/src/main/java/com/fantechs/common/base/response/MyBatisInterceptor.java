@@ -205,18 +205,21 @@ public class MyBatisInterceptor implements Interceptor {
         try {
             return (HashMap) parameterHandler.getParameterObject();
         } catch (Exception e) {
-            logger.error("全表单查询入参转换异常，此报错可以忽略！");
-            HashMap<String, Object> hashMap = new HashMap<>();
-            Field[] fields = parameterHandler.getParameterObject().getClass().getDeclaredFields();
-            for (Field field : fields) {
-                field.setAccessible(true);
-                if(PARAM_NAME.equals(field.getName())){
-                    hashMap.put(field.getName(), field.get(parameterHandler.getParameterObject()));
+            try {
+                HashMap<String, Object> hashMap = new HashMap<>();
+                Field[] fields = parameterHandler.getParameterObject().getClass().getDeclaredFields();
+                for (Field field : fields) {
+                    field.setAccessible(true);
+                    if(PARAM_NAME.equals(field.getName())){
+                        hashMap.put(field.getName(), field.get(parameterHandler.getParameterObject()));
+                    }
                 }
+                return hashMap;
+            }catch (Exception ex){
+                logger.error("全表单查询入参转换异常，此报错可以忽略！");
             }
-
-            return hashMap;
         }
+        return null;
     }
 
     @Override

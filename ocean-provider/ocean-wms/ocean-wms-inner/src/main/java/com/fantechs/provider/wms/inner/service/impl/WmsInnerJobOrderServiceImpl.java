@@ -98,7 +98,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             SysUser sysUser = currentUser();
             searchWmsInnerJobOrder.setOrgId(sysUser.getOrganizationId());
         }
-        return wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder);
+        return wmsInnerJobOrderMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerJobOrder));
     }
 
     @Override
@@ -165,7 +165,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             // 获取表头详情
             SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
             searchWmsInnerJobOrder.setJobOrderId(wmsInnerJobOrder.getJobOrderId());
-            WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder).get(0);
+            WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerJobOrder)).get(0);
 
             //如果上游单据已预设好移入库位 则不需要再分配库位
             Example exampleExist = new Example(WmsInnerJobOrderDet.class);
@@ -410,7 +410,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
             SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
             searchWmsInnerJobOrder.setJobOrderId(wmsInPutawayOrderDet.getJobOrderId());
-            WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder).get(0);
+            WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerJobOrder)).get(0);
             searchWmsInnerJobOrderDet.setJobOrderDetId(wmsInPutawayOrderDet.getJobOrderDetId());
             WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = wmsInnerJobOrderDetMapper.findList(searchWmsInnerJobOrderDet).get(0);
 
@@ -1079,7 +1079,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
             //更改库存
             SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
             searchWmsInnerJobOrder.setJobOrderId(wmsInPutawayOrderDet.getJobOrderId());
-            WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder).get(0);
+            WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerJobOrder)).get(0);
             searchWmsInnerJobOrderDet.setJobOrderDetId(jobOrderDetId);
             List<WmsInnerJobOrderDetDto> wmsInner = wmsInnerJobOrderDetMapper.findList(searchWmsInnerJobOrderDet);
             WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = wmsInner.get(0);
@@ -1341,7 +1341,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         //更改库存
         SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
         searchWmsInnerJobOrder.setJobOrderId(wmsInPutawayOrderDet.getJobOrderId());
-        WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder).get(0);
+        WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerJobOrder)).get(0);
         searchWmsInnerJobOrderDet.setJobOrderDetId(jobOrderDetId);
         List<WmsInnerJobOrderDetDto> wmsInner = wmsInnerJobOrderDetMapper.findList(searchWmsInnerJobOrderDet);
         WmsInnerJobOrderDetDto wmsInnerJobOrderDetDto = wmsInner.get(0);
@@ -4231,7 +4231,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         WmsInnerJobOrderDto dto = new WmsInnerJobOrderDto();
         SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
         searchWmsInnerJobOrder.setJobOrderId(id);
-        List<WmsInnerJobOrderDto> list = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder);
+        List<WmsInnerJobOrderDto> list = wmsInnerJobOrderMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerJobOrder));
         if(StringUtils.isNotEmpty(list)){
             dto = list.get(0);
             List<Long>  ids = new ArrayList<>();

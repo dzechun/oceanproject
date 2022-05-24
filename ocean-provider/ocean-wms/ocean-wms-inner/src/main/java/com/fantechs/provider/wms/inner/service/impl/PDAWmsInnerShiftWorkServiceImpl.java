@@ -502,7 +502,7 @@ public class PDAWmsInnerShiftWorkServiceImpl implements PDAWmsInnerShiftWorkServ
 
         SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
         searchWmsInnerJobOrder.setJobOrderId(oldDto.getJobOrderId());
-        WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder).get(0);
+        WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerJobOrder)).get(0);
 
         // 更改库存状态
         Example example = new Example(WmsInnerInventory.class);

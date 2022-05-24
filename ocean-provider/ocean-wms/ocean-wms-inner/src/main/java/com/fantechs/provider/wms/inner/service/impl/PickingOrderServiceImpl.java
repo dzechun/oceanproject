@@ -28,6 +28,7 @@ import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJo
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrderDet;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrderReJo;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -1137,7 +1138,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
 
         SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
         searchWmsInnerJobOrder.setJobOrderId(wmsInnerJobOrderDet.getJobOrderId());
-        WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder).get(0);
+        WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerJobOrder)).get(0);
         List<WmsInnerJobOrderDetDto> wmsInnerJobOrderDetDto = wmsInnerJobOrderDetMapper.findList(searchWmsInnerJobOrderDet);
         //更改库存
         num = this.Inventory(oldDto,wmsInnerJobOrderDetDto.get(0));
@@ -1788,7 +1789,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             //更改库存
             SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
             searchWmsInnerJobOrder.setJobOrderId(wmsInPutawayOrderDet.getJobOrderId());
-            WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder).get(0);
+            WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerJobOrder)).get(0);
             WmsInnerJobOrderDet Det = wmsInnerJobOrderDetMapper.selectByPrimaryKey(jobOrderDetId);
 
             //拣货作业更改库存
@@ -1840,7 +1841,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
     public List<WmsInnerJobOrderDto> findList(SearchWmsInnerJobOrder searchWmsInnerJobOrder) {
         SysUser sysUser = currentUser();
         searchWmsInnerJobOrder.setOrgId(sysUser.getOrganizationId());
-        return wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder);
+        return wmsInnerJobOrderMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerJobOrder));
     }
     /**
      * 拣货分配库存
@@ -2018,7 +2019,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
         int num = 0;
         SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
         searchWmsInnerJobOrder.setJobOrderId(wmsInnerJobOrder.getJobOrderId());
-        WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder).get(0);
+        WmsInnerJobOrderDto wmsInnerJobOrderDto = wmsInnerJobOrderMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerJobOrder)).get(0);
         criteria.andEqualTo("relevanceOrderCode",wmsInnerJobOrder.getJobOrderCode()).andEqualTo("materialId",wmsInnerJobOrderDetDto.getMaterialId());
 //        if(StringUtils.isNotEmpty(wmsInnerJobOrderDetDto.getDistributionQty())){
 //            criteria.andEqualTo("batchCode",wmsInnerJobOrderDetDto.getBatchCode());
@@ -2392,7 +2393,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
             //查询超过21天的作业单
             SearchWmsInnerJobOrder searchWmsInnerJobOrder = new SearchWmsInnerJobOrder();
 //            searchWmsInnerJobOrder.setSealOrder((byte)1);
-            List<WmsInnerJobOrderDto> list = wmsInnerJobOrderMapper.findList(searchWmsInnerJobOrder);
+            List<WmsInnerJobOrderDto> list = wmsInnerJobOrderMapper.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerJobOrder));
             if(list.size()>0){
                 List<WmsInnerJobOrder> wmsInnerJobOrders = new ArrayList<>(list);
                 num = this.sealOrderDet(wmsInnerJobOrders);
