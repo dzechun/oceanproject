@@ -574,7 +574,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         WmsOutDeliveryOrderDto wmsOutDeliveryOrderDto = list.get(0);
 
         //月台是否已被其他正在作业的拣货单占用
-        SearchWmsInnerJobOrder sWmsInnerJobOrder=new SearchWmsInnerJobOrder();
+        /*SearchWmsInnerJobOrder sWmsInnerJobOrder=new SearchWmsInnerJobOrder();
         List<Byte> statusList=new ArrayList<>();
         statusList.add((byte)1);
         statusList.add((byte)2);
@@ -590,6 +590,8 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
         if(StringUtils.isNotEmpty(innerJobOrderDtos) && innerJobOrderDtos.size()>0){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"月台已被正在作业的拣货单【"+innerJobOrderDtos.get(0).getJobOrderCode()+"】占用 请选择其他月台");
         }
+
+         */
 
         //找发货库位
         SearchBaseStorage searchBaseStorage=new SearchBaseStorage();
