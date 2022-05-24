@@ -74,56 +74,99 @@
         wiipo.option3
     </sql>
 
+    <sql id="FindListBaseColumn">
+        t.in_plan_order_id,
+        t.core_source_sys_order_type_code,
+        t.source_sys_order_type_code,
+        t.source_big_type,
+        t.sys_order_type_code,
+        t.in_plan_order_code,
+        t.warehouse_id,
+        t.storage_id,
+        t.plan_start_time,
+        t.plan_end_time,
+        t.make_order_user_id,
+        t.order_status,
+        t.status,
+        t.remark,
+        t.org_id,
+        t.create_user_id,
+        t.create_time,
+        t.modified_user_id,
+        t.modified_time,
+        t.is_delete,
+        t.option1,
+        t.option2,
+        t.option3,
+        t.warehouse_name,
+        t.storage_name,
+        t.storage_code,
+        t.total_plan_qty,
+        t.total_putaway_qty,
+        t.make_order_user_name,
+        t.create_user_name,
+        t.modified_user_name,
+        t.organization_name
+    </sql>
     <select id="findList" resultMap="BaseResultMapDto">
-        SELECT<include refid="BaseColumnList"/>,
-        bw.warehouse_name AS warehouse_name,bs.storage_name AS storage_name,bs.storage_code AS storage_code,
-        ( SELECT SUM(plan_qty) FROM wms_in_in_plan_order_det wiipod WHERE wiipod.in_plan_order_id = wiipo.in_plan_order_id ) AS total_plan_qty,
-        ( SELECT SUM(putaway_qty) FROM wms_in_in_plan_order_det wiipods WHERE wiipods.in_plan_order_id = wiipo.in_plan_order_id ) AS total_putaway_qty,
-        su.user_name AS make_order_user_name,
-        u.user_name AS create_user_name,
-        s.user_name AS modified_user_name,
-        bo.organization_name
-        FROM wms_in_in_plan_order wiipo
-        LEFT JOIN base_warehouse bw ON wiipo.warehouse_id = bw.warehouse_id
-        LEFT JOIN base_storage bs ON wiipo.storage_id = bs.storage_id
-        LEFT JOIN sys_user u ON wiipo.create_user_id=u.user_id
-        LEFT JOIN sys_user s ON wiipo.modified_user_id=s.user_id
-        LEFT JOIN sys_user su ON wiipo.make_order_user_id=su.user_id
-        LEFT JOIN base_organization bo ON wiipo.org_id = bo.organization_id
+        select
+        <include refid="FindListBaseColumn"/>
+        from (
+            SELECT<include refid="BaseColumnList"/>,
+            bw.warehouse_name AS warehouse_name,bs.storage_name AS storage_name,bs.storage_code AS storage_code,
+            ( SELECT SUM(plan_qty) FROM wms_in_in_plan_order_det wiipod WHERE wiipod.in_plan_order_id =
+            wiipo.in_plan_order_id ) AS total_plan_qty,
+            ( SELECT SUM(putaway_qty) FROM wms_in_in_plan_order_det wiipods WHERE wiipods.in_plan_order_id =
+            wiipo.in_plan_order_id ) AS total_putaway_qty,
+            su.user_name AS make_order_user_name,
+            u.user_name AS create_user_name,
+            s.user_name AS modified_user_name,
+            bo.organization_name
+            FROM wms_in_in_plan_order wiipo
+            LEFT JOIN base_warehouse bw ON wiipo.warehouse_id = bw.warehouse_id
+            LEFT JOIN base_storage bs ON wiipo.storage_id = bs.storage_id
+            LEFT JOIN sys_user u ON wiipo.create_user_id=u.user_id
+            LEFT JOIN sys_user s ON wiipo.modified_user_id=s.user_id
+            LEFT JOIN sys_user su ON wiipo.make_order_user_id=su.user_id
+            LEFT JOIN base_organization bo ON wiipo.org_id = bo.organization_id
+            <where>
+                <if test="orgId!=null and orgId!=''">
+                    and wiipo.org_id = #{orgId}
+                </if>
+                <if test="sysOrderTypeCode!=null and sysOrderTypeCode!=''">
+                    and wiipo.sys_order_type_code = #{sysOrderTypeCode}
+                </if>
+                <if test="inPlanOrderCode!=null and inPlanOrderCode!=''">
+                    and wiipo.in_plan_order_code = #{inPlanOrderCode}
+                </if>
+                <if test="warehouseName!=null and warehouseName!=''">
+                    and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
+                </if>
+                <if test="sourceSysOrderTypeCode!=null and sourceSysOrderTypeCode!=''">
+                    and wiipo.source_sys_order_type_code = #{sourceSysOrderTypeCode}
+                </if>
+                <if test="orderStatus!=null and orderStatus!=''">
+                    and wiipo.order_status = #{orderStatus}
+                </if>
+                <if test="startTime != null and endTime != null">
+                    and date_format(wiipo.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND
+                    date_format(#{endTime}, '%Y-%m-%d')
+                </if>
+                <if test="planStartTime1 != null and planStartTime1 != '' and planStartTime2 != null and planStartTime2 != ''">
+                    and date_format(wiipo.plan_start_time, '%Y-%m-%d') BETWEEN #{planStartTime1} AND #{planStartTime2}
+                </if>
+                <if test="planEndTime1 != null and planEndTime1 != '' and planEndTime2 != null and planEndTime2 != ''">
+                    and date_format(wiipo.plan_end_time, '%Y-%m-%d') BETWEEN #{planEndTime1} AND #{planEndTime2}
+                </if>
+            </where>
+            order by wiipo.create_time desc
+        ) t
         <where>
-            <if test="orgId!=null and orgId!=''">
-                and wiipo.org_id = #{orgId}
-            </if>
-            <if test="sysOrderTypeCode!=null and sysOrderTypeCode!=''">
-                and wiipo.sys_order_type_code = #{sysOrderTypeCode}
-            </if>
-            <if test="inPlanOrderCode!=null and inPlanOrderCode!=''">
-                and wiipo.in_plan_order_code = #{inPlanOrderCode}
-            </if>
-            <if test="warehouseName!=null and warehouseName!=''">
-                and bw.warehouse_name like CONCAT('%',#{warehouseName},'%')
-            </if>
-            <if test="sourceSysOrderTypeCode!=null and sourceSysOrderTypeCode!=''">
-                and wiipo.source_sys_order_type_code = #{sourceSysOrderTypeCode}
-            </if>
-            <if test="orderStatus!=null and orderStatus!=''">
-                and wiipo.order_status = #{orderStatus}
-            </if>
-            <if test="startTime != null and endTime != null">
-                and date_format(wiipo.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
-            </if>
-            <if test="planStartTime1 != null and planStartTime1 != '' and planStartTime2 != null and planStartTime2 != ''">
-                and date_format(wiipo.plan_start_time, '%Y-%m-%d') BETWEEN #{planStartTime1} AND #{planStartTime2}
-            </if>
-            <if test="planEndTime1 != null and planEndTime1 != '' and planEndTime2 != null and planEndTime2 != ''">
-                and date_format(wiipo.plan_end_time, '%Y-%m-%d') BETWEEN #{planEndTime1} AND #{planEndTime2}
-            </if>
             <!-- 全表单查询 -->
             <if test="query != null">
                 and #FULL_FROM_QUERY
             </if>
         </where>
-        order by wiipo.create_time desc
     </select>
 
 </mapper>
