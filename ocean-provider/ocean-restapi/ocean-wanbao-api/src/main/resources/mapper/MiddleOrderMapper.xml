@@ -9,6 +9,7 @@
         <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode" />
         <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
         <result column="pro_code" jdbcType="VARCHAR" property="proCode"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
         <result column="plan_start_time" jdbcType="VARCHAR" property="planStartTime"/>
         <result column="plan_end_time" jdbcType="VARCHAR" property="planEndTime"/>
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
@@ -27,6 +28,7 @@
             wdj.Attribute5 AS sales_order_code,
             wdj.attribute6 AS pro_name,
             wdj.SCHEDULE_GROUP_ID AS pro_code,
+            wsg.SCHEDULE_GROUP_NAME AS option1,
             wdj.scheduled_start_date AS plan_start_time,
             wdj.scheduled_completion_date AS plan_end_time,
             msib.segment1 AS material_code,
@@ -39,10 +41,12 @@
             APPS.wip_entities we,
             APPS.mfg_lookups wjs,
             APPS.wip_discrete_jobs wdj,
-            APPS.mtl_system_items_b msib
+            APPS.mtl_system_items_b msib,
+            APPS.WIP_SCHEDULE_GROUPS wsg
         <where>
             we.wip_entity_id = wdj.wip_entity_id
             AND wdj.primary_item_id = msib.inventory_item_id
+            AND wdj.SCHEDULE_GROUP_ID = wsg.SCHEDULE_GROUP_ID
             AND msib.organization_id = 83
             AND wjs.lookup_type = 'WIP_JOB_STATUS'
             AND wjs.LOOKUP_CODE = WDJ.STATUS_TYPE

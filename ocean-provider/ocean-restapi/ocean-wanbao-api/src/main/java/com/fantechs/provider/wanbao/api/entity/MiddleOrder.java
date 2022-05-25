@@ -42,6 +42,10 @@ public class MiddleOrder implements Serializable {
     @ApiModelProperty(name="proCode" ,value="线别编码")
     private String proCode;
 
+    @Column
+    @ApiModelProperty(name = "option1", value = "计划组")
+    private String option1;
+
     @ApiModelProperty(name="planStartTime",value = "计划开始时间")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     @Column(name = "plan_start_time")

@@ -410,7 +410,13 @@ public class SyncDataServiceImpl implements SyncDataService {
                             continue;
                         }
                         workOrder.setProLineId(item.getProLineId());
-                    } else if (item.getProName().equals(order.getProName())) {
+                    } else if (order.getOption1().contains("ZA") && "A".equals(item.getProCode())) {
+                        workOrder.setProLineId(item.getProLineId());
+                        break;
+                    } else if (order.getOption1().contains("ZC") && "C".equals(item.getProCode())) {
+                        workOrder.setProLineId(item.getProLineId());
+                        break;
+                    } else if (order.getOption1().contains("ZD") && "D".equals(item.getProCode())) {
                         workOrder.setProLineId(item.getProLineId());
                         break;
                     }
