@@ -118,7 +118,7 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
             }
         }
         if(StringUtils.isEmpty(cleanBarcodeDto.getOrderBarCode())){
-            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "未扫描到厂内码");
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "未扫描到厂内码或厂内码不存在");
         }
 
         boolean isCheckCustBarcode = false, isCheckSalesBarcode = false;
