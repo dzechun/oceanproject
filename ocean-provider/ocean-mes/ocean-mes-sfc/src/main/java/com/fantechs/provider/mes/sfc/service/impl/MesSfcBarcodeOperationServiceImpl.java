@@ -1200,7 +1200,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         searchBasePackageSpecification.setProcessId(processId);
         List<BasePackageSpecificationDto> packageSpecificationDtos = baseFeignApi.findBasePackageSpecificationList(searchBasePackageSpecification).getData();
         if (packageSpecificationDtos.isEmpty()) {
-            throw new BizErrorException(ErrorCodeEnum.OPT20012003);
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "打包工序尚未维护当前物料的包装规格数据");
         }
         return packageSpecificationDtos.get(0);
     }

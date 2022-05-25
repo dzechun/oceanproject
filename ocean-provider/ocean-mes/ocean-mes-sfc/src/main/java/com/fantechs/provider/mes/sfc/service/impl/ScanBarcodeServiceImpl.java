@@ -67,6 +67,7 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
         Example example = new Example(MesSfcBarcodeProcess.class);
         Example.Criteria criteria = example.createCriteria();
         SearchMesPmWorkOrderProcessReWo searchMesPmWorkOrderProcessReWo = new SearchMesPmWorkOrderProcessReWo();
+        boolean flag = true;
         if (barcodeArr.length == 1){
             // 判断是厂内码还是三星客户条码
             if (barcodeArr[0].length() == 23){
@@ -76,13 +77,14 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
                 criteria.andLike("customerBarcode", barcodeArr[0] + "%");
             }
             List<MesSfcBarcodeProcess> mesSfcBarcodeProcesses = barcodeProcessService.selectByExample(example);
-            if (mesSfcBarcodeProcesses.isEmpty()){
-                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码BarcodeUtils：" + barcodeArr[0] + "在系统中不存在");
+            if (!mesSfcBarcodeProcesses.isEmpty()){
+                cleanBarcodeDto.setOrderBarCode(mesSfcBarcodeProcesses.get(0).getBarcode());
+                searchMesPmWorkOrderProcessReWo.setMaterialId(mesSfcBarcodeProcesses.get(0).getMaterialId().toString());
+                searchMesPmWorkOrderProcessReWo.setWorkOrderId(mesSfcBarcodeProcesses.get(0).getWorkOrderId().toString());
+                flag = false;
             }
-            cleanBarcodeDto.setOrderBarCode(mesSfcBarcodeProcesses.get(0).getBarcode());
-            searchMesPmWorkOrderProcessReWo.setMaterialId(mesSfcBarcodeProcesses.get(0).getMaterialId().toString());
-            searchMesPmWorkOrderProcessReWo.setWorkOrderId(mesSfcBarcodeProcesses.get(0).getWorkOrderId().toString());
-        }else {
+        }
+        if (flag){
             for (String str : barcodeArr){
                 if (str.length() == 23){
                     criteria.andEqualTo("barcode", str);
@@ -95,8 +97,8 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
                         searchMesPmWorkOrderProcessReWo.setMaterialId(mesSfcBarcodeProcesses.get(0).getMaterialId().toString());
                         searchMesPmWorkOrderProcessReWo.setWorkOrderId(mesSfcBarcodeProcesses.get(0).getWorkOrderId().toString());
                     }
-                }else if ("1".equals(scanBarcodeDto.getType())){
-                    // 打包工序需清洗销售订单条码/客户条码，入库下线工序则不需要
+                }else {
+                    // 清洗销售订单条码/客户条码是否重复
                     if (str.contains("391-") || str.contains("391D")){
                         if (StringUtils.isNotEmpty(cleanBarcodeDto.getSalesBarcode())){
                             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "已扫条码中存在两个或以上销售条码，不允许操作");
