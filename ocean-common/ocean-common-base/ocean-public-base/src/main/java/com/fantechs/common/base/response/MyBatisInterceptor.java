@@ -216,7 +216,6 @@ public class MyBatisInterceptor implements Interceptor {
                 }
                 return hashMap;
             }catch (Exception ex){
-                logger.error("全表单查询入参转换异常，此报错可以忽略！");
             }
         }
         return null;
