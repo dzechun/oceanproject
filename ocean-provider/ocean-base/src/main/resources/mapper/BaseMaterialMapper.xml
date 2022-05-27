@@ -136,6 +136,12 @@
             <if test="voltage!=null and voltage!=''">
                 and bt.voltage LIKE CONCAT('%',#{voltage},'%')
             </if>
+            <if test="brandName!=null and brandName!=''">
+                and bt.brand_name LIKE CONCAT('%',#{brandName},'%')
+            </if>
+            <if test="productCategory!=null and productCategory!=''">
+                and bt.product_category LIKE CONCAT('%',#{productCategory},'%')
+            </if>
         </where>
         order by sm.create_time desc
     </select>

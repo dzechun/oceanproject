@@ -100,4 +100,10 @@ public class SearchBaseMaterial extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name="voltage" ,value="电压")
     private String voltage;
+
+    @ApiModelProperty(name="brandName" ,value="品牌名称")
+    private String brandName;
+
+    @ApiModelProperty(name="productCategory" ,value="产品分类")
+    private String productCategory;
 }

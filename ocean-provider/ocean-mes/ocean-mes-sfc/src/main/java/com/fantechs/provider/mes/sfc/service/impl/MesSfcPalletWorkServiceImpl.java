@@ -977,6 +977,13 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             }
         }
 
+        SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
+        searchMesSfcWorkOrderBarcode.setBarcode(barcode);
+        List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtoList = mesSfcWorkOrderBarcodeService.findList(searchMesSfcWorkOrderBarcode);
+        if (mesSfcWorkOrderBarcodeDtoList.isEmpty()) {
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该条码不存在系统或已被删除");
+        }
+
         if (barcode.contains("391-") || barcode.contains("391D")){
             // 销售条码
             map.put("partBarcode", barcode);
@@ -991,12 +998,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             return map;
         }
 
-        SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
-        searchMesSfcWorkOrderBarcode.setBarcode(barcode);
-        List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtoList = mesSfcWorkOrderBarcodeService.findList(searchMesSfcWorkOrderBarcode);
-        if (mesSfcWorkOrderBarcodeDtoList.isEmpty()) {
-            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该条码不存在系统或已被删除");
-        }
         log.info("=========== 查询条码耗时：" + (System.currentTimeMillis() - start));
         long time = System.currentTimeMillis();
         BaseLabelCategory labelCategory = baseFeignApi.findLabelCategoryDetail(mesSfcWorkOrderBarcodeDtoList.get(0).getLabelCategoryId()).getData();

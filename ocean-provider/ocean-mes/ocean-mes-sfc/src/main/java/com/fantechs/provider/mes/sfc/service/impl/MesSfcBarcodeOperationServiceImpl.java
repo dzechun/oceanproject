@@ -110,7 +110,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 criteria.andLike("customerBarcode", dto.getBarCode() + "%");
                 List<MesSfcBarcodeProcess> mesSfcBarcodeProcesses = mesSfcBarcodeProcessService.selectByExample(example);
                 if (mesSfcBarcodeProcesses.isEmpty()) {
-                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码BarcodeUtils：" + dto.getBarCode() + "在系统中不存在");
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "厂内码不存在或未扫到厂内码");
                 }
                 customerBarcode = dto.getBarCode();
                 MesSfcBarcodeProcess barcodeProcess = mesSfcBarcodeProcesses.get(0);
@@ -527,7 +527,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             criteria.andLike("customerBarcode", dto.getBarCode() + "%");
             List<MesSfcBarcodeProcess> mesSfcBarcodeProcesses = mesSfcBarcodeProcessService.selectByExample(example);
             if (mesSfcBarcodeProcesses.isEmpty()) {
-                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码BarcodeUtils：" + dto.getBarCode() + "在系统中不存在");
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "厂内码不存在或未扫描到厂内码");
             }
             customerBarcode = dto.getBarCode();
             MesSfcBarcodeProcess barcodeProcess = mesSfcBarcodeProcesses.get(0);

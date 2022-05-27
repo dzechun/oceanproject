@@ -34,6 +34,14 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
     @Resource
     private PMFeignApi pmFeignApi;
 
+
+    public static void main(String[] args) {
+        String s = "3911009300151079ME00014,391101220037114VME00012";
+        String[] barcodeArr = s.split(",");
+        for (String str : barcodeArr){
+            System.out.println(str);
+        }
+    }
     @Override
     public WanbaoStackingMQDto doScan(ScanBarcodeDto scanBarcodeDto) throws Exception {
         /**
@@ -64,11 +72,11 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
 
         // 清洗条码
         CleanBarcodeDto cleanBarcodeDto = new CleanBarcodeDto();
-        Example example = new Example(MesSfcBarcodeProcess.class);
-        Example.Criteria criteria = example.createCriteria();
         SearchMesPmWorkOrderProcessReWo searchMesPmWorkOrderProcessReWo = new SearchMesPmWorkOrderProcessReWo();
         boolean flag = true;
         if (barcodeArr.length == 1){
+            Example example = new Example(MesSfcBarcodeProcess.class);
+            Example.Criteria criteria = example.createCriteria();
             // 判断是厂内码还是三星客户条码
             if (barcodeArr[0].length() == 23){
                 criteria.andEqualTo("barcode", barcodeArr[0]);
@@ -87,6 +95,8 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
         if (flag){
             for (String str : barcodeArr){
                 if (str.length() == 23){
+                    Example example = new Example(MesSfcBarcodeProcess.class);
+                    Example.Criteria criteria = example.createCriteria();
                     criteria.andEqualTo("barcode", str);
                     List<MesSfcBarcodeProcess> mesSfcBarcodeProcesses = barcodeProcessService.selectByExample(example);
                     if (!mesSfcBarcodeProcesses.isEmpty()){
@@ -117,13 +127,13 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
                 }
             }
         }
-        if(StringUtils.isEmpty(cleanBarcodeDto.getOrderBarCode())){
-            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "未扫描到厂内码");
-        }
 
         boolean isCheckCustBarcode = false, isCheckSalesBarcode = false;
         // 入库下线工序不需要校验工单关键物料清单，只有打包工序需要
         if ("1".equals(scanBarcodeDto.getType())){
+            if(StringUtils.isEmpty(cleanBarcodeDto.getOrderBarCode())){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "未扫描到厂内码或厂内码不存在");
+            }
             // 判断工单关键物料清单
             searchMesPmWorkOrderProcessReWo.setProcessId(scanBarcodeDto.getProcessId().toString());
             List<MesPmWorkOrderProcessReWoDto> pmWorkOrderProcessReWoDtoList = pmFeignApi.findPmWorkOrderProcessReWoList(searchMesPmWorkOrderProcessReWo).getData();
@@ -183,7 +193,13 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
             dto.setStationId(scanBarcodeDto.getStationId());
             dto.setProcessId(scanBarcodeDto.getProcessId());
             dto.setProLineId(scanBarcodeDto.getProLineId());
-            dto.setBarcode(cleanBarcodeDto.getOrderBarCode());
+            if (StringUtils.isNotEmpty(cleanBarcodeDto.getOrderBarCode())){
+                dto.setBarcode(cleanBarcodeDto.getOrderBarCode());
+            }else if (StringUtils.isNotEmpty(cleanBarcodeDto.getSalesBarcode())){
+                dto.setBarcode(cleanBarcodeDto.getSalesBarcode());
+            }else if (StringUtils.isNotEmpty(cleanBarcodeDto.getCutsomerBarcode())){
+                dto.setBarcode(cleanBarcodeDto.getCutsomerBarcode());
+            }
             dto.setMaxPalletNum(1);
             dto.setCheckdaliyOrder((byte) 0);
             dto.setPrintBarcode((byte) 0);
