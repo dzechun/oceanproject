@@ -48,7 +48,7 @@ public class MyBatisInterceptor implements Interceptor {
             ParameterHandler parameterHandler = targetObject.getParameterHandler();
             if (ObjectUtil.isNotNull(parameterHandler)) {
                 HashMap<String, Object> hashMapParam = convertHashMap(parameterHandler);
-                if (!CollectionUtils.isEmpty(hashMapParam) && !StringUtils.isEmpty(hashMapParam.get(PARAM_NAME))) {
+                if (!CollectionUtils.isEmpty(hashMapParam) && !StringUtils.isEmpty(hashMapParam.containsKey(PARAM_NAME))) {
                     BoundSql boundSql = targetObject.getBoundSql();
                     String sql = boundSql.getSql().trim();
                     if (sql.contains(FULL_FROM_QUERY)) {
