@@ -200,6 +200,8 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
             listDto.setList(value);
             list.add(listDto);
         });
+        //按数量降序 2022-05-27
+        list.sort(Comparator.comparing(WanbaoAutoStackingListDto::getCount).reversed());
         return list;
     }
 
