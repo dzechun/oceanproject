@@ -229,13 +229,12 @@ public class SysCustomFormDetServiceImpl  extends BaseService<SysCustomFormDet> 
                 sysCustomFormDet.setOrgId(user.getOrganizationId());
                 idList.add(sysCustomFormDet.getCustomFormDetId());
             }
-            example.createCriteria().andEqualTo("customFormId",id)
-                    .andIn("customFormDetId",idList);
-            sysCustomFormDetMapper.deleteByExample(example);
-
-            sysCustomFormDetMapper.insertList(list);
+            example.createCriteria().andIn("customFormDetId",idList);
+            int delCount = sysCustomFormDetMapper.deleteByExample(example);
+            logger.info("删除自定义表单条数：{}",delCount);
+            int insertCount = sysCustomFormDetMapper.insertList(list);
+            logger.info("新增自定义表单条数：{}",insertCount);
         }
-
         return 1;
     }
 }
