@@ -20,6 +20,9 @@ public class WanbaoAutoStackingDto implements Serializable {
     @ApiModelProperty(name="stackingCode",value = "堆垛编码")
     private String stackingCode;
 
+    @ApiModelProperty(name="stackingName",value = "堆垛名称")
+    private String stackingName;
+
     @ApiModelProperty(name="barcode",value = "成品条码")
     private String barcode;
 

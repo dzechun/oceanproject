@@ -56,6 +56,7 @@
     SELECT
       ws.stacking_id as stackingId,
       ws.stacking_code as stackingCode,
+      ws.stacking_name as stackingName,
       wsd.stacking_det_id as stackingDetId,
       wsd.barcode,
       wsd.customer_barcode as customerBarcode,
