@@ -2237,6 +2237,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         List<WmsInnerJobOrderReMspp> jobOrderReMspps = wmsInnerJobOrderReMsppMapper.selectByExample(example);
         if (!jobOrderReMspps.isEmpty()){
             WanbaoStacking stacking = wanbaoFeignApi.detail(jobOrderReMspps.get(0).getProductPalletId()).getData();
+            if(StringUtils.isEmpty(stacking)){
+                throw new BizErrorException("未找到上架单绑定的堆垛信息");
+            }
             stacking.setUsageStatus((byte) 1);
             wanbaoFeignApi.updateAndClearBarcode(stacking);
         }
