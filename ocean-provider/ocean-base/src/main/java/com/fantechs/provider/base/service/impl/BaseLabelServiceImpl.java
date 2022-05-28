@@ -10,12 +10,11 @@ import com.fantechs.common.base.general.dto.basic.BaseLabelDto;
 import com.fantechs.common.base.general.entity.basic.BaseLabel;
 import com.fantechs.common.base.general.entity.basic.BaseLabelCategory;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtLabel;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabel;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.mapper.BaseHtLabelMapper;
 import com.fantechs.provider.base.mapper.BaseLabelCategoryMapper;
 import com.fantechs.provider.base.mapper.BaseLabelMapper;
@@ -49,7 +48,7 @@ public class BaseLabelServiceImpl extends BaseService<BaseLabel> implements Base
     @Resource
     private BaseHtLabelMapper baseHtLabelMapper;
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
     @Resource
     private BaseLabelCategoryMapper baseLabelCategoryMapper;
 

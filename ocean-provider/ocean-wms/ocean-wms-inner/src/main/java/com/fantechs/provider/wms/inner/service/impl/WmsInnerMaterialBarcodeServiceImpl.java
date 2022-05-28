@@ -31,7 +31,7 @@ import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerHtMaterialBarcodeMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerMaterialBarcodeMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerMaterialBarcodeReprintMapper;
@@ -59,7 +59,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
     @Resource
     private RedisUtil redisUtil;
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
     @Resource
     private SFCFeignApi sfcFeignApi;
     @Resource

@@ -14,7 +14,7 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.ews.mapper.EwsWarningEventExecuteLogMapper;
 import com.fantechs.provider.ews.mapper.EwsWarningEventExecutePushLogMapper;
 import com.fantechs.provider.ews.mapper.EwsWarningPushConfigMapper;
@@ -47,7 +47,7 @@ public class EwsWarningEventExecuteLogServiceImpl extends BaseService<EwsWarning
     @Resource
     private EwsWarningPushConfigReWuiMapper ewsWarningPushConfigReWuiMapper;
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
     @Resource
     private EwsWarningEventExecutePushLogMapper ewsWarningEventExecutePushLogMapper;
     @Resource

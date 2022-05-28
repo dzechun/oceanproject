@@ -32,7 +32,7 @@ import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.wanbao.api.config.DynamicDataSourceHolder;
 import com.fantechs.provider.wanbao.api.entity.*;
@@ -80,7 +80,7 @@ public class SyncDataServiceImpl implements SyncDataService {
     private OutFeignApi outFeignApi;
 
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
 
     @Resource
     private SFCFeignApi sfcFeignApi;

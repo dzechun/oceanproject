@@ -31,7 +31,7 @@ import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.guest.leisai.LeisaiFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcProductCartonMapper;
 import com.fantechs.provider.mes.sfc.service.*;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
@@ -69,7 +69,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
     @Resource
     private OMFeignApi omFeignApi;
     @Resource

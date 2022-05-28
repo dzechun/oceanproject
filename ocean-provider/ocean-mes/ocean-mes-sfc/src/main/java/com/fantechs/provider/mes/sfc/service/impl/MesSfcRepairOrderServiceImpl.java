@@ -22,7 +22,6 @@ import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrde
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrderBom;
 import com.fantechs.common.base.general.entity.mes.sfc.*;
 import com.fantechs.common.base.general.entity.mes.sfc.history.MesSfcHtRepairOrder;
-import com.fantechs.common.base.general.entity.om.OmPurchaseOrderDet;
 import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrder;
 import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -34,7 +33,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.*;
 import com.fantechs.provider.mes.sfc.service.MesSfcRepairOrderService;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
@@ -62,7 +61,7 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
     @Resource
     private PMFeignApi pmFeignApi;
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
     @Resource
     private BaseFeignApi baseFeignApi;
     @Resource

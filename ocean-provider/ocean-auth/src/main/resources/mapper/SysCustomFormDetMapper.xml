@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.auth.mapper.SysCustomFormDetMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.security.SysCustomFormDet">
+        <id column="custom_form_det_id" jdbcType="BIGINT" property="customFormDetId"/>
+        <result column="custom_form_id" jdbcType="BIGINT" property="customFormId"/>
+        <result column="item_key" jdbcType="VARCHAR" property="itemKey"/>
+        <result column="item_name" jdbcType="VARCHAR" property="itemName"/>
+        <result column="show_type" jdbcType="TINYINT" property="showType"/>
+        <result column="item_value" jdbcType="VARCHAR" property="itemValue"/>
+        <result column="disabled" jdbcType="TINYINT" property="disabled"/>
+        <result column="item_width" jdbcType="VARCHAR" property="itemWidth"/>
+        <result column="item_list_type" jdbcType="TINYINT" property="itemListType"/>
+        <result column="item_search_type" jdbcType="TINYINT" property="itemSearchType"/>
+        <result column="item_detail_type" jdbcType="TINYINT" property="itemDetailType"/>
+        <result column="is_hide" jdbcType="TINYINT" property="isHide"/>
+        <result column="is_enum" jdbcType="TINYINT" property="isEnum"/>
+        <result column="is_edit_display" jdbcType="TINYINT" property="isEditDisplay"/>
+        <result column="is_search" jdbcType="TINYINT" property="isSearch"/>
+        <result column="is_table" jdbcType="TINYINT" property="isTable"/>
+        <result column="is_form" jdbcType="TINYINT" property="isForm"/>
+        <result column="is_detail" jdbcType="TINYINT" property="isDetail"/>
+
+        <result column="query_seq" jdbcType="VARCHAR" property="querySeq"/>
+        <result column="query_type" jdbcType="VARCHAR" property="queryType"/>
+        <result column="join_query" jdbcType="VARCHAR" property="joinQuery"/>
+        <result column="is_high_grade" jdbcType="VARCHAR" property="isHighGrade"/>
+
+        <result column="spec_code" jdbcType="VARCHAR" property="specCode"/>
+        <result column="enum_data" jdbcType="VARCHAR" property="enumData"/>
+        <result column="event_trigger_mode" jdbcType="TINYINT" property="eventTriggerMode"/>
+        <result column="event_trigger_name" jdbcType="TINYINT" property="eventTriggerName"/>
+        <result column="is_required" jdbcType="TINYINT" property="isRequired"/>
+        <result column="format" jdbcType="VARCHAR" property="format"/>
+        <result column="value_format" jdbcType="VARCHAR" property="valueFormat"/>
+        <result column="date_type" jdbcType="VARCHAR" property="dateType"/>
+        <result column="order_num" jdbcType="INTEGER" property="orderNum"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete"/>
+        <result column="select_name" jdbcType="VARCHAR" property="selectName"/>
+        <result column="select_value" jdbcType="VARCHAR" property="selectValue"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId" />
+        <result column="min_value" jdbcType="DECIMAL" property="minValue"/>
+        <result column="max_value" jdbcType="DECIMAL" property="maxValue"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+               type="com.fantechs.common.base.general.dto.security.SysCustomFormDetDto">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="custom_form_code" jdbcType="VARCHAR" property="customFormCode"/>
+        <result column="sub_code" jdbcType="VARCHAR" property="subCode"/>
+        <result column="sub_name" jdbcType="VARCHAR" property="subName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    cfd.custom_form_det_id,
+    cfd.custom_form_id,
+    cfd.item_key,
+    cfd.item_name,
+    cfd.show_type,
+    cfd.item_value,
+    cfd.disabled,
+    cfd.item_width,
+    cfd.item_list_type,
+    cfd.item_search_type,
+    cfd.item_detail_type,
+    cfd.is_hide,
+    cfd.is_edit_display,
+    cfd.is_enum,
+    cfd.is_search,
+    cfd.is_table,
+    cfd.is_form,
+    cfd.is_detail,
+    cfd.query_seq,
+    cfd.query_type,
+    cfd.join_query,
+    cfd.is_high_grade,
+    cfd.spec_code,
+    cfd.enum_data,
+    cfd.is_required,
+    cfd.format,
+    cfd.value_format,
+    cfd.date_type,
+    cfd.order_num,
+    cfd.create_user_id,
+    cfd.create_time,
+    cfd.modified_time,
+    cfd.modified_time,
+    cfd.status,
+    cfd.is_delete,
+    cfd.event_trigger_mode,
+    cfd.event_trigger_name,
+    cfd.select_name,
+    cfd.select_value,
+    cfd.min_value,
+    cfd.max_value
+    </sql>
+    <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+        select
+        <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+        cf.custom_form_code ,cf.custom_form_name ,cf.from_rout ,scf.custom_form_name AS sub_name,scf.custom_form_code AS
+        sub_code
+        from sys_custom_form_det cfd
+        LEFT JOIN sys_user su ON cfd.create_user_id = su.user_id
+        LEFT JOIN sys_user sus ON cfd.modified_user_id = sus.user_id
+        LEFT JOIN sys_custom_form cf on cf.custom_form_id = cfd.custom_form_id
+        LEFT JOIN sys_custom_form scf on cf.sub_id = scf.custom_form_id
+        <where>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(cfd.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="itemKey!=null and itemKey!=''">
+                and cfd.item_key=#{itemKey}
+            </if>
+            <if test="itemName!=null and itemName!=''">
+                and cfd.item_name like CONCAT('%',#{itemName},'%')
+            </if>
+            <if test="customFormId!=null and customFormId!=''">
+                and cfd.custom_form_id=#{customFormId}
+            </if>
+            <if test="customFormCode!=null and customFormCode!=''">
+                and cf.custom_form_code=#{customFormCode}
+            </if>
+            <if test="fromRout!=null and fromRout!=''">
+                and cf.from_rout=#{fromRout}
+            </if>
+            <if test="status!=null">
+                and cfd.status=#{status}
+            </if>
+            <if test="orgId!=null">
+                and cfd.org_id=#{orgId}
+            </if>
+        </where>
+        order by cfd.order_num
+    </select>
+</mapper>

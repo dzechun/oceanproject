@@ -10,12 +10,11 @@ import com.fantechs.common.base.general.dto.basic.BaseLabelCategoryDto;
 import com.fantechs.common.base.general.entity.basic.BaseLabel;
 import com.fantechs.common.base.general.entity.basic.BaseLabelCategory;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtLabelCategory;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabelCategory;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.mapper.BaseHtLabelCategoryMapper;
 import com.fantechs.provider.base.mapper.BaseLabelCategoryMapper;
 import com.fantechs.provider.base.service.BaseLabelCategoryService;
@@ -43,7 +42,7 @@ public class BaseLabelCategoryServiceImpl extends BaseService<BaseLabelCategory>
          @Resource
          private BaseHtLabelCategoryMapper baseHtLabelCategoryMapper;
          @Resource
-         private SecurityFeignApi securityFeignApi;
+         private AuthFeignApi securityFeignApi;
 
     @Override
     public List<BaseLabelCategoryDto> findList(Map<String, Object> map) {

@@ -32,7 +32,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.*;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.electronic.ElectronicTagFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.api.tem.TemVehicleFeignApi;
 import com.fantechs.provider.client.config.RabbitConfig;
 import com.fantechs.provider.client.dto.*;
@@ -58,7 +58,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
     @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
     @Resource
     private TemVehicleFeignApi temVehicleFeignApi;
     @Resource

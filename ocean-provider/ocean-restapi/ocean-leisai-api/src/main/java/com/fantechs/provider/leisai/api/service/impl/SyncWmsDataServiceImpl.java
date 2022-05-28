@@ -3,7 +3,7 @@ package com.fantechs.provider.leisai.api.service.impl;
 import com.fantechs.common.base.entity.security.SysApiLog;
 import com.fantechs.common.base.general.entity.leisai.LeisaiWmsCarton;
 import com.fantechs.common.base.general.entity.leisai.LeisaiWmsCartonDet;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.leisai.api.mapper.WmsCartonDetMapper;
 import com.fantechs.provider.leisai.api.mapper.WmsCartonMapper;
 import com.fantechs.provider.leisai.api.service.SyncWmsDataService;
@@ -26,7 +26,7 @@ public class SyncWmsDataServiceImpl implements SyncWmsDataService {
     private WmsCartonDetMapper wmsCartonDetMapper;
 
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
 
     @Override
     public void syncCartonData(LeisaiWmsCarton leisaiWmsCarton) {

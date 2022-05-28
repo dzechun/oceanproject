@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.auth.mapper.SysUserMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.security.SysUser">
+        <id column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="user_code" jdbcType="VARCHAR" property="userCode"/>
+        <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="status" jdbcType="BIT" property="status"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="factory_id" jdbcType="BIGINT" property="factoryId"/>
+        <result column="dept_id" jdbcType="BIGINT" property="deptId"/>
+        <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
+        <result column="mobile" jdbcType="VARCHAR" property="mobile"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+        <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
+        <result column="factory_name" jdbcType="VARCHAR" property="factoryName"/>
+        <result column="organization_name" jdbcType="VARCHAR" property="organizationName"/>
+    </resultMap>
+
+    <resultMap id="DeptResultMap" type="com.fantechs.common.base.general.entity.basic.BaseDept">
+        <result column="dept_id" jdbcType="BIGINT" property="deptId"/>
+        <result column="dept_code" jdbcType="VARCHAR" property="deptCode"/>
+        <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
+        <result column="dept_desc" jdbcType="VARCHAR" property="deptDesc"/>
+        <result column="factory_id" jdbcType="BIGINT" property="factoryId"/>
+        <result column="factory_name" jdbcType="VARCHAR" property="factoryName"/>
+        <result column="status" jdbcType="BIT" property="status"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    su.user_id,
+	su.user_code,
+	su.user_name,
+	su.nick_name,
+	su.`password`,
+	su.`status`,
+	su.organization_id,
+	su.remark,
+	su.factory_id,
+	su.dept_id,
+	su.telephone,
+	su.mobile,
+	su.email,
+	su.create_user_id,
+	su.create_time,
+	su.modified_user_id,
+	su.modified_time,
+	su.is_delete
+  </sql>
+
+    <select id="selectUsers" parameterType="com.fantechs.common.base.entity.security.search.SearchSysUser"
+            resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"></include>,
+        sf.factory_name, sd.dept_name,
+        u.user_name as createUserName, s.user_name as modifiedUserName,
+        bo.organization_name
+        from sys_user su
+        left join sys_user u on su.create_user_id=u.user_id
+        left join sys_user s on su.modified_user_id=s.user_id
+        left join base_factory sf on su.factory_id= sf.factory_id
+        left join base_dept sd on su.dept_id=sd.dept_id
+        /*LEFT JOIN sys_user_role sur ON su.user_id = sur.user_id
+        LEFT JOIN sys_role sr ON sur.role_id = sr.role_id*/
+        LEFT JOIN base_organization bo ON su.organization_id = bo.organization_id
+        <where>
+            1=1
+            <if test="startTime!= null  and endTime!= null">
+                and date_format(su.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="userCode!=null and userCode!=''">
+                and su.user_code like CONCAT('%', #{userCode}, '%')
+            </if>
+            <if test="userId!=null and userId!=''">
+                and su.user_id = #{userId}
+            </if>
+            <if test="nickName!=null and nickName!=''">
+                and su.nick_name like CONCAT('%', #{nickName}, '%')
+            </if>
+            <if test="searchType==1 and roleId!=null and roleId!=''">
+                AND su.user_id IN (SELECT sur.user_id FROM sys_user_role sur WHERE sur.role_id=#{roleId})
+                AND su.status=1
+            </if>
+            <if test="searchType==0 and roleId!=null and roleId!=''">
+                AND su.user_id NOT IN (SELECT sur.user_id FROM sys_user_role sur WHERE sur.role_id=#{roleId})
+                AND su.status=1
+            </if>
+            <if test="status!=null">
+                and su.status=#{status}
+            </if>
+            <if test="searchType==1 and organizationId!=null and organizationId!=''">
+                AND su.user_id IN (SELECT sou.user_id FROM sys_organization_user sou WHERE sou.org_id=#{organizationId})
+                AND su.status=1
+            </if>
+            <if test="searchType==0 and organizationId!=null and organizationId!=''">
+                AND su.user_id NOT IN (SELECT sou.user_id FROM sys_organization_user sou WHERE sou.org_id=#{organizationId})
+                AND su.status=1
+            </if>
+            <if test="searchType==1 and supplierId!=null and supplierId!=''">
+                AND su.user_id IN (SELECT bsru.user_id FROM base_supplier_re_user bsru WHERE bsru.supplier_id=#{supplierId})
+                AND su.status=1
+            </if>
+            <if test="searchType==0 and supplierId!=null and supplierId!=''">
+                AND su.user_id NOT IN (SELECT bsru.user_id FROM base_supplier_re_user bsru WHERE bsru.supplier_id=#{supplierId})
+                AND su.status=1
+            </if>
+        </where>
+    </select>
+
+    <select id="selectDept" parameterType="java.lang.String" resultMap="DeptResultMap">
+    select sd.dept_id, sd.dept_code, sd.dept_name, sd.dept_desc, sd.factory_id,f.factory_name as factoryName,
+    sd.status, sd.create_user_id,sd.create_time,sd.modified_user_id, sd.modified_time,sd.is_delete
+    from base_dept sd
+    left join base_factory f on sd.factory_id=f.factory_id
+    where f.factory_name=#{factoryName} and sd.dept_name=#{deptName}
+  </select>
+
+  <select id="findAllRoleId" parameterType="long" resultType="java.lang.String">
+      select role_id
+      from sys_user_role sur
+      where sur.user_id = #{userId}
+  </select>
+
+    <select id="findOrganizationList" parameterType="long" resultType="long">
+      select sou.org_id
+      from sys_organization_user sou
+      where sou.user_id = #{userId}
+  </select>
+
+</mapper>

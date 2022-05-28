@@ -32,8 +32,8 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.fantechs.provider.api.security</groupId>
-            <artifactId>ocean-security-api</artifactId>
+            <groupId>com.fantechs.provider.api.auth</groupId>
+            <artifactId>ocean-auth-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

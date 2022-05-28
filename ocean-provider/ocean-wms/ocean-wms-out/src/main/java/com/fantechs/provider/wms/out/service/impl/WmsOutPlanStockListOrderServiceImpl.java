@@ -29,7 +29,7 @@ import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.wms.out.mapper.WmsOutHtPlanStockListOrderMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutPlanStockListOrderDetMapper;
@@ -67,7 +67,7 @@ public class WmsOutPlanStockListOrderServiceImpl extends BaseService<WmsOutPlanS
     @Resource
     private InnerFeignApi innerFeignApi;
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
 
     @Override
     public List<WmsOutPlanStockListOrderDto> findList(Map<String, Object> map) {

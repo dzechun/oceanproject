@@ -22,7 +22,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.esop.mapper.*;
 import com.fantechs.provider.esop.service.EsopWorkInstructionService;
 import com.fantechs.provider.esop.service.socket.SocketService;
@@ -71,7 +71,7 @@ public class EsopWorkInstructionServiceImpl extends BaseService<EsopWorkInstruct
     @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
     @Resource
     private EsopWiReleaseMapper esopWiReleaseMapper;
     @Resource

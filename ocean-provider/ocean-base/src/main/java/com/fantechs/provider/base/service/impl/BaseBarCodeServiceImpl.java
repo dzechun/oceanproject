@@ -1,7 +1,6 @@
 package com.fantechs.provider.base.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
@@ -22,7 +21,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.mapper.BaseBarCodeDetMapper;
 import com.fantechs.provider.base.mapper.BaseBarCodeMapper;
 import com.fantechs.provider.base.mapper.BaseBarcodeRuleSpecMapper;
@@ -54,7 +53,7 @@ public class BaseBarCodeServiceImpl extends BaseService<BaseBarCode> implements 
     @Resource
     private BaseBarCodeMapper baseBarCodeMapper;
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
     @Resource
     private BaseBarCodeDetMapper baseBarCodeDetMapper;
     @Resource

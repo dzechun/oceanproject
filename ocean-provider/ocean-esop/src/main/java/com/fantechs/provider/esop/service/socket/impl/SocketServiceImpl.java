@@ -10,7 +10,7 @@ import com.fantechs.common.base.general.entity.esop.EsopEquipment;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.esop.mapper.EsopEquipmentMapper;
 import com.fantechs.provider.esop.service.EsopIssueService;
 import com.fantechs.provider.esop.service.socket.SocketService;
@@ -38,7 +38,7 @@ public class SocketServiceImpl implements SocketService {
     @Resource
     private EsopEquipmentMapper esopEquipmentMapper;
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
     @Resource
     private EsopIssueService esopIssueService;
 

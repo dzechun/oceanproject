@@ -1,10 +1,8 @@
 package com.fantechs.provider.qms.service.impl;
 
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrderAuditUser;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsIpqcInspectionOrder;
@@ -12,7 +10,7 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderAuditUserMapper;
 import com.fantechs.provider.qms.mapper.QmsIpqcInspectionOrderMapper;
 import com.fantechs.provider.qms.service.QmsIpqcInspectionOrderAuditUserService;
@@ -37,7 +35,7 @@ public class QmsIpqcInspectionOrderAuditUserServiceImpl extends BaseService<QmsI
     @Resource
     private QmsIpqcInspectionOrderMapper qmsIpqcInspectionOrderMapper;
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
 
     @Override
     public List<QmsIpqcInspectionOrderAuditUser> findList(Map<String, Object> map) {

@@ -27,7 +27,7 @@ import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.mes.sfc.service.*;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
@@ -75,7 +75,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     @Resource
     InFeignApi inFeignApi;
     @Resource
-    SecurityFeignApi securityFeignApi;
+    AuthFeignApi securityFeignApi;
 
     @Override
     @Transactional(rollbackFor = Exception.class)

@@ -19,7 +19,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -36,7 +36,7 @@ public class DeviceInterFaceUtils {
     @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
     @Resource
     private SFCFeignApi sfcFeignApi;
     @Resource

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.auth.mapper.SysDefaultCustomFormDetMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.security.SysDefaultCustomFormDet">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="custom_form_det_id" jdbcType="BIGINT" property="customFormDetId" />
+    <result column="custom_form_id" jdbcType="BIGINT" property="customFormId" />
+    <result column="item_key" jdbcType="VARCHAR" property="itemKey" />
+    <result column="item_name" jdbcType="VARCHAR" property="itemName" />
+    <result column="show_type" jdbcType="TINYINT" property="showType" />
+    <result column="item_value" jdbcType="VARCHAR" property="itemValue" />
+    <result column="item_width" jdbcType="VARCHAR" property="itemWidth" />
+    <result column="select_name" jdbcType="VARCHAR" property="selectName" />
+    <result column="select_value" jdbcType="VARCHAR" property="selectValue" />
+    <result column="disabled" jdbcType="TINYINT" property="disabled" />
+    <result column="item_list_type" jdbcType="TINYINT" property="itemListType" />
+    <result column="item_search_type" jdbcType="TINYINT" property="itemSearchType" />
+    <result column="item_detail_type" jdbcType="TINYINT" property="itemDetailType" />
+    <result column="is_hide" jdbcType="TINYINT" property="isHide" />
+    <result column="is_enum" jdbcType="TINYINT" property="isEnum" />
+    <result column="is_edit_display" jdbcType="TINYINT" property="isEditDisplay" />
+    <result column="spec_code" jdbcType="VARCHAR" property="specCode" />
+    <result column="event_trigger_mode" jdbcType="TINYINT" property="eventTriggerMode" />
+    <result column="event_trigger_name" jdbcType="TINYINT" property="eventTriggerName" />
+    <result column="enum_data" jdbcType="VARCHAR" property="enumData" />
+    <result column="is_required" jdbcType="TINYINT" property="isRequired" />
+    <result column="format" jdbcType="VARCHAR" property="format" />
+    <result column="value_format" jdbcType="VARCHAR" property="valueFormat" />
+    <result column="date_type" jdbcType="VARCHAR" property="dateType" />
+    <result column="order_num" jdbcType="INTEGER" property="orderNum" />
+    <result column="is_search" jdbcType="TINYINT" property="isSearch" />
+    <result column="is_table" jdbcType="TINYINT" property="isTable" />
+    <result column="is_form" jdbcType="TINYINT" property="isForm" />
+    <result column="is_detail" jdbcType="TINYINT" property="isDetail" />
+    <result column="query_seq" jdbcType="VARCHAR" property="querySeq"/>
+    <result column="query_type" jdbcType="VARCHAR" property="queryType"/>
+    <result column="join_query" jdbcType="VARCHAR" property="joinQuery"/>
+    <result column="is_high_grade" jdbcType="VARCHAR" property="isHighGrade"/>
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="min_value" jdbcType="DECIMAL" property="minValue"/>
+    <result column="max_value" jdbcType="DECIMAL" property="maxValue"/>
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap"
+             type="com.fantechs.common.base.general.dto.security.SysDefaultCustomFormDetDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+    <result column="custom_form_code" jdbcType="VARCHAR" property="customFormCode"/>
+    <result column="sub_code" jdbcType="VARCHAR" property="subCode"/>
+    <result column="sub_name" jdbcType="VARCHAR" property="subName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    dcfd.custom_form_det_id,
+    dcfd.custom_form_id,
+    dcfd.item_key,
+    dcfd.item_name,
+    dcfd.show_type,
+    dcfd.item_value,
+    dcfd.disabled,
+    dcfd.item_width,
+    dcfd.item_list_type,
+    dcfd.item_search_type,
+    dcfd.item_detail_type,
+    dcfd.is_hide,
+    dcfd.is_edit_display,
+    dcfd.is_enum,
+    dcfd.is_search,
+    dcfd.is_table,
+    dcfd.is_form,
+    dcfd.is_detail,
+    dcfd.query_seq,
+    dcfd.query_type,
+    dcfd.join_query,
+    dcfd.is_high_grade,
+    dcfd.spec_code,
+    dcfd.enum_data,
+    dcfd.is_required,
+    dcfd.format,
+    dcfd.value_format,
+    dcfd.date_type,
+    dcfd.order_num,
+    dcfd.create_user_id,
+    dcfd.create_time,
+    dcfd.modified_time,
+    dcfd.modified_time,
+    dcfd.status,
+    dcfd.is_delete,
+    dcfd.event_trigger_mode,
+    dcfd.event_trigger_name,
+    dcfd.select_name,
+    dcfd.select_value,
+    dcfd.min_value,
+    dcfd.max_value
+  </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    select
+    <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name,
+    dcf.custom_form_code ,dcf.custom_form_name ,dcf.from_rout ,sdcf.custom_form_name AS sub_name,
+    sdcf.custom_form_code AS sub_code
+    from sys_default_custom_form_det dcfd
+    LEFT JOIN sys_user su ON dcfd.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON dcfd.modified_user_id = sus.user_id
+    LEFT JOIN sys_default_custom_form dcf on dcf.custom_form_id = dcfd.custom_form_id
+    LEFT JOIN sys_default_custom_form sdcf on dcf.sub_id = sdcf.custom_form_id
+    <where>
+      <if test="customFormId!=null and customFormId!=''">
+        and dcfd.custom_form_id=#{customFormId}
+      </if>
+      <if test="itemKey!=null and itemKey!=''">
+        and dcfd.item_key=#{itemKey}
+      </if>
+      <if test="customFormCode!=null and customFormCode!=''">
+        and dcf.custom_form_code=#{customFormCode}
+      </if>
+      <if test="fromRout!=null and fromRout!=''">
+        and dcf.from_rout=#{fromRout}
+      </if>
+      <if test="status!=null">
+        and dcfd.status=#{status}
+      </if>
+      <if test="orgId!=null">
+        and dcfd.org_id=#{orgId}
+      </if>
+    </where>
+    order by dcfd.order_num
+  </select>
+</mapper>

@@ -14,7 +14,7 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.ews.mapper.EwsHtWarningUserInfoMapper;
 import com.fantechs.provider.ews.mapper.EwsWarningUserInfoMapper;
 import com.fantechs.provider.ews.service.EwsWarningUserInfoService;
@@ -36,7 +36,7 @@ public class EwsWarningUserInfoServiceImpl extends BaseService<EwsWarningUserInf
     @Resource
     private EwsWarningUserInfoMapper ewsWarningUserInfoMapper;
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
     @Resource
     private EwsHtWarningUserInfoMapper ewsHtWarningUserInfoMapper;
 

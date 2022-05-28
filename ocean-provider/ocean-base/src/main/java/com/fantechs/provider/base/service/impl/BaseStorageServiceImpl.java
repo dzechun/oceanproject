@@ -24,7 +24,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.common.base.utils.UUIDUtils;
 import com.fantechs.provider.api.guest.fivering.FiveringFeignApi;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseStorageService;
 import org.springframework.beans.BeanUtils;
@@ -54,7 +54,7 @@ public class BaseStorageServiceImpl extends BaseService<BaseStorage> implements 
     @Resource
     private SFCFeignApi sfcFeignApi;
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
     @Resource
     private FiveringFeignApi fiveringFeignApi;
 

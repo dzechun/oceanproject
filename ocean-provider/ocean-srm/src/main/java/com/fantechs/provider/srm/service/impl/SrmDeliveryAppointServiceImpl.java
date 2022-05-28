@@ -24,7 +24,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.srm.mapper.*;
 import com.fantechs.provider.srm.service.SrmDeliveryAppointService;
 import org.springframework.beans.BeanUtils;
@@ -54,7 +54,7 @@ public class SrmDeliveryAppointServiceImpl extends BaseService<SrmDeliveryAppoin
     @Resource
     private SrmCarportTimeQuantumMapper srmCarportTimeQuantumMapper;
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
     @Resource
     private BaseFeignApi baseFeignApi;
     @Resource

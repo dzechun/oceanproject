@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.auth.mapper.SysAuthRoleMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.security.SysAuthRole">
+    <id column="auth_id" jdbcType="BIGINT" property="authId" />
+    <result column="role_id" jdbcType="BIGINT" property="roleId" />
+    <result column="menu_id" jdbcType="BIGINT" property="menuId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    auth_id, role_id, menu_id
+  </sql>
+
+  <insert id="updateBatch" parameterType="list">
+    insert into sys_auth_role
+    (role_id,menu_id)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.roleId},#{item.menuId})
+    </foreach>
+    ON DUPLICATE KEY UPDATE
+    role_id = VALUES(role_id),
+    menu_id = VALUES(menu_id)
+  </insert>
+
+
+    <!--通过菜单ID批量删除权限-->
+  <delete id="delBatchByMenuIds" parameterType="list">
+    delete from sys_auth_role where  menu_id in
+    <foreach collection="list" index="index" item="item" open="("  separator="," close=")">
+      #{item}
+    </foreach>
+  </delete>
+</mapper>

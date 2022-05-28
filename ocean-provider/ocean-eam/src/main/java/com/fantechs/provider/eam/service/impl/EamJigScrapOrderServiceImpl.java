@@ -17,7 +17,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.eam.mapper.*;
 import com.fantechs.provider.eam.service.EamJigScrapOrderService;
 import org.springframework.beans.BeanUtils;
@@ -46,7 +46,7 @@ public class EamJigScrapOrderServiceImpl extends BaseService<EamJigScrapOrder> i
     @Resource
     private EamJigMapper eamJigMapper;
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
 
     @Override
     public List<EamJigScrapOrderDto> findList(Map<String, Object> map) {

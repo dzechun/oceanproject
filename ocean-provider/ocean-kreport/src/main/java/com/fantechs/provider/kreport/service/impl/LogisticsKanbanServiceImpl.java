@@ -5,7 +5,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.AddressUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.kreport.mapper.LogisticsKanbanMapper;
 import com.fantechs.provider.kreport.service.LogisticsKanbanService;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class LogisticsKanbanServiceImpl extends BaseService<LogisticsKanban> imp
     @Resource
     private LogisticsKanbanMapper logisticsKanbanMapper;
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
     @Resource
     private RedisUtil redisUtil;
 

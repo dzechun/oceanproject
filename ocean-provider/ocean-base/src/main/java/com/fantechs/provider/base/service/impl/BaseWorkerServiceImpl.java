@@ -19,7 +19,7 @@ import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.DateUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.mapper.BaseWarehouseMapper;
 import com.fantechs.provider.base.mapper.BaseWorkerMapper;
 import com.fantechs.provider.base.mapper.BaseWorkingAreaMapper;
@@ -50,7 +50,7 @@ public class BaseWorkerServiceImpl extends BaseService<BaseWorker> implements Ba
     @Resource
     private BaseWorkingAreaReWService baseWorkingAreaReWService;
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
     @Resource
     private BaseWarehouseMapper baseWarehouseMapper;
     @Resource

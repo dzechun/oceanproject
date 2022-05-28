@@ -13,7 +13,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.srm.mapper.SrmInAsnOrderDetBarcodeMapper;
 import com.fantechs.provider.srm.mapper.SrmInAsnOrderDetMapper;
 import com.fantechs.provider.srm.mapper.SrmInHtAsnOrderDetBarcodeMapper;
@@ -42,7 +42,7 @@ public class SrmInAsnOrderDetBarcodeServiceImpl extends BaseService<SrmInAsnOrde
     @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
 
     @Override
     public List<SrmInAsnOrderDetBarcodeDto> findList(Map<String, Object> map) {

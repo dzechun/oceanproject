@@ -35,7 +35,7 @@ import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.qms.QmsFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.wms.in.mapper.*;
 import com.fantechs.provider.wms.in.service.WmsInInPlanOrderService;
@@ -70,7 +70,7 @@ public class WmsInReceivingOrderServiceImpl extends BaseService<WmsInReceivingOr
     @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
     @Resource
     private QmsFeignApi qmsFeignApi;
     @Resource

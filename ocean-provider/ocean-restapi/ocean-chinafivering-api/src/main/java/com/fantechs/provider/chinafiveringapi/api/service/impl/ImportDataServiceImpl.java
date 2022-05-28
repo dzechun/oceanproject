@@ -23,7 +23,7 @@ import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.guest.eng.EngFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.chinafiveringapi.api.service.ImportDataService;
 import org.springframework.stereotype.Service;
@@ -53,7 +53,7 @@ public class ImportDataServiceImpl implements ImportDataService {
     @Resource
     EngFeignApi engFeignApi;
     @Resource
-    SecurityFeignApi securityFeignApi;
+    AuthFeignApi securityFeignApi;
 
     @Override
     /**

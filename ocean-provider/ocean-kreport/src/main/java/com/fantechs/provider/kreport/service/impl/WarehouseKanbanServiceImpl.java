@@ -2,7 +2,7 @@ package com.fantechs.provider.kreport.service.impl;
 
 import com.fantechs.common.base.general.entity.kreport.*;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.kreport.mapper.WarehouseKanbanMapper;
 import com.fantechs.provider.kreport.service.WarehouseKanbanService;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class WarehouseKanbanServiceImpl extends BaseService<WarehouseKanban> imp
     @Resource
     private WarehouseKanbanMapper warehouseKanbanMapper;
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
 
     @Override
     public WarehouseKanban findKanbanData(Map<String, Object> map) {

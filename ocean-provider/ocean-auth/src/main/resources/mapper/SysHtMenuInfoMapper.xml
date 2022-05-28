@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.auth.mapper.SysHtMenuInfoMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.security.history.SysHtMenuInfo">
+    <id column="ht_menu_id" jdbcType="BIGINT" property="htMenuId" />
+    <result column="menu_id" jdbcType="BIGINT" property="menuId" />
+    <result column="menu_code" jdbcType="VARCHAR" property="menuCode" />
+    <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
+    <result column="order_num" jdbcType="INTEGER" property="orderNum" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="menu_desc" jdbcType="VARCHAR" property="menuDesc" />
+    <result column="menu_level" jdbcType="DECIMAL" property="menuLevel" />
+    <result column="is_menu" jdbcType="DECIMAL" property="isMenu" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="premenu_id" jdbcType="VARCHAR" property="premenuId" />
+    <result column="menu_type" jdbcType="BIT" property="menuType" />
+    <result column="is_hide" jdbcType="BIT" property="isHide" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="is_oppen" jdbcType="BIT" property="isOppen" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    sm.ht_menu_id, sm.menu_id, sm.menu_code, sm.menu_name, sm.order_num, sm.parent_id, sm.menu_desc, sm.menu_level,
+    sm.is_menu, sm.url, sm.premenu_id, sm.menu_type, sm.is_hide, sm.is_delete, sm.icon, sm.is_oppen, sm.create_user_id,
+    sm.create_time, sm.modified_user_id, sm.modified_time
+  </sql>
+
+  <select id="findHtList" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List" />, su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    from sys_ht_menuinfo sm
+    LEFT JOIN sys_user su  ON sm.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON sm.modified_user_id = sus.user_id
+    <where>
+      <if test="menuCode != null">
+        and sm.menu_code like CONCAT('%', #{menuCode}, '%')
+      </if>
+      <if test="menuName != null">
+        and  sm.menu_name like CONCAT('%', #{menuName}, '%')
+      </if>
+      <if test="parentId != null">
+        and sm.parent_id = #{parentId}
+      </if>
+      <if test="menuType != null">
+        and sm.menu_type = #{menuType}
+      </if>
+    </where>
+    order by sm.modified_time desc
+  </select>
+</mapper>

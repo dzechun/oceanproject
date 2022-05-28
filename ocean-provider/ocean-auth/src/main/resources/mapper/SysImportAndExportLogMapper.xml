@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.auth.mapper.SysImportAndExportLogMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.entity.security.SysImportAndExportLog">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="import_and_export_log_id" jdbcType="BIGINT" property="importAndExportLogId"/>
+        <result column="module_names" jdbcType="VARCHAR" property="moduleNames"/>
+        <result column="file_name" jdbcType="VARCHAR" property="fileName"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="result" jdbcType="TINYINT" property="result"/>
+        <result column="operator_user_id" jdbcType="BIGINT" property="operatorUserId"/>
+        <result column="total_count" jdbcType="INTEGER" property="totalCount"/>
+        <result column="succeed_count" jdbcType="INTEGER" property="succeedCount"/>
+        <result column="fail_count" jdbcType="INTEGER" property="failCount"/>
+        <result column="consume_time" jdbcType="DECIMAL" property="consumeTime"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="org_id" jdbcType="BIGINT" property="orgId"/>
+        <result column="request_time" jdbcType="TIMESTAMP" property="requestTime"/>
+        <result column="response_time" jdbcType="TIMESTAMP" property="responseTime"/>
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="option1" jdbcType="VARCHAR" property="option1"/>
+        <result column="option2" jdbcType="VARCHAR" property="option2"/>
+        <result column="option3" jdbcType="VARCHAR" property="option3"/>
+        <result column="succeed_info" jdbcType="LONGVARCHAR" property="succeedInfo"/>
+        <result column="fail_info" jdbcType="LONGVARCHAR" property="failInfo"/>
+    </resultMap>
+
+
+    <resultMap id="BaseResultDtoMap" extends="BaseResultMap"
+               type="com.fantechs.common.base.dto.security.SysImportAndExportLogDto">
+        <result column="create_user_name" jdbcType="VARCHAR" property="createUserName"/>
+        <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName"/>
+        <result column="operator_user_name" jdbcType="VARCHAR" property="operatorUserName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    siael.import_and_export_log_id,
+    siael.module_names,
+    siael.file_name,
+    siael.type,
+    siael.result,
+    siael.operator_user_id,
+    siael.total_count,
+    siael.succeed_count,
+    siael.fail_count,
+    siael.consume_time,
+    siael.status,
+    siael.remark,
+    siael.org_id,
+    siael.request_time,
+    siael.response_time,
+    siael.create_user_id,
+    siael.create_time,
+    siael.modified_user_id,
+    siael.modified_time,
+    siael.option1,
+    siael.option2,
+    siael.option3,
+    siael.succeed_info,
+    siael.fail_info
+  </sql>
+
+    <select id="findList" resultMap="BaseResultDtoMap" parameterType="map">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        sus.user_name AS operatorUserName,
+        su.user_name AS create_user_name,s.user_name AS modifiedUserName
+        FROM
+        sys_import_and_export_log siael
+        LEFT JOIN sys_user sus ON siael.operator_user_id = sus.user_id
+        LEFT JOIN sys_user su ON siael.create_user_id = su.user_id
+        LEFT JOIN sys_user s ON siael.modified_user_id=s.user_id
+        <where>
+            <if test="orgId!=null and orgId!=''">
+                and siael.org_id = #{orgId}
+            </if>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(siael.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <if test="result!=null and result!=''">
+                and siael.result = #{result}
+            </if>
+            <if test="moduleNames!=null and moduleNames!=''">
+                and siael.module_names = #{moduleNames}
+            </if>
+            <if test="type!=null and type!=''">
+                and siael.type = #{type}
+            </if>
+            <if test="operatorUserName!=null and operatorUserName!=''">
+                and sus.user_name = #{operatorUserName}
+            </if>
+        </where>
+    </select>
+
+</mapper>

@@ -14,7 +14,7 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.BeanUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.esop.mapper.EsopHtWiReleaseDetMapper;
 import com.fantechs.provider.esop.mapper.EsopHtWiReleaseMapper;
 import com.fantechs.provider.esop.mapper.EsopWiReleaseDetMapper;
@@ -50,7 +50,7 @@ public class EsopWiReleaseServiceImpl extends BaseService<EsopWiRelease> impleme
     @Resource
     private SocketService socketService;
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
     @Resource
     private EsopIssueService esopIssueService;
 

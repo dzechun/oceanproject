@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.auth.mapper.SysConfigurationMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.security.SysConfiguration">
+    <id column="configuration_id" jdbcType="BIGINT" property="configurationId" />
+    <result column="configuration_name" jdbcType="VARCHAR" property="configurationName" />
+    <result column="configuration_source" jdbcType="VARCHAR" property="configurationSource" />
+    <result column="configuration_target" jdbcType="VARCHAR" property="configurationTarget" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+  </resultMap>
+
+  <resultMap id="BaseResultMapDto" extends="BaseResultMap" type="com.fantechs.common.base.general.dto.security.SysConfigurationDto">
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="modified_user_name" jdbcType="VARCHAR" property="modifiedUserName" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    cf.configuration_id,
+    cf.configuration_name,
+    cf.configuration_source,
+    cf.configuration_target,
+    cf.status,
+    cf.remark,
+    cf.create_user_id,
+    cf.create_time,
+    cf.modified_user_id,
+    cf.modified_time,
+    cf.is_delete,
+    cf.org_id
+    </sql>
+
+  <select id="findList" resultMap="BaseResultMapDto" parameterType="map">
+    select
+    <include refid="Base_Column_List"/>, su.user_name AS create_user_name, sus.user_name AS modified_user_name
+    from sys_configuration cf
+    LEFT JOIN sys_user su ON cf.create_user_id = su.user_id
+    LEFT JOIN sys_user sus ON cf.modified_user_id = sus.user_id
+    <where>
+      <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+        and date_format(cf.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+      </if>
+      <if test="status!=null">
+        and cf.status=#{status}
+      </if>
+      <if test="orgId!=null">
+        and cf.org_id=#{orgId}
+      </if>
+    </where>
+    order by cf.create_time desc
+  </select>
+
+  <select id="findTbalesByName" resultType="com.fantechs.common.base.general.dto.security.SysTableDto">
+  SELECT DISTINCT table_name as tableName ,table_comment as tableComment FROM INFORMATION_SCHEMA.TABLES
+  WHERE table_schema = 'fantech_imes_v2_1'
+    AND  TABLE_COMMENT != 'VIEW'
+    AND table_name NOT LIKE '%_ht_%'
+    AND table_name NOT LIKE '%sys_configuration%'
+    AND table_name NOT LIKE 'QRTZ_%'
+    <if test="tableName!=null and tableName!=''">
+      AND table_name like CONCAT('%',#{tableName},'%')
+    </if>
+  </select>
+  <select id="findFieldList" resultType="com.fantechs.common.base.general.dto.security.SysFieldDto" parameterType="string">
+    SELECT DISTINCT
+    COLUMN_NAME  as columnName,
+    column_comment as columnComment ,
+    column_type as columnType
+    FROM information_schema.columns
+    WHERE   table_name = #{tableName};
+  </select>
+  <insert id="insertSelect"  parameterType="string">
+    ${sqlStr}
+  </insert>
+
+</mapper>

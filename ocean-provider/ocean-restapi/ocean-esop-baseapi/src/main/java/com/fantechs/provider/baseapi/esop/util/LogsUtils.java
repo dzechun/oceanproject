@@ -1,7 +1,7 @@
 package com.fantechs.provider.baseapi.esop.util;
 
 import com.fantechs.common.base.entity.security.SysApiLog;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.SecurityFeignApi;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
