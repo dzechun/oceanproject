@@ -229,9 +229,13 @@
 
   <select id="countBarcodeListForSalesOrder" parameterType="map" resultType="java.lang.String">
     SELECT COUNT(*) FROM (
-    SELECT IFNULL(COUNT(*),0) FROM om_sales_order_det osod
-    LEFT JOIN mes_pm_work_order mpwo ON osod.sales_order_id = mpwo.sales_order_id
-    LEFT JOIN mes_sfc_barcode_process msbp ON mpwo.work_order_id = msbp.work_order_id AND msbp.material_id = osod.material_id
+    SELECT
+    osod.sales_order_det_id
+    FROM
+    mes_sfc_barcode_process msbp
+    LEFT JOIN mes_pm_work_order mpwo ON mpwo.work_order_id = msbp.work_order_id
+    LEFT JOIN om_sales_order_det osod ON osod.sales_code = mpwo.sales_code
+    AND msbp.material_id = osod.material_id
     <where>
       <if test="barcodeList != null">
         <foreach collection="barcodeList" index="index" item="item" open="msbp.barcode in (" close=")"
