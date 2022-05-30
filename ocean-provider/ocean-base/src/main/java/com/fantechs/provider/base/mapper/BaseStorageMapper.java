@@ -6,6 +6,7 @@ import com.fantechs.common.base.mybatis.MyMapper;
 import com.fantechs.common.base.general.dto.basic.StorageRuleDto;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +33,7 @@ public interface BaseStorageMapper extends MyMapper<BaseStorage> {
      * @param
      * @return
      */
-    List<StorageRuleInventry> findInv(@Param("storageIds") List<BaseStorage>storageIds,@Param("materialId") Long materialId,@Param("salesBarcode") String salesBarcode,@Param("poCode") String poCode,@Param("inventoryStatusId")Long inventoryStatusId);
+    List<StorageRuleInventry> findInv(@Param("storageIds") List<Long>storageIds,@Param("materialId") Long materialId,@Param("salesBarcode") String salesBarcode,@Param("poCode") String poCode,@Param("inventoryStatusId")Long inventoryStatusId);
 
     /**
      * 查询先进库存
@@ -49,4 +50,6 @@ public interface BaseStorageMapper extends MyMapper<BaseStorage> {
     List<Long> findJobOrderStorage(@Param("storageIds") List<Long>storageIds);
 
     List<Long> findJobOrderStorageInMaterial(@Param("materialId") Long materialId,@Param("poCode")String poCode,@Param("salesBarcode")String salesBarcode ,@Param("storageIds")List<Long> storageIds);
+
+    List<Long> screen(@Param("storageIds") List<BaseStorage>storageIds, @Param("capacity")BigDecimal capacity,@Param("qty")BigDecimal qty);
 }

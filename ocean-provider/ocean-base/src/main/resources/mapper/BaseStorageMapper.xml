@@ -310,7 +310,7 @@ order by wii.modified_time desc limit 1
             <if test="storageIds!=null and storageIds.size()&gt; 0">
                 and storage_id  in
                 <foreach collection="storageIds" item="list" open="(" close=")" separator=",">
-                    #{list.storageId}
+                    #{list}
                 </foreach>
             </if>
             <if test="materialId!=null and materialId!=''">
@@ -459,5 +459,18 @@ order by wii.modified_time desc limit 1
             </foreach>
         </where>
         group by in_storage_id
+    </select>
+    <select id="screen" resultType="java.lang.Long">
+        SELECT bs.storage_id FROM base_storage bs
+        LEFT JOIN wms_inner_inventory_det iid ON iid.storage_id = bs.storage_id
+        WHERE
+        <if test="storageIds!=null and storageIds.size()&gt; 0">
+            bs.storage_id  in
+            <foreach collection="storageIds" item="list" open="(" close=")" separator=",">
+                #{list.storageId}
+            </foreach>
+        </if>
+        GROUP BY bs.storage_id
+        HAVING SUM(iid.material_qty)&lt;#{capacity} AND (SUM(iid.material_qty)+#{qty})&lt;=#{capacity}
     </select>
 </mapper>

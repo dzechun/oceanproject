@@ -102,6 +102,7 @@ public class WanbaoStorageRule {
             throw new BizErrorException(ErrorCodeEnum.OPT20012002.getCode(),"获取最大库容失败");
         }
         BigDecimal capacity = new BigDecimal(map.get("capacity").toString());
+        log.error("====================================库容："+capacity+"=============================");
         baseStorageList = (List<BaseStorage>) map.get("list");
         if(StringUtils.isEmpty(baseStorageList) || baseStorageList.size()<1){
             return publicStorage(baseStorageRule);
@@ -296,13 +297,18 @@ public class WanbaoStorageRule {
      */
     private static Long onStorage(BaseStorageRule baseStorageRule,List<BaseStorage> list,BigDecimal capacity){
         Long storageId= null;
+        //用库位查询在库货品库存
+        List<Long> scLongs = wanbaoStorageRule.baseStorageMapper.screen(list,capacity,baseStorageRule.getQty());
         //查询批次相同库位 物料+库位+销售编码+PO+库龄小于30天
-        List<StorageRuleInventry> storageRuleInventries = wanbaoStorageRule.baseStorageMapper.findInv(list,baseStorageRule.getMaterialId(),
+        List<StorageRuleInventry> storageRuleInventries = wanbaoStorageRule.baseStorageMapper.findInv(scLongs,baseStorageRule.getMaterialId(),
                 baseStorageRule.getSalesBarcode(),baseStorageRule.getPoCode(),baseStorageRule.getInventoryStatusId());
+        log.error("====================================库容："+capacity+"=============================");
+        log.error("最近上架库位"+JsonUtils.objectToJson(storageRuleInventries));
         List<StorageRuleInventry> alikeList = storageRuleInventries.stream().filter(x->(capacity.subtract(x.getMaterialQty()))
                 .compareTo(baseStorageRule.getQty())>-1)
                 .sorted(Comparator.comparing(StorageRuleInventry::getMaterialQty))
                 .collect(Collectors.toList());
+        log.error("未满仓库位："+JsonUtils.objectToJson(alikeList));
         if(alikeList.size()>0){
             storageId = alikeList.get(0).getStorageId();
         }
