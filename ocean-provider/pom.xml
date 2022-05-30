@@ -15,6 +15,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>ocean-auth</module>        <!-- 认证服务 -->
         <module>ocean-fileserver</module>  <!-- 文件服务 -->
         <module>ocean-security</module>    <!-- 用户认证中心 -->
         <module>ocean-electronic-tag</module> <!-- 电子标签 -->
