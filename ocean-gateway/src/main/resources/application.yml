@@ -26,9 +26,9 @@ zuul:
     socket-timeout-millis: 60000
     connect-timeout-millis: 30000
   routes:
-    ocean-security:               #传统的路由配置,此名称可以自定义
-        path: /ocean-security/**  #映射的url
-        serviceId: ocean-security #服务名
+    ocean-auth:               #传统的路由配置,此名称可以自定义
+        path: /ocean-auth/**  #映射的url
+        serviceId: ocean-auth #服务名
     ocean-base:
         path: /ocean-base/**
         serviceId: ocean-base
@@ -76,7 +76,7 @@ logging:
   file: /data/logs/ocean/@pom.artifactId@/info/@pom.artifactId@.log
 
 url:
-  securityUrl: http://localhost:8768/ocean-security/clientGetToken
+  securityUrl: http://localhost:8768/ocean-auth/clientGetToken
 
 constant-base:
   orgId: 29

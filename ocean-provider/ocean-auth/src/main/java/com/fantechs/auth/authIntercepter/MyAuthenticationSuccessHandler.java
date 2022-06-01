@@ -1,5 +1,8 @@
 package com.fantechs.auth.authIntercepter;
 
+import cn.dev33.satoken.stp.StpUtil;
+import cn.dev33.satoken.strategy.SaStrategy;
+import cn.dev33.satoken.util.SaFoxUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.dto.security.SysMenuInListDTO;
 import com.fantechs.common.base.dto.security.SysUserDto;
@@ -53,27 +56,27 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
         httpServletResponse.setContentType("application/json;charset=utf-8");
         PrintWriter writer = httpServletResponse.getWriter();
         SysUserDto loginUser = MySecurityTool.getCurrentLoginUserDTO();
-        List<SysMenuInListDTO>  roleMenuList = new LinkedList<>();
+        List<SysMenuInListDTO> roleMenuList = new LinkedList<>();
         if (StringUtils.isNotEmpty(loginUser)) {
 
-            //---加入角色权限所对应的菜单名称
+            // 加入角色权限所对应的菜单名称
             List<SysRole> roles = loginUser.getRoles();
-            List<String> roleIds = new  LinkedList<>();
+            List<String> roleIds = new LinkedList<>();
             String browserKernel = httpServletRequest.getParameter("browserKernel");
-            //menuType 1-windows(平板C端)访问  2-web(客户端) 3-PDA(移动设备) 4-安卓app访问系统
+            // menuType 1-windows(平板C端)访问  2-web(客户端) 3-PDA(移动设备) 4-安卓app访问系统
             int menuType = 3;  //PDA
-            if(StringUtils.isEmpty(browserKernel)) {
-                log.info("==========================" + httpServletRequest.getHeader("user-agent"));
+            if (StringUtils.isEmpty(browserKernel)) {
+                log.info("user-agent：" + httpServletRequest.getHeader("user-agent"));
                 if (httpServletRequest.getHeader("user-agent").contains("Apache-HttpClient")) {
                     menuType = 1;
                 } else if (!UserAgentUtil.CheckAgent(httpServletRequest.getHeader("user-agent"))) {
                     menuType = 2;
                 }
-
-            }else{
+            } else {
                 menuType = Integer.valueOf(browserKernel);
             }
 
+            // 获取菜单权限列表
             if (StringUtils.isNotEmpty(roles)) {
                 for (SysRole role : roles) {
                     roleIds.add(role.getRoleId().toString());
@@ -83,22 +86,18 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
                             "parentId", "0",
                             "menuType", menuType + ""
                 ), roleIds);
-
                 if (StringUtils.isNotEmpty(roleMenuList)) {
                     loginUser.setMenuList(roleMenuList);
                     //获取所有菜单地址
                     getPermsSet(roleMenuList);
                 }
             }
-
         }
 
-        //如何带有token将token删除
+        // 如何带有token将token删除
         TokenUtil.clearTokenByRequest(httpServletRequest);
-        //---生成token
         SysUser sysUser = MySecurityTool.getCurrentLoginUser();
         sysUser.setAuthority(permsSet);
-
         CustomWebAuthenticationDetails details = (CustomWebAuthenticationDetails) authentication.getDetails();
         String organizationid = details.getOrganizationid();
         SearchBaseSupplierReUser searchBaseSupplierReUser = new SearchBaseSupplierReUser();
@@ -114,21 +113,16 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
             sysUser.setSupplierName(baseSupplierReUserList.get(0).getSupplierName());
         }
 
-        String token = TokenUtil.generateToken(httpServletRequest.getHeader("user-agent"), sysUser,null);
-        String refreshToken = TokenUtil.generateToken(httpServletRequest.getHeader("user-agent"), sysUser,getIpAddress(httpServletRequest));
-        TokenUtil.save(token,sysUser);
-        TokenUtil.save(refreshToken,sysUser);
-        httpServletResponse.setHeader("token", token);
-        httpServletResponse.setHeader("refreshToken",refreshToken);
+        //sa-token登录
+        String token = TokenUtil.generateToken(httpServletRequest.getHeader("user-agent"), sysUser);
+        TokenUtil.save(token, sysUser);
+        httpServletResponse.setHeader(StpUtil.getTokenName(), token);
         loginUser.setToken(token);
-        loginUser.setRefreshToken(refreshToken);
         httpServletResponse.setHeader("Access-Control-Expose-Headers", "token,refreshToken");
-
         ResponseEntity<Object> responseEntity = ControllerUtil.returnDataSuccess(loginUser, 1);
         writer.write(JSONObject.toJSONString(responseEntity));
         writer.flush();
         writer.close();
-
     }
 
     /**

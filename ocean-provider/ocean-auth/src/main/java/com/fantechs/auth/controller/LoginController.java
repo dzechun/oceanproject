@@ -78,6 +78,7 @@ public class LoginController {
 
     @GetMapping("/logout")
     public ResponseEntity logout(HttpServletRequest request){
+        // 登出接口已被拦截器重写，前端调用时不会走此接口，会走拦截器接口
         ResponseEntity responseEntity = authFeignApi.logout();
         return responseEntity;
     }
@@ -124,7 +125,7 @@ public class LoginController {
         log.info("--------------为客户端赋予一个可访问的token--------------");
         SysUser sysUser = sysUserService.selectByCode("admin");
         sysUser.setOrganizationId(orgId);
-        String token = "client_" + TokenUtil.generateToken("", sysUser, null);
+        String token = "client_" + TokenUtil.generateToken("", sysUser);
         TokenUtil.save(token, sysUser);
         log.info("--------------返回一个可访问的token : " + token + "--------------");
 

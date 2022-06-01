@@ -1,5 +1,6 @@
 package com.fantechs.auth.authIntercepter;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.alibaba.fastjson.JSONObject;
 
 import com.fantechs.common.base.response.ControllerUtil;
@@ -26,8 +27,9 @@ import java.io.PrintWriter;
 public class MyLogoutSuccessHandler implements LogoutSuccessHandler {
     @Override
     public void onLogoutSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
-        //如何带有token将token删除
+        // 如何带有token将token删除
         TokenUtil.clearTokenByRequest(httpServletRequest);
+        StpUtil.logout();
         httpServletResponse.setContentType("application/json;charset=utf-8");
         PrintWriter writer = httpServletResponse.getWriter();
         ResponseEntity<Object> responseEntity = ControllerUtil.returnSuccess("退出成功");

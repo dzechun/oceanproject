@@ -114,14 +114,13 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
             sysUser.setSupplierName(baseSupplierReUserList.get(0).getSupplierName());
         }
 
-        String token = TokenUtil.generateToken(httpServletRequest.getHeader("user-agent"), sysUser,null);
-        String refreshToken = TokenUtil.generateToken(httpServletRequest.getHeader("user-agent"), sysUser,getIpAddress(httpServletRequest));
+        String token = TokenUtil.generateToken(httpServletRequest.getHeader("user-agent"), sysUser);
+        //String refreshToken = TokenUtil.generateToken(httpServletRequest.getHeader("user-agent"), sysUser);
         TokenUtil.save(token,sysUser);
-        TokenUtil.save(refreshToken,sysUser);
         httpServletResponse.setHeader("token", token);
-        httpServletResponse.setHeader("refreshToken",refreshToken);
+        //httpServletResponse.setHeader("refreshToken",refreshToken);
         loginUser.setToken(token);
-        loginUser.setRefreshToken(refreshToken);
+        //loginUser.setRefreshToken(refreshToken);
         httpServletResponse.setHeader("Access-Control-Expose-Headers", "token,refreshToken");
 
         ResponseEntity<Object> responseEntity = ControllerUtil.returnDataSuccess(loginUser, 1);

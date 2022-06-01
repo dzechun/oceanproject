@@ -123,7 +123,7 @@ public class LoginController {
         log.info("--------------为客户端赋予一个可访问的token--------------");
         SysUser sysUser = sysUserService.selectByCode("admin");
         sysUser.setOrganizationId(orgId);
-        String token = "client_" + TokenUtil.generateToken("", sysUser, null);
+        String token = "client_" + TokenUtil.generateToken("", sysUser);
         TokenUtil.save(token, sysUser);
         log.info("--------------返回一个可访问的token : " + token + "--------------");
 

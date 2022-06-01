@@ -55,14 +55,14 @@ public class AuthHeaderFilter extends ZuulFilter {
 
 
 	//排除过滤的 uri 地址
-	private static final String LOGIN_URI = "/ocean-security/meslogin,/ocean-security/loginByOrgCode,/ocean-security/refreshtoken,/ocean-security/clientGetToken," +
-			"/ocean-security/userinfo,/ocean-security/logout,/ocean-fileserver/file/download,/ocean-fileserver/file/multipleFileBase64" +
+	private static final String LOGIN_URI = "/ocean-auth/meslogin,/ocean-auth/loginByOrgCode,/ocean-auth/refreshtoken,/ocean-auth/clientGetToken," +
+			"/ocean-auth/userinfo,/ocean-auth/logout,/ocean-fileserver/file/download,/ocean-fileserver/file/multipleFileBase64" +
 			",/ocean-fileserver/file/uploadToSVG,/ocean-imes-materialapi/material/api" +
-			",/ocean-security/sysRole/findList,/ocean-security/sysUser/saveByApi" +
-			",/ocean-security/sysSpecItem/findList,/ocean-exhibition-client/RCSAPI/agvCallback,/ocean-base/baseOrganization/findList"+
+			",/ocean-auth/sysRole/findList,/ocean-auth/sysUser/saveByApi" +
+			",/ocean-auth/sysSpecItem/findList,/ocean-exhibition-client/RCSAPI/agvCallback,/ocean-base/baseOrganization/findList"+
 			",/ocean-imes-materialapi/material/workOrder,/ocean-imes-materialapi/material/purchaseOrder,/ocean-esop/esopNews/findList" +
 			",/ocean-imes-materialapi/material/ChkLogUserInfo,/ocean-imes-materialapi/material/ChkSnRouting,/ocean-imes-materialapi/material/SnDataTransfer" +
-			",/ocean-security/eamlogin,/ocean-base/baseFile/findList,/ocean-base/baseFile/batchAddFile,/ocean-base/baseFile/add,/ocean-guest-callagv/callAgvBarcode/add" +
+			",/ocean-auth/eamlogin,/ocean-base/baseFile/findList,/ocean-base/baseFile/batchAddFile,/ocean-base/baseFile/add,/ocean-guest-callagv/callAgvBarcode/add" +
 			",/ocean-guest-callagv/callAgvBarcode/findList,/ocean-guest-callagv/callAgvBarcode/findList,/ocean-ureport/proLineBoard/findList," +
 			"/ocean-chinafivering-api/webServiceImport/getVendor,/ocean-chinafivering-api/webServiceImport/getIssueDetails,/ocean-eam/eamEquipment/findList,"+
 			"/ocean-chinafivering-api/webServiceImport/getPoDetails,/ocean-chinafivering-api/webServiceImport/getPartNoInfo,/ocean-chinafivering-api/webServiceImport/getVendorUserNameAndPwd,"+
@@ -79,7 +79,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 			"/ocean-chinafivering-api/webServiceImport/getShelvesNo,/ocean-chinafivering-api/webServiceImport/getSubcontractor,"+
 			"/ocean-chinafivering-api/webServiceImport/getReqDetails,/ocean-chinafivering-api/webServiceImport/getVendorUserNameAndPwd,/ocean-qms/qmsInspectionOrder/autoAdd,"+
 			"/ocean-mes-sfc/mesSfcScanBarcode/chkLogUserInfo,/ocean-mes-sfc/mesSfcScanBarcode/chkSnRouting,/ocean-mes-sfc/mesSfcScanBarcode/snDataTransfer,"+
-			"/ocean-security/sysUser/findList,/ocean-security/sysRole/findList,/ocean-security/sysUser/saveByApi,"+
+			"/ocean-auth/sysUser/findList,/ocean-auth/sysRole/findList,/ocean-auth/sysUser/saveByApi,"+
 			"/ocean-guest-callagv/RCSAPI/agvCallback,/ocean-imes-materialapi/productBomApi,/ocean-esop-baseapi/getIssue/getAllIssue,/ocean-esop-baseapi/getWorkOrder/getAllWorkOrder";
 
 	/**

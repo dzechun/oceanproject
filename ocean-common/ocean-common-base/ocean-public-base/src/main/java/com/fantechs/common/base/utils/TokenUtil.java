@@ -1,5 +1,8 @@
 package com.fantechs.common.base.utils;
 
+import cn.dev33.satoken.stp.StpUtil;
+import cn.dev33.satoken.strategy.SaStrategy;
+import cn.dev33.satoken.util.SaFoxUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
@@ -7,6 +10,9 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.TokenValidationFailedException;
 import cz.mallat.uasparser.UserAgentInfo;
 import org.apache.tomcat.util.buf.Utf8Encoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -24,6 +30,7 @@ import java.util.Date;
  */
 
 public class TokenUtil {
+    private static Logger logger = LoggerFactory.getLogger(TokenUtil.class);
     private static RedisUtil redisUtil=(RedisUtil)SpringUtil.getBean("redisUtil");
 
     /**
@@ -45,17 +52,12 @@ public class TokenUtil {
      *  <br/>
      *  MOBILE：“前缀MOBILE-USERCODE-USERID-CREATIONDATE-RONDEM[6位]”
      */
-    public static String generateToken(String agent, SysUser user, String refreshTokenIp) {
-        // TODO Auto-generated method stub
+    public static String generateToken(String agent, SysUser user) {
         try {
+
             UserAgentInfo userAgentInfo = UserAgentUtil.getUasParser().parse(
                     agent);
             StringBuilder sb = new StringBuilder();
-            if(StringUtils.isEmpty(refreshTokenIp)){
-                sb.append(tokenPrefix);//统一前缀
-            }else{
-                sb.append(refreshTokenPrefix);//统一前缀
-            }
             if (userAgentInfo.getDeviceType().equals(UserAgentInfo.UNKNOWN)) {
                 if(agent.contains("Apache-HttpClient")){
                     sb.append("NET-");
@@ -70,32 +72,25 @@ public class TokenUtil {
             } else
                 sb.append("MOBILE-");
 			sb.append(URLEncoder.encode(user.getUserCode(),"UTF-8") + "-");
-            sb.append(MD5.getMd5(user.getUserId()+"",32) + "-");//加密用户ID
-            if(StringUtils.isNotEmpty(refreshTokenIp)){
-                sb.append(MD5.getMd5(refreshTokenIp,16) + "-");
-            }else{
-                sb.append(user.getUserId() + "-");
-            }
-            sb.append(new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())
-                    + "-");
-            sb.append(MD5.getMd5(agent, 6));// 识别客户端的简化实现——6位MD5码
-
-            return sb.toString();
+            // 重写 Token 生成策略
+            SaStrategy.me.createToken = (loginId, loginType) -> {
+                //客户端 + 随机字符串
+                return sb + UUIDUtils.getUUID();
+            };
+            StpUtil.login(user.getUserId());
+            return StpUtil.getTokenValue();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     public static void save(String token, SysUser user) {
-        if(token.startsWith(refreshTokenPrefix)){
-            redisUtil.set(token, user, refresh_expire);
-        }else if (token.startsWith(tokenPrefix+"PC-")) {
+        if (token.startsWith("PC-")) {
             redisUtil.set(token, user, expire);
-        }
-        else {
-            redisUtil.set(token, user);// 手机认证信息永不失效
+        } else {
+            redisUtil.set(token, user, refresh_expire);// 手机认证信息永不失效
         }
     }
 
@@ -156,7 +151,7 @@ public class TokenUtil {
         long ttl = redisUtil.getExpire(refreshToken);// token有效期（剩余秒数 ）
         if (ttl > 0 || ttl == -1) {// 兼容手机与PC端的token在有效期
             SysUser user = load(refreshToken);
-            newToken = generateToken(agent, user,null);
+            newToken = generateToken(agent, user);
             save(newToken, user);// 缓存新token
             if(validate(agent,oldToken))
                 redisUtil.set(oldToken, JSON.toJSONString(user),REPLACEMENT_DELAY);// 2分钟后旧token过期，注意手机端由永久有效变为2分钟（REPLACEMENT_DELAY默认值）后失效
@@ -173,31 +168,38 @@ public class TokenUtil {
      * @return
      */
     public static boolean validate(String agent, String token) {
-        if (!redisUtil.hasKey(token)) {// token不存在
+        // 先找Redis的token
+        if (!redisUtil.hasKey(token)) {
             return false;
         }
         try {
-            Date TokenGenTime;// token生成时间
-            String agentMD5;
-            String[] tokenDetails = token.split("-");
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-            TokenGenTime = formatter.parse(tokenDetails[4]);
-            long passed = Calendar.getInstance().getTimeInMillis()
-                    - TokenGenTime.getTime();
-            if(token.startsWith(tokenPrefix)){
-                if(passed>expire*1000)
-                    return false;
-            }else{
-                if(passed>refresh_expire*1000)
-                    return false;
-            }
-            agentMD5 = tokenDetails[5];
-            if(agent.startsWith("Postman") || MD5.getMd5(agent, 6).equals(agentMD5))
-                return true;
-        } catch (ParseException e) {
+            Boolean isLogin = StpUtil.isLogin();
+            logger.info("当前登录状态：{}", isLogin ? "已登录" : "未登录");
+            return isLogin;
+        } catch (Exception e) {
+            logger.error("校验token异常:", e);
             return false;
         }
-        return false;
+    }
+
+    /**
+     * 验证token是否有效
+     * @param token
+     * @return
+     */
+    public boolean validateToken(String token) {
+        // 先找Redis的token
+        if (!redisUtil.hasKey(token)) {
+            return false;
+        }
+        try {
+            Boolean isLogin = StpUtil.isLogin();
+            logger.info("当前登录状态：{}", isLogin ? "已登录" : "未登录");
+            return isLogin;
+        } catch (Exception e) {
+            logger.error("校验token异常:", e);
+            return false;
+        }
     }
 
     /**

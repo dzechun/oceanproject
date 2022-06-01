@@ -1,5 +1,6 @@
 package com.fantechs.auth.authIntercepter;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.common.base.utils.TokenUtil;
@@ -41,12 +42,11 @@ public class MyAccessDecisionManager implements AccessDecisionManager {
             //---有可能是token访问
             FilterInvocation filterInvocation = (FilterInvocation) o;
             HttpServletRequest request = filterInvocation.getRequest();
-            String agent = request.getHeader("user-agent");
             String token = request.getHeader("token");
-            if(StringUtils.isNotEmpty(token) && TokenUtil.validate(agent, token)){
+            if(StringUtils.isNotEmpty(token) && StpUtil.isLogin()){
                 SysUser mbUser = TokenUtil.load(token);
                 try {
-                    userDetailsServiceImpl.setUserDetail(mbUser.getUserCode(),request);
+                        userDetailsServiceImpl.setUserDetail(mbUser.getUserCode(),request);
                 } catch (Exception e) {
                     e.printStackTrace();
                     throw new AccessDeniedException(e.getMessage());
