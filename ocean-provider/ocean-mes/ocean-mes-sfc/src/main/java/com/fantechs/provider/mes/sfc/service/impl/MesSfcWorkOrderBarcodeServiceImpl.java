@@ -853,18 +853,6 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
 
             mesSfcWorkOrderBarcodeList.add(mesSfcWorkOrderBarcode);
         }
-        if (StringUtils.isNotEmpty(record.getOption1()) && record.getOption1().equals("5")) {
-            //判断是否已经打完
-            BigDecimal barCodeTotalQty = mesSfcWorkOrderBarcodeMapper.saleOrderTotalQty(ControllerUtil.dynamicCondition("type", 1,
-                    "salesOrderId", record.getSalesOrderId(),
-                    "barcodeTypeId", record.getLabelCategoryId()));
-            BigDecimal salesTotalQty = mesSfcWorkOrderBarcodeMapper.saleOrderTotalQty(ControllerUtil.dynamicCondition("type", 1, "salesOrderId", record.getSalesOrderId()));
-            if (barCodeTotalQty.compareTo(BigDecimal.ZERO) != 0 && salesTotalQty.compareTo(barCodeTotalQty) == 0) {
-                log.info("=========== redis 失效了");
-                //三秒后失效
-                redisUtil.expire(key, 3);
-            }
-        }
         logger.info("fro循环 执行总时长 : {}毫秒)",(System.currentTimeMillis() - forTime));
 
         // 批量保存条码过站表
