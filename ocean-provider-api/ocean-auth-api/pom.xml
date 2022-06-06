@@ -21,6 +21,12 @@
             <artifactId>ocean-public-base</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.fantechs.common.base.general</groupId>
+            <artifactId>ocean-general-base</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>

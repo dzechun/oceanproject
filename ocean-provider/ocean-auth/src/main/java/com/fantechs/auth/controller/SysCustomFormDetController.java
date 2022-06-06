@@ -1,5 +1,6 @@
 package com.fantechs.auth.controller;
 
+import com.fantechs.auth.service.SysCustomFormDetService;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -11,7 +12,6 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.auth.service.SysCustomFormDetService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -107,6 +108,24 @@ public class SysCustomFormDetController {
         List<SysCustomFormDetDto> list = sysCustomFormDetService.findList(ControllerUtil.dynamicConditionByEntity(searchSysCustomFormDet));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
+
+    @ApiOperation("自定义表单列表")
+    @PostMapping("/findCustomFormDetList")
+    public ResponseEntity<List<SysCustomFormDetDto>> findCustomFormDetList(@ApiParam(value = "查询对象")@RequestParam  @NotNull(message="id不能为空") String fromRout) {
+        Page<Object> page = PageHelper.startPage(1,99999);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("fromRout", fromRout);
+        List<SysCustomFormDetDto> list = sysCustomFormDetService.findList(map);
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    // @ApiOperation("自定义表单列表")
+    // @PostMapping("/findCustomFormList")
+    // public ResponseEntity<List<SysCustomFormDto>> findCustomFormList(@ApiParam(value = "查询对象")@RequestBody String fromRout) {
+    //     Page<Object> page = PageHelper.startPage(1,99999);
+    //     List<SysCustomFormDto> list = sysCustomFormService.findList(Collections.singletonMap("fromRout", fromRout));
+    //     return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    // }
 
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")

@@ -6,6 +6,7 @@ import com.fantechs.common.base.entity.security.*;
 import com.fantechs.common.base.entity.security.search.SearchSysRole;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.entity.security.search.SearchSysUser;
+import com.fantechs.common.base.general.dto.security.SysCustomFormDetDto;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -75,5 +76,10 @@ public interface AuthFeignApi {
     @ApiOperation(value = "导入接口日志新增",notes = "导入接口日志新增")
     @PostMapping("/sysImportAndExportLog/add")
     ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody SysImportAndExportLog sysImportAndExportLog);
+
+    @ApiOperation(value = "获取自定义表单列表",notes = "获取自定义表单列表")
+    @PostMapping(value = "/sysCustomFormDet/findCustomFormDetList")
+    ResponseEntity<List<SysCustomFormDetDto>> findCustomFormList(@ApiParam(value = "查询对象")@RequestParam  @NotNull(message="id不能为空") String fromRout);
+
 
 }
