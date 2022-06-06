@@ -610,7 +610,7 @@ public class BarcodeRuleUtils {
             StringBuilder str = new StringBuilder();
             str.append(start + i);
             while (true) {
-                if (maxCode.length() == str.length()) {
+                if (maxCode.length() <= str.length()) {
                     break;
                 }
                 str.insert(0, "0");
@@ -654,7 +654,7 @@ public class BarcodeRuleUtils {
             StringBuilder str = new StringBuilder();
             str.append(start + i);
             while (true) {
-                if (maxCode.length() == str.length()) {
+                if (maxCode.length() <= str.length()) {
                     break;
                 }
                 str.insert(0, "0");
