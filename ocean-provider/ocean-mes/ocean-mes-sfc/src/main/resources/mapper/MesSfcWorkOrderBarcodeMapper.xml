@@ -484,7 +484,7 @@
         </foreach>
     </select>
 
-    <select id="selectMaxWorkOrderBarcodeId" resultType="long">
+    <select id="selectMaxWorkOrderBarcodeId" resultType="int">
         select MAx(work_order_barcode_id) from  mes_sfc_work_order_barcode
     </select>
 
