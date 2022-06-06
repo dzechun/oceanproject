@@ -62,7 +62,7 @@ public interface MesSfcWorkOrderBarcodeMapper extends MyMapper<MesSfcWorkOrderBa
 
     List<SyncWorkOrderBarcodeDto> selectPartField(Map<String, Object> map);
 
-    Long selectMaxWorkOrderBarcodeId();
+    int selectMaxWorkOrderBarcodeId();
 
     void setAutoIncrement(Integer autoIncrementId);
 }
