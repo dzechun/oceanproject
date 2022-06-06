@@ -10,14 +10,15 @@ import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseHtOrganizationService;
 import com.fantechs.provider.base.service.BaseOrganizationService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +29,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 /**
  * Created by leifengzhi on 2020/12/29.
@@ -44,6 +44,8 @@ public class BaseOrganizationController {
     private BaseOrganizationService baseOrganizationService;
     @Resource
     private BaseHtOrganizationService baseHtOrganizationService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增", notes = "新增")
     @PostMapping("/add")
@@ -91,12 +93,27 @@ public class BaseOrganizationController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseOrganization searchBaseOrganization) {
         List<BaseOrganizationDto> list = baseOrganizationService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseOrganization));
+
+        // HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        // String fromRout = httpServletRequest.getHeader("fromRout");
+        // SearchSysCustomForm searchSysCustomForm = new SearchSysCustomForm();
+        // searchSysCustomForm.setFromRout(fromRout);
+        //CustomFormUtils.getFromRout()
+        securityFeignApi.findCustomFormList("fromRout");
+        // System.out.println(customFormList);
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(list, "导出信息", "BaseOrganization信息", BaseOrganizationDto.class, "BaseOrganization.xls", response);
+            EasyPoiUtils.customExportExcel(list, "导出信息", "BaseOrganization信息", "BaseOrganization.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }
+
+        // try {
+        //     // 导出操作
+        //     EasyPoiUtils.exportExcel(list, "导出信息", "BaseOrganization信息", BaseOrganizationDto.class, "BaseOrganization.xls", response);
+        // } catch (Exception e) {
+        //     throw new BizErrorException(e);
+        // }
     }
 
     @ApiOperation("绑定用户")

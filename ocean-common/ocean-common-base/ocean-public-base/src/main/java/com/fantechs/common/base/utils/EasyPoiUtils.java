@@ -5,10 +5,13 @@ import cn.afterturn.easypoi.excel.ExcelImportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
 import cn.afterturn.easypoi.excel.entity.ImportParams;
 import cn.afterturn.easypoi.excel.entity.enmus.ExcelType;
-import org.apache.poi.ss.formula.functions.T;
+import cn.afterturn.easypoi.excel.entity.params.ExcelExportEntity;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +38,43 @@ public final class EasyPoiUtils {
         Workbook workbook = ExcelExportUtil.exportExcel(exportParams, clz, dataList);
         if (workbook != null) {
             downLoadExcel(fileName, response, workbook);
+        }
+    }
+
+
+    /**
+     * 自定义导出
+     * @param dataList
+     * @param title
+     * @param sheetName
+     * @param fileName
+     * @param response
+     * @param <T>
+     */
+    public static<T> void customExportExcel(List<T> dataList, String title, String sheetName, String fileName, HttpServletResponse response) {
+        HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String fromRout = httpServletRequest.getHeader("fromRout");
+
+
+        List beanList =new ArrayList();
+        beanList.add(new ExcelExportEntity("学生姓名", "name"));
+        beanList.add(new ExcelExportEntity("学生性别", "sex"));
+        beanList.add(new ExcelExportEntity("进校日期", "registrationDate"));
+        List list =new ArrayList<>();
+        for(int i = 0; i < 5; i++) {
+            Map map = new HashMap<>();
+            map.put("name", i + "aa");
+            map.put("sex", i + "bb");
+            map.put("registrationDate", i + "cc");
+            map.put("registrationDate1", i + "cc");
+            map.put("registrationDate2", i + "cc");
+            map.put("registrationDate3", i + "cc");
+            list.add(map);
+        }
+
+        Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams("测试", "测试"), beanList, list);
+        if (workbook != null) {
+            downLoadExcel("ff", response, workbook);
         }
     }
 
