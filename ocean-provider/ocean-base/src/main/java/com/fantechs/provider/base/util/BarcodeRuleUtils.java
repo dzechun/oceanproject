@@ -607,12 +607,13 @@ public class BarcodeRuleUtils {
         String returnBarcode = null;
         List<String> barcodeStrList = new ArrayList<>();
         for (int i = 1; i <= qty; i++) {
-            String str = String.valueOf((start + i));
+            StringBuilder str = new StringBuilder();
+            str.append(start + i);
             while (true) {
                 if (maxCode.length() == str.length()) {
                     break;
                 }
-                str = "0" + str;
+                str.insert(0, "0");
             }
             log.info("======= barcode : " + fixedValue + str);
             barcodeStrList.add(fixedValue + str);
@@ -650,12 +651,13 @@ public class BarcodeRuleUtils {
         String returnBarcode = null;
         List<String> barcodeStrList = new ArrayList<>();
         for (int i = 1; i <= qty; i++) {
-            String str = String.valueOf((start + i));
+            StringBuilder str = new StringBuilder();
+            str.append(start + i);
             while (true) {
                 if (maxCode.length() == str.length()) {
                     break;
                 }
-                str = "0" + str;
+                str.insert(0, "0");
             }
             log.info("======= barcode : " + fixedValue + str);
             barcodeStrList.add(fixedValue + str);
