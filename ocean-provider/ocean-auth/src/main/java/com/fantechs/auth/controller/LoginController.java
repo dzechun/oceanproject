@@ -94,8 +94,8 @@ public class LoginController {
 
     @GetMapping("/logout")
     public ResponseEntity logout(HttpServletRequest request){
-        // 登出接口已被拦截器重写，前端调用时不会走此接口，会走拦截器接口
-        ResponseEntity responseEntity = authFeignApi.logout();
+        // 退出登录、先清除redis的token,然后调用sa-token的退出登录
+        ResponseEntity responseEntity = loginService.logout(request) ? ControllerUtil.returnSuccess("退出成功") : ControllerUtil.returnSuccess("退出失败");
         return responseEntity;
     }
 

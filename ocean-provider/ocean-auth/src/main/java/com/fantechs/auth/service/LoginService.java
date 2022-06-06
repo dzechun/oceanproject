@@ -2,6 +2,8 @@ package com.fantechs.auth.service;
 
 import com.fantechs.common.base.response.ResponseEntity;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * Create on 2022/6/1
  *
@@ -19,4 +21,10 @@ public interface LoginService {
      */
     ResponseEntity mesLogin(String userName,String password,Long orgId,String browserKernel,String type);
 
+    /**
+     * 退出登录
+     * @param request
+     * @return
+     */
+    Boolean logout(HttpServletRequest request);
 }

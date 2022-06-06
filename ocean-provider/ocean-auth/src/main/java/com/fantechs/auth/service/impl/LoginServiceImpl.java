@@ -1,5 +1,6 @@
 package com.fantechs.auth.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.fantechs.auth.mapper.SysOrganizationUserMapper;
 import com.fantechs.auth.mapper.SysSpecItemMapper;
@@ -127,7 +128,7 @@ public class LoginServiceImpl implements LoginService {
             }
         }
 
-        // 如何带有token将token删除
+        // 如果登录请求头带有token，会删除旧的token
         TokenUtil.clearTokenByRequest(httpServletRequest);
         SysUser sysUser = sysUserService.selectByKey(loginUser.getUserId());
         sysUser.setAuthority(permsSet);
@@ -152,6 +153,19 @@ public class LoginServiceImpl implements LoginService {
         loginUser.setToken(token);
         ResponseEntity<Object> responseEntity = ControllerUtil.returnDataSuccess(loginUser, 1);
         return responseEntity;
+    }
+
+    @Override
+    public Boolean logout(HttpServletRequest request) {
+        try{
+            // 将redis的token删除
+            TokenUtil.clearTokenByRequest(request);
+            StpUtil.logout();
+            return true;
+        }catch (Exception e){
+            logger.error("退出登录异常：",e);
+            return false;
+        }
     }
 
     /**
@@ -208,7 +222,6 @@ public class LoginServiceImpl implements LoginService {
                 userDto.setOrganizationId(organizationList.get(0));
             }
         }
-        userDto.setRoles(null);
         return userDto;
     }
 
