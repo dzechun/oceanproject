@@ -13,7 +13,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.FilterInvocation;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -40,13 +39,14 @@ public class MyAccessDecisionManager implements AccessDecisionManager {
     public void decide(Authentication authentication, Object o, Collection<ConfigAttribute> collection) throws AccessDeniedException, InsufficientAuthenticationException {
         if(!(authentication instanceof UsernamePasswordAuthenticationToken)){
             //---有可能是token访问
-            FilterInvocation filterInvocation = (FilterInvocation) o;
-            HttpServletRequest request = filterInvocation.getRequest();
-            String token = request.getHeader("token");
+//            FilterInvocation filterInvocation = (FilterInvocation) o;
+//            HttpServletRequest request = filterInvocation.getRequest();
+//            String token = request.getHeader("token");
+            String token = StpUtil.getTokenValue();
             if(StringUtils.isNotEmpty(token) && StpUtil.isLogin()){
                 SysUser mbUser = TokenUtil.load(token);
                 try {
-                        userDetailsServiceImpl.setUserDetail(mbUser.getUserCode(),request);
+                        userDetailsServiceImpl.setUserDetail(mbUser.getUserCode(),null);
                 } catch (Exception e) {
                     e.printStackTrace();
                     throw new AccessDeniedException(e.getMessage());

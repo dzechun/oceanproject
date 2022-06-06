@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -36,7 +35,7 @@ import java.util.List;
 import java.util.Set;
 
 @Component
-public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class MyAuthenticationSuccessHandler {
     private static Logger log= LoggerFactory.getLogger(MyAuthenticationSuccessHandler.class);
 
     // 菜单缓存redis的key
@@ -52,7 +51,7 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
 
     private Set<String> permsSet = new HashSet<>();
 
-    public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest  httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
         httpServletResponse.setContentType("application/json;charset=utf-8");
         PrintWriter writer = httpServletResponse.getWriter();
         SysUserDto loginUser = MySecurityTool.getCurrentLoginUserDTO();

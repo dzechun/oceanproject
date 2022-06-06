@@ -1,6 +1,9 @@
 package com.fantechs.auth.controller;
 
+import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.StpUtil;
+import com.fantechs.auth.service.LoginService;
+import com.fantechs.auth.service.impl.LoginServiceImpl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -20,12 +23,15 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 ;
@@ -53,13 +59,23 @@ public class LoginController {
     @Resource
     private BaseFeignApi baseFeignApi;
 
-
+    @Resource
+    private LoginService loginService;
 
 
     @PostMapping("/meslogin")
     @ApiOperation(value = "登陆接口")
-    public ResponseEntity meslogin(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "organizationId") Long orgId , @RequestParam(value = "browserKernel") String browserKernel){
-        ResponseEntity responseEntity = authFeignApi.login(username, password,orgId,null,browserKernel);
+    public ResponseEntity mesogin(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "organizationId") Long orgId , @RequestParam(value = "browserKernel") String browserKernel){
+      ResponseEntity responseEntity = loginService.mesLogin(username,password,orgId,browserKernel,null);
+      //ResponseEntity responseEntity = authFeignApi.login(username, password,orgId,null,browserKernel);
+        return  responseEntity;
+    }
+
+    @PostMapping("/login")
+    @ApiOperation(value = "登陆接口")
+    public ResponseEntity login(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password,
+                                  @RequestParam(value = "orgId") Long orgId, @RequestParam(value = "type") String type, @RequestParam(value = "browserKernel") String browserKernel){
+        ResponseEntity responseEntity = loginService.mesLogin(username,password,orgId,browserKernel,type);
         return  responseEntity;
     }
 
@@ -138,15 +154,5 @@ public class LoginController {
     public ResponseEntity mesloginByEam(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "organizationId") Long orgId
             , @RequestParam(value = "mac") String mac ,@RequestParam(value = "type") String type ){
         return  sysLoginByEquipmentService.eamLogin(username,password,orgId,mac,type);
-    }
-
-    @RequestMapping("doLogin")
-    public String doLogin(String username, String password) {
-        // 此处仅作模拟示例，真实项目需要从数据库中查询数据进行比对
-        if("zhang".equals(username) && "123456".equals(password)) {
-            StpUtil.login(10001);
-            return "登录成功";
-        }
-        return "登录失败";
     }
 }

@@ -17,7 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
+//import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -75,7 +75,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 userDetails.getPassword(), userDetails.getAuthorities());
 
         // 设置authentication中details
-        authentication.setDetails(new WebAuthenticationDetails(request));
+        //authentication.setDetails(new WebAuthenticationDetails(request));
         // 存放authentication到SecurityContextHolder
         SecurityContextHolder.getContext().setAuthentication(authentication);
         HttpSession session = request.getSession(true);

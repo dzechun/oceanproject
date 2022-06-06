@@ -23,4 +23,10 @@ public interface SysRoleMapper extends MyMapper<SysRole> {
     List<SysRole> findByMeunId(Long menuId);
 
     List<SysRoleDto> findByRoleId(Map<String,Object> map);
+
+    /**
+     * 根据账号密码获取用户角色列表
+     * @param userId
+     */
+    List<SysRole> findSysRoleList(@Param("userId") Long userId);
 }

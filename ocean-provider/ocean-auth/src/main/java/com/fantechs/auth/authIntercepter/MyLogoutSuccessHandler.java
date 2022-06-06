@@ -8,7 +8,6 @@ import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.TokenUtil;
 
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
@@ -24,8 +23,8 @@ import java.io.PrintWriter;
  * @Version: 1.0
  */
 @Component
-public class MyLogoutSuccessHandler implements LogoutSuccessHandler {
-    @Override
+public class MyLogoutSuccessHandler {
+    //@Override
     public void onLogoutSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
         // 如何带有token将token删除
         TokenUtil.clearTokenByRequest(httpServletRequest);

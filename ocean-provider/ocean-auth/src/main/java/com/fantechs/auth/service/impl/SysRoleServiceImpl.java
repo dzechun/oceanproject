@@ -1,11 +1,13 @@
 package com.fantechs.auth.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.fantechs.auth.mapper.SysHtRoleMapper;
 import com.fantechs.auth.mapper.SysRoleMapper;
 import com.fantechs.auth.mapper.SysUserRoleMapper;
 import com.fantechs.auth.service.SysRoleService;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.dto.security.SysRoleDto;
+import com.fantechs.common.base.dto.security.SysUserDto;
 import com.fantechs.common.base.entity.security.SysRole;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.SysUserRole;
@@ -16,6 +18,8 @@ import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -36,6 +40,9 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
 
     @Resource
     private SysUserRoleMapper sysUserRoleMapper;
+
+    @Resource
+    private UserDetailsServiceImpl userDetailsService;
 
 
     @Override
@@ -190,5 +197,10 @@ public class SysRoleServiceImpl extends BaseService<SysRole> implements SysRoleS
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("userId",userId);
         return sysUserRoleMapper.selectByExample(example);
+    }
+
+    @Override
+    public List<SysRole> findSysRoleList(Long userId) {
+        return sysRoleMapper.findSysRoleList(userId);
     }
 }

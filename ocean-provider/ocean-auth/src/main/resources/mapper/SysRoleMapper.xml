@@ -120,4 +120,28 @@
   left join sys_role sr on sr.role_id = sar.role_id
   </select>
 
+  <select id="findSysRoleList" resultMap="BaseResultMap">
+    select sr.role_id,
+           sr.role_code,
+           sr.role_name,
+           sr.role_desc,
+           sr.create_user_id,
+           sr.create_time,
+           sr.modified_user_id,
+           sr.modified_time,
+           sr.status,
+           sr.is_delete,
+           sar.menu_id as menuId
+    from sys_role sr
+    inner join sys_auth_role sar on sar.role_id = sr.role_id
+    where sr.role_id in (
+            select sur.role_id
+            from sys_user su
+            inner join sys_user_role sur on sur.user_id = su.user_id
+            where su.user_id = #{userId}
+              and su.is_delete = 1
+            )
+      and sr.is_delete = 1
+  </select>
+
 </mapper>

@@ -1,6 +1,7 @@
 package com.fantechs.auth.authIntercepter;
 
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.common.base.utils.TokenUtil;
@@ -8,8 +9,6 @@ import com.fantechs.auth.service.SysMenuInfoService;
 import com.fantechs.auth.service.SysUserService;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
-import org.springframework.security.web.FilterInvocation;
-import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 
@@ -23,7 +22,7 @@ import java.util.Set;
  * 定义权限过滤器，查看当前访问链接需要哪些权限
  */
 @Component
-public class MyFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
+public class MyFilterInvocationSecurityMetadataSource  {
     @Resource
     private SysMenuInfoService SysMenuinfoService;
     private AntPathMatcher antPathMatcher=new AntPathMatcher();
@@ -37,16 +36,17 @@ public class MyFilterInvocationSecurityMetadataSource implements FilterInvocatio
      * @throws IllegalArgumentException
      */
     public Collection<ConfigAttribute> getAttributes(Object o) throws IllegalArgumentException {
-        FilterInvocation filterInvocation = (FilterInvocation) o;
-        HttpServletRequest httpRequest = filterInvocation.getHttpRequest();
+//        FilterInvocation filterInvocation = (FilterInvocation) o;
+//        HttpServletRequest httpRequest = filterInvocation.getHttpRequest();
 
 
-        String token = httpRequest.getHeader("token");
+//        String token = httpRequest.getHeader("token");
+        String token = StpUtil.getTokenValue();
         if (StringUtils.isNotEmpty(token)){
             SysUser user = TokenUtil.load(token);
             if(StringUtils.isNotEmpty(user) && StringUtils.isNotEmpty(user.getAuthority())){
                 StringBuffer sb = new StringBuffer();
-                String path = httpRequest.getServletPath();
+                String path = null;//httpRequest.getServletPath();
                 String[] pathArr =  path.split("/");
                 if(pathArr.length>2){
                     Set<String> authority = user.getAuthority();
@@ -67,7 +67,7 @@ public class MyFilterInvocationSecurityMetadataSource implements FilterInvocatio
         return null;
     }
 
-    public boolean supports(Class<?> aClass) {
-        return FilterInvocation.class.isAssignableFrom(aClass);
-    }
+//    public boolean supports(Class<?> aClass) {
+//        return FilterInvocation.class.isAssignableFrom(aClass);
+//    }
 }
