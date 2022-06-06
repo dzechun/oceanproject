@@ -2,20 +2,12 @@ package com.fantechs.auth.satokenconfigure;
 
 import cn.dev33.satoken.context.SaHolder;
 import cn.dev33.satoken.filter.SaServletFilter;
-import cn.dev33.satoken.interceptor.SaRouteInterceptor;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.dev33.satoken.strategy.SaStrategy;
-import cn.dev33.satoken.util.SaFoxUtil;
 import cn.dev33.satoken.util.SaResult;
 import com.codingapi.txlcn.tracing.http.spring.WebMvcConfigurer;
-import com.fantechs.auth.authIntercepter.MyAuthenticationSuccessHandler;
-import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.utils.UserAgentUtil;
-import cz.mallat.uasparser.UserAgentInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDecisionManager;
@@ -24,11 +16,12 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -40,21 +33,18 @@ import java.util.Collection;
 @Configuration
 public class SaTokenConfigure implements WebMvcConfigurer, AccessDecisionManager {
 
-    private static Logger logger= LoggerFactory.getLogger(SaTokenConfigure.class);
+    private static Logger logger = LoggerFactory.getLogger(SaTokenConfigure.class);
 
-    private String[] white_list={
-            "/tologin","/meslogin","/loginByOrgCode","/pda/login","/eamlogin",
-            "/index.html", "/static/**", "/favicon.ico","/doLogin",
+    private String[] white_list = {
+            "/tologin","/logout", "/meslogin", "/loginByOrgCode", "/pda/login", "/eamlogin",
+            "/index.html", "/static/**", "/favicon.ico", "/doLogin",
             "/swagger-ui.html", "/swagger-resources/**", "/images/**", "/webjars/**", "/v2/api-docs", "/configuration/ui", "/configuration/auth"
-            ,"null/swagger-resources/**","/sysSpecItem/findList","/sysRole/findList","/sysUser/saveByApi","/sysApiLog/add","/sysSpecItem/detail","/clientGetToken"
+            , "null/swagger-resources/**", "/sysSpecItem/findList", "/sysRole/findList", "/sysUser/saveByApi", "/sysApiLog/add", "/sysSpecItem/detail", "/clientGetToken"
     };
+
     // 注册拦截器
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-//        // 注册Sa-Token的路由拦截器
-//        registry.addInterceptor(new SaRouteInterceptor())
-//                .addPathPatterns("/**")
-//                .excludePathPatterns(white_list);
     }
 
     @Override
@@ -102,6 +92,16 @@ public class SaTokenConfigure implements WebMvcConfigurer, AccessDecisionManager
                 ;
     }
 
+    //配置跨域
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://10.182.163.82:8080"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 
     @Override
     public boolean supports(ConfigAttribute configAttribute) {
