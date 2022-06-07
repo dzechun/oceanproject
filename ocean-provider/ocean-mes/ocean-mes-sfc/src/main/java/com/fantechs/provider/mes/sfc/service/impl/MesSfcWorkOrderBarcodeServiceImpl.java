@@ -840,6 +840,12 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 mesSfcBarcodeProcess.setNextProcessName(routeProcess.getProcessName());
                 mesSfcBarcodeProcess.setSectionId(routeProcess.getSectionId());
                 mesSfcBarcodeProcess.setSectionName(routeProcess.getSectionName());
+                mesSfcBarcodeProcess.setCreateTime(new Date());
+                mesSfcBarcodeProcess.setCreateUserId(sysUser.getUserId());
+                mesSfcBarcodeProcess.setModifiedTime(new Date());
+                mesSfcBarcodeProcess.setModifiedUserId(sysUser.getUserId());
+                mesSfcBarcodeProcess.setOrgId(sysUser.getOrganizationId());
+                mesSfcBarcodeProcess.setIsDelete((byte) 1);
                 processList.add(mesSfcBarcodeProcess);
             }
 
