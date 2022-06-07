@@ -72,10 +72,9 @@ public class WanbaoStorageRule {
         example.createCriteria().andEqualTo("logicId",baseStorageRule.getLogicId()).andEqualTo("proLineId",baseStorageRule.getProLineId());
         List<BaseStorage> baseStorageList = wanbaoStorageRule.baseStorageMapper.selectByExample(example);
         if(StringUtils.isEmpty(baseStorageList) || baseStorageList.size()<1){
-            log.info("未查询到逻辑仓："+baseStorageRule.getLogicId()+"产线："+baseStorageRule.getProLineId());
+            log.error("未查询到逻辑仓："+baseStorageRule.getLogicId()+"产线："+baseStorageRule.getProLineId());
             return publicStorage(baseStorageRule);
         }
-        log.info("库位："+ JsonUtils.objectToJson(baseStorageList));
         //是否MC产品
         BaseMaterial baseMaterial = wanbaoStorageRule.baseMaterialMapper.selectByPrimaryKey(baseStorageRule.getMaterialId());
         if(StringUtils.isEmpty(baseMaterial)){
@@ -103,13 +102,16 @@ public class WanbaoStorageRule {
         }
         BigDecimal capacity = new BigDecimal(map.get("capacity").toString());
         log.error("====================================库容："+capacity+"=============================");
+        log.error(JsonUtils.objectToJson(map.get("list")));
         baseStorageList = (List<BaseStorage>) map.get("list");
         if(StringUtils.isEmpty(baseStorageList) || baseStorageList.size()<1){
+            log.error("=======================进入匹配空库位2=====================");
             return publicStorage(baseStorageRule);
         }
         //计算可上架库位
         Long storageId = onStorage(baseStorageRule,baseStorageList,capacity);
         if(StringUtils.isEmpty(storageId)){
+            log.error("=======================没有可上架库位进入匹配空库位3=====================");
             storageId = publicStorage(baseStorageRule);
         }
 
@@ -311,6 +313,7 @@ public class WanbaoStorageRule {
         log.error("未满仓库位："+JsonUtils.objectToJson(alikeList));
         if(alikeList.size()>0){
             storageId = alikeList.get(0).getStorageId();
+            return storageId;
         }
         //筛选空库位 根据上架动线号升序
         if(StringUtils.isNotEmpty(storageRuleInventries) || storageRuleInventries.size()>0){
@@ -345,7 +348,9 @@ public class WanbaoStorageRule {
     public static void main(String[] args) {
 //        String ss = "396101060025";
 //        System.out.println(Integer.parseInt(ss.substring(5,8)));
-        int[] src = new int[]{25,100,30,20,49,51};
-        System.out.println(getApproximate(50,src));
+        //int[] src = new int[]{25,100,30,20,49,51};
+        String code = "391100470238".substring(5,8);
+        System.out.println(Integer.parseInt(code)<=99);
+        System.out.println(code);
     }
 }
