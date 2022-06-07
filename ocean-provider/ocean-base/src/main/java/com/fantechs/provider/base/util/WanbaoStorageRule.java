@@ -214,7 +214,10 @@ public class WanbaoStorageRule {
             String code = baseMaterial.getMaterialCode().substring(5,8);
             if(Integer.parseInt(code)<=99){
                 capacity = baseStorageCapacity.getTypeACapacity();
+                log.error("A库容");
+                log.error(JsonUtils.objectToJson(list));
                 list = list.stream().filter(x->x.getMaterialStoreType()==1).collect(Collectors.toList());
+                log.error(JsonUtils.objectToJson(list));
             }else if(Integer.parseInt(code)>=100){
                 capacity = baseStorageCapacity.getTypeBCapacity();
                 list = list.stream().filter(x->x.getMaterialStoreType()==2).collect(Collectors.toList());
