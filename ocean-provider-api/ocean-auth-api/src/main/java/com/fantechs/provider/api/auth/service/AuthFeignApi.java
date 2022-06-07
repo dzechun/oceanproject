@@ -79,7 +79,7 @@ public interface AuthFeignApi {
 
     @ApiOperation(value = "获取自定义表单列表",notes = "获取自定义表单列表")
     @PostMapping(value = "/sysCustomFormDet/findCustomFormDetList")
-    ResponseEntity<List<SysCustomFormDetDto>> findCustomFormList(@ApiParam(value = "查询对象")@RequestParam  @NotNull(message="id不能为空") String fromRout);
+    ResponseEntity<List<SysCustomFormDetDto>> findCustomFormList(@ApiParam(value = "查询对象")@RequestParam(value = "fromRout")  @NotNull(message="fromRout不能为空") String fromRout);
 
 
 }

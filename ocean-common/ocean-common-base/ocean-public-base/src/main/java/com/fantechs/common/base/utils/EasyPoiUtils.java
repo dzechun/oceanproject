@@ -51,12 +51,15 @@ public final class EasyPoiUtils {
      * @param response
      * @param <T>
      */
-    public static<T> void customExportExcel(List<T> dataList, String title, String sheetName, String fileName, HttpServletResponse response) {
+    public static<T> void customExportExcel(List<T> dataList, List<Map<String, Object>> customFormMapList, String title, String sheetName, String fileName, HttpServletResponse response) {
         HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String fromRout = httpServletRequest.getHeader("fromRout");
 
-
         List beanList =new ArrayList();
+        // customFormMapList.forEach(item -> {
+        //     beanList.add(new ExcelExportEntity((String) item.get("itemName"), (String) item.get("itemKey")));
+        // });
+
         beanList.add(new ExcelExportEntity("学生姓名", "name"));
         beanList.add(new ExcelExportEntity("学生性别", "sex"));
         beanList.add(new ExcelExportEntity("进校日期", "registrationDate"));
@@ -74,7 +77,7 @@ public final class EasyPoiUtils {
 
         Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams("测试", "测试"), beanList, list);
         if (workbook != null) {
-            downLoadExcel("ff", response, workbook);
+            downLoadExcel("ff.xls", response, workbook);
         }
     }
 

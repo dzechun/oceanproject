@@ -113,6 +113,7 @@ public class SysCustomFormDetController {
     @PostMapping("/findCustomFormDetList")
     public ResponseEntity<List<SysCustomFormDetDto>> findCustomFormDetList(@ApiParam(value = "查询对象")@RequestParam  @NotNull(message="id不能为空") String fromRout) {
         Page<Object> page = PageHelper.startPage(1,99999);
+        System.out.println(fromRout);
         HashMap<String, Object> map = new HashMap<>();
         map.put("fromRout", fromRout);
         List<SysCustomFormDetDto> list = sysCustomFormDetService.findList(map);
