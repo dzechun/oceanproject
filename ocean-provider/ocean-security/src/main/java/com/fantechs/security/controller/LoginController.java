@@ -124,7 +124,7 @@ public class LoginController {
         SysUser sysUser = sysUserService.selectByCode("admin");
         sysUser.setOrganizationId(orgId);
         String token = "client_" + TokenUtil.generateToken("", sysUser);
-        TokenUtil.save(token, sysUser);
+        TokenUtil.saveToken(token, sysUser);
         log.info("--------------返回一个可访问的token : " + token + "--------------");
 
         return ControllerUtil.returnDataSuccess("生成client_token成功", token);

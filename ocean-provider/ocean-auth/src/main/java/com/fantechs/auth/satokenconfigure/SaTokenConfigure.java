@@ -35,8 +35,9 @@ public class SaTokenConfigure implements WebMvcConfigurer, AccessDecisionManager
 
     private static Logger logger = LoggerFactory.getLogger(SaTokenConfigure.class);
 
+    // 白名单
     private String[] white_list = {
-            "/tologin","/logout", "/meslogin", "/loginByOrgCode", "/pda/login", "/eamlogin",
+            "/tologin","/logout", "/meslogin","/refreshtoken", "/loginByOrgCode", "/pda/login", "/eamlogin",
             "/index.html", "/static/**", "/favicon.ico", "/doLogin",
             "/swagger-ui.html", "/swagger-resources/**", "/images/**", "/webjars/**", "/v2/api-docs", "/configuration/ui", "/configuration/auth"
             , "null/swagger-resources/**", "/sysSpecItem/findList", "/sysRole/findList", "/sysUser/saveByApi", "/sysApiLog/add", "/sysSpecItem/detail", "/clientGetToken"
@@ -64,7 +65,7 @@ public class SaTokenConfigure implements WebMvcConfigurer, AccessDecisionManager
 
                 // 认证函数: 每次请求执行
                 .setAuth(obj -> {
-                    logger.info("---------- 进入Sa-Token全局认证 -----------");
+                    logger.info("进入Sa-Token全局认证");
                     // 登录认证 -- 拦截所有路由，并排除/login 用于开放登录
                     SaRouter.match("/**", "/login", () -> StpUtil.checkLogin());
                 })
@@ -77,7 +78,7 @@ public class SaTokenConfigure implements WebMvcConfigurer, AccessDecisionManager
 
                 // 前置函数：在每次认证函数之前执行
                 .setBeforeAuth(r -> {
-                    // ---------- 设置一些安全响应头 ----------
+                    // 设置一些安全响应头
                     SaHolder.getResponse()
                             // 服务器名称
                             .setServer("ocean-auth")
@@ -88,11 +89,10 @@ public class SaTokenConfigure implements WebMvcConfigurer, AccessDecisionManager
                             // 禁用浏览器内容嗅探
                             .setHeader("X-Content-Type-Options", "nosniff")
                     ;
-                })
-                ;
+                });
     }
 
-    //配置跨域
+    // 配置跨域
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

@@ -1,5 +1,7 @@
 package com.fantechs.auth.controller;
 
+import cn.dev33.satoken.stp.SaTokenInfo;
+import cn.dev33.satoken.stp.StpUtil;
 import com.fantechs.auth.service.LoginService;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -59,35 +61,35 @@ public class LoginController {
 
     @PostMapping("/meslogin")
     @ApiOperation(value = "登陆接口")
-    public ResponseEntity mesogin(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "organizationId") Long orgId , @RequestParam(value = "browserKernel") String browserKernel){
-       ResponseEntity responseEntity = loginService.mesLogin(username,password,orgId,null,browserKernel);
-        return  responseEntity;
+    public ResponseEntity mesogin(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "organizationId") Long orgId, @RequestParam(value = "browserKernel") String browserKernel) {
+        ResponseEntity responseEntity = loginService.mesLogin(username, password, orgId, null, browserKernel);
+        return responseEntity;
     }
 
     @PostMapping("/login")
     @ApiOperation(value = "登陆接口")
     public ResponseEntity login(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password,
                                 @RequestParam(value = "orgId") Long orgId, @RequestParam(value = "type", required = false) String type,
-                                @RequestParam(value = "browserKernel" , required = false) String browserKernel){
-            ResponseEntity responseEntity = loginService.mesLogin(username,password,orgId,type,browserKernel);
-        return  responseEntity;
+                                @RequestParam(value = "browserKernel", required = false) String browserKernel) {
+        ResponseEntity responseEntity = loginService.mesLogin(username, password, orgId, type, browserKernel);
+        return responseEntity;
     }
 
     @PostMapping("/loginByOrgCode")
     @ApiOperation(value = "登陆接口")
-    public ResponseEntity loginByOrgCode(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "orgCode") String orgCode){
+    public ResponseEntity loginByOrgCode(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "orgCode") String orgCode) {
         SearchBaseOrganization organization = new SearchBaseOrganization();
         organization.setOrganizationCode(orgCode);
         List<BaseOrganizationDto> organizationDtos = baseFeignApi.findOrganizationList(organization).getData();
-        if (organizationDtos.isEmpty()){
+        if (organizationDtos.isEmpty()) {
             throw new BizErrorException(ErrorCodeEnum.GL9999404, "此组织编码不存在或已被删除，不可登录");
         }
-        ResponseEntity responseEntity = authFeignApi.login(username, password, organizationDtos.get(0).getOrganizationId(),null,null);
+        ResponseEntity responseEntity = authFeignApi.login(username, password, organizationDtos.get(0).getOrganizationId(), null, null);
         return responseEntity;
     }
 
     @GetMapping("/logout")
-    public ResponseEntity logout(HttpServletRequest request){
+    public ResponseEntity logout(HttpServletRequest request) {
         // 退出登录、先清除redis的token,然后调用sa-token的退出登录
         ResponseEntity responseEntity = loginService.logout(request) ? ControllerUtil.returnSuccess("退出成功") : ControllerUtil.returnSuccess("退出失败");
         return responseEntity;
@@ -95,28 +97,29 @@ public class LoginController {
 
     @ApiIgnore
     @PostMapping("/tologin")
-    public ResponseEntity toLogin(){
+    public ResponseEntity toLogin() {
         return ControllerUtil.returnFail(ErrorCodeEnum.GL99990401);
     }
 
     @ApiOperation(value = "刷新token")
     @PostMapping("refreshtoken")
-    public ResponseEntity refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String token=request.getHeader("token");
-        String refreshToken=request.getHeader("refreshToken");
-        if(StringUtils.isEmpty(token,refreshToken)){
+    public ResponseEntity refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        String token = request.getHeader("token");
+        String refreshToken = request.getHeader("refreshToken");
+        if (StringUtils.isEmpty(token, refreshToken)) {
             return ControllerUtil.returnFail(ErrorCodeEnum.UAC10011039);
         }
         try {
-             token= TokenUtil.replaceToken(request.getHeader("user-agent"),token,refreshToken);
+            // 刷新/续期token
+            token = TokenUtil.renewTimeoutToken(request.getHeader("user-agent"), token, refreshToken);
         } catch (TokenValidationFailedException e) {
             e.printStackTrace();
             log.error(e.getMessage());
             return ControllerUtil.returnFail(ErrorCodeEnum.UAC10011039);
         }
-        response.setHeader("token",token);
-        response.setHeader("Access-Control-Expose-Headers","token");
-        return ControllerUtil.returnDataSuccess(token, StringUtils.isEmpty(token)?0:1);
+        response.setHeader("token", token);
+        response.setHeader("Access-Control-Expose-Headers", "token");
+        return ControllerUtil.returnDataSuccess(token, StringUtils.isEmpty(token) ? 0 : 1);
     }
 
 
@@ -125,20 +128,18 @@ public class LoginController {
     @ResponseBody
     public ResponseEntity<SysUser> getUserinfo() throws TokenValidationFailedException {
         SysUser loginUser = CurrentUserInfoUtils.getCurrentUserInfo();
-        return ControllerUtil.returnDataSuccess(loginUser, StringUtils.isEmpty(loginUser)?0:1);
+        return ControllerUtil.returnDataSuccess(loginUser, StringUtils.isEmpty(loginUser) ? 0 : 1);
     }
 
     @ApiOperation(value = "为客户端赋予一个可访问的token")
     @GetMapping("/clientGetToken")
     public ResponseEntity<String> clientGetToken(@RequestParam(value = "orgId") Long orgId) {
-
-        log.info("--------------为客户端赋予一个可访问的token--------------");
+        log.info("为客户端赋予一个可访问的token");
         SysUser sysUser = sysUserService.selectByCode("admin");
         sysUser.setOrganizationId(orgId);
-        String token = "client_" + TokenUtil.generateToken("", sysUser);
-        TokenUtil.save(token, sysUser);
-        log.info("--------------返回一个可访问的token : " + token + "--------------");
-
+        String token =  TokenUtil.generateToken("", sysUser);
+        TokenUtil.saveToken(token, sysUser);
+        log.info("返回一个可访问的token :{} " , token);
         return ControllerUtil.returnDataSuccess("生成client_token成功", token);
     }
 
@@ -146,7 +147,7 @@ public class LoginController {
     @PostMapping("/eamlogin")
     @ApiOperation(value = "设备登陆接口")
     public ResponseEntity mesloginByEam(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "organizationId") Long orgId
-            , @RequestParam(value = "mac") String mac ,@RequestParam(value = "type") String type ){
-        return  sysLoginByEquipmentService.eamLogin(username,password,orgId,mac,type);
+            , @RequestParam(value = "mac") String mac, @RequestParam(value = "type") String type) {
+        return sysLoginByEquipmentService.eamLogin(username, password, orgId, mac, type);
     }
 }
