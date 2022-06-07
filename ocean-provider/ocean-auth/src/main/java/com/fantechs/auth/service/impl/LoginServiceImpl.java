@@ -9,7 +9,6 @@ import com.fantechs.auth.service.LoginService;
 import com.fantechs.auth.service.SysMenuInfoService;
 import com.fantechs.auth.service.SysRoleService;
 import com.fantechs.auth.service.SysUserService;
-import com.fantechs.auth.utils.MySecurityTool;
 import com.fantechs.common.base.dto.security.SysMenuInListDTO;
 import com.fantechs.common.base.dto.security.SysUserDto;
 import com.fantechs.common.base.entity.security.SysOrganizationUser;

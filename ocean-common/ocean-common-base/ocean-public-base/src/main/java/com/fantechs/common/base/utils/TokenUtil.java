@@ -1,11 +1,8 @@
 package com.fantechs.common.base.utils;
 
-import cn.dev33.satoken.dao.SaTokenDao;
-import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.strategy.SaStrategy;
-import cn.dev33.satoken.util.SaFoxUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -13,10 +10,8 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.TokenValidationFailedException;
 import cz.mallat.uasparser.UserAgentInfo;
-import org.apache.tomcat.util.buf.Utf8Encoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -254,19 +249,6 @@ public class TokenUtil {
             return newToken;
         }
     }
-
-
-    /**
-     * 对指定 Token 的 timeout 值进行续期
-     *
-     * @param tokenValue 指定token
-     * @param timeout    要修改成为的有效时间 (单位: 秒)
-     */
-    public void renewTimeout(String tokenValue, long timeout) {
-
-
-    }
-
 
     /**
      * 验证token是否有效

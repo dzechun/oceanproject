@@ -39,14 +39,10 @@ public class SysLoginByEquipmentServiceImpl  implements SysLoginByEquipmentServi
         ResponseEntity responseEntity = null;
         //密码登录
         if("1".equals(type)) {
-         //   if (StringUtils.isNotEmpty(sysRoleDtos)) {
-                responseEntity = securityFeignApi.login(username, password,orgId,null,null);
-         //   }
+            responseEntity = securityFeignApi.login(username, password,orgId,null,null);
             //刷卡登录
         }else if("2".equals(type)){
-        //    if (StringUtils.isNotEmpty(sysRoleDtos)) {
-                responseEntity = securityFeignApi.login(username, "123456",orgId,type,null);
-        //    }
+            responseEntity = securityFeignApi.login(username, "123456",orgId,type,null);
         }
 
         //通过mac地址查询设备
