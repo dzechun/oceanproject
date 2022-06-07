@@ -1,9 +1,6 @@
 package com.fantechs.auth.controller;
 
-import cn.dev33.satoken.session.SaSession;
-import cn.dev33.satoken.stp.StpUtil;
 import com.fantechs.auth.service.LoginService;
-import com.fantechs.auth.service.impl.LoginServiceImpl;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -23,15 +20,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 
 ;
@@ -66,16 +60,16 @@ public class LoginController {
     @PostMapping("/meslogin")
     @ApiOperation(value = "登陆接口")
     public ResponseEntity mesogin(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password, @RequestParam(value = "organizationId") Long orgId , @RequestParam(value = "browserKernel") String browserKernel){
-      ResponseEntity responseEntity = loginService.mesLogin(username,password,orgId,browserKernel,null);
-      //ResponseEntity responseEntity = authFeignApi.login(username, password,orgId,null,browserKernel);
+       ResponseEntity responseEntity = loginService.mesLogin(username,password,orgId,null,browserKernel);
         return  responseEntity;
     }
 
     @PostMapping("/login")
     @ApiOperation(value = "登陆接口")
     public ResponseEntity login(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password,
-                                  @RequestParam(value = "orgId") Long orgId, @RequestParam(value = "type") String type, @RequestParam(value = "browserKernel") String browserKernel){
-        ResponseEntity responseEntity = loginService.mesLogin(username,password,orgId,browserKernel,type);
+                                @RequestParam(value = "orgId") Long orgId, @RequestParam(value = "type", required = false) String type,
+                                @RequestParam(value = "browserKernel" , required = false) String browserKernel){
+            ResponseEntity responseEntity = loginService.mesLogin(username,password,orgId,type,browserKernel);
         return  responseEntity;
     }
 

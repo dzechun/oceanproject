@@ -64,9 +64,9 @@ public class SaTokenConfigure implements WebMvcConfigurer, AccessDecisionManager
 
                 // 认证函数: 每次请求执行
                 .setAuth(obj -> {
-                    System.out.println("---------- 进入Sa-Token全局认证 -----------");
-                    // 登录认证 -- 拦截所有路由，并排除/doLogin 用于开放登录
-                    SaRouter.match("/**", "/meslogin", () -> StpUtil.checkLogin());
+                    logger.info("---------- 进入Sa-Token全局认证 -----------");
+                    // 登录认证 -- 拦截所有路由，并排除/login 用于开放登录
+                    SaRouter.match("/**", "/login", () -> StpUtil.checkLogin());
                 })
 
                 // 异常处理函数：每次认证函数发生异常时执行此函数

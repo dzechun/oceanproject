@@ -75,7 +75,7 @@ public class LoginServiceImpl implements LoginService {
     private Set<String> permsSet = new HashSet<>();
 
     @Override
-    public ResponseEntity mesLogin(String userName, String password, Long orgId, String browserKernel, String type) {
+    public ResponseEntity mesLogin(String userName, String password, Long orgId, String type,String browserKernel) {
         //验证账号密码
         SysUserDto loginUser = verifyUserInfo(userName, password, orgId.toString(), type);
         if (ObjectUtil.isNull(loginUser) || StringUtils.isEmpty(loginUser.getUserId())) {

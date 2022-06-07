@@ -55,7 +55,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 
 
 	//排除过滤的 uri 地址
-	private static final String LOGIN_URI = "/ocean-auth/meslogin,/ocean-auth/loginByOrgCode,/ocean-auth/refreshtoken,/ocean-auth/clientGetToken," +
+	private static final String LOGIN_URI = "/ocean-auth/meslogin,/ocean-auth/login,/ocean-auth/loginByOrgCode,/ocean-auth/refreshtoken,/ocean-auth/clientGetToken," +
 			"/ocean-auth/userinfo,/ocean-auth/logout,/ocean-fileserver/file/download,/ocean-fileserver/file/multipleFileBase64" +
 			",/ocean-fileserver/file/uploadToSVG,/ocean-imes-materialapi/material/api" +
 			",/ocean-auth/sysRole/findList,/ocean-auth/sysUser/saveByApi" +

@@ -29,7 +29,7 @@ public interface AuthFeignApi {
 
     @PostMapping(value = "/login")
     ResponseEntity login(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password,
-                         @RequestParam(value = "orgId") Long orgId, @RequestParam(value = "type") String type, @RequestParam(value = "browserKernel") String browserKernel);
+                         @RequestParam(value = "orgId") Long orgId, @RequestParam(value = "type", required = false) String type, @RequestParam(value = "browserKernel" , required = false) String browserKernel);
 
 
     @GetMapping(value = "/logout")

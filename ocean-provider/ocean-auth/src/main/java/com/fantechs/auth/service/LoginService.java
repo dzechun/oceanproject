@@ -19,7 +19,7 @@ public interface LoginService {
      * @param browserKernel 浏览器内核标识
      * @return
      */
-    ResponseEntity mesLogin(String userName,String password,Long orgId,String browserKernel,String type);
+    ResponseEntity mesLogin(String userName,String password,Long orgId,String type,String browserKernel);
 
     /**
      * 退出登录
