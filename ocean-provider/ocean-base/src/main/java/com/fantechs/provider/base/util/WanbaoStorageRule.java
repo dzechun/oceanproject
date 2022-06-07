@@ -80,10 +80,10 @@ public class WanbaoStorageRule {
         if(StringUtils.isEmpty(baseMaterial)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"获取物料信息失败");
         }
-        if(baseMaterial.getMaterialName().contains("/MC/")){
-            //包含MC则筛选底垫的库位
-            baseStorageList = baseStorageList.stream().filter(x->x.getIsHeelpiece()==2).collect(Collectors.toList());
-        }
+//        if(baseMaterial.getMaterialName().contains("/MC/")){
+//            //包含MC则筛选底垫的库位
+//            baseStorageList = baseStorageList.stream().filter(x->x.getIsHeelpiece()==2).collect(Collectors.toList());
+//        }
 
         //查询产线是否为A产线
         BaseProLine baseProLine = wanbaoStorageRule.baseProLineMapper.selectByPrimaryKey(baseStorageRule.getProLineId());
