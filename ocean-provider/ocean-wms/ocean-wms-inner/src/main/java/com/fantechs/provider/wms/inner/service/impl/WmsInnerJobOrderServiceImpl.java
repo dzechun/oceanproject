@@ -1252,6 +1252,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         if (StringUtils.isEmpty(list.getData())) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "库位查询失败");
         }
+        BaseStorage baseStorage = list.getData().get(0);
 
         WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInPutawayOrderDetMapper.selectByPrimaryKey(jobOrderDetId);
         if (StringUtils.isEmpty(wmsInnerJobOrderDet.getActualQty())) {
@@ -1260,7 +1261,12 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         if (wmsInnerJobOrderDet.getActualQty().add(qty).compareTo(wmsInnerJobOrderDet.getDistributionQty()) == 1) {
             throw new BizErrorException("上架数量不能大于分配数量");
         }
-        BaseStorage baseStorage = list.getData().get(0);
+
+        // 校验堆垛是否释放
+        WmsInnerJobOrder innerJobOrder = this.selectByKey(wmsInnerJobOrderDet.getJobOrderId());
+        if (StringUtils.isEmpty(innerJobOrder.getReleaseUserId())){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "堆垛未释放，不可操作上架");
+        }
 
         SearchWmsInnerJobOrderDet searchWmsInnerJobOrderDet = new SearchWmsInnerJobOrderDet();
         searchWmsInnerJobOrderDet.setJobOrderDetId(jobOrderDetId);
@@ -2238,7 +2244,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         if (!jobOrderReMspps.isEmpty()){
             WanbaoStacking stacking = wanbaoFeignApi.detail(jobOrderReMspps.get(0).getProductPalletId()).getData();
             if(StringUtils.isEmpty(stacking)){
-                throw new BizErrorException("未找到上架单绑定的堆垛信息");
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "未找到上架单绑定的堆垛信息");
             }
             stacking.setUsageStatus((byte) 1);
             wanbaoFeignApi.updateAndClearBarcode(stacking);
@@ -2246,7 +2252,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
         // 添加操作员以及操作时间
         WmsInnerJobOrder wmsInnerJobOrder = wmsInPutawayOrderMapper.selectByPrimaryKey(jobOrderId);
         if(!wmsInnerJobOrder.getJobOrderType().equals((byte) 3)){
-            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该订单不是移位上架单，不可操作");
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该订单不是上架单，不可操作");
         }
         wmsInnerJobOrder.setReleaseUserId(user.getUserId());
         wmsInnerJobOrder.setReleaseTime(new Date());
