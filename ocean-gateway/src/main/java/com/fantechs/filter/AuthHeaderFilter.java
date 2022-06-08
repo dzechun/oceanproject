@@ -134,8 +134,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 		logger.info("进入网关鉴权验证！");
 		RequestContext requestContext = RequestContext.getCurrentContext();
 		HttpServletRequest request = requestContext.getRequest();
-
-		String token =request .getHeader("token");
+		String token =request.getHeader("token");
 		Boolean tokenBoolean = false;
 		if (StringUtils.isEmpty(token) && CLIENT_URI.contains(request.getRequestURI())) {
 			tokenBoolean = true;
@@ -162,8 +161,10 @@ public class AuthHeaderFilter extends ZuulFilter {
 			return requestContext;
 
 		}
+		logger.info("获取token为：{}",token);
 		SysUser user = TokenUtil.load(token);
 		if(StringUtils.isEmpty(user)){
+			logger.info("根据token获取用户信息为空，验证token失败");
 			requestContext.setSendZuulResponse(false);
 			requestContext.setResponseStatusCode(HttpStatus.UNAUTHORIZED.value());
 			result.setCode(ErrorCodeEnum.UAC10011039.getCode());
