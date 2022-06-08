@@ -145,6 +145,7 @@ public class TokenUtil {
 
     public static SysUser load(String token) {
         Object o = redisUtil.get(token);
+        logger.info("根据token获取用户信息：{}",o);
         return JSONObject.parseObject(JSONObject.toJSONString(o), SysUser.class);
     }
 
