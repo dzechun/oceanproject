@@ -3,12 +3,13 @@ package com.fantechs.provider.base.controller;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
-import com.fantechs.common.base.general.dto.security.SysCustomFormDetDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrganization;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtOrganization;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrganization;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.auth.service.AuthFeignApi;
@@ -28,8 +29,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -93,87 +92,18 @@ public class BaseOrganizationController {
 
     @PostMapping(value = "/export")
     @ApiOperation(value = "导出excel", notes = "导出excel")
-    public String exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
+    public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseOrganization searchBaseOrganization) {
         List<BaseOrganizationDto> list = baseOrganizationService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseOrganization));
-
-        // HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        // String fromRout = httpServletRequest.getHeader("fromRout");
-        // SearchSysCustomForm searchSysCustomForm = new SearchSysCustomForm();
-        // searchSysCustomForm.setFromRout(fromRout);
-        //CustomFormUtils.getFromRout()
-        // ResponseEntity<List<SysCustomFormDetDto>> customFormList = null;
-        List<SysCustomFormDetDto> customFormList = securityFeignApi.findCustomFormList("Organization").getData();
-        // System.out.println(customFormList);
-
-        List<Map<String, Object>> customFormMapList = new ArrayList<>();
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("itemKey", "organizationName");
-        map.put("itemName", "组织名称");
-        map.put("exportIndex", 0);
-        customFormMapList.add(map);
-
-        map = new HashMap<>();
-        map.put("itemKey", "organizationCode");
-        map.put("itemName", "组织编码");
-        map.put("exportIndex", 1);
-        customFormMapList.add(map);
-
-        map = new HashMap<>();
-        map.put("itemKey", "organizationDesc");
-        map.put("itemName", "组织描述");
-        map.put("exportIndex", 2);
-        customFormMapList.add(map);
-
-        // System.out.println(customFormList);
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
         try {
             // 导出操作
-            EasyPoiUtils.customExportExcel(list, customFormMapList, "导出信息", "BaseOrganization信息", "BaseOrganization.xls", response);
-            return "ok";
+            EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "BaseOrganization信息", "BaseOrganization.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }
-
-        // try {
-        //     // 导出操作
-        //     EasyPoiUtils.exportExcel(list, "导出信息", "BaseOrganization信息", BaseOrganizationDto.class, "BaseOrganization.xls", response);
-        // } catch (Exception e) {
-        //     throw new BizErrorException(e);
-        // }
     }
-
-    @PostMapping(value = "/export2")
-    @ApiOperation(value = "导出excel2", notes = "导出excel2")
-    public String exportExcel2(HttpServletResponse response, @ApiParam(value = "查询对象")
-    @RequestBody(required = false) SearchBaseOrganization searchBaseOrganization) {
-        // List<BaseOrganizationDto> list = baseOrganizationService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseOrganization));
-
-        // HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        // String fromRout = httpServletRequest.getHeader("fromRout");
-        // SearchSysCustomForm searchSysCustomForm = new SearchSysCustomForm();
-        // searchSysCustomForm.setFromRout(fromRout);
-        //CustomFormUtils.getFromRout()
-        ResponseEntity<List<SysCustomFormDetDto>> customFormList = null;
-        securityFeignApi.findCustomFormList("fromRout");
-        System.out.println(customFormList);
-        // System.out.println(customFormList);
-        try {
-            // 导出操作
-            // EasyPoiUtils.customExportExcel(list, "导出信息", "BaseOrganization信息", "BaseOrganization.xls", response);
-            return "ok";
-        } catch (Exception e) {
-            throw new BizErrorException(e);
-        }
-
-        // try {
-        //     // 导出操作
-        //     EasyPoiUtils.exportExcel(list, "导出信息", "BaseOrganization信息", BaseOrganizationDto.class, "BaseOrganization.xls", response);
-        // } catch (Exception e) {
-        //     throw new BizErrorException(e);
-        // }
-    }
-
-
 
     @ApiOperation("绑定用户")
     @PostMapping("/addUser")

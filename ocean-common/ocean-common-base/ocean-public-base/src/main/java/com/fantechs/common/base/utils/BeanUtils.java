@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import org.apache.commons.compress.utils.Lists;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -11,6 +12,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static cn.hutool.core.bean.BeanUtil.beanToMap;
 
 /**
  * @Auther: bingo.ren
@@ -242,5 +245,25 @@ public class BeanUtils {
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss") // 设置日期转换
                 .create();
         return gson;
+    }
+
+    /**
+     * 将List<T>转换为List<Map<String, Object>>
+     *
+     * @param objList
+     * @return
+     */
+    public static <T> List<Map<String, Object>> objectListToMapList(List<T> objList) {
+        List<Map<String, Object>> list = Lists.newArrayList();
+        if (objList != null && objList.size() > 0) {
+            Map<String, Object> map = null;
+            T bean = null;
+            for (int i = 0, size = objList.size(); i < size; i++) {
+                bean = objList.get(i);
+                map = beanToMap(bean);
+                list.add(map);
+            }
+        }
+        return list;
     }
 }

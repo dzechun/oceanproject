@@ -7,11 +7,8 @@ import cn.afterturn.easypoi.excel.entity.ImportParams;
 import cn.afterturn.easypoi.excel.entity.enmus.ExcelType;
 import cn.afterturn.easypoi.excel.entity.params.ExcelExportEntity;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
@@ -52,32 +49,16 @@ public final class EasyPoiUtils {
      * @param <T>
      */
     public static<T> void customExportExcel(List<T> dataList, List<Map<String, Object>> customFormMapList, String title, String sheetName, String fileName, HttpServletResponse response) {
-        HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String fromRout = httpServletRequest.getHeader("fromRout");
-
-        List beanList =new ArrayList();
-        // customFormMapList.forEach(item -> {
-        //     beanList.add(new ExcelExportEntity((String) item.get("itemName"), (String) item.get("itemKey")));
-        // });
-
-        beanList.add(new ExcelExportEntity("学生姓名", "name"));
-        beanList.add(new ExcelExportEntity("学生性别", "sex"));
-        beanList.add(new ExcelExportEntity("进校日期", "registrationDate"));
-        List list =new ArrayList<>();
-        for(int i = 0; i < 5; i++) {
-            Map map = new HashMap<>();
-            map.put("name", i + "aa");
-            map.put("sex", i + "bb");
-            map.put("registrationDate", i + "cc");
-            map.put("registrationDate1", i + "cc");
-            map.put("registrationDate2", i + "cc");
-            map.put("registrationDate3", i + "cc");
-            list.add(map);
-        }
-
-        Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams("测试", "测试"), beanList, list);
+        // 自定义导出列头设置（字段对应的中文名、英文名、列宽）
+        List<ExcelExportEntity> beanList =new ArrayList<>();
+        customFormMapList.forEach(item -> {
+            beanList.add(new ExcelExportEntity((String) item.get("itemName"), item.get("itemKey"), (Integer) item.get("exportColumnWidth")));
+        });
+        // 对象集合->Map集合
+        List<Map<String, Object>> mapList = BeanUtils.objectListToMapList(dataList);
+        Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(title, sheetName), beanList, mapList);
         if (workbook != null) {
-            downLoadExcel("ff.xls", response, workbook);
+            downLoadExcel(fileName, response, workbook);
         }
     }
 

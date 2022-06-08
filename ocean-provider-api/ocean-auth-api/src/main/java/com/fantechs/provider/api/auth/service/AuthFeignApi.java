@@ -6,7 +6,7 @@ import com.fantechs.common.base.entity.security.*;
 import com.fantechs.common.base.entity.security.search.SearchSysRole;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.entity.security.search.SearchSysUser;
-import com.fantechs.common.base.general.dto.security.SysCustomFormDetDto;
+import com.fantechs.common.base.general.dto.security.SysCustomExportDTO;
 import com.fantechs.common.base.response.ResponseEntity;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -78,8 +78,8 @@ public interface AuthFeignApi {
     ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody SysImportAndExportLog sysImportAndExportLog);
 
     @ApiOperation(value = "获取自定义表单列表",notes = "获取自定义表单列表")
-    @PostMapping(value = "/sysCustomFormDet/findCustomFormDetList")
-    ResponseEntity<List<SysCustomFormDetDto>> findCustomFormList(@ApiParam(value = "查询对象")@RequestParam(value = "fromRout")  @NotNull(message="fromRout不能为空") String fromRout);
+    @PostMapping(value = "/sysCustomFormDet/findCustomExportParamList")
+    ResponseEntity<List<SysCustomExportDTO>> findCustomExportParamList(@ApiParam(value = "路由地址")@RequestParam(value = "fromRout")  @NotNull(message="fromRout不能为空") String fromRout);
 
 
 }

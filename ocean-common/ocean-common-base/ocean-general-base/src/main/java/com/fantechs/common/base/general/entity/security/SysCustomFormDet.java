@@ -347,5 +347,20 @@ public class SysCustomFormDet extends ValidGroup implements Serializable {
     @Column(name = "max_value")
     private Integer maxValue;
 
+    @ApiModelProperty(name="isExport",value = "是否导出")
+    @Excel(name = "是否导出（0-否，1-是）", height = 20, width = 30)
+    @Column(name = "is_export")
+    private Integer isExport;
+
+    @ApiModelProperty(name="exportIndex",value = "导出列序号")
+    @Excel(name = "导出列序号", height = 20, width = 30)
+    @Column(name = "export_index")
+    private Integer exportIndex;
+
+    @ApiModelProperty(name="exportColumnWidth",value = "导出列宽")
+    @Excel(name = "导出列宽", height = 20, width = 30)
+    @Column(name = "export_column_width")
+    private Integer exportColumnWidth;
+
     private static final long serialVersionUID = 1L;
 }
