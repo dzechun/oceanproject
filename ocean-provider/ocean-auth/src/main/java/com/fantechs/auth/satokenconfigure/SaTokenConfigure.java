@@ -61,13 +61,15 @@ public class SaTokenConfigure implements WebMvcConfigurer, AccessDecisionManager
     public SaServletFilter getSaServletFilter() {
         return new SaServletFilter()
 
-                // 指定 拦截路由 与 放行路由
-                .addInclude("/**").addExclude(white_list)
-
+                // 指定 拦截路由
+                .addInclude("/**")
+                // 放行路由
+                .addExclude(white_list)
                 // 认证函数: 每次请求执行
                 .setAuth(obj -> {
                     logger.info("进入Sa-Token全局认证");
                     // 登录认证 -- 拦截所有路由，并排除/login 用于开放登录
+                    logger.info("登录状态：{}",StpUtil.isLogin());
                     SaRouter.match("/**", "/login", () -> StpUtil.checkLogin());
                 })
 
