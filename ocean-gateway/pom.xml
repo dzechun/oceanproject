@@ -43,10 +43,10 @@
                 <layout>ZIP</layout>
                 <includes>
                 <!--此处可以指定包含jar包-->
-                <include>
-                <groupId>com.fantechs.common.base</groupId>
-                <artifactId>ocean-imes-base</artifactId>
-                </include>
+                <!-- <include> -->
+                <!-- <groupId>com.fantechs.common.base</groupId> -->
+                <!-- <artifactId>ocean-imes-base</artifactId> -->
+                <!-- </include> -->
                 <include>
                 <groupId>com.fantechs.common.config</groupId>
                 <artifactId>ocean-imes-config</artifactId>

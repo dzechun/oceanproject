@@ -22,6 +22,8 @@ import com.fantechs.common.base.utils.TokenUtil;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -40,6 +42,7 @@ import java.util.Set;
 @Slf4j
 @Component
 public class AuthHeaderFilter extends ZuulFilter {
+	private static Logger logger = LoggerFactory.getLogger(AuthHeaderFilter.class);
 
 	@Resource
 	private RedisUtil redisUtil;
@@ -128,10 +131,10 @@ public class AuthHeaderFilter extends ZuulFilter {
 	 */
 	@Override
 	public Object run() {
+		logger.info("进入网关鉴权验证！");
 		RequestContext requestContext = RequestContext.getCurrentContext();
 		HttpServletRequest request = requestContext.getRequest();
-
-		String token =request .getHeader("token");
+		String token =request.getHeader("token");
 		Boolean tokenBoolean = false;
 		if (StringUtils.isEmpty(token) && CLIENT_URI.contains(request.getRequestURI())) {
 			tokenBoolean = true;
@@ -158,8 +161,10 @@ public class AuthHeaderFilter extends ZuulFilter {
 			return requestContext;
 
 		}
+		logger.info("获取token为：{}",token);
 		SysUser user = TokenUtil.load(token);
 		if(StringUtils.isEmpty(user)){
+			logger.info("根据token获取用户信息为空，验证token失败");
 			requestContext.setSendZuulResponse(false);
 			requestContext.setResponseStatusCode(HttpStatus.UNAUTHORIZED.value());
 			result.setCode(ErrorCodeEnum.UAC10011039.getCode());
@@ -215,6 +220,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 			requestContext.setResponseStatusCode(HttpStatus.OK.value());
 
 		}
+		logger.info("网关鉴权结束");
 		return requestContext;
 	}
 

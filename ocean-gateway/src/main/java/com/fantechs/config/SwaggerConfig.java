@@ -61,7 +61,7 @@ public class SwaggerConfig
                 //页面标题
                 .title("Spring Boot 测试使用 Swagger2 构建RESTful API")
                 //创建人
-                .contact(new Contact("security 相关接口", "http://www.baidu.com", ""))
+                .contact(new Contact("auth 相关接口", "http://www.baidu.com", ""))
                 //版本号
                 .version("1.0")
                 //描述
