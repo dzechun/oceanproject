@@ -27,4 +27,6 @@ public class WanbaoBarcodeDto implements Serializable {
     private String salesBarcode;
 
     private Long workOrderId;
+
+    private Long materialId;
 }

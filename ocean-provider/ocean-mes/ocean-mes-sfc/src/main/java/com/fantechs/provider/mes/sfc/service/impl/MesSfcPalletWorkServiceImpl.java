@@ -427,6 +427,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 for (MesSfcWorkOrderBarcodeDto workOrderBarcodeDto : mesSfcWorkOrderBarcodeDtoList) {
                     if (workOrderBarcodeDto.getBarcode().equals(wanbaoBarcodeDto.getBarcode())) {
                         wanbaoBarcodeDto.setWorkOrderId(workOrderBarcodeDto.getWorkOrderId());
+                        wanbaoBarcodeDto.setMaterialId(workOrderBarcodeDto.getMaterialId());
                         break;
                     }
                 }
@@ -819,6 +820,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             for (MesSfcWorkOrderBarcodeDto workOrderBarcodeDto : mesSfcWorkOrderBarcodeDtoList) {
                 if (workOrderBarcodeDto.getBarcode().equals(wanbaoBarcodeDto.getBarcode())) {
                     wanbaoBarcodeDto.setWorkOrderId(workOrderBarcodeDto.getWorkOrderId());
+                    wanbaoBarcodeDto.setMaterialId(workOrderBarcodeDto.getMaterialId());
                     break;
                 }
             }
@@ -885,7 +887,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             palletAutoAsnDto.setStackingId(stackingId);
             List<BarPODto> barPODtos = new ArrayList<>();
             wanbaoBarcodeDtos.forEach(item -> {
-                if (item.getWorkOrderId().equals(palletAutoAsnDto.getSourceOrderId())) {
+                if (item.getMaterialId().equals(palletAutoAsnDto.getMaterialId())) {
                     BarPODto barPODto = new BarPODto();
                     barPODto.setBarCode(item.getBarcode());
                     barPODto.setPOCode(palletAutoAsnDto.getSamePackageCode());
@@ -894,6 +896,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                     barPODtos.add(barPODto);
                 }
             });
+            log.info("============== 生成完工入库单生成完工入库单 barPODtos ===========" + JSON.toJSONString(barPODtos));
             palletAutoAsnDto.setBarCodeList(barPODtos);
             //完工入库
             SearchBaseMaterialOwner searchBaseMaterialOwner = new SearchBaseMaterialOwner();

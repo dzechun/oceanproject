@@ -113,6 +113,11 @@ public class SyncDataServiceImpl implements SyncDataService {
             long start = System.currentTimeMillis();
             List<MiddleMaterial> list = new ArrayList<>();
             for (MiddleMaterial item : middleMaterials){
+                if (StringUtils.isEmpty(item.getVoltage())){
+                    // 记录日志
+                    logList.add(build(sysUser.getOrganizationId(), (byte) 0, "查询数据库-同步物料", item.getMaterialCode() + "物料电压值为空，不同步此物料", null));
+                    continue;
+                }
                 String substring = item.getVoltage().substring(item.getVoltage().length() - 1);
                 if (substring.equals("～") || substring.equals("~")){
                     item.setVoltage(item.getVoltage().substring(0, item.getVoltage().length() - 1));
