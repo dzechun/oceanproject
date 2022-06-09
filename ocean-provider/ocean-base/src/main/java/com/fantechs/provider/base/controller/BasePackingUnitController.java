@@ -6,11 +6,13 @@ import com.fantechs.common.base.general.dto.basic.imports.BasePackingUnitImport;
 import com.fantechs.common.base.general.entity.basic.BasePackingUnit;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtPackingUnit;
 import com.fantechs.common.base.general.entity.basic.search.SearchBasePackingUnit;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseHtPackingUnitService;
 import com.fantechs.provider.base.service.BasePackingUnitService;
 import com.github.pagehelper.Page;
@@ -29,7 +31,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 /**
  *
@@ -46,6 +47,8 @@ public class BasePackingUnitController {
     private BasePackingUnitService basePackingUnitService;
     @Resource
     private BaseHtPackingUnitService baseHtPackingUnitService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -93,12 +96,10 @@ public class BasePackingUnitController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBasePackingUnit searchBasePackingUnit){
     List<BasePackingUnitDto> smtPackingUnitDtos = basePackingUnitService.findList(ControllerUtil.dynamicConditionByEntity(searchBasePackingUnit));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(smtPackingUnitDtos, "导出信息", "SmtPackingUnit信息", BasePackingUnitDto.class, "SmtPackingUnit.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(smtPackingUnitDtos, customExportParamList, "导出信息", "SmtPackingUnit信息", "SmtPackingUnit.xls", response);
     }
 
     /**

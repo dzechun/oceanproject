@@ -1,7 +1,6 @@
 package com.fantechs.provider.ews.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.ews.EwsHtWarningUserInfoDto;
 import com.fantechs.common.base.general.dto.ews.EwsWarningUserInfoDto;
 import com.fantechs.common.base.general.dto.ews.imports.EwsWarningUserInfoImport;
@@ -9,8 +8,11 @@ import com.fantechs.common.base.general.entity.ews.EwsWarningUserInfo;
 import com.fantechs.common.base.general.entity.ews.search.SearchEwsWarningUserInfo;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.ews.service.EwsWarningUserInfoService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -42,6 +44,8 @@ public class EwsWarningUserInfoController {
 
     @Resource
     private EwsWarningUserInfoService ewsWarningUserInfoService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -89,12 +93,10 @@ public class EwsWarningUserInfoController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchEwsWarningUserInfo searchEwsWarningUserInfo){
     List<EwsWarningUserInfoDto> list = ewsWarningUserInfoService.findList(ControllerUtil.dynamicConditionByEntity(searchEwsWarningUserInfo));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "预警人员", "预警人员", EwsWarningUserInfoDto.class, "预警人员.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "预警人员", "预警人员", "预警人员.xls", response);
     }
 
     @PostMapping(value = "/import")

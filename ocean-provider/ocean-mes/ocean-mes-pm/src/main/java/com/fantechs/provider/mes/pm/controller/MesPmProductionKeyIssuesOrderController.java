@@ -1,13 +1,15 @@
 package com.fantechs.provider.mes.pm.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmProductionKeyIssuesOrder;
 import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtProductionKeyIssuesOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmProductionKeyIssuesOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.mes.pm.service.MesPmHtProductionKeyIssuesOrderService;
 import com.fantechs.provider.mes.pm.service.MesPmProductionKeyIssuesOrderService;
 import com.github.pagehelper.Page;
@@ -23,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -38,6 +41,8 @@ public class MesPmProductionKeyIssuesOrderController {
     private MesPmProductionKeyIssuesOrderService mesPmProductionKeyIssuesOrderService;
     @Resource
     private MesPmHtProductionKeyIssuesOrderService mesPmHtProductionKeyIssuesOrderService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -91,12 +96,10 @@ public class MesPmProductionKeyIssuesOrderController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchMesPmProductionKeyIssuesOrder searchMesPmProductionKeyIssuesOrder){
-    List<MesPmProductionKeyIssuesOrder> list = mesPmProductionKeyIssuesOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchMesPmProductionKeyIssuesOrder));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "产前关键事项确认", MesPmProductionKeyIssuesOrder.class, "产前关键事项确认.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        List<MesPmProductionKeyIssuesOrder> list = mesPmProductionKeyIssuesOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchMesPmProductionKeyIssuesOrder));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "产前关键事项确认", "产前关键事项确认.xls", response);
     }
 }

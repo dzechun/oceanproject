@@ -7,11 +7,13 @@ import com.fantechs.common.base.general.dto.basic.imports.BaseWorkShopImport;
 import com.fantechs.common.base.general.entity.basic.BaseWorkShop;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWorkShop;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkShop;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseHtWorkShopService;
 import com.fantechs.provider.base.service.BaseWorkShopService;
 import com.github.pagehelper.Page;
@@ -29,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 /**
  * Created by lfz on 2020/9/1.
@@ -45,6 +46,9 @@ public class BaseWorkShopController {
 
     @Resource
     private BaseHtWorkShopService baseHtWorkShopService;
+
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation("查询列表")
     @PostMapping("/findList")
@@ -102,12 +106,11 @@ public class BaseWorkShopController {
     @ApiOperation(value = "导出excel",notes = "导出车间excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")@RequestBody SearchBaseWorkShop searchBaseWorkShop){
         List<BaseWorkShopDto> smtWorkShopDtos = baseWorkShopService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseWorkShop));
-        try {
-            // 导出操作
-            EasyPoiUtils.exportExcel(smtWorkShopDtos, "导出车间信息", "车间信息", BaseWorkShopDto.class, "车间信息.xls", response);
-        } catch (Exception e) {
-            throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(smtWorkShopDtos, customExportParamList, "导出车间信息", "车间信息", "车间信息.xls", response);
+
     }
 
     /**

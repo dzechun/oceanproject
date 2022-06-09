@@ -1,14 +1,16 @@
 package com.fantechs.provider.eam.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentCategoryDto;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentCategory;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentCategory;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentCategory;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.eam.service.EamEquipmentCategoryService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -23,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -36,6 +39,8 @@ public class EamEquipmentCategoryController {
 
     @Resource
     private EamEquipmentCategoryService eamEquipmentCategoryService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -83,11 +88,9 @@ public class EamEquipmentCategoryController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchEamEquipmentCategory searchEamEquipmentCategory){
     List<EamEquipmentCategoryDto> list = eamEquipmentCategoryService.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipmentCategory));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "设备类别", EamEquipmentCategoryDto.class, "设备类别.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "设备类别", "设备类别.xls", response);
     }
 }

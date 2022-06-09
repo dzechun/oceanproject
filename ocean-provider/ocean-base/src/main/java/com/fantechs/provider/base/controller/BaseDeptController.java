@@ -6,11 +6,13 @@ import com.fantechs.common.base.general.dto.basic.imports.BaseDeptImport;
 import com.fantechs.common.base.general.entity.basic.BaseDept;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtDept;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseDept;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseDeptService;
 import com.fantechs.provider.base.service.BaseHtDeptService;
 import com.github.pagehelper.Page;
@@ -29,7 +31,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 /**
  * @Auther: wcz
@@ -49,6 +50,9 @@ public class BaseDeptController {
 
     @Resource
     private BaseHtDeptService baseHtDeptService;
+
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation("查询部门列表")
     @PostMapping("/findList")
@@ -95,12 +99,10 @@ public class BaseDeptController {
     public void exportDepts(HttpServletResponse response, @ApiParam(value ="输入查询条件",required = false)
     @RequestBody(required = false) SearchBaseDept searchBaseDept){
         List<BaseDept> list = baseDeptService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseDept));
-        try {
-            // 导出操作
-            EasyPoiUtils.exportExcel(list, "部门信息表", "部门信息", BaseDept.class, "部门信息.xls", response);
-        } catch (Exception e) {
-            throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "部门信息表", "部门信息", "部门信息.xls", response);
     }
 
 

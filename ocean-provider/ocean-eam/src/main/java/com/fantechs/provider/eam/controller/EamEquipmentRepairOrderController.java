@@ -1,14 +1,16 @@
 package com.fantechs.provider.eam.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentRepairOrderDto;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentRepairOrder;
 import com.fantechs.common.base.general.entity.eam.history.EamHtEquipmentRepairOrder;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamEquipmentRepairOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.eam.service.EamEquipmentRepairOrderService;
 import com.fantechs.provider.eam.service.EamHtEquipmentRepairOrderService;
 import com.github.pagehelper.Page;
@@ -24,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -39,6 +42,8 @@ public class EamEquipmentRepairOrderController {
     private EamEquipmentRepairOrderService eamEquipmentRepairOrderService;
     @Resource
     private EamHtEquipmentRepairOrderService eamHtEquipmentRepairOrderService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation("新建维修单")
     @PostMapping("/pdaCreateOrder")
@@ -93,11 +98,9 @@ public class EamEquipmentRepairOrderController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchEamEquipmentRepairOrder searchEamEquipmentRepairOrder){
     List<EamEquipmentRepairOrderDto> list = eamEquipmentRepairOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquipmentRepairOrder));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "设备维修单", EamEquipmentRepairOrderDto.class, "设备维修单.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "设备维修单", "设备维修单.xls", response);
     }
 }

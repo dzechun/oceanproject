@@ -1,17 +1,18 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWorkingAreaDto;
-import com.fantechs.common.base.general.dto.basic.imports.BaseWarehouseImport;
 import com.fantechs.common.base.general.dto.basic.imports.BaseWorkingAreaImport;
 import com.fantechs.common.base.general.entity.basic.BaseWorkingArea;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWorkingArea;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkingArea;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseHtWorkingAreaService;
 import com.fantechs.provider.base.service.BaseWorkingAreaService;
 import com.github.pagehelper.Page;
@@ -40,9 +41,10 @@ public class BaseWorkingAreaController {
 
     @Resource
     private BaseWorkingAreaService baseWorkingAreaService;
-
     @Resource
     private BaseHtWorkingAreaService baseHtWorkingAreaService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -90,12 +92,10 @@ public class BaseWorkingAreaController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseWorkingArea searchBaseWorkingArea){
     List<BaseWorkingAreaDto> list = baseWorkingAreaService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseWorkingArea));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "工作区导出信息", "工作区信息", BaseWorkingAreaDto.class, "工作区.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "工作区导出信息", "工作区信息", "工作区.xls", response);
     }
 
     /**

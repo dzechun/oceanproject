@@ -1,14 +1,16 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.imports.BaseOrderFlowSourceImport;
 import com.fantechs.common.base.general.entity.basic.BaseOrderFlowSource;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseOrderFlowSource;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseOrderFlowSourceService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -40,6 +42,8 @@ public class BaseOrderFlowSourceController {
 
     @Resource
     private BaseOrderFlowSourceService baseOrderFlowSourceService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -86,12 +90,10 @@ public class BaseOrderFlowSourceController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseOrderFlowSource searchBaseOrderFlowSource){
     List<BaseOrderFlowSource> list = baseOrderFlowSourceService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseOrderFlowSource));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "BaseOrderFlowSource信息", BaseOrderFlowSource.class, "BaseOrderFlowSource.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "BaseOrderFlowSource信息", "BaseOrderFlowSource.xls", response);
     }
 
     @PostMapping(value = "/import")

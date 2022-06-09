@@ -1,7 +1,6 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseSampleTransitionRuleDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseSampleTransitionRuleImport;
 import com.fantechs.common.base.general.entity.basic.BaseSampleTransitionRule;
@@ -9,8 +8,11 @@ import com.fantechs.common.base.general.entity.basic.history.BaseHtSampleTransit
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSampleTransitionRule;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseHtSampleTransitionRuleService;
 import com.fantechs.provider.base.service.BaseSampleTransitionRuleService;
 import com.github.pagehelper.Page;
@@ -43,9 +45,10 @@ public class BaseSampleTransitionRuleController {
 
     @Resource
     private BaseSampleTransitionRuleService baseSampleTransitionRuleService;
-
     @Resource
     private BaseHtSampleTransitionRuleService baseHtSampleTransitionRuleService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -92,13 +95,12 @@ public class BaseSampleTransitionRuleController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseSampleTransitionRule searchBaseSampleTransitionRule){
-    List<BaseSampleTransitionRuleDto> list = baseSampleTransitionRuleService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseSampleTransitionRule));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "抽样转移规则导出信息", "抽样转移规则信息", BaseSampleTransitionRuleDto.class, "抽样转移规则.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        List<BaseSampleTransitionRuleDto> list = baseSampleTransitionRuleService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseSampleTransitionRule));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "抽样转移规则导出信息", "抽样转移规则信息", "抽样转移规则.xls", response);
+
     }
 
     /**

@@ -6,6 +6,7 @@ import cn.afterturn.easypoi.excel.entity.ExportParams;
 import cn.afterturn.easypoi.excel.entity.ImportParams;
 import cn.afterturn.easypoi.excel.entity.enmus.ExcelType;
 import cn.afterturn.easypoi.excel.entity.params.ExcelExportEntity;
+import cn.hutool.core.util.StrUtil;
 import com.fantechs.common.base.exception.BizErrorException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,18 +51,23 @@ public final class EasyPoiUtils {
      * @param <T>
      */
     public static<T> void customExportExcel(List<T> dataList, List<Map<String, Object>> customFormMapList, String title, String sheetName, String fileName, HttpServletResponse response) {
-        if(customFormMapList.size() == 0) {
-            throw new BizErrorException("导出失败：无自定义导出配置");
+        try{
+            if(customFormMapList.size() == 0) {
+                throw new BizErrorException("导出失败：无自定义导出配置");
+            }
+            // 自定义导出列头设置（字段对应的中文名、英文名、列宽）
+            List<ExcelExportEntity> beanList =new ArrayList<>();
+            customFormMapList.forEach(item -> {
+                beanList.add(new ExcelExportEntity((String) item.get("itemName"), item.get("itemKey"), (Integer) item.get("exportColumnWidth")));
+            });
+            // 对象集合->Map集合
+            List<Map<String, Object>> mapList = BeanUtils.objectListToMapList(dataList);
+            Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(title, sheetName), beanList, mapList);
+            downLoadExcel(fileName, response, workbook);
+        }catch (Exception e){
+            throw new BizErrorException(StrUtil.format("导出失败：{}", e.getMessage()));
         }
-        // 自定义导出列头设置（字段对应的中文名、英文名、列宽）
-        List<ExcelExportEntity> beanList =new ArrayList<>();
-        customFormMapList.forEach(item -> {
-            beanList.add(new ExcelExportEntity((String) item.get("itemName"), item.get("itemKey"), (Integer) item.get("exportColumnWidth")));
-        });
-        // 对象集合->Map集合
-        List<Map<String, Object>> mapList = BeanUtils.objectListToMapList(dataList);
-        Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(title, sheetName), beanList, mapList);
-        downLoadExcel(fileName, response, workbook);
+
     }
 
     public static<T> void exportExcel(List<T> dataList, String title, String sheetName, Class<?> clz, String fileName, boolean isCreateHeader, HttpServletResponse response) {

@@ -2,15 +2,17 @@ package com.fantechs.provider.base.controller;
 
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.imports.BaseProductModelImport;
 import com.fantechs.common.base.general.entity.basic.BaseProductModel;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtProductModel;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductModel;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseHtProductModelService;
 import com.fantechs.provider.base.service.BaseProductModelService;
 import com.github.pagehelper.Page;
@@ -49,6 +51,9 @@ public class BaseProductModelController {
 
     @Resource
     private BaseHtProductModelService baseHtProductModelService;
+
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
 
     @ApiOperation("根据条件查询产品型号信息列表")
@@ -121,12 +126,12 @@ public class BaseProductModelController {
     public void exportProductModels(HttpServletResponse response, @ApiParam(value = "输入查询条件", required = false)
     @RequestBody(required = false) SearchBaseProductModel searchBaseProductModel) {
         List<BaseProductModel> list = baseProductModelService.selectProductModels(ControllerUtil.dynamicConditionByEntity(searchBaseProductModel));
-        try {
-            // 导出操作
-            EasyPoiUtils.exportExcel(list, "产品型号信息导出", "产品型号信息", BaseProductModel.class, "产品型号信息.xls", response);
-        } catch (Exception e) {
-            throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "产品型号信息导出", "产品型号信息", "产品型号信息.xls", response);
+
     }
 
 

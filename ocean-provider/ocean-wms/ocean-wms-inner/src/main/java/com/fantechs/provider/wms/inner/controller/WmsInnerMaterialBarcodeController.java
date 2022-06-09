@@ -1,15 +1,17 @@
 package com.fantechs.provider.wms.inner.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerMaterialBarcodeImport;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerMaterialBarcode;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.wms.inner.service.WmsInnerMaterialBarcodeService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -41,6 +43,8 @@ public class WmsInnerMaterialBarcodeController {
 
     @Resource
     private WmsInnerMaterialBarcodeService wmsInnerMaterialBarcodeService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "批量修改",notes = "批量修改")
     @PostMapping("/batchUpdate")
@@ -93,12 +97,10 @@ public class WmsInnerMaterialBarcodeController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode){
         List<WmsInnerMaterialBarcodeDto> list = wmsInnerMaterialBarcodeService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerMaterialBarcode));
-        try {
-            // 导出操作
-            EasyPoiUtils.exportExcel(list, "导出信息", "条码信息", WmsInnerMaterialBarcodeDto.class, "条码信息.xls", response);
-        } catch (Exception e) {
-            throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "条码信息", "条码信息.xls", response);
     }
 
     @PostMapping(value = "/import")

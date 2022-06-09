@@ -1,17 +1,19 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.general.entity.basic.BaseProLine;
+import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.imports.BaseRouteImport;
 import com.fantechs.common.base.general.entity.basic.BaseRoute;
 import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtRoute;
-import com.fantechs.common.base.general.dto.basic.imports.BaseRouteImport;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseRoute;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseHtRouteService;
 import com.fantechs.provider.base.service.BaseRouteProcessService;
 import com.fantechs.provider.base.service.BaseRouteService;
@@ -31,7 +33,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 /**
  *
@@ -50,6 +51,8 @@ public class BaseRouteController {
     private BaseHtRouteService baseHtRouteService;
     @Resource
     private BaseRouteProcessService baseRouteProcessService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -96,12 +99,14 @@ public class BaseRouteController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
                             @RequestBody(required = false) SearchBaseRoute searchBaseRoute){
-    List<BaseRoute> list = baseRouteService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseRoute));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出工艺路线信息", "工艺路线信息", BaseRoute.class, "工艺路线信息.xls", response);
+        List<BaseRoute> list = baseRouteService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseRoute));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        try {
+            // 自定义导出操作
+            EasyPoiUtils.customExportExcel(list, customExportParamList, "导出工艺路线信息", "工艺路线信息", "工艺路线信息.xls", response);
         } catch (Exception e) {
-        throw new BizErrorException(e);
+            throw new BizErrorException(e);
         }
     }
 

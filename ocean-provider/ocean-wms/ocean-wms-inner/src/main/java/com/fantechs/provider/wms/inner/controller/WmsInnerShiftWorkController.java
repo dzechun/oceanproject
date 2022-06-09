@@ -1,7 +1,6 @@
 package com.fantechs.provider.wms.inner.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.export.WmsInnerJobOrderExport;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
@@ -10,8 +9,11 @@ import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerJobOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.wms.inner.service.WmsInnerShiftWorkService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -43,6 +45,8 @@ public class WmsInnerShiftWorkController {
 
     @Resource
     private WmsInnerShiftWorkService wmsInnerShiftWorkService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation("手动分配")
     @PostMapping("/handDistribution")
@@ -123,12 +127,10 @@ public class WmsInnerShiftWorkController {
             title = "拣货作业单信息导出";
         }
         List<WmsInnerJobOrderExport> list = wmsInnerShiftWorkService.findExportList(ControllerUtil.dynamicConditionByEntity(searchWmsInPutawayOrder));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, title, title, WmsInnerJobOrderExport.class, title+".xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, title, title, title+".xls", response);
     }
 
     /**

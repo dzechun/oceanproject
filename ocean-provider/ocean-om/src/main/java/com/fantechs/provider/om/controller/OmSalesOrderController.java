@@ -1,7 +1,6 @@
 package com.fantechs.provider.om.controller;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmHtSalesOrderDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
@@ -9,8 +8,11 @@ import com.fantechs.common.base.general.entity.om.OmSalesOrder;
 import com.fantechs.common.base.general.entity.om.search.SearchOmSalesOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.om.service.OmSalesOrderService;
 import com.fantechs.provider.om.service.ht.OmHtSalesOrderService;
 import com.github.pagehelper.Page;
@@ -45,6 +47,8 @@ public class OmSalesOrderController {
     private OmSalesOrderService omSalesOrderService;
     @Resource
     private OmHtSalesOrderService omHtSalesOrderService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "下推",notes = "下推")
     @PostMapping("/pushDown")
@@ -127,12 +131,9 @@ public class OmSalesOrderController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchOmSalesOrder searchOmSalesOrder){
     List<OmSalesOrderDto> list = omSalesOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchOmSalesOrder));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "销售订单信息", "OmSalesOrder信息", OmSalesOrderDto.class, "OmSalesOrder.xls", response);
-        } catch (Exception e) {
-//            e.printStackTrace();
-            throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "销售订单信息", "OmSalesOrder信息", "OmSalesOrder.xls", response);
     }
 }

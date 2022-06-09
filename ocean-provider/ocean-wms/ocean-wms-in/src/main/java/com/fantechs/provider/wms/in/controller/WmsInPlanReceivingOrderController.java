@@ -1,7 +1,6 @@
 package com.fantechs.provider.wms.in.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.in.WmsInHtPlanReceivingOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInPlanReceivingOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.imports.WmsInPlanReceivingOrderImport;
@@ -9,8 +8,11 @@ import com.fantechs.common.base.general.entity.wms.in.WmsInPlanReceivingOrder;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInPlanReceivingOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.wms.in.service.WmsInHtPlanReceivingOrderService;
 import com.fantechs.provider.wms.in.service.WmsInPlanReceivingOrderService;
 import com.github.pagehelper.Page;
@@ -45,6 +47,8 @@ public class WmsInPlanReceivingOrderController {
     private WmsInPlanReceivingOrderService wmsInPlanReceivingOrderService;
     @Resource
     private WmsInHtPlanReceivingOrderService wmsInHtPlanReceivingOrderService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -105,12 +109,10 @@ public class WmsInPlanReceivingOrderController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchWmsInPlanReceivingOrder searchWmsInPlanReceivingOrder){
     List<WmsInPlanReceivingOrderDto> list = wmsInPlanReceivingOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInPlanReceivingOrder));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "收获计划", WmsInPlanReceivingOrderDto.class, "收获计划.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "收获计划", "收获计划.xls", response);
     }
 
     @PostMapping(value = "/import")

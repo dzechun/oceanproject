@@ -1,7 +1,6 @@
 package com.fantechs.provider.om.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmHtSalesCodeReSpcDto;
 import com.fantechs.common.base.general.dto.om.OmSalesCodeReSpcDto;
 import com.fantechs.common.base.general.dto.om.imports.OmSalesCodeReSpcImport;
@@ -9,8 +8,11 @@ import com.fantechs.common.base.general.entity.om.OmSalesCodeReSpc;
 import com.fantechs.common.base.general.entity.om.search.SearchOmSalesCodeReSpc;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.om.service.OmSalesCodeReSpcService;
 import com.fantechs.provider.om.service.ht.OmHtSalesCodeReSpcService;
 import com.github.pagehelper.Page;
@@ -43,9 +45,10 @@ public class OmSalesCodeReSpcController {
 
     @Resource
     private OmSalesCodeReSpcService omSalesCodeReSpcService;
-
     @Resource
     private OmHtSalesCodeReSpcService omHtSalesCodeReSpcService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -99,13 +102,10 @@ public class OmSalesCodeReSpcController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchOmSalesCodeReSpc searchOmSalesCodeReSpc){
-    List<OmSalesCodeReSpcDto> list = omSalesCodeReSpcService.findList(ControllerUtil.dynamicConditionByEntity(searchOmSalesCodeReSpc));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "销售编码关联PO号信息", OmSalesCodeReSpcDto.class, "OmSalesCodeReSpc.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        List<OmSalesCodeReSpcDto> list = omSalesCodeReSpcService.findList(ControllerUtil.dynamicConditionByEntity(searchOmSalesCodeReSpc));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "销售编码关联PO号信息", "OmSalesCodeReSpc.xls", response);
     }
 
     @PostMapping(value = "/import")

@@ -1,16 +1,17 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.imports.BaseInspectionExemptedListImport;
-import com.fantechs.common.base.general.dto.basic.imports.BaseInspectionItemImport;
 import com.fantechs.common.base.general.entity.basic.BaseInspectionExemptedList;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtInspectionExemptedList;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspectionExemptedList;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseHtInspectionExemptedListService;
 import com.fantechs.provider.base.service.BaseInspectionExemptedListService;
 import com.github.pagehelper.Page;
@@ -45,6 +46,8 @@ public class BaseInspectionExemptedListController {
     private BaseInspectionExemptedListService baseInspectionExemptedListService;
     @Resource
     private BaseHtInspectionExemptedListService baseHtInspectionExemptedListService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -91,13 +94,11 @@ public class BaseInspectionExemptedListController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseInspectionExemptedList searchBaseInspectionExemptedList){
-    List<BaseInspectionExemptedList> list = baseInspectionExemptedListService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseInspectionExemptedList));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "免检清单", BaseInspectionExemptedList.class, "免检清单.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        List<BaseInspectionExemptedList> list = baseInspectionExemptedListService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseInspectionExemptedList));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "免检清单", "免检清单.xls", response);
     }
 
     /**

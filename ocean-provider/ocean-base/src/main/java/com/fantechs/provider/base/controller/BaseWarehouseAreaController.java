@@ -1,17 +1,19 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWarehouseAreaDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseWarehouseAreaImport;
-import com.fantechs.common.base.general.dto.basic.imports.BaseWarehouseImport;
 import com.fantechs.common.base.general.entity.basic.BaseWarehouseArea;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtWarehouseArea;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWarehouseArea;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseHtWarehouseAreaService;
 import com.fantechs.provider.base.service.BaseWarehouseAreaService;
 import com.github.pagehelper.Page;
@@ -46,6 +48,8 @@ public class BaseWarehouseAreaController {
     private BaseWarehouseAreaService baseWarehouseAreaService;
     @Resource
     private BaseHtWarehouseAreaService baseHtWarehouseAreaService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -97,9 +101,11 @@ public class BaseWarehouseAreaController {
     @ApiOperation(value = "导出excel",notes = "导出库区excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")@RequestBody SearchBaseWarehouseArea searchBaseWarehouseArea){
         List<BaseWarehouseAreaDto> list = baseWarehouseAreaService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseWarehouseArea));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
         try {
-            // 导出操作
-            EasyPoiUtils.exportExcel(list, "导出库区", "库区信息", BaseWarehouseAreaDto.class, "库区信息.xls", response);
+            // 自定义导出操作
+            EasyPoiUtils.customExportExcel(list, customExportParamList, "导出库区", "库区信息", "库区信息.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }

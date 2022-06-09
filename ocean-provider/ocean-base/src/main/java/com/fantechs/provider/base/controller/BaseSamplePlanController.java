@@ -1,17 +1,18 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseSamplePlanDto;
-import com.fantechs.common.base.general.dto.basic.imports.BaseCurrencyImport;
 import com.fantechs.common.base.general.dto.basic.imports.BaseSamplePlanImport;
 import com.fantechs.common.base.general.entity.basic.BaseSamplePlan;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtSamplePlan;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSamplePlan;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseHtSamplePlanService;
 import com.fantechs.provider.base.service.BaseSamplePlanService;
 import com.github.pagehelper.Page;
@@ -44,9 +45,10 @@ public class BaseSamplePlanController {
 
     @Resource
     private BaseSamplePlanService baseSamplePlanService;
-
     @Resource
     private BaseHtSamplePlanService baseHtSamplePlanService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -93,13 +95,11 @@ public class BaseSamplePlanController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseSamplePlan searchBaseSamplePlan){
-    List<BaseSamplePlanDto> list = baseSamplePlanService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseSamplePlan));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "抽样方案导出信息", "抽样方案信息", BaseSamplePlanDto.class, "抽样方案.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        List<BaseSamplePlanDto> list = baseSamplePlanService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseSamplePlan));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "抽样方案导出信息", "抽样方案信息", "抽样方案.xls", response);
     }
 
     /**

@@ -1,7 +1,6 @@
 package com.fantechs.provider.wms.in.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.in.WmsInHtReceivingOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.WmsInReceivingOrderDto;
 import com.fantechs.common.base.general.dto.wms.in.imports.WmsInReceivingOrderImport;
@@ -9,8 +8,11 @@ import com.fantechs.common.base.general.entity.wms.in.WmsInReceivingOrder;
 import com.fantechs.common.base.general.entity.wms.in.search.SearchWmsInReceivingOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.wms.in.service.WmsInHtReceivingOrderService;
 import com.fantechs.provider.wms.in.service.WmsInReceivingOrderService;
 import com.github.pagehelper.Page;
@@ -45,6 +47,8 @@ public class WmsInReceivingOrderController {
     private WmsInReceivingOrderService wmsInReceivingOrderService;
     @Resource
     private WmsInHtReceivingOrderService wmsInHtReceivingOrderService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -104,13 +108,11 @@ public class WmsInReceivingOrderController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchWmsInReceivingOrder searchWmsInReceivingOrder){
-    List<WmsInReceivingOrderDto> list = wmsInReceivingOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInReceivingOrder));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "收货作业", "收货作业", WmsInReceivingOrderDto.class, "收货作业.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        List<WmsInReceivingOrderDto> list = wmsInReceivingOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInReceivingOrder));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "收货作业", "收货作业", "收货作业.xls", response);
     }
 
     @PostMapping(value = "/import")

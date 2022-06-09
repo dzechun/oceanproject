@@ -1,12 +1,14 @@
 package com.fantechs.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.ureport.SrmAsnOrder;
 import com.fantechs.common.base.general.entity.ureport.search.SearchSrmAsnOrder;
 import com.fantechs.common.base.general.entity.ureport.search.SearchSupplierUreport;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.service.AsnOrderFindUreportService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by lzw on 2021/11/23.
@@ -34,6 +37,8 @@ public class AsnOrderFindUreportController {
 
     @Resource
     private AsnOrderFindUreportService asnOrderFindUreportService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation("ASN查询")
     @PostMapping("/findList")
@@ -49,11 +54,9 @@ public class AsnOrderFindUreportController {
     public void export(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchSupplierUreport searchSupplierUreport){
         List<SrmAsnOrder> list = asnOrderFindUreportService.findList(ControllerUtil.dynamicConditionByEntity(searchSupplierUreport));
-        try {
-            // 导出操作
-            EasyPoiUtils.exportExcel(list, "ANS查询信息报表", "ANS查询信息报表", SrmAsnOrder.class, "ANS查询信息报表.xls", response);
-        } catch (Exception e) {
-            throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "ANS查询信息报表", "ANS查询信息报表", "ANS查询信息报表.xls", response);
     }
 }

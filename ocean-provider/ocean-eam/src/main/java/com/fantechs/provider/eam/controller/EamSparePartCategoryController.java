@@ -1,13 +1,15 @@
 package com.fantechs.provider.eam.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.eam.EamSparePartCategory;
 import com.fantechs.common.base.general.entity.eam.history.EamHtSparePartCategory;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamSparePartCategory;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.eam.service.EamSparePartCategoryService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -22,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -35,6 +38,8 @@ public class EamSparePartCategoryController {
 
     @Resource
     private EamSparePartCategoryService eamSparePartCategoryService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -89,11 +94,9 @@ public class EamSparePartCategoryController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchEamSparePartCategory searchEamSparePartCategory){
     List<EamSparePartCategory> list = eamSparePartCategoryService.findList(ControllerUtil.dynamicConditionByEntity(searchEamSparePartCategory));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "备用件类别", EamSparePartCategory.class, "备用件类别.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "备用件类别", "备用件类别.xls", response);
     }
 }

@@ -1,18 +1,19 @@
 package com.fantechs.provider.qms.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.qms.QmsIpqcInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtIpqcInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsIpqcInspectionOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.qms.service.QmsHtIpqcInspectionOrderService;
 import com.fantechs.provider.qms.service.QmsIpqcInspectionOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import feign.Response;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -40,6 +42,8 @@ public class QmsIpqcInspectionOrderController {
     private QmsIpqcInspectionOrderService qmsIpqcInspectionOrderService;
     @Resource
     private QmsHtIpqcInspectionOrderService qmsHtIpqcInspectionOrderService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation("PDA提交")
     @PostMapping("/PDASubmit")
@@ -107,11 +111,9 @@ public class QmsIpqcInspectionOrderController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchQmsIpqcInspectionOrder searchQmsIpqcInspectionOrder){
     List<QmsIpqcInspectionOrder> list = qmsIpqcInspectionOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsIpqcInspectionOrder));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "IPQC检验单", QmsIpqcInspectionOrder.class, "IPQC检验单.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "IPQC检验单", "IPQC检验单.xls", response);
     }
 }

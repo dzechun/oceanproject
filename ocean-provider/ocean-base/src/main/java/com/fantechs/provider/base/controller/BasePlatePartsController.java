@@ -1,7 +1,6 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BasePlatePartsDto;
 import com.fantechs.common.base.general.dto.basic.imports.BasePlatePartsImport;
 import com.fantechs.common.base.general.entity.basic.BasePlateParts;
@@ -9,8 +8,11 @@ import com.fantechs.common.base.general.entity.basic.history.BaseHtPlateParts;
 import com.fantechs.common.base.general.entity.basic.search.SearchBasePlateParts;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseHtPlatePartsService;
 import com.fantechs.provider.base.service.BasePlatePartsService;
 import com.github.pagehelper.Page;
@@ -30,7 +32,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 /**
  *
@@ -47,6 +48,8 @@ public class BasePlatePartsController {
     private BasePlatePartsService basePlatePartsService;
     @Resource
     private BaseHtPlatePartsService baseHtPlatePartsService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -93,13 +96,12 @@ public class BasePlatePartsController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBasePlateParts searchBasePlateParts){
-    List<BasePlatePartsDto> list = basePlatePartsService.findList(ControllerUtil.dynamicConditionByEntity(searchBasePlateParts));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "部件组成导出信息", "部件组成信息", BasePlatePartsDto.class, "部件组成.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        List<BasePlatePartsDto> list = basePlatePartsService.findList(ControllerUtil.dynamicConditionByEntity(searchBasePlateParts));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "部件组成导出信息", "部件组成信息", "部件组成.xls", response);
+
     }
 
     /**

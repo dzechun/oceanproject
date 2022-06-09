@@ -1,7 +1,6 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBadnessPhenotypeDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseBadnessPhenotypeImport;
 import com.fantechs.common.base.general.entity.basic.BaseBadnessPhenotype;
@@ -9,8 +8,11 @@ import com.fantechs.common.base.general.entity.basic.history.BaseHtBadnessPhenot
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBadnessPhenotype;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseBadnessPhenotypeService;
 import com.fantechs.provider.base.service.BaseHtBadnessPhenotypeService;
 import com.github.pagehelper.Page;
@@ -43,9 +45,10 @@ public class BaseBadnessPhenotypeController {
 
     @Resource
     private BaseBadnessPhenotypeService baseBadnessPhenotypeService;
-
     @Resource
     private BaseHtBadnessPhenotypeService baseHtBadnessPhenotypeService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -92,13 +95,11 @@ public class BaseBadnessPhenotypeController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseBadnessPhenotype searchBaseBadnessPhenotype){
-    List<BaseBadnessPhenotypeDto> list = baseBadnessPhenotypeService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseBadnessPhenotype));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "不良现象代码导出信息", "不良现象代码信息", BaseBadnessPhenotypeDto.class, "不良现象代码.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        List<BaseBadnessPhenotypeDto> list = baseBadnessPhenotypeService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseBadnessPhenotype));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "不良现象代码导出信息", "不良现象代码信息", "不良现象代码.xls", response);
     }
 
     /**

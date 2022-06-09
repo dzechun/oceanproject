@@ -1,15 +1,16 @@
 package com.fantechs.provider.srm.controller;
 
-import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.srm.SrmPoExpediteDto;
 import com.fantechs.common.base.general.entity.srm.SrmPoExpedite;
 import com.fantechs.common.base.general.entity.srm.history.SrmHtPoExpedite;
 import com.fantechs.common.base.general.entity.srm.search.SearchSrmPoExpedite;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.srm.service.SrmHtPoExpediteService;
 import com.fantechs.provider.srm.service.SrmPoExpediteService;
 import com.github.pagehelper.Page;
@@ -19,13 +20,13 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -41,6 +42,8 @@ public class SrmPoExpediteController {
     private SrmPoExpediteService srmPoExpediteService;
     @Resource
     private SrmHtPoExpediteService srmHtPoExpediteService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -95,12 +98,10 @@ public class SrmPoExpediteController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchSrmPoExpedite searchSrmPoExpedite){
     List<SrmPoExpediteDto> list = srmPoExpediteService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmPoExpedite));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "SrmPoExpedite信息", SrmPoExpediteDto.class, "SrmPoExpedite.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "SrmPoExpedite信息", "SrmPoExpedite.xls", response);
     }
 //
 //    @PostMapping(value = "/import")

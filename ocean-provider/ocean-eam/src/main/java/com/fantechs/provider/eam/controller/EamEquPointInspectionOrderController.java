@@ -1,16 +1,16 @@
 package com.fantechs.provider.eam.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamEquInspectionOrderDto;
 import com.fantechs.common.base.general.dto.eam.EamEquPointInspectionOrderDto;
-import com.fantechs.common.base.general.dto.eam.EamEquipmentMaintainOrderDto;
 import com.fantechs.common.base.general.entity.eam.EamEquPointInspectionOrder;
-import com.fantechs.common.base.general.entity.eam.EamEquipmentMaintainOrder;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamEquPointInspectionOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.eam.service.EamEquPointInspectionOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -26,6 +26,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -39,6 +40,8 @@ public class EamEquPointInspectionOrderController {
 
     @Resource
     private EamEquPointInspectionOrderService eamEquPointInspectionOrderService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation("新建点检单")
     @PostMapping("/pdaCreateOrder")
@@ -108,11 +111,9 @@ public class EamEquPointInspectionOrderController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchEamEquPointInspectionOrder searchEamEquPointInspectionOrder){
     List<EamEquPointInspectionOrderDto> list = eamEquPointInspectionOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchEamEquPointInspectionOrder));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "设备点检单", EamEquPointInspectionOrderDto.class, "设备点检单.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "设备点检单", "设备点检单.xls", response);
     }
 }
