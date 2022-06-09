@@ -203,10 +203,12 @@ public class WanbaoStorageRule {
         }
         //物料前缀39110157 推荐C类  39110089、39110090推荐B类
         BigDecimal capacity = BigDecimal.ZERO;
-        if(str.startsWith("39110157")){
+        if(str.startsWith("39110157") || baseMaterial.getMaterialName().contains("酒柜") || baseMaterial.getMaterialName().contains("饮料柜")){
+            log.error("C库容");
             capacity = baseStorageCapacity.getTypeCCapacity();
             list = list.stream().filter(x->x.getMaterialStoreType()==3).collect(Collectors.toList());
-        }else if(str.startsWith("39110089") || str.startsWith("39110090") || baseMaterial.getMaterialName().contains("酒柜") || baseMaterial.getMaterialName().contains("饮料柜")){
+        }else if(str.startsWith("39110089") || str.startsWith("39110090")){
+            log.error("B库容");
             capacity = baseStorageCapacity.getTypeBCapacity();
             list = list.stream().filter(x->x.getMaterialStoreType()==2).collect(Collectors.toList());
         }else {
@@ -355,5 +357,7 @@ public class WanbaoStorageRule {
         String code = "391100470238".substring(5,8);
         System.out.println(Integer.parseInt(code)<=99);
         System.out.println(code);
+        String ss = "WW149EIB-A/HVBC58ST/VISSANI/MC/预涂黑色箱体/烟色玻璃门体/直冷/R600a/115V~/60Hz/CSA/美国/NRCan/无/1个门/电子温控/嵌入式/2A LED灯 自动除霜37F-61F 压花镀锌底背板 酒柜饮料柜/A.001";
+        System.out.println(ss.contains("酒柜") || ss.contains("饮料柜"));
     }
 }
