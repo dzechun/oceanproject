@@ -78,8 +78,16 @@ public class SaTokenConfigure implements WebMvcConfigurer, AccessDecisionManager
 
                 // 前置函数：在每次认证函数之前执行
                 .setBeforeAuth(r -> {
-                    // 设置一些安全响应头
+                    // 设置跨域响应头
                     SaHolder.getResponse()
+                            // 允许指定域访问跨域资源
+                            .setHeader("Access-Control-Allow-Origin", "*")
+                            // 允许所有请求方式
+                            .setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
+                            // 有效时间
+                            .setHeader("Access-Control-Max-Age", "3600")
+                            // 允许的header参数
+                            .setHeader("Access-Control-Allow-Headers", "*")
                             // 服务器名称
                             .setServer("ocean-auth")
                             // 是否可以在iframe显示视图： DENY=不可以 | SAMEORIGIN=同域下可以 | ALLOW-FROM uri=指定域名下可以
