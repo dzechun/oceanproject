@@ -77,24 +77,24 @@ public class SaTokenConfigure implements WebMvcConfigurer, AccessDecisionManager
                 .setError(e -> {
                     logger.info("进入Sa-Token异常处理");
                     return SaResult.error(e.getMessage());
-                })
-
-                // 前置函数：在每次认证函数之前执行
-                .setBeforeAuth(obj -> {
-                    // ---------- 设置跨域响应头 ----------
-                    SaHolder.getResponse()
-                            // 允许指定域访问跨域资源
-                            .setHeader("Access-Control-Allow-Origin", "*")
-                            // 允许所有请求方式
-                            .setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
-                            // 允许的header参数
-                            .setHeader("Access-Control-Allow-Headers", "*");
-
-                    // 如果是预检请求，则立即返回到前端
-                    SaRouter.match(SaHttpMethod.OPTIONS)
-                            .free(r -> System.out.println("--------OPTIONS预检请求，不做处理"))
-                            .back();
                 });
+
+//                // 前置函数：在每次认证函数之前执行
+//                .setBeforeAuth(obj -> {
+//                    // ---------- 设置跨域响应头 ----------
+//                    SaHolder.getResponse()
+//                            // 允许指定域访问跨域资源
+//                            .setHeader("Access-Control-Allow-Origin", "*")
+//                            // 允许所有请求方式
+//                            .setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
+//                            // 允许的header参数
+//                            .setHeader("Access-Control-Allow-Headers", "*");
+//
+//                    // 如果是预检请求，则立即返回到前端
+//                    SaRouter.match(SaHttpMethod.OPTIONS)
+//                            .free(r -> System.out.println("--------OPTIONS预检请求，不做处理"))
+//                            .back();
+//                });
     }
 
     // 配置跨域
