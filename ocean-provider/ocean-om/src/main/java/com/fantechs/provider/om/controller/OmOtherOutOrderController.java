@@ -1,6 +1,5 @@
 package com.fantechs.provider.om.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmHtOtherOutOrderDto;
 import com.fantechs.common.base.general.dto.om.OmOtherOutOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmOtherOutOrderDto;
@@ -8,8 +7,11 @@ import com.fantechs.common.base.general.entity.om.OmOtherOutOrder;
 import com.fantechs.common.base.general.entity.om.search.SearchOmOtherOutOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.om.service.OmOtherOutOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -26,6 +28,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -39,6 +42,8 @@ public class OmOtherOutOrderController {
 
     @Resource
     private OmOtherOutOrderService omOtherOutOrderService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "下推",notes = "下推")
     @PostMapping("/pushDown")
@@ -99,11 +104,9 @@ public class OmOtherOutOrderController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchOmOtherOutOrder searchOmOtherOutOrder){
     List<OmOtherOutOrderDto> list = omOtherOutOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchOmOtherOutOrder));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "OmOtherOutOrder信息", OmOtherOutOrderDto.class, "OmOtherOutOrder.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "OmOtherOutOrder信息", "OmOtherOutOrder.xls", response);
     }
 }

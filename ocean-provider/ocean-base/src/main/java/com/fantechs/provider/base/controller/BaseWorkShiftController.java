@@ -1,7 +1,6 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseWorkShiftDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseWorkShiftImport;
 import com.fantechs.common.base.general.entity.basic.BaseWorkShift;
@@ -9,8 +8,11 @@ import com.fantechs.common.base.general.entity.basic.history.BaseHtWorkShift;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseWorkShift;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseHtWorkShiftService;
 import com.fantechs.provider.base.service.BaseWorkShiftService;
 import com.github.pagehelper.Page;
@@ -30,7 +32,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 /**
  *
@@ -47,6 +48,9 @@ public class BaseWorkShiftController {
     private BaseWorkShiftService baseWorkShiftService;
     @Resource
     private BaseHtWorkShiftService baseHtWorkShiftService;
+
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -93,13 +97,12 @@ public class BaseWorkShiftController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseWorkShift searchBaseWorkShift){
-    List<BaseWorkShiftDto> list = baseWorkShiftService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseWorkShift));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "BaseWorkShift信息", BaseWorkShiftDto.class, "BaseWorkShift.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        List<BaseWorkShiftDto> list = baseWorkShiftService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseWorkShift));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "BaseWorkShift信息", "BaseWorkShift.xls", response);
+
     }
 
     /**

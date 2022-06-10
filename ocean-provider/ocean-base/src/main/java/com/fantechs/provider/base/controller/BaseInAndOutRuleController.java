@@ -1,7 +1,6 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseHtInAndOutRuleDto;
 import com.fantechs.common.base.general.dto.basic.BaseInAndOutRuleDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseInAndOutRuleImport;
@@ -9,8 +8,11 @@ import com.fantechs.common.base.general.entity.basic.BaseInAndOutRule;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInAndOutRule;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseInAndOutRuleService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -43,6 +45,8 @@ public class BaseInAndOutRuleController {
 
     @Resource
     private BaseInAndOutRuleService baseInAndOutRuleService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -97,12 +101,10 @@ public class BaseInAndOutRuleController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseInAndOutRule searchBaseInAndOutRule){
     List<BaseInAndOutRuleDto> list = baseInAndOutRuleService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseInAndOutRule));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "出入库规则维护", "出入库规则维护", BaseInAndOutRuleDto.class, "出入库规则维护.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "出入库规则维护", "出入库规则维护", "出入库规则维护.xls", response);
     }
 
     @PostMapping(value = "/import")

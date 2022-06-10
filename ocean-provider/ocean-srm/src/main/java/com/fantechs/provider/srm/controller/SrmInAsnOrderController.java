@@ -1,14 +1,16 @@
 package com.fantechs.provider.srm.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.srm.SrmInAsnOrderDto;
 import com.fantechs.common.base.general.dto.srm.SrmInHtAsnOrderDto;
 import com.fantechs.common.base.general.entity.srm.SrmInAsnOrder;
 import com.fantechs.common.base.general.entity.srm.search.SearchSrmInAsnOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.srm.service.SrmInAsnOrderService;
 import com.fantechs.provider.srm.service.SrmInHtAsnOrderService;
 import com.github.pagehelper.Page;
@@ -25,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -41,6 +44,8 @@ public class SrmInAsnOrderController {
     private SrmInAsnOrderService srmInAsnOrderService;
     @Resource
     private SrmInHtAsnOrderService srmInHtAsnOrderService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -101,12 +106,10 @@ public class SrmInAsnOrderController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchSrmInAsnOrder searchSrmInAsnOrder){
     List<SrmInAsnOrderDto> list = srmInAsnOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmInAsnOrder));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "SrmInAsnOrder信息", SrmInAsnOrderDto.class, "SrmInAsnOrder.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "SrmInAsnOrder信息", "SrmInAsnOrder.xls", response);
     }
 
     @ApiOperation("发货")

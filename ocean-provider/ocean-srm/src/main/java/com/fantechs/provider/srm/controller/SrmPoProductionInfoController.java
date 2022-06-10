@@ -1,15 +1,17 @@
 package com.fantechs.provider.srm.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.srm.SrmPoProductionInfoDto;
 import com.fantechs.common.base.general.entity.srm.SrmPoProductionInfo;
 import com.fantechs.common.base.general.entity.srm.history.SrmHtPoProductionInfo;
 import com.fantechs.common.base.general.entity.srm.search.SearchSrmPoProductionInfo;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.srm.service.SrmHtPoProductionInfoService;
 import com.fantechs.provider.srm.service.SrmPoProductionInfoService;
 import com.github.pagehelper.Page;
@@ -44,6 +46,8 @@ public class SrmPoProductionInfoController {
     private SrmPoProductionInfoService srmPoProductionInfoService;
     @Resource
     private SrmHtPoProductionInfoService srmHtPoProductionInfoService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -98,12 +102,10 @@ public class SrmPoProductionInfoController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchSrmPoProductionInfo searchSrmPoProductionInfo){
     List<SrmPoProductionInfoDto> list = srmPoProductionInfoService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmPoProductionInfo));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出订单生产状态信息", "订单生产状态信息", SrmPoProductionInfoDto.class, "SrmPoProductionInfo.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出订单生产状态信息", "订单生产状态信息", "SrmPoProductionInfo.xls", response);
     }
 
     @PostMapping(value = "/import")

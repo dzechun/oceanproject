@@ -1,7 +1,6 @@
 package com.fantechs.provider.mes.pm.controller;
 
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
@@ -9,8 +8,11 @@ import com.fantechs.common.base.general.entity.mes.pm.history.MesPmHtWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.mes.pm.service.MesPmHtWorkOrderService;
 import com.fantechs.provider.mes.pm.service.MesPmWorkOrderService;
 import com.github.pagehelper.Page;
@@ -27,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author hyc
@@ -40,18 +43,12 @@ import java.util.List;
 @Validated
 public class MesPmWorkOrderController {
 
-    /*修改内容*/
-
-
-    /*修改内容*/
-
-
-    /*原内容*/
     @Resource
     private MesPmWorkOrderService mesPmWorkOrderService;
-
     @Resource
     private MesPmHtWorkOrderService mesPmHtWorkOrderService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -132,13 +129,11 @@ public class MesPmWorkOrderController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
                             @RequestBody(required = false) SearchMesPmWorkOrder searchMesPmWorkOrder){
-    List<MesPmWorkOrderDto> list = mesPmWorkOrderService.findList(searchMesPmWorkOrder);
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出工单信息", "工单信息", MesPmWorkOrderDto.class, "工单信息.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        List<MesPmWorkOrderDto> list = mesPmWorkOrderService.findList(searchMesPmWorkOrder);
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出工单信息", "工单信息", "工单信息.xls", response);
     }
 
     @PostMapping("/updateInventory")

@@ -1,7 +1,6 @@
 package com.fantechs.provider.srm.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.srm.SrmPlanDeliveryOrderDto;
 import com.fantechs.common.base.general.dto.srm.imports.SrmPlanDeliveryOrderImport;
 import com.fantechs.common.base.general.entity.srm.SrmPlanDeliveryOrder;
@@ -9,8 +8,11 @@ import com.fantechs.common.base.general.entity.srm.history.SrmHtPlanDeliveryOrde
 import com.fantechs.common.base.general.entity.srm.search.SearchSrmPlanDeliveryOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.srm.service.SrmHtPlanDeliveryOrderService;
 import com.fantechs.provider.srm.service.SrmPlanDeliveryOrderService;
 import com.github.pagehelper.Page;
@@ -45,6 +47,8 @@ public class SrmPlanDeliveryOrderController {
     private SrmPlanDeliveryOrderService srmPlanDeliveryOrderService;
     @Resource
     private SrmHtPlanDeliveryOrderService srmHtPlanDeliveryOrderService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -99,12 +103,10 @@ public class SrmPlanDeliveryOrderController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchSrmPlanDeliveryOrder searchSrmPlanDeliveryOrder){
     List<SrmPlanDeliveryOrderDto> list = srmPlanDeliveryOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmPlanDeliveryOrder));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "SrmPlanDeliveryOrder信息", SrmPlanDeliveryOrderDto.class, "SrmPlanDeliveryOrder.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "SrmPlanDeliveryOrder信息", "SrmPlanDeliveryOrder.xls", response);
     }
 
     @PostMapping(value = "/import")

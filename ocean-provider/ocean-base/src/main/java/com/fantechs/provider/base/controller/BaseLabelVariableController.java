@@ -1,17 +1,18 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseLabelVariableDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseLabelVariableImport;
-import com.fantechs.common.base.general.dto.basic.imports.BaseShipmentEnterpriseImport;
 import com.fantechs.common.base.general.entity.basic.BaseLabelVariable;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtLabelVariable;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabelVariable;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseLabelVariableService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -43,6 +44,8 @@ public class BaseLabelVariableController {
 
     @Resource
     private BaseLabelVariableService baseLabelVariableService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -96,13 +99,11 @@ public class BaseLabelVariableController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseLabelVariable searchBaseLabelVariable){
-    List<BaseLabelVariableDto> list = baseLabelVariableService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseLabelVariable));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "标签变量信息", BaseLabelVariableDto.class, "标签变量信息.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        List<BaseLabelVariableDto> list = baseLabelVariableService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseLabelVariable));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "标签变量信息", "标签变量信息.xls", response);
     }
 
     /**

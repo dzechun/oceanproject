@@ -1,18 +1,19 @@
 package com.fantechs.provider.mes.pm.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmDailyPlanStockListDto;
 import com.fantechs.common.base.general.dto.mes.pm.imports.MesPmDailyPlanImport;
-import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerJobOrderImport;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmDailyPlan;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmHtDailyPlan;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmDailyPlan;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.mes.pm.service.MesPmDailyPlanService;
 import com.fantechs.provider.mes.pm.service.MesPmHtDailyPlanService;
 import com.github.pagehelper.Page;
@@ -48,6 +49,8 @@ public class MesPmDailyPlanController {
     private MesPmDailyPlanService mesPmDailyPlanService;
     @Resource
     private MesPmHtDailyPlanService mesPmHtDailyPlanService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -98,13 +101,11 @@ public class MesPmDailyPlanController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchMesPmDailyPlan searchMesPmDailyPlan){
-    List<MesPmDailyPlanDto> list = mesPmDailyPlanService.findList(searchMesPmDailyPlan);
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "MesPmDailyPlan信息", MesPmDailyPlanDto.class, "MesPmDailyPlan.xls", response);
-        } catch (Exception e) {
-            throw new BizErrorException(e);
-        }
+        List<MesPmDailyPlanDto> list = mesPmDailyPlanService.findList(searchMesPmDailyPlan);
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "MesPmDailyPlan信息", "MesPmDailyPlan.xls", response);
     }
 
     /**

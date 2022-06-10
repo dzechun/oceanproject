@@ -1,6 +1,5 @@
 package com.fantechs.provider.wms.inner.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.history.WmsHtInnerInventory;
@@ -8,8 +7,11 @@ import com.fantechs.common.base.general.entity.wms.inner.search.SearchFindInvSto
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.wms.inner.service.WmsHtInnerInventoryService;
 import com.fantechs.provider.wms.inner.service.WmsInnerInventoryService;
 import com.github.pagehelper.Page;
@@ -41,9 +43,10 @@ public class WmsInnerInventoryController {
 
     @Resource
     private WmsInnerInventoryService wmsInnerInventoryService;
-
     @Resource
     private WmsHtInnerInventoryService wmsHtInnerInventoryService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiIgnore
     @ApiOperation(value = "新增",notes = "新增")
@@ -133,12 +136,10 @@ public class WmsInnerInventoryController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchWmsInnerInventory searchWmsInnerInventory){
     List<WmsInnerInventoryDto> list = wmsInnerInventoryService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerInventory));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "WmsInnerInventory信息", WmsInnerInventoryDto.class, "WmsInnerInventory.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "WmsInnerInventory信息", "WmsInnerInventory.xls", response);
     }
 
     @PostMapping("/findInvStorage")

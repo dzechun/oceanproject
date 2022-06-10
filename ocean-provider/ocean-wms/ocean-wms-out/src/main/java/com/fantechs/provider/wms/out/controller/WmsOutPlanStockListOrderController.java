@@ -1,7 +1,6 @@
 package com.fantechs.provider.wms.out.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutPlanStockListOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.imports.WmsOutPlanStockListOrderImport;
@@ -10,8 +9,11 @@ import com.fantechs.common.base.general.entity.wms.out.history.WmsOutHtPlanStock
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutPlanStockListOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.wms.out.service.WmsOutPlanStockListOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -45,6 +47,8 @@ public class WmsOutPlanStockListOrderController {
 
     @Resource
     private WmsOutPlanStockListOrderService wmsOutPlanStockListOrderService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -112,12 +116,10 @@ public class WmsOutPlanStockListOrderController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchWmsOutPlanStockListOrder searchWmsOutPlanStockListOrder){
     List<WmsOutPlanStockListOrderDto> list = wmsOutPlanStockListOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsOutPlanStockListOrder));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "WmsOutPlanStockListOrder信息", WmsOutPlanStockListOrderDto.class, "WmsOutPlanStockListOrder.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "WmsOutPlanStockListOrder信息", "WmsOutPlanStockListOrder.xls", response);
     }
 
     @PostMapping(value = "/import")

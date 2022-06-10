@@ -1,16 +1,19 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BasePackageSpecificationDto;
 import com.fantechs.common.base.general.dto.basic.imports.BasePackageSpecificationImport;
 import com.fantechs.common.base.general.entity.basic.BasePackageSpecification;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtPackageSpecification;
 import com.fantechs.common.base.general.entity.basic.search.SearchBasePackageSpecification;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseHtPackageSpecificationService;
 import com.fantechs.provider.base.service.BasePackageSpecificationService;
 import com.github.pagehelper.Page;
@@ -24,12 +27,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 
 /**
@@ -47,6 +50,8 @@ public class BasePackageSpecificationController {
     private BasePackageSpecificationService basePackageSpecificationService;
     @Autowired
     private BaseHtPackageSpecificationService baseHtPackageSpecificationService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -101,13 +106,12 @@ public class BasePackageSpecificationController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBasePackageSpecification searchBasePackageSpecification){
-    List<BasePackageSpecificationDto> list = basePackageSpecificationService.findList(ControllerUtil.dynamicConditionByEntity(searchBasePackageSpecification));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "SmtPackageSpecification信息", BasePackageSpecificationDto.class, "SmtPackageSpecification.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        List<BasePackageSpecificationDto> list = basePackageSpecificationService.findList(ControllerUtil.dynamicConditionByEntity(searchBasePackageSpecification));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "SmtPackageSpecification信息", "SmtPackageSpecification.xls", response);
+
     }
 
     /**

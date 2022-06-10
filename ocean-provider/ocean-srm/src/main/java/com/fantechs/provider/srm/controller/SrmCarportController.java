@@ -1,14 +1,16 @@
 package com.fantechs.provider.srm.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.srm.SrmCarportDto;
 import com.fantechs.common.base.general.dto.srm.SrmHtCarportDto;
 import com.fantechs.common.base.general.entity.srm.SrmCarport;
 import com.fantechs.common.base.general.entity.srm.search.SearchSrmCarport;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.srm.service.SrmCarportService;
 import com.fantechs.provider.srm.service.SrmHtCarportService;
 import com.github.pagehelper.Page;
@@ -24,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -39,6 +42,8 @@ public class SrmCarportController {
     private SrmCarportService srmCarportService;
     @Resource
     private SrmHtCarportService srmHtCarportService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -93,11 +98,9 @@ public class SrmCarportController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchSrmCarport searchSrmCarport) {
         List<SrmCarportDto> list = srmCarportService.findList(ControllerUtil.dynamicConditionByEntity(searchSrmCarport));
-        try {
-            // 导出操作
-            EasyPoiUtils.exportExcel(list, "导出信息", "SrmAppointDeliveryReAsn信息", SrmCarportDto.class, "SrmAppointDeliveryReAsn.xls", response);
-        } catch (Exception e) {
-            throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "SrmAppointDeliveryReAsn信息", "SrmAppointDeliveryReAsn.xls", response);
     }
 }

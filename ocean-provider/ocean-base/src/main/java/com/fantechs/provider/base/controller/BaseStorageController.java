@@ -5,17 +5,17 @@ import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.basic.JobRuleDto;
 import com.fantechs.common.base.general.dto.basic.PrintBaseStorageCode;
 import com.fantechs.common.base.general.dto.basic.StorageRuleDto;
-import com.fantechs.common.base.general.dto.basic.imports.BaseFactoryImport;
 import com.fantechs.common.base.general.dto.basic.imports.BaseStorageImport;
-import com.fantechs.common.base.general.entity.basic.BaseCustomer;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseHtStorageService;
 import com.fantechs.provider.base.service.BaseStorageService;
 import com.fantechs.provider.base.util.StorageDistributionRuleUtils;
@@ -33,11 +33,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 /**
  * Created by wcz on 2020/09/23.
@@ -54,6 +51,8 @@ public class BaseStorageController {
 
     @Resource
     private BaseHtStorageService baseHtStorageService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "批量更新", notes = "批量更新")
     @PostMapping("/batchUpdate")
@@ -128,12 +127,11 @@ public class BaseStorageController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseStorage searchBaseStorage) {
         List<BaseStorage> list = baseStorageService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseStorage));
-        try {
-            // 导出操作
-            EasyPoiUtils.exportExcel(list, "导出库位信息", "库位信息", BaseStorage.class, "库位信息.xls", response);
-        } catch (Exception e) {
-            throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出库位信息", "库位信息", "库位信息.xls", response);
+
     }
 
     /**

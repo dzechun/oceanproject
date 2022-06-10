@@ -1,7 +1,6 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.imports.BaseCustomerImport;
 import com.fantechs.common.base.general.dto.basic.imports.BaseSupplierImport;
 import com.fantechs.common.base.general.entity.basic.BaseSupplier;
@@ -10,8 +9,10 @@ import com.fantechs.common.base.general.entity.basic.search.SearchBaseInspection
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSupplier;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseSupplierReUserService;
 import com.fantechs.provider.base.service.BaseSupplierService;
 import com.github.pagehelper.Page;
@@ -50,6 +51,8 @@ public class BaseSupplierController {
     private BaseSupplierService baseSupplierService;
     @Resource
     private BaseSupplierReUserService baseSupplierReUserService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -111,13 +114,11 @@ public class BaseSupplierController {
     @ApiOperation(value = "导出供应商excel",notes = "导出供应商excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseSupplier searchBaseSupplier){
-    List<BaseSupplier> list = baseSupplierService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseSupplier));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "供应商信息导出", "供应商信息", BaseSupplier.class, "供应商.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        List<BaseSupplier> list = baseSupplierService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseSupplier));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = com.fantechs.common.base.utils.BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "供应商信息导出", "供应商信息", "供应商.xls", response);
     }
 
     /**

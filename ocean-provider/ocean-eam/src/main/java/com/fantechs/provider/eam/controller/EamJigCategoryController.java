@@ -1,14 +1,16 @@
 package com.fantechs.provider.eam.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.eam.EamJigCategoryDto;
 import com.fantechs.common.base.general.entity.eam.EamJigCategory;
 import com.fantechs.common.base.general.entity.eam.history.EamHtJigCategory;
 import com.fantechs.common.base.general.entity.eam.search.SearchEamJigCategory;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.eam.service.EamHtJigCategoryService;
 import com.fantechs.provider.eam.service.EamJigCategoryService;
 import com.github.pagehelper.Page;
@@ -24,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -39,6 +42,8 @@ public class EamJigCategoryController {
     private EamJigCategoryService eamJigCategoryService;
     @Resource
     private EamHtJigCategoryService eamHtJigCategoryService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -85,12 +90,10 @@ public class EamJigCategoryController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchEamJigCategory searchEamJigCategory){
-    List<EamJigCategoryDto> list = eamJigCategoryService.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigCategory));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "治具类别", EamJigCategoryDto.class, "治具类别.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        List<EamJigCategoryDto> list = eamJigCategoryService.findList(ControllerUtil.dynamicConditionByEntity(searchEamJigCategory));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "治具类别", "治具类别.xls", response);
     }
 }

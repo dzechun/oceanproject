@@ -1,22 +1,23 @@
 package com.fantechs.provider.base.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseLabelCategoryDto;
 import com.fantechs.common.base.general.entity.basic.BaseLabelCategory;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtLabelCategory;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabelCategory;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseHtLabelCategoryService;
 import com.fantechs.provider.base.service.BaseLabelCategoryService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author Mr.Lei
@@ -40,6 +42,8 @@ public class BaseLabelCategoryController {
     private BaseLabelCategoryService baseLabelCategoryService;
     @Resource
     private BaseHtLabelCategoryService baseHtLabelCategoryService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -93,12 +97,11 @@ public class BaseLabelCategoryController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseLabelCategory searchBaseLabelCategory){
-    List<BaseLabelCategoryDto> list = baseLabelCategoryService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseLabelCategory));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "标签类别信息", BaseLabelCategoryDto.class, "标签类别.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        List<BaseLabelCategoryDto> list = baseLabelCategoryService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseLabelCategory));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "标签类别信息", "标签类别.xls", response);
+
     }
 }

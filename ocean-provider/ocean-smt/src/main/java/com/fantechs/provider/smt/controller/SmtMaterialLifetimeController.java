@@ -1,14 +1,16 @@
 package com.fantechs.provider.smt.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.smt.SmtMaterialLifetimeDto;
 import com.fantechs.common.base.general.entity.smt.SmtMaterialLifetime;
 import com.fantechs.common.base.general.entity.smt.history.SmtHtMaterialLifetime;
 import com.fantechs.common.base.general.entity.smt.search.SearchSmtMaterialLifetime;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.smt.service.SmtHtMaterialLifetimeService;
 import com.fantechs.provider.smt.service.SmtMaterialLifetimeService;
 import com.github.pagehelper.Page;
@@ -24,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -39,6 +42,8 @@ public class SmtMaterialLifetimeController {
     private SmtMaterialLifetimeService smtMaterialLifetimeService;
     @Resource
     private SmtHtMaterialLifetimeService smtHtMaterialLifetimeService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -85,12 +90,10 @@ public class SmtMaterialLifetimeController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchSmtMaterialLifetime searchSmtMaterialLifetime){
-    List<SmtMaterialLifetimeDto> list = smtMaterialLifetimeService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtMaterialLifetime));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "MSD材料寿命定义", SmtMaterialLifetimeDto.class, "MSD材料寿命定义.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        List<SmtMaterialLifetimeDto> list = smtMaterialLifetimeService.findList(ControllerUtil.dynamicConditionByEntity(searchSmtMaterialLifetime));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "MSD材料寿命定义", "MSD材料寿命定义.xls", response);
     }
 }

@@ -1,15 +1,17 @@
 package com.fantechs.provider.base.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseBarcodeRuleDto;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRule;
 import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtBarcodeRule;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRule;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseBarcodeRuleService;
 import com.fantechs.provider.base.service.BaseHtBarcodeRuleService;
 import com.fantechs.provider.base.util.BarcodeRuleUtils;
@@ -22,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -42,6 +45,8 @@ public class BaseBarcodeRuleController {
     private BaseBarcodeRuleService baseBarcodeRuleService;
     @Autowired
     private BaseHtBarcodeRuleService baseHtBarcodeRuleService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -96,12 +101,11 @@ public class BaseBarcodeRuleController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
                             @RequestBody(required = false) SearchBaseBarcodeRule searchBaseBarcodeRule){
     List<BaseBarcodeRuleDto> list = baseBarcodeRuleService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseBarcodeRule));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出条码规则信息", "条码规则信息", BaseBarcodeRuleDto.class, "BaseBarcodeRule.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出条码规则信息", "条码规则信息", "BaseBarcodeRule.xls", response);
+
     }
 
     @ApiOperation(value = "保存",notes = "保存")

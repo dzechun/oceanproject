@@ -5,11 +5,13 @@ import com.fantechs.common.base.general.dto.basic.BaseAddressDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseAddressImport;
 import com.fantechs.common.base.general.entity.basic.BaseAddress;
 import com.fantechs.common.base.general.entity.basic.search.SearcBaseAddress;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseAddressService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -41,6 +43,8 @@ public class BaseAddressController {
 
     @Resource
     private BaseAddressService baseAddressService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -81,12 +85,10 @@ public class BaseAddressController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearcBaseAddress searcBaseAddress){
     List<BaseAddressDto> list = baseAddressService.findList(ControllerUtil.dynamicConditionByEntity(searcBaseAddress));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "SmtAddress信息", BaseAddress.class, "SmtAddress.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "SmtAddress信息", "SmtAddress.xls", response);
     }
 
     /**

@@ -1,6 +1,5 @@
 package com.fantechs.provider.om.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmHtTransferOrderDto;
 import com.fantechs.common.base.general.dto.om.OmTransferOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmTransferOrderDto;
@@ -8,8 +7,11 @@ import com.fantechs.common.base.general.entity.om.OmTransferOrder;
 import com.fantechs.common.base.general.entity.om.search.SearchOmTransferOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.om.service.OmTransferOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -25,6 +27,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -38,6 +41,8 @@ public class OmTransferOrderController {
 
     @Resource
     private OmTransferOrderService omTransferOrderService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "下推",notes = "下推")
     @PostMapping("/pushDown")
@@ -82,13 +87,11 @@ public class OmTransferOrderController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchOmTransferOrder searchOmTransferOrder){
-    List<OmTransferOrderDto> list = omTransferOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchOmTransferOrder));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "OmTransferOrder信息", OmTransferOrderDto.class, "OmTransferOrder.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        List<OmTransferOrderDto> list = omTransferOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchOmTransferOrder));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "OmTransferOrder信息", "OmTransferOrder.xls", response);
     }
 
     @ApiOperation("修改单据状态")

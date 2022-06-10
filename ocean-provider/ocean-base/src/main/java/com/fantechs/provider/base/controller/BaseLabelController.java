@@ -1,14 +1,16 @@
 package com.fantechs.provider.base.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseLabelDto;
 import com.fantechs.common.base.general.entity.basic.BaseLabel;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtLabel;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseLabel;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseHtLabelService;
 import com.fantechs.provider.base.service.BaseLabelService;
 import com.github.pagehelper.Page;
@@ -26,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author Mr.Lei
@@ -41,6 +44,8 @@ public class BaseLabelController {
     private BaseLabelService baseLabelService;
     @Resource
     private BaseHtLabelService baseHtLabelService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -94,12 +99,11 @@ public class BaseLabelController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseLabel searchBaseLabel){
-    List<BaseLabelDto> list = baseLabelService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseLabel));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "BcmLabel信息", BaseLabelDto.class, "BcmLabel.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        List<BaseLabelDto> list = baseLabelService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseLabel));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "BcmLabel信息", "BcmLabel.xls", response);
+
     }
 }

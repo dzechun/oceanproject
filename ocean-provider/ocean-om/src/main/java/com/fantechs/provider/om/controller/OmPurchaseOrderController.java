@@ -1,6 +1,5 @@
 package com.fantechs.provider.om.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.om.OmHtPurchaseOrderDto;
 import com.fantechs.common.base.general.dto.om.OmPurchaseOrderDto;
 import com.fantechs.common.base.general.entity.om.OmPurchaseOrder;
@@ -8,8 +7,11 @@ import com.fantechs.common.base.general.entity.om.OmPurchaseOrderDet;
 import com.fantechs.common.base.general.entity.om.search.SearchOmPurchaseOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.om.service.OmPurchaseOrderService;
 import com.fantechs.provider.om.service.ht.OmHtPurchaseOrderService;
 import com.github.pagehelper.Page;
@@ -26,6 +28,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -41,6 +44,8 @@ public class OmPurchaseOrderController {
     private OmPurchaseOrderService omPurchaseOrderService;
     @Resource
     private OmHtPurchaseOrderService omHtPurchaseOrderService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -110,13 +115,10 @@ public class OmPurchaseOrderController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchOmPurchaseOrder searchOmPurchaseOrder){
         List<OmPurchaseOrderDto> list = omPurchaseOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchOmPurchaseOrder));
-        try {
-            // 导出操作
-            EasyPoiUtils.exportExcel(list, "采购订单信息", "OmPurchaseOrder信息", OmPurchaseOrderDto.class, "OmPurchaseOrder.xls", response);
-        } catch (Exception e) {
-//            e.printStackTrace();
-            throw new BizErrorException(e);
-        }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "采购订单信息", "OmPurchaseOrder信息", "OmPurchaseOrder.xls", response);
     }
 
     @ApiOperation(value = "下推",notes = "下推")

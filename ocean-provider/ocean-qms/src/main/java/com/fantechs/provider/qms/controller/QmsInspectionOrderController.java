@@ -1,13 +1,15 @@
 package com.fantechs.provider.qms.controller;
 
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.qms.QmsInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.history.QmsHtInspectionOrder;
 import com.fantechs.common.base.general.entity.qms.search.SearchQmsInspectionOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.qms.service.QmsHtInspectionOrderService;
 import com.fantechs.provider.qms.service.QmsInspectionOrderService;
 import com.github.pagehelper.Page;
@@ -23,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -38,6 +41,8 @@ public class QmsInspectionOrderController {
     private QmsInspectionOrderService qmsInspectionOrderService;
     @Resource
     private QmsHtInspectionOrderService qmsHtInspectionOrderService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation("PDA提交")
     @PostMapping("/PDASubmit")
@@ -114,13 +119,11 @@ public class QmsInspectionOrderController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchQmsInspectionOrder searchQmsInspectionOrder){
-    List<QmsInspectionOrder> list = qmsInspectionOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrder));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "成品检验单信息", QmsInspectionOrder.class, "成品检验单.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        List<QmsInspectionOrder> list = qmsInspectionOrderService.findList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrder));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "成品检验单信息", "成品检验单.xls", response);
     }
 
     @ApiOperation(value = "定时自动新增",notes = "定时自动新增")

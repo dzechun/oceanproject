@@ -9,8 +9,11 @@ import com.fantechs.common.base.general.entity.basic.history.BaseHtMaterial;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseHtMaterialService;
 import com.fantechs.provider.base.service.BaseMaterialService;
 import com.github.pagehelper.Page;
@@ -50,6 +53,9 @@ public class BaseMaterialController {
 
     @Resource
     private BaseHtMaterialService baseHtMaterialService;
+
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation("根据条件查询物料信息列表")
     @PostMapping("/findList")
@@ -111,9 +117,11 @@ public class BaseMaterialController {
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
                               @RequestBody(required = false) SearchBaseMaterial searchBaseMaterial){
         List<BaseMaterialDto> list = baseMaterialService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseMaterial));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
         try {
-            // 导出操作
-            EasyPoiUtils.exportExcel(list, "物料信息表", "物料信息", BaseMaterialDto.class, "物料信息.xls", response);
+            // 自定义导出操作
+            EasyPoiUtils.customExportExcel(list, customExportParamList, "物料信息表", "物料信息", "物料信息.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }

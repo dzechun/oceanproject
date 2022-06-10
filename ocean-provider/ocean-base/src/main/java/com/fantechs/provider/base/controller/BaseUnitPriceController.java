@@ -1,7 +1,6 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseUnitPriceDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseUnitPriceImport;
 import com.fantechs.common.base.general.entity.basic.BaseUnitPrice;
@@ -9,15 +8,18 @@ import com.fantechs.common.base.general.entity.basic.history.BaseHtUnitPrice;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseUnitPrice;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseHtUnitPriceService;
 import com.fantechs.provider.base.service.BaseUnitPriceService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +47,8 @@ public class BaseUnitPriceController {
     private BaseUnitPriceService baseUnitPriceService;
     @Resource
     private BaseHtUnitPriceService baseHtUnitPriceService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -91,13 +95,11 @@ public class BaseUnitPriceController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseUnitPrice searchBaseUnitPrice){
-    List<BaseUnitPriceDto> list = baseUnitPriceService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseUnitPrice));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "BaseUnitPrice信息", BaseUnitPriceDto.class, "BaseUnitPrice.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        List<BaseUnitPriceDto> list = baseUnitPriceService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseUnitPrice));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "BaseUnitPrice信息", "BaseUnitPrice.xls", response);
     }
 
     /**

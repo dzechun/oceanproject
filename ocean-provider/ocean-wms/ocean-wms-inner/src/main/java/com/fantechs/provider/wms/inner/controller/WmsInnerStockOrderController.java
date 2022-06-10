@@ -1,24 +1,27 @@
 package com.fantechs.provider.wms.inner.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.wms.inner.*;
+import com.fantechs.common.base.general.dto.wms.inner.CommitInnerStockBarcodeDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDetBarcodeDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDetDto;
+import com.fantechs.common.base.general.dto.wms.inner.WmsInnerStockOrderDto;
 import com.fantechs.common.base.general.dto.wms.inner.imports.WmsInnerStockOrderImport;
-import com.fantechs.common.base.general.dto.wms.out.imports.WmsOutDeliveryOrderImport;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrder;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerStockOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStockOrder;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerStockOrderDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.wms.inner.service.WmsInnerStockOrderDetService;
 import com.fantechs.provider.wms.inner.service.WmsInnerStockOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -46,6 +49,8 @@ public class WmsInnerStockOrderController {
     private WmsInnerStockOrderService wmsInventoryVerificationService;
     @Resource
     private WmsInnerStockOrderDetService wmsInventoryVerificationDetService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -108,12 +113,10 @@ public class WmsInnerStockOrderController {
         SearchWmsInnerStockOrderDet searchWmsInnerStockOrderDet = new SearchWmsInnerStockOrderDet();
         searchWmsInnerStockOrderDet.setStockIds(longs);
         List<WmsInnerStockOrderDetDto> detDtos = wmsInventoryVerificationDetService.findList(ControllerUtil.dynamicConditionByEntity(searchWmsInnerStockOrderDet));
-        try {
-            // 导出操作
-            EasyPoiUtils.exportExcel(detDtos, "导出信息", "盘点单", WmsInnerStockOrderDetDto.class, "盘点单.xls", response);
-            } catch (Exception e) {
-            throw new BizErrorException(e);
-            }
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(detDtos, customExportParamList, "导出信息", "盘点单", "盘点单.xls", response);
     }
 
     @ApiOperation("盘点单激活作废")

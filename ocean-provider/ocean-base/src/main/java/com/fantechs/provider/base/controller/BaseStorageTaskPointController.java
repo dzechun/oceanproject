@@ -1,16 +1,17 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.imports.BaseStorageImport;
 import com.fantechs.common.base.general.dto.basic.imports.BaseStorageTaskPointImport;
 import com.fantechs.common.base.general.entity.basic.BaseStorageTaskPoint;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtStorageTaskPoint;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorageTaskPoint;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.BeanUtils;
+import com.fantechs.common.base.utils.CustomFormUtils;
 import com.fantechs.common.base.utils.EasyPoiUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.service.BaseStorageTaskPointService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -42,6 +43,8 @@ public class BaseStorageTaskPointController {
 
     @Resource
     private BaseStorageTaskPointService baseStorageTaskPointService;
+    @Resource
+    private AuthFeignApi securityFeignApi;
 
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
@@ -88,13 +91,11 @@ public class BaseStorageTaskPointController {
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void exportExcel(HttpServletResponse response, @ApiParam(value = "查询对象")
     @RequestBody(required = false) SearchBaseStorageTaskPoint searchBaseStorageTaskPoint){
-    List<BaseStorageTaskPoint> list = baseStorageTaskPointService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseStorageTaskPoint));
-    try {
-        // 导出操作
-        EasyPoiUtils.exportExcel(list, "导出信息", "配送点信息", BaseStorageTaskPoint.class, "配送点信息.xls", response);
-        } catch (Exception e) {
-        throw new BizErrorException(e);
-        }
+        List<BaseStorageTaskPoint> list = baseStorageTaskPointService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseStorageTaskPoint));
+        // 获取自定义导出参数列表
+        List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
+        // 自定义导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "配送点信息", "配送点信息.xls", response);
     }
 
     /**

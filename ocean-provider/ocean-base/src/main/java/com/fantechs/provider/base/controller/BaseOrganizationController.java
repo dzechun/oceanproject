@@ -1,7 +1,6 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.entity.basic.BaseOrganization;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtOrganization;
@@ -97,12 +96,8 @@ public class BaseOrganizationController {
         List<BaseOrganizationDto> list = baseOrganizationService.findList(ControllerUtil.dynamicConditionByEntity(searchBaseOrganization));
         // 获取自定义导出参数列表
         List<Map<String, Object>> customExportParamList = BeanUtils.objectListToMapList(securityFeignApi.findCustomExportParamList(CustomFormUtils.getFromRout()).getData());
-        try {
-            // 导出操作
-            EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "BaseOrganization信息", "BaseOrganization.xls", response);
-        } catch (Exception e) {
-            throw new BizErrorException(e);
-        }
+        // 导出操作
+        EasyPoiUtils.customExportExcel(list, customExportParamList, "导出信息", "BaseOrganization信息", "BaseOrganization.xls", response);
     }
 
     @ApiOperation("绑定用户")
