@@ -795,12 +795,12 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
 
         List<MesSfcWorkOrderBarcode> mesSfcWorkOrderBarcodes = new ArrayList<>();
         //获取最大值id
-        int workOrderBarcodeId = mesSfcWorkOrderBarcodeMapper.selectMaxWorkOrderBarcodeId();
+        //int workOrderBarcodeId = mesSfcWorkOrderBarcodeMapper.selectMaxWorkOrderBarcodeId();
 
         long forTime = System.currentTimeMillis();
         List<MesSfcBarcodeProcess> processList = new ArrayList<>();
         for (String barcode : rs.getData()) {
-            workOrderBarcodeId++;
+            //workOrderBarcodeId++;
             //record.setWorkOrderBarcodeId(null);
             //Integer max = mesSfcWorkOrderBarcodeMapper.findCountCode(record.getBarcodeType(),record.getWorkOrderId())
             MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode = new MesSfcWorkOrderBarcode();
@@ -814,7 +814,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
             mesSfcWorkOrderBarcode.setModifiedUserId(sysUser.getUserId());
             mesSfcWorkOrderBarcode.setOrgId(sysUser.getOrganizationId());
             mesSfcWorkOrderBarcode.setCreateBarcodeTime(new Date());
-            mesSfcWorkOrderBarcode.setWorkOrderBarcodeId(Long.valueOf(workOrderBarcodeId));
+            //mesSfcWorkOrderBarcode.setWorkOrderBarcodeId(Long.valueOf(workOrderBarcodeId));
             mesSfcWorkOrderBarcodes.add(mesSfcWorkOrderBarcode);
 
             if (labelRuteDto.getBarcodeType() == (byte) 1) {
@@ -863,19 +863,23 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
                 redisUtil.expire(key, 3);
             }
         }
+        logger.info("fro循环 执行总时长 : {}毫秒)", (System.currentTimeMillis() - forTime));
         if (CollectionUtil.isNotEmpty(mesSfcWorkOrderBarcodes)) {
             //批量生成
-            mesSfcWorkOrderBarcodeMapper.insertList(mesSfcWorkOrderBarcodes);
-            //mesSfcWorkOrderBarcodeMapper.setAutoIncrement(workOrderBarcodeId);
-        }
-
-        logger.info("fro循环 执行总时长 : {}毫秒)", (System.currentTimeMillis() - forTime));
-
-        // 批量保存条码过站表
-        if (!processList.isEmpty()) {
-            long insertListTime = System.currentTimeMillis();
-            mesSfcBarcodeProcessMapper.insertList(processList);
-            logger.info("批量保存条码过站表 执行总时长 : {}毫秒)", (System.currentTimeMillis() - insertListTime));
+            List<MesSfcWorkOrderBarcode> mesSfcWorkOrderBarcodesList = mesSfcWorkOrderBarcodeMapper.batchInsert(mesSfcWorkOrderBarcodes);
+            // 批量保存条码过站表
+            if (!processList.isEmpty()) {
+                long insertListTime = System.currentTimeMillis();
+                for(MesSfcBarcodeProcess mesSfcBarcodeProcess :processList){
+                    for(MesSfcWorkOrderBarcode item: mesSfcWorkOrderBarcodesList){
+                        if(mesSfcBarcodeProcess.getBarcode().equals(item.getBarcode())){
+                            mesSfcBarcodeProcess.setWorkOrderBarcodeId(item.getWorkOrderBarcodeId());
+                        }
+                    }
+                }
+                mesSfcBarcodeProcessMapper.insertList(processList);
+                logger.info("批量保存条码过站表 执行总时长 : {}毫秒)", (System.currentTimeMillis() - insertListTime));
+            }
         }
         logger.info("新增条码 执行总时长 : {}毫秒)", (System.currentTimeMillis() - startTime));
         return mesSfcWorkOrderBarcodeList;

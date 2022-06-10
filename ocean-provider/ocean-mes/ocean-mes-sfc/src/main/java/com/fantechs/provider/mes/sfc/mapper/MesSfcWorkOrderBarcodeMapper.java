@@ -65,4 +65,6 @@ public interface MesSfcWorkOrderBarcodeMapper extends MyMapper<MesSfcWorkOrderBa
     int selectMaxWorkOrderBarcodeId();
 
     void setAutoIncrement(Integer autoIncrementId);
+
+    List<MesSfcWorkOrderBarcode> batchInsert(List<MesSfcWorkOrderBarcode> mesSfcWorkOrderBarcodes);
 }

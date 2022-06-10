@@ -491,4 +491,19 @@
     <select id="setAutoIncrement">
         alter table mes_sfc_work_order_barcode AUTO_INCREMENT= #{autoIncrementId};
     </select>
+
+    <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true"  keyProperty="work_order_barcode_id">
+        INSERT INTO mes_sfc_work_order_barcode
+        (parent_id,barcode,work_order_id,barcode_status,label_category_id,print_time,create_barcode_time,remark,
+        org_id,create_user_id,create_time,modified_user_id,modified_time,is_delete,option1,option2,option3)
+        VALUES
+        <foreach collection="mesSfcWorkOrderBarcodes" index="index" item="items" separator=",">
+            (
+            #{items.parentId},#{items.barcode},#{items.workOrderId},#{items.barcodeStatus},#{items.labelCategoryId},
+            #{items.printTime},#{items.createBarcodeTime},#{items.remark},
+            #{items.orgId},#{items.createUserId},#{items.createTime},#{items.modifiedUserId},#{items.modifiedTime},#{items.isDelete},
+            #{items.option1},#{items.option2},#{items.option3}
+            )
+        </foreach>
+    </insert>
 </mapper>
