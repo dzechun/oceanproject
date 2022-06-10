@@ -34,22 +34,25 @@
         <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
         <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
         <result column="label_category_name" jdbcType="VARCHAR" property="labelCategoryName"/>
-        <result column="same_package_code" jdbcType="VARCHAR" property="samePackageCode" />
-        <result column="cutsomer_barcode" jdbcType="VARCHAR" property="cutsomerBarcode" />
-        <result column="sales_barcode" jdbcType="VARCHAR" property="salesBarcode" />
-        <result column="reprint_count" jdbcType="VARCHAR" property="reprintCount" />
+        <result column="same_package_code" jdbcType="VARCHAR" property="samePackageCode"/>
+        <result column="cutsomer_barcode" jdbcType="VARCHAR" property="cutsomerBarcode"/>
+        <result column="sales_barcode" jdbcType="VARCHAR" property="salesBarcode"/>
+        <result column="reprint_count" jdbcType="VARCHAR" property="reprintCount"/>
     </resultMap>
     <resultMap id="BaseRuleMap" type="com.fantechs.common.base.general.dto.mes.sfc.LabelRuteDto">
     </resultMap>
     <resultMap id="BaseResultDto" type="com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto">
-        <result column="source_order_id" jdbcType="BIGINT" property="sourceOrderId" />
-        <result column="material_id" jdbcType="BIGINT" property="materialId" />
-        <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName" />
-        <result column="packing_qty" jdbcType="DECIMAL" property="packingQty" />
-        <result column="actual_qty" jdbcType="DECIMAL" property="actualQty" />
+        <result column="source_order_id" jdbcType="BIGINT" property="sourceOrderId"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
+        <result column="packing_unit_name" jdbcType="VARCHAR" property="packingUnitName"/>
+        <result column="packing_qty" jdbcType="DECIMAL" property="packingQty"/>
+        <result column="actual_qty" jdbcType="DECIMAL" property="actualQty"/>
     </resultMap>
     <sql id="BaseColumnList">
-        mswob.work_order_barcode_id,
+        mswob
+        .
+        work_order_barcode_id
+        ,
         mswob.parent_id,
         mswob.barcode,
         mswob.work_order_id,
@@ -122,7 +125,8 @@
         left join base_material bms on sod.material_id = bms.material_id
         left join base_label_category blc on mswob.label_category_id = blc.label_category_id
         LEFT JOIN mes_sfc_barcode_process msbp ON mswob.work_order_barcode_id = msbp.work_order_barcode_id
-        LEFT JOIN mes_sfc_work_order_barcode_reprint mswobr ON mswob.work_order_barcode_id = mswobr.work_order_barcode_id
+        LEFT JOIN mes_sfc_work_order_barcode_reprint mswobr ON mswob.work_order_barcode_id =
+        mswobr.work_order_barcode_id
         <where>
             <if test="workOrderId != null">
                 and mswob.work_order_id = #{workOrderId}
@@ -143,7 +147,8 @@
                 and mswob.barcode = #{barcode}
             </if>
             <if test="barcodeList != null">
-                <foreach collection="barcodeList" index="index" item="item" open="mswob.barcode in (" close=")" separator=",">
+                <foreach collection="barcodeList" index="index" item="item" open="mswob.barcode in (" close=")"
+                         separator=",">
                     #{item}
                 </foreach>
             </if>
@@ -188,38 +193,39 @@
     <select id="findListByReprint" resultMap="BaseResultDtoMap"
             parameterType="com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode">
         SELECT
-            mswob.work_order_barcode_id,
-            mswob.barcode,
-            <choose>
-                <when test="barcodeType==3 or barcodeType==4">
-                    oso.sales_order_code as 'work_order_code',
-                </when>
-                <otherwise>
-                    mswob.work_order_code,
-                </otherwise>
-            </choose>
-            mswob.barcode_status,
-            blc.label_category_name,
-            bm.material_code,
-            bm.material_name,
-            COUNT( mswobr.work_order_barcode_reprint_id ) AS reprint_count,
-            mswob.print_time,
-            mswob.create_barcode_time
+        mswob.work_order_barcode_id,
+        mswob.barcode,
+        <choose>
+            <when test="barcodeType==3 or barcodeType==4">
+                oso.sales_order_code as 'work_order_code',
+            </when>
+            <otherwise>
+                mswob.work_order_code,
+            </otherwise>
+        </choose>
+        mswob.barcode_status,
+        blc.label_category_name,
+        bm.material_code,
+        bm.material_name,
+        COUNT( mswobr.work_order_barcode_reprint_id ) AS reprint_count,
+        mswob.print_time,
+        mswob.create_barcode_time
         FROM
-            mes_sfc_work_order_barcode mswob
-            <choose>
-                <when test="barcodeType==3 or barcodeType==4">
-                    LEFT JOIN om_sales_order_det osod ON mswob.work_order_id = osod.sales_order_det_id
-                    LEFT JOIN om_sales_order oso on osod.sales_order_id = oso.sales_order_id
-                    LEFT JOIN base_material bm on osod.material_id = bm.material_id
-                </when>
-                <otherwise>
-                    LEFT JOIN mes_pm_work_order mpwo ON mswob.work_order_id = mpwo.work_order_id
-                    LEFT JOIN base_material bm on mpwo.material_id = bm.material_id
-                </otherwise>
-            </choose>
-                LEFT JOIN mes_sfc_work_order_barcode_reprint mswobr ON mswob.work_order_barcode_id = mswobr.work_order_barcode_id
-                LEFT JOIN base_label_category blc ON mswob.label_category_id = blc.label_category_id
+        mes_sfc_work_order_barcode mswob
+        <choose>
+            <when test="barcodeType==3 or barcodeType==4">
+                LEFT JOIN om_sales_order_det osod ON mswob.work_order_id = osod.sales_order_det_id
+                LEFT JOIN om_sales_order oso on osod.sales_order_id = oso.sales_order_id
+                LEFT JOIN base_material bm on osod.material_id = bm.material_id
+            </when>
+            <otherwise>
+                LEFT JOIN mes_pm_work_order mpwo ON mswob.work_order_id = mpwo.work_order_id
+                LEFT JOIN base_material bm on mpwo.material_id = bm.material_id
+            </otherwise>
+        </choose>
+        LEFT JOIN mes_sfc_work_order_barcode_reprint mswobr ON mswob.work_order_barcode_id =
+        mswobr.work_order_barcode_id
+        LEFT JOIN base_label_category blc ON mswob.label_category_id = blc.label_category_id
         <where>
             <if test="workOrderCode != null and workOrderCode !=''">
                 and mswob.work_order_code like CONCAT('%', #{workOrderCode}, '%')
@@ -254,7 +260,7 @@
             </if>
         </where>
         GROUP BY
-            mswob.work_order_barcode_id
+        mswob.work_order_barcode_id
         <choose>
             <when test="barcodeType==3 or barcodeType==4">
                 order by oso.sales_order_code desc, mswob.barcode desc
@@ -274,11 +280,13 @@
     </select>
     <!--查询条码解析码及标签模版（工单条码打印）-->
     <select id="findRule" resultMap="BaseRuleMap">
-        SELECT br.barcode_rule as 'barcodeRule',br.barcode_rule_id as 'barcodeRuleId',lc.barcode_type as 'barcodeType',bl.label_code as 'labelCode', bl.label_name as 'labelName',bl.label_version as 'labelVersion',bl.print_mode as 'printMode',
-        lc.label_category_id as 'labelCategoryId',(mpwo.work_order_qty-IFNULL((select COUNT(*)
-                                                                        FROM mes_sfc_work_order_barcode
-                                                                        where label_category_id = lc.label_category_id
-                                                                          and work_order_id = mpwo.work_order_id),0)) as 'oncePrintQty',lm.once_print_count as 'size'
+        SELECT br.barcode_rule as 'barcodeRule',br.barcode_rule_id as 'barcodeRuleId',lc.barcode_type as 'barcodeType',bl.label_code as 'labelCode', bl.label_name as 'labelName',bl.label_version as 'labelVersion',bl.print_mode as 'printMode', lc.label_category_id as 'labelCategoryId',(mpwo.work_order_qty -
+                                                                                                                                                                                                                                                                                              IFNULL(
+                                                                                                                                                                                                                                                                                                      (select COUNT(*)
+                                                                                                                                                                                                                                                                                                       FROM mes_sfc_work_order_barcode
+                                                                                                                                                                                                                                                                                                       where label_category_id = lc.label_category_id
+                                                                                                                                                                                                                                                                                                         and work_order_id = mpwo.work_order_id),
+                                                                                                                                                                                                                                                                                                      0)) as 'oncePrintQty',lm.once_print_count as 'size'
         FROM mes_pm_work_order mpwo
                  left join base_barcode_rule_set_det brs on brs.barcode_rule_set_id = mpwo.barcode_rule_set_id
                  LEFT JOIN base_barcode_rule br ON brs.barcode_rule_id = br.barcode_rule_id
@@ -291,11 +299,13 @@
           AND lc.label_category_code = #{code}
     </select>
     <select id="findOmRule" resultMap="BaseRuleMap">
-        SELECT br.barcode_rule as 'barcodeRule',br.barcode_rule_id as 'barcodeRuleId',lc.barcode_type as 'barcodeType',bl.label_code as 'labelCode', bl.label_name as 'labelName',bl.label_version as 'labelVersion',bl.print_mode as 'printMode',
-                lc.label_category_id as 'labelCategoryId',(osod.order_qty-IFNULL((select COUNT(*)
-                                                                                  FROM mes_sfc_work_order_barcode
-                                                                                  where label_category_id = lc.label_category_id
-                                                                                    and work_order_id = osod.sales_order_det_id),0)) as 'oncePrintQty',lm.once_print_count as 'size'
+        SELECT br.barcode_rule as 'barcodeRule',br.barcode_rule_id as 'barcodeRuleId',lc.barcode_type as 'barcodeType',bl.label_code as 'labelCode', bl.label_name as 'labelName',bl.label_version as 'labelVersion',bl.print_mode as 'printMode', lc.label_category_id as 'labelCategoryId',(osod.order_qty -
+                                                                                                                                                                                                                                                                                              IFNULL(
+                                                                                                                                                                                                                                                                                                      (select COUNT(*)
+                                                                                                                                                                                                                                                                                                       FROM mes_sfc_work_order_barcode
+                                                                                                                                                                                                                                                                                                       where label_category_id = lc.label_category_id
+                                                                                                                                                                                                                                                                                                         and work_order_id = osod.sales_order_det_id),
+                                                                                                                                                                                                                                                                                                      0)) as 'oncePrintQty',lm.once_print_count as 'size'
         FROM om_sales_order_det osod
                  LEFT JOIN om_sales_order oso ON oso.sales_order_id = osod.sales_order_id
                  left join base_barcode_rule_set_det brs on brs.barcode_rule_set_id = oso.barcode_rule_set_id
@@ -304,7 +314,7 @@
                  LEFT JOIN base_label bl ON lm.label_id = bl.label_id
                  LEFT JOIN base_label_category lc ON bl.label_category_id = lc.label_category_id AND
                                                      bl.label_category_id = lc.label_category_id
-        where osod.sales_order_det_id=#{salesOrderDetId}
+        where osod.sales_order_det_id = #{salesOrderDetId}
           and br.barcode_rule_category_id = lc.label_category_id
           AND lc.label_category_code = 02
     </select>
@@ -346,7 +356,9 @@
     <select id="saleOrderTotalQty" resultType="java.math.BigDecimal">
         <choose>
             <when test="type=1">
-                SELECT IFNULL(COUNT(*),0) FROM mes_sfc_work_order_barcode WHERE work_order_id IN(SELECT sales_order_det_id FROM om_sales_order_det WHERE sales_order_id=#{salesOrderId}) AND label_category_id=#{barcodeTypeId}
+                SELECT IFNULL(COUNT(*),0) FROM mes_sfc_work_order_barcode WHERE work_order_id IN(SELECT
+                sales_order_det_id FROM om_sales_order_det WHERE sales_order_id=#{salesOrderId}) AND
+                label_category_id=#{barcodeTypeId}
             </when>
             <otherwise>
                 SELECT sum(order_qty) FROM om_sales_order_det WHERE sales_order_id=#{salesOrderId}
@@ -363,7 +375,7 @@
         SELECT
         <include refid="BaseColumnList"/>
         FROM
-            mes_sfc_product_carton_det mspcd
+        mes_sfc_product_carton_det mspcd
         LEFT JOIN mes_sfc_work_order_barcode mswob ON mswob.work_order_barcode_id = mspcd.work_order_barcode_id
         LEFT JOIN mes_sfc_product_carton mspc ON mspc.product_carton_id = mspcd.product_carton_id
         <where>
@@ -408,7 +420,8 @@
                 and mswob.org_id = #{orgId}
             </if>
             <if test="list != null">
-                <foreach collection="list" open="and mswob.work_order_barcode_id IN (" separator="," close=")" item="value">
+                <foreach collection="list" open="and mswob.work_order_barcode_id IN (" separator="," close=")"
+                         item="value">
                     #{value}
                 </foreach>
             </if>
@@ -418,7 +431,7 @@
     </select>
 
     <select id="findListByPalletDet" resultMap="BaseResultDtoMap" parameterType="map">
-        SELECT <include refid="BaseColumnList"/>,
+        SELECT<include refid="BaseColumnList"/>,
         bm.material_code,
         msbp.same_package_code,
         mskpr.part_barcode AS 'cutsomer_barcode',
@@ -428,8 +441,10 @@
         LEFT JOIN mes_pm_work_order mpwo ON mswob.work_order_id = mpwo.work_order_id
         LEFT JOIN base_material bm ON mpwo.material_id = bm.material_id
         LEFT JOIN mes_sfc_barcode_process msbp ON mswob.work_order_barcode_id = msbp.work_order_barcode_id
-        LEFT JOIN mes_sfc_key_part_relevance mskpr ON mswob.work_order_barcode_id = mskpr.work_order_barcode_id AND mskpr.material_id IS NOT NULL
-        LEFT JOIN mes_sfc_key_part_relevance mskpr2 ON mswob.work_order_barcode_id = mskpr2.work_order_barcode_id AND mskpr2.label_category_id IS NOT NULL
+        LEFT JOIN mes_sfc_key_part_relevance mskpr ON mswob.work_order_barcode_id = mskpr.work_order_barcode_id AND
+        mskpr.material_id IS NOT NULL
+        LEFT JOIN mes_sfc_key_part_relevance mskpr2 ON mswob.work_order_barcode_id = mskpr2.work_order_barcode_id AND
+        mskpr2.label_category_id IS NOT NULL
         <where>
             <if test="orgId != null">
                 and mswob.org_id = #{orgId}
@@ -441,7 +456,7 @@
     </select>
 
     <select id="findListByCartonDet" resultMap="BaseResultDtoMap" parameterType="map">
-        SELECT <include refid="BaseColumnList"/>,
+        SELECT<include refid="BaseColumnList"/>,
         bm.material_code,
         msbp.same_package_code,
         mskpr.part_barcode AS 'cutsomer_barcode',
@@ -451,8 +466,10 @@
         LEFT JOIN mes_pm_work_order mpwo ON mswob.work_order_id = mpwo.work_order_id
         LEFT JOIN base_material bm ON mpwo.material_id = bm.material_id
         LEFT JOIN mes_sfc_barcode_process msbp ON mswob.work_order_barcode_id = msbp.work_order_barcode_id
-        LEFT JOIN mes_sfc_key_part_relevance mskpr ON mswob.work_order_barcode_id = mskpr.work_order_barcode_id AND mskpr.material_id IS NOT NULL
-        LEFT JOIN mes_sfc_key_part_relevance mskpr2 ON mswob.work_order_barcode_id = mskpr2.work_order_barcode_id AND mskpr2.label_category_id IS NOT NULL
+        LEFT JOIN mes_sfc_key_part_relevance mskpr ON mswob.work_order_barcode_id = mskpr.work_order_barcode_id AND
+        mskpr.material_id IS NOT NULL
+        LEFT JOIN mes_sfc_key_part_relevance mskpr2 ON mswob.work_order_barcode_id = mskpr2.work_order_barcode_id AND
+        mskpr2.label_category_id IS NOT NULL
         <where>
             <if test="orgId != null">
                 and mswob.org_id = #{orgId}
@@ -464,42 +481,50 @@
     </select>
 
     <select id="findSysUser" resultType="java.lang.String">
-        SELECT su.`password` FROM ocean_v2.sys_user_role sur
-        LEFT JOIN ocean_v2.sys_role sr ON sur.role_id = sr.role_id
-        LEFT JOIN ocean_v2.sys_user su ON sur.user_id = su.user_id
-        WHERE sr.role_code=015 AND su.user_code=#{userCode}
+        SELECT su.`password`
+        FROM ocean_v2.sys_user_role sur
+                 LEFT JOIN ocean_v2.sys_role sr ON sur.role_id = sr.role_id
+                 LEFT JOIN ocean_v2.sys_user su ON sur.user_id = su.user_id
+        WHERE sr.role_code = 015
+          AND su.user_code = #{userCode}
     </select>
 
     <select id="findLabelView" resultType="java.lang.String">
-        SELECT TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_SCHEMA= 'fantech_imes_v2' AND TABLE_NAME = #{labelCode}
+        SELECT TABLE_NAME
+        FROM INFORMATION_SCHEMA.VIEWS
+        WHERE TABLE_SCHEMA = 'fantech_imes_v2'
+          AND TABLE_NAME = #{labelCode}
     </select>
 
-    <select id="selectPartField" parameterType="map" resultType="com.fantechs.common.base.general.dto.mes.sfc.SyncWorkOrderBarcodeDto">
+    <select id="selectPartField" parameterType="map"
+            resultType="com.fantechs.common.base.general.dto.mes.sfc.SyncWorkOrderBarcodeDto">
         SELECT mswob.barcode, mswob.barcode_status as barcodeStatus
         FROM mes_sfc_work_order_barcode mswob
         WHERE
-            mswob.label_category_id = #{labelCategoryId}
-        <foreach collection="barcodeList" index="index" item="item" open="AND mswob.barcode IN (" close=")" separator=",">
+        mswob.label_category_id = #{labelCategoryId}
+        <foreach collection="barcodeList" index="index" item="item" open="AND mswob.barcode IN (" close=")"
+                 separator=",">
             #{item}
         </foreach>
     </select>
 
     <select id="selectMaxWorkOrderBarcodeId" resultType="int">
-        select MAx(work_order_barcode_id) from  mes_sfc_work_order_barcode
+        select MAx(work_order_barcode_id)
+        from mes_sfc_work_order_barcode
     </select>
 
     <select id="setAutoIncrement">
         alter table mes_sfc_work_order_barcode AUTO_INCREMENT= #{autoIncrementId};
     </select>
 
-    <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true"  keyProperty="work_order_barcode_id">
+    <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="workOrderBarcodeId">
         INSERT INTO mes_sfc_work_order_barcode
-        (parent_id,barcode,work_order_id,barcode_status,label_category_id,print_time,create_barcode_time,remark,
+        (parent_id,barcode,work_order_id,work_order_code,barcode_status,label_category_id,print_time,create_barcode_time,remark,
         org_id,create_user_id,create_time,modified_user_id,modified_time,is_delete,option1,option2,option3)
         VALUES
-        <foreach collection="mesSfcWorkOrderBarcodes" index="index" item="items" separator=",">
+        <foreach collection="list" index="index" item="items" separator=",">
             (
-            #{items.parentId},#{items.barcode},#{items.workOrderId},#{items.barcodeStatus},#{items.labelCategoryId},
+            #{items.parentId},#{items.barcode},#{items.workOrderId},#{items.workOrderCode},#{items.barcodeStatus},#{items.labelCategoryId},
             #{items.printTime},#{items.createBarcodeTime},#{items.remark},
             #{items.orgId},#{items.createUserId},#{items.createTime},#{items.modifiedUserId},#{items.modifiedTime},#{items.isDelete},
             #{items.option1},#{items.option2},#{items.option3}

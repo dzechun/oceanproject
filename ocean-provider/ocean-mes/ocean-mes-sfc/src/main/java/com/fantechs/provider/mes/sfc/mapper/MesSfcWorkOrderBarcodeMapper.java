@@ -66,5 +66,5 @@ public interface MesSfcWorkOrderBarcodeMapper extends MyMapper<MesSfcWorkOrderBa
 
     void setAutoIncrement(Integer autoIncrementId);
 
-    List<MesSfcWorkOrderBarcode> batchInsert(List<MesSfcWorkOrderBarcode> mesSfcWorkOrderBarcodes);
+    void batchInsert(List<MesSfcWorkOrderBarcode> list);
 }

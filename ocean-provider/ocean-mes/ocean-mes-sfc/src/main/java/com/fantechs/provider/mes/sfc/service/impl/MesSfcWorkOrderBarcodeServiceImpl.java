@@ -866,12 +866,12 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         logger.info("fro循环 执行总时长 : {}毫秒)", (System.currentTimeMillis() - forTime));
         if (CollectionUtil.isNotEmpty(mesSfcWorkOrderBarcodes)) {
             //批量生成
-            List<MesSfcWorkOrderBarcode> mesSfcWorkOrderBarcodesList = mesSfcWorkOrderBarcodeMapper.batchInsert(mesSfcWorkOrderBarcodes);
+            mesSfcWorkOrderBarcodeMapper.batchInsert(mesSfcWorkOrderBarcodes);
             // 批量保存条码过站表
             if (!processList.isEmpty()) {
                 long insertListTime = System.currentTimeMillis();
                 for(MesSfcBarcodeProcess mesSfcBarcodeProcess :processList){
-                    for(MesSfcWorkOrderBarcode item: mesSfcWorkOrderBarcodesList){
+                    for(MesSfcWorkOrderBarcode item: mesSfcWorkOrderBarcodes){
                         if(mesSfcBarcodeProcess.getBarcode().equals(item.getBarcode())){
                             mesSfcBarcodeProcess.setWorkOrderBarcodeId(item.getWorkOrderBarcodeId());
                         }
