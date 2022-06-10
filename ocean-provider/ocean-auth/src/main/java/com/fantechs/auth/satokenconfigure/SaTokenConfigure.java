@@ -85,10 +85,14 @@ public class SaTokenConfigure implements WebMvcConfigurer, AccessDecisionManager
                     SaHolder.getResponse()
                             // 允许指定域访问跨域资源
                             .setHeader("Access-Control-Allow-Origin", "*")
+
+                            .setHeader("Access-Control-Allow-Credentials", "true")
                             // 允许所有请求方式
                             .setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
                             // 允许的header参数
                             .setHeader("Access-Control-Allow-Headers", "*")
+
+                            .setHeader("Access-Control-Max-Age", "3600")
                             // 服务器名称
                             .setServer("ocean-auth")
                             // 是否可以在iframe显示视图： DENY=不可以 | SAMEORIGIN=同域下可以 | ALLOW-FROM uri=指定域名下可以
