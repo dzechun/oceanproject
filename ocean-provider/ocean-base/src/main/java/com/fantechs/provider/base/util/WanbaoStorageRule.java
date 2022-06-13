@@ -311,18 +311,21 @@ public class WanbaoStorageRule {
         //用库位查询在库货品库存
         List<Long> scLongs = wanbaoStorageRule.baseStorageMapper.screen(list,capacity,baseStorageRule.getQty());
         //查询批次相同库位 物料+库位+销售编码+PO+库龄小于30天
-        List<StorageRuleInventry> storageRuleInventries = wanbaoStorageRule.baseStorageMapper.findInv(scLongs,baseStorageRule.getMaterialId(),
-                baseStorageRule.getSalesBarcode(),baseStorageRule.getPoCode(),baseStorageRule.getInventoryStatusId());
-        log.error("====================================库容："+capacity+"=============================");
-        log.error("最近上架库位"+JsonUtils.objectToJson(storageRuleInventries));
-        List<StorageRuleInventry> alikeList = storageRuleInventries.stream().filter(x->(capacity.subtract(x.getMaterialQty()))
-                .compareTo(baseStorageRule.getQty())>-1)
-                .sorted(Comparator.comparing(StorageRuleInventry::getMaterialQty))
-                .collect(Collectors.toList());
-        log.error("未满仓库位："+JsonUtils.objectToJson(alikeList));
-        if(alikeList.size()>0){
-            storageId = alikeList.get(0).getStorageId();
-            return storageId;
+        List<StorageRuleInventry> storageRuleInventries = new ArrayList<>();
+        if(scLongs.size()>0) {
+            storageRuleInventries = wanbaoStorageRule.baseStorageMapper.findInv(scLongs, baseStorageRule.getMaterialId(),
+                    baseStorageRule.getSalesBarcode(), baseStorageRule.getPoCode(), baseStorageRule.getInventoryStatusId());
+            log.error("====================================库容：" + capacity + "=============================");
+            log.error("最近上架库位" + JsonUtils.objectToJson(storageRuleInventries));
+            List<StorageRuleInventry> alikeList = storageRuleInventries.stream().filter(x -> (capacity.subtract(x.getMaterialQty()))
+                            .compareTo(baseStorageRule.getQty()) > -1)
+                    .sorted(Comparator.comparing(StorageRuleInventry::getMaterialQty))
+                    .collect(Collectors.toList());
+            log.error("未满仓库位：" + JsonUtils.objectToJson(alikeList));
+            if (alikeList.size() > 0) {
+                storageId = alikeList.get(0).getStorageId();
+                return storageId;
+            }
         }
         //筛选空库位 根据上架动线号升序
         if(StringUtils.isNotEmpty(storageRuleInventries) || storageRuleInventries.size()>0){
@@ -361,6 +364,7 @@ public class WanbaoStorageRule {
      * @return
      */
     private static Long getLatelyStorage(BaseStorageRule baseStorageRule,BaseMaterial baseMaterial){
+        log.error("进入首选最近上架库位筛选");
         //查询最近上架库位
         Long storageId = wanbaoStorageRule.baseStorageMapper.getLatelyStorage(baseStorageRule.getMaterialId());
         if(StringUtils.isEmpty(storageId)){

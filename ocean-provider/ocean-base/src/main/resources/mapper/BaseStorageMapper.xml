@@ -470,6 +470,7 @@ order by wii.modified_time desc limit 1
                 #{list.storageId}
             </foreach>
         </if>
+        and barcode_status=3
         GROUP BY bs.storage_id
         HAVING SUM(iid.material_qty)&lt;#{capacity} AND (SUM(iid.material_qty)+#{qty})&lt;=#{capacity}
     </select>
