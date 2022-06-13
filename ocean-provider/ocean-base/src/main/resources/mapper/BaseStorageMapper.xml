@@ -473,4 +473,10 @@ order by wii.modified_time desc limit 1
         GROUP BY bs.storage_id
         HAVING SUM(iid.material_qty)&lt;#{capacity} AND (SUM(iid.material_qty)+#{qty})&lt;=#{capacity}
     </select>
+    <select id="getLatelyStorage" resultType="java.lang.Long">
+        select in_storage_id FROM wms_inner_job_order_det jod
+        LEFT JOIN wms_inner_job_order jo ON jod.job_order_id = jo.job_order_id
+        where jo.job_order_type=3 and jod.material_id=#{materialId} and jod.order_status>=3
+        order by jod.modified_time desc limit 1
+    </select>
 </mapper>

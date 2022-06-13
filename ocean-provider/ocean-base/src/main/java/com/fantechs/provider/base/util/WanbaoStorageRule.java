@@ -19,10 +19,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -67,6 +64,15 @@ public class WanbaoStorageRule {
             log.error("参数为空");
             throw new BizErrorException(ErrorCodeEnum.GL99990100);
         }
+
+        //是否MC产品
+        BaseMaterial baseMaterial = wanbaoStorageRule.baseMaterialMapper.selectByPrimaryKey(baseStorageRule.getMaterialId());
+
+        //优先匹配最近上架库位
+        Long storage = getLatelyStorage(baseStorageRule,baseMaterial);
+        if(StringUtils.isNotEmpty(storage)){
+            return storage;
+        }
         //根据仓库产线查询库位
         Example example = new Example(BaseStorage.class);
         example.createCriteria().andEqualTo("logicId",baseStorageRule.getLogicId()).andEqualTo("proLineId",baseStorageRule.getProLineId());
@@ -75,8 +81,6 @@ public class WanbaoStorageRule {
             log.error("未查询到逻辑仓："+baseStorageRule.getLogicId()+"产线："+baseStorageRule.getProLineId());
             return publicStorage(baseStorageRule);
         }
-        //是否MC产品
-        BaseMaterial baseMaterial = wanbaoStorageRule.baseMaterialMapper.selectByPrimaryKey(baseStorageRule.getMaterialId());
         if(StringUtils.isEmpty(baseMaterial)){
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"获取物料信息失败");
         }
@@ -348,6 +352,54 @@ public class WanbaoStorageRule {
             }
         }
         return storageId;
+    }
+
+    /**
+     * 优先获取最近上架库位
+     * @param baseStorageRule
+     * @param baseMaterial
+     * @return
+     */
+    private static Long getLatelyStorage(BaseStorageRule baseStorageRule,BaseMaterial baseMaterial){
+        //查询最近上架库位
+        Long storageId = wanbaoStorageRule.baseStorageMapper.getLatelyStorage(baseStorageRule.getMaterialId());
+        if(StringUtils.isEmpty(storageId)){
+            log.error("首次匹配最近上架库位失败，进入正常规则匹配");
+            return null;
+        }
+        //根据物料获取库位类型
+        String str = baseMaterial.getMaterialCode().substring(0,8);
+        Example example = new Example(BaseStorageCapacity.class);
+        example.createCriteria().andEqualTo("materialCodePrefix",str);
+        BaseStorageCapacity baseStorageCapacity = wanbaoStorageRule.baseStorageCapacityMapper.selectOneByExample(example);
+        if(StringUtils.isEmpty(baseStorageCapacity)){
+            throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(),"获取库位类型失败");
+        }
+        //查询库位
+        BaseStorage baseStorage = wanbaoStorageRule.baseStorageMapper.selectByPrimaryKey(storageId);
+        BigDecimal capacity;
+        if(baseStorage.getMaterialStoreType()==1){
+            capacity = baseStorageCapacity.getTypeACapacity();
+        }else if(baseStorage.getMaterialStoreType()==2){
+            capacity = baseStorageCapacity.getTypeBCapacity();
+        }else if(baseStorage.getMaterialStoreType()==3){
+            capacity = baseStorageCapacity.getTypeCCapacity();
+        }else {
+            capacity = baseStorageCapacity.getTypeDCapacity();
+        }
+        if(StringUtils.isEmpty(capacity)){
+            log.error("获取库容类型失败");
+            return null;
+        }
+        List<Long> scLongs = new ArrayList<>();
+        scLongs.add(storageId);
+        List<StorageRuleInventry> storageRuleInventries = wanbaoStorageRule.baseStorageMapper.findInv(scLongs,baseStorageRule.getMaterialId(),null,null,baseStorageRule.getInventoryStatusId());
+        storageRuleInventries = storageRuleInventries.stream().filter(y->(capacity.subtract(y.getMaterialQty()))
+                .compareTo(baseStorageRule.getQty())>-1).collect(Collectors.toList());
+        if(StringUtils.isEmpty(storageRuleInventries) && storageRuleInventries.size()<1){
+            return null;
+        }
+        return storageRuleInventries.get(0).getStorageId();
     }
 
     public static void main(String[] args) {
