@@ -15,6 +15,9 @@ public class SearchOmSalesCodeReSpc extends BaseQuery implements Serializable {
     @ApiModelProperty(name="samePackageCode",value = "PO号")
     private String samePackageCode;
 
+    @ApiModelProperty(name="materialId",value = "产品ID")
+    private Long materialId;
+
     @ApiModelProperty(name="materialCode",value = "产品编码")
     private String materialCode;
 
