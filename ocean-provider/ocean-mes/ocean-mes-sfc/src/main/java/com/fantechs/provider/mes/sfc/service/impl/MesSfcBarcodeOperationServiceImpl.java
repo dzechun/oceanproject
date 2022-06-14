@@ -262,14 +262,10 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             }
 
             // 查找该附件码是否存在系统中
-            List<MesSfcWorkOrderBarcodeDto> sfcWorkOrderAnnexBarcodeDtos = mesSfcWorkOrderBarcodeService
-                    .findList(SearchMesSfcWorkOrderBarcode.builder()
-                            .barcode(dto.getBarAnnexCode())
-                            .build());
-            if (StringUtils.isEmpty(sfcWorkOrderAnnexBarcodeDtos)){
+            MesSfcWorkOrderBarcode barcodeDto = mesSfcWorkOrderBarcodeService.findBarcode(dto.getBarAnnexCode());
+            if (StringUtils.isEmpty(barcodeDto)){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该附件码不存在系统中");
             }
-            MesSfcWorkOrderBarcodeDto barcodeDto = sfcWorkOrderAnnexBarcodeDtos.get(0);
             if (barcodeDto.getLabelCategoryId().equals(mesSfcWorkOrderBarcodeMapper.finByTypeId("产品条码"))){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该附件码为厂内码类型，不可扫码");
             }
@@ -317,49 +313,38 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                         .build());
                 isWork = false;
 
-                /**
-                 * 万宝特性要求
-                 * 扫附件码时，通过销售条码查找销售编码与PO关系表
-                 * 绑定关系
-                 */
-                SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
-                searchSysSpecItem.setSpecCode("wanbaoPackingPO");
-                List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
-                if (!specItems.isEmpty() && "1".equals(specItems.get(0).getParaValue())){
-                    SearchOmSalesCodeReSpc searchOmSalesCodeReSpc = new SearchOmSalesCodeReSpc();
-                    searchOmSalesCodeReSpc.setSamePackageCodeStatus((byte) 1);
-                    List<OmSalesCodeReSpcDto> codeReSpcDtos = omFeignApi.findAll(searchOmSalesCodeReSpc).getData();
-                    // 同个销售编码
-                    List<OmSalesCodeReSpcDto> currentDtos = new ArrayList<>();
-                    for (OmSalesCodeReSpcDto omSalesCodeReSpcDto : codeReSpcDtos){
-                        if(StringUtils.isNotEmpty(omSalesCodeReSpcDto.getSalesCode())) {
-                            if (dto.getBarAnnexCode().contains(omSalesCodeReSpcDto.getSalesCode()) && barcodeDto.getMaterialId().equals(omSalesCodeReSpcDto.getMaterialId())) {
-                                currentDtos.add(omSalesCodeReSpcDto);
-                                continue;
-                            }
-                        }
+                SearchOmSalesCodeReSpc searchOmSalesCodeReSpc = new SearchOmSalesCodeReSpc();
+                searchOmSalesCodeReSpc.setSamePackageCodeStatus((byte) 1);
+                searchOmSalesCodeReSpc.setMaterialId(mesPmWorkOrder.getMaterialId());
+                List<OmSalesCodeReSpcDto> codeReSpcDtos = omFeignApi.findAll(searchOmSalesCodeReSpc).getData();
+                // 同个销售编码
+                List<OmSalesCodeReSpcDto> currentDtos = new ArrayList<>();
+                for (OmSalesCodeReSpcDto omSalesCodeReSpcDto : codeReSpcDtos){
+                    if(StringUtils.isNotEmpty(omSalesCodeReSpcDto.getSalesCode()) && dto.getBarAnnexCode().contains(omSalesCodeReSpcDto.getSalesCode())) {
+                        currentDtos.add(omSalesCodeReSpcDto);
+                        continue;
                     }
-                    if (!currentDtos.isEmpty() && currentDtos.size() > 0){
-                        // 排序，优先级最高的
-                        currentDtos = currentDtos.stream().sorted(Comparator.comparing(OmSalesCodeReSpc::getPriority)).collect(Collectors.toList());
-                        OmSalesCodeReSpc omSalesCodeReSpc = currentDtos.get(0);
-                        // 绑定关系
-                        mesSfcBarcodeProcess.setSamePackageCode(omSalesCodeReSpc.getSamePackageCode());
-                        mesSfcBarcodeProcess.setSalesCodeReSpcId(omSalesCodeReSpc.getSalesCodeReSpcId());
-                        mesSfcBarcodeProcessService.update(mesSfcBarcodeProcess);
+                }
+                if (!currentDtos.isEmpty() && currentDtos.size() > 0){
+                    // 排序，优先级最高的
+                    currentDtos = currentDtos.stream().sorted(Comparator.comparing(OmSalesCodeReSpc::getPriority)).collect(Collectors.toList());
+                    OmSalesCodeReSpc omSalesCodeReSpc = currentDtos.get(0);
+                    // 绑定关系
+                    mesSfcBarcodeProcess.setSamePackageCode(omSalesCodeReSpc.getSamePackageCode());
+                    mesSfcBarcodeProcess.setSalesCodeReSpcId(omSalesCodeReSpc.getSalesCodeReSpcId());
+                    mesSfcBarcodeProcessService.update(mesSfcBarcodeProcess);
 
-                        // 增加以匹配数
-                        omSalesCodeReSpc.setMatchedQty(omSalesCodeReSpc.getMatchedQty() != null ? BigDecimal.ONE.add(omSalesCodeReSpc.getMatchedQty()) : BigDecimal.ONE);
-                        if (omSalesCodeReSpc.getMatchedQty().compareTo(omSalesCodeReSpc.getSamePackageCodeQty()) == 0){
-                            omSalesCodeReSpc.setSamePackageCodeStatus((byte) 3);
-                        }
-                        omFeignApi.update(omSalesCodeReSpc);
+                    // 增加以匹配数
+                    omSalesCodeReSpc.setMatchedQty(omSalesCodeReSpc.getMatchedQty() != null ? BigDecimal.ONE.add(omSalesCodeReSpc.getMatchedQty()) : BigDecimal.ONE);
+                    if (omSalesCodeReSpc.getMatchedQty().compareTo(omSalesCodeReSpc.getSamePackageCodeQty()) == 0){
+                        omSalesCodeReSpc.setSamePackageCodeStatus((byte) 3);
                     }
+                    omFeignApi.update(omSalesCodeReSpc);
                 }
             }
 
             long getAnnex = System.currentTimeMillis();
-            log.info("===========扫描附件码耗时===================:" + (getAnnex-CartonDto));
+            log.info("=========== 扫描附件码耗时 :" + (getAnnex-checkAnnerExists));
 
             // 有附件码未作业或有附件码并且已作业，直接返回
             if (isWork||keyPartRelevanceDtos.size() + 1 < usageQty.intValue()) {
@@ -395,14 +380,12 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                         .build());
             }
         }
-
+        long one1 = System.currentTimeMillis();
+        log.info("============== 附件码处理耗时:"+ (one1 - selectBaseTime));
         // 7、过站
         // 更新下一工序，增加工序记录
-        log.info("================== 过站开始 ==================");
         List<BaseRouteProcess> routeProcessList = baseFeignApi.findConfigureRout(mesPmWorkOrder.getRouteId()).getData();
-        // 获取当前工单信息
-        long one1 = System.currentTimeMillis();
-        log.info("============== 判断当前工序one1:"+ (one1 - selectBaseTime));
+
         // 判断当前工序是否为产出工序,若是产出工序则不用判断下一工序
         if (!mesSfcBarcodeProcess.getNextProcessId().equals(mesPmWorkOrder.getOutputProcessId())) {
             // 若入参当前扫码工序ID跟过站表下一工序ID不一致
@@ -524,7 +507,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
 
         // 是否投产工序且是该条码在工单工序第一次过站，工单投产数量 +1 mesSfcBarcodeProcessRecordDtoList.isEmpty()
         if(StringUtils.isNotEmpty(mesPmWorkOrder.getPutIntoProcessId())) {
-            if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getProcessId()) && mesPmWorkOrder.getWorkOrderStatus() == (byte) 1) {
+            if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getProcessId())) {
                 /**
                  * 20211215 bgkun
                  * 如果有附件码，变更销售订单条码状态
@@ -536,12 +519,10 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     List<MesSfcWorkOrderBarcode> barcodes = new ArrayList<>();
                     for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : keyPartRelevanceDtos){
                         if (keyPartRelevanceDto.getPartBarcode() != null && mesSfcBarcodeProcess.getCustomerBarcode() == null){
-                            SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode = new SearchMesSfcWorkOrderBarcode();
-                            searchMesSfcWorkOrderBarcode.setBarcode(keyPartRelevanceDto.getPartBarcode());
-                            List<MesSfcWorkOrderBarcodeDto> barcodeDtos = mesSfcWorkOrderBarcodeService.findList(searchMesSfcWorkOrderBarcode);
-                            if (!barcodeDtos.isEmpty()){
+                            MesSfcWorkOrderBarcode barcodeDto = mesSfcWorkOrderBarcodeService.findBarcode(keyPartRelevanceDto.getPartBarcode());
+                            if (StringUtils.isNotEmpty(barcodeDto)){
                                 MesSfcWorkOrderBarcode barcode = new MesSfcWorkOrderBarcode();
-                                barcode.setWorkOrderBarcodeId(barcodeDtos.get(0).getWorkOrderBarcodeId());
+                                barcode.setWorkOrderBarcodeId(barcodeDto.getWorkOrderBarcodeId());
                                 barcode.setBarcodeStatus((byte) 1);
                                 barcodes.add(barcode);
                             }
@@ -554,8 +535,10 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
 
                 mesPmWorkOrder.setProductionQty(mesPmWorkOrder.getProductionQty() != null ? mesPmWorkOrder.getProductionQty().add(BigDecimal.ONE) : BigDecimal.ONE);
                 // 若是投产工序，则判断是否首条码，若是则更新工单状态为生产中
-                mesPmWorkOrder.setWorkOrderStatus((byte) 3);
-                mesPmWorkOrder.setActualStartTime(new Date());
+                if (mesPmWorkOrder.getWorkOrderStatus() == (byte) 1){
+                    mesPmWorkOrder.setWorkOrderStatus((byte) 3);
+                    mesPmWorkOrder.setActualStartTime(new Date());
+                }
                 pmFeignApi.updatePmWorkOrder(mesPmWorkOrder);
 
                 /**

@@ -91,6 +91,9 @@
           <if test="salesCode != null and salesCode != ''">
               and oscrs.sales_code like CONCAT('%', #{salesCode}, '%')
           </if>
+          <if test="materialId != null and materialId != ''">
+              and bm.material_id =  #{materialId}
+          </if>
           <if test="materialCode != null and materialCode != ''">
               and bm.material_code like CONCAT('%', #{materialCode}, '%')
           </if>
