@@ -24,11 +24,11 @@
         LEFT JOIN  ProductTrace PT ON P.Id= pt.ProductId
         <where>
             pt.Status= '1'
-            AND pt.StationId= '5eccf61c-de83-4380-ab99-3e722141ebe3'
+            AND pt.StationId= '0c16a804-d54f-4057-8077-650f29420fc5'
             <if test="date != null and date != ''">
                 AND pt.CreateOn >= CONVERT(DATETIME , #{date}, 102)
             </if>
-            /*AND  PP.PlanName= 'ZA2107-0098' */
+            /*AND  PP.PlanName= 'ZA2107-0098' 5eccf61c-de83-4380-ab99-3e722141ebe3 */
         </where>
     </select>
 
