@@ -479,8 +479,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         long three = System.currentTimeMillis();
         log.info("============== 设置next工序:"+ (three - two2));
         //客户条码
-        if (StringUtils.isNotEmpty(dto.getBarAnnexCode())){
-            mesSfcBarcodeProcess.setCustomerBarcode(dto.getBarAnnexCode());
+        if (StringUtils.isNotEmpty(customerBarcode)){
+            mesSfcBarcodeProcess.setCustomerBarcode(customerBarcode);
         }
         mesSfcBarcodeProcess.setBarcodeStatus((byte) 1);
         mesSfcBarcodeProcess.setInProcessTime(new Date());
@@ -538,6 +538,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     }
                 }
 
+                long updatePartKey = System.currentTimeMillis();
+                log.info("============== 变更附件码耗时:"+ (updatePartKey - four));
+
                 mesPmWorkOrder.setProductionQty(mesPmWorkOrder.getProductionQty() != null ? mesPmWorkOrder.getProductionQty().add(BigDecimal.ONE) : BigDecimal.ONE);
                 // 若是投产工序，则判断是否首条码，若是则更新工单状态为生产中
                 if (mesPmWorkOrder.getWorkOrderStatus() == (byte) 1){
@@ -546,12 +549,16 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 }
                 pmFeignApi.updatePmWorkOrder(mesPmWorkOrder);
 
+                long updateworkorder = System.currentTimeMillis();
+                log.info("============== 反写工单耗时:"+ (updateworkorder - updatePartKey));
                 /**
                  * 日期：20211109
                  * 更新条码状态  条码状态(0-待投产 1-投产中 2-已完成 3-待打印)
                  */
                 sfcWorkOrderBarcode.setBarcodeStatus((byte) 1);
                 mesSfcWorkOrderBarcodeService.update(sfcWorkOrderBarcode);
+                long updateOrderBarcode = System.currentTimeMillis();
+                log.info("============== 反写条码表耗时:"+ (updateOrderBarcode - updateworkorder));
             }
         }
 
