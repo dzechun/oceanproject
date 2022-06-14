@@ -40,6 +40,7 @@ public class ProcessRecordUreportController {
     @PostMapping("/findList")
     @ApiModelProperty("过站日报表")
     public ResponseEntity<List<ProcessRecordUreportDto>> findList(@RequestBody(required = false) SearchProcessRecordUreportDto dto){
+        dto.setPageSize(9999);
         Page<Object> page = PageHelper.startPage(dto.getStartPage(), dto.getPageSize());
         return ControllerUtil.returnDataSuccess(processRecordUreportService.findList(ControllerUtil.dynamicConditionByEntity(dto)), (int)page.getTotal());
     }

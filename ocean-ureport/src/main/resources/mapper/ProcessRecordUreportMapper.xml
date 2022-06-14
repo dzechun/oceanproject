@@ -13,7 +13,7 @@
         count(*) AS finishQty,
         su.user_name AS userName,
         msbpr.process_name AS processName,
-        date_format( msbpr.create_time, '%Y-%m-%d' ) AS finishDate
+        date_format( msbpr.in_process_time, '%Y-%m-%d' ) AS finishDate
         FROM
         mes_sfc_barcode_process_record msbpr
         LEFT JOIN base_material bm ON msbpr.material_id=bm.material_id
@@ -33,7 +33,7 @@
                 and msbpr.process_name like CONCAT('%', #{processName}, '%')
             </if>
             <if test="finishDate != null and finishDate != ''">
-                and date_format(msbpr.create_time, '%Y-%m-%d')=#{finishDate}
+                and date_format(msbpr.in_process_time, '%Y-%m-%d')=#{finishDate}
             </if>
             <if test="userName != null and userName != ''">
                 and su.user_name = #{userName}
