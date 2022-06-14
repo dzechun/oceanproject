@@ -516,7 +516,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 map.clear();
                 map.put("workOrderBarcodeId", sfcWorkOrderBarcode.getWorkOrderBarcodeId());
                 List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = mesSfcKeyPartRelevanceService.findList(map);
-                log.info("======== 查询所有附件码：" + JSON.toJSONString(keyPartRelevanceDtos));
                 if (!keyPartRelevanceDtos.isEmpty() && keyPartRelevanceDtos.size() >0){
                     List<MesSfcWorkOrderBarcode> barcodes = new ArrayList<>();
                     for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : keyPartRelevanceDtos){
