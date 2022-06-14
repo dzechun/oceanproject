@@ -459,6 +459,7 @@ order by wii.modified_time desc limit 1
             </foreach>
         </where>
         group by in_storage_id
+        HAVING (SUM(distribution_qty)+#{qty})&lt;=#{capacity}
     </select>
     <select id="screen" resultType="java.lang.Long">
         SELECT bs.storage_id FROM base_storage bs
