@@ -98,11 +98,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
         // 2022-03-08 判断是否质检完成之后走产线入库
-        SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
-        searchWmsInnerInventoryDet.setBarcode(dto.getBarCode());
-        List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
-        if (!inventoryDetDtos.isEmpty()){
-            this.scanBarocodeByQmsFinish(dto.getBarCode(), inventoryDetDtos.get(0));
+        WmsInnerInventoryDet innerInventoryDet = innerFeignApi.findByDet(dto.getBarCode()).getData();
+        if (StringUtils.isNotEmpty(innerInventoryDet)){
+            this.scanBarocodeByQmsFinish(dto.getBarCode(), innerInventoryDet);
             return true;
         }
 
@@ -161,12 +159,17 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             throw new BizErrorException(ErrorCodeEnum.PDA40012007.getCode(), "作业配置的产线与工单上的产线不符，不可操作");
         }
 
+        long workorderTime = System.currentTimeMillis();
+        log.info("=========== 查询工单耗时 :" + (workorderTime-WorkOrderBarcode));
+
         MesSfcBarcodeProcess mesSfcBarcodeProcess = mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
                 .workOrderBarcodeId(orderBarcodeDto.getWorkOrderBarcodeId())
-                .nextProcessId(dto.getProcessId())
                 .build());
         if(StringUtils.isEmpty(mesSfcBarcodeProcess)){
-            throw new BizErrorException(ErrorCodeEnum.PDA40012002);
+            throw new BizErrorException(ErrorCodeEnum.PDA40012002.getCode(), "该条码未生成或条码过站数据不存在");
+        }
+        if (!mesSfcBarcodeProcess.getNextProcessId().equals(dto.getProcessId())){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "配置工序与条码所处工序不匹配");
         }
         if (!mesSfcBarcodeProcess.getProLineId().equals(dto.getProLineId())){
             throw new BizErrorException(ErrorCodeEnum.PDA40012003.getCode(), "该产品条码产线跟该工位产线不匹配");
@@ -181,7 +184,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         }
 
         long BarcodeProcess = System.currentTimeMillis();
-        log.info("=========== 查询条码对应过站记录信息以及工单耗时 :" + (BarcodeProcess-WorkOrderBarcode));
+        log.info("=========== 查询条码对应过站记录信息耗时 :" + (BarcodeProcess-workorderTime));
 
         // 查询包装规格信息
         BasePackageSpecificationDto packageSpecificationDto = getPackageSpecification(mesSfcBarcodeProcess.getMaterialId(), dto.getProcessId());
@@ -399,7 +402,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         List<BaseRouteProcess> routeProcessList = baseFeignApi.findConfigureRout(mesPmWorkOrder.getRouteId()).getData();
         // 获取当前工单信息
         long one1 = System.currentTimeMillis();
-        log.info("============== 判断当前工序one1:"+ (one1 - start));
+        log.info("============== 判断当前工序one1:"+ (one1 - selectBaseTime));
         // 判断当前工序是否为产出工序,若是产出工序则不用判断下一工序
         if (!mesSfcBarcodeProcess.getNextProcessId().equals(mesPmWorkOrder.getOutputProcessId())) {
             // 若入参当前扫码工序ID跟过站表下一工序ID不一致
@@ -425,7 +428,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
 
         long one = System.currentTimeMillis();
         log.info("============== 判断当前工序one:"+ (one - one1));
-        log.info("============== 判断当前工序:"+ (one - start));
 
         // 更新当前工序
         mesSfcBarcodeProcess.setProcessId(baseProcess.getProcessId());
@@ -458,17 +460,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         long two2 = System.currentTimeMillis();
         log.info("============== 产线:"+ (two2 - two1));
 
-
-        //过站次数累加注释
-        //条码在当前工序有几条过站记录 记录工序过站次数开始 2021-10-18
-        Map<String, Object> mapExist = new HashMap<>();
-        mapExist.put("barcode", dto.getBarCode());
-        mapExist.put("stationId", dto.getStationId());
-        mapExist.put("processId", dto.getProcessId());
-        List<MesSfcBarcodeProcessRecordDto> mesSfcBarcodeProcessRecordDtoList = mesSfcBarcodeProcessRecordService.findList(mapExist);
-        mesSfcBarcodeProcess.setPassStationCount(mesSfcBarcodeProcessRecordDtoList.size()+1);
-        //条码在当前工序有几条过站记录 记录工序过站次数结束 2021-10-18
-
         if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getProcessId())) {
             mesSfcBarcodeProcess.setDevoteTime(new Date());
         }
@@ -499,7 +490,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         }
 
         long three = System.currentTimeMillis();
-        log.info("============== 设置next工序:"+ (three - two));
+        log.info("============== 设置next工序:"+ (three - two2));
         //客户条码
         if (StringUtils.isNotEmpty(dto.getBarAnnexCode())){
             mesSfcBarcodeProcess.setCustomerBarcode(dto.getBarAnnexCode());
@@ -533,8 +524,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
 
         // 是否投产工序且是该条码在工单工序第一次过站，工单投产数量 +1 mesSfcBarcodeProcessRecordDtoList.isEmpty()
         if(StringUtils.isNotEmpty(mesPmWorkOrder.getPutIntoProcessId())) {
-            if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getProcessId()) && mesSfcBarcodeProcessRecordDtoList.size() == 0) {
-
+            if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getProcessId()) && mesSfcBarcodeProcess.getPassStationCount() > 1) {
                 /**
                  * 20211215 bgkun
                  * 如果有附件码，变更销售订单条码状态
@@ -597,7 +587,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         searchWmsInnerInventoryDet.setBarcode(dto.getBarCode());
         List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
         if (!inventoryDetDtos.isEmpty()){
-            this.scanBarocodeByQmsFinish(dto.getBarCode(), inventoryDetDtos.get(0));
+//            this.scanBarocodeByQmsFinish(dto.getBarCode(), inventoryDetDtos.get(0));
             return true;
         }
 
@@ -1356,9 +1346,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
      * 3、反写检验单明细条码样本值
      * 4、拆分移位单明细
      */
-    private void scanBarocodeByQmsFinish(String barcode, WmsInnerInventoryDetDto dto){
-        WmsInnerInventoryDet inventoryDet = new WmsInnerInventoryDet();
-        BeanUtils.copyProperties(dto, inventoryDet);
+    private void scanBarocodeByQmsFinish(String barcode, WmsInnerInventoryDet inventoryDet){
         if (inventoryDet.getInspectionOrderCode() == null){
             return;
         }
