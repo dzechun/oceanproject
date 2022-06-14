@@ -1,5 +1,6 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
@@ -261,6 +262,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 throw new BizErrorException(ErrorCodeEnum.PDA40012020);
             }
 
+            long checkKeyPart = System.currentTimeMillis();
+            log.info("=========== 校验关键部件物料清单耗时 :" + (checkKeyPart-checkrewo));
+
             // 查找该附件码是否存在系统中
             MesSfcWorkOrderBarcode barcodeDto = mesSfcWorkOrderBarcodeService.findBarcode(dto.getBarAnnexCode());
             if (StringUtils.isEmpty(barcodeDto)){
@@ -271,7 +275,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             }
 
             long checkAnnerExists = System.currentTimeMillis();
-            log.info("=========== 校验附件码是否存在耗时 :" + (checkAnnerExists-checkrewo));
+            log.info("=========== 校验附件码是否存在耗时 :" + (checkAnnerExists-checkKeyPart));
 
             BigDecimal material_count = pmWorkOrderMaterialRePDtoList.stream()
                     .filter(i -> barcodeDto.getLabelCategoryId().equals(i.getLabelCategoryId()) && StringUtils.isNotEmpty(i.getUsageQty()))
@@ -515,6 +519,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 map.clear();
                 map.put("workOrderBarcodeId", sfcWorkOrderBarcode.getWorkOrderBarcodeId());
                 List<MesSfcKeyPartRelevanceDto> keyPartRelevanceDtos = mesSfcKeyPartRelevanceService.findList(map);
+                log.info("======== 查询所有附件码：" + JSON.toJSONString(keyPartRelevanceDtos));
                 if (!keyPartRelevanceDtos.isEmpty() && keyPartRelevanceDtos.size() >0){
                     List<MesSfcWorkOrderBarcode> barcodes = new ArrayList<>();
                     for (MesSfcKeyPartRelevanceDto keyPartRelevanceDto : keyPartRelevanceDtos){
