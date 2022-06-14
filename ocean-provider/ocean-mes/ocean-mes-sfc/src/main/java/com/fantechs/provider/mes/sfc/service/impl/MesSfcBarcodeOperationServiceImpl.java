@@ -524,7 +524,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
 
         // 是否投产工序且是该条码在工单工序第一次过站，工单投产数量 +1 mesSfcBarcodeProcessRecordDtoList.isEmpty()
         if(StringUtils.isNotEmpty(mesPmWorkOrder.getPutIntoProcessId())) {
-            if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getProcessId()) && mesSfcBarcodeProcess.getPassStationCount() > 1) {
+            if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getProcessId()) && mesPmWorkOrder.getWorkOrderStatus() == (byte) 1) {
                 /**
                  * 20211215 bgkun
                  * 如果有附件码，变更销售订单条码状态
@@ -554,10 +554,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
 
                 mesPmWorkOrder.setProductionQty(mesPmWorkOrder.getProductionQty() != null ? mesPmWorkOrder.getProductionQty().add(BigDecimal.ONE) : BigDecimal.ONE);
                 // 若是投产工序，则判断是否首条码，若是则更新工单状态为生产中
-                if (mesPmWorkOrder.getWorkOrderStatus() == (byte) 1) {
-                    mesPmWorkOrder.setWorkOrderStatus((byte) 3);
-                    mesPmWorkOrder.setActualStartTime(new Date());
-                }
+                mesPmWorkOrder.setWorkOrderStatus((byte) 3);
+                mesPmWorkOrder.setActualStartTime(new Date());
                 pmFeignApi.updatePmWorkOrder(mesPmWorkOrder);
 
                 /**
