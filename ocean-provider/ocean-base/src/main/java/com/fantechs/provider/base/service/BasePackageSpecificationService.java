@@ -18,6 +18,7 @@ public interface BasePackageSpecificationService extends IService<BasePackageSpe
     List<BasePackageSpecificationDto> findList(Map<String, Object> map);
 
     List<BasePackageSpecificationDto> findByMaterialProcess(Map<String, Object> map);
+    List<BasePackageSpecificationDto> findByMaterialProcessNotDet(Map<String, Object> map);
 
     Map<String, Object> importExcel(List<BasePackageSpecificationImport> basePackageSpecificationImports);
 }

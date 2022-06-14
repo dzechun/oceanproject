@@ -189,9 +189,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
 
         // 查询包装规格信息
         BasePackageSpecificationDto packageSpecificationDto = getPackageSpecification(mesSfcBarcodeProcess.getMaterialId(), dto.getProcessId());
-        if(StringUtils.isEmpty(packageSpecificationDto)){
-            throw new BizErrorException("未设置包箱规格 不可继续");
-        }
         long CartonDetDto = System.currentTimeMillis();
         log.info("=========== 查询包装规格信息耗时 :" + (CartonDetDto-BarcodeProcess));
 
@@ -1266,7 +1263,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         SearchBasePackageSpecification searchBasePackageSpecification = new SearchBasePackageSpecification();
         searchBasePackageSpecification.setMaterialId(materialId);
         searchBasePackageSpecification.setProcessId(processId);
-        List<BasePackageSpecificationDto> packageSpecificationDtos = baseFeignApi.findBasePackageSpecificationList(searchBasePackageSpecification).getData();
+        List<BasePackageSpecificationDto> packageSpecificationDtos = baseFeignApi.findByMaterialProcessNotDet(searchBasePackageSpecification).getData();
         if (packageSpecificationDtos.isEmpty()) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "打包工序尚未维护当前物料的包装规格数据");
         }
