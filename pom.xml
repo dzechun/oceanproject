@@ -16,7 +16,7 @@
     <description>Demo project for Spring Boot</description>
 
     <modules>
-        <module>ocean-eureka</module>  <!-- 注册中心 -->
+<!--        <module>ocean-eureka</module>  &lt;!&ndash; 注册中心 &ndash;&gt;-->
         <module>ocean-admin</module>  <!-- 监控中心 -->
         <module>ocean-common</module>  <!-- 公共模块 -->
         <module>ocean-txlcn</module>  <!-- 分布式锁 -->
@@ -263,25 +263,50 @@
 
 
         <!--springcloud-->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-        </dependency>
-        <!--nacos-->
 <!--        <dependency>-->
 <!--            <groupId>org.springframework.cloud</groupId>-->
-<!--            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>-->
-<!--            <version>0.2.1.RELEASE</version>-->
+<!--            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>-->
 <!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.alibaba.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>-->
+<!--            <version>2.1.0.RELEASE</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.alibaba.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>-->
+<!--            <version>2.1.0.RELEASE</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.alibaba.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-alibaba-nacos-config</artifactId>-->
+<!--            <version>2.1.0.RELEASE</version>-->
+<!--            <type>jar.sha1</type>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>-->
+<!--        </dependency>-->
+
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+            <version>2.1.1.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+            <version>2.1.1.RELEASE</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
-
         <dependency>
             <groupId>io.github.openfeign</groupId>
             <artifactId>feign-httpclient</artifactId>
@@ -333,30 +358,38 @@
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
         </plugins>
+<!--        <resources>-->
+<!--            <resource>-->
+<!--                <directory>src/main/resources/bootstrap-${dev.environment}</directory>-->
+<!--                <targetPath>WEB-INF/classes</targetPath>-->
+<!--            </resource>-->
+<!--        </resources>-->
     </build>
 
-    <!--<profiles>-->
-        <!--<profile>-->
-            <!--<id>dev</id>-->
-            <!--<properties>-->
-                <!--<profileActive>dev</profileActive>-->
-            <!--</properties>-->
-            <!--<activation>-->
-                <!--<activeByDefault>true</activeByDefault>-->
-            <!--</activation>-->
-        <!--</profile>-->
-        <!--<profile>-->
-            <!--<id>test</id>-->
-            <!--<properties>-->
-                <!--<profileActive>test</profileActive>-->
-            <!--</properties>-->
-        <!--</profile>-->
-        <!--<profile>-->
-            <!--<id>pro</id>-->
-            <!--<properties>-->
-                <!--<profileActive>pro</profileActive>-->
-            <!--</properties>-->
-        <!--</profile>-->
-    <!--</profiles>-->
-
+<!--    <profiles>-->
+<!--        <profile>-->
+<!--            &lt;!&ndash;开发环境&ndash;&gt;-->
+<!--            <id>dev</id>-->
+<!--            <properties>-->
+<!--                <dev.environment>dev</dev.environment>-->
+<!--            </properties>-->
+<!--            <activation>-->
+<!--                <activeByDefault>true</activeByDefault>-->
+<!--            </activation>-->
+<!--        </profile>-->
+<!--        <profile>-->
+<!--            &lt;!&ndash;测试环境&ndash;&gt;-->
+<!--            <id>test</id>-->
+<!--            <properties>-->
+<!--                <dev.environment>test</dev.environment>-->
+<!--            </properties>-->
+<!--        </profile>-->
+<!--        <profile>-->
+<!--            &lt;!&ndash;生产环境&ndash;&gt;-->
+<!--            <id>prod</id>-->
+<!--            <properties>-->
+<!--                <dev.environment>prod</dev.environment>-->
+<!--            </properties>-->
+<!--        </profile>-->
+<!--    </profiles>-->
 </project>
