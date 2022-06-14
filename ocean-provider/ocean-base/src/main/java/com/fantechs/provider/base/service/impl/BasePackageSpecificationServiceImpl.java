@@ -216,6 +216,15 @@ public class BasePackageSpecificationServiceImpl extends BaseService<BasePackage
     }
 
     @Override
+    public List<BasePackageSpecificationDto> findByMaterialProcessNotDet(Map<String, Object> map) {
+        SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
+        map.put("orgId", user.getOrganizationId());
+        List<BasePackageSpecificationDto> basePackageSpecificationDtos = basePackageSpecificationMapper.findByMaterialProcess(map);
+        SearchBaseMaterialPackage searchBaseMaterialPackage = new SearchBaseMaterialPackage();
+        return basePackageSpecificationDtos;
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> importExcel(List<BasePackageSpecificationImport> basePackageSpecificationImports) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();

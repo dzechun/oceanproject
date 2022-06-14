@@ -1,12 +1,12 @@
 package com.fantechs.provider.base.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
+import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BasePackageSpecificationDto;
 import com.fantechs.common.base.general.dto.basic.imports.BasePackageSpecificationImport;
 import com.fantechs.common.base.general.entity.basic.BasePackageSpecification;
 import com.fantechs.common.base.general.entity.basic.history.BaseHtPackageSpecification;
 import com.fantechs.common.base.general.entity.basic.search.SearchBasePackageSpecification;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
@@ -29,7 +29,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 
 /**
@@ -86,6 +85,14 @@ public class BasePackageSpecificationController {
     public ResponseEntity<List<BasePackageSpecificationDto>> findByMaterialProcess(@ApiParam(value = "查询对象")@RequestBody SearchBasePackageSpecification searchBasePackageSpecification) {
         Page<Object> page = PageHelper.startPage(searchBasePackageSpecification.getStartPage(), searchBasePackageSpecification.getPageSize());
         List<BasePackageSpecificationDto> list = basePackageSpecificationService.findByMaterialProcess(ControllerUtil.dynamicConditionByEntity(searchBasePackageSpecification));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @ApiOperation("根据物料工序查询列表不附带明细")
+    @PostMapping("/findByMaterialProcessNotDet")
+    public ResponseEntity<List<BasePackageSpecificationDto>> findByMaterialProcessNotDet(@ApiParam(value = "查询对象")@RequestBody SearchBasePackageSpecification searchBasePackageSpecification) {
+        Page<Object> page = PageHelper.startPage(searchBasePackageSpecification.getStartPage(), searchBasePackageSpecification.getPageSize());
+        List<BasePackageSpecificationDto> list = basePackageSpecificationService.findByMaterialProcessNotDet(ControllerUtil.dynamicConditionByEntity(searchBasePackageSpecification));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 

@@ -343,6 +343,10 @@ public interface BaseFeignApi {
     @PostMapping("/basePackageSpecification/findByMaterialProcess")
     ResponseEntity<List<BasePackageSpecificationDto>> findBasePackageSpecificationList(@ApiParam(value = "查询对象") @RequestBody SearchBasePackageSpecification searchBasePackageSpecification);
 
+    @ApiOperation("根据物料工序查询列表不附带明细")
+    @PostMapping("/basePackageSpecification/findByMaterialProcessNotDet")
+    ResponseEntity<List<BasePackageSpecificationDto>> findByMaterialProcessNotDet(@ApiParam(value = "查询对象") @RequestBody SearchBasePackageSpecification searchBasePackageSpecification);
+
     @ApiOperation("获取工位详情")
     @PostMapping("/baseStation/detail")
     ResponseEntity<BaseStation> findStationDetail(@ApiParam(value = "ID", required = true) @RequestParam @NotNull(message = "id不能为空") Long id);

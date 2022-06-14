@@ -188,9 +188,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
 
         // 查询包装规格信息
         BasePackageSpecificationDto packageSpecificationDto = getPackageSpecification(mesSfcBarcodeProcess.getMaterialId(), dto.getProcessId());
-        if(StringUtils.isEmpty(packageSpecificationDto)){
-            throw new BizErrorException("未设置包箱规格 不可继续");
-        }
         long CartonDetDto = System.currentTimeMillis();
         log.info("=========== 查询包装规格信息耗时 :" + (CartonDetDto-BarcodeProcess));
 
@@ -261,6 +258,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 throw new BizErrorException(ErrorCodeEnum.PDA40012020);
             }
 
+            long checkKeyPart = System.currentTimeMillis();
+            log.info("=========== 校验关键部件物料清单耗时 :" + (checkKeyPart-checkrewo));
+
             // 查找该附件码是否存在系统中
             MesSfcWorkOrderBarcode barcodeDto = mesSfcWorkOrderBarcodeService.findBarcode(dto.getBarAnnexCode());
             if (StringUtils.isEmpty(barcodeDto)){
@@ -271,7 +271,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             }
 
             long checkAnnerExists = System.currentTimeMillis();
-            log.info("=========== 校验附件码是否存在耗时 :" + (checkAnnerExists-checkrewo));
+            log.info("=========== 校验附件码是否存在耗时 :" + (checkAnnerExists-checkKeyPart));
 
             BigDecimal material_count = pmWorkOrderMaterialRePDtoList.stream()
                     .filter(i -> barcodeDto.getLabelCategoryId().equals(i.getLabelCategoryId()) && StringUtils.isNotEmpty(i.getUsageQty()))
@@ -475,8 +475,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         long three = System.currentTimeMillis();
         log.info("============== 设置next工序:"+ (three - two2));
         //客户条码
-        if (StringUtils.isNotEmpty(dto.getBarAnnexCode())){
-            mesSfcBarcodeProcess.setCustomerBarcode(dto.getBarAnnexCode());
+        if (StringUtils.isNotEmpty(customerBarcode)){
+            mesSfcBarcodeProcess.setCustomerBarcode(customerBarcode);
         }
         mesSfcBarcodeProcess.setBarcodeStatus((byte) 1);
         mesSfcBarcodeProcess.setInProcessTime(new Date());
@@ -533,6 +533,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     }
                 }
 
+                long updatePartKey = System.currentTimeMillis();
+                log.info("============== 变更附件码耗时:"+ (updatePartKey - four));
+
                 mesPmWorkOrder.setProductionQty(mesPmWorkOrder.getProductionQty() != null ? mesPmWorkOrder.getProductionQty().add(BigDecimal.ONE) : BigDecimal.ONE);
                 // 若是投产工序，则判断是否首条码，若是则更新工单状态为生产中
                 if (mesPmWorkOrder.getWorkOrderStatus() == (byte) 1){
@@ -541,12 +544,16 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 }
                 pmFeignApi.updatePmWorkOrder(mesPmWorkOrder);
 
+                long updateworkorder = System.currentTimeMillis();
+                log.info("============== 反写工单耗时:"+ (updateworkorder - updatePartKey));
                 /**
                  * 日期：20211109
                  * 更新条码状态  条码状态(0-待投产 1-投产中 2-已完成 3-待打印)
                  */
                 sfcWorkOrderBarcode.setBarcodeStatus((byte) 1);
                 mesSfcWorkOrderBarcodeService.update(sfcWorkOrderBarcode);
+                long updateOrderBarcode = System.currentTimeMillis();
+                log.info("============== 反写条码表耗时:"+ (updateOrderBarcode - updateworkorder));
             }
         }
 
@@ -1254,7 +1261,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         SearchBasePackageSpecification searchBasePackageSpecification = new SearchBasePackageSpecification();
         searchBasePackageSpecification.setMaterialId(materialId);
         searchBasePackageSpecification.setProcessId(processId);
-        List<BasePackageSpecificationDto> packageSpecificationDtos = baseFeignApi.findBasePackageSpecificationList(searchBasePackageSpecification).getData();
+        List<BasePackageSpecificationDto> packageSpecificationDtos = baseFeignApi.findByMaterialProcessNotDet(searchBasePackageSpecification).getData();
         if (packageSpecificationDtos.isEmpty()) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "打包工序尚未维护当前物料的包装规格数据");
         }
