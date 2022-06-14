@@ -1,6 +1,5 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
