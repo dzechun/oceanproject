@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSON;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
@@ -45,6 +46,8 @@ import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeReprintService;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import com.fantechs.provider.mes.sfc.util.RabbitProducer;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -104,8 +107,25 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
      * @return
      */
     @Override
-    public List<MesSfcWorkOrderBarcodeDto> findListByReprint(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode) {
-        return mesSfcWorkOrderBarcodeMapper.findListByReprint(searchMesSfcWorkOrderBarcode);
+    public ResponseEntity<List<MesSfcWorkOrderBarcodeDto>> findListByReprint(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode) {
+        List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtos = new ArrayList<>();
+        if(ObjectUtil.isNull(searchMesSfcWorkOrderBarcode.getBarcodeType())){
+            throw new BizErrorException("条码类别不能为空！");
+        }
+        HashMap<String, Object> map = mesSfcWorkOrderBarcodeMapper.selectLabelCategoryId(String.valueOf(searchMesSfcWorkOrderBarcode.getBarcodeType()));
+        searchMesSfcWorkOrderBarcode.setLabelCategoryId(Long.valueOf(map.get("labelCategoryId").toString()));
+        Page<Object> page = PageHelper.startPage(searchMesSfcWorkOrderBarcode.getStartPage(), searchMesSfcWorkOrderBarcode.getPageSize());
+        if ("3".equals(searchMesSfcWorkOrderBarcode.getBarcodeType().toString()) || "4".equals(searchMesSfcWorkOrderBarcode.getBarcodeType().toString())) {
+            mesSfcWorkOrderBarcodeDtos = mesSfcWorkOrderBarcodeMapper.findListBySalesWorkOrder(searchMesSfcWorkOrderBarcode);
+        } else {
+            mesSfcWorkOrderBarcodeDtos = mesSfcWorkOrderBarcodeMapper.findListByWorkOrder(searchMesSfcWorkOrderBarcode);
+        }
+        mesSfcWorkOrderBarcodeDtos.forEach(t -> {
+            t.setLabelCategoryName(map.get("labelCategoryName").toString());
+            t.setLabelCategoryId(Long.valueOf(map.get("labelCategoryId").toString()));
+            t.setReprintCount(mesSfcWorkOrderBarcodeMapper.selectReprintCount(t.getWorkOrderBarcodeId()));
+        });
+        return ControllerUtil.returnDataSuccess(mesSfcWorkOrderBarcodeDtos, (int) page.getTotal());
     }
 
     /**

@@ -4,6 +4,7 @@ import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.dto.wms.in.PalletAutoAsnDto;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
 import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.IService;
 import org.apache.ibatis.annotations.Param;
 
@@ -24,7 +25,7 @@ public interface MesSfcWorkOrderBarcodeService extends IService<MesSfcWorkOrderB
      * @param searchMesSfcWorkOrderBarcode
      * @return
      */
-    List<MesSfcWorkOrderBarcodeDto> findListByReprint(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode);
+    ResponseEntity<List<MesSfcWorkOrderBarcodeDto>> findListByReprint(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode);
 
     int print(String ids,Byte printType,String printName,String userCode,String password,String printId);
     int print_rewrite(String ids,Byte printType,String printName,String userCode,String password,String printId);

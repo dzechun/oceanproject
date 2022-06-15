@@ -12,6 +12,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,4 +68,27 @@ public interface MesSfcWorkOrderBarcodeMapper extends MyMapper<MesSfcWorkOrderBa
     void setAutoIncrement(Integer autoIncrementId);
 
     void batchInsert(List<MesSfcWorkOrderBarcode> list);
+
+    /**
+     *  根据销售订单查询
+     * @param searchMesSfcWorkOrderBarcode
+     * @return
+     */
+    List<MesSfcWorkOrderBarcodeDto> findListBySalesWorkOrder(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode);
+
+    /**
+     * 根据工单查询
+     * @param searchMesSfcWorkOrderBarcode
+     * @return
+     */
+    List<MesSfcWorkOrderBarcodeDto> findListByWorkOrder(SearchMesSfcWorkOrderBarcode searchMesSfcWorkOrderBarcode);
+
+    /**
+     * 根据条码类型查询标签类别信息id
+     * @param barcodeType
+     * @return
+     */
+    HashMap<String,Object> selectLabelCategoryId(@Param("barcodeType") String barcodeType);
+
+    String selectReprintCount(@Param("workOrderBarcodeId") Long workOrderBarcodeId);
 }
