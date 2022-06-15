@@ -3,40 +3,14 @@ spring:
     # 环境变量
     active: dev
   cloud:
-    #    sentinel:
-    #      datasource:
-    #        flow:
-    #          nacos:
-    #            server-addr: ${spring.cloud.nacos.server-addr}
-    #            data-id: sentinel-flow.json
-    #            group-id: ${spring.application.name}
-    #            namespace: ${spring.cloud.nacos.discovery.namespace}
-    #            rule-type: flow
-    #        degrade:
-    #          nacos:
-    #            server-addr: ${spring.cloud.nacos.server-addr}
-    #            data-id: sentinel-degrade.json
-    #            group-id: ${spring.application.name}
-    #            namespace: ${spring.cloud.nacos.discovery.namespace}
-    #            rule-type: degrade
-    #        system:
-    #          nacos:
-    #            server-addr: ${spring.cloud.nacos.server-addr}
-    #            data-id: sentinel-system.json
-    #            group-id: ${spring.application.name}
-    #            namespace: ${spring.cloud.nacos.discovery.namespace}
-    #            rule-type: system
-    #      eager: true
     nacos:
+      # 注册配/置地址
       server-addr: ${NACOS_ADDR:192.168.204.177:8848}
-#      config:
-#        shared-dataids:
-#        file-extension: yml
-#        shared-configs:
-##          - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}   # application
-#          - data-id: ocean-common.yml
-#            group: DEFAULT_GROUP
+      config:
+        # 配置文件后缀
+        file-extension: yml
+        # 公共配置文件
+        shared-dataids: ocean-common.yml
 jasypt:
   encryptor:
     bootstrap: false
-
