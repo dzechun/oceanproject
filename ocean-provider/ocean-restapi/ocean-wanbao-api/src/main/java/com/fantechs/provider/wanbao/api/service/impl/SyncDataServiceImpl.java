@@ -937,7 +937,8 @@ public class SyncDataServiceImpl implements SyncDataService {
 //           }
 //           DynamicDataSourceHolder.removeDataSource();
 
-            logList.add(build(sysUser.getOrganizationId(), (byte) 1, "查询数据库-同步产品条码", JSON.toJSONString(barcodeDatas), new BigDecimal(System.currentTimeMillis() - start)));
+            List<String> collect = barcodeDatas.stream().map(i -> i.getBarcode() + "||" + i.getCustomerBarcode()).collect(Collectors.toList());
+            logList.add(build(sysUser.getOrganizationId(), (byte) 1, "查询数据库-同步产品条码", JSON.toJSONString(collect), new BigDecimal(System.currentTimeMillis() - start)));
         }
         if (!logList.isEmpty()) {
             securityFeignApi.batchAdd(logList);
