@@ -23,7 +23,6 @@ import com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrderDetSampl
 import com.fantechs.common.base.general.entity.wanbao.history.QmsHtInspectionOrder;
 import com.fantechs.common.base.general.entity.wanbao.search.SearchQmsInspectionOrder;
 import com.fantechs.common.base.general.entity.wanbao.search.SearchQmsInspectionOrderDet;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
@@ -1459,6 +1458,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         searchWmsInnerInventoryDet.setNotEqualMark(1);
         //加上质检单号为空作为条件 存在质检中的质检单
         searchWmsInnerInventoryDet.setIfInspectionOrderCodeNull(1);
+        searchWmsInnerInventoryDet.setPageSize(9999);
         List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
 
         //List<WmsInnerInventoryDetDto> innerInventoryDetDtos=wmsInnerInventoryDetDtos.stream().filter(item -> item.getInspectionOrderCode()==null).collect(Collectors.toList());
@@ -1545,6 +1545,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         searchWmsInnerInventoryDet1.setNotEqualMark(0);
         searchWmsInnerInventoryDet1.setIfInspectionOrderCodeNull(1);
         searchWmsInnerInventoryDet1.setStorageType((byte)1);
+        searchWmsInnerInventoryDet1.setPageSize(9999);
 
         List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos1 = innerFeignApi.findList(searchWmsInnerInventoryDet1).getData();
         Map<String, List<WmsInnerInventoryDetDto>> collect1 = new HashMap<>();
