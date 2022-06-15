@@ -15,28 +15,28 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>ocean-auth</module>        <!-- 认证服务 -->
-        <module>ocean-fileserver</module>  <!-- 文件服务 -->
-        <module>ocean-security</module>    <!-- 用户认证中心 -->
-        <module>ocean-electronic-tag</module> <!-- 电子标签 -->
-        <module>ocean-client</module>     <!-- 客户端服务 -->
-        <module>ocean-restapi</module> <!-- API接口服务 -->
-        <module>ocean-mes</module>    <!-- mes服务 -->
-        <module>ocean-wms</module>    <!-- wms服务 -->
-        <module>ocean-bcm</module>     <!-- 条码管理模块 -->
-        <module>ocean-base</module>    <!-- 基础模块 -->
-        <module>ocean-ews</module>    <!-- 预警模块  定时任务调度器-->
-        <module>ocean-ids</module>    <!-- 配送管理 -->
-        <module>ocean-om</module>    <!-- 订单管理 -->
-        <module>ocean-qms</module>    <!-- 质量管理 -->
-        <module>ocean-srm</module>    <!-- 供应商管理 -->
-        <module>ocean-eam</module>    <!-- 设备管理 -->
-        <module>ocean-smt</module>    <!-- MSD管理 -->
-        <module>ocean-tem</module>
         <module>ocean-agv</module>
-        <module>ocean-daq</module>    <!-- 数据采集 -->
-        <module>ocean-esop</module>    <!-- esop -->
+        <module>ocean-auth</module>     <!-- 认证服务 -->
+        <module>ocean-base</module>     <!-- 基础模块 -->
+        <module>ocean-bcm</module>      <!-- 条码管理模块 -->
+        <module>ocean-client</module>   <!-- 客户端服务 -->
+        <module>ocean-daq</module>      <!-- 数据采集 -->
+        <module>ocean-eam</module>      <!-- 设备管理 -->
+        <module>ocean-electronic-tag</module>   <!-- 电子标签 -->
+        <module>ocean-ews</module>      <!-- 预警模块  定时任务调度器-->
+        <module>ocean-esop</module>     <!-- esop -->
+        <module>ocean-fileserver</module>       <!-- 文件服务 -->
         <module>ocean-guest</module>    <!-- 定制化模块 -->
+        <module>ocean-ids</module>      <!-- 配送管理 -->
         <module>ocean-kreport</module>
+        <module>ocean-mes</module>      <!-- mes服务 -->
+        <module>ocean-om</module>       <!-- 订单管理 -->
+        <module>ocean-qms</module>      <!-- 质量管理 -->
+        <module>ocean-restapi</module>  <!-- API接口服务 -->
+        <module>ocean-srm</module>      <!-- 供应商管理 -->
+        <module>ocean-security</module> <!-- 用户认证中心 -->
+        <module>ocean-smt</module>      <!-- MSD管理 -->
+        <module>ocean-tem</module>
+        <module>ocean-wms</module>      <!-- wms服务 -->
     </modules>
 </project>

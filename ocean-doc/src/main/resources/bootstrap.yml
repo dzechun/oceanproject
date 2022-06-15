@@ -1,38 +1,31 @@
-#spring:
-#  application:
-#    name: txlcn-tm
-#  profiles:
-#    active: dev # 环境
-#  cloud:
-#    nacos:
-#      server-addr: 192.168.204.177:8848 # nacos地址
-#      discovery:
-#        namespace: dev
-#
-#
-server:
-  port: 7970
 
-# Spring
+
+knife4j:
+  enableAggregation: true
+  nacos:
+    enable: true  # 将该属性设置为true，则代表启用nacos模式
+    serviceUrl: http://192.168.204.177:8804/nacos/    # nacos注册中心的地址
+    routeAuth:
+      enable: false
+#      username: test
+#      password: 12313
+    routes:
+      - name: 基础服务
+        serviceName: ocean-base
+        groupName: DEFAULT_GROUP
+        namespaceId: dev
+#        clusters: test
+        location: /v2/api-docs?group=default
+        swaggerVersion: 2.0
+        servicePath: /base
+        routeAuth:
+          enable: false
+#          username: test
+
+
 spring:
-  application:
-    # 应用名称
-    name: txlcn-tm
-  profiles:
-    # 环境配置
-    active: dev
   cloud:
     nacos:
-      discovery:
-        # 服务注册地址
-        server-addr: 192.168.204.177:8848
-        namespace: dev
-      config:
-        # 配置中心地址
-        server-addr: 192.168.204.177:8848
-        # 配置文件格式
-        file-extension: yml
-        # 共享配置
-        shared-configs:
-          - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
-        namespace: dev
+      server-addr: 192.168.204.177:8848
+server:
+  port: 8010

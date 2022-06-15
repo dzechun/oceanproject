@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RestController;
 @SpringBootApplication
 @EnableDiscoveryClient
 @RestController
-public class OceanTxlcnApplication {
+public class OceanDocApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(OceanTxlcnApplication.class, args);
+        SpringApplication.run(OceanDocApplication.class, args);
     }
 
 }

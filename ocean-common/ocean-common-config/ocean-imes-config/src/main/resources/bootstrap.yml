@@ -28,9 +28,9 @@ spring:
     #            rule-type: system
     #      eager: true
     nacos:
-      server-addr: ${NACOS_ADDR:192.168.204.153:8848}
-      config:
-        shared-dataids: 
+      server-addr: ${NACOS_ADDR:192.168.204.177:8848}
+#      config:
+#        shared-dataids:
 #        file-extension: yml
 #        shared-configs:
 ##          - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}   # application
