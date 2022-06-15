@@ -22,9 +22,10 @@
         <module>ocean-txlcn</module>  <!-- 分布式锁 -->
         <module>ocean-provider</module>  <!-- 服务中心 -->
         <module>ocean-provider-api</module>  <!-- feign对外接口 -->
-        <module>ocean-gateway</module>  <!-- 网关 -->
-        <module>ocean-generator</module>  <!-- 代码生成器 -->
+        <module>ocean-gateway</module>      <!-- 网关 -->
+        <module>ocean-generator</module>    <!-- 代码生成器 -->
         <module>ocean-ureport</module>
+        <module>ocean-doc</module>          <!-- api文档 -->
     </modules>
 
     <!-- 整合依赖版本管理-->
@@ -136,21 +137,29 @@
         </dependency>
 
         <!-- swagger -->
+        <!-- <dependency> -->
+        <!--     <groupId>io.springfox</groupId> -->
+        <!--     <artifactId>springfox-swagger2</artifactId> -->
+        <!--     <version>${swagger.version}</version> -->
+        <!-- </dependency> -->
+        <!-- <dependency> -->
+        <!--     <groupId>io.springfox</groupId> -->
+        <!--     <artifactId>springfox-bean-validators</artifactId> -->
+        <!--     <version>${alidators.version}</version> -->
+        <!-- </dependency> -->
+        <!-- <dependency> -->
+        <!--     <groupId>io.springfox</groupId> -->
+        <!--     <artifactId>springfox-swagger-ui</artifactId> -->
+        <!--     <version>${swagger.version}</version> -->
+        <!-- </dependency> -->
+        <!-- Knife4j -->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>${swagger.version}</version>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-spring-boot-starter</artifactId>
+            <!-- springboot2.1版本, Knife4j必须小于2.0.6-->
+            <version>2.0.5</version>
         </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-bean-validators</artifactId>
-            <version>${alidators.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${swagger.version}</version>
-        </dependency>
+
 
         <!-- 生成uuid -->
         <dependency>

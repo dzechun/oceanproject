@@ -30,10 +30,13 @@ spring:
     nacos:
       server-addr: ${NACOS_ADDR:192.168.204.153:8848}
       config:
-        file-extension: yml
-        shared-configs:
-          - data-id: ocean-common.yml
-            group: DEFAULT_GROUP
+        shared-dataids: 
+#        file-extension: yml
+#        shared-configs:
+##          - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}   # application
+#          - data-id: ocean-common.yml
+#            group: DEFAULT_GROUP
 jasypt:
   encryptor:
     bootstrap: false
+
