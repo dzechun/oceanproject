@@ -105,6 +105,11 @@ constant-base:
   defaultOrgNum: N
   defaultOrgName: 广东纽恩泰新能源科技发展有限公司
 
+#提高日志级别为WARN
+logging:
+  level:
+    com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver: WARN
+
 # Sa-Token配置
 sa-token:
   # token名称 (同时也是cookie名称)
