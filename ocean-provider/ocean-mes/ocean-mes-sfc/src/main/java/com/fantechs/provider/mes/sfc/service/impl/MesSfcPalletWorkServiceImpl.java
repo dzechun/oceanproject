@@ -224,16 +224,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         barcodeProcessDto.setSectionCode(baseWorkshopSection.getSectionCode());//工段code
         barcodeProcessDto.setSectionName(baseWorkshopSection.getSectionName());//工段名称
         long two1 = System.currentTimeMillis();
-        log.info("============== 更新工位:" + (two1 - two));
-
-        //过站次数累加注释
-        //条码在当前工序有几条过站记录 记录工序过站次数开始 2021-10-18
-        Map<String, Object> mapExist = new HashMap<>();
-        mapExist.put("barcode", barcode);
-        mapExist.put("stationId", requestPalletWorkScanDto.getStationId());
-        mapExist.put("processId", requestPalletWorkScanDto.getProcessId());
-        List<MesSfcBarcodeProcessRecordDto> mesSfcBarcodeProcessRecordDtoList = mesSfcBarcodeProcessRecordService.findList(mapExist);
-        barcodeProcessDto.setPassStationCount(mesSfcBarcodeProcessRecordDtoList.size() + 1);
+        log.info("============== 更新工段:" + (two1 - two));
 
         if (barcodeProcessDto.getNextProcessId().equals(pmWorkOrder.getOutputProcessId())) {
             // 产出工序置空下一道工序关信息
@@ -271,34 +262,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
             long six2 = System.currentTimeMillis();
             log.info("============== 变更附件码条码状态:" + (six2 - six1));
-        } else {
-            Optional<BaseRouteProcess> routeProcessOptional = routeProcessList.stream()
-                    .filter(i -> requestPalletWorkScanDto.getProcessId().equals(i.getProcessId()))
-                    .findFirst();
-            if (!routeProcessOptional.isPresent()) {
-                throw new BizErrorException(ErrorCodeEnum.PDA40012011, barcodeProcessDto.getNextProcessId());
-            }
-
-            BaseRouteProcess routeProcess = routeProcessOptional.get();
-            processResponseEntity = baseFeignApi.processDetail(routeProcess.getNextProcessId());
-            if (processResponseEntity.getCode() != 0) {
-                throw new BizErrorException(ErrorCodeEnum.PDA40012012, routeProcess.getNextProcessId());
-            }
-            baseProcess = processResponseEntity.getData();
-
-            // 设置下一工序
-            barcodeProcessDto.setNextProcessId(routeProcess.getNextProcessId());
-            barcodeProcessDto.setNextProcessCode(baseProcess.getProcessCode());
-            barcodeProcessDto.setNextProcessName(baseProcess.getProcessName());
         }
-
-        long three = System.currentTimeMillis();
-        log.info("============== 设置next工序:" + (three - two));
-
-        // 生成栈板码
         startTime = System.currentTimeMillis();
-        String palletCode = this.createPalletCode(barcodeProcessDto.getMaterialId(), barcodeProcessDto.getMaterialCode(), requestPalletWorkScanDto.getProcessId(), barcodeProcessDto.getProCode(), workOrderId);
-        log.info("=============== 通过规则生成栈板耗时：" + (System.currentTimeMillis() - startTime));
 
         //客户条码
         barcodeProcessDto.setInProcessTime(new Date());
@@ -306,59 +271,19 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         barcodeProcessDto.setOperatorUserId(user.getUserId());
         barcodeProcessDto.setModifiedUserId(user.getUserId());
         barcodeProcessDto.setModifiedTime(new Date());
-        barcodeProcessDto.setPalletCode(palletCode);
         int update = mesSfcBarcodeProcessService.update(barcodeProcessDto);
         if (update < 1) {
             throw new RuntimeException("更新过站表下一工序失败！");
         }
 
         long four = System.currentTimeMillis();
-        log.info("============== 增加过站记录:" + (four - three));
-        log.info("============ 更新过站信息耗时：" + (System.currentTimeMillis() - startTime));
+        log.info("============== 更新过站耗时:" + (four - startTime));
 
-        // 增加过站记录 2022-05-20
-        MesSfcBarcodeProcessRecord mesSfcBarcodeProcessRecord = new MesSfcBarcodeProcessRecord();
-        BeanUtils.copyProperties(barcodeProcessDto, mesSfcBarcodeProcessRecord);
-        mesSfcBarcodeProcessRecord.setOperatorUserId(user.getUserId());
-        mesSfcBarcodeProcessRecord.setCreateTime(new Date());
-        mesSfcBarcodeProcessRecord.setModifiedTime(new Date());
-        mesSfcBarcodeProcessRecord.setModifiedUserId(user.getUserId());
-        mesSfcBarcodeProcessRecordService.save(mesSfcBarcodeProcessRecord);
-
-        // 万宝项目一包一，生成栈板
-        MesSfcProductPallet mesSfcProductPallet = new MesSfcProductPallet();
-        mesSfcProductPallet.setPalletCode(palletCode);
-        mesSfcProductPallet.setNowPackageSpecQty(BigDecimal.ONE);
-        mesSfcProductPallet.setWorkOrderId(workOrderId);
-        mesSfcProductPallet.setMaterialId(barcodeProcessDto.getMaterialId());
-        mesSfcProductPallet.setStationId(requestPalletWorkScanDto.getStationId());
-        mesSfcProductPallet.setCloseStatus((byte) 1);
-        mesSfcProductPallet.setClosePalletUserId(user.getUserId());
-        mesSfcProductPallet.setClosePalletTime(new Date());
-        mesSfcProductPallet.setModifiedUserId(user.getUserId());
-        mesSfcProductPallet.setModifiedTime(new Date());
-        mesSfcProductPallet.setOrgId(user.getOrganizationId());
-        mesSfcProductPallet.setCreateUserId(user.getUserId());
-        mesSfcProductPallet.setCreateTime(new Date());
-        mesSfcProductPallet.setMoveStatus((byte) 0);
-        mesSfcProductPalletService.save(mesSfcProductPallet);
-        log.info("================= 新增产品栈板信息耗时：" + (System.currentTimeMillis() - startTime));
-
-        startTime = System.currentTimeMillis();
-        // 生成栈板明细
-        MesSfcProductPalletDet mesSfcProductPalletDet = new MesSfcProductPalletDet();
-        mesSfcProductPalletDet.setProductPalletId(mesSfcProductPallet.getProductPalletId());
-        mesSfcProductPalletDet.setWorkOrderBarcodeId(workOrderBarcodeId);
-        mesSfcProductPalletDet.setOrgId(user.getOrganizationId());
-        mesSfcProductPalletDet.setCreateUserId(user.getUserId());
-        mesSfcProductPalletDet.setCreateTime(new Date());
-        mesSfcProductPalletDetService.save(mesSfcProductPalletDet);
-        log.info("================= 新增产品栈板明细表耗时：" + (System.currentTimeMillis() - startTime));
 
         // 构建返回值
         PalletWorkScanDto palletWorkScanDto = new PalletWorkScanDto();
-        palletWorkScanDto.setPalletCode(palletCode);
-        palletWorkScanDto.setProductPalletId(mesSfcProductPallet.getProductPalletId());
+//        palletWorkScanDto.setPalletCode(palletCode);
+//        palletWorkScanDto.setProductPalletId(mesSfcProductPallet.getProductPalletId());
         palletWorkScanDto.setWorkOrderCode(pmWorkOrder.getWorkOrderCode());
         palletWorkScanDto.setMaterialCode(barcodeProcessDto.getMaterialCode());
         palletWorkScanDto.setMaterialDesc(barcodeProcessDto.getMaterialName());
