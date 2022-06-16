@@ -47,16 +47,6 @@ public class BaseAddressController {
     @Resource
     private AuthFeignApi securityFeignApi;
 
-    @Value("#{myname}")
-    private String myname;
-
-    @ApiOperation(value = "新增",notes = "新增")
-    @PostMapping("/test")
-    public String test() {
-        System.out.println(myname);
-        return "";
-    }
-
     @ApiOperation(value = "新增",notes = "新增")
     @PostMapping("/add")
     public ResponseEntity add(@ApiParam(value = "必传：",required = true)@RequestBody @Validated BaseAddress baseAddress) {
