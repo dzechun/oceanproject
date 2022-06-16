@@ -1,12 +1,3 @@
-server:
-  port: 9019
-  max-http-header-size: 10000000
-
 spring:
-  profiles:
-    include: wuhuan
   application:
     name: @pom.artifactId@
-
-logging:
-  file: /data/logs/ocean/@pom.artifactId@/info/@pom.artifactId@.log

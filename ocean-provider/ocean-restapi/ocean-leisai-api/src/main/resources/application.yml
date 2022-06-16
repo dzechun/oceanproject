@@ -1,38 +1,3 @@
-server:
-  port: 9028
-  max-http-header-size: 10000000
-
 spring:
-  profiles:
-    include: dev
   application:
     name: @pom.artifactId@
-  datasource:
-    primary:
-      jdbc-url: jdbc:oracle:thin:@192.168.0.22:1522:prod
-      type: com.alibaba.druid.pool.DruidDataSource
-      username: wbquery
-      password: wbquery
-      driverClassName: oracle.jdbc.OracleDriver
-    secondary:
-      jdbc-url: jdbc:oracle:thin:@middb:1521:ORCL
-      type: com.alibaba.druid.pool.DruidDataSource
-      username: k3wms
-      password: k3wms
-      driverClassName: oracle.jdbc.driver.OracleDriver
-    thirdary:
-      jdbc-url: jdbc:sqlserver://pqmsdb:1433;DatabaseName=SridaFramework
-      type: com.alibaba.druid.pool.DruidDataSource
-      username: sa
-      password: 2020@WB
-      driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
-
-#    thirdary:
-#      jdbc-url: jdbc:sqlserver://192.168.200.9:1433;DatabaseName=LSDB1
-#      type: com.alibaba.druid.pool.DruidDataSource
-#      username: sa
-#      password: 00000
-#      driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
-
-logging:
-  file: /data/logs/ocean/@pom.artifactId@/info/@pom.artifactId@.log

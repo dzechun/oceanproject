@@ -1,15 +1,3 @@
-server:
-  port: 9012
-  maxHttpHeaderSize: 10000000
-
 spring:
-  profiles:
-    active: dev
   application:
     name: @pom.artifactId@
-  servlet:
-    multipart:
-      max-file-size: 500MB
-      max-request-size: 500MB
-logging:
-  file: /data/logs/ocean/@pom.artifactId@/info/@pom.artifactId@.log
