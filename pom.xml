@@ -137,28 +137,28 @@
         </dependency>
 
         <!-- swagger -->
-        <!-- <dependency> -->
-        <!--     <groupId>io.springfox</groupId> -->
-        <!--     <artifactId>springfox-swagger2</artifactId> -->
-        <!--     <version>${swagger.version}</version> -->
-        <!-- </dependency> -->
-        <!-- <dependency> -->
-        <!--     <groupId>io.springfox</groupId> -->
-        <!--     <artifactId>springfox-bean-validators</artifactId> -->
-        <!--     <version>${alidators.version}</version> -->
-        <!-- </dependency> -->
-        <!-- <dependency> -->
-        <!--     <groupId>io.springfox</groupId> -->
-        <!--     <artifactId>springfox-swagger-ui</artifactId> -->
-        <!--     <version>${swagger.version}</version> -->
-        <!-- </dependency> -->
-        <!-- Knife4j -->
         <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-spring-boot-starter</artifactId>
-            <!-- springboot2.1版本, Knife4j必须小于2.0.6-->
-            <version>2.0.5</version>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${swagger.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-bean-validators</artifactId>
+            <version>${alidators.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${swagger.version}</version>
+        </dependency>
+        <!-- Knife4j -->
+        <!-- <dependency> -->
+        <!--     <groupId>com.github.xiaoymin</groupId> -->
+        <!--     <artifactId>knife4j-spring-boot-starter</artifactId> -->
+        <!--     &lt;!&ndash; springboot2.1版本, Knife4j必须小于2.0.6&ndash;&gt; -->
+        <!--     <version>2.0.5</version> -->
+        <!-- </dependency> -->
 
 
         <!-- 生成uuid -->
