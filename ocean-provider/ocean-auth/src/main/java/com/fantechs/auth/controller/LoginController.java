@@ -19,6 +19,7 @@ import com.fantechs.auth.service.SysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -54,6 +55,16 @@ public class LoginController {
 
     @Resource
     private LoginService loginService;
+
+    @Value("${mys}")
+    private String mys;
+
+    @PostMapping("/mys")
+    @ApiOperation(value = "登陆接口")
+    public ResponseEntity mys() {
+        System.out.println("========" +  mys);
+        return null;
+    }
 
 
     @PostMapping("/meslogin")

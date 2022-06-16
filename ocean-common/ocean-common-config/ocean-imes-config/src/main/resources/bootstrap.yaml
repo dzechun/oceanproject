@@ -4,13 +4,12 @@ spring:
     active: dev
   cloud:
     nacos:
-      # 注册配/置地址
+      # 注册/配置地址
       server-addr: ${NACOS_ADDR:192.168.204.177:8848}
       config:
         # 配置文件后缀
-        file-extension: yml
+        file-extension: yaml
         # 公共配置文件
-        shared-dataids: ocean-common.yml
-jasypt:
-  encryptor:
-    bootstrap: false
+        shared-dataids: ocean-common.yaml
+        # 指定需要自动刷新的公共配置文件
+        refreshable-dataids: ocean-common.yaml
