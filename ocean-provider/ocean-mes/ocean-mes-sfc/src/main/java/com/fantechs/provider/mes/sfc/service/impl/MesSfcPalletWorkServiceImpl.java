@@ -30,6 +30,7 @@ import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.*;
 import com.fantechs.common.base.general.entity.wanbao.WanbaoStackingDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventoryDet;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
@@ -119,10 +120,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
         startTime = System.currentTimeMillis();
         // 2022-03-08 判断是否质检完成之后走产线入库
-        SearchWmsInnerInventoryDet searchWmsInnerInventoryDet = new SearchWmsInnerInventoryDet();
-        searchWmsInnerInventoryDet.setBarcode(barcode);
-        List<WmsInnerInventoryDetDto> inventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
-        if (!inventoryDetDtos.isEmpty()) {
+        WmsInnerInventoryDet innerInventoryDet = innerFeignApi.findByDet(requestPalletWorkScanDto.getBarcode()).getData();
+        if (StringUtils.isNotEmpty(innerInventoryDet)){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此条码已入库，不可重复扫码，请检查是否品质重新入库");
         }
         log.info("=============== 判断是否质检完成之后走产线入库耗时：" + (System.currentTimeMillis() - startTime));
@@ -293,7 +292,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         palletWorkScanDto.setNowPackageSpecQty(BigDecimal.ONE);
         palletWorkScanDto.setScanCartonNum(1);
 
-        log.info("====== 栈板总耗时：" + (System.currentTimeMillis() - curretTime));
+        log.info("=============== 栈板总耗时：" + (System.currentTimeMillis() - curretTime));
         return palletWorkScanDto;
     }
 
