@@ -34,7 +34,6 @@
         <module>ocean-qms</module>      <!-- 质量管理 -->
         <module>ocean-restapi</module>  <!-- API接口服务 -->
         <module>ocean-srm</module>      <!-- 供应商管理 -->
-        <module>ocean-security</module> <!-- 用户认证中心 -->
         <module>ocean-smt</module>      <!-- MSD管理 -->
         <module>ocean-tem</module>
         <module>ocean-wms</module>      <!-- wms服务 -->

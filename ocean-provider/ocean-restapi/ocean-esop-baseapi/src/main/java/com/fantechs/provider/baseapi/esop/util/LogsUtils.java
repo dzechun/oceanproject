@@ -1,7 +1,7 @@
 package com.fantechs.provider.baseapi.esop.util;
 
 import com.fantechs.common.base.entity.security.SysApiLog;
-import com.fantechs.provider.api.auth.service.SecurityFeignApi;
+import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -16,7 +16,7 @@ import java.util.Date;
 public class LogsUtils {
 
     @Resource
-    private SecurityFeignApi securityFeignApi;
+    private AuthFeignApi securityFeignApi;
     /**
      * 日志
      * @param result
