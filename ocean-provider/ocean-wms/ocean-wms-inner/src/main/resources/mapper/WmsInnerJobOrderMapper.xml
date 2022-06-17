@@ -154,6 +154,9 @@ wipo.option5
             <if test="orderTypeId!=null and orderTypeId!=''">
                 and wipo.order_type_id =#{orderTypeId}
             </if>
+            <if test="stackingCode!=null and stackingCode!=''">
+                and ws.stacking_code =#{stackingCode}
+            </if>
             <if test="workName!=null and workName!=''">
                 and wr.user_name =#{workName}
             </if>
