@@ -19,10 +19,7 @@ import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.*;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrder;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcProductPallet;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcWorkOrderBarcode;
-import com.fantechs.common.base.general.entity.mes.sfc.SearchMesSfcWorkOrderBarcode;
+import com.fantechs.common.base.general.entity.mes.sfc.*;
 import com.fantechs.common.base.general.entity.wanbao.WanbaoStackingDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.response.ControllerUtil;
@@ -267,9 +264,16 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             throw new RuntimeException("更新过站表下一工序失败！");
         }
 
-        long four = System.currentTimeMillis();
-        log.info("============== 更新过站耗时:" + (four - startTime));
+        // 增加过站记录
+        MesSfcBarcodeProcessRecord mesSfcBarcodeProcessRecord = new MesSfcBarcodeProcessRecord();
+        BeanUtils.copyProperties(barcodeProcessDto, mesSfcBarcodeProcessRecord);
+        mesSfcBarcodeProcessRecord.setOperatorUserId(user.getUserId());
+        mesSfcBarcodeProcessRecord.setModifiedTime(new Date());
+        mesSfcBarcodeProcessRecord.setModifiedUserId(user.getUserId());
+        mesSfcBarcodeProcessRecordService.save(mesSfcBarcodeProcessRecord);
 
+        long four = System.currentTimeMillis();
+        log.info("============== 增加过站记录:"+ (four - startTime));
 
         // 构建返回值
         PalletWorkScanDto palletWorkScanDto = new PalletWorkScanDto();
@@ -417,14 +421,21 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         }
         long WorkOrderBarcode = System.currentTimeMillis();
         log.info("=========== 查询生产订单条码表耗时 :" + (WorkOrderBarcode-custBarcode));
-        List<BaseLabelCategoryDto> labelCategoryDtoList = baseFeignApi.findLabelCategoryList(new SearchBaseLabelCategory()).getData();
+        SearchBaseLabelCategory baseLabelCategory = new SearchBaseLabelCategory();
+        baseLabelCategory.setPageSize(9999);
+        List<BaseLabelCategoryDto> labelCategoryDtoList = baseFeignApi.findLabelCategoryList(baseLabelCategory).getData();
+        log.info("======== labelCategoryDtoList: " + JSON.toJSONString(labelCategoryDtoList));
         BaseLabelCategory labelCategory = new BaseLabelCategory();
         for (BaseLabelCategoryDto categoryDto : labelCategoryDtoList){
             if (mesSfcWorkOrderBarcodeDtoList.get(0).getLabelCategoryId().equals(categoryDto.getLabelCategoryId())){
                 BeanUtil.copyProperties(categoryDto, labelCategory);
+                log.info("======== categoryDto: " + JSON.toJSONString(categoryDto));
+                log.info("======== labelCategory11222: " + JSON.toJSONString(labelCategory));
                 break;
             }
         }
+        log.info("======== labelCategory: " + JSON.toJSONString(labelCategory));
+        log.info("======== mesSfcWorkOrderBarcodeDtoList.get(0).getLabelCategoryId(): " + JSON.toJSONString(mesSfcWorkOrderBarcodeDtoList.get(0).getLabelCategoryId()));
         if (StringUtils.isEmpty(labelCategory) || StringUtils.isEmpty(labelCategory.getLabelCategoryId())){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码关联的标签模板不存在，请检查");
         }
@@ -775,7 +786,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     @LcnTransaction
     @Transactional(rollbackFor = RuntimeException.class)
     public int workByAuto(WanbaoAutoStackingListDto dto) throws Exception {
-
+        long startTime = System.currentTimeMillis();
+        log.info("======= 堆垛提交自动线 ========");
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (dto.getList() == null || dto.getList().isEmpty()) {
             throw new BizErrorException(ErrorCodeEnum.GL99990500.getCode(), "条码集合为空，请扫码");
@@ -801,10 +813,13 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             }
             list.add(wanbaoBarcodeDto);
         }
+        long barcodeListTime = System.currentTimeMillis();
+        log.info("=========== 堆垛查询条码集合耗时:" + (barcodeListTime - startTime));
 
         // 完工入库以及上架作业
         this.beforePalletAutoAsnOrder(dto.getStackingId(), user.getOrganizationId(), list, barcodeList, mesSfcWorkOrderBarcodeDtoList);
-
+        long beforePalletAutoAsnOrderTime = System.currentTimeMillis();
+        log.info("=========== 完工入库以及上架作业耗时:" + (beforePalletAutoAsnOrderTime - barcodeListTime));
         return 1;
     }
 
