@@ -31,6 +31,7 @@ import com.fantechs.provider.base.util.BarcodeRuleUtils;
 import com.fantechs.provider.base.util.SocketClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -48,6 +49,7 @@ import java.util.stream.Collectors;
 * @create 2020/12/22.
 */
 @Service
+@RefreshScope
 public class BaseBarCodeServiceImpl extends BaseService<BaseBarCode> implements BaseBarCodeService {
 
     @Resource

@@ -4,11 +4,13 @@ import com.fantechs.common.base.utils.RestTemplateUtil;
 import com.fantechs.common.base.utils.UUIDUtils;
 import com.fantechs.provider.agv.service.DispatchService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 @Service
+@RefreshScope
 public class DispatchServiceImpl implements DispatchService {
 
     @Value("${rcsUrl}")
