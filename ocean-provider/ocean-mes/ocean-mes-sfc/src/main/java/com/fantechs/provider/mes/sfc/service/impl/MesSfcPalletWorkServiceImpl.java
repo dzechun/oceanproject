@@ -93,7 +93,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
     public PalletWorkScanDto palletWorkScanBarcode(RequestPalletWorkScanDto requestPalletWorkScanDto) throws Exception {
         log.info("===================   开始  =================");
         long curretTime = System.currentTimeMillis();
@@ -265,12 +264,12 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         }
 
         // 增加过站记录
-        MesSfcBarcodeProcessRecord mesSfcBarcodeProcessRecord = new MesSfcBarcodeProcessRecord();
+        /*MesSfcBarcodeProcessRecord mesSfcBarcodeProcessRecord = new MesSfcBarcodeProcessRecord();
         BeanUtils.copyProperties(barcodeProcessDto, mesSfcBarcodeProcessRecord);
         mesSfcBarcodeProcessRecord.setOperatorUserId(user.getUserId());
         mesSfcBarcodeProcessRecord.setModifiedTime(new Date());
         mesSfcBarcodeProcessRecord.setModifiedUserId(user.getUserId());
-        mesSfcBarcodeProcessRecordService.save(mesSfcBarcodeProcessRecord);
+        mesSfcBarcodeProcessRecordService.save(mesSfcBarcodeProcessRecord);*/
 
         long four = System.currentTimeMillis();
         log.info("============== 增加过站记录:"+ (four - startTime));

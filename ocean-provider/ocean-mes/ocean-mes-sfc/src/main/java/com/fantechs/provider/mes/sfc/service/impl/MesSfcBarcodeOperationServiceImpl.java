@@ -493,12 +493,12 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         }
 
         // 增加过站记录
-        MesSfcBarcodeProcessRecord mesSfcBarcodeProcessRecord = new MesSfcBarcodeProcessRecord();
+        /*MesSfcBarcodeProcessRecord mesSfcBarcodeProcessRecord = new MesSfcBarcodeProcessRecord();
         BeanUtils.copyProperties(mesSfcBarcodeProcess, mesSfcBarcodeProcessRecord);
         mesSfcBarcodeProcessRecord.setOperatorUserId(user.getUserId());
         mesSfcBarcodeProcessRecord.setModifiedTime(new Date());
         mesSfcBarcodeProcessRecord.setModifiedUserId(user.getUserId());
-        mesSfcBarcodeProcessRecordService.save(mesSfcBarcodeProcessRecord);
+        mesSfcBarcodeProcessRecordService.save(mesSfcBarcodeProcessRecord);*/
 
         long four = System.currentTimeMillis();
         log.info("============== 增加过站记录:"+ (four - three));

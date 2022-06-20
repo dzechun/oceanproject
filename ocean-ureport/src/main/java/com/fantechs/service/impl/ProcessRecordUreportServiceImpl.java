@@ -2,8 +2,6 @@ package com.fantechs.service.impl;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
-import com.fantechs.common.base.entity.security.SysUser;
-import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.dto.ProcessRecordUreportDto;
 import com.fantechs.mapper.ProcessRecordUreportMapper;
@@ -11,6 +9,7 @@ import com.fantechs.service.ProcessRecordUreportService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +28,7 @@ public class ProcessRecordUreportServiceImpl implements ProcessRecordUreportServ
         if(StringUtils.isEmpty(map.get("finishDate"))){
             map.put("finishDate", DateUtil.format(new Date(), DatePattern.NORM_DATE_PATTERN));
         }
-        return processRecordUreportMapper.findList(map);
+//        return processRecordUreportMapper.findList(map);
+        return new ArrayList<>();
     }
 }
