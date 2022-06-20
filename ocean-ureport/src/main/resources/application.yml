@@ -1,3 +1,5 @@
 spring:
   application:
     name: @pom.artifactId@
+  main:
+    allow-bean-definition-overriding: true
