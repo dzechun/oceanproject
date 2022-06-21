@@ -1460,14 +1460,12 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         List<WmsInnerInventoryDetDto> wmsInnerInventoryDetDtos = innerFeignApi.findList(searchWmsInnerInventoryDet).getData();
 
         //List<WmsInnerInventoryDetDto> innerInventoryDetDtos=wmsInnerInventoryDetDtos.stream().filter(item -> item.getInspectionOrderCode()==null).collect(Collectors.toList());
-        logger.info("----库存总数----"+wmsInnerInventoryDetDtos.size());
         //库存明细按PO和销售订单号和物料进行分组
         Map<String, List<WmsInnerInventoryDetDto>> collect = newGroupInventoryDet(wmsInnerInventoryDetDtos);
         if(StringUtils.isNotEmpty(collect)) {
             Set<String> codes = collect.keySet();
             for (String code : codes) {
                 List<WmsInnerInventoryDetDto> detDtos = collect.get(code);
-                logger.info("----分组后数量----"+detDtos.get(0).getMaterialCode()+"-------"+detDtos.size());
                 QmsInspectionOrder qmsInspectionOrder = new QmsInspectionOrder();
 
                 SearchWmsInnerInventoryDet searchQualifiedInventoryDet = new SearchWmsInnerInventoryDet();
