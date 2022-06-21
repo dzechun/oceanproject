@@ -124,4 +124,8 @@ public interface InnerFeignApi {
     @PostMapping("/pdaWmsInnerShiftWork/saveJobOrderReturnId")
     ResponseEntity<Long> saveJobOrderReturnId(@ApiParam(value = "上架确认实体", required = true) @RequestBody SaveShiftJobOrderDto dto);
 
+    @PostMapping("/wmsInnerInventory/notOrderInStorage")
+    @ApiOperation("万宝无单入库")
+    ResponseEntity notOrderInStorage(@RequestBody NotOrderInStorage notOrderInStorage);
+
 }

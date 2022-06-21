@@ -4,13 +4,22 @@ import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.wms.inner.NotOrderInStorage;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
+import com.fantechs.common.base.general.entity.basic.BaseInventoryStatus;
+import com.fantechs.common.base.general.entity.basic.BaseStorage;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseInventoryStatus;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseStorage;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.history.WmsHtInnerInventory;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
+import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.wms.inner.mapper.WmsHtInnerInventoryMapper;
+import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.service.WmsInnerInventoryService;
 import org.springframework.beans.BeanUtils;
@@ -37,6 +46,10 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
 
     @Resource
     private WmsHtInnerInventoryMapper wmsHtInnerInventoryMapper;
+    @Resource
+    private BaseFeignApi baseFeignApi;
+    @Resource
+    private WmsInnerInventoryDetMapper wmsInnerInventoryDetMapper;
 
     @Override
     public List<WmsInnerInventoryDto> findList(Map<String, Object> map) {
@@ -216,6 +229,90 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
         map.put("orgId",sysUser.getOrganizationId());
         map.put("isStorage","1");
         return wmsInnerInventoryMapper.findList(map);
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    @LcnTransaction
+    public int notOrderInStorage(NotOrderInStorage notOrderInStorage) {
+        SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        //获取A16库位
+        SearchBaseStorage searchBaseStorage = new SearchBaseStorage();
+        searchBaseStorage.setStorageCode("Z-A16");
+        searchBaseStorage.setCodeQueryMark((byte)1);
+        ResponseEntity<List<BaseStorage>> responseEntity = baseFeignApi.findList(searchBaseStorage);
+        if(responseEntity.getCode()!=0){
+            throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
+        }
+        List<BaseStorage> storages = responseEntity.getData();
+        if(storages.size()<1){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取A16库位失败");
+        }
+        //获取默认库存状态
+        SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
+        searchBaseInventoryStatus.setIfDefaultStatus((byte)1);
+        ResponseEntity<List<BaseInventoryStatus>> res = baseFeignApi.findList(searchBaseInventoryStatus);
+        if(res.getCode()!=0){
+            throw new BizErrorException(res.getCode(),res.getMessage());
+        }
+        List<BaseInventoryStatus> baseInventoryStatuses = res.getData();
+        if(baseInventoryStatuses.size()<1){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取默认库位失败");
+        }
+        WmsInnerInventory wmsInnerInventory = new WmsInnerInventory();
+        wmsInnerInventory.setPackingUnitName(notOrderInStorage.getPackingUnitName());
+        wmsInnerInventory.setPackingQty(notOrderInStorage.getPackingQty());
+        wmsInnerInventory.setWarehouseId(storages.get(0).getWarehouseId());
+        wmsInnerInventory.setStorageId(storages.get(0).getStorageId());
+        wmsInnerInventory.setJobStatus((byte)1);
+        wmsInnerInventory.setLockStatus((byte)0);
+        wmsInnerInventory.setQcLock((byte)0);
+        wmsInnerInventory.setQcLock((byte)0);
+        wmsInnerInventory.setMaterialId(notOrderInStorage.getMaterialId());
+        wmsInnerInventory.setInventoryStatusId(baseInventoryStatuses.get(0).getInventoryStatusId());
+        wmsInnerInventory.setCreateTime(new Date());
+        wmsInnerInventory.setCreateUserId(sysUser.getUserId());
+        wmsInnerInventory.setOrgId(sysUser.getOrganizationId());
+        wmsInnerInventory.setModifiedTime(new Date());
+        wmsInnerInventory.setModifiedUserId(sysUser.getUserId());
+        wmsInnerInventory.setProductionDate(new Date());
+        wmsInnerInventory.setRelevanceOrderCode(notOrderInStorage.getRelevanceOrderCode());
+        wmsInnerInventory.setReceivingDate(new Date());
+        //查询是否有相同库存
+        int num = 0;
+        Example example = new Example(WmsInnerInventory.class);
+        Example.Criteria criteria1 = example.createCriteria();
+        criteria1.andEqualTo("materialId", wmsInnerInventory.getMaterialId()).andEqualTo("warehouseId", wmsInnerInventory.getWarehouseId()).andEqualTo("storageId", wmsInnerInventory.getStorageId());
+        criteria1.andEqualTo("jobStatus", (byte) 1);
+        criteria1.andEqualTo("inventoryStatusId", wmsInnerInventory.getInventoryStatusId());
+        criteria1.andEqualTo("stockLock", 0).andEqualTo("qcLock", 0).andEqualTo("lockStatus", 0);
+        criteria1.andEqualTo("orgId",sysUser.getOrganizationId());
+        WmsInnerInventory wmsInnerInventorys = wmsInnerInventoryMapper.selectOneByExample(example);
+        if(StringUtils.isNotEmpty(wmsInnerInventorys)){
+            if(StringUtils.isEmpty(wmsInnerInventorys.getPackingQty()) || wmsInnerInventorys.getPackingQty().compareTo(BigDecimal.ZERO)==0){
+                wmsInnerInventorys.setReceivingDate(wmsInnerInventory.getReceivingDate());
+            }
+            //原库存
+            wmsInnerInventorys.setPackingQty(wmsInnerInventorys.getPackingQty().add(wmsInnerInventory.getPackingQty()));
+            wmsInnerInventorys.setWorkOrderCode(wmsInnerInventory.getWorkOrderCode());
+            wmsInnerInventorys.setRelevanceOrderCode(wmsInnerInventory.getRelevanceOrderCode());
+            wmsInnerInventorys.setModifiedTime(new Date());
+            wmsInnerInventorys.setModifiedUserId(sysUser.getUserId());
+            num+= wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventorys);
+        }else {
+            num+=wmsInnerInventoryMapper.insertSelective(wmsInnerInventory);
+        }
+        //新增库存明细
+        WmsInnerInventoryDet wmsInnerInventoryDet = new WmsInnerInventoryDet();
+        BeanUtils.copyProperties(wmsInnerInventory,wmsInnerInventoryDet);
+        wmsInnerInventoryDet.setMaterialQty(notOrderInStorage.getPackingQty());
+        wmsInnerInventoryDet.setBarcode(notOrderInStorage.getBarcode());
+        wmsInnerInventoryDet.setSalesBarcode(notOrderInStorage.getSalesBarcode());
+        wmsInnerInventoryDet.setBarcodeStatus((byte)3);
+        wmsInnerInventoryDet.setIfStockLock((byte)0);
+        wmsInnerInventoryDet.setJobStatus((byte)2);
+        wmsInnerInventoryDetMapper.insertSelective(wmsInnerInventoryDet);
+        return num;
     }
 
     @Override

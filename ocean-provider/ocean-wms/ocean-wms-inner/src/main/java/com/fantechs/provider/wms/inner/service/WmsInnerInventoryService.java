@@ -1,8 +1,8 @@
 package com.fantechs.provider.wms.inner.service;
 
+import com.fantechs.common.base.general.dto.wms.inner.NotOrderInStorage;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
-import com.fantechs.common.base.general.entity.wms.inner.search.SearchWmsInnerInventory;
 import com.fantechs.common.base.support.IService;
 
 import java.math.BigDecimal;
@@ -34,4 +34,11 @@ public interface WmsInnerInventoryService extends IService<WmsInnerInventory> {
     int batchUpdate(List<WmsInnerInventory> list);
 
     List<WmsInnerInventoryDto> findInvStorage(Map<String ,Object> map);
+
+    /**
+     * 万宝无单入库
+     * @param notOrderInStorage
+     * @return
+     */
+    int notOrderInStorage(NotOrderInStorage notOrderInStorage);
 }
