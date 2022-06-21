@@ -120,11 +120,22 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
         } else {
             mesSfcWorkOrderBarcodeDtos = mesSfcWorkOrderBarcodeMapper.findListByWorkOrder(searchMesSfcWorkOrderBarcode);
         }
-        mesSfcWorkOrderBarcodeDtos.forEach(t -> {
-            t.setLabelCategoryName(map.get("labelCategoryName").toString());
-            t.setLabelCategoryId(Long.valueOf(map.get("labelCategoryId").toString()));
-            t.setReprintCount(mesSfcWorkOrderBarcodeMapper.selectReprintCount(t.getWorkOrderBarcodeId()));
-        });
+        if(CollectionUtil.isNotEmpty(mesSfcWorkOrderBarcodeDtos)){
+            List<Long> workOrderBarcodeIds = mesSfcWorkOrderBarcodeDtos.stream().map(MesSfcWorkOrderBarcodeDto::getWorkOrderBarcodeId).collect(Collectors.toList());
+            List<HashMap<String,Long>> reprintCountCountList = mesSfcWorkOrderBarcodeMapper.selectReprintCount(workOrderBarcodeIds);
+            mesSfcWorkOrderBarcodeDtos.forEach(t -> {
+                t.setLabelCategoryName(map.get("labelCategoryName").toString());
+                t.setLabelCategoryId(Long.valueOf(map.get("labelCategoryId").toString()));
+                for (HashMap<String,Long> maps : reprintCountCountList){
+                    if(t.getWorkOrderBarcodeId().toString().equals(maps.get("workOrderBarcodeId").toString())){
+                        t.setReprintCount(maps.get("reprintCount").toString());
+                    }
+                }
+                if(StringUtils.isEmpty(t.getReprintCount())){
+                    t.setReprintCount("0");
+                }
+            });
+        }
         return ControllerUtil.returnDataSuccess(mesSfcWorkOrderBarcodeDtos, (int) page.getTotal());
     }
 

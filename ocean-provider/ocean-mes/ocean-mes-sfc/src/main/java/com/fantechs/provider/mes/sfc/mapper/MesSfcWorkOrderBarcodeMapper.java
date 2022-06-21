@@ -90,5 +90,10 @@ public interface MesSfcWorkOrderBarcodeMapper extends MyMapper<MesSfcWorkOrderBa
      */
     HashMap<String,Object> selectLabelCategoryId(@Param("barcodeType") String barcodeType);
 
-    String selectReprintCount(@Param("workOrderBarcodeId") Long workOrderBarcodeId);
+    /**
+     * 根据workOrderBarcodeId获取打印次数
+     * @param workOrderBarcodeIds
+     * @return
+     */
+    List<HashMap<String,Long>> selectReprintCount(@Param("workOrderBarcodeIds") List<Long> workOrderBarcodeIds);
 }

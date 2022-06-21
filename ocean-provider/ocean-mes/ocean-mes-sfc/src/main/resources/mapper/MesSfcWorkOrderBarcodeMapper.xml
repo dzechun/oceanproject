@@ -634,9 +634,13 @@
         </where>
     </select>
 
-    <select id="selectReprintCount" resultType="string">
-        select COUNT( mswobr.work_order_barcode_reprint_id ) AS reprint_count from
+    <select id="selectReprintCount" resultType="hashmap">
+        select mswobr.work_order_barcode_id as workOrderBarcodeId,COUNT( mswobr.work_order_barcode_reprint_id ) AS reprintCount from
             mes_sfc_work_order_barcode_reprint mswobr
-        where  mswobr.work_order_barcode_id = #{workOrderBarcodeId}
+        where  mswobr.work_order_barcode_id in
+        <foreach collection="workOrderBarcodeIds" item="workOrderBarcodeId" open="(" close=")" separator=",">
+            #{workOrderBarcodeId}
+        </foreach>
+        group by  mswobr.work_order_barcode_id
     </select>
 </mapper>

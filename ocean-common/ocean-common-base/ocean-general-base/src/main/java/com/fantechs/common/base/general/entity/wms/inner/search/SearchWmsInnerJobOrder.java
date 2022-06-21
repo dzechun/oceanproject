@@ -99,4 +99,7 @@ public class SearchWmsInnerJobOrder extends BaseQuery implements Serializable {
 
     @ApiModelProperty(name="platformName",value = "月台")
     private String platformName;
+
+    @ApiModelProperty(name="stackingCode",value = "堆垛编码")
+    private String stackingCode;
 }

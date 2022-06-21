@@ -2,6 +2,7 @@ package com.fantechs.provider.guest.wanbao.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSON;
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -23,6 +24,7 @@ import com.fantechs.provider.guest.wanbao.service.WanbaoStackingDetService;
 import com.fantechs.provider.guest.wanbao.service.WanbaoStackingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -42,7 +44,10 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
     SFCFeignApi sfcFeignApi;
 
     @Override
+    @LcnTransaction
+    @Transactional(rollbackFor = RuntimeException.class)
     public int workByManualOperation(PalletWorkByManualOperationDto dto) {
+        long startTime = System.currentTimeMillis();
         if (dto.getWanbaoBarcodeDtos().isEmpty()){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码集合为空，请扫码后提交");
         }
@@ -62,6 +67,8 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
         if (stackingDtos.get(0).getStatus() == 0){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛无效，请重新扫码");
         }
+        long stackingTime = System.currentTimeMillis();
+        log.info("=========== 查询堆垛耗时:" + (stackingTime-startTime));
         // 容量校验
         map.clear();
         map.put("stackingId", stackingDto.getStackingId());
@@ -73,6 +80,8 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
         if (new BigDecimal(count).compareTo(stackingDto.getMaxCapacity()) == 1){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛编码容量存放不下当前提交数量");
         }
+        long stackdetTime = System.currentTimeMillis();
+        log.info("=========== 查询明细耗时:" + (stackdetTime-stackingTime));
         ResponseEntity<Integer> responseEntity = sfcFeignApi.workByManualOperation(dto);
         if (responseEntity.getCode() != 0){
             throw new BizErrorException(responseEntity.getCode(), responseEntity.getMessage());
@@ -212,6 +221,8 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
      * @return
      */
     @Override
+    @LcnTransaction
+    @Transactional(rollbackFor = RuntimeException.class)
     public int workByAuto(WanbaoAutoStackingListDto dto) {
         WanbaoStacking stacking = stackingService.selectByKey(dto.getStackingId());
         stacking.setUsageStatus((byte) 2);
@@ -222,7 +233,6 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
     /**
      * 切换堆垛
      *
-     * @param oldId
      * @param newId
      * @param stackingDetId
      * @return

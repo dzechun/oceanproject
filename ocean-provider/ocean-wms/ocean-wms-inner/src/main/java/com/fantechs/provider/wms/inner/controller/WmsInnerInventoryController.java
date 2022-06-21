@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.inner.controller;
 
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.wms.inner.NotOrderInStorage;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.history.WmsHtInnerInventory;
@@ -147,5 +148,11 @@ public class WmsInnerInventoryController {
         Page<Object> page = PageHelper.startPage(searchFindInvStorage.getStartPage(),searchFindInvStorage.getPageSize());
         List<WmsInnerInventoryDto> list = wmsInnerInventoryService.findInvStorage(ControllerUtil.dynamicConditionByEntity(searchFindInvStorage));
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @PostMapping("/notOrderInStorage")
+    @ApiOperation("万宝无单入库")
+    public ResponseEntity notOrderInStorage(@RequestBody NotOrderInStorage notOrderInStorage){
+        return ControllerUtil.returnCRUD(wmsInnerInventoryService.notOrderInStorage(notOrderInStorage));
     }
 }
