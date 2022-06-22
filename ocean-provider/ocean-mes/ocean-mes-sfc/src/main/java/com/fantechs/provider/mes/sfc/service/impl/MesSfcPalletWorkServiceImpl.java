@@ -371,7 +371,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
             log.info("=========== 完工入库以及上架作业耗时:" + (beforePalletAutoAsnOrderTime-saveBarcodeStackingTime));
 
             // A产线，发送堆垛数据至MQ
-            if (stackingList.get(0).getProCode().equals("A") && (dto.getIsReadHead() == null || !dto.getIsReadHead())) {
+            /*if (stackingList.get(0).getProCode().equals("A") && (dto.getIsReadHead() == null || !dto.getIsReadHead())) {
                 WanbaoStackingMQDto wanbaoStackingMQDto = new WanbaoStackingMQDto();
                 wanbaoStackingMQDto.setCode(0);
                 wanbaoStackingMQDto.setStackingCode(stackingList.get(0).getStackingCode());
@@ -379,7 +379,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
                 wanbaoStackingMQDto.setStackingLine(stackingLine);
                 // 发送堆垛号至mq
                 rabbitProducer.sendStacking(JSON.toJSONString(wanbaoStackingMQDto));
-            }
+            }*/
         } catch (Exception e) {
             if (!stackingList.isEmpty() && stackingList.get(0).getProCode().equals("A")) {
                 WanbaoStackingMQDto wanbaoStackingMQDto = new WanbaoStackingMQDto();
