@@ -460,14 +460,21 @@ public class SyncDataServiceImpl implements SyncDataService {
             log.info("========== 数据梳理以及筛选耗时:" + res3);
             // 保存平台库
             if (!addList.isEmpty()) {
+                log.info("========== 批量添加：pmFeignApi.addList - start");
                 pmFeignApi.addList(addList);
+                log.info("========== 批量添加：pmFeignApi.addList - end");
             }
+
             if (!updateList.isEmpty()) {
+                log.info("========== 批量更新：pmFeignApi.batchUpdate - start");
                 pmFeignApi.batchUpdate(updateList);
+                log.info("========== 批量更新：pmFeignApi.batchUpdate - end");
             }
             logList.add(build(sysUser.getOrganizationId(), (byte) 1, "查询数据库-同步生产订单", JSON.toJSONString(workOrders), new BigDecimal(System.currentTimeMillis() - start)));
             if (!logList.isEmpty()) {
+                log.info("========== 批量添加：securityFeignApi.batchAdd - start");
                 securityFeignApi.batchAdd(logList);
+                log.info("========== securityFeignApi.batchAdd - end");
             }
 
             long current4 = System.currentTimeMillis();
