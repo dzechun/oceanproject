@@ -94,33 +94,16 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         map.put("orgId", user.getOrganizationId());
         List<QmsInspectionOrder> qmsInspectionOrders = qmsInspectionOrderMapper.findList(map);
-        return qmsInspectionOrders;
-
-        //新数据源
-        /*SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
-        map.put("orgId",user.getOrganizationId());
-        List<QmsInspectionOrder> resultList=new ArrayList<>();
-        List<QmsInspectionOrder> qmsInspectionOrders = qmsInspectionOrderMapper.findList(map);
-        for (QmsInspectionOrder qmsInspectionOrder : qmsInspectionOrders) {
-            String orderCode=qmsInspectionOrder.getInspectionOrderCode();
-            SearchWmsInnerJobOrder searchWmsInnerJobOrder=new SearchWmsInnerJobOrder();
-            searchWmsInnerJobOrder.setRelatedOrderCode(orderCode);
-            List<WmsInnerJobOrderDto> list=innerFeignApi.findList(searchWmsInnerJobOrder).getData();
-            if(StringUtils.isNotEmpty(list) && list.size()>0){
-                Long jobOrderId=list.get(0).getJobOrderId();
-                SearchWmsInnerJobOrderDet sJobOrderDet=new SearchWmsInnerJobOrderDet();
-                sJobOrderDet.setJobOrderId(jobOrderId);
-                List<WmsInnerJobOrderDetDto> jobOrderDetDtos=innerFeignApi.findList(sJobOrderDet).getData();
-                for (WmsInnerJobOrderDetDto jobOrderDetDto : jobOrderDetDtos) {
-                    QmsInspectionOrder newQmsInspectionOrder=new QmsInspectionOrder();
-                    BeanUtil.copyProperties(qmsInspectionOrder,newQmsInspectionOrder);
-                    newQmsInspectionOrder.setOrderQty(jobOrderDetDto.getPlanQty());
-                    newQmsInspectionOrder.setJobOrderDetId(jobOrderDetDto.getJobOrderDetId());
-                    resultList.add(newQmsInspectionOrder);
-                }
+        if(StringUtils.isNotEmpty(qmsInspectionOrders)&&!"0".equals(map.get("ifContainDet"))){
+            SearchQmsInspectionOrderDet searchQmsInspectionOrderDet = new SearchQmsInspectionOrderDet();
+            for (QmsInspectionOrder qmsInspectionOrder : qmsInspectionOrders){
+                searchQmsInspectionOrderDet.setInspectionOrderId(qmsInspectionOrder.getInspectionOrderId());
+                List<QmsInspectionOrderDet> detList = qmsInspectionOrderDetMapper.findDetList(ControllerUtil.dynamicConditionByEntity(searchQmsInspectionOrderDet));
+                qmsInspectionOrder.setQmsInspectionOrderDets(detList);
             }
         }
-        return resultList;*/
+
+        return qmsInspectionOrders;
     }
 
     @Override

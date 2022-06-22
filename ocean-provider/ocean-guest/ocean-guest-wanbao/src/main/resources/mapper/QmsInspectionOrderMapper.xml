@@ -51,9 +51,9 @@
     <result column="dept_name" jdbcType="VARCHAR" property="deptName"/>
     <result column="audit_user_name" jdbcType="VARCHAR" property="auditUserName"/>
     <result column="inspection_user_name" jdbcType="VARCHAR" property="inspectionUserName"/>
-    <collection property="qmsInspectionOrderDets" ofType="com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrderDet"
+    <!--<collection property="qmsInspectionOrderDets" ofType="com.fantechs.common.base.general.entity.wanbao.QmsInspectionOrderDet"
                 column="{inspectionOrderId=inspection_order_id}" select="com.fantechs.provider.guest.wanbao.mapper.QmsInspectionOrderDetMapper.findDetList">
-    </collection>
+    </collection>-->
   </resultMap>
 
   <sql id="Base_Column_List">

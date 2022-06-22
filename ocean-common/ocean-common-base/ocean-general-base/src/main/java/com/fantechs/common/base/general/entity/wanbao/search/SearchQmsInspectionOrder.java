@@ -82,4 +82,10 @@ public class SearchQmsInspectionOrder extends BaseQuery implements Serializable 
      */
     @ApiModelProperty(name="auditUserName",value = "(0-PO号和销售编码为空)")
     private Integer queryType;
+
+    /**
+     * 是否包含明细（0-否 1-是）
+     */
+    @ApiModelProperty(name="ifContainDet",value = "是否包含明细（0-否 1-是）")
+    private String ifContainDet;
 }
