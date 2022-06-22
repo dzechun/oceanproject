@@ -110,7 +110,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         // 2022-03-08 判断是否质检完成之后走产线入库
         WmsInnerInventoryDet innerInventoryDet = innerFeignApi.findByDet(barcode).getData();
         if (StringUtils.isNotEmpty(innerInventoryDet)){
-            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "此条码已入库，不可重复扫码，请检查是否品质重新入库");
+            return new PalletWorkScanDto();
         }
         log.info("=============== 判断是否质检完成之后走产线入库耗时：" + (System.currentTimeMillis() - startTime));
 
