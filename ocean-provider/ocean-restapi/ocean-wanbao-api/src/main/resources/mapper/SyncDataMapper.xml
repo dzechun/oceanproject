@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wanbao.api.mapper.SyncDataMapper">
+    <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.entity.om.OmSalesOrder">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="sales_order_id" jdbcType="BIGINT" property="salesOrderId" />
+        <result column="sales_order_code" jdbcType="VARCHAR" property="salesOrderCode" />
+    </resultMap>
+
+    <resultMap id="WorkOrderResultMap" type="com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder">
+        <result column="work_order_id" jdbcType="BIGINT" property="workOrderId"/>
+        <result column="work_order_code" jdbcType="BIGINT" property="workOrderCode"/>
+        <result column="logic_id" jdbcType="BIGINT" property="logicId"/>
+    </resultMap>
+
+    <resultMap id="SalesOrderDetResultMap" type="com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto">
+        <result column="sales_order_det_id" jdbcType="BIGINT" property="salesOrderDetId"/>
+        <result column="sales_code" jdbcType="BIGINT" property="salesCode"/>
+    </resultMap>
+
+
+    <select id="findAllSalesOrder" parameterType="map" resultMap="BaseResultMap">
+        SELECT
+            so.sales_order_id,
+            so.sales_order_code
+        FROM
+            om_sales_order so
+        WHERE
+            so.org_id = #{orgId}
+    </select>
+
+    <select id="findAllSalesorderDet" parameterType="map" resultMap="SalesOrderDetResultMap">
+        SELECT
+            sod.sales_order_det_id,
+            sod.sales_code
+        FROM
+            om_sales_order_det sod
+        WHERE
+            sod.org_id = #{orgId}
+          AND sod.sales_order_id = #{salesOrderId}
+    </select>
+
+    <select id="findAllWorkOrder" resultMap="WorkOrderResultMap">
+        SELECT
+            swo.work_order_id,
+            swo.work_order_code,
+            swo.material_id,
+            swo.logic_id
+        FROM
+            mes_pm_work_order swo
+        WHERE
+            swo.org_id = #{orgId}
+    </select>
+</mapper>

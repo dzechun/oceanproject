@@ -32,6 +32,39 @@ spring:
       username: wbquery
       password: wbquery
       driverClassName: oracle.jdbc.OracleDriver
+    five:
+#      jdbc-url: jdbc:mysql://192.168.5.86:3306/fantech_imes_v2?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+      jdbc-url: jdbc:mysql://192.168.5.90:3306/fantech_imes_v2?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+      type: com.alibaba.druid.pool.DruidDataSource
+      username: root
+      password: 123456
+      driverClassName: com.mysql.cj.jdbc.Driver
+      druid:
+        initialSize: 5
+        minIdle: 5
+        maxActive: 20
+        maxWait: 60000
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: SELECT 1 FROM DUAL
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxPoolPreparedStatementPerConnectionSize: 20
+        #  filters: stat,wall,logback
+        filters: stat,wall,slf4j
+        connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+        # StatViewServlet配置
+        stat-view-servlet:
+          enabled: true
+          url-pattern: /druid/*
+          reset-enable: true
+          login-username: root
+          login-password: 123456
+          ##deny优先于allow，如果在deny列表中，就算在allow列表中，也会被拒绝。如果allow没有配置或者为空，则允许所有访问
+          allow:
+          deny:
 #    primary:
 #      jdbc-url: jdbc:oracle:thin:@192.168.204.160:1521:ORCL
 #      type: com.alibaba.druid.pool.DruidDataSource

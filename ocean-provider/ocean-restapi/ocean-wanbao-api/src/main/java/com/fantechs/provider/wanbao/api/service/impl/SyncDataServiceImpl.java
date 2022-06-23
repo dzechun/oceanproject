@@ -11,7 +11,9 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.general.dto.basic.*;
-import com.fantechs.common.base.general.dto.mes.sfc.*;
+import com.fantechs.common.base.general.dto.mes.sfc.BatchSyncBarcodeDto;
+import com.fantechs.common.base.general.dto.mes.sfc.SyncBarcodeProcessDto;
+import com.fantechs.common.base.general.dto.mes.sfc.SyncFindBarcodeDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
@@ -19,6 +21,7 @@ import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
+import com.fantechs.common.base.general.entity.om.OmSalesOrder;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDeliveryOrder;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
@@ -62,6 +65,9 @@ public class SyncDataServiceImpl implements SyncDataService {
 
     @Resource
     private MiddleProductMapper middleProductMapper;
+
+    @Resource
+    private SyncDataMapper syncDataMapper;
 
     @Resource
     private BaseFeignApi baseFeignApi;
@@ -308,12 +314,15 @@ public class SyncDataServiceImpl implements SyncDataService {
             log.info("========== 查询基础数据耗时:" + res22);
 
             // 获取所有销售订单
-            List<OmSalesOrderDto> salesOrderDtos = omFeignApi.findSalesOrderAll().getData();
+            DynamicDataSourceHolder.putDataSouce("five");
+            map.clear();
+            map.put("orgId", sysUser.getOrganizationId());
+            List<OmSalesOrder> salesOrders = syncDataMapper.findAllSalesOrder(map);
             long current33 = System.currentTimeMillis();
             long res33 = current33 - current22;
             log.info("========== 查询销售订单耗时:" + res33);
             // 工单集合
-            List<MesPmWorkOrder> workOrderDtos = pmFeignApi.findWorkOrderAll().getData();
+            List<MesPmWorkOrder> workOrderDtos = syncDataMapper.findAllWorkOrder(map);
             long current44 = System.currentTimeMillis();
             long res44 = current44 - current33;
             log.info("========== 查询工单耗时:" + res44);
@@ -383,7 +392,7 @@ public class SyncDataServiceImpl implements SyncDataService {
                 }
 
                 // 销售订单
-                for (OmSalesOrderDto item : salesOrderDtos) {
+                for (OmSalesOrder item : salesOrders) {
                     if (item.getSalesOrderCode().equals(order.getSalesOrderCode())) {
                         workOrder.setSalesOrderId(item.getSalesOrderId());
                         break;
@@ -441,7 +450,6 @@ public class SyncDataServiceImpl implements SyncDataService {
                 } else {
                     Map<Long, List<MesPmWorkOrder>> listMap = workOrderDtos.stream().filter(item -> item.getMaterialId().equals(workOrder.getMaterialId()) && item.getLogicId() != null).collect(Collectors.groupingBy(MesPmWorkOrder::getLogicId));
                     // 同个物料的离散任务中存在多个逻辑仓或没有的，不处理，有且只有一个的时候赋值
-                    log.info("================= 逻辑仓listMap:" + workOrderDtos.stream().filter(item -> item.getMaterialId().equals(workOrder.getMaterialId()) && item.getLogicId() != null).collect(Collectors.toList()));
                     if (listMap.size() == 1){
                         listMap.forEach((key, value) -> {
                             workOrder.setLogicId(key);
@@ -510,7 +518,7 @@ public class SyncDataServiceImpl implements SyncDataService {
         // 执行查询前调用函数执行存储过程
         middleSaleOrderMapper.setPolicy();
         List<MiddleSaleOrder> salesOrders = middleSaleOrderMapper.findSaleOrderData(map);
-        log.info("=========== salesOrderDtos: " + JSON.toJSONString(salesOrders));
+        log.info("=========== salesOrders: " + JSON.toJSONString(salesOrders));
         if (!salesOrders.isEmpty()) {
             // 记录日志
             long start = System.currentTimeMillis();
@@ -528,7 +536,10 @@ public class SyncDataServiceImpl implements SyncDataService {
                 return;
             }
             // 销售订单
-            List<OmSalesOrderDto> salesOrderDtos = omFeignApi.findSalesOrderAll().getData();
+            DynamicDataSourceHolder.putDataSouce("five");
+            map.clear();
+            map.put("orgId", sysUser.getOrganizationId());
+            List<OmSalesOrder> salesOrderDtos = syncDataMapper.findAllSalesOrder(map);
 
             List<MiddleSaleOrder> list = new ArrayList<>();
             Map<String, List<MiddleSaleOrder>> collect = salesOrders.stream().collect(Collectors.groupingBy(MiddleSaleOrder::getSalesOrderCode));
@@ -598,11 +609,13 @@ public class SyncDataServiceImpl implements SyncDataService {
                     OmSalesOrderDetDto detDto = new OmSalesOrderDetDto();
                     BeanUtil.copyProperties(saleOrder, detDto);
                     // 判断订单是否存在
-                    for (OmSalesOrderDto dto : salesOrderDtos) {
+                    for (OmSalesOrder dto : salesOrderDtos) {
                         if (dto.getSalesOrderCode().equals(saleOrder.getSalesOrderCode())) {
                             omSalesOrder.setSalesOrderId(dto.getSalesOrderId());
                             saleOrder.setSaleOrderId(dto.getSalesOrderId().toString());
-                            for (OmSalesOrderDetDto oldDetDto : dto.getOmSalesOrderDetDtoList()) {
+                            map.put("salesOrderId", dto.getSalesOrderId());
+                            List<OmSalesOrderDetDto> orderDetDtoList = syncDataMapper.findAllSalesorderDet(map);
+                            for (OmSalesOrderDetDto oldDetDto : orderDetDtoList) {
                                 if (oldDetDto.getSalesCode().equals(saleOrder.getSalesCode())) {
                                     detDto.setSalesOrderDetId(oldDetDto.getSalesOrderDetId());
                                 }
@@ -884,7 +897,10 @@ public class SyncDataServiceImpl implements SyncDataService {
             long time3 = System.currentTimeMillis();
             log.info("=========== 查询base耗时: " + (time3-time2));
             // 工单
-            List<MesPmWorkOrder> workOrders = pmFeignApi.findWorkOrderAll().getData();
+            DynamicDataSourceHolder.putDataSouce("five");
+            map.clear();
+            map.put("orgId", sysUser.getOrganizationId());
+            List<MesPmWorkOrder> workOrders = syncDataMapper.findAllWorkOrder(map);
             long time4 = System.currentTimeMillis();
             log.info("=========== 查询om耗时: " + (time4-time3));
             // 条码
