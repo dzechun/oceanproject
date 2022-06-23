@@ -1940,11 +1940,12 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
         log.info("===================== 数量 " + (count - 1));
         if (count == 0) {
             qmsInspectionOrder.setRecheckStatus((byte) 2);
+            qmsInspectionOrder.setInspectionResult((byte) 1);
             qmsInspectionOrderMapper.updateByPrimaryKey(qmsInspectionOrder);
         }
         if (count > 0) {
             qmsInspectionOrder.setInspectionResult((byte) 2);
-            qmsInspectionOrder.setInspectionResult((byte) 1);
+            qmsInspectionOrder.setRecheckStatus((byte) 2);
             qmsInspectionOrderMapper.updateByPrimaryKey(qmsInspectionOrder);
         }
         innerFeignApi.autoRecheck(qmsInspectionOrder.getInspectionOrderCode());
