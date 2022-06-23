@@ -11,13 +11,14 @@
 
     <resultMap id="WorkOrderResultMap" type="com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder">
         <result column="work_order_id" jdbcType="BIGINT" property="workOrderId"/>
-        <result column="work_order_code" jdbcType="BIGINT" property="workOrderCode"/>
+        <result column="work_order_code" jdbcType="VARCHAR" property="workOrderCode"/>
+        <result column="material_id" jdbcType="BIGINT" property="materialId"/>
         <result column="logic_id" jdbcType="BIGINT" property="logicId"/>
     </resultMap>
 
     <resultMap id="SalesOrderDetResultMap" type="com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto">
         <result column="sales_order_det_id" jdbcType="BIGINT" property="salesOrderDetId"/>
-        <result column="sales_code" jdbcType="BIGINT" property="salesCode"/>
+        <result column="sales_code" jdbcType="VARCHAR" property="salesCode"/>
     </resultMap>
 
 

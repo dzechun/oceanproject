@@ -448,6 +448,8 @@ public class SyncDataServiceImpl implements SyncDataService {
                     // 修改订单
                     updateList.add(workOrder);
                 } else {
+//                    log.info("================================ workOrderDtos1111:" + JSON.toJSONString(workOrderDtos.stream().map(item -> item.getMaterialId()).collect(Collectors.toList())));
+//                    log.info("================================ workOrderDtos23333333:" + JSON.toJSONString(workOrderDtos.stream().map(item -> item.getLogicId()).collect(Collectors.toList())));
                     Map<Long, List<MesPmWorkOrder>> listMap = workOrderDtos.stream().filter(item -> item.getMaterialId().equals(workOrder.getMaterialId()) && item.getLogicId() != null).collect(Collectors.groupingBy(MesPmWorkOrder::getLogicId));
                     // 同个物料的离散任务中存在多个逻辑仓或没有的，不处理，有且只有一个的时候赋值
                     if (listMap.size() == 1){
