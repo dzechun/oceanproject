@@ -1,0 +1,21 @@
+logging:
+  config: classpath:logback-spring.xml
+server:
+  port: 8081
+spring:
+  application:
+    name: ocean-xxl-job-executor
+  profiles:
+    active: dev
+xxl:
+  job:
+    accessToken: default_token
+    admin:
+      addresses: http://127.0.0.1:8080/xxl-job-admin
+    executor:
+      address: ''
+      appname: xxl-job-executor-sample
+      ip: ''
+      logpath: /data/applogs/ocean-xxl-job/jobhandler
+      logretentiondays: 30
+      port: 9999
