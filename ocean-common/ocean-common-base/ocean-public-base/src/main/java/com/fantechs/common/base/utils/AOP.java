@@ -38,6 +38,10 @@ public class AOP {
         String token =request .getHeader("token");
         StringBuffer stringBuffer=new StringBuffer("(");
         Object[] args = joinPoint.getArgs();
+        String method =  joinPoint.getSignature().getDeclaringTypeName()+"."+joinPoint.getSignature().getName();
+        if (method.equals("com.fantechs.provider.mes.sfc.controller.MesSfcWorkOrderBarcodeController.add") || method.equals("com.fantechs.provider.mes.sfc.controller.MesSfcWorkOrderBarcodeController.print")){
+            return;
+        }
         for (int i = 0; i < args.length; i++) {
             Object arg = args[i];
             if(!StringUtils.isEmpty(arg)) {
@@ -63,6 +67,10 @@ public class AOP {
 
     @AfterReturning(value = "pointCut()",returning = "result")
     public void logAfterController(JoinPoint joinPoint, Object result){
+        String method =  joinPoint.getSignature().getDeclaringTypeName()+"."+joinPoint.getSignature().getName();
+        if (method.equals("com.fantechs.provider.mes.sfc.controller.MesSfcWorkOrderBarcodeController.add") || method.equals("com.fantechs.provider.mes.sfc.controller.MesSfcWorkOrderBarcodeController.print")){
+            return;
+        }
         log.info("【AOP日志记录】执行结束："+joinPoint.getSignature().getDeclaringTypeName()+"."+joinPoint.getSignature().getName()+"，返回结果:"+result);
     }
 }
