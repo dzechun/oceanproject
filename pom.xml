@@ -53,6 +53,8 @@
         <easypoi-web.version>4.0.0</easypoi-web.version>
         <easypoi-annotation.version>4.0.0</easypoi-annotation.version>
         <txlcn-tc.version>5.0.2.RELEASE</txlcn-tc.version>
+        <!-- 在构建过程中读取源码时使用的字符集 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>

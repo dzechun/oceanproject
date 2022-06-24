@@ -24,11 +24,7 @@
             <artifactId>uasparser</artifactId>
             <version>0.6.0</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
+        
     </dependencies>
 
 </project>
