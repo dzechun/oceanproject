@@ -38,7 +38,9 @@ import com.fantechs.provider.mes.sfc.service.*;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
 import com.fantechs.provider.mes.sfc.util.RabbitProducer;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -88,6 +90,8 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     InnerFeignApi innerFeignApi;
     @Resource
     private RabbitProducer rabbitProducer;
+    @Autowired
+    private AmqpTemplate rabbitTemplate;
 
     // endregion
 
@@ -288,6 +292,15 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         palletWorkScanDto.setScanCartonNum(1);
 
         log.info("=============== 栈板总耗时：" + (System.currentTimeMillis() - curretTime));
+
+        //补扫入库下线，发送消息mq到前端，自动确认滚动
+        if(requestPalletWorkScanDto.getIsReadHead()){
+            log.info("补扫入库下线，发送消息mq到前端，产线ID：{}, 工位ID:{}",requestPalletWorkScanDto.getProLineId(),requestPalletWorkScanDto.getStationId());
+            String topic = requestPalletWorkScanDto.getProLineId() + "_" + requestPalletWorkScanDto.getStationId();
+            String code = "{\"code\":\"0\"}";
+            byte[] bytes = code.getBytes();
+            this.rabbitTemplate.convertAndSend(topic,bytes);
+        }
         return palletWorkScanDto;
     }
 

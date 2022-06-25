@@ -204,7 +204,7 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
             dto.setCheckdaliyOrder((byte) 0);
             dto.setPrintBarcode((byte) 0);
             dto.setPalletType((byte) 2);
-//            dto.setIsReadHead(true);
+            dto.setIsReadHead(true);
             PalletWorkScanDto scanDto = mesSfcPalletWorkService.palletWorkScanBarcode(dto);
 
             /*WanbaoStackingMQDto wanbaoStackingMQDto = new WanbaoStackingMQDto();
