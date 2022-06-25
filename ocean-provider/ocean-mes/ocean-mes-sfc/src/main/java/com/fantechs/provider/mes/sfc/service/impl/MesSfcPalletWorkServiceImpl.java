@@ -90,8 +90,6 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
     InnerFeignApi innerFeignApi;
     @Resource
     private RabbitProducer rabbitProducer;
-    @Autowired
-    private AmqpTemplate rabbitTemplate;
 
     // endregion
 
@@ -295,11 +293,10 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
         //补扫入库下线，发送消息mq到前端，自动确认滚动
         if(requestPalletWorkScanDto.getIsReadHead()){
-            log.info("补扫入库下线，发送消息mq到前端，产线ID：{}, 工位ID:{}",requestPalletWorkScanDto.getProLineId(),requestPalletWorkScanDto.getStationId());
-            String topic = "topic." + requestPalletWorkScanDto.getProLineId() + "_" + requestPalletWorkScanDto.getStationId();
+            log.info("============== 补扫入库下线，发送消息mq到前端，产线ID：{}, 工位ID:{}",requestPalletWorkScanDto.getProLineId(),requestPalletWorkScanDto.getStationId());
+            String topic = requestPalletWorkScanDto.getProLineId() + "_" + requestPalletWorkScanDto.getStationId();
             String code = "{\"code\":\"0\"}";
-            byte[] bytes = code.getBytes();
-            this.rabbitTemplate.convertAndSend(topic,bytes);
+            rabbitProducer.sendMakeUp(code,topic);
         }
         return palletWorkScanDto;
     }

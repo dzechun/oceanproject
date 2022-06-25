@@ -110,4 +110,36 @@ public class RabbitProducer {
         this.rabbitTemplate.convertAndSend(RabbitConfig.STACKING_QUEUE_NAME,bytes);
     }
 
+    /**
+     * 发送读头扫码补打信息
+     * @param resultJson
+     * @param id
+     */
+    public void sendMakeUp(String resultJson,String id){
+        try {
+            Queue queue = new Queue(RabbitConfig.QUEUE_NAME_FILE+":"+id,true,false,false,null);
+            FanoutExchange fanoutExchange = new FanoutExchange(RabbitConfig.DIRECT_EXCHANGE);
+            rabbitAdmin.declareQueue(queue);
+            rabbitAdmin.declareBinding(BindingBuilder.bind(queue).to(fanoutExchange));
+        }catch (Exception e){
+            log.error("队列已存在或者异常:"+e.getMessage());
+        }
+
+        AMQP.Queue.DeclareOk declareOk = rabbitAdmin.getRabbitTemplate().execute(
+                new ChannelCallback<AMQP.Queue.DeclareOk>() {
+                    @Override
+                    public AMQP.Queue.DeclareOk doInRabbit(Channel channel)
+                            throws Exception {
+                        return channel.queueDeclarePassive(RabbitConfig.QUEUE_NAME_FILE+":"+id);
+                    }
+                });
+
+        String json = JSONObject.toJSONString(resultJson);
+        byte[] bytes = json.getBytes();
+        byte[] ibytes = new byte[1+bytes.length];
+        ibytes[0]=(byte)1;
+        System.arraycopy(bytes,0,ibytes,1,bytes.length);
+        this.rabbitTemplate.convertAndSend(RabbitConfig.QUEUE_NAME_FILE+":"+id,ibytes);
+    }
+
 }
