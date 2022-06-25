@@ -23,6 +23,8 @@ public class RabbitConfig {
 
     public static final String TOPIC_EXCHANGE="topic.exchange";
 
+    public static final String QUEUE_NAME_DO = "topic.do";
+
 //    //死信队列名称
 //    public static final String DEAD_QUEUE = "dead.queue";
 //    //死信交换机名称

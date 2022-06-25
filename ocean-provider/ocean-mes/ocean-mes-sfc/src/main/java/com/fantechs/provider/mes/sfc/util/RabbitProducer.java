@@ -117,7 +117,7 @@ public class RabbitProducer {
      */
     public void sendMakeUp(String resultJson,String id){
         try {
-            Queue queue = new Queue(RabbitConfig.QUEUE_NAME_FILE+":"+id,true,false,false,null);
+            Queue queue = new Queue(RabbitConfig.QUEUE_NAME_DO +":"+id,true,false,false,null);
             FanoutExchange fanoutExchange = new FanoutExchange(RabbitConfig.DIRECT_EXCHANGE);
             rabbitAdmin.declareQueue(queue);
             rabbitAdmin.declareBinding(BindingBuilder.bind(queue).to(fanoutExchange));

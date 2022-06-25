@@ -66,8 +66,10 @@ spring:
   main:
     allow-bean-definition-overriding: true
   rabbitmq:
-    host: 192.168.5.85
-    port: 5672
+    #host: 192.168.61.55
+    host: 192.168.204.164
+    #host: 172.16.60.35
+    #    host: 192.168.5.85
     username: admin
     #password: admin
     password: StrongPassword
