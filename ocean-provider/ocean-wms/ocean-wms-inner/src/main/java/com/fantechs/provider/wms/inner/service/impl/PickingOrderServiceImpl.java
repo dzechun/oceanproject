@@ -18,7 +18,6 @@ import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcKeyPartRe
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDto;
-import com.fantechs.common.base.general.dto.wms.inner.WmsInnerMaterialBarcodeDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
 import com.fantechs.common.base.general.entity.basic.BaseStorage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterial;
@@ -544,8 +543,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
 
                             isFlat=true;
 
-                            //分配库存
-                            num += this.DistributionInventory(wmsInnerJobOrder, newDet,1,null);
+                            //分配库存 不占用库存
+                            //num += this.DistributionInventory(wmsInnerJobOrder, newDet,1,null);
                         }
                         else {
                             //库存足
@@ -564,8 +563,8 @@ public class PickingOrderServiceImpl implements PickingOrderService {
 
                             isFlat=true;
 
-                            //分配库存
-                            num += this.DistributionInventory(wmsInnerJobOrder, wms,1,null);
+                            //分配库存 不占用库存
+                            //num += this.DistributionInventory(wmsInnerJobOrder, wms,1,null);
                         }
 
                         if(planQty.compareTo(new BigDecimal(0))<=0){

@@ -1699,7 +1699,9 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
                 throw new BizErrorException("配置项 Automatic 获取失败");
             }
             SysSpecItem sysSpecItem = itemListFiveRing.get(0);
-            if ("1".equals(sysSpecItem.getParaValue())) {
+
+            //上架自动分配
+            if ("1".equals(sysSpecItem.getParaValue()) && record.getJobOrderType()==3) {
                 //自动分配
                 try {
                     this.dis(record);
