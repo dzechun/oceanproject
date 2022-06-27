@@ -130,7 +130,7 @@ public class RabbitProducer {
                     @Override
                     public AMQP.Queue.DeclareOk doInRabbit(Channel channel)
                             throws Exception {
-                        return channel.queueDeclarePassive(RabbitConfig.QUEUE_NAME_FILE+":"+id);
+                        return channel.queueDeclarePassive(RabbitConfig.QUEUE_NAME_DO+":"+id);
                     }
                 });
 
@@ -139,7 +139,7 @@ public class RabbitProducer {
         byte[] ibytes = new byte[1+bytes.length];
         ibytes[0]=(byte)1;
         System.arraycopy(bytes,0,ibytes,1,bytes.length);
-        this.rabbitTemplate.convertAndSend(RabbitConfig.QUEUE_NAME_FILE+":"+id,ibytes);
+        this.rabbitTemplate.convertAndSend(RabbitConfig.QUEUE_NAME_DO+":"+id,ibytes);
     }
 
 }
