@@ -106,7 +106,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${basedir}/lib/auth</outputDirectory>
+							<outputDirectory>${basedir}/lib/admin</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
