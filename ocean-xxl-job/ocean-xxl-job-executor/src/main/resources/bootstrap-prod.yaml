@@ -1,0 +1,7 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        namespace: ${NACOS_NAMESPACE:prod}
+      discovery:
+        namespace: ${NACOS_NAMESPACE:prod}
