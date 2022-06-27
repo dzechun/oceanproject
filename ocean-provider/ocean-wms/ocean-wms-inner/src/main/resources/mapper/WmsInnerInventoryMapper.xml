@@ -259,7 +259,21 @@ wii.option5
     <foreach collection="list" item="item" index="index" open="" close="" separator=";">
       update wms_inner_inventory
       <set>
-        packing_qty =#{item.packingQty},
+          <if test="item.packingQty != null">
+            packing_qty =#{item.packingQty},
+          </if>
+        <if test="item.qcLock != null">
+          qc_lock =#{item.qcLock},
+        </if>
+        <if test="item.modifiedTime != null">
+          modified_time =#{item.modifiedTime},
+        </if>
+        <if test="item.modifiedUserId != null">
+          modified_user_id =#{item.modifiedUserId},
+        </if>
+        <if test="item.inspectionOrderCode != null">
+          inspection_order_code =#{item.inspectionOrderCode},
+        </if>
       </set>
       where inventory_id =#{item.inventoryId}
     </foreach>

@@ -20,4 +20,6 @@ public interface WmsInnerInventoryDetMapper extends MyMapper<WmsInnerInventoryDe
      * @return
      */
     List<InStorageMaterialDto> findInventoryDetByStorage(Map<String, Object> map);
+
+    int batchUpdateByPartField(List<WmsInnerInventoryDet> list);
 }

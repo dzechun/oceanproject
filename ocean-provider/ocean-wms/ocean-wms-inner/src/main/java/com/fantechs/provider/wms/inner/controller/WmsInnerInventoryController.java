@@ -67,6 +67,12 @@ public class WmsInnerInventoryController {
         return ControllerUtil.returnCRUD(wmsInnerInventoryService.update(wmsInnerInventory));
     }
 
+    @ApiOperation("修改")
+    @PostMapping("/batchUpdate")
+    public ResponseEntity batchUpdate(@ApiParam(value = "对象，Id必传",required = true)@RequestBody List<WmsInnerInventory> list) {
+        return ControllerUtil.returnCRUD(wmsInnerInventoryService.batchUpdate(list));
+    }
+
     @ApiOperation("获取详情")
     @PostMapping("/detail")
     public ResponseEntity<WmsInnerInventory> detail(@ApiParam(value = "ID",required = true)@RequestParam  @NotNull(message="id不能为空") Long id) {

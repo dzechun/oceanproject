@@ -30,6 +30,10 @@ public interface InnerFeignApi {
     @PostMapping("/wmsInnerInventory/update")
     ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=WmsInnerInventory.update.class) WmsInnerInventory wmsInnerInventory);
 
+    @ApiOperation("批量修改部分字段")
+    @PostMapping("/wmsInnerInventory/batchUpdate")
+    ResponseEntity batchUpdateInventory(@ApiParam(value = "对象，Id必传",required = true)@RequestBody List<WmsInnerInventory> list);
+
 
     @PostMapping("/wmsInnerInventory/selectOneByExample")
     ResponseEntity<WmsInnerInventory> selectOneByExample(@RequestBody Map<String,Object> map);
@@ -84,6 +88,10 @@ public interface InnerFeignApi {
     @ApiOperation("修改")
     @PostMapping("/wmsInnerInventoryDet/update")
     ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value= WmsInnerInventoryDet.update.class) WmsInnerInventoryDet wmsInnerInventoryDet);
+
+    @ApiOperation("批量修改部分字段")
+    @PostMapping("/wmsInnerInventoryDet/batchUpdate")
+    ResponseEntity batchUpdate(@ApiParam(value = "对象，Id必传",required = true)@RequestBody List<WmsInnerInventoryDet> list);
 
     @ApiOperation("来料打印列表")
     @PostMapping("/wmsInnerMaterialBarcode/findList")

@@ -5,7 +5,6 @@ import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.support.IService;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 /**
@@ -22,6 +21,7 @@ public interface WmsInnerInventoryDetService extends IService<WmsInnerInventoryD
 
     WmsInnerInventoryDet findByOne(String barCode);
 
+    int batchUpdate(List<WmsInnerInventoryDet> list);
 
     /**
      * 20220104

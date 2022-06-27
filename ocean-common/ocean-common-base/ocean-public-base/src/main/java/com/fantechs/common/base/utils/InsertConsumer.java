@@ -1,4 +1,4 @@
-package com.fantechs.provider.base.util;
+package com.fantechs.common.base.utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +25,9 @@ public class InsertConsumer {
     }
 
     /**
-     * 插入方法
+     * 并行流方式
      *
-     * @param list     插入数据集合
+     * @param list     数据集合
      * @param consumer 消费型方法，直接使用 mapper::method 方法引用的方式
      * @param <T>      插入的数据类型
      */

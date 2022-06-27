@@ -7,11 +7,10 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.InStorageMaterialDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
-import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.InsertConsumer;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
 import com.fantechs.provider.wms.inner.service.WmsInnerInventoryDetService;
@@ -149,6 +148,15 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
             return wmsInnerInventoryDet.get(0);
         }
         return null;
+    }
+
+    @Override
+    public int batchUpdate(List<WmsInnerInventoryDet> list) {
+        long start = System.currentTimeMillis();
+        InsertConsumer.insertData(list, wmsInnerInventoryDetMapper::batchUpdateByPartField);
+        long end = System.currentTimeMillis();
+        logger.info("=============== InsertConsumer.insertData 耗时:" + (end-start));
+        return 1;
     }
 
     @Override
