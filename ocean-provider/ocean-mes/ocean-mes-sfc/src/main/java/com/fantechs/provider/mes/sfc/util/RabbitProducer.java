@@ -134,8 +134,7 @@ public class RabbitProducer {
                     }
                 });
 
-        String json = JSONObject.toJSONString(resultJson);
-        byte[] bytes = json.getBytes();
+        byte[] bytes = resultJson.getBytes();
         byte[] ibytes = new byte[1+bytes.length];
         ibytes[0]=(byte)1;
         System.arraycopy(bytes,0,ibytes,1,bytes.length);

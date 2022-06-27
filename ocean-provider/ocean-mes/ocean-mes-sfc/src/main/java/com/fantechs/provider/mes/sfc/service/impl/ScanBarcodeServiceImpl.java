@@ -174,6 +174,7 @@ public class ScanBarcodeServiceImpl implements ScanBarcodeService {
             dto.setCheckOrNot(false);
             dto.setPrint(false);
             dto.setPackType("1");
+            dto.setIsReadHead(true);
             if (isCheckSalesBarcode || isCheckCustBarcode){
                 dto.setAnnex(true);
                 if (isCheckSalesBarcode){
