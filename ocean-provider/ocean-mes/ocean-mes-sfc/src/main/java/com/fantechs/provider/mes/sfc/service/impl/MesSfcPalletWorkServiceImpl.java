@@ -1,6 +1,7 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSON;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
@@ -292,7 +293,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
         log.info("=============== 栈板总耗时：" + (System.currentTimeMillis() - curretTime));
 
         //补扫入库下线，发送消息mq到前端，自动确认滚动
-        if(requestPalletWorkScanDto.getIsReadHead()){
+        if(ObjectUtil.isNull(requestPalletWorkScanDto.getIsReadHead()) || !requestPalletWorkScanDto.getIsReadHead()){
             log.info("============== 补扫入库下线，发送消息mq到前端，产线ID：{}, 工位ID:{}",requestPalletWorkScanDto.getProLineId(),requestPalletWorkScanDto.getStationId());
             String topic = requestPalletWorkScanDto.getProLineId() + "_" + requestPalletWorkScanDto.getStationId();
             String code = "{\"code\":\"0\"}";

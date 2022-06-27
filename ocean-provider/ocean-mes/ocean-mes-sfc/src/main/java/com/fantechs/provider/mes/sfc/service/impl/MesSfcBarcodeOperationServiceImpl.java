@@ -1,5 +1,6 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
@@ -38,6 +39,7 @@ import com.fantechs.provider.mes.sfc.mapper.MesSfcProductCartonMapper;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
 import com.fantechs.provider.mes.sfc.service.*;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
+import com.fantechs.provider.mes.sfc.util.RabbitProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -87,6 +89,8 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     InnerFeignApi innerFeignApi;
     @Resource
     WanbaoFeignApi wanbaoFeignApi;
+    @Resource
+    private RabbitProducer rabbitProducer;
 
     // endregion
 
@@ -564,6 +568,14 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         long five = System.currentTimeMillis();
         log.info("============== 投产工序:"+ (five - four));
         log.info("=========== 包箱过站总耗时 :" + (System.currentTimeMillis() - start));
+
+        //补扫入库下线，发送消息mq到前端，自动确认滚动
+        if(ObjectUtil.isNull(dto.getIsReadHead()) || !dto.getIsReadHead()){
+            log.info("============== 补扫入库下线，发送消息mq到前端，产线ID：{}, 工位ID:{}",dto.getProLineId(),dto.getStationId());
+            String topic = dto.getProLineId() + "_" + dto.getStationId();
+            String code = "{\"code\":\"0\"}";
+            rabbitProducer.sendMakeUp(code,topic);
+        }
         return true;
     }
 
