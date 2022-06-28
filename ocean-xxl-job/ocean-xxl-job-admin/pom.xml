@@ -22,6 +22,7 @@
 	</dependencyManagement>
 
 	<dependencies>
+
 		<!-- starter-web：spring-webmvc + autoconfigure + logback + yaml + tomcat -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -53,45 +54,50 @@
 			<version>${mysql-connector-java.version}</version>
 		</dependency>
 
-		<!-- -xxl-job-core -->
+		<!-- xxl-job-core -->
 		<dependency>
 			<groupId>com.xuxueli</groupId>
 			<artifactId>xxl-job-core</artifactId>
 			<version>2.3.0</version>
 		</dependency>
+
 	</dependencies>
 
+
 	<build>
+		<finalName>${artifactId}</finalName>
 		<plugins>
 			<plugin>
+				<!--打包时去除第三方依赖-->
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring-boot.version}</version>
+				<configuration>
+					<layout>ZIP</layout>
+					<includes>
+						<!--只包含自己-->
+						<include>
+							<groupId>${groupId}</groupId>
+							<artifactId>${artifactId}</artifactId>
+						</include>
+					</includes>
+				</configuration>
+			</plugin>
+			<!--拷贝第三方依赖文件到指定目录-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
 					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
 						<goals>
-							<goal>repackage</goal>
+							<goal>copy-dependencies</goal>
 						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/lib/admin</outputDirectory>
+						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-			<!-- docker -->
-			<plugin>
-				<groupId>com.spotify</groupId>
-				<artifactId>docker-maven-plugin</artifactId>
-				<version>0.4.13</version>
-				<configuration>
-					<!-- made of '[a-z0-9-_.]' -->
-					<imageName>${project.artifactId}:${project.version}</imageName>
-					<dockerDirectory>${project.basedir}</dockerDirectory>
-					<resources>
-						<resource>
-							<targetPath>/</targetPath>
-							<directory>${project.build.directory}</directory>
-							<include>${project.build.finalName}.jar</include>
-						</resource>
-					</resources>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
