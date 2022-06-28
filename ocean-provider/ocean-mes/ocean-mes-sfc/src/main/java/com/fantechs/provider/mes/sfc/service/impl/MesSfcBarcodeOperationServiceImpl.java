@@ -7,12 +7,14 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseMaterialPackageDto;
 import com.fantechs.common.base.general.dto.basic.BasePackageSpecificationDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderMaterialRePDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderProcessReWoDto;
 import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
 import com.fantechs.common.base.general.dto.om.OmSalesCodeReSpcDto;
+import com.fantechs.common.base.general.dto.wms.inner.NotOrderInStorage;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDetDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseInventoryStatus;
@@ -453,12 +455,13 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getProcessId())) {
             mesSfcBarcodeProcess.setDevoteTime(new Date());
         }
-        if (mesSfcBarcodeProcess.getNextProcessId().equals(mesPmWorkOrder.getOutputProcessId())) {
+        if (mesSfcBarcodeProcess.getNextProcessId().equals(mesPmWorkOrder.getOutputProcessId()) || mesPmWorkOrder.getWorkOrderCode().startsWith("ZL")) {
             // 产出工序置空下一道工序关信息
             mesSfcBarcodeProcess.setProductionTime(new Date());
             mesSfcBarcodeProcess.setNextProcessId(0L);
             mesSfcBarcodeProcess.setNextProcessName("");
             mesSfcBarcodeProcess.setNextProcessCode("");
+            mesSfcBarcodeProcess.setOutProcessTime(new Date());
         }else {
             Optional<BaseRouteProcess> routeProcessOptional = routeProcessList.stream()
                     .filter(i -> dto.getProcessId().equals(i.getProcessId()))
@@ -487,7 +490,6 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         }
         mesSfcBarcodeProcess.setBarcodeStatus((byte) 1);
         mesSfcBarcodeProcess.setInProcessTime(new Date());
-        mesSfcBarcodeProcess.setOutProcessTime(new Date());
         mesSfcBarcodeProcess.setOperatorUserId(user.getUserId());
         mesSfcBarcodeProcess.setModifiedUserId(user.getUserId());
         mesSfcBarcodeProcess.setModifiedTime(new Date());
@@ -531,7 +533,11 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                             if (StringUtils.isNotEmpty(barcodeDto)){
                                 MesSfcWorkOrderBarcode barcode = new MesSfcWorkOrderBarcode();
                                 barcode.setWorkOrderBarcodeId(barcodeDto.getWorkOrderBarcodeId());
-                                barcode.setBarcodeStatus((byte) 1);
+                                if (mesPmWorkOrder.getWorkOrderCode().startsWith("ZL")){
+                                    barcode.setBarcodeStatus((byte) 2);
+                                } else {
+                                    barcode.setBarcodeStatus((byte) 1);
+                                }
                                 barcodes.add(barcode);
                             }
                         }
@@ -550,15 +556,31 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     mesPmWorkOrder.setWorkOrderStatus((byte) 3);
                     mesPmWorkOrder.setActualStartTime(new Date());
                 }
+                if (mesPmWorkOrder.getWorkOrderCode().startsWith("ZL")){
+                    // 判断当前工序是否为产出工序，且是该条码在工单工序第一次过站，工单产出 +1
+                    mesPmWorkOrder.setOutputQty(mesPmWorkOrder.getOutputQty() != null ? BigDecimal.ONE.add(mesPmWorkOrder.getOutputQty()) : BigDecimal.ONE);
+                    if (mesPmWorkOrder.getOutputQty().compareTo(mesPmWorkOrder.getWorkOrderQty()) == 0) {
+                        // A16车间产出数量等于工单数量，工单完工
+                        mesPmWorkOrder.setWorkOrderStatus((byte) 6);
+                        mesPmWorkOrder.setActualEndTime(new Date());
+                        mesPmWorkOrder.setModifiedTime(new Date());
+                        mesPmWorkOrder.setModifiedUserId(user.getUserId());
+                    }
+                }
+
                 pmFeignApi.updatePmWorkOrder(mesPmWorkOrder);
 
                 long updateworkorder = System.currentTimeMillis();
                 log.info("============== 反写工单耗时:"+ (updateworkorder - updatePartKey));
                 /**
                  * 日期：20211109
-                 * 更新条码状态  条码状态(0-待投产 1-投产中 2-已完成 3-待打印)
+                 * 更新条码状态(0-待投产 1-投产中 2-已完成 3-待打印)
                  */
-                sfcWorkOrderBarcode.setBarcodeStatus((byte) 1);
+                if (mesPmWorkOrder.getWorkOrderCode().startsWith("ZL")){
+                    sfcWorkOrderBarcode.setBarcodeStatus((byte) 2);
+                } else {
+                    sfcWorkOrderBarcode.setBarcodeStatus((byte) 1);
+                }
                 mesSfcWorkOrderBarcodeService.update(sfcWorkOrderBarcode);
                 long updateOrderBarcode = System.currentTimeMillis();
                 log.info("============== 反写条码表耗时:"+ (updateOrderBarcode - updateworkorder));
@@ -567,6 +589,38 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
 
         long five = System.currentTimeMillis();
         log.info("============== 投产工序:"+ (five - four));
+
+
+        /**
+         * A16车间增加特性业务
+         */
+        if (mesPmWorkOrder.getWorkOrderCode().startsWith("ZL")){
+            NotOrderInStorage notOrderInStorage = new NotOrderInStorage();
+            notOrderInStorage.setMaterialId(mesPmWorkOrder.getMaterialId());
+            notOrderInStorage.setRelevanceOrderCode(mesPmWorkOrder.getWorkOrderCode());
+
+            SearchBasePackageSpecification searchBasePackageSpecification = new SearchBasePackageSpecification();
+            searchBasePackageSpecification.setMaterialId(mesPmWorkOrder.getMaterialId());
+            searchBasePackageSpecification.setOrgId(user.getOrganizationId());
+            List<BasePackageSpecificationDto> basePackgeSpecifications = baseFeignApi.findBasePackageSpecificationList(searchBasePackageSpecification).getData();
+            if (StringUtils.isNotEmpty(basePackgeSpecifications)) {
+                List<BaseMaterialPackageDto> baseMaterialPackageDtos = basePackgeSpecifications.get(0).getBaseMaterialPackages();
+                if (StringUtils.isNotEmpty(baseMaterialPackageDtos)) {
+                    BaseMaterialPackageDto baseMaterialPackageDto = baseMaterialPackageDtos.get(0);
+                    notOrderInStorage.setPackingUnitName(baseMaterialPackageDto.getPackingUnitName());
+                }
+            }
+            notOrderInStorage.setPackingQty(BigDecimal.ONE);
+            notOrderInStorage.setBarcode(mesSfcBarcodeProcess.getBarcode());
+            if (StringUtils.isNotEmpty(dto.getBarAnnexCode())){
+                notOrderInStorage.setSalesBarcode(dto.getBarAnnexCode());
+            }
+            innerFeignApi.notOrderInStorage(notOrderInStorage);
+            long six = System.currentTimeMillis();
+            log.info("============== A16无单入库:"+ (six - five));
+        }
+
+
         log.info("=========== 包箱过站总耗时 :" + (System.currentTimeMillis() - start));
 
         //补扫入库下线，发送消息mq到前端，自动确认滚动
