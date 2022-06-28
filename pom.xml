@@ -57,6 +57,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <!-- 依赖声明 -->
+    <!-- <dependencyManagement> -->
+    <!--     <dependencies> -->
+    <!--     </dependencies> -->
+
+    <!-- </dependencyManagement> -->
+
+
     <dependencies>
 
         <!-- 整合SpringMVC启动器-->
