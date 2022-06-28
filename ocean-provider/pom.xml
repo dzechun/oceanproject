@@ -38,4 +38,14 @@
         <module>ocean-tem</module>
         <module>ocean-wms</module>      <!-- wms服务 -->
     </modules>
+
+    <dependencies>
+        <!-- 整合SpringMVC启动器-->
+        <!-- HessianServiceExporter 在这个jar包中 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>

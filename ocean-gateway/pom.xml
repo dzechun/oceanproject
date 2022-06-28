@@ -19,15 +19,18 @@
 
 
     <dependencies>
+        <!-- 1 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-zuul</artifactId>
         </dependency>
+        <!-- 2 -->
         <dependency>
             <groupId>com.fantechs.common.base</groupId>
             <artifactId>ocean-public-base</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <!-- 3 -->
         <dependency>
             <groupId>com.fantechs.common.config</groupId>
             <artifactId>ocean-imes-config</artifactId>
@@ -46,14 +49,17 @@
                     <layout>ZIP</layout>
                     <includes>
                         <!--此处可以指定包含jar包-->
+                        <!-- 2 -->
                         <include>
                             <groupId>com.fantechs.common.config</groupId>
                             <artifactId>ocean-imes-config</artifactId>
                         </include>
+                        <!-- 3 -->
                         <include>
-                            <groupId>org.springframework.cloud</groupId>
-                            <artifactId>spring-cloud-starter-netflix-zuul</artifactId>
+                            <groupId>com.fantechs.common.base</groupId>
+                            <artifactId>ocean-public-base</artifactId>
                         </include>
+
                     </includes>
                 </configuration>
             </plugin>
@@ -70,6 +76,8 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${boot-jar-output}</outputDirectory>
+                            <!-- 排除项目内部依赖 -->
+                            <excludeGroupIds>com.fantechs</excludeGroupIds>
                         </configuration>
                     </execution>
                 </executions>

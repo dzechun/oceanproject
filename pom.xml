@@ -57,22 +57,20 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <!-- 依赖声明 -->
-    <!-- <dependencyManagement> -->
-    <!--     <dependencies> -->
-    <!--     </dependencies> -->
-
-    <!-- </dependencyManagement> -->
-
+    <!--管理spring-cloud版本，引入openfeign时不用添加version-->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
-
-        <!-- 整合SpringMVC启动器-->
-        <!-- HessianServiceExporter 在这个jar包中 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -328,18 +326,6 @@
             <artifactId>commons-pool2</artifactId>
         </dependency>
     </dependencies>
-    <!--管理springcloud版本，引入openfeign时不用添加version-->
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <build>
         <plugins>

@@ -9,7 +9,6 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.fantechs</groupId>
     <artifactId>ocean-txlcn</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ocean-txlcn</name>

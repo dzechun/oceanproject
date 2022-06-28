@@ -20,12 +20,6 @@
             <artifactId>ocean-public-base</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>cz.mallat.uasparser</groupId>
-            <artifactId>uasparser</artifactId>
-            <version>0.6.0</version>
-        </dependency>
-
     </dependencies>
 
 </project>

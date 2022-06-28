@@ -8,7 +8,6 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.fantechs</groupId>
     <artifactId>ocean-admin</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ocean-admin</name>

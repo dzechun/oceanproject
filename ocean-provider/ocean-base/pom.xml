@@ -22,9 +22,15 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.fantechs.common.config</groupId>
-            <artifactId>ocean-imes-config</artifactId>
+            <groupId>com.fantechs.common.base</groupId>
+            <artifactId>ocean-public-base</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fantechs.common.config</groupId>
+            <artifactId>ocean-common-config</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.fantechs.common.base.general</groupId>
@@ -91,6 +97,50 @@
                             <groupId>${groupId}</groupId>
                             <artifactId>${artifactId}</artifactId>
                         </include>
+                        <include>
+                            <groupId>com.fantechs.common.base</groupId>
+                            <artifactId>ocean-public-base</artifactId>
+                        </include>
+                        <include>
+                            <groupId>com.fantechs.common.base</groupId>
+                            <artifactId>ocean-imes-base</artifactId>
+                        </include>
+                        <include>
+                            <groupId>com.fantechs.common.config</groupId>
+                            <artifactId>ocean-common-config</artifactId>
+                        </include>
+                        <include>
+                            <groupId>com.fantechs.common.base.general</groupId>
+                            <artifactId>ocean-general-base</artifactId>
+                        </include>
+                        <include>
+                            <groupId>com.fantechs.provider.api.mes.pm</groupId>
+                            <artifactId>ocean-mes-pm-api</artifactId>
+                        </include>
+                        <include>
+                            <groupId>com.fantechs.provider.api.bcm</groupId>
+                            <artifactId>ocean-bcm-api</artifactId>
+                        </include>
+                        <include>
+                            <groupId>com.fantechs.provider.api.qms</groupId>
+                            <artifactId>ocean-qms-api</artifactId>
+                        </include>
+                        <include>
+                            <groupId>com.fantechs.provider.api.auth</groupId>
+                            <artifactId>ocean-auth-api</artifactId>
+                        </include>
+                        <include>
+                            <groupId>com.fantechs.provider.api.base</groupId>
+                            <artifactId>ocean-base-api</artifactId>
+                        </include>
+                        <include>
+                            <groupId>com.fantechs.provider.api.mes.sfc</groupId>
+                            <artifactId>ocean-mes-sfc-api</artifactId>
+                        </include>
+                        <include>
+                            <groupId>com.fantechs.provider.api.guest.fivering</groupId>
+                            <artifactId>ocean-guest-fivering-api</artifactId>
+                        </include>
                     </includes>
                 </configuration>
             </plugin>
@@ -106,7 +156,10 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/lib/base</outputDirectory>
+                            <!-- 拷贝依赖到公共目录 -->
+                            <outputDirectory>../../lj</outputDirectory>
+                            <!-- 排除项目内部依赖 -->
+                            <excludeGroupIds>com.fantechs</excludeGroupIds>
                         </configuration>
                     </execution>
                 </executions>

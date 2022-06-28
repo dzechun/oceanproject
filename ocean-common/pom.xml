@@ -17,14 +17,4 @@
         <module>ocean-common-base</module>
         <module>ocean-common-config</module>
     </modules>
-
-    <dependencies>
-        <dependency>
-            <groupId>cz.mallat.uasparser</groupId>
-            <artifactId>uasparser</artifactId>
-            <version>0.6.0</version>
-        </dependency>
-        
-    </dependencies>
-
 </project>
