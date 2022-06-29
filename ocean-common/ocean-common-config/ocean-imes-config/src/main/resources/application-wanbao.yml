@@ -80,7 +80,7 @@ eureka:
     #status-page-url: http://${spring.cloud.client.ip-address}:${server.port}/swagger-ui.html
   client:
     service-url:
-      defaultZone: http://root:root@localhost:8761/eureka/
+      defaultZone: http://root:Wms123@192.168.5.86:8761/eureka/
 ribbon:
   eureka:
     enabled: true
