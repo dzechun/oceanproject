@@ -96,4 +96,11 @@ public interface MesSfcWorkOrderBarcodeMapper extends MyMapper<MesSfcWorkOrderBa
      * @return
      */
     List<HashMap<String,Long>> selectReprintCount(@Param("workOrderBarcodeIds") List<Long> workOrderBarcodeIds);
+
+    /**
+     * 修改流转卡状态
+     * @param mesSfcWorkOrderBarcode
+     * @return
+     */
+    int updateBarcodeStatusByBarcode(@Param("mesSfcWorkOrderBarcode") MesSfcWorkOrderBarcode mesSfcWorkOrderBarcode);
 }

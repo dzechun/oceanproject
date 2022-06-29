@@ -392,4 +392,15 @@
             #{item.workOrderId,jdbcType=BIGINT}
         </foreach>
     </update>
+    <update id="batchUpdateProductionQty">
+        <foreach collection="mesPmWorkOrders" item="item" separator=";" close=";">
+            UPDATE mes_pm_work_order SET
+            production_qty = #{item.productionQty},
+            work_order_status = #{item.workOrderStatus},
+            schedule_status = #{item.scheduleStatus},
+            modified_user_id = #{item.modifiedUserId},
+            modified_user_id = #{item.modifiedUserId}
+            WHERE  work_order_id = #{item.workOrderId}
+        </foreach>
+    </update>
 </mapper>

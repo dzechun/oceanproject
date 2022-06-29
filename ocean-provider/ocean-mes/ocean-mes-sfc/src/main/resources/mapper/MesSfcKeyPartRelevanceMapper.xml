@@ -78,7 +78,7 @@
     mskpr.is_delete
   </sql>
 
-  <select id="findList" resultMap="BaseResultDtoMap" parameterType="map">
+    <select id="findList" resultMap="BaseResultDtoMap" parameterType="map">
     select <include refid="BaseColumnList"/>
     FROM mes_sfc_key_part_relevance mskpr
     <where>
@@ -173,5 +173,21 @@
     </where>
     GROUP BY mskpr.material_id, mskpr.label_category_id
   </select>
-  
+
+  <select id="findBarcodeCodeByBarcode" resultType="java.lang.String">
+    select barcode_code from  mes_sfc_key_part_relevance mskpr
+    where (barcode_code = #{barcode} or part_barcode = #{barcode})
+  </select>
+
+  <select id="findMesSfcKeyPartRelevance" resultType="com.fantechs.common.base.general.entity.mes.sfc.MesSfcKeyPartRelevance">
+    select barcode_code as barcodeCode,
+           work_order_id as workOrderId,
+           part_barcode as partBarcode
+    from mes_sfc_key_part_relevance
+    where barcode_code = #{barcodeCode}
+  </select>
+
+  <delete id="deleteByBarcode">
+    delete from mes_sfc_key_part_relevance where barcode_code = #{barcode}
+  </delete>
 </mapper>

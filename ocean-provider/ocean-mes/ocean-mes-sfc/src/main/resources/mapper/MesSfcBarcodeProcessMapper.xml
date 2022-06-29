@@ -275,4 +275,9 @@
       #{item}
     </foreach>
   </select>
+
+<!--  <select id="findProductionTimeByBarcode" resultType="">-->
+<!--    select * from mes_sfc_barcode_process-->
+<!--    where barcode = #{barcodeCode}-->
+<!--  </select>-->
 </mapper>

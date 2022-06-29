@@ -83,4 +83,14 @@ public class MesSfcKeyPartRelevanceController {
         throw new BizErrorException(e);
         }
     }
+
+    @ApiOperation("条码解绑")
+    @PostMapping("/barcodeUnbinding")
+    public ResponseEntity barcodeUnbinding(@RequestParam @NotBlank(message="条码不能为空") String barcode) {
+        if(mesSfcKeyPartRelevanceService.barcodeUnbinding(barcode)){
+            return ControllerUtil.returnSuccess();
+        }else{
+            return ControllerUtil.returnFail(ErrorCodeEnum.valueOf("条码解绑失败!"));
+        }
+    }
 }

@@ -102,6 +102,13 @@ public class MesPmWorkOrder extends ValidGroup implements Serializable {
     private Byte workOrderStatus;
 
     /**
+     * 排产状态(1-未排产 2-部分排产 3-已排产)
+     */
+    @ApiModelProperty(name="schedule_status",value = "排产状态(1-未排产 2-部分排产 3-已排产)")
+    @Column(name = "schedule_status")
+    private Byte scheduleStatus;
+
+    /**
      * 线别ID
      */
     @ApiModelProperty(name="proLineId",value = "线别ID")
