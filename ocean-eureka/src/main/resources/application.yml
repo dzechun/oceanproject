@@ -20,7 +20,7 @@ spring:
       enabled: true
     user:
       name: root
-      password: root
+      password: qwe123!@#
 eureka:
   server:
     enable-self-preservation: false
