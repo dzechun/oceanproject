@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fantechs.provider.wms.inner.mapper.WanbaoPlatformMapper">
+  <resultMap id="BaseResultMap" type="com.fantechs.common.base.general.dto.wms.inner.WanbaoPlatform">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="platform_id" jdbcType="BIGINT" property="platformId" />
+    <result column="platform_code" jdbcType="VARCHAR" property="platformCode" />
+    <result column="platform_name" jdbcType="VARCHAR" property="platformName" />
+    <result column="usage_status" jdbcType="TINYINT" property="usageStatus" />
+    <result column="job_order_id" jdbcType="BIGINT" property="jobOrderId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_user_id" jdbcType="BIGINT" property="modifiedUserId" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="option1" jdbcType="VARCHAR" property="option1" />
+    <result column="option2" jdbcType="VARCHAR" property="option2" />
+    <result column="option3" jdbcType="VARCHAR" property="option3" />
+      <result column="if_sale_order" jdbcType="TINYINT" property="ifSaleOrder"/>
+      <result column="if_po" jdbcType="TINYINT" property="ifPo"/>
+<!--    <collection property="wanbaoPlatformDetDtos" ofType="com.fantechs.common.base.general.dto.wms.inner.WanbaoPlatformDetDto"-->
+<!--                column="{platformId=platform_id}" select="com.fantechs.provider.wms.inner.mapper.WanbaoPlatformDetMapper.findList">-->
+<!--    </collection>-->
+  </resultMap>
+  <sql id="base_column_list">
+    wp.platform_id,
+    wp.platform_code,
+        wp.platform_name,
+        wp.usage_status,
+        wp.job_order_id,
+        wp.status,
+        wp.remark,
+        wp.org_id,
+        wp.create_user_id,
+        wp.create_time,
+        wp.modified_user_id,
+        wp.modified_time,
+        wp.option1,
+        wp.option2,
+        wp.option3,
+        if_sale_order,
+        if_po
+  </sql>
+  <select id="findList" resultMap="BaseResultMap">
+    select <include refid="base_column_list"/>,(SELECT COUNT(wpd.platform_det_id) FROM wanbao_platform_det wpd WHERE wpd.platform_id = wp.platform_id) as 'totalQty' FROM wanbao_platform wp
+    <where>
+        <if test="usageStatus!=null">
+            wp.usage_status = #{usageStatus}
+        </if>
+    </where>
+order by wp.platform_code asc
+  </select>
+</mapper>
