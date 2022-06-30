@@ -4,6 +4,10 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
+import com.fantechs.dto.SearchWarehousingDto;
+import com.fantechs.dto.WarehousingDetailDto;
+import com.fantechs.dto.WarehousingListDto;
+import com.fantechs.dto.WarehousingSummaryDto;
 import com.fantechs.entity.OmInStorage;
 import com.fantechs.entity.ProductionInStorage;
 import com.fantechs.entity.ProductionInStorageDet;
@@ -66,6 +70,7 @@ public class ProductionInStorageController {
         return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
     }
 
+
     @PostMapping(value = "/findProDetListExport")
     @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
     public void findProDetListExport(HttpServletResponse response, @ApiParam(value = "查询对象")
@@ -74,6 +79,69 @@ public class ProductionInStorageController {
         try {
             // 导出操作
             EasyPoiUtils.exportExcel(list, "生产库存明细导出信息", "生产库存明细信息", ProductionInStorageDet.class, "生产库存明细.xls", response);
+        } catch (Exception e) {
+            throw new BizErrorException(e);
+        }
+    }
+
+    @ApiOperation("生产入库明细一览表")
+    @PostMapping("/findWarehousingList")
+    public ResponseEntity<List<WarehousingListDto>> findWarehousingDetList(@ApiParam(value = "查询对象")@RequestBody SearchWarehousingDto searchWarehousingDto) {
+        Page<Object> page = PageHelper.startPage(searchWarehousingDto.getStartPage(),searchWarehousingDto.getPageSize());
+        List<WarehousingListDto> list = productionInStorageService.findWarehousingList(ControllerUtil.dynamicConditionByEntity(searchWarehousingDto));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @PostMapping(value = "/findWarehousingListExport")
+    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
+    public void findWarehousingListExport(HttpServletResponse response, @ApiParam(value = "查询对象")
+    @RequestBody(required = false) SearchWarehousingDto searchWarehousingDto){
+        List<WarehousingListDto> list = productionInStorageService.findWarehousingList(ControllerUtil.dynamicConditionByEntity(searchWarehousingDto));
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(list, "生产入库明细一览表导出信息", "生产入库明细一览表", ProductionInStorageDet.class, "生产入库明细一览表.xls", response);
+        } catch (Exception e) {
+            throw new BizErrorException(e);
+        }
+    }
+
+    @ApiOperation("生产入库明细表")
+    @PostMapping("/findWarehousingDetail")
+    public ResponseEntity<List<WarehousingDetailDto>> findWarehousingDetail(@ApiParam(value = "查询对象")@RequestBody SearchWarehousingDto searchWarehousingDto) {
+        Page<Object> page = PageHelper.startPage(searchWarehousingDto.getStartPage(),searchWarehousingDto.getPageSize());
+        List<WarehousingDetailDto> list = productionInStorageService.findWarehousingDetail(ControllerUtil.dynamicConditionByEntity(searchWarehousingDto));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @PostMapping(value = "/findWarehousingDetailExport")
+    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
+    public void findWarehousingDetailExport(HttpServletResponse response, @ApiParam(value = "查询对象")
+    @RequestBody(required = false) SearchWarehousingDto searchWarehousingDto){
+        List<WarehousingDetailDto> list = productionInStorageService.findWarehousingDetail(ControllerUtil.dynamicConditionByEntity(searchWarehousingDto));
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(list, "生产入库汇总表导出信息", "生产入库汇总表", ProductionInStorageDet.class, "生产入库汇总表.xls", response);
+        } catch (Exception e) {
+            throw new BizErrorException(e);
+        }
+    }
+
+    @ApiOperation("生产入库汇总表")
+    @PostMapping("/findWarehousingSummary")
+    public ResponseEntity<List<WarehousingSummaryDto>> findWarehousingSummary(@ApiParam(value = "查询对象")@RequestBody SearchWarehousingDto searchWarehousingDto) {
+        Page<Object> page = PageHelper.startPage(searchWarehousingDto.getStartPage(),searchWarehousingDto.getPageSize());
+        List<WarehousingSummaryDto> list = productionInStorageService.findWarehousingSummary(ControllerUtil.dynamicConditionByEntity(searchWarehousingDto));
+        return ControllerUtil.returnDataSuccess(list,(int)page.getTotal());
+    }
+
+    @PostMapping(value = "/findWarehousingSummaryExport")
+    @ApiOperation(value = "导出excel",notes = "导出excel",produces = "application/octet-stream")
+    public void findWarehousingSummaryExport(HttpServletResponse response, @ApiParam(value = "查询对象")
+    @RequestBody(required = false) SearchWarehousingDto searchWarehousingDto){
+        List<WarehousingSummaryDto> list = productionInStorageService.findWarehousingSummary(ControllerUtil.dynamicConditionByEntity(searchWarehousingDto));
+        try {
+            // 导出操作
+            EasyPoiUtils.exportExcel(list, "生产入库汇总表导出信息", "生产入库汇总表", ProductionInStorageDet.class, "生产入库汇总表.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }
