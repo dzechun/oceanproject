@@ -1,5 +1,6 @@
 package com.fantechs.provider.fileserver;
 
+import com.codingapi.txlcn.tc.config.EnableDistributedTransaction;
 import com.github.tobato.fastdfs.FdfsClientConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @EnableDiscoveryClient
 @RestController
 @ComponentScan({"com.fantechs.provider","com.fantechs.common"})
+@EnableDistributedTransaction
 public class OceanFileserverApplication {
 
     public static void main(String[] args) {

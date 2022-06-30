@@ -1,6 +1,7 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.codingapi.txlcn.tc.annotation.DTXPropagation;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -67,7 +68,7 @@ public class MesSfcKeyPartRelevanceServiceImpl extends BaseService<MesSfcKeyPart
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = RuntimeException.class)
     @LcnTransaction
     public boolean barcodeUnbinding(String barcode) {
         // 条码解绑步骤
