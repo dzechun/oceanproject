@@ -88,7 +88,7 @@ public class MesSfcKeyPartRelevanceController {
     @PostMapping("/barcodeUnbinding")
     public ResponseEntity barcodeUnbinding(@RequestParam @NotBlank(message="条码不能为空") String barcode) {
         if(mesSfcKeyPartRelevanceService.barcodeUnbinding(barcode)){
-            return ControllerUtil.returnSuccess();
+            return ControllerUtil.returnSuccess("条码解绑成功!");
         }else{
             return ControllerUtil.returnFail(ErrorCodeEnum.valueOf("条码解绑失败!"));
         }
