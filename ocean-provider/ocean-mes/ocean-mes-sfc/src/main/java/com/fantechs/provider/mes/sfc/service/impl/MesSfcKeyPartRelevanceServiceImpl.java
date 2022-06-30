@@ -76,6 +76,7 @@ public class MesSfcKeyPartRelevanceServiceImpl extends BaseService<MesSfcKeyPart
         // 2、修改：工单表、产品条码过站表、生产订单条码表
         // 3、删除：关键部件关联表
 
+        logger.info("=============进入条码解绑，条码：{}",barcode);
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<String> barcodeList = mesSfcKeyPartRelevanceMapper.findBarcodeCodeByBarcode(barcode);
         if (ObjectUtil.isNull(barcodeList) || barcodeList.size() == 0) {
@@ -118,9 +119,9 @@ public class MesSfcKeyPartRelevanceServiceImpl extends BaseService<MesSfcKeyPart
             throw new BizErrorException(ErrorCodeEnum.PDA40012040);
         }
         BaseRouteProcess baseRouteProcess = responseEntityRoute.getData().get(0);
-        mesSfcBarcodeProcess.setNextProcessId(baseRouteProcess.getNextProcessId());
+        mesSfcBarcodeProcess.setNextProcessId(baseRouteProcess.getProcessId());
         mesSfcBarcodeProcess.setNextProcessCode(baseRouteProcess.getProcessCode());
-        mesSfcBarcodeProcess.setNextProcessName(baseRouteProcess.getNextProcessName());
+        mesSfcBarcodeProcess.setNextProcessName(baseRouteProcess.getProcessName());
         int processUpdateCount = mesSfcBarcodeProcessMapper.updateByPrimaryKey(mesSfcBarcodeProcess);
         logger.info("=============修改产品条码过站表条数：{}", processUpdateCount);
 
