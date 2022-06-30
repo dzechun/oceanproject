@@ -63,7 +63,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>../lj</outputDirectory>
+                            <outputDirectory>${boot-jar-output}</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

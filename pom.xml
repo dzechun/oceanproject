@@ -8,6 +8,8 @@
         <version>2.1.1.RELEASE</version>
     </parent>
 
+
+
     <groupId>com.fantechs</groupId>
     <artifactId>ocean-parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -55,6 +57,7 @@
         <txlcn-tc.version>5.0.2.RELEASE</txlcn-tc.version>
         <!-- 在构建过程中读取源码时使用的字符集 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <boot-jar-output>../lj</boot-jar-output>
     </properties>
 
     <!--管理spring-cloud版本，引入openfeign时不用添加version-->
