@@ -76,8 +76,8 @@
 					<includes>
 						<!--只包含自己-->
 						<include>
-							<groupId>${groupId}</groupId>
-							<artifactId>${artifactId}</artifactId>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>${project.artifactId}</artifactId>
 						</include>
 					</includes>
 				</configuration>
@@ -94,7 +94,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${basedir}/lib/admin</outputDirectory>
+							<outputDirectory>${boot-jar-output}</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>

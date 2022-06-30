@@ -69,7 +69,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/lib2/kreport</outputDirectory>
+                            <outputDirectory>${boot-jar-output}</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

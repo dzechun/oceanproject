@@ -22,6 +22,16 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.fantechs.common.base</groupId>
+            <artifactId>ocean-public-base</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fantechs.common.base.general</groupId>
+            <artifactId>ocean-general-base</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>com.fantechs.common.config</groupId>
             <artifactId>ocean-common-config</artifactId>
             <version>0.0.1-SNAPSHOT</version>
@@ -35,10 +45,6 @@
             <groupId>com.fantechs.provider.base</groupId>
             <artifactId>ocean-base</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fantechs.provider.api.esop</groupId>
@@ -78,7 +84,8 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/lib/auth</outputDirectory>
+                            <!-- 拷贝依赖到公共目录 -->
+                            <outputDirectory>${boot-jar-output}</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

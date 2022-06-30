@@ -13,6 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>ocean-common-config</name>
     <description>Demo project for Spring Boot</description>
+    <packaging>jar</packaging>
 
     <build>
         <plugins>

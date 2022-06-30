@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>ocean-provider</artifactId>
@@ -25,12 +25,6 @@
             <groupId>com.fantechs.common.config</groupId>
             <artifactId>ocean-imes-config</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fantechs.common.base.general</groupId>
-            <artifactId>ocean-general-base</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>commons-net</groupId>
@@ -79,32 +73,33 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                <layout>ZIP</layout>
-                <includes>
-                    <!--只包含自己-->
-                    <include>
-                        <groupId>${groupId}</groupId>
-                        <artifactId>${artifactId}</artifactId>
-                    </include>
-                </includes>
+                    <layout>ZIP</layout>
+                    <includes>
+                        <!--只包含自己-->
+                        <include>
+                            <groupId>${groupId}</groupId>
+                            <artifactId>${artifactId}</artifactId>
+                        </include>
+                    </includes>
                 </configuration>
             </plugin>
             <!--拷贝第三方依赖文件到指定目录-->
             <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <executions>
-            <execution>
-            <id>copy-dependencies</id>
-            <phase>package</phase>
-            <goals>
-            <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-            <outputDirectory>${basedir}/lib/bcm</outputDirectory>
-            </configuration>
-            </execution>
-            </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <!-- 拷贝依赖到公共目录 -->
+                            <outputDirectory>${boot-jar-output}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

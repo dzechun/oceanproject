@@ -83,18 +83,6 @@
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>com.fantechs.provider.api.mes.sfc</groupId>
-            <artifactId>ocean-mes-sfc-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fantechs.provider.api.wms.in</groupId>
-            <artifactId>ocean-wms-in-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
         <!--<dependency>
             <groupId>com.fantechs.provider.api.srm</groupId>
             <artifactId>ocean-srm-api</artifactId>
@@ -111,7 +99,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                <layout>ZIP</layout>
+                    <layout>ZIP</layout>
                     <includes>
                         <!--只包含自己-->
                         <include>
@@ -123,20 +111,20 @@
             </plugin>
             <!--拷贝第三方依赖文件到指定目录-->
             <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <executions>
-            <execution>
-            <id>copy-dependencies</id>
-            <phase>package</phase>
-            <goals>
-            <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-            <outputDirectory>${basedir}/lib/qms</outputDirectory>
-            </configuration>
-            </execution>
-            </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${boot-jar-output}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

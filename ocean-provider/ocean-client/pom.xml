@@ -91,7 +91,8 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/lib/client</outputDirectory>
+                            <!-- 拷贝依赖到公共目录 -->
+                            <outputDirectory>${boot-jar-output}</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

@@ -14,6 +14,11 @@
     <name>ocean-provider</name>
     <packaging>pom</packaging>
 
+    <properties>
+        <boot-jar-output>../../lj</boot-jar-output>
+    </properties>
+
+
     <modules>
         <module>ocean-agv</module>
         <module>ocean-auth</module>     <!-- 认证服务 -->

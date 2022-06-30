@@ -13,11 +13,6 @@
     <name>ocean-gateway</name>
     <description>Demo project for Spring Boot</description>
 
-    <properties>
-        <boot-jar-output>../lj</boot-jar-output>
-    </properties>
-
-
     <dependencies>
         <!-- 1 -->
         <dependency>
@@ -48,18 +43,11 @@
                 <configuration>
                     <layout>ZIP</layout>
                     <includes>
-                        <!--此处可以指定包含jar包-->
-                        <!-- 2 -->
+                        <!--只包含自己-->
                         <include>
-                            <groupId>com.fantechs.common.config</groupId>
-                            <artifactId>ocean-imes-config</artifactId>
+                            <groupId>${groupId}</groupId>
+                            <artifactId>${artifactId}</artifactId>
                         </include>
-                        <!-- 3 -->
-                        <include>
-                            <groupId>com.fantechs.common.base</groupId>
-                            <artifactId>ocean-public-base</artifactId>
-                        </include>
-
                     </includes>
                 </configuration>
             </plugin>
@@ -75,92 +63,11 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${boot-jar-output}</outputDirectory>
-                            <!-- 排除项目内部依赖 -->
-                            <excludeGroupIds>com.fantechs</excludeGroupIds>
+                            <outputDirectory>../lj</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
-
-    <!-- <build> -->
-    <!--     <finalName>${artifactId}</finalName> -->
-    <!--     &lt;!&ndash; -->
-    <!--     特别注意： -->
-    <!--     项目仅仅是为了演示配置方便，直接在parent的build部分做了插件配置和运行定义。 -->
-    <!--     但是实际项目中需要把这些定义只放到spring boot模块项目（可优化使用pluginManagement形式），避免干扰其他util、common等模块项目 -->
-    <!--     &ndash;&gt; -->
-    <!--     <plugins> -->
-    <!--         &lt;!&ndash; 基于maven-jar-plugin插件实现把依赖jar定义写入输出jar的META-INFO/MANIFEST文件 &ndash;&gt; -->
-    <!--         <plugin> -->
-    <!--             <groupId>org.apache.maven.plugins</groupId> -->
-    <!--             <artifactId>maven-jar-plugin</artifactId> -->
-    <!--             <configuration> -->
-    <!--                 <archive> -->
-    <!--                     <manifest> -->
-    <!--                         <addClasspath>true</addClasspath> -->
-    <!--                         <classpathPrefix>lib/</classpathPrefix> -->
-    <!--                         <useUniqueVersions>false</useUniqueVersions> -->
-    <!--                     </manifest> -->
-    <!--                 </archive> -->
-    <!--             </configuration> -->
-    <!--         </plugin> -->
-    <!--         &lt;!&ndash; 拷贝项目所有依赖jar文件到构建lib目录下 &ndash;&gt; -->
-    <!--         <plugin> -->
-    <!--             <groupId>org.apache.maven.plugins</groupId> -->
-    <!--             <artifactId>maven-dependency-plugin</artifactId> -->
-    <!--             <executions> -->
-    <!--                 <execution> -->
-    <!--                     <id>copy-dependencies</id> -->
-    <!--                     <phase>package</phase> -->
-    <!--                     <goals> -->
-    <!--                         <goal>copy-dependencies</goal> -->
-    <!--                     </goals> -->
-    <!--                     <configuration> -->
-    <!--                         &lt;!&ndash; -->
-    <!--                         各子模块按照实际层级定义各模块对应的属性值，检查所有微服务模块依赖jar文件合并复制到同一个目录 -->
-    <!--                         详见各子模块中 boot-jar-output 属性定义 -->
-    <!--                         &ndash;&gt; -->
-    <!--                         <outputDirectory>${boot-jar-output}/lib</outputDirectory> -->
-    <!--                         <excludeTransitive>false</excludeTransitive> -->
-    <!--                         <stripVersion>false</stripVersion> -->
-    <!--                         <silent>false</silent> -->
-    <!--                     </configuration> -->
-    <!--                 </execution> -->
-    <!--             </executions> -->
-    <!--         </plugin> -->
-    <!--         &lt;!&ndash; Spring Boot模块jar构建 &ndash;&gt; -->
-    <!--         <plugin> -->
-    <!--             <groupId>org.springframework.boot</groupId> -->
-    <!--             <artifactId>spring-boot-maven-plugin</artifactId> -->
-    <!--             <configuration> -->
-    <!--                 <includes> -->
-    <!--                     &lt;!&ndash; 不存在的include引用，相当于排除所有maven依赖jar，没有任何三方jar文件打入输出jar &ndash;&gt; -->
-    <!--                     <include> -->
-    <!--                         <groupId>null</groupId> -->
-    <!--                         <artifactId>null</artifactId> -->
-    <!--                     </include> -->
-    <!--                 </includes> -->
-    <!--                 <layout>ZIP</layout> -->
-    <!--                 &lt;!&ndash; -->
-    <!--                 基于maven-jar-plugin输出微服务jar文件进行二次spring boot重新打包文件的输出目录 -->
-    <!--                 所有微服务构建输出jar文件统一输出到与lib同一个目录，便于共同引用同一个lib目录 -->
-    <!--                 详见各子模块中boot-jar-output属性定义 -->
-    <!--                 &ndash;&gt; -->
-    <!--                 &lt;!&ndash;  &ndash;&gt; -->
-    <!--                 <outputDirectory>${boot-jar-output}</outputDirectory> -->
-    <!--             </configuration> -->
-    <!--             <executions> -->
-    <!--                 <execution> -->
-    <!--                     <goals> -->
-    <!--                         <goal>repackage</goal> -->
-    <!--                     </goals> -->
-    <!--                 </execution> -->
-    <!--             </executions> -->
-    <!--         </plugin> -->
-    <!--     </plugins> -->
-    <!-- </build> -->
-
 </project>

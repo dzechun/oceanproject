@@ -25,12 +25,6 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.fantechs.common.base.general</groupId>
-            <artifactId>ocean-general-base</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.fantechs.provider.api.mes.pm</groupId>
             <artifactId>ocean-mes-pm-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
@@ -45,12 +39,6 @@
         <dependency>
             <groupId>org.springframework.amqp</groupId>
             <artifactId>spring-amqp</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fantechs.provider.api.base</groupId>
-            <artifactId>ocean-om-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.fantechs.provider.api.base</groupId>
@@ -120,7 +108,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/lib/sfc</outputDirectory>
+                            <outputDirectory>${boot-jar-output}</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

@@ -15,6 +15,10 @@
     <description>Demo project for Spring Boot</description>
     <packaging>pom</packaging>
 
+    <properties>
+        <boot-jar-output>../../lj</boot-jar-output>
+    </properties>
+
     <modules>
         <module>ocean-auth-api</module>
         <module>ocean-agv-api</module>
