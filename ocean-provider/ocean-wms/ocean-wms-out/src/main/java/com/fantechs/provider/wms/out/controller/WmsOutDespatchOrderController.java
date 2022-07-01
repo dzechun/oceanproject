@@ -4,7 +4,6 @@ import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDespatchOrderDto;
 import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrder;
 import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDespatchOrder;
-import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.EasyPoiUtils;
@@ -12,9 +11,9 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.out.service.WmsOutDespatchOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -101,5 +100,11 @@ public class WmsOutDespatchOrderController {
     @PostMapping("/forwarding")
     public ResponseEntity forwarding(@ApiParam("逗号间隔") @RequestParam @NotNull(message = "id不能为空") String ids){
         return ControllerUtil.returnCRUD(wmsOutDespatchOrderService.forwarding(ids));
+    }
+
+    @ApiOperation("批量新增")
+    @PostMapping("/batchSave")
+    public ResponseEntity batchSave(@RequestBody List<WmsOutDespatchOrder> list){
+        return ControllerUtil.returnCRUD(wmsOutDespatchOrderService.batchSave(list));
     }
 }

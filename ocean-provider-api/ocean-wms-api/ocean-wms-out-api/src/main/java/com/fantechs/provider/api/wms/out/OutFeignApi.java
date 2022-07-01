@@ -78,4 +78,8 @@ public interface OutFeignApi {
     @PostMapping("/wmsOutDeliveryOrder/overIssue")
     @ApiOperation(value = "领料出库单封单回写接口",hidden = true)
     ResponseEntity overIssue(@RequestParam Long deliveryOrderId);
+
+    @ApiOperation("批量新增")
+    @PostMapping("/wmsOutDespatchOrder/batchSave")
+    ResponseEntity batchSave(@RequestBody List<WmsOutDespatchOrder> list);
 }

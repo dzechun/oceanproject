@@ -1,16 +1,25 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
+import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.*;
+import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
+import com.fantechs.common.base.general.entity.wms.out.*;
+import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
+import com.fantechs.common.base.utils.CodeUtils;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.common.base.utils.StringUtils;
-import com.fantechs.provider.api.base.BaseFeignApi;
+import com.fantechs.provider.api.wms.out.OutFeignApi;
 import com.fantechs.provider.wms.inner.mapper.*;
 import com.fantechs.provider.wms.inner.service.WanbaoPlatformService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +54,10 @@ public class WanbaoPlatformServiceImpl extends BaseService<WanbaoPlatform> imple
     @Resource
     private WanbaoPlatformDetMapper wanbaoPlatformDetMapper;
     @Resource
-    private BaseFeignApi baseFeignApi;
+    private OutFeignApi outFeignApi;
+    @Resource
+    private WmsInnerInventoryMapper wmsInnerInventoryMapper;
+
 
     @Override
     public List<WanbaoPlatform> findList(Map<String, Object> map) {
@@ -66,9 +80,6 @@ public class WanbaoPlatformServiceImpl extends BaseService<WanbaoPlatform> imple
         String[] barcodeArr = scanBarCodeOut.getBarCode().split(",");
 
         WanbaoPlatform wanbaoPlatform = wanbaoPlatformMapper.selectByPrimaryKey(scanBarCodeOut.getPlatformId());
-        //获取合格库存状态
-//        SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
-//        List<BaseInventoryStatus> baseInventoryStatuses = baseFeignApi.findList(searchBaseInventoryStatus).getData();
         if(StringUtils.isEmpty(wanbaoPlatform.getJobOrderId()) || wanbaoPlatform.getUsageStatus()==1){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"月台未绑定拣货单");
         }
@@ -111,10 +122,6 @@ public class WanbaoPlatformServiceImpl extends BaseService<WanbaoPlatform> imple
                 if(wmsInnerInventoryDets.get(0).getLockStatus()==1){
                     throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"条码已被锁");
                 }
-//                String invName = baseInventoryStatuses.stream().filter(y->y.getInventoryStatusId().equals(wmsInnerInventoryDets.get(0).getInventoryStatusId())).collect(Collectors.toList()).get(0).getInventoryStatusName();
-//                if(!invName.equals("合格")){
-//                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"产品"+invName);
-//                }
                 cleanBarcodeDto.setOrderBarCode(wmsInnerInventoryDets.get(0).getBarcode());
                 wanbaoPlatformDet.setBarcode(cleanBarcodeDto.getOrderBarCode());
                 wanbaoPlatformDet.setMaterialId(wmsInnerInventoryDets.get(0).getMaterialId());
@@ -142,10 +149,6 @@ public class WanbaoPlatformServiceImpl extends BaseService<WanbaoPlatform> imple
                         if(wmsInnerInventoryDets.get(0).getLockStatus()==1){
                             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"条码已被锁");
                         }
-//                        String invName = baseInventoryStatuses.stream().filter(y->y.getInventoryStatusId().equals(wmsInnerInventoryDets.get(0).getInventoryStatusId())).collect(Collectors.toList()).get(0).getInventoryStatusName();
-//                        if(!invName.equals("合格")){
-//                            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"产品"+invName);
-//                        }
                         cleanBarcodeDto.setOrderBarCode(wmsInnerInventoryDets.get(0).getBarcode());
                         wanbaoPlatformDet.setMaterialId(wmsInnerInventoryDets.get(0).getMaterialId());
                         wanbaoPlatformDet.setInventoryDetId(wmsInnerInventoryDets.get(0).getInventoryDetId());
@@ -176,7 +179,7 @@ public class WanbaoPlatformServiceImpl extends BaseService<WanbaoPlatform> imple
         }
         //判断当前条码产品是否属于当前单据
         Example example = new Example(WmsInnerJobOrderDet.class);
-        example.createCriteria().andEqualTo("jobOrderId",scanBarCodeOut.getJobOrderId()).andEqualTo("materialId",wanbaoPlatformDet.getMaterialId());
+        example.createCriteria().andEqualTo("jobOrderId",scanBarCodeOut.getJobOrderId()).andEqualTo("materialId",wanbaoPlatformDet.getMaterialId()).andNotEqualTo("orderStatus",6);
         List<WmsInnerJobOrderDet> wmsInnerJobOrderDets = wmsInnerJobOrderDetMapper.selectByExample(example);
         if(wmsInnerJobOrderDets.isEmpty()){
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"当前出货产品不属于当前单据");
@@ -208,13 +211,21 @@ public class WanbaoPlatformServiceImpl extends BaseService<WanbaoPlatform> imple
                 }
             }
         }
+        //校验是否超出计划数量
+        example = new Example(WanbaoPlatformDet.class);
+        example.createCriteria().andEqualTo("jobOrderDetId",wmsInnerJobOrderDets.get(0).getJobOrderDetId());
+        int count = wanbaoPlatformDetMapper.selectCountByExample(example);
+        if(wmsInnerJobOrderDets.get(0).getPlanQty().compareTo(BigDecimal.valueOf(count))==0){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"超出计划数量");
+        }
         //判断是否重复扫码
         example = new Example(WanbaoPlatformDet.class);
         example.createCriteria().andEqualTo("barcode",cleanBarcodeDto.getOrderBarCode());
-        int count = wanbaoPlatformDetMapper.selectCountByExample(example);
+        count = wanbaoPlatformDetMapper.selectCountByExample(example);
         if(count>0){
             throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"重复扫码");
         }
+        wanbaoPlatformDet.setJobOrderId(wanbaoPlatform.getJobOrderId());
         wanbaoPlatformDet.setJobOrderDetId(wmsInnerJobOrderDets.get(0).getJobOrderDetId());
         wanbaoPlatformDet.setBarcode(cleanBarcodeDto.getOrderBarCode());
         wanbaoPlatformDet.setCustomerBarcode(cleanBarcodeDto.getCutsomerBarcode());
@@ -235,6 +246,15 @@ public class WanbaoPlatformServiceImpl extends BaseService<WanbaoPlatform> imple
 //        if(old.getUsageStatus()==2){
 //            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"月台未释放");
 //        }
+        //判断拣货单是否在其他月台绑定未
+        Example example = new Example(WanbaoPlatform.class);
+        example.createCriteria().andEqualTo("jobOrderId",wanbaoPlatform.getJobOrderId()).andNotEqualTo("platformId",wanbaoPlatform.getPlatformId());
+        WanbaoPlatform wf = wanbaoPlatformMapper.selectOneByExample(example);
+        if(StringUtils.isNotEmpty(wf)){
+            throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"拣货单已在【"+wf.getPlatformCode()+"】月台绑定未释放");
+        }
+        old.setIfPo(wanbaoPlatform.getIfPo());
+        old.setIfSaleOrder(wanbaoPlatform.getIfSaleOrder());
         old.setUsageStatus((byte)2);
         old.setJobOrderId(wanbaoPlatform.getJobOrderId());
         old.setModifiedTime(new Date());
@@ -242,23 +262,186 @@ public class WanbaoPlatformServiceImpl extends BaseService<WanbaoPlatform> imple
     }
 
     @Override
+    @LcnTransaction
     @Transactional(rollbackFor = RuntimeException.class)
     public int submit(String ids) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         String[] arryId = ids.split(",");
-        int num=0;
+        //批量装车单
+        List<WmsOutDespatchOrder> wmsOutDespatchOrders = new ArrayList<>();
+        int num = 0;
         for (String s : arryId) {
             WanbaoPlatform old = wanbaoPlatformMapper.selectByPrimaryKey(s);
             if(StringUtils.isEmpty(old)){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404);
             }
             Example example = new Example(WanbaoPlatformDet.class);
-            example.createCriteria().andEqualTo("platformDetId");
+            example.createCriteria().andEqualTo("platformId",s);
             List<WanbaoPlatformDet> wanbaoPlatformDets = wanbaoPlatformDetMapper.selectByExample(example);
-            for (WanbaoPlatformDet wanbaoPlatformDet : wanbaoPlatformDets) {
-                //扣减库存
+            if(wanbaoPlatformDets.size()<1){
+                throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"月台【"+old.getPlatformCode()+"】暂无出货产品");
             }
+            //根据拣货单表头分组
+            Map<Long,List<WanbaoPlatformDet>> map = wanbaoPlatformDets.stream().collect(Collectors.groupingBy(WanbaoPlatformDet::getJobOrderId));
+            log.info("===============根据拣货单分组"+ JsonUtils.objectToJson(map));
+            WmsOutDespatchOrder wmsOutDespatchOrder = new WmsOutDespatchOrder();
+            wmsOutDespatchOrder.setOrderStatus((byte)4);
+            wmsOutDespatchOrder.setActualDespatchTime(new Date());
+            wmsOutDespatchOrder.setDespatchOrderCode(CodeUtils.getId("TRUCK"));
+            wmsOutDespatchOrder.setCreateTime(new Date());
+            wmsOutDespatchOrder.setCreateUserId(sysUser.getUserId());
+            wmsOutDespatchOrder.setOrgId(sysUser.getOrganizationId());
+
+            //批量装车单明细
+            List<WmsOutDespatchOrderReJo> wmsOutDespatchOrderReJos = new ArrayList<>();
+            //批量出货单
+            List<WmsOutDeliveryOrder> deliveryOrders = new ArrayList<>();
+            for (Long id : map.keySet()) {
+                //查询拣货单表头
+                WmsInnerJobOrder wmsInnerJobOrder = wmsInnerJobOrderMapper.selectByPrimaryKey(id);
+                if(StringUtils.isEmpty(wmsInnerJobOrder)){
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取拣货单信息失败");
+                }
+                //装车单绑定拣货单集合
+                WmsOutDespatchOrderReJo wmsOutDespatchOrderReJo = new WmsOutDespatchOrderReJo();
+                wmsOutDespatchOrderReJo.setJobOrderId(id);
+                wmsOutDespatchOrderReJo.setCreateTime(new Date());
+                wmsOutDespatchOrderReJo.setCreateUserId(sysUser.getUserId());
+                wmsOutDespatchOrderReJo.setOrgId(sysUser.getOrganizationId());
+                wmsOutDespatchOrder.setWarehouseId(wmsInnerJobOrder.getWarehouseId());
+                //根据拣货单明细分组
+                Map<Long,List<WanbaoPlatformDet>> detMap = map.get(id).stream().collect(Collectors.groupingBy(WanbaoPlatformDet::getJobOrderDetId));
+                log.info("===============根据拣货单明细分组"+ JsonUtils.objectToJson(detMap));
+                //装车单对应拣货单明细绑定关系集合
+                List<WmsOutDespatchOrderReJoReDet> wmsOutDespatchOrderReJoReDets = new ArrayList<>();
+                //批量出货单明细
+                List<WmsOutDeliveryOrderDetDto> wmsOutDeliveryOrderDetDtos = new ArrayList<>();
+                for (Long detId : detMap.keySet()) {
+                    WmsInnerJobOrderDet wmsInnerJobOrderDet = wmsInnerJobOrderDetMapper.selectByPrimaryKey(detId);
+                    if(StringUtils.isEmpty(wmsInnerJobOrder)){
+                        throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"获取拣货单信息失败");
+                    }
+                    BigDecimal totalQty = BigDecimal.ZERO;
+                    //筛选同库位
+                    Map<Long,List<WanbaoPlatformDet>> storageMap = detMap.get(detId).stream().collect(Collectors.groupingBy(WanbaoPlatformDet::getStroageId));
+                    log.info("===============根据拣货单明细同库位分组"+ JsonUtils.objectToJson(storageMap));
+                    for (Long storageId : storageMap.keySet()) {
+                        List<WanbaoPlatformDet> list = storageMap.get(storageId);
+                        //生成装车作业单
+                        WmsInnerJobOrderDet newDet = new WmsInnerJobOrderDet();
+                        BeanUtil.copyProperties(wmsInnerJobOrderDet,newDet);
+                        newDet.setOrderStatus((byte)6);
+                        newDet.setPlanQty(BigDecimal.valueOf(list.size()));
+                        newDet.setDistributionQty(newDet.getPlanQty());
+                        newDet.setActualQty(newDet.getDistributionQty());
+                        newDet.setOutStorageId(storageId);
+                        newDet.setCreateTime(new Date());
+                        newDet.setCreateUserId(sysUser.getUserId());
+                        newDet.setModifiedTime(new Date());
+                        newDet.setModifiedUserId(sysUser.getUserId());
+                        newDet.setWorkStartTime(new Date());
+                        newDet.setWorkEndTime(new Date());
+                        wmsInnerJobOrderDetMapper.insertUseGeneratedKeys(newDet);
+                        WmsOutDespatchOrderReJoReDet wmsOutDespatchOrderReJoReDet = new WmsOutDespatchOrderReJoReDet();
+                        wmsOutDespatchOrderReJoReDet.setJobOrderDetId(newDet.getJobOrderDetId());
+                        wmsOutDespatchOrderReJoReDets.add(wmsOutDespatchOrderReJoReDet);
+                        totalQty = totalQty.add(newDet.getActualQty());
+
+                        //更改条码未已出库状态
+                        List<Long> invDetS = storageMap.get(storageId).stream().map(WanbaoPlatformDet::getInventoryDetId).collect(Collectors.toList());
+                        log.info("===============更改条码出库状态"+ JsonUtils.objectToJson(invDetS));
+                        example = new Example(WmsInnerInventoryDet.class);
+                        example.createCriteria().andIn("inventoryDetId",invDetS);
+                        WmsInnerInventoryDet wmsInnerInventoryDet = new WmsInnerInventoryDet();
+                        wmsInnerInventoryDet.setModifiedTime(new Date());
+                        wmsInnerInventoryDet.setModifiedUserId(sysUser.getUserId());
+                        wmsInnerInventoryDet.setBarcodeStatus((byte)6);
+                        wmsInnerInventoryDetMapper.updateByExampleSelective(wmsInnerInventoryDet,example);
+                        //扣减库存
+                        example = new Example(WmsInnerInventory.class);
+                        example.createCriteria()
+                                .andEqualTo("storageId",storageId)
+                                .andEqualTo("materialId",wmsInnerJobOrderDet.getMaterialId())
+                                .andEqualTo("jobStatus",(byte)1)
+                                .andEqualTo("stockLock",0)
+                                .andEqualTo("qcLock",0)
+                                .andEqualTo("lockStatus",0)
+                                .andGreaterThan("packingQty",0)
+                                .andEqualTo("orgId",sysUser.getOrganizationId());
+                        List<WmsInnerInventory> wmsInnerInventories = wmsInnerInventoryMapper.selectByExample(example);
+                        log.info("===============查询库存"+ JsonUtils.objectToJson(wmsInnerInventories));
+                        if(StringUtils.isNotEmpty(wmsInnerInventories) && wmsInnerInventories.size()>0){
+                            WmsInnerInventory wmsInnerInventory = wmsInnerInventories.get(0);
+                            if(StringUtils.isNotEmpty(wmsInnerInventory.getPackingQty())) {
+                                wmsInnerInventory.setPackingQty(wmsInnerInventory.getPackingQty().subtract(newDet.getActualQty()));
+                            }
+                            //库存等于0删除库存 大于0扣减数量修改库存
+                            if(wmsInnerInventory.getPackingQty().compareTo(BigDecimal.ZERO)<1){
+                                wmsInnerInventoryMapper.deleteByPrimaryKey(wmsInnerInventory.getInventoryId());
+                            }else {
+                                wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
+                            }
+                            log.info("===============扣减后库存"+ JsonUtils.objectToJson(wmsInnerInventory));
+                        }
+                    }
+                    //判断数量是否满足计划数量 不满足则未多次出货
+                    if(wmsInnerJobOrderDet.getPlanQty().compareTo(totalQty)==0){
+                        wmsInnerJobOrderDetMapper.deleteByPrimaryKey(wmsInnerJobOrderDet.getJobOrderDetId());
+                    }else {
+                        //修改剩余出货数量明细
+                        wmsInnerJobOrderDet.setPlanQty(wmsInnerJobOrderDet.getPlanQty().subtract(totalQty));
+                        wmsInnerJobOrderDet.setModifiedTime(new Date());
+                        wmsInnerJobOrderDet.setModifiedUserId(sysUser.getUserId());
+                        wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInnerJobOrderDet);
+                    }
+                    if(StringUtils.isEmpty(wmsInnerJobOrder.getActualQty())){
+                        wmsInnerJobOrder.setActualQty(BigDecimal.ZERO);
+                    }
+                    wmsInnerJobOrder.setActualQty(wmsInnerJobOrder.getActualQty().add(totalQty));
+
+                    //批量出货单数量
+                    WmsOutDeliveryOrderDetDto wmsOutDeliveryOrderDetDto = new WmsOutDeliveryOrderDetDto();
+                    wmsOutDeliveryOrderDetDto.setDeliveryOrderDetId(wmsInnerJobOrderDet.getSourceDetId());
+                    wmsOutDeliveryOrderDetDto.setPickingQty(totalQty);
+                    wmsOutDeliveryOrderDetDto.setDispatchQty(totalQty);
+                    wmsOutDeliveryOrderDetDto.setModifiedTime(new Date());
+                    wmsOutDeliveryOrderDetDto.setModifiedUserId(sysUser.getUserId());
+                    wmsOutDeliveryOrderDetDtos.add(wmsOutDeliveryOrderDetDto);
+                }
+                //出货单对象
+                WmsOutDeliveryOrder wmsOutDeliveryOrder = new WmsOutDeliveryOrder();
+                wmsOutDeliveryOrder.setDeliveryOrderId(wmsInnerJobOrder.getSourceOrderId());
+                wmsOutDeliveryOrder.setActualDespatchDate(new Date());
+                wmsOutDeliveryOrder.setModifiedTime(new Date());
+                wmsOutDeliveryOrder.setModifiedUserId(sysUser.getUserId());
+
+                wmsOutDespatchOrderReJo.setWmsOutDespatchOrderReJoReDets(wmsOutDespatchOrderReJoReDets);
+                wmsOutDespatchOrderReJos.add(wmsOutDespatchOrderReJo);
+                //更改表头拣货数量
+                wmsInnerJobOrder.setWorkStartTime(new Date());
+                if(wmsInnerJobOrder.getPlanQty().compareTo(wmsInnerJobOrder.getActualQty())==0){
+                    wmsInnerJobOrder.setOrderStatus((byte)6);
+                    wmsInnerJobOrder.setWorkEndtTime(new Date());
+                    wmsOutDeliveryOrder.setOrderStatus((byte)5);
+                }else {
+                    wmsInnerJobOrder.setOrderStatus((byte)5);
+                    wmsOutDeliveryOrder.setOrderStatus((byte)4);
+                }
+                wmsInnerJobOrder.setModifiedTime(new Date());
+                wmsInnerJobOrder.setModifiedUserId(sysUser.getUserId());
+                wmsInnerJobOrderMapper.updateByPrimaryKey(wmsInnerJobOrder);
+                //添加到出货单集合
+                wmsOutDeliveryOrder.setWmsOutDeliveryOrderDetList(wmsOutDeliveryOrderDetDtos);
+                deliveryOrders.add(wmsOutDeliveryOrder);
+            }
+            wmsOutDespatchOrder.setWmsOutDespatchOrderReJo(wmsOutDespatchOrderReJos);
+            //出货单明细
+            wmsOutDespatchOrder.setDeliveryOrders(deliveryOrders);
+
+            wmsOutDespatchOrders.add(wmsOutDespatchOrder);
             //清空月台扫描记录 释放月台
+            example = new Example(WanbaoPlatformDet.class);
+            example.createCriteria().andEqualTo("platformId",s);
             wanbaoPlatformDetMapper.deleteByExample(example);
             //默认校验PO
             //old.setIfPo((byte)1);
@@ -269,6 +452,11 @@ public class WanbaoPlatformServiceImpl extends BaseService<WanbaoPlatform> imple
             old.setModifiedTime(new Date());
             old.setUsageStatus((byte)1);
             num+=wanbaoPlatformMapper.updateByPrimaryKeySelective(old);
+        }
+        //批量新增装车单及修改出货单明细
+        ResponseEntity responseEntity = outFeignApi.batchSave(wmsOutDespatchOrders);
+        if(responseEntity.getCode()!=0){
+            throw new BizErrorException(responseEntity.getCode(),responseEntity.getMessage());
         }
         return num;
     }

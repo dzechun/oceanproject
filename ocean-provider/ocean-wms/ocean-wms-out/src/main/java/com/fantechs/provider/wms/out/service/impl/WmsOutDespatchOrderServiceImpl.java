@@ -28,9 +28,11 @@ import com.fantechs.common.base.general.entity.wms.out.search.SearchWmsOutDespat
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
-import com.fantechs.common.base.utils.*;
+import com.fantechs.common.base.utils.CodeUtils;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
+import com.fantechs.common.base.utils.DateUtils;
+import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.qms.OMFeignApi;
-import com.fantechs.provider.api.security.service.SecurityFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.wms.out.mapper.*;
@@ -66,8 +68,6 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
     private WmsOutDeliveryOrderMapper wmsOutDeliveryOrderMapper;
     @Resource
     private InFeignApi inFeignApi;
-    @Resource
-    private SecurityFeignApi securityFeignApi;
 
 
     @Override
@@ -201,6 +201,34 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
     @Override
     public List<WmsOutDespatchOrderReJoReDetDto> findDetList(SearchWmsOutDespatchOrderReJoReDet searchWmsOutDespatchOrderReJoReDet) {
         return wmsOutDespatchOrderReJoReDetMapper.findList(searchWmsOutDespatchOrderReJoReDet);
+    }
+
+
+    @Override
+    @LcnTransaction
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int batchSave(List<WmsOutDespatchOrder> list) {
+        int num = 0;
+        for (WmsOutDespatchOrder wmsOutDespatchOrder : list) {
+            num+= wmsOutDespatchOrderMapper.insertUseGeneratedKeys(wmsOutDespatchOrder);
+            for (WmsOutDespatchOrderReJo wmsOutDespatchOrderReJo : wmsOutDespatchOrder.getWmsOutDespatchOrderReJo()) {
+                wmsOutDespatchOrderReJo.setDespatchOrderId(wmsOutDespatchOrder.getDespatchOrderId());
+                wmsOutDespatchOrderReJoMapper.insertUseGeneratedKeys(wmsOutDespatchOrderReJo);
+                for (WmsOutDespatchOrderReJoReDet wmsOutDespatchOrderReJoReDet : wmsOutDespatchOrderReJo.getWmsOutDespatchOrderReJoReDets()) {
+                    wmsOutDespatchOrderReJoReDet.setDespatchOrderReJoId(wmsOutDespatchOrderReJo.getDespatchOrderReJoId());
+                }
+                wmsOutDespatchOrderReJoReDetMapper.insertList(wmsOutDespatchOrderReJo.getWmsOutDespatchOrderReJoReDets());
+            }
+
+            //修改出货单
+            for (WmsOutDeliveryOrder deliveryOrder : wmsOutDespatchOrder.getDeliveryOrders()) {
+                wmsOutDeliveryOrderMapper.updateByPrimaryKeySelective(deliveryOrder);
+                for (WmsOutDeliveryOrderDetDto wmsOutDeliveryOrderDetDto : deliveryOrder.getWmsOutDeliveryOrderDetList()) {
+                    wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDetDto);
+                }
+            }
+        }
+        return num;
     }
 
     @Override

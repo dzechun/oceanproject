@@ -41,9 +41,17 @@ public class WanbaoPlatformDet extends ValidGroup implements Serializable {
     private Long platformId;
 
     /**
+     * 拣货单id
+     */
+    @ApiModelProperty(name="jobOrderId",value = "拣货单id")
+    @Excel(name = "拣货单id", height = 20, width = 30,orderNum="")
+    @Column(name = "job_order_id")
+    private Long jobOrderId;
+
+    /**
      * 拣货单明细id
      */
-    @ApiModelProperty(name="jobOrderDetId",value = "拣货单id")
+    @ApiModelProperty(name="jobOrderDetId",value = "拣货单明细id")
     @Excel(name = "拣货单明细id", height = 20, width = 30,orderNum="")
     @Column(name = "job_order_det_id")
     private Long jobOrderDetId;

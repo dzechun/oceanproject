@@ -1,14 +1,21 @@
 package com.fantechs.common.base.general.entity.wms.out;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import com.alibaba.fastjson.annotation.JSONField;;
-import com.fantechs.common.base.support.ValidGroup;;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fantechs.common.base.support.ValidGroup;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.*;
-import lombok.Data;
+
+;
+;
 
 /**
  * 装车单
@@ -199,6 +206,10 @@ public class WmsOutDespatchOrder extends ValidGroup implements Serializable {
     @ApiModelProperty(name = "originHarbor",value = "起运港")
     @Column(name = "origin_harbor")
     private String originHarbor;
+
+    @Transient
+    @ApiModelProperty(name = "deliveryOrders",value = "出货单明细")
+    private List<WmsOutDeliveryOrder> deliveryOrders;
 
     private static final long serialVersionUID = 1L;
 }
