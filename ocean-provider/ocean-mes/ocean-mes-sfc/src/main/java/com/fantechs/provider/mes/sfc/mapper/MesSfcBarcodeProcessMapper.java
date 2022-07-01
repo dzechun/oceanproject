@@ -5,6 +5,7 @@ import com.fantechs.common.base.general.dto.mes.sfc.SyncBarcodeProcessDto;
 import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.mybatis.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -72,4 +73,6 @@ public interface MesSfcBarcodeProcessMapper extends MyMapper<MesSfcBarcodeProces
      * @return
      */
     List<SyncBarcodeProcessDto> findByLabelCategory(Map<String, Object> map);
+
+//    MesSfcBarcodeProcess findProductionTimeByBarcode(@Param("barcodeCode")String barcodeCode);
 }

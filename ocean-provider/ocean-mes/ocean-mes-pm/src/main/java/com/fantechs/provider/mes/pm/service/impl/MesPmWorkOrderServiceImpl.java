@@ -1,6 +1,7 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
 
+import com.codingapi.txlcn.tc.annotation.DTXPropagation;
 import com.codingapi.txlcn.tc.annotation.LcnTransaction;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -32,9 +33,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 
@@ -192,6 +195,31 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
         smtHtWorkOrderMapper.insertSelective(mesPmHtWorkOrder);
 
         return i;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @LcnTransaction
+    public int updateProductionQty(List<String> workOrderIds) {
+        List<MesPmWorkOrder> mesPmWorkOrders = mesPmWorkOrderMapper.getWorkOrderList(workOrderIds);
+        SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
+        if(!CollectionUtils.isEmpty(mesPmWorkOrders)){
+            for (MesPmWorkOrder item : mesPmWorkOrders){
+                item.setModifiedUserId(currentUser.getUserId());
+                item.setModifiedTime(new Date());
+                if(item.getProductionQty().compareTo(BigDecimal.ONE) == 1){
+                    //工单已投产数量>1，工单已投产数量减1
+                    item.setProductionQty(item.getProductionQty().subtract(BigDecimal.ONE));
+                }else {
+                    //工单已投产数量<=1 变更工单状态=2、排产状态=1
+                    item.setProductionQty(item.getProductionQty().subtract(BigDecimal.ZERO));
+                    item.setWorkOrderStatus((byte)2);
+                    item.setScheduleStatus((byte)1);
+                }
+            }
+             return mesPmWorkOrderMapper.batchUpdateProductionQty(mesPmWorkOrders);
+        }
+        return 0;
     }
 
     @Override

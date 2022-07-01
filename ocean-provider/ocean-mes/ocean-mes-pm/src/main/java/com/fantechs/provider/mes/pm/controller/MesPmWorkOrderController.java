@@ -152,4 +152,10 @@ public class MesPmWorkOrderController {
         mesPmWorkOrder = mesPmWorkOrderService.saveByApi(mesPmWorkOrder);
         return ControllerUtil.returnDataSuccess(mesPmWorkOrder,StringUtils.isEmpty(mesPmWorkOrder)?0:1);
     }
+
+    @ApiOperation("修改工单投产数量")
+    @PostMapping("/updateProductionQty")
+    public ResponseEntity updateProductionQty(@ApiParam(value = "对象，Id必传",required = true)  @RequestParam @NotNull(message = "工单Id不能为空") List<String> workOrderIds) {
+        return ControllerUtil.returnCRUD(mesPmWorkOrderService.updateProductionQty(workOrderIds));
+    }
 }

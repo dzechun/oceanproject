@@ -22,4 +22,6 @@ public interface MesPmWorkOrderMapper extends MyMapper<MesPmWorkOrder> {
     List<MesPmWorkOrder> getWorkOrderList(List<String> workOrderIds);
 
     int batchUpdate(List<MesPmWorkOrder> mesPmWorkOrders);
+
+    int batchUpdateProductionQty(@Param("mesPmWorkOrders") List<MesPmWorkOrder> mesPmWorkOrders);
 }

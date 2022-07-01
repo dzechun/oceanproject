@@ -28,6 +28,58 @@
     <resultMap id="BaseResultProDetMap" extends="BaseResultMap" type="com.fantechs.entity.ProductionInStorageDet">
 
     </resultMap>
+
+    <resultMap id="WarehousingListMap" type="com.fantechs.dto.WarehousingListDto">
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="sales_code" jdbcType="VARCHAR" property="salesCode"/>
+        <result column="work_shop_name" jdbcType="VARCHAR" property="workShopName" />
+        <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
+        <result column="site" jdbcType="TINYINT" property="site" />
+        <result column="barcode" jdbcType="VARCHAR" property="barcode"/>
+        <result column="sales_barcode" jdbcType="VARCHAR" property="salesBarcode"/>
+        <result column="customer_barcode" jdbcType="VARCHAR" property="customerBarcode"/>
+        <result column="carton_time" jdbcType="TIMESTAMP" property="cartonTime"/>
+        <result column="carton_status" jdbcType="VARCHAR" property="cartonStatus"/>
+        <result column="carton_count" jdbcType="DECIMAL" property="cartonCount"/>
+        <result column="pallet_time" jdbcType="TIMESTAMP" property="palletTime"/>
+        <result column="pallet_count" jdbcType="VARCHAR" property="palletCount"/>
+        <result column="pallet_status" jdbcType="DECIMAL" property="palletStatus"/>
+        <result column="inventoty_time" jdbcType="TIMESTAMP" property="inventotyTime"/>
+        <result column="inventoty_status" jdbcType="VARCHAR" property="inventotyStatus"/>
+        <result column="inventory_count" jdbcType="DECIMAL" property="inventotyCount"/>
+        <result column="storage_code" jdbcType="VARCHAR" property="storageCode"/>
+        <result column="site_status" jdbcType="TINYINT" property="siteStatus"/>
+    </resultMap>
+
+    <resultMap id="WarehousingSummaryMap" type="com.fantechs.dto.WarehousingSummaryDto">
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="sales_code" jdbcType="VARCHAR" property="salesCode"/>
+        <result column="work_shop_name" jdbcType="VARCHAR" property="workShopName" />
+        <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
+        <result column="site" jdbcType="TINYINT" property="site" />
+        <result column="qty" jdbcType="DECIMAL" property="qty"/>
+        <result column="time" jdbcType="TIMESTAMP" property="time"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+    </resultMap>
+
+    <resultMap id="WarehousingDetailMap" type="com.fantechs.dto.WarehousingDetailDto">
+        <result column="material_code" jdbcType="VARCHAR" property="materialCode"/>
+        <result column="material_name" jdbcType="VARCHAR" property="materialName"/>
+        <result column="sales_code" jdbcType="VARCHAR" property="salesCode"/>
+        <result column="work_shop_name" jdbcType="VARCHAR" property="workShopName" />
+        <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
+        <result column="site" jdbcType="TINYINT" property="site" />
+        <result column="barcode" jdbcType="VARCHAR" property="barcode"/>
+        <result column="sales_barcode" jdbcType="VARCHAR" property="salesBarcode"/>
+        <result column="customer_barcode" jdbcType="VARCHAR" property="customerBarcode"/>
+        <result column="qty" jdbcType="DECIMAL" property="qty"/>
+        <result column="time" jdbcType="TIMESTAMP" property="time"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+    </resultMap>
+
+
     <select id="findProList" resultMap="BaseResultMap">
         SELECT
                 bo.organization_name,
@@ -247,5 +299,240 @@
             </if>
         </where>
         GROUP BY wiid.barcode
+    </select>
+
+    <!--  生产入库明细一览表  -->
+    <select id="findWarehousingList" parameterType="map" resultMap="WarehousingListMap">
+        SELECT
+            msbp.material_code,
+            msbp.material_name,
+            mpwo.sales_code,
+            bws.work_shop_name,
+            msbp.pro_name,
+            IF (wiid.inventory_det_id IS NOT NULL, 3, IF (msbp.production_time IS NOT NULL,2, IF (msbp.devote_time IS NOT NULL,1,4))) AS site,
+            msbp.barcode,
+            mskpr.part_barcode AS 'cutsomer_barcode',
+            mskpr2.part_barcode AS 'sales_barcode',
+            msbp.devote_time AS carton_time,
+            CASE WHEN IFNULL(msbp.devote_time,'') THEN 0 ELSE 1 END AS carton_status,
+            '1' AS carton_count,
+            msbp.production_time AS pallet_time,
+            CASE WHEN IFNULL(msbp.production_time,'') THEN 0 ELSE 1 END AS pallet_status,
+            '1' AS pallet_count,
+            wiid.create_time AS inventoty_time,
+            CASE WHEN IFNULL(wiid.inventory_det_id,'') THEN 0 ELSE 1 END AS inventoty_status,
+            wiid.material_qty AS inventory_count,
+            bs.storage_code,
+            IF (wiid.inventory_det_id IS NOT NULL, 4, IF (msbp.production_time IS NOT NULL,3, IF (msbp.devote_time IS NOT NULL,2,1))) AS `site_status`
+        FROM
+            mes_sfc_barcode_process msbp
+            LEFT JOIN base_pro_line bpl ON msbp.pro_line_id = bpl.pro_line_id
+            LEFT JOIN base_work_shop bws ON bpl.work_shop_id = bws.work_shop_id
+            LEFT JOIN mes_pm_work_order mpwo ON msbp.work_order_id = mpwo.work_order_id
+            LEFT JOIN mes_sfc_key_part_relevance mskpr ON msbp.work_order_barcode_id = mskpr.work_order_barcode_id
+            AND mskpr.material_id IS NOT NULL
+            LEFT JOIN mes_sfc_key_part_relevance mskpr2 ON msbp.work_order_barcode_id = mskpr2.work_order_barcode_id
+            AND mskpr2.label_category_id IS NOT NULL
+            LEFT JOIN wms_inner_inventory_det wiid ON wiid.barcode = msbp.barcode
+            LEFT JOIN base_storage bs ON wiid.storage_id = bs.storage_id
+        <where>
+            <if test="workShopId!=null and workShopId!=''">
+                and bpl.work_shop_id =#{workShopId}
+            </if>
+            <if test="proLineId!=null and proLineId!=''">
+                and msbp.pro_line_id =#{proLineId}
+            </if>
+            <if test="site!=null and site!=''">
+                <if test="site==1">
+                    AND msbp.devote_time IS NULL
+                </if>
+                <if test="site==2">
+                    AND msbp.devote_time IS NOT NULL
+                    AND msbp.production_time IS NULL
+                </if>
+                <if test="site==3">
+                    AND msbp.devote_time IS NOT NULL
+                    AND msbp.production_time IS NOT NULL
+                    AND wiid.inventory_det_id IS NULL
+                </if>
+            </if>
+            <if test="status!=null and status!=''">
+                <if test="status==0">
+                    AND (msbp.devote_time IS NOT NULL
+                    OR msbp.production_time IS NOT NULL
+                    OR wiid.inventory_det_id IS NOT NULL)
+                </if>
+                <if test="status==0">
+                    AND (msbp.devote_time IS NULL
+                    OR msbp.production_time IS NULL
+                    OR wiid.inventory_det_id IS NULL)
+                </if>
+            </if>
+            <if test="siteStatus!=null and siteStatus!=''">
+                <if test="siteStatus==1">
+                    AND msbp.devote_time IS NULL
+                </if>
+                <if test="siteStatus==2">
+                    AND msbp.devote_time IS NOT NULL
+                </if>
+                <if test="siteStatus==3">
+                    AND msbp.production_time IS NOT NULL
+                </if>
+                <if test="siteStatus==3">
+                    AND  wiid.inventory_det_id IS NOT NULL
+                </if>
+            </if>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                AND (date_format(msbp.devote_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+                         or date_format(msbp.production_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+                         or date_format(wiid.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime})
+            </if>
+        </where>
+    </select>
+
+    <!--  生产入库明细表  -->
+    <select id="findWarehousingSummary" parameterType="map" resultMap="WarehousingSummaryMap">
+        SELECT
+            CASE CONCAT(IF ( msbp.devote_time IS NOT NULL, 1, 0 ),IF ( msbp.production_time IS NOT NULL, 1, 0 ),IF ( wiid.create_time IS NOT NULL, 1, 0 ))
+            WHEN '000' THEN '0'
+            ELSE '1' END AS `status`,
+            msbp.material_code,
+            msbp.material_name,
+            mpwo.sales_code,
+            bws.work_shop_name,
+            msbp.pro_name,
+            IF (wiid.inventory_det_id IS NOT NULL, 3, IF (msbp.production_time IS NOT NULL,2, IF (msbp.devote_time IS NOT NULL,1,4))) AS site,
+            COUNT( msbp.barcode_process_id ) AS qty,
+            IF (wiid.inventory_det_id IS NOT NULL, wiid.create_time, IF (msbp.production_time IS NOT NULL,msbp.production_time, IF (msbp.devote_time IS NOT NULL,msbp.devote_time,NULL))) AS time
+        FROM
+            mes_sfc_barcode_process msbp
+                LEFT JOIN base_pro_line bpl ON msbp.pro_line_id = bpl.pro_line_id
+                LEFT JOIN base_work_shop bws ON bpl.work_shop_id = bws.work_shop_id
+                LEFT JOIN mes_pm_work_order mpwo ON msbp.work_order_id = mpwo.work_order_id
+                LEFT JOIN wms_inner_inventory_det wiid ON wiid.barcode = msbp.barcode
+        <where>
+            CONCAT(IF ( msbp.devote_time IS NOT NULL, 1, 0 ),IF ( msbp.production_time IS NOT NULL, 1, 0 ),IF ( wiid.create_time IS NOT NULL, 1, 0 )) != '001'
+            AND CONCAT(IF ( msbp.devote_time IS NOT NULL, 1, 0 ),IF ( msbp.production_time IS NOT NULL, 1, 0 ),IF ( wiid.create_time IS NOT NULL, 1, 0 )) != '101'
+            AND CONCAT(IF ( msbp.devote_time IS NOT NULL, 1, 0 ),IF ( msbp.production_time IS NOT NULL, 1, 0 ),IF ( wiid.create_time IS NOT NULL, 1, 0 )) != '011'
+            <if test="workShopId!=null and workShopId!=''">
+                and bpl.work_shop_id =#{workShopId}
+            </if>
+            <if test="proLineId!=null and proLineId!=''">
+                and msbp.pro_line_id =#{proLineId}
+            </if>
+            <if test="site!=null and site!=''">
+                <if test="site==1">
+                    AND msbp.devote_time IS NULL
+                </if>
+                <if test="site==2">
+                    AND msbp.devote_time IS NOT NULL
+                    AND msbp.production_time IS NULL
+                </if>
+                <if test="site==3">
+                    AND msbp.devote_time IS NOT NULL
+                    AND msbp.production_time IS NOT NULL
+                    AND wiid.inventory_det_id IS NULL
+                </if>
+            </if>
+            <if test="status!=null and status!=''">
+                <if test="status==0">
+                    AND (msbp.devote_time IS NOT NULL
+                    OR msbp.production_time IS NOT NULL
+                    OR wiid.inventory_det_id IS NOT NULL)
+                </if>
+                <if test="status==0">
+                    AND (msbp.devote_time IS NULL
+                    OR msbp.production_time IS NULL
+                    OR wiid.inventory_det_id IS NULL)
+                </if>
+            </if>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                AND (date_format(msbp.devote_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+                or date_format(msbp.production_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+                or date_format(wiid.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime})
+            </if>
+        </where>
+        GROUP BY
+            msbp.material_id,
+            mpwo.sales_code,
+            msbp.pro_line_id,
+            msbp.next_process_id,
+            wiid.option3
+    </select>
+
+    <!--  生产入库汇总表  -->
+    <select id="findWarehousingDetail" parameterType="map" resultMap="WarehousingDetailMap">
+        SELECT
+            msbp.material_code,
+            msbp.material_name,
+            mpwo.sales_code,
+            bws.work_shop_name,
+            msbp.pro_name,
+            case when d.id = 1 then 1 when d.id = 2 then 2 when d.id = 3 then 3 else 4 end AS site,
+            case when d.id = 1 then IF ( msbp.devote_time IS NOT NULL, '0', '1' ) when d.id = 2 then IF ( msbp.production_time IS NOT NULL, '0', '1' ) else IF ( wiid.create_time IS NOT NULL, '0', '1' ) end AS status,
+            msbp.barcode,
+            mskpr.part_barcode AS 'cutsomer_barcode',
+                mskpr2.part_barcode AS 'sales_barcode',
+                '1' AS qty,
+            IF (wiid.inventory_det_id IS NOT NULL, wiid.create_time, IF (msbp.production_time IS NOT NULL,msbp.production_time, IF (msbp.devote_time IS NOT NULL,msbp.devote_time,NULL))) AS time
+        FROM
+            mes_sfc_barcode_process msbp
+            LEFT JOIN base_pro_line bpl ON msbp.pro_line_id = bpl.pro_line_id
+            LEFT JOIN base_work_shop bws ON bpl.work_shop_id = bws.work_shop_id
+            LEFT JOIN mes_pm_work_order mpwo ON msbp.work_order_id = mpwo.work_order_id
+            LEFT JOIN mes_sfc_key_part_relevance mskpr ON msbp.work_order_barcode_id = mskpr.work_order_barcode_id
+            AND mskpr.material_id IS NOT NULL
+            LEFT JOIN mes_sfc_key_part_relevance mskpr2 ON msbp.work_order_barcode_id = mskpr2.work_order_barcode_id
+            AND mskpr2.label_category_id IS NOT NULL
+            LEFT JOIN wms_inner_inventory_det wiid ON wiid.barcode = msbp.barcode
+            LEFT join (
+            select 1 as id,'包箱' as 'name'
+            UNION
+            select 2 as id,'栈板' as 'name'
+            UNION
+            select 3 as id,'入库' as 'name'
+            ) d on 1= 1
+        <where>
+            CONCAT(IF ( msbp.devote_time IS NOT NULL, 1, 0 ),IF ( msbp.production_time IS NOT NULL, 1, 0 ),IF ( wiid.create_time IS NOT NULL, 1, 0 )) != '001'
+            AND CONCAT(IF ( msbp.devote_time IS NOT NULL, 1, 0 ),IF ( msbp.production_time IS NOT NULL, 1, 0 ),IF ( wiid.create_time IS NOT NULL, 1, 0 )) != '101'
+            AND CONCAT(IF ( msbp.devote_time IS NOT NULL, 1, 0 ),IF ( msbp.production_time IS NOT NULL, 1, 0 ),IF ( wiid.create_time IS NOT NULL, 1, 0 )) != '011'
+            <if test="workShopId!=null and workShopId!=''">
+                and bpl.work_shop_id =#{workShopId}
+            </if>
+            <if test="proLineId!=null and proLineId!=''">
+                and msbp.pro_line_id =#{proLineId}
+            </if>
+            <if test="site!=null and site!=''">
+                <if test="site==1">
+                    AND msbp.devote_time IS NULL
+                </if>
+                <if test="site==2">
+                    AND msbp.devote_time IS NOT NULL
+                    AND msbp.production_time IS NULL
+                </if>
+                <if test="site==3">
+                    AND msbp.devote_time IS NOT NULL
+                    AND msbp.production_time IS NOT NULL
+                    AND wiid.inventory_det_id IS NULL
+                </if>
+            </if>
+            <if test="status!=null and status!=''">
+                <if test="status==0">
+                    AND (msbp.devote_time IS NOT NULL
+                    OR msbp.production_time IS NOT NULL
+                    OR wiid.inventory_det_id IS NOT NULL)
+                </if>
+                <if test="status==0">
+                    AND (msbp.devote_time IS NULL
+                    OR msbp.production_time IS NULL
+                    OR wiid.inventory_det_id IS NULL)
+                </if>
+            </if>
+            <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                AND (date_format(msbp.devote_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+                or date_format(msbp.production_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+                or date_format(wiid.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime})
+            </if>
+        </where>
     </select>
 </mapper>

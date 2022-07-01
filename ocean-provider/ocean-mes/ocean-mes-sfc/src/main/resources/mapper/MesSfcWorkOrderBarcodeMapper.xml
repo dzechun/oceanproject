@@ -643,4 +643,12 @@
         </foreach>
         group by  mswobr.work_order_barcode_id
     </select>
+
+    <update id="updateBarcodeStatusByBarcode">
+        update  mes_sfc_work_order_barcode set
+                barcode_status = #{mesSfcWorkOrderBarcode.barcodeStatus},
+                modified_user_id = #{mesSfcWorkOrderBarcode.modifiedUserId},
+                modified_time =  #{mesSfcWorkOrderBarcode.modifiedTime}
+        where barcode =  #{mesSfcWorkOrderBarcode.barcode}
+    </update>
 </mapper>

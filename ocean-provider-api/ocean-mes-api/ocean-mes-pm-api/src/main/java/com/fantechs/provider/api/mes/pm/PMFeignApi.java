@@ -105,4 +105,8 @@ public interface PMFeignApi {
     @PostMapping("/mesPmProductionKeyIssuesOrder/findList")
     ResponseEntity<List<MesPmProductionKeyIssuesOrder>> findPmPKIOList(@ApiParam(value = "查询对象") @RequestBody SearchMesPmProductionKeyIssuesOrder searchMesPmProductionKeyIssuesOrder);
 
+    @ApiOperation("修改工单投产数量")
+    @PostMapping("/mesPmWorkOrder/updateProductionQty")
+    ResponseEntity updateProductionQty(@ApiParam(value = "对象，Id必传",required = true)  @RequestParam @NotNull(message = "工单Id不能为空") List<String> workOrderIds);
+
 }

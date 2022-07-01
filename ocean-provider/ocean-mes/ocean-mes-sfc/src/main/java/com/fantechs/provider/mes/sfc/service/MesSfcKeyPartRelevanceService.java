@@ -17,4 +17,10 @@ public interface MesSfcKeyPartRelevanceService extends IService<MesSfcKeyPartRel
     List<MesSfcKeyPartRelevanceDto> findListByPallet(Map<String, Object> map);
 
     List<MesSfcKeyPartRelevanceDto> findListForGroup(Map<String, Object> map);
+
+    /**
+     * 条码解绑
+     * @param barcode
+     */
+    boolean barcodeUnbinding(String barcode);
 }
