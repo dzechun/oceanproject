@@ -57,7 +57,7 @@
         <txlcn-tc.version>5.0.2.RELEASE</txlcn-tc.version>
         <!-- 在构建过程中读取源码时使用的字符集 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <boot-jar-output>../lib</boot-jar-output>
+        <boot-jar-output>../package</boot-jar-output>
     </properties>
 
     <!--管理spring-cloud版本，引入openfeign时不用添加version-->
