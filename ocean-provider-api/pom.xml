@@ -16,7 +16,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <boot-jar-output>../../lj</boot-jar-output>
+        <boot-jar-output>../../lib</boot-jar-output>
     </properties>
 
     <modules>
