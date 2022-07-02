@@ -18,7 +18,7 @@
     <dependencies>
         <dependency>
             <groupId>com.fantechs.common.config</groupId>
-            <artifactId>ocean-imes-config</artifactId>
+            <artifactId>ocean-common-config</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -48,8 +48,8 @@
                     <includes>
                         <!--只包含自己-->
                         <include>
-                            <groupId>${groupId}</groupId>
-                            <artifactId>${artifactId}</artifactId>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>${project.artifactId}</artifactId>
                         </include>
                     </includes>
                 </configuration>

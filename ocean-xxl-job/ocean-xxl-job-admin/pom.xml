@@ -65,7 +65,7 @@
 
 
 	<build>
-		<finalName>${artifactId}</finalName>
+		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<!--打包时去除第三方依赖-->

@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>com.fantechs.common.config</groupId>
-            <artifactId>ocean-imes-config</artifactId>
+            <artifactId>ocean-common-config</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
