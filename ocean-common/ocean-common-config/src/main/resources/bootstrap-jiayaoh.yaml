@@ -1,0 +1,9 @@
+spring:
+  cloud:
+    nacos:
+      # 注册/配置地址
+      server-addr: ${NACOS_ADDR:192.168.1.203:8848}
+      config:
+        namespace: ${NACOS_NAMESPACE:jiayaoh}
+      discovery:
+        namespace: ${NACOS_NAMESPACE:jiayaoh}

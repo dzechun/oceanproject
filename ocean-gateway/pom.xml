@@ -14,18 +14,15 @@
     <description>Demo project for Spring Boot</description>
 
     <dependencies>
-        <!-- 1 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-zuul</artifactId>
         </dependency>
-        <!-- 2 -->
         <dependency>
             <groupId>com.fantechs.common.base</groupId>
             <artifactId>ocean-public-base</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-        <!-- 3 -->
         <dependency>
             <groupId>com.fantechs.common.config</groupId>
             <artifactId>ocean-common-config</artifactId>
