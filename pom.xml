@@ -331,12 +331,20 @@
     </dependencies>
 
     <build>
-        <!-- <plugins> -->
-        <!--     <plugin> -->
-        <!--         <groupId>org.apache.maven.plugins</groupId> -->
-        <!--         <artifactId>maven-compiler-plugin</artifactId> -->
-        <!--     </plugin> -->
-        <!-- </plugins> -->
+        <plugins>
+            <!-- clean项目时，清除package目录 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>./package/</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+        </plugins>
 <!--        <resources>-->
 <!--            <resource>-->
 <!--                <directory>src/main/resources/bootstrap-${dev.environment}</directory>-->
@@ -345,30 +353,37 @@
 <!--        </resources>-->
     </build>
 
-<!--    <profiles>-->
-<!--        <profile>-->
-<!--            &lt;!&ndash;开发环境&ndash;&gt;-->
-<!--            <id>dev</id>-->
-<!--            <properties>-->
-<!--                <dev.environment>dev</dev.environment>-->
-<!--            </properties>-->
-<!--            <activation>-->
-<!--                <activeByDefault>true</activeByDefault>-->
-<!--            </activation>-->
-<!--        </profile>-->
-<!--        <profile>-->
-<!--            &lt;!&ndash;测试环境&ndash;&gt;-->
-<!--            <id>test</id>-->
-<!--            <properties>-->
-<!--                <dev.environment>test</dev.environment>-->
-<!--            </properties>-->
-<!--        </profile>-->
-<!--        <profile>-->
-<!--            &lt;!&ndash;生产环境&ndash;&gt;-->
-<!--            <id>prod</id>-->
-<!--            <properties>-->
-<!--                <dev.environment>prod</dev.environment>-->
-<!--            </properties>-->
-<!--        </profile>-->
-<!--    </profiles>-->
+   <profiles>
+       <profile>
+           <!--开发环境-->
+           <id>dev</id>
+           <properties>
+               <dev.environment>dev</dev.environment>
+           </properties>
+           <activation>
+               <activeByDefault>true</activeByDefault>
+           </activation>
+       </profile>
+       <profile>
+           <!--测试环境-->
+           <id>test</id>
+           <properties>
+               <dev.environment>test</dev.environment>
+           </properties>
+       </profile>
+       <profile>
+           <!--生产环境-->
+           <id>prod</id>
+           <properties>
+               <dev.environment>prod</dev.environment>
+           </properties>
+       </profile>
+       <profile>
+           <!--jiayao-home测试-->
+           <id>jiayaoh</id>
+           <properties>
+               <dev.environment>jiayaoh</dev.environment>
+           </properties>
+       </profile>
+   </profiles>
 </project>

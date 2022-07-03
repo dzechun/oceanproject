@@ -2,33 +2,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>com.fantechs.provider</groupId>
         <artifactId>ocean-provider</artifactId>
+        <groupId>com.fantechs.provider</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.fantechs.auth</groupId>
-    <artifactId>ocean-auth</artifactId>
+    <groupId>com.fantechs.provider.fileserver</groupId>
+    <artifactId>ocean-fileserver-minio</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ocean-auth</name>
-    <description>Demo project for Spring Boot</description>
+    <name>ocean-fileserver-minio</name>
+    <description>文件服务器</description>
 
     <dependencies>
         <dependency>
             <groupId>com.fantechs.common.base</groupId>
-            <artifactId>ocean-imes-base</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fantechs.common.base</groupId>
             <artifactId>ocean-public-base</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fantechs.common.base.general</groupId>
-            <artifactId>ocean-general-base</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -36,21 +24,29 @@
             <artifactId>ocean-common-config</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+
+        <!-- minio -->
         <dependency>
-            <groupId>com.fantechs.provider.api.auth</groupId>
-            <artifactId>ocean-auth-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>8.4.2</version>
         </dependency>
+
         <dependency>
-            <groupId>com.fantechs.provider.base</groupId>
-            <artifactId>ocean-base</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-cloud-openfeign-core</artifactId>
+                    <groupId>org.springframework.cloud</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
+        <!-- 支持 @ConfigurationProperties 注解 -->
         <dependency>
-            <groupId>com.fantechs.provider.api.esop</groupId>
-            <artifactId>ocean-esop-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
@@ -137,6 +133,4 @@
             </plugin>
         </plugins>
     </build>
-
-
 </project>

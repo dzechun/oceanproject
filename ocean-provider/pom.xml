@@ -31,6 +31,7 @@
         <module>ocean-ews</module>      <!-- 预警模块  定时任务调度器-->
         <module>ocean-esop</module>     <!-- esop -->
         <module>ocean-fileserver</module>       <!-- 文件服务 -->
+        <module>ocean-fileserver-minio</module>       <!-- 文件服务 -->
         <module>ocean-guest</module>    <!-- 定制化模块 -->
         <module>ocean-ids</module>      <!-- 配送管理 -->
         <module>ocean-kreport</module>

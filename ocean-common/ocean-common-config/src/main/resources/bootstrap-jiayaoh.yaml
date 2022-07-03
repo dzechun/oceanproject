@@ -1,4 +1,7 @@
 spring:
+  profiles:
+    # 环境变量
+    active: jiayaoh
   cloud:
     nacos:
       # 注册/配置地址
