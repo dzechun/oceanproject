@@ -99,7 +99,7 @@ public class ProductionInStorageController {
         List<WarehousingListDto> list = productionInStorageService.findWarehousingList(ControllerUtil.dynamicConditionByEntity(searchWarehousingDto));
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(list, "生产入库明细一览表导出信息", "生产入库明细一览表", ProductionInStorageDet.class, "生产入库明细一览表.xls", response);
+            EasyPoiUtils.exportExcel(list, "生产入库明细一览表导出信息", "生产入库明细一览表", WarehousingListDto.class, "生产入库明细一览表.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }
@@ -120,7 +120,7 @@ public class ProductionInStorageController {
         List<WarehousingDetailDto> list = productionInStorageService.findWarehousingDetail(ControllerUtil.dynamicConditionByEntity(searchWarehousingDto));
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(list, "生产入库汇总表导出信息", "生产入库汇总表", ProductionInStorageDet.class, "生产入库汇总表.xls", response);
+            EasyPoiUtils.exportExcel(list, "生产入库汇总表导出信息", "生产入库汇总表", WarehousingDetailDto.class, "生产入库汇总表.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }
@@ -141,7 +141,7 @@ public class ProductionInStorageController {
         List<WarehousingSummaryDto> list = productionInStorageService.findWarehousingSummary(ControllerUtil.dynamicConditionByEntity(searchWarehousingDto));
         try {
             // 导出操作
-            EasyPoiUtils.exportExcel(list, "生产入库汇总表导出信息", "生产入库汇总表", ProductionInStorageDet.class, "生产入库汇总表.xls", response);
+            EasyPoiUtils.exportExcel(list, "生产入库汇总表导出信息", "生产入库汇总表", WarehousingSummaryDto.class, "生产入库汇总表.xls", response);
         } catch (Exception e) {
             throw new BizErrorException(e);
         }

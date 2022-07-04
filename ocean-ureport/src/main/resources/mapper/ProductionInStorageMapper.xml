@@ -61,7 +61,7 @@
         <result column="site" jdbcType="TINYINT" property="site" />
         <result column="qty" jdbcType="DECIMAL" property="qty"/>
         <result column="time" jdbcType="TIMESTAMP" property="time"/>
-        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="pass_status" jdbcType="TINYINT" property="passStatus"/>
     </resultMap>
 
     <resultMap id="WarehousingDetailMap" type="com.fantechs.dto.WarehousingDetailDto">
@@ -76,7 +76,7 @@
         <result column="customer_barcode" jdbcType="VARCHAR" property="customerBarcode"/>
         <result column="qty" jdbcType="DECIMAL" property="qty"/>
         <result column="time" jdbcType="TIMESTAMP" property="time"/>
-        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="pass_status" jdbcType="TINYINT" property="passStatus"/>
     </resultMap>
 
 
@@ -315,13 +315,13 @@
             mskpr2.part_barcode AS 'sales_barcode',
             msbp.devote_time AS carton_time,
             CASE WHEN IFNULL(msbp.devote_time,'') THEN 0 ELSE 1 END AS carton_status,
-            '1' AS carton_count,
+            CASE WHEN IFNULL(msbp.devote_time,'') THEN 1 ELSE 0 END AS carton_count,
             msbp.production_time AS pallet_time,
             CASE WHEN IFNULL(msbp.production_time,'') THEN 0 ELSE 1 END AS pallet_status,
-            '1' AS pallet_count,
+            CASE WHEN IFNULL(msbp.production_time,'') THEN 1 ELSE 0 END AS pallet_count,
             wiid.create_time AS inventoty_time,
             CASE WHEN IFNULL(wiid.inventory_det_id,'') THEN 0 ELSE 1 END AS inventoty_status,
-            wiid.material_qty AS inventory_count,
+            CASE WHEN IFNULL(wiid.inventory_det_id,'') THEN wiid.material_qty ELSE 0 END AS inventory_count,
             bs.storage_code,
             IF (wiid.inventory_det_id IS NOT NULL, 4, IF (msbp.production_time IS NOT NULL,3, IF (msbp.devote_time IS NOT NULL,2,1))) AS `site_status`
         FROM
@@ -336,11 +336,11 @@
             LEFT JOIN wms_inner_inventory_det wiid ON wiid.barcode = msbp.barcode
             LEFT JOIN base_storage bs ON wiid.storage_id = bs.storage_id
         <where>
-            <if test="workShopId!=null and workShopId!=''">
-                and bpl.work_shop_id =#{workShopId}
+            <if test="workShopName!=null and workShopName!=''">
+                and bws.work_shop_name = #{workShopName}
             </if>
-            <if test="proLineId!=null and proLineId!=''">
-                and msbp.pro_line_id =#{proLineId}
+            <if test="proName!=null and proName!=''">
+                and bpl.pro_name = #{proName}
             </if>
             <if test="site!=null and site!=''">
                 <if test="site==1">
@@ -354,18 +354,6 @@
                     AND msbp.devote_time IS NOT NULL
                     AND msbp.production_time IS NOT NULL
                     AND wiid.inventory_det_id IS NULL
-                </if>
-            </if>
-            <if test="status!=null and status!=''">
-                <if test="status==0">
-                    AND (msbp.devote_time IS NOT NULL
-                    OR msbp.production_time IS NOT NULL
-                    OR wiid.inventory_det_id IS NOT NULL)
-                </if>
-                <if test="status==0">
-                    AND (msbp.devote_time IS NULL
-                    OR msbp.production_time IS NULL
-                    OR wiid.inventory_det_id IS NULL)
                 </if>
             </if>
             <if test="siteStatus!=null and siteStatus!=''">
@@ -390,60 +378,41 @@
         </where>
     </select>
 
-    <!--  生产入库明细表  -->
+    <!--  生产入库汇总表  -->
     <select id="findWarehousingSummary" parameterType="map" resultMap="WarehousingSummaryMap">
         SELECT
-            CASE CONCAT(IF ( msbp.devote_time IS NOT NULL, 1, 0 ),IF ( msbp.production_time IS NOT NULL, 1, 0 ),IF ( wiid.create_time IS NOT NULL, 1, 0 ))
-            WHEN '000' THEN '0'
-            ELSE '1' END AS `status`,
             msbp.material_code,
             msbp.material_name,
             mpwo.sales_code,
             bws.work_shop_name,
-            msbp.pro_name,
-            IF (wiid.inventory_det_id IS NOT NULL, 3, IF (msbp.production_time IS NOT NULL,2, IF (msbp.devote_time IS NOT NULL,1,4))) AS site,
-            COUNT( msbp.barcode_process_id ) AS qty,
-            IF (wiid.inventory_det_id IS NOT NULL, wiid.create_time, IF (msbp.production_time IS NOT NULL,msbp.production_time, IF (msbp.devote_time IS NOT NULL,msbp.devote_time,NULL))) AS time
+            bpl.pro_name,
+            case when t.id = 1 then 1 when t.id = 2 then 2 when t.id = 3 then 3 else 4 end AS site,
+            COUNT(msbp.barcode_process_id) AS qty,
+            case when t.id = 1 then IF ( msbp.devote_time IS NOT NULL, '0', '1' ) when t.id = 2 then IF ( msbp.production_time IS NOT NULL, '0', '1' ) else IF ( wiid.create_time IS NOT NULL, '0', '1' ) end AS pass_status,
+            case when t.id = 1 then IF ( msbp.devote_time IS NOT NULL, msbp.devote_time, NULL ) when t.id = 2 then IF ( msbp.production_time IS NOT NULL, msbp.production_time, NULL ) else IF ( wiid.create_time IS NOT NULL, wiid.create_time, NULL ) end AS time
         FROM
             mes_sfc_barcode_process msbp
-                LEFT JOIN base_pro_line bpl ON msbp.pro_line_id = bpl.pro_line_id
-                LEFT JOIN base_work_shop bws ON bpl.work_shop_id = bws.work_shop_id
-                LEFT JOIN mes_pm_work_order mpwo ON msbp.work_order_id = mpwo.work_order_id
-                LEFT JOIN wms_inner_inventory_det wiid ON wiid.barcode = msbp.barcode
+            LEFT JOIN base_pro_line bpl ON msbp.pro_line_id = bpl.pro_line_id
+            LEFT JOIN base_work_shop bws ON bpl.work_shop_id = bws.work_shop_id
+            LEFT JOIN mes_pm_work_order mpwo ON msbp.work_order_id = mpwo.work_order_id
+            LEFT JOIN wms_inner_inventory_det wiid ON wiid.barcode = msbp.barcode
+            LEFT JOIN ( SELECT 1 AS id, '包箱' AS 'name' UNION SELECT 2 AS id, '栈板' AS 'name' UNION SELECT 3 AS id, '入库' AS 'name') AS t ON 1 = 1
         <where>
-            CONCAT(IF ( msbp.devote_time IS NOT NULL, 1, 0 ),IF ( msbp.production_time IS NOT NULL, 1, 0 ),IF ( wiid.create_time IS NOT NULL, 1, 0 )) != '001'
-            AND CONCAT(IF ( msbp.devote_time IS NOT NULL, 1, 0 ),IF ( msbp.production_time IS NOT NULL, 1, 0 ),IF ( wiid.create_time IS NOT NULL, 1, 0 )) != '101'
-            AND CONCAT(IF ( msbp.devote_time IS NOT NULL, 1, 0 ),IF ( msbp.production_time IS NOT NULL, 1, 0 ),IF ( wiid.create_time IS NOT NULL, 1, 0 )) != '011'
-            <if test="workShopId!=null and workShopId!=''">
-                and bpl.work_shop_id =#{workShopId}
+            <if test="workShopName!=null and workShopName!=''">
+                and bws.work_shop_name = #{workShopName}
             </if>
-            <if test="proLineId!=null and proLineId!=''">
-                and msbp.pro_line_id =#{proLineId}
+            <if test="proName!=null and proName!=''">
+                and bpl.pro_name = #{proName}
             </if>
             <if test="site!=null and site!=''">
-                <if test="site==1">
-                    AND msbp.devote_time IS NULL
-                </if>
-                <if test="site==2">
-                    AND msbp.devote_time IS NOT NULL
-                    AND msbp.production_time IS NULL
-                </if>
-                <if test="site==3">
-                    AND msbp.devote_time IS NOT NULL
-                    AND msbp.production_time IS NOT NULL
-                    AND wiid.inventory_det_id IS NULL
-                </if>
+                AND t.id = #{site}
             </if>
-            <if test="status!=null and status!=''">
-                <if test="status==0">
-                    AND (msbp.devote_time IS NOT NULL
-                    OR msbp.production_time IS NOT NULL
-                    OR wiid.inventory_det_id IS NOT NULL)
+            <if test="passStatus!=null and passStatus!=''">
+                <if test="passStatus==0">
+                    AND (case when t.id = 1 then msbp.devote_time IS NOT NULL when t.id = 2 then msbp.production_time IS NOT NULL else wiid.create_time IS NOT NULL end)
                 </if>
-                <if test="status==0">
-                    AND (msbp.devote_time IS NULL
-                    OR msbp.production_time IS NULL
-                    OR wiid.inventory_det_id IS NULL)
+                <if test="passStatus==1">
+                    AND (case when t.id = 1 then msbp.devote_time IS NULL when t.id = 2 then msbp.production_time IS NULL else wiid.create_time IS NULL end)
                 </if>
             </if>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
@@ -453,27 +422,26 @@
             </if>
         </where>
         GROUP BY
-            msbp.material_id,
-            mpwo.sales_code,
-            msbp.pro_line_id,
-            msbp.next_process_id,
-            wiid.option3
+        t.id,
+        msbp.material_code,
+        mpwo.sales_code,
+        case when t.id = 1 then IF ( msbp.devote_time IS NOT NULL, '100', '000' ) when t.id = 2 then IF ( msbp.production_time IS NOT NULL, '110', '100' ) else IF ( wiid.create_time IS NOT NULL, '111', '110' ) end
     </select>
 
-    <!--  生产入库汇总表  -->
+    <!--  生产入库明细表  -->
     <select id="findWarehousingDetail" parameterType="map" resultMap="WarehousingDetailMap">
         SELECT
             msbp.material_code,
             msbp.material_name,
             mpwo.sales_code,
             bws.work_shop_name,
-            msbp.pro_name,
+            bpl.pro_name,
             case when d.id = 1 then 1 when d.id = 2 then 2 when d.id = 3 then 3 else 4 end AS site,
-            case when d.id = 1 then IF ( msbp.devote_time IS NOT NULL, '0', '1' ) when d.id = 2 then IF ( msbp.production_time IS NOT NULL, '0', '1' ) else IF ( wiid.create_time IS NOT NULL, '0', '1' ) end AS status,
+            case when d.id = 1 then IF ( msbp.devote_time IS NOT NULL, '0', '1' ) when d.id = 2 then IF ( msbp.production_time IS NOT NULL, '0', '1' ) else IF ( wiid.create_time IS NOT NULL, '0', '1' ) end AS pass_status,
             msbp.barcode,
             mskpr.part_barcode AS 'cutsomer_barcode',
-                mskpr2.part_barcode AS 'sales_barcode',
-                '1' AS qty,
+            mskpr2.part_barcode AS 'sales_barcode',
+            '1' AS qty,
             IF (wiid.inventory_det_id IS NOT NULL, wiid.create_time, IF (msbp.production_time IS NOT NULL,msbp.production_time, IF (msbp.devote_time IS NOT NULL,msbp.devote_time,NULL))) AS time
         FROM
             mes_sfc_barcode_process msbp
@@ -493,39 +461,21 @@
             select 3 as id,'入库' as 'name'
             ) d on 1= 1
         <where>
-            CONCAT(IF ( msbp.devote_time IS NOT NULL, 1, 0 ),IF ( msbp.production_time IS NOT NULL, 1, 0 ),IF ( wiid.create_time IS NOT NULL, 1, 0 )) != '001'
-            AND CONCAT(IF ( msbp.devote_time IS NOT NULL, 1, 0 ),IF ( msbp.production_time IS NOT NULL, 1, 0 ),IF ( wiid.create_time IS NOT NULL, 1, 0 )) != '101'
-            AND CONCAT(IF ( msbp.devote_time IS NOT NULL, 1, 0 ),IF ( msbp.production_time IS NOT NULL, 1, 0 ),IF ( wiid.create_time IS NOT NULL, 1, 0 )) != '011'
-            <if test="workShopId!=null and workShopId!=''">
-                and bpl.work_shop_id =#{workShopId}
+            <if test="workShopName!=null and workShopName!=''">
+                and bws.work_shop_name = #{workShopName}
             </if>
-            <if test="proLineId!=null and proLineId!=''">
-                and msbp.pro_line_id =#{proLineId}
+            <if test="proName!=null and proName!=''">
+                and bpl.pro_name = #{proName}
             </if>
             <if test="site!=null and site!=''">
-                <if test="site==1">
-                    AND msbp.devote_time IS NULL
-                </if>
-                <if test="site==2">
-                    AND msbp.devote_time IS NOT NULL
-                    AND msbp.production_time IS NULL
-                </if>
-                <if test="site==3">
-                    AND msbp.devote_time IS NOT NULL
-                    AND msbp.production_time IS NOT NULL
-                    AND wiid.inventory_det_id IS NULL
-                </if>
+                AND d.id = #{site}
             </if>
-            <if test="status!=null and status!=''">
-                <if test="status==0">
-                    AND (msbp.devote_time IS NOT NULL
-                    OR msbp.production_time IS NOT NULL
-                    OR wiid.inventory_det_id IS NOT NULL)
+            <if test="passStatus!=null and passStatus!=''">
+                <if test="passStatus==0">
+                    AND (case when d.id = 1 then msbp.devote_time IS NOT NULL when d.id = 2 then msbp.production_time IS NOT NULL else wiid.create_time IS NOT NULL end)
                 </if>
-                <if test="status==0">
-                    AND (msbp.devote_time IS NULL
-                    OR msbp.production_time IS NULL
-                    OR wiid.inventory_det_id IS NULL)
+                <if test="passStatus==1">
+                    AND (case when d.id = 1 then msbp.devote_time IS NULL when d.id = 2 then msbp.production_time IS NULL else wiid.create_time IS NULL end)
                 </if>
             </if>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
