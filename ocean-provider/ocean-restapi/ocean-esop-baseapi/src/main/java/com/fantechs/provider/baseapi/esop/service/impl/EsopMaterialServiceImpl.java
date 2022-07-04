@@ -1,6 +1,6 @@
 package com.fantechs.provider.baseapi.esop.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
@@ -16,6 +16,7 @@ import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.baseapi.esop.service.EsopMaterialService;
 import com.fantechs.provider.baseapi.esop.util.BaseUtils;
 import com.fantechs.provider.baseapi.esop.util.LogsUtils;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -49,7 +50,7 @@ public class EsopMaterialServiceImpl implements EsopMaterialService {
     private String url = "http://xbqms.donlim.com:8081/qms/qualitiy/esop/material"; //新宝工单接口地址
 
     @Override
-    @LcnTransaction
+    @GlobalTransactional
     public BaseMaterial getMaterial(String materialCode) {
         if (StringUtils.isEmpty(materialCode)) throw new BizErrorException("物料（产品）编码不能为空");
         String result = null;

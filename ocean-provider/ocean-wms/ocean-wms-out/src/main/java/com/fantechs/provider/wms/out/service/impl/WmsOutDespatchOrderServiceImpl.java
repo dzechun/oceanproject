@@ -1,7 +1,7 @@
 package com.fantechs.provider.wms.out.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -40,6 +40,7 @@ import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.wms.out.mapper.*;
 import com.fantechs.provider.wms.out.service.WmsOutDespatchOrderService;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -90,7 +91,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int forwarding(String ids) {
         SysUser sysUser = currentUser();
         String[] arrIds = ids.split(",");
@@ -238,7 +239,7 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public String add(WmsOutDespatchOrder record) {
         SysUser sysUser = currentUser();
         record.setDespatchOrderCode(CodeUtils.getId("TRUCK"));

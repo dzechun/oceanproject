@@ -1,7 +1,7 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -41,6 +41,7 @@ import com.fantechs.provider.wms.inner.service.WmsInnerShiftWorkDetService;
 import com.fantechs.provider.wms.inner.service.WmsInnerShiftWorkService;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
 import com.fantechs.provider.wms.inner.util.WmsInnerInventoryUtil;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -102,7 +103,7 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int batchDeleteByShiftWork(String ids) {
         String[] arrId = ids.split(",");
         for (String s : arrId) {
@@ -312,7 +313,7 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int cancelDistribution(String ids) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         String[] arrId = ids.split(",");
@@ -405,7 +406,7 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int singleReceivingByBarcode(WmsInnerJobOrderDet wmsInPutawayOrderDet, String ids, Byte orderType) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         int num = 0;
@@ -886,7 +887,7 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int activation(Long jobOrderId) {
         WmsInnerJobOrder wmsInnerJobOrder = wmsInnerJobOrderMapper.selectByPrimaryKey(jobOrderId);
         if (StringUtils.isEmpty(wmsInnerJobOrder)) {
@@ -911,7 +912,7 @@ public class WmsInnerShiftWorkServiceImpl extends BaseService<WmsInnerJobOrder> 
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int save(WmsInnerJobOrder record) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         List<WmsInnerMaterialBarcodeReOrder> barcodeReOrderList = new ArrayList<>();

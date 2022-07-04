@@ -1,7 +1,7 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerInventoryDto;
 import com.fantechs.common.base.general.dto.wms.inner.WmsInnerJobOrderDetDto;
@@ -16,6 +16,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
 import com.fantechs.provider.wms.inner.service.WmsInnerJobOrderDetService;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,7 +56,7 @@ public class WmsInnerJobOrderDetServiceImpl extends BaseService<WmsInnerJobOrder
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int pickDisQty(List<WmsInnerJobOrderDet> wmsInnerJobOrderDets) {
         int num = 0;
         for (WmsInnerJobOrderDet det : wmsInnerJobOrderDets) {

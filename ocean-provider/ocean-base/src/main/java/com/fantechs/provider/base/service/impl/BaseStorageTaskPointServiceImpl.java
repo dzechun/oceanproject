@@ -1,6 +1,6 @@
 package com.fantechs.provider.base.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -19,6 +19,7 @@ import com.fantechs.provider.base.mapper.BaseHtStorageTaskPointMapper;
 import com.fantechs.provider.base.mapper.BaseStorageMapper;
 import com.fantechs.provider.base.mapper.BaseStorageTaskPointMapper;
 import com.fantechs.provider.base.service.BaseStorageTaskPointService;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,7 +97,7 @@ public class BaseStorageTaskPointServiceImpl extends BaseService<BaseStorageTask
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int update(BaseStorageTaskPoint entity) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
 

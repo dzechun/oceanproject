@@ -1,7 +1,7 @@
 package com.fantechs.provider.om.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -37,6 +37,7 @@ import com.fantechs.provider.om.mapper.ht.OmHtOtherOutOrderDetMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtOtherOutOrderMapper;
 import com.fantechs.provider.om.service.OmOtherOutOrderService;
 import com.fantechs.provider.om.util.OrderFlowUtil;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -102,7 +103,7 @@ public class OmOtherOutOrderServiceImpl extends BaseService<OmOtherOutOrder> imp
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int pushDown(List<OmOtherOutOrderDetDto> omOtherOutOrderDets) {
         int i;
         for (OmOtherOutOrderDetDto omOtherOutOrderDetDto : omOtherOutOrderDets){

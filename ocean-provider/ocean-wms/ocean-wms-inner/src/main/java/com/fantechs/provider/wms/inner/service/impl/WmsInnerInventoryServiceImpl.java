@@ -1,6 +1,6 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -13,6 +13,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.inner.mapper.WmsHtInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryMapper;
 import com.fantechs.provider.wms.inner.service.WmsInnerInventoryService;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -171,14 +172,14 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int updateByPrimaryKeySelective(WmsInnerInventory wmsInnerInventory) {
         return wmsInnerInventoryMapper.updateByPrimaryKeySelective(wmsInnerInventory);
     }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int updateByExampleSelective(WmsInnerInventory wmsInnerInventory, Map<String,Object> map) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         Example example = new Example(WmsInnerInventory.class);
@@ -203,7 +204,7 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int insertSelective(WmsInnerInventory wmsInnerInventory) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         wmsInnerInventory.setOrgId(sysUser.getOrganizationId());
@@ -216,7 +217,7 @@ public class WmsInnerInventoryServiceImpl extends BaseService<WmsInnerInventory>
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int insertList(List<WmsInnerInventory> wmsInnerInventories) {
         return wmsInnerInventoryMapper.insertList(wmsInnerInventories);
     }

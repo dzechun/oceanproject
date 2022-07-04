@@ -1,6 +1,6 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.restapi.DTMESBADCODE;
@@ -16,6 +16,7 @@ import com.fantechs.provider.materialapi.imes.utils.BasicAuthenticator;
 import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
 import com.fantechs.provider.materialapi.imes.utils.badnessCategoryApi.SIMESBADCODEQUERYOut;
 import com.fantechs.provider.materialapi.imes.utils.badnessCategoryApi.SIMESBADCODEQUERYOutService;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,7 @@ public class SapBadnessCategoryApiServiceImpl implements SapBadnessCategoryApiSe
     private String password = "1234qwer"; //雷赛wsdl密码
 
     @Override
-    @LcnTransaction
+    @GlobalTransactional
     public int getbadnessCategory(SearchSapBadnessCategoryApi searchSapBadnessCategoryApi) throws ParseException {
         Authenticator.setDefault(new BasicAuthenticator(userName, password));
         SIMESBADCODEQUERYOutService service = new SIMESBADCODEQUERYOutService();

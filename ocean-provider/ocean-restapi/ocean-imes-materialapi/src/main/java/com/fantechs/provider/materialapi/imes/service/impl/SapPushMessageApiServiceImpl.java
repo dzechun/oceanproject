@@ -1,6 +1,6 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.restapi.Resbase;
@@ -12,6 +12,7 @@ import com.fantechs.provider.materialapi.imes.utils.BaseUtils;
 import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
 import com.fantechs.provider.materialapi.imes.utils.pushMessage.SendMsg;
 import com.fantechs.provider.materialapi.imes.utils.pushMessage.SendMsgService;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ public class SapPushMessageApiServiceImpl implements SapPushMessageApiService {
     private String appid = "1000035";
 
     @Override
-    @LcnTransaction
+    @GlobalTransactional
     public int  sendPushMessage(SapPushMessageApi sapPushMessageApi){
         check(sapPushMessageApi);
         List<BaseOrganizationDto> orgIdList = baseUtils.getOrId();

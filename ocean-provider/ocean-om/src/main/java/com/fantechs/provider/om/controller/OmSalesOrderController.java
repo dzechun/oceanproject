@@ -1,6 +1,6 @@
 package com.fantechs.provider.om.controller;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.general.dto.om.OmHtSalesOrderDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDetDto;
 import com.fantechs.common.base.general.dto.om.OmSalesOrderDto;
@@ -17,6 +17,7 @@ import com.fantechs.provider.om.service.OmSalesOrderService;
 import com.fantechs.provider.om.service.ht.OmHtSalesOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import io.seata.spring.annotation.GlobalTransactional;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -65,7 +66,7 @@ public class OmSalesOrderController {
     @ApiOperation(value = "批量新增",notes = "批量新增")
     @PostMapping("/addList")
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public ResponseEntity addList(@ApiParam(value = "销售订单信息集合") @RequestBody List<OmSalesOrder> salesOrders){
         return ControllerUtil.returnCRUD(omSalesOrderService.batchSave(salesOrders));
     }

@@ -1,7 +1,7 @@
 package com.fantechs.provider.om.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -43,6 +43,7 @@ import com.fantechs.provider.om.mapper.ht.OmHtOtherInOrderDetMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtOtherInOrderMapper;
 import com.fantechs.provider.om.service.OmOtherInOrderService;
 import com.fantechs.provider.om.util.OrderFlowUtil;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,7 +92,7 @@ public class OmOtherInOrderServiceImpl extends BaseService<OmOtherInOrder> imple
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int packageAutoOutOrder(OmOtherInOrder omOtherInOrder) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if (omOtherInOrder.getOrderStatus() >= 3) {

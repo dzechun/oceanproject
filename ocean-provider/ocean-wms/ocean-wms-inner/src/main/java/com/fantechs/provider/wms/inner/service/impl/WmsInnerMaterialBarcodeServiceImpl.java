@@ -1,7 +1,7 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -37,6 +37,7 @@ import com.fantechs.provider.wms.inner.mapper.WmsInnerMaterialBarcodeMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerMaterialBarcodeReprintMapper;
 import com.fantechs.provider.wms.inner.service.WmsInnerMaterialBarcodeReOrderService;
 import com.fantechs.provider.wms.inner.service.WmsInnerMaterialBarcodeService;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -143,7 +144,7 @@ public class WmsInnerMaterialBarcodeServiceImpl extends BaseService<WmsInnerMate
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public List<WmsInnerMaterialBarcodeDto> add(List<WmsInnerMaterialBarcodeDto> barcodeDtoList,Integer type) {
         SysUser sysUser = currentUser();
 

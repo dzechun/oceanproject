@@ -2,7 +2,7 @@ package com.fantechs.provider.mes.sfc.service.impl;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -35,6 +35,7 @@ import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcProductCartonMapper;
 import com.fantechs.provider.mes.sfc.service.*;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,7 +79,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public Boolean pdaCartonWork(PdaCartonWorkDto dto) throws Exception {
         // 获取登录用户
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();

@@ -1,7 +1,7 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -31,6 +31,7 @@ import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.api.wms.in.InFeignApi;
 import com.fantechs.provider.mes.sfc.service.*;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,7 +80,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public PalletWorkScanDto palletWorkScanBarcode(RequestPalletWorkScanDto requestPalletWorkScanDto) throws Exception {
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -532,7 +533,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int submitNoFullPallet(List<Long> palletIdList, byte printBarcode, String printName) throws Exception {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         log.error("============未满箱提交，palletIdList:"+ palletIdList.size());
@@ -582,7 +583,7 @@ public class MesSfcPalletWorkServiceImpl implements MesSfcPalletWorkService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int updateNowPackageSpecQty(Long productPalletId, Double nowPackageSpecQty, Boolean print, String printName) throws Exception {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 

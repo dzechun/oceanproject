@@ -1,6 +1,6 @@
 package com.fantechs.provider.wms.in.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysImportAndExportLog;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -38,6 +38,7 @@ import com.fantechs.provider.wms.in.mapper.WmsInPlanReceivingOrderDetMapper;
 import com.fantechs.provider.wms.in.mapper.WmsInPlanReceivingOrderMapper;
 import com.fantechs.provider.wms.in.service.WmsInPlanReceivingOrderService;
 import com.fantechs.provider.wms.in.service.WmsInReceivingOrderService;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -315,7 +316,7 @@ public class WmsInPlanReceivingOrderServiceImpl extends BaseService<WmsInPlanRec
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int pushDown(String ids) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         String[] idArry = ids.split(",");

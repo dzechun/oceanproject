@@ -1,7 +1,7 @@
 package com.fantechs.provider.client.listener;
 
 import com.alibaba.fastjson.JSONObject;
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.electronic.dto.PtlElectronicTagStorageDto;
 import com.fantechs.common.base.electronic.dto.PtlJobOrderDetDto;
 import com.fantechs.common.base.electronic.dto.PtlJobOrderDto;
@@ -23,6 +23,7 @@ import com.fantechs.provider.client.dto.ResponseEntityDTO;
 import com.fantechs.provider.client.server.ElectronicTagStorageService;
 import com.fantechs.provider.client.server.impl.FanoutSender;
 import com.rabbitmq.client.Channel;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -60,7 +61,7 @@ public class ElectronicTagReceiver {
     // 监听标签队列
     @RabbitListener(queues = RabbitConfig.TOPIC_QUEUE1)
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public void receiveTopic1(byte[] bytes, Message message, Channel channel) throws Exception {
         String encoded = new String(bytes, "UTF-8");
         MQResponseEntity mqResponseEntity = JsonUtils.jsonToPojo(encoded, MQResponseEntity.class);

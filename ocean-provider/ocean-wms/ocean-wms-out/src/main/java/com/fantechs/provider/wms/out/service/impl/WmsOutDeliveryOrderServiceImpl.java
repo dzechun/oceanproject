@@ -2,7 +2,7 @@ package com.fantechs.provider.wms.out.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -43,6 +43,7 @@ import com.fantechs.provider.wms.out.mapper.WmsOutDeliveryOrderMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutHtDeliveryOrderDetMapper;
 import com.fantechs.provider.wms.out.mapper.WmsOutHtDeliveryOrderMapper;
 import com.fantechs.provider.wms.out.service.WmsOutDeliveryOrderService;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -415,7 +416,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int createJobOrder(Long id,Long platformId) {
         /*Map<String, Object> map = new HashMap<>();
         map.put("deliveryOrderId", id);
@@ -800,7 +801,7 @@ public class WmsOutDeliveryOrderServiceImpl extends BaseService<WmsOutDeliveryOr
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int sealOrder(Long outDeliveryOrderId) {
         WmsOutDeliveryOrder wmsOutDeliveryOrder  = wmsOutDeliveryOrderMapper.selectByPrimaryKey(outDeliveryOrderId);
         if(StringUtils.isEmpty(wmsOutDeliveryOrder)){

@@ -1,6 +1,6 @@
 package com.fantechs.provider.mes.pm.controller;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderBomDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderDto;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
@@ -17,6 +17,7 @@ import com.fantechs.provider.mes.pm.service.MesPmHtWorkOrderService;
 import com.fantechs.provider.mes.pm.service.MesPmWorkOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import io.seata.spring.annotation.GlobalTransactional;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -59,7 +60,7 @@ public class MesPmWorkOrderController {
     @ApiOperation(value = "批量新增",notes = "批量新增")
     @PostMapping("/addList")
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public ResponseEntity addList(@ApiParam(value = "工单信息集合") @RequestBody List<MesPmWorkOrder> pmWorkOrders){
         return ControllerUtil.returnCRUD(mesPmWorkOrderService.batchSave(pmWorkOrders));
     }

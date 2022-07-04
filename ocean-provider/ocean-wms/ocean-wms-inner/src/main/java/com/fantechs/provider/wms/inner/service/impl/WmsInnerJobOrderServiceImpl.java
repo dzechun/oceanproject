@@ -1,7 +1,7 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -38,6 +38,7 @@ import com.fantechs.provider.wms.inner.service.*;
 import com.fantechs.provider.wms.inner.util.InBarcodeUtil;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
 import com.fantechs.provider.wms.inner.util.WmsInnerInventoryUtil;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -634,7 +635,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int allReceiving(String ids) {
         SysUser sysUser = currentUser();
         String[] arrId = ids.split(",");
@@ -1018,7 +1019,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int singleReceiving(List<WmsInnerJobOrderDet> wmsInPutawayOrderDets) {
         SysUser sysUser = currentUser();
         int num = 0;
@@ -1259,7 +1260,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int singleReceivingByBarcode(WmsInnerJobOrderDet wmsInPutawayOrderDet,String ids,Byte orderType) {
         SysUser sysUser = currentUser();
         int num = 0;
@@ -1647,7 +1648,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public WmsInnerJobOrderDet scanStorageBackQty(String storageCode, Long jobOrderDetId, BigDecimal qty, String barcode) {
         SysUser sysUser = currentUser();
         if (StringUtils.isEmpty(qty)) {
@@ -1798,7 +1799,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public WmsInnerJobOrder packageAutoAdd(WmsInnerJobOrder wmsInnerJobOrder) {
         SysUser sysUser = currentUser();
         wmsInnerJobOrder.setJobOrderCode(CodeUtils.getId("WORK-"));
@@ -1842,7 +1843,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int activation(Long jobOrderId) {
         WmsInnerJobOrder wmsInnerJobOrder = wmsInnerJobOrderMapper.selectByPrimaryKey(jobOrderId);
         if (StringUtils.isEmpty(wmsInnerJobOrder)) {
@@ -1872,7 +1873,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int addList(List<WmsInnerJobOrder> list){
         SysUser sysUser = currentUser();
         for (WmsInnerJobOrder wmsInnerJobOrder : list) {
@@ -1955,7 +1956,7 @@ public class WmsInnerJobOrderServiceImpl extends BaseService<WmsInnerJobOrder> i
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int cancelJobOrder(List<EngPackingOrderTakeCancel> engPackingOrderTakeCancels){
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         int num=0;

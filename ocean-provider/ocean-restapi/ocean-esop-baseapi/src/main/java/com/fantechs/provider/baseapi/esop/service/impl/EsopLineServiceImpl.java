@@ -1,6 +1,6 @@
 package com.fantechs.provider.baseapi.esop.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.basic.BaseWorkShopDto;
 import com.fantechs.common.base.general.entity.basic.BaseProLine;
@@ -14,6 +14,7 @@ import com.fantechs.provider.baseapi.esop.mapper.EsopLineMapper;
 import com.fantechs.provider.baseapi.esop.service.EsopLineService;
 import com.fantechs.provider.baseapi.esop.util.BaseUtils;
 import com.fantechs.provider.baseapi.esop.util.LogsUtils;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class EsopLineServiceImpl extends BaseService<EsopLine> implements EsopLi
     private BaseUtils baseUtils;
 
     @Override
-    @LcnTransaction
+    @GlobalTransactional
     public List<BaseProLine> addLine(Map<String, Object> map) throws ParseException {
         List<EsopLine> list = esopLineMapper.findList(map);
         List<BaseProLine> baseLines = new ArrayList<BaseProLine>();

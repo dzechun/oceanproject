@@ -249,22 +249,22 @@
         </dependency>
 
         <!--分布式锁-->
-        <dependency>
-            <groupId>com.codingapi.txlcn</groupId>
-            <artifactId>txlcn-tc</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.github.jsqlparser</groupId>
-                    <artifactId>jsqlparser</artifactId>
-                </exclusion>
-            </exclusions>
-            <version>${txlcn-tc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codingapi.txlcn</groupId>
-            <artifactId>txlcn-txmsg-netty</artifactId>
-            <version>${txlcn-tc.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.codingapi.txlcn</groupId>-->
+<!--            <artifactId>txlcn-tc</artifactId>-->
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <groupId>com.github.jsqlparser</groupId>-->
+<!--                    <artifactId>jsqlparser</artifactId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
+<!--            <version>${txlcn-tc.version}</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.codingapi.txlcn</groupId>-->
+<!--            <artifactId>txlcn-txmsg-netty</artifactId>-->
+<!--            <version>${txlcn-tc.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>

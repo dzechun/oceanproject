@@ -1,6 +1,6 @@
 package com.fantechs.provider.wms.out.controller;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDto;
@@ -16,6 +16,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.wms.out.service.WmsOutDeliveryOrderService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import io.seata.spring.annotation.GlobalTransactional;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -56,7 +57,7 @@ public class WmsOutDeliveryOrderController {
     @ApiOperation(value = "批量新增",notes = "批量新增")
     @PostMapping("/addList")
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public ResponseEntity addList(@ApiParam(value = "销售出库单信息集合") @RequestBody List<WmsOutDeliveryOrder> outDeliveryOrders){
         return ControllerUtil.returnCRUD(wmsOutDeliveryOrderService.batchSave(outDeliveryOrders));
     }

@@ -2,7 +2,7 @@ package com.fantechs.provider.om.service.impl;
 
 
 import cn.hutool.core.date.DateTime;
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -36,6 +36,7 @@ import com.fantechs.provider.om.mapper.ht.OmHtSalesOrderDetMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtSalesOrderMapper;
 import com.fantechs.provider.om.service.OmSalesOrderService;
 import com.fantechs.provider.om.util.OrderFlowUtil;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,7 +73,7 @@ public class OmSalesOrderServiceImpl extends BaseService<OmSalesOrder> implement
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int pushDown(List<OmSalesOrderDetDto> omSalesOrderDetDtoList) {
         int i = 0;
         for (OmSalesOrderDetDto omSalesOrderDetDto : omSalesOrderDetDtoList){

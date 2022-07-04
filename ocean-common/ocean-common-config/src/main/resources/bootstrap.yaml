@@ -34,4 +34,3 @@ seata:
       application: seata-server
       server-addr: 192.168.204.177:8848
       namespace: dev
-      group: DEFAULT_GROUP

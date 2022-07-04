@@ -1,6 +1,6 @@
 package com.fantechs.provider.baseapi.esop.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.general.dto.basic.BaseFactoryDto;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.entity.basic.BaseWorkShop;
@@ -14,6 +14,7 @@ import com.fantechs.provider.baseapi.esop.mapper.EsopWorkshopMapper;
 import com.fantechs.provider.baseapi.esop.service.EsopWorkshopService;
 import com.fantechs.provider.baseapi.esop.util.BaseUtils;
 import com.fantechs.provider.baseapi.esop.util.LogsUtils;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -39,7 +40,7 @@ public class EsopWorkshopServiceImpl extends BaseService<EsopWorkshop> implement
     private BaseUtils baseUtils;
 
   @Override
-  @LcnTransaction
+  @GlobalTransactional
     public List<BaseWorkShop> addWorkshop(Map<String, Object> map) throws ParseException {
       List<EsopWorkshop> list = esopWorkshopMapper.findList(map);
       List<BaseWorkShop> baseWorkShops = new ArrayList<BaseWorkShop>();

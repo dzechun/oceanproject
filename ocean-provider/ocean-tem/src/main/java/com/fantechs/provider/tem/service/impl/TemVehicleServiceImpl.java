@@ -1,6 +1,6 @@
 package com.fantechs.provider.tem.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -15,6 +15,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.tem.mapper.TemHtVehicleMapper;
 import com.fantechs.provider.tem.mapper.TemVehicleMapper;
 import com.fantechs.provider.tem.service.TemVehicleService;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -47,7 +48,7 @@ public class TemVehicleServiceImpl extends BaseService<TemVehicle> implements Te
 
     @Override
     @Transactional
-    @LcnTransaction
+    @GlobalTransactional
     public int save(TemVehicle temVehicle) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         Example example = new Example(TemVehicle.class);
@@ -76,7 +77,7 @@ public class TemVehicleServiceImpl extends BaseService<TemVehicle> implements Te
 
     @Override
     @Transactional
-    @LcnTransaction
+    @GlobalTransactional
     public int delete(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         String[] idsArr = ids.split(",");
@@ -94,7 +95,7 @@ public class TemVehicleServiceImpl extends BaseService<TemVehicle> implements Te
 
     @Override
     @Transactional
-    @LcnTransaction
+    @GlobalTransactional
     public int update(TemVehicle temVehicle) {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
 

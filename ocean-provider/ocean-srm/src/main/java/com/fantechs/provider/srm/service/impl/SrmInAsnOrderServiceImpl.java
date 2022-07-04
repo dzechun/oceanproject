@@ -1,6 +1,6 @@
 package com.fantechs.provider.srm.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -31,6 +31,7 @@ import com.fantechs.provider.api.wms.inner.InnerFeignApi;
 import com.fantechs.provider.srm.mapper.*;
 import com.fantechs.provider.srm.service.SrmAppointDeliveryReAsnService;
 import com.fantechs.provider.srm.service.SrmInAsnOrderService;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,7 +88,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
 
 
     @Override
-    @LcnTransaction
+    @GlobalTransactional
     @Transactional(rollbackFor = RuntimeException.class)
     public int save(SrmInAsnOrderDto srmInAsnOrderDto) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -184,7 +185,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int update(SrmInAsnOrderDto srmInAsnOrderDto) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -296,7 +297,7 @@ public class SrmInAsnOrderServiceImpl extends BaseService<SrmInAsnOrder> impleme
     }
 
     @Override
-    @LcnTransaction
+    @GlobalTransactional
     public int send(List<SrmInAsnOrderDto> srmInAsnOrderDtos) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if(StringUtils.isNotEmpty(srmInAsnOrderDtos)) {

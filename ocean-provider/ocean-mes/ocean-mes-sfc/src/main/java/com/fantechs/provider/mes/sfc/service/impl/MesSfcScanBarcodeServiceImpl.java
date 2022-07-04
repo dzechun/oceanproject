@@ -50,7 +50,7 @@ public class MesSfcScanBarcodeServiceImpl implements MesSfcScanBarcodeService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    //@LcnTransaction
+    //@GlobalTransactional
     public BaseExecuteResultDto snDataTransfer(RestapiSNDataTransferApiDto restapiSNDataTransferApiDto) throws Exception {
         BaseExecuteResultDto baseExecuteResultDto=new BaseExecuteResultDto();
         try {

@@ -1,7 +1,7 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -19,6 +19,7 @@ import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerJobOrderMapper;
 import com.fantechs.provider.wms.inner.service.WmsInnerInventoryService;
 import com.fantechs.provider.wms.inner.service.WmsInnerShiftWorkDetService;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -62,7 +63,7 @@ public class WmsInnerShiftWorkDetServiceImpl extends BaseService<WmsInnerJobOrde
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int pickDisQty(List<WmsInnerJobOrderDet> wmsInnerJobOrderDets) {
         int num = 0;
         for (WmsInnerJobOrderDet det : wmsInnerJobOrderDets) {
@@ -105,7 +106,7 @@ public class WmsInnerShiftWorkDetServiceImpl extends BaseService<WmsInnerJobOrde
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int batchDeleteByShiftWork(String ids) {
         String[] arrId = ids.split(",");
         for (String s : arrId) {

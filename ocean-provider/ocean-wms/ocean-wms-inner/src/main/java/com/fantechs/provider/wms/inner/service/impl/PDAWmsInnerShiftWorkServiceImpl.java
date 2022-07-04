@@ -1,7 +1,7 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -26,6 +26,7 @@ import com.fantechs.provider.wms.inner.mapper.*;
 import com.fantechs.provider.wms.inner.service.*;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
 import com.fantechs.provider.wms.inner.util.WmsInnerInventoryUtil;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -168,7 +169,7 @@ public class PDAWmsInnerShiftWorkServiceImpl implements PDAWmsInnerShiftWorkServ
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public String saveShiftWorkDetBarcode(SaveShiftWorkDetDto dto) {
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -460,7 +461,7 @@ public class PDAWmsInnerShiftWorkServiceImpl implements PDAWmsInnerShiftWorkServ
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int saveJobOrder(SaveShiftJobOrderDto dto) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 

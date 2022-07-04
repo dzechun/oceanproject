@@ -1,6 +1,6 @@
 package com.fantechs.provider.electronic.controller;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.electronic.dto.PtlJobOrderDetDto;
 import com.fantechs.common.base.electronic.entity.PtlJobOrderDet;
 import com.fantechs.common.base.electronic.entity.search.SearchPtlJobOrderDet;
@@ -13,6 +13,7 @@ import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.electronic.service.PtlJobOrderDetService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import io.seata.spring.annotation.GlobalTransactional;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,7 +49,7 @@ public class PtlJobOrderDetController {
     @ApiOperation("删除")
     @PostMapping("/delete")
     @Transactional
-    @LcnTransaction
+    @GlobalTransactional
     public ResponseEntity delete(@ApiParam(value = "对象ID列表，多个逗号分隔",required = true) @RequestParam @NotBlank(message="ids不能为空") String ids) {
         return ControllerUtil.returnCRUD(ptlJobOrderDetService.batchDelete(ids));
     }
@@ -56,7 +57,7 @@ public class PtlJobOrderDetController {
     @ApiOperation("修改")
     @PostMapping("/update")
     @Transactional
-    @LcnTransaction
+    @GlobalTransactional
     public ResponseEntity update(@ApiParam(value = "对象，Id必传",required = true)@RequestBody @Validated(value=PtlJobOrderDet.update.class) PtlJobOrderDet ptlJobOrderDet) {
         return ControllerUtil.returnCRUD(ptlJobOrderDetService.update(ptlJobOrderDet));
     }
@@ -92,7 +93,7 @@ public class PtlJobOrderDetController {
     @ApiOperation("批量新增")
     @PostMapping("/batchSave")
     @Transactional
-    @LcnTransaction
+    @GlobalTransactional
     public ResponseEntity batchSave(@ApiParam(value = "对象列表",required = true)@RequestBody @Validated List<PtlJobOrderDet> ptlJobOrderDetList) {
         return ControllerUtil.returnCRUD(ptlJobOrderDetService.batchSave(ptlJobOrderDetList));
     }

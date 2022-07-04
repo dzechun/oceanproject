@@ -6,7 +6,6 @@ import cn.dev33.satoken.router.SaHttpMethod;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
-import com.codingapi.txlcn.tracing.http.spring.WebMvcConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -32,7 +31,7 @@ import java.util.Collection;
  */
 @Component
 @Configuration
-public class SaTokenConfigure implements WebMvcConfigurer, AccessDecisionManager {
+public class SaTokenConfigure implements AccessDecisionManager {
 
     private static Logger logger = LoggerFactory.getLogger(SaTokenConfigure.class);
 
@@ -43,11 +42,6 @@ public class SaTokenConfigure implements WebMvcConfigurer, AccessDecisionManager
             "/swagger-ui.html", "/swagger-resources/**", "/images/**", "/webjars/**", "/v2/api-docs", "/configuration/ui", "/configuration/auth"
             , "null/swagger-resources/**", "/sysSpecItem/findList", "/sysRole/findList", "/sysUser/saveByApi", "/sysApiLog/add", "/sysSpecItem/detail", "/clientGetToken"
     };
-
-    // 注册拦截器
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-    }
 
     @Override
     public void decide(Authentication authentication, Object o, Collection<ConfigAttribute> collection) throws AccessDeniedException, InsufficientAuthenticationException {

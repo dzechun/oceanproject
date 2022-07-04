@@ -1,6 +1,6 @@
 package com.fantechs.provider.qms.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -23,6 +23,7 @@ import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderDetSampleMapper;
 import com.fantechs.provider.qms.mapper.QmsInspectionOrderMapper;
 import com.fantechs.provider.qms.service.QmsInspectionOrderService;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,7 +77,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int batchQualified(Long inspectionOrderId){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -123,7 +124,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int batchSubmit(Long inspectionOrderId){
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -182,7 +183,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     }
 
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int splitInventory(String inspectionOrderCode,List<QmsInspectionOrderDetSample> unQualifiedBarcodes){
         /*SearchBaseInventoryStatus searchBaseInventoryStatus = new SearchBaseInventoryStatus();
         searchBaseInventoryStatus.setInventoryStatusName("不合格");
@@ -316,7 +317,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int save(QmsInspectionOrder qmsInspectionOrder) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -387,7 +388,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int update(QmsInspectionOrder qmsInspectionOrder) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -458,7 +459,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int writeBack(Long inspectionOrderId){
         Example example = new Example(QmsInspectionOrderDet.class);
         Example.Criteria criteria = example.createCriteria();
@@ -505,7 +506,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
     }
 
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int handleInventory(String inspectionOrderCode,Byte inspectionResult){
         //检验结果返写回库存
         /*SearchWmsInnerInventory  searchWmsInnerInventory = new SearchWmsInnerInventory();
@@ -607,7 +608,7 @@ public class QmsInspectionOrderServiceImpl extends BaseService<QmsInspectionOrde
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int autoAdd() {
         /*System.out.println("===========自动生成成品检验单定时任务============");
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();

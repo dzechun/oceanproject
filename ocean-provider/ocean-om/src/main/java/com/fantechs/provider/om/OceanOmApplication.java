@@ -1,6 +1,5 @@
 package com.fantechs.provider.om;
 
-import com.codingapi.txlcn.tc.config.EnableDistributedTransaction;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -13,7 +12,6 @@ import tk.mybatis.spring.annotation.MapperScan;
 @ComponentScan({"com.fantechs.provider.om","com.fantechs.common"})
 @MapperScan({"com.fantechs.provider.om.mapper"})
 @EnableFeignClients(basePackages = "com.fantechs.provider")
-@EnableDistributedTransaction
 public class OceanOmApplication {
 
     public static void main(String[] args) {

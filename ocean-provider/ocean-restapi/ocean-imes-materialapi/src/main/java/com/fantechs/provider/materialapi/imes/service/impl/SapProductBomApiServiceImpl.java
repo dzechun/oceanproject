@@ -1,6 +1,6 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.basic.BaseProductBomDto;
@@ -21,6 +21,7 @@ import com.fantechs.provider.materialapi.imes.utils.BasicAuthenticator;
 import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
 import com.fantechs.provider.materialapi.imes.utils.productBomApi.SIMESBOMQUERYOut;
 import com.fantechs.provider.materialapi.imes.utils.productBomApi.SIMESBOMQUERYOutService;
+import io.seata.spring.annotation.GlobalTransactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -45,7 +46,7 @@ public class SapProductBomApiServiceImpl implements SapProductBomApiService {
     ReentrantLock lock = new ReentrantLock(true);
 
     @Override
-    @LcnTransaction
+    @GlobalTransactional
     public int getProductBom(SearchSapProductBomApi searchSapProductBomApi) throws ParseException {
         if(lock.tryLock()) {
             try {

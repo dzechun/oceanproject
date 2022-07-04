@@ -1,6 +1,5 @@
 package com.fantechs.provider.eam;
 
-import com.codingapi.txlcn.tc.config.EnableDistributedTransaction;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -14,7 +13,6 @@ import tk.mybatis.spring.annotation.MapperScan;
 @ComponentScan({"com.fantechs.provider.eam","com.fantechs.common"})
 @MapperScan({"com.fantechs.provider.eam.mapper"})
 @EnableFeignClients(basePackages = "com.fantechs.provider")
-@EnableDistributedTransaction
 @EnableScheduling
 public class OceanEamApplication {
 

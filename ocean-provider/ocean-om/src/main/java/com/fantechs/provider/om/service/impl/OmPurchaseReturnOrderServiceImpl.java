@@ -1,7 +1,7 @@
 package com.fantechs.provider.om.service.impl;
 
 import cn.hutool.core.date.DateTime;
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.entity.security.SysImportAndExportLog;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysUser;
@@ -35,6 +35,7 @@ import com.fantechs.provider.om.mapper.ht.OmHtPurchaseReturnOrderDetMapper;
 import com.fantechs.provider.om.mapper.ht.OmHtPurchaseReturnOrderMapper;
 import com.fantechs.provider.om.service.OmPurchaseReturnOrderService;
 import com.fantechs.provider.om.util.OrderFlowUtil;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,7 +88,7 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int purchaseUpdatePickingQty(Long purchaseReturnOrderDetId, BigDecimal actualQty) {
         OmPurchaseReturnOrderDet omPurchaseReturnOrderDet = omPurchaseReturnOrderDetMapper.selectByPrimaryKey(purchaseReturnOrderDetId);
         if (StringUtils.isNotEmpty(omPurchaseReturnOrderDet)) {
@@ -108,7 +109,7 @@ public class OmPurchaseReturnOrderServiceImpl extends BaseService<OmPurchaseRetu
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int pushDown(List<OmPurchaseReturnOrderDetDto> omPurchaseReturnOrderDetDtos) {
         int i;
         for (OmPurchaseReturnOrderDetDto omPurchaseReturnOrderDetDto : omPurchaseReturnOrderDetDtos){

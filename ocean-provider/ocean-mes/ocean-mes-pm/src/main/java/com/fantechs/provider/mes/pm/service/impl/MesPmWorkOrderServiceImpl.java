@@ -1,7 +1,7 @@
 package com.fantechs.provider.mes.pm.service.impl;
 
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -52,6 +52,7 @@ import com.fantechs.provider.mes.pm.service.MesPmDailyPlanService;
 import com.fantechs.provider.mes.pm.service.MesPmWorkOrderProcessReWoService;
 import com.fantechs.provider.mes.pm.service.MesPmWorkOrderService;
 import com.fantechs.provider.mes.pm.util.OrderFlowUtil;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -138,7 +139,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int update(MesPmWorkOrderDto mesPmWorkOrderDto) {
         int i = 0;
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -188,7 +189,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int updatePmWorkOrder(MesPmWorkOrder mesPmWorkOrder) {
         int i = 0;
         //mesPmWorkOrder.setModifiedUserId(currentUser.getUserId());
@@ -378,7 +379,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int outPushDownDailyPlan(List<MesPmWorkOrderDto> mesPmWorkOrderDtos) {
         int i = 0;
         Long warehouseId = mesPmWorkOrderDtos.get(0).getWarehouseId();
@@ -437,7 +438,7 @@ public class MesPmWorkOrderServiceImpl extends BaseService<MesPmWorkOrder> imple
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int outPushDown(List<MesPmWorkOrderBomDto> mesPmWorkOrderBomDtos) {
         int i = 0;
 

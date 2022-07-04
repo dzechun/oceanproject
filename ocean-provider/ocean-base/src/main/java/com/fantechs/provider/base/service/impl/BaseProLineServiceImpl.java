@@ -1,7 +1,7 @@
 package com.fantechs.provider.base.service.impl;
 
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.basic.imports.BaseProLineImport;

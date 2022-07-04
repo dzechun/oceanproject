@@ -1,6 +1,6 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.restapi.*;
@@ -16,6 +16,7 @@ import com.fantechs.provider.materialapi.imes.utils.BasicAuthenticator;
 import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
 import com.fantechs.provider.materialapi.imes.utils.ProLineApi.SIMESPROCESSQUERYOut;
 import com.fantechs.provider.materialapi.imes.utils.ProLineApi.SIMESPROCESSQUERYOutService;
+import io.seata.spring.annotation.GlobalTransactional;
 
 import javax.annotation.Resource;
 import java.net.Authenticator;
@@ -37,7 +38,7 @@ public class SapRouteApiServiceImpl implements SapRouteApiService {
     private String password = "1234qwer"; //雷赛wsdl密码
 
     @Override
-    @LcnTransaction
+    @GlobalTransactional
     public int getRoute(SearchSapRouteApi searchSapRouteApi) throws ParseException {
         Authenticator.setDefault(new BasicAuthenticator(userName, password));
         SIMESPROCESSQUERYOutService service = new SIMESPROCESSQUERYOutService();

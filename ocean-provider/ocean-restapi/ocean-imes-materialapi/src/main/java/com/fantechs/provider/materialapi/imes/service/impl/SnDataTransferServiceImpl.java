@@ -1,12 +1,13 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.general.dto.basic.BaseExecuteResultDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiSNDataTransferApiDto;
 import com.fantechs.common.base.utils.JsonUtils;
 import com.fantechs.provider.api.mes.sfc.SFCFeignApi;
 import com.fantechs.provider.materialapi.imes.service.SnDataTransferService;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -27,7 +28,7 @@ public class SnDataTransferServiceImpl implements SnDataTransferService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public String SnDataTransfer(RestapiSNDataTransferApiDto restapiSNDataTransferApiDto) throws Exception {
         /*
          * 1 验证传参基础信息是否正确

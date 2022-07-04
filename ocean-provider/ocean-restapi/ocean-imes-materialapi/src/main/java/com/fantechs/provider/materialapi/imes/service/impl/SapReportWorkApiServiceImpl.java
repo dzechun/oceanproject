@@ -1,6 +1,6 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.restapi.*;
@@ -12,6 +12,7 @@ import com.fantechs.provider.materialapi.imes.utils.reportWorkApi.SIMESWORKORDER
 import com.fantechs.provider.materialapi.imes.utils.reportWorkApi.SIMESWORKORDERREPORTSAVEOutService;
 import com.fantechs.provider.materialapi.imes.service.SapReportWorkApiService;
 import com.fantechs.provider.materialapi.imes.utils.BasicAuthenticator;
+import io.seata.spring.annotation.GlobalTransactional;
 
 import javax.annotation.Resource;
 import java.net.Authenticator;
@@ -31,7 +32,7 @@ public class SapReportWorkApiServiceImpl implements SapReportWorkApiService {
     private String password = "1234qwer"; //雷赛wsdl密码
 
     @Override
-    @LcnTransaction
+    @GlobalTransactional
     public int sendReportWork(SearchSapReportWorkApi searchSapReportWorkApi) throws ParseException {
         check(searchSapReportWorkApi);
         Authenticator.setDefault(new BasicAuthenticator(userName, password));

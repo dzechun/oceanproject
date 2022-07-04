@@ -1,6 +1,6 @@
 package com.fantechs.provider.baseapi.esop.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.general.dto.basic.BaseFactoryDto;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.entity.basic.BaseDept;
@@ -14,6 +14,7 @@ import com.fantechs.provider.baseapi.esop.mapper.EsopDeptMapper;
 import com.fantechs.provider.baseapi.esop.service.EsopDeptService;
 import com.fantechs.provider.baseapi.esop.util.BaseUtils;
 import com.fantechs.provider.baseapi.esop.util.LogsUtils;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -40,7 +41,7 @@ public class EsopDeptServiceImpl extends BaseService<EsopDept> implements EsopDe
 
 
     @Override
-    @LcnTransaction
+    @GlobalTransactional
     public List<BaseDept> addDept(Map<String, Object> map) throws ParseException {
         map.put("isWas",1); //1为各个分公司
         map.put("isDeleted",0); //新宝0为未删除 1为已删除

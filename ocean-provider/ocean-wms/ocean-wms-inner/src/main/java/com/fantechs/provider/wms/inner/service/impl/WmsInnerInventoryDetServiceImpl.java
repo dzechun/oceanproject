@@ -1,6 +1,6 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -14,6 +14,7 @@ import com.fantechs.provider.wms.inner.mapper.WmsInnerInventoryDetMapper;
 import com.fantechs.provider.wms.inner.mapper.WmsInnerMaterialBarcodeMapper;
 import com.fantechs.provider.wms.inner.service.WmsInnerInventoryDetService;
 import com.fantechs.provider.wms.inner.service.WmsInnerMaterialBarcodeService;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -69,7 +70,7 @@ public class WmsInnerInventoryDetServiceImpl extends BaseService<WmsInnerInvento
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int subtract(WmsInnerInventoryDetDto wmsInnerInventoryDetDto) {
         SysUser sysUser = CurrentUserInfoUtils.getCurrentUserInfo();
         Example example = new Example(WmsInnerInventoryDet.class);

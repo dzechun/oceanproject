@@ -1,7 +1,7 @@
 package com.fantechs.provider.base.service.impl;
 
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -20,6 +20,7 @@ import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.auth.service.AuthFeignApi;
 import com.fantechs.provider.base.mapper.*;
 import com.fantechs.provider.base.service.BaseMaterialService;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -403,7 +404,7 @@ public class BaseMaterialServiceImpl extends BaseService<BaseMaterial> implement
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int batchSave(List<BaseMaterial> baseMaterials) {
         int i = 0;
         if (StringUtils.isNotEmpty(baseMaterials)) {

@@ -1,6 +1,6 @@
 package com.fantechs.provider.qms.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysImportAndExportLog;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -38,6 +38,7 @@ import com.fantechs.provider.qms.mapper.*;
 import com.fantechs.provider.qms.service.QmsIncomingInspectionOrderDetService;
 import com.fantechs.provider.qms.service.QmsIncomingInspectionOrderService;
 import com.fantechs.provider.qms.util.OrderFlowUtil;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -148,7 +149,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int pushDown(String ids) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -342,7 +343,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int save(QmsIncomingInspectionOrderDto record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -401,7 +402,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
     }
 
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int insertMaterialBarcode(QmsIncomingInspectionOrderDto qmsIncomingInspectionOrderDto,SysUser user){
         int i = 0;
         if(StringUtils.isNotEmpty(qmsIncomingInspectionOrderDto.getSourceId())) {
@@ -438,7 +439,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int update(QmsIncomingInspectionOrderDto entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -533,7 +534,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
      * @param list
      */
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public void checkInspectionResult(List<QmsIncomingInspectionOrderDet> list){
         if(StringUtils.isNotEmpty(list)) {
             Byte inspectionResult = 1;
@@ -593,7 +594,7 @@ public class QmsIncomingInspectionOrderServiceImpl extends BaseService<QmsIncomi
     }
 
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int updateInspectionStatus(List<Long> idList, Byte inspectionResult) {
         int i = 0;
         SearchWmsInnerMaterialBarcode searchWmsInnerMaterialBarcode = new SearchWmsInnerMaterialBarcode();

@@ -1,7 +1,7 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiWorkOrderApiDto;
 import com.fantechs.common.base.general.entity.basic.BaseMaterial;
@@ -20,6 +20,7 @@ import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.materialapi.imes.service.SapWorkOrderService;
 import com.fantechs.provider.materialapi.imes.utils.BaseUtils;
 import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
+import io.seata.spring.annotation.GlobalTransactional;
 
 import javax.annotation.Resource;
 import javax.jws.WebService;
@@ -43,7 +44,7 @@ public class SapWorkOrderServiceImpl implements SapWorkOrderService {
     private BaseUtils baseUtils;
 
     @Override
-    @LcnTransaction
+    @GlobalTransactional
     public String saveWorkOrder(List<RestapiWorkOrderApiDto> restapiWorkOrderApiDtos) throws ParseException {
         if(StringUtils.isEmpty(restapiWorkOrderApiDtos)) return "工单参数为空";
         Map<String,Long> orderMap = new HashMap<String,Long>();

@@ -1,7 +1,7 @@
 package com.fantechs.provider.guest.callagv.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.agv.dto.PositionCodePath;
 import com.fantechs.common.base.agv.dto.RcsResponseDTO;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -28,6 +28,7 @@ import com.fantechs.provider.guest.callagv.mapper.CallAgvVehicleLogMapper;
 import com.fantechs.provider.guest.callagv.mapper.CallAgvVehicleReBarcodeMapper;
 import com.fantechs.provider.guest.callagv.service.CallAgvVehicleReBarcodeService;
 import com.google.gson.reflect.TypeToken;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,7 +74,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
 
     @Override
     @Transactional
-    @LcnTransaction
+    @GlobalTransactional
     public int callAgvStock(RequestCallAgvStockDTO requestCallAgvStockDTO) throws BizErrorException {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         TemVehicle temVehicle = temVehicleFeignApi.detail(requestCallAgvStockDTO.getVehicleId()).getData();
@@ -134,7 +135,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
 
     @Override
     @Transactional
-    @LcnTransaction
+    @GlobalTransactional
     public String callAgvDistribution(Long vehicleId, Long warehouseAreaId, Long storageTaskPointId, Integer type) throws Exception {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         List<String> positionCodeList = new LinkedList<>();
@@ -324,7 +325,7 @@ public class CallAgvVehicleReBarcodeServiceImpl extends BaseService<CallAgvVehic
 
     @Override
     @Transactional
-    @LcnTransaction
+    @GlobalTransactional
     public int vehicleBarcodeUnbound(RequestBarcodeUnboundDTO requestBarcodeUnboundDTO) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         TemVehicle temVehicle = temVehicleFeignApi.detail(requestBarcodeUnboundDTO.getVehicleId()).getData();

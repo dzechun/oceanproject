@@ -1,7 +1,7 @@
 package com.fantechs.provider.electronic.service.Impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.electronic.dto.PtlJobOrderDetDto;
 import com.fantechs.common.base.electronic.dto.PtlJobOrderDto;
@@ -21,6 +21,7 @@ import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.electronic.mapper.PtlJobOrderDetMapper;
 import com.fantechs.provider.electronic.mapper.PtlJobOrderMapper;
 import com.fantechs.provider.electronic.service.PtlJobOrderService;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -70,7 +71,7 @@ public class PtlJobOrderServiceImpl extends BaseService<PtlJobOrder> implements 
 
     @Override
     @Transactional
-    @LcnTransaction
+    @GlobalTransactional
     public int updateByRelatedOrderCode(PtlJobOrder ptlJobOrder) throws Exception {
 
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();

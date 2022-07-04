@@ -2,7 +2,7 @@ package com.fantechs.provider.wms.inner.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSONArray;
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -43,6 +43,7 @@ import com.fantechs.provider.wms.inner.service.WmsInnerInventoryService;
 import com.fantechs.provider.wms.inner.service.WmsInnerJobOrderService;
 import com.fantechs.provider.wms.inner.util.InBarcodeUtil;
 import com.fantechs.provider.wms.inner.util.InventoryLogUtil;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -180,7 +181,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public List<WmsInnerJobOrderDetDto> pdaSave(List<WmsInnerPdaInventoryDetDto> list) {
         SysUser sysUser = currentUser();
         List<WmsInnerJobOrderDetDto> jobOrderDetList = new ArrayList<>();
@@ -391,7 +392,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int pdaSubmit(WmsInnerPdaJobOrderDet wmsInnerPdaJobOrderDet) {
         SysUser sysUser = currentUser();
 
@@ -2200,7 +2201,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int retrographyStatus(WmsInnerJobOrderDet wmsInnerJobOrderDet){
         wmsInnerJobOrderDetMapper.updateByPrimaryKeySelective(wmsInnerJobOrderDet);
         Example example = new Example(WmsInnerJobOrderDet.class);
@@ -2232,7 +2233,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
      */
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int autoOutOrder(Long outDeliveryOrderId,Byte orderTypeId) {
         SysUser sysUser = currentUser();
         //查询调拨出库对应的待发运拣货作业
@@ -2363,7 +2364,7 @@ public class PickingOrderServiceImpl implements PickingOrderService {
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int sealOrder(List<Long> outDeliveryOrderIds,Byte type) {
         int num=0;
         if(StringUtils.isEmpty(type)){

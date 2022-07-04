@@ -1,6 +1,6 @@
 package com.fantechs.provider.wms.inner.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
@@ -20,6 +20,7 @@ import com.fantechs.provider.wms.inner.service.WmsInnerDirectTransferOrderServic
 import com.fantechs.provider.wms.inner.service.WmsInnerInventoryDetService;
 import com.fantechs.provider.wms.inner.service.WmsInnerMaterialBarcodeService;
 import com.fantechs.provider.wms.inner.util.WmsInnerInventoryUtil;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,7 +85,7 @@ public class WmsInnerDirectTransferOrderServiceImpl extends BaseService<WmsInner
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int save(List<PDAWmsInnerDirectTransferOrderDto> pdaWmsInnerDirectTransferOrderDtos) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(pdaWmsInnerDirectTransferOrderDtos))

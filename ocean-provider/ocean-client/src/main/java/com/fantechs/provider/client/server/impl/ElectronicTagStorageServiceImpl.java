@@ -1,7 +1,7 @@
 package com.fantechs.provider.client.server.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.electronic.dto.PtlElectronicTagStorageDto;
 import com.fantechs.common.base.electronic.dto.PtlEquipmentDto;
@@ -37,6 +37,7 @@ import com.fantechs.provider.api.tem.TemVehicleFeignApi;
 import com.fantechs.provider.client.config.RabbitConfig;
 import com.fantechs.provider.client.dto.*;
 import com.fantechs.provider.client.server.ElectronicTagStorageService;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,7 +72,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public List<PtlJobOrderDto> sendElectronicTagStorage(String ids, Long warehouseAreaId, Integer type) throws Exception {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -299,7 +300,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public ResponseEntityDTO createPtlJobOrder(List<PtlJobOrderDTO> ptlJobOrderDTOList) throws Exception {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -479,7 +480,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public PtlJobOrderDto writeBackPtlJobOrder(Long jobOrderId, Integer type) throws Exception {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -667,7 +668,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public List<PtlJobOrderDetPrintDTO> printPtlJobOrderLabel(String ids, Long workUserId, Integer type) throws Exception {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -877,7 +878,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int hangUpPtlJobOrderDet(String ids) throws Exception {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -998,7 +999,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
     @Override
     @Transactional
-    @LcnTransaction
+    @GlobalTransactional
     public ResponseEntityDTO cancelPtrlJobOrder(PtlJobOrderDTO ptlJobOrderDTO) throws Exception {
 
         if ("C".equals(ptlJobOrderDTO.getStatus())) {
@@ -1160,7 +1161,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
     @Override
     @Transactional
-    @LcnTransaction
+    @GlobalTransactional
     public int ptlJobOrderLightOff(Long jobOrderId) throws Exception {
 
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
@@ -1295,7 +1296,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int activateAndPrint(String ids, Long workUserId) throws Exception {
 
         try {
@@ -1357,7 +1358,7 @@ public class ElectronicTagStorageServiceImpl implements ElectronicTagStorageServ
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public SysUser getPrinter() throws Exception {
         SysUser currentUser = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(currentUser)) {

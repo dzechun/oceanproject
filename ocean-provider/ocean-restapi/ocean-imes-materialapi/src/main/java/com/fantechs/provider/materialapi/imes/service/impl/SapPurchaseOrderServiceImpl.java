@@ -1,7 +1,7 @@
 package com.fantechs.provider.materialapi.imes.service.impl;
 
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.general.dto.basic.BaseFactoryDto;
 import com.fantechs.common.base.general.dto.basic.BaseOrganizationDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiPurchaseOrderApiDto;
@@ -21,6 +21,7 @@ import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.materialapi.imes.service.SapPurchaseOrderService;
 import com.fantechs.provider.materialapi.imes.utils.BaseUtils;
 import com.fantechs.provider.materialapi.imes.utils.LogsUtils;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,7 @@ public class SapPurchaseOrderServiceImpl implements SapPurchaseOrderService {
 
 
     @Override
-    @LcnTransaction
+    @GlobalTransactional
     public String purchaseOrder(List<RestapiPurchaseOrderApiDto> purchaseOrderApiDtos) {
 
         if(StringUtils.isEmpty(purchaseOrderApiDtos)) return "采购订单参数为空";

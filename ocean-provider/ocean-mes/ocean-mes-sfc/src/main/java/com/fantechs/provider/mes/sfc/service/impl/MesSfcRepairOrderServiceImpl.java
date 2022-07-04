@@ -1,6 +1,6 @@
 package com.fantechs.provider.mes.sfc.service.impl;
 
-import com.codingapi.txlcn.tc.annotation.LcnTransaction;
+
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
@@ -39,6 +39,7 @@ import com.fantechs.provider.mes.sfc.service.MesSfcRepairOrderService;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
 import com.fantechs.provider.mes.sfc.util.DeviceInterFaceUtils;
 import com.fantechs.provider.mes.sfc.util.RabbitProducer;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -298,7 +299,7 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public MesSfcRepairOrder add(MesSfcRepairOrder record) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
@@ -365,7 +366,7 @@ public class MesSfcRepairOrderServiceImpl extends BaseService<MesSfcRepairOrder>
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @LcnTransaction
+    @GlobalTransactional
     public int update(MesSfcRepairOrder entity) {
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
 
