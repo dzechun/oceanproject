@@ -18,15 +18,14 @@
     <description>Demo project for Spring Boot</description>
 
     <modules>
-        <module>ocean-admin</module>  <!-- 监控中心 -->
-        <module>ocean-common</module>  <!-- 公共模块 -->
-        <module>ocean-txlcn</module>  <!-- 分布式锁 -->
-        <module>ocean-provider</module>  <!-- 服务中心 -->
-        <module>ocean-provider-api</module>  <!-- feign对外接口 -->
+        <module>ocean-admin</module>        <!-- 监控中心 -->
+        <module>ocean-common</module>       <!-- 公共模块 -->
+        <module>ocean-provider</module>     <!-- 服务中心 -->
+        <module>ocean-provider-api</module> <!-- feign对外接口 -->
         <module>ocean-gateway</module>      <!-- 网关 -->
         <module>ocean-generator</module>    <!-- 代码生成器 -->
         <module>ocean-ureport</module>
-        <module>ocean-xxl-job</module>    <!-- 定时任务 -->
+        <module>ocean-xxl-job</module>      <!-- 定时任务 -->
         <!-- <module>ocean-doc</module>          &lt;!&ndash; api文档 &ndash;&gt; -->
     </modules>
 
