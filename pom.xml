@@ -383,12 +383,5 @@
                <dev.environment>prod</dev.environment>
            </properties>
        </profile>
-       <profile>
-           <!--jiayao-home测试-->
-           <id>jiayaoh</id>
-           <properties>
-               <dev.environment>jiayaoh</dev.environment>
-           </properties>
-       </profile>
    </profiles>
 </project>
