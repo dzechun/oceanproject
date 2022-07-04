@@ -13,3 +13,25 @@ spring:
         shared-dataids: ocean-common.yaml
         # 指定需要自动刷新的公共配置文件
         refreshable-dataids: ocean-common.yaml
+
+#seata分布式事务配置
+seata:
+  #启用分布式事务
+  enabled: true
+  # 客户端和服务端在同一个事务组
+  tx-service-group: tx_seata_group
+  # 自动数据源代理
+  enable-auto-data-source-proxy: true
+  config:
+    type: nacos
+    nacos:
+      namespace: seata
+      server-addr: 192.168.204.177:8848
+      group: SEATA_GROUP
+  registry:
+    type: nacos
+    nacos:
+      application: seata-server
+      server-addr: 192.168.204.177:8848
+      namespace: dev
+      group: DEFAULT_GROUP
