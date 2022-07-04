@@ -15,6 +15,10 @@
     <packaging>pom</packaging>
     <description>Demo project for Spring Boot</description>
 
+    <properties>
+        <boot-jar-output>../../../lib</boot-jar-output>
+    </properties>
+
     <modules>
         <module>ocean-imes-restapi</module>
         <module>ocean-imes-materialapi</module>

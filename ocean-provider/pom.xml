@@ -14,6 +14,11 @@
     <name>ocean-provider</name>
     <packaging>pom</packaging>
 
+    <properties>
+        <boot-jar-output>../../package</boot-jar-output>
+    </properties>
+
+
     <modules>
         <module>ocean-agv</module>
         <module>ocean-auth</module>     <!-- 认证服务 -->
@@ -26,6 +31,7 @@
         <module>ocean-ews</module>      <!-- 预警模块  定时任务调度器-->
         <module>ocean-esop</module>     <!-- esop -->
         <module>ocean-fileserver</module>       <!-- 文件服务 -->
+        <module>ocean-fileserver-minio</module>       <!-- 文件服务 -->
         <module>ocean-guest</module>    <!-- 定制化模块 -->
         <module>ocean-ids</module>      <!-- 配送管理 -->
         <module>ocean-kreport</module>
@@ -38,4 +44,14 @@
         <module>ocean-tem</module>
         <module>ocean-wms</module>      <!-- wms服务 -->
     </modules>
+
+    <dependencies>
+        <!-- 整合SpringMVC启动器-->
+        <!-- HessianServiceExporter 在这个jar包中 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>

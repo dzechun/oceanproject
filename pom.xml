@@ -8,6 +8,8 @@
         <version>2.1.1.RELEASE</version>
     </parent>
 
+
+
     <groupId>com.fantechs</groupId>
     <artifactId>ocean-parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -55,16 +57,23 @@
         <txlcn-tc.version>5.0.2.RELEASE</txlcn-tc.version>
         <!-- 在构建过程中读取源码时使用的字符集 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <boot-jar-output>../package</boot-jar-output>
     </properties>
 
-    <dependencies>
+    <!--管理spring-cloud版本，引入openfeign时不用添加version-->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-        <!-- 整合SpringMVC启动器-->
-        <!-- HessianServiceExporter 在这个jar包中 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
+    <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -326,24 +335,20 @@
             <version>1.2.0</version>
         </dependency>
     </dependencies>
-    <!--管理springcloud版本，引入openfeign时不用添加version-->
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <build>
         <plugins>
+            <!-- clean项目时，清除package目录 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>./package/</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
             </plugin>
         </plugins>
 <!--        <resources>-->
@@ -354,30 +359,37 @@
 <!--        </resources>-->
     </build>
 
-<!--    <profiles>-->
-<!--        <profile>-->
-<!--            &lt;!&ndash;开发环境&ndash;&gt;-->
-<!--            <id>dev</id>-->
-<!--            <properties>-->
-<!--                <dev.environment>dev</dev.environment>-->
-<!--            </properties>-->
-<!--            <activation>-->
-<!--                <activeByDefault>true</activeByDefault>-->
-<!--            </activation>-->
-<!--        </profile>-->
-<!--        <profile>-->
-<!--            &lt;!&ndash;测试环境&ndash;&gt;-->
-<!--            <id>test</id>-->
-<!--            <properties>-->
-<!--                <dev.environment>test</dev.environment>-->
-<!--            </properties>-->
-<!--        </profile>-->
-<!--        <profile>-->
-<!--            &lt;!&ndash;生产环境&ndash;&gt;-->
-<!--            <id>prod</id>-->
-<!--            <properties>-->
-<!--                <dev.environment>prod</dev.environment>-->
-<!--            </properties>-->
-<!--        </profile>-->
-<!--    </profiles>-->
+   <profiles>
+       <profile>
+           <!--开发环境-->
+           <id>dev</id>
+           <properties>
+               <dev.environment>dev</dev.environment>
+           </properties>
+           <activation>
+               <activeByDefault>true</activeByDefault>
+           </activation>
+       </profile>
+       <profile>
+           <!--测试环境-->
+           <id>test</id>
+           <properties>
+               <dev.environment>test</dev.environment>
+           </properties>
+       </profile>
+       <profile>
+           <!--生产环境-->
+           <id>prod</id>
+           <properties>
+               <dev.environment>prod</dev.environment>
+           </properties>
+       </profile>
+       <profile>
+           <!--jiayao-home测试-->
+           <id>jiayaoh</id>
+           <properties>
+               <dev.environment>jiayaoh</dev.environment>
+           </properties>
+       </profile>
+   </profiles>
 </project>

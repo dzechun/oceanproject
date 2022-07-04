@@ -11,7 +11,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 @EnableDiscoveryClient
 @ComponentScan({"com.fantechs.provider.ids","com.fantechs.common"})
 @MapperScan({"com.fantechs.provider.ids.mapper"})
-@EnableFeignClients(basePackages = "com.fantechs.provider.api")
+@EnableFeignClients(basePackages = "com.fantechs.provider")
 public class OceanIdsApplication {
 
     public static void main(String[] args) {
