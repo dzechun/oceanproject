@@ -8,8 +8,6 @@
         <version>2.1.1.RELEASE</version>
     </parent>
 
-
-
     <groupId>com.fantechs</groupId>
     <artifactId>ocean-parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -247,23 +245,6 @@
             <version>4.3.0</version>
         </dependency>
 
-        <!--分布式锁-->
-<!--        <dependency>-->
-<!--            <groupId>com.codingapi.txlcn</groupId>-->
-<!--            <artifactId>txlcn-tc</artifactId>-->
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>com.github.jsqlparser</groupId>-->
-<!--                    <artifactId>jsqlparser</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-<!--            <version>${txlcn-tc.version}</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.codingapi.txlcn</groupId>-->
-<!--            <artifactId>txlcn-txmsg-netty</artifactId>-->
-<!--            <version>${txlcn-tc.version}</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
@@ -310,13 +291,13 @@
             <version>1.29.0</version>
         </dependency>
 
-        <!-- Sa-Token 提供Redis连接池 -->
+        <!-- Sa-Token Redis连接池 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
         </dependency>
 
-        <!-- Seata分布式事务 -->
+        <!-- Seata 分布式事务 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
@@ -350,12 +331,6 @@
                 </configuration>
             </plugin>
         </plugins>
-<!--        <resources>-->
-<!--            <resource>-->
-<!--                <directory>src/main/resources/bootstrap-${dev.environment}</directory>-->
-<!--                <targetPath>WEB-INF/classes</targetPath>-->
-<!--            </resource>-->
-<!--        </resources>-->
     </build>
 
    <profiles>
