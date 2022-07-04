@@ -3,6 +3,6 @@ spring:
     nacos:
       server-addr: ${NACOS_ADDR:192.168.204.177:8848}
       config:
-        namespace: ${NACOS_NAMESPACE:keguang}
+        namespace: ${NACOS_NAMESPACE:dev}
       discovery:
-        namespace: ${NACOS_NAMESPACE:keguang}
+        namespace: ${NACOS_NAMESPACE:dev}
