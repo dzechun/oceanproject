@@ -5,7 +5,6 @@ spring:
   cloud:
     nacos:
       # 注册/配置地址
-      server-addr: ${NACOS_ADDR:192.168.204.177:8848}
       config:
         # 配置文件后缀
         file-extension: yaml
@@ -26,11 +25,11 @@ seata:
     type: nacos
     nacos:
       namespace: seata
-      server-addr: 192.168.204.177:8848
+      server-addr:  ${spring.cloud.nacos.server-addr}
       group: SEATA_GROUP
   registry:
     type: nacos
     nacos:
-      application: seata-server
-      server-addr: 192.168.204.177:8848
-      namespace: dev
+      application: ocean-seata-server
+      server-addr: ${spring.cloud.nacos.server-addr}
+      namespace: ${spring.profiles.active}

@@ -1,6 +1,7 @@
 spring:
   cloud:
     nacos:
+      server-addr: ${NACOS_ADDR:127.0.0.1:8848}
       config:
         namespace: ${NACOS_NAMESPACE:prod}
       discovery:
