@@ -1,6 +1,6 @@
 target/
 classes/
-
+lib/
 .gradle/
 build/
 
@@ -38,6 +38,7 @@ doc/
 /nbdist/
 /.nb-gradle/
 build/
+package/
 
 ### VS Code ###
 .vscode/

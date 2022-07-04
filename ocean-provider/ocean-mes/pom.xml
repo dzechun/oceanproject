@@ -15,6 +15,10 @@
     <description>Demo project for Spring Boot</description>
     <packaging>pom</packaging>
 
+    <properties>
+        <boot-jar-output>../../../lib</boot-jar-output>
+    </properties>
+
     <modules>
         <module>ocean-mes-pm</module>
         <module>ocean-mes-sfc</module>

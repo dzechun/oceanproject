@@ -16,6 +16,10 @@
     <description>Demo project for Spring Boot</description>
     <packaging>pom</packaging>
 
+    <properties>
+        <boot-jar-output>../../../package</boot-jar-output>
+    </properties>
+
     <modules>
         <module>ocean-guest-leisai</module>
         <module>ocean-guest-callagv</module>   <!-- 木林森AGV备料配送-->

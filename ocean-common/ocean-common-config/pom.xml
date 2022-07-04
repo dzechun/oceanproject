@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>com.fantechs.common</groupId>
         <artifactId>ocean-common</artifactId>
@@ -8,15 +8,19 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.fantechs.common</groupId>
+    <groupId>com.fantechs.common.config</groupId>
     <artifactId>ocean-common-config</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ocean-common-config</name>
-    <packaging>pom</packaging>
     <description>Demo project for Spring Boot</description>
+    <packaging>jar</packaging>
 
-    <modules>
-<!--        <module>ocean-base-config</module>-->
-        <module>ocean-imes-config</module>
-    </modules>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

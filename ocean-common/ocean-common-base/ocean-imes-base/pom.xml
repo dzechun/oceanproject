@@ -21,11 +21,6 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>cz.mallat.uasparser</groupId>
-            <artifactId>uasparser</artifactId>
-            <version>0.6.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.fantechs.common.base.general</groupId>
             <artifactId>ocean-general-base</artifactId>
             <version>0.0.1-SNAPSHOT</version>
