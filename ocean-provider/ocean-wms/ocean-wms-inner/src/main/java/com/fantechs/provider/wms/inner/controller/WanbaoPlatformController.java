@@ -1,6 +1,7 @@
 package com.fantechs.provider.wms.inner.controller;
 
 import com.fantechs.common.base.general.dto.wms.inner.*;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.provider.wms.inner.service.WanbaoPlatformService;
@@ -66,5 +67,12 @@ public class WanbaoPlatformController {
     @PostMapping("/delete")
     public ResponseEntity delete(@RequestParam String platformDetId){
         return ControllerUtil.returnCRUD(wanbaoPlatformService.delete(platformDetId));
+    }
+
+    @ApiOperation("公共机拣货单列表")
+    @PostMapping("/findJobOrderList")
+    public ResponseEntity<List<WmsInnerJobOrder>> findJobOrderList() {
+        List<WmsInnerJobOrder> list = wanbaoPlatformService.findJobOrderList();
+        return ControllerUtil.returnDataSuccess(list,list.size());
     }
 }

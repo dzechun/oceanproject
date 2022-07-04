@@ -3,6 +3,7 @@ package com.fantechs.provider.wms.inner.service;
 import com.fantechs.common.base.general.dto.wms.inner.ScanBarCodeOut;
 import com.fantechs.common.base.general.dto.wms.inner.WanbaoPlatform;
 import com.fantechs.common.base.general.dto.wms.inner.WanbaoPlatformDetDto;
+import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.support.IService;
 
 import java.util.List;
@@ -44,4 +45,10 @@ public interface WanbaoPlatformService extends IService<WanbaoPlatform> {
      * @return
      */
     int delete(String platformDetId);
+
+    /**
+     * 公共机拣货单列表
+     * @return
+     */
+    List<WmsInnerJobOrder> findJobOrderList();
 }

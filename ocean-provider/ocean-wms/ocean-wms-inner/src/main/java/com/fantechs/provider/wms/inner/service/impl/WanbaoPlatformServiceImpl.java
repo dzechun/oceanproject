@@ -476,4 +476,11 @@ public class WanbaoPlatformServiceImpl extends BaseService<WanbaoPlatform> imple
         }
         return wanbaoPlatformDetMapper.deleteByIds(platformDetId);
     }
+
+    @Override
+    public List<WmsInnerJobOrder> findJobOrderList() {
+        Example example = new Example(WmsInnerJobOrder.class);
+        example.createCriteria().andEqualTo("jobOrderType",5).andNotEqualTo("orderStatus",6);
+        return wmsInnerJobOrderMapper.selectByExample(example);
+    }
 }
