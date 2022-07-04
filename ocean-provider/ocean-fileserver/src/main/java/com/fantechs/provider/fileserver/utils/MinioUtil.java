@@ -5,7 +5,8 @@ import io.minio.*;
 import io.minio.messages.DeleteError;
 import io.minio.messages.DeleteObject;
 import io.minio.messages.Item;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  */
 @Component
 public class MinioUtil {
-    @Resource
+    @Autowired
     private MinioClient minioClient;
 
     @Value("${minio.bucketName}")
@@ -90,6 +90,7 @@ public class MinioUtil {
      *
      * @param multipartFile
      * @return: java.lang.String
+
      */
     public List<String> upload(MultipartFile[] multipartFile) {
         List<String> names = new ArrayList<>(multipartFile.length);
@@ -211,3 +212,4 @@ public class MinioUtil {
 
 
 }
+

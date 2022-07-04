@@ -24,12 +24,26 @@
             <artifactId>ocean-common-config</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-        <!-- 文件服务器-->
+
+        <!-- minio -->
         <dependency>
-            <groupId>com.github.tobato</groupId>
-            <artifactId>fastdfs-client</artifactId>
-            <version>1.26.1-RELEASE</version>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>8.0.3</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>3.12.0</version>
+        </dependency>
+
+        <!-- &lt;!&ndash; 文件服务器&ndash;&gt; -->
+        <!-- <dependency> -->
+        <!--     <groupId>com.github.tobato</groupId> -->
+        <!--     <artifactId>fastdfs-client</artifactId> -->
+        <!--     <version>1.26.1-RELEASE</version> -->
+        <!-- </dependency> -->
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>

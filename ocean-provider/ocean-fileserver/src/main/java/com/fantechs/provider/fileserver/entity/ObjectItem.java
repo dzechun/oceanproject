@@ -7,4 +7,3 @@ public class ObjectItem {
     private String objectName;
     private Long size;
 }
-

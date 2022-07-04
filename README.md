@@ -7,7 +7,7 @@ txlcn-manager       8070
 mes-pm              8101
 mes-sfc             8102
 agv                 8701
-fileserver          8763
+fileserver          8763    文件服务
 auth                8765
 gateway             8768
 ureport             8769

@@ -7,10 +7,10 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.fantechs.provider.fileserver</groupId>
-    <artifactId>ocean-fileserver-minio</artifactId>
+    <groupId>com.fantechs.provider.fileserver-fastdfs</groupId>
+    <artifactId>ocean-fileserver-fastdfs</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ocean-fileserver-minio</name>
+    <name>ocean-fileserver-fastdfs</name>
     <description>文件服务器</description>
 
     <dependencies>
@@ -24,12 +24,11 @@
             <artifactId>ocean-common-config</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-
-        <!-- minio -->
+        <!-- 文件服务器-->
         <dependency>
-            <groupId>io.minio</groupId>
-            <artifactId>minio</artifactId>
-            <version>8.4.2</version>
+            <groupId>com.github.tobato</groupId>
+            <artifactId>fastdfs-client</artifactId>
+            <version>1.26.1-RELEASE</version>
         </dependency>
 
         <dependency>
