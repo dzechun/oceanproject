@@ -1,7 +1,0 @@
-spring:
-  cloud:
-    nacos:
-      config:
-        namespace: ${NACOS_NAMESPACE:dev}
-      discovery:
-        namespace: ${NACOS_NAMESPACE:dev}
