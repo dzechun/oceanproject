@@ -8,8 +8,6 @@
         <version>2.1.1.RELEASE</version>
     </parent>
 
-
-
     <groupId>com.fantechs</groupId>
     <artifactId>ocean-parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
