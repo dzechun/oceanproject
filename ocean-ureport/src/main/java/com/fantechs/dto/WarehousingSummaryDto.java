@@ -45,8 +45,8 @@ public class WarehousingSummaryDto implements Serializable {
     @JSONField(format ="yyyy-MM-dd")
     private Date time;
 
-    @ApiModelProperty(name="status",value = "状态(0OK,1NG)")
+    @ApiModelProperty(name="passStatus",value = "状态(0OK,1NG)")
     @Excel(name = "状态", height = 20, width = 30, replace = {"OK_0", "NG_1"})
-    private Byte status;
+    private Byte passStatus;
 
 }
