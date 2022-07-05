@@ -16,7 +16,7 @@
     <description>Demo project for Spring Boot</description>
 
     <properties>
-        <boot-jar-output>../../../lib</boot-jar-output>
+        <boot-jar-output>../../../package</boot-jar-output>
     </properties>
 
     <modules>

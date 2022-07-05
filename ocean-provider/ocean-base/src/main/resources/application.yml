@@ -1,5 +1,5 @@
 spring:
-  aop:
-    proxy-target-class: false
+#  aop:
+#    proxy-target-class: false
   application:
     name: @pom.artifactId@
