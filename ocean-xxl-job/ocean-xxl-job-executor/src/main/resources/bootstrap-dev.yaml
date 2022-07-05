@@ -1,6 +1,7 @@
 spring:
   cloud:
     nacos:
+      server-addr: ${NACOS_ADDR:192.168.204.177:8848}
       config:
         namespace: ${NACOS_NAMESPACE:dev}
       discovery:
