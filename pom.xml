@@ -308,7 +308,7 @@
                     <artifactId>seata-spring-boot-starter</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>io.druid</groupId>
+                    <groupId>com.alibaba</groupId>
                     <artifactId>druid-spring-boot-starter</artifactId>
                 </exclusion>
             </exclusions>
