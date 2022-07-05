@@ -1,5 +1,6 @@
 package com.fantechs;
 
+import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
 import com.bstek.ureport.console.UReportServlet;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,7 +13,7 @@ import org.springframework.context.annotation.ImportResource;
 import tk.mybatis.spring.annotation.MapperScan;
 
 
-@SpringBootApplication
+@SpringBootApplication(exclude = DruidDataSourceAutoConfigure.class)
 @EnableDiscoveryClient
 @ImportResource("classpath:context.xml") // 加载ureport对应的xml配置文件
 @ComponentScan({"com.fantechs", "com.fantechs.common"})
