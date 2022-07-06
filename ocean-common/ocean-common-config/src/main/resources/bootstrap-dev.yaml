@@ -1,8 +1,11 @@
 spring:
   cloud:
     nacos:
+      # Nacos发现与配置地址
       server-addr: ${NACOS_ADDR:192.168.204.177:8848}
       config:
+        # Nacos配置地址
         namespace: ${NACOS_NAMESPACE:dev}
       discovery:
+        # Nacos注册地址
         namespace: ${NACOS_NAMESPACE:dev}

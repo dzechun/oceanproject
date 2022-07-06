@@ -4,7 +4,6 @@ spring:
     active: dev
   cloud:
     nacos:
-      # 注册/配置地址
       config:
         # 配置文件后缀
         file-extension: yaml
