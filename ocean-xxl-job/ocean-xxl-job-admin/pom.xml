@@ -6,25 +6,25 @@
 		<artifactId>ocean-xxl-job</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-<!--	<parent>-->
-<!--		<groupId>com.fantechs.provider</groupId>-->
-<!--		<artifactId>ocean-provider</artifactId>-->
-<!--		<version>0.0.1-SNAPSHOT</version>-->
-<!--	</parent>-->
+	<!--	<parent>-->
+	<!--		<groupId>com.fantechs.provider</groupId>-->
+	<!--		<artifactId>ocean-provider</artifactId>-->
+	<!--		<version>0.0.1-SNAPSHOT</version>-->
+	<!--	</parent>-->
 	<artifactId>ocean-xxl-job-admin</artifactId>
 	<packaging>jar</packaging>
 
-<!--	<dependencyManagement>-->
-<!--		<dependencies>-->
-<!--			<dependency>-->
-<!--				<groupId>org.springframework.boot</groupId>-->
-<!--				<artifactId>spring-boot-starter-parent</artifactId>-->
-<!--				<version>${spring-boot.version}</version>-->
-<!--				<type>pom</type>-->
-<!--				<scope>import</scope>-->
-<!--			</dependency>-->
-<!--		</dependencies>-->
-<!--	</dependencyManagement>-->
+	<!--	<dependencyManagement>-->
+	<!--		<dependencies>-->
+	<!--			<dependency>-->
+	<!--				<groupId>org.springframework.boot</groupId>-->
+	<!--				<artifactId>spring-boot-starter-parent</artifactId>-->
+	<!--				<version>${spring-boot.version}</version>-->
+	<!--				<type>pom</type>-->
+	<!--				<scope>import</scope>-->
+	<!--			</dependency>-->
+	<!--		</dependencies>-->
+	<!--	</dependencyManagement>-->
 
 	<dependencies>
 		<!-- xxl-job-core -->
@@ -120,6 +120,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
 
 </project>

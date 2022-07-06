@@ -1,7 +1,13 @@
 package com.xxl.job.admin.core.complete;
 
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
+import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLog;
+import com.xxl.job.admin.core.thread.JobTriggerPoolHelper;
+import com.xxl.job.admin.core.trigger.TriggerTypeEnum;
+import com.xxl.job.admin.core.util.I18nUtil;
+import com.xxl.job.core.biz.model.ReturnT;
+import com.xxl.job.core.context.XxlJobContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,13 +44,6 @@ public class XxlJobCompleter {
      * do somethind to finish job
      */
     private static void finishJob(XxlJobLog xxlJobLog){
-
-        // 1、handle success, to trigger child job
-        String triggerChildMsg = null;
-
-
-        // 2、fix_delay trigger next
-        // on the way
 
     }
 
