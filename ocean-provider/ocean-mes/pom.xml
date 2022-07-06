@@ -16,7 +16,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <boot-jar-output>../../../package</boot-jar-output>
+        <boot-jar-output>../../../ocean</boot-jar-output>
     </properties>
 
     <modules>
