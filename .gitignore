@@ -38,7 +38,7 @@ doc/
 /nbdist/
 /.nb-gradle/
 build/
-package/
+ocean/
 
 ### VS Code ###
 .vscode/
