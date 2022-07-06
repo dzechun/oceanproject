@@ -336,7 +336,7 @@
                 <configuration>
                     <filesets>
                         <fileset>
-                            <directory>./package/</directory>
+                            <directory>./ocean/</directory>
                         </fileset>
                     </filesets>
                 </configuration>
