@@ -9,6 +9,7 @@ spring:
         # 配置文件后缀
         file-extension: yaml
         # 公共配置文件
-        shared-dataids: ocean-common.yaml
+        shared-configs:
+          - data-id: ocean-common.yaml
         # 指定需要自动刷新的公共配置文件
-        refreshable-dataids: ocean-common.yaml
+        refresh-enabled: true
