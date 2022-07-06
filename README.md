@@ -13,6 +13,7 @@ gateway             8768
 ureport             8769
 electronic-tag      8770   
 admin               8799
+xxl-job-admin       8080
 base                8801
 bcm                 8802
 ews                 8803
@@ -30,8 +31,8 @@ esop                9015
 chinafivering-api   9019
 guest-leisai        9021
 leisai-api          9028
-minio-server        19000   minio-api接口
-minio-manager       19090   minio控制端
 client              10010
+minio-server-api    19000   minio-api接口
+minio-manager       19090   minio控制端
 ```
 
