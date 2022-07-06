@@ -38,23 +38,16 @@
             <version>3.12.0</version>
         </dependency>
 
-        <!-- &lt;!&ndash; 文件服务器&ndash;&gt; -->
-        <!-- <dependency> -->
-        <!--     <groupId>com.github.tobato</groupId> -->
-        <!--     <artifactId>fastdfs-client</artifactId> -->
-        <!--     <version>1.26.1-RELEASE</version> -->
-        <!-- </dependency> -->
-
-        <!-- <dependency> -->
-        <!--     <groupId>org.springframework.cloud</groupId> -->
-        <!--     <artifactId>spring-cloud-starter-openfeign</artifactId> -->
-        <!--     <exclusions> -->
-        <!--         <exclusion> -->
-        <!--             <artifactId>spring-cloud-openfeign-core</artifactId> -->
-        <!--             <groupId>org.springframework.cloud</groupId> -->
-        <!--         </exclusion> -->
-        <!--     </exclusions> -->
-        <!-- </dependency> -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-cloud-openfeign-core</artifactId>
+                    <groupId>org.springframework.cloud</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <!-- 支持 @ConfigurationProperties 注解 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
