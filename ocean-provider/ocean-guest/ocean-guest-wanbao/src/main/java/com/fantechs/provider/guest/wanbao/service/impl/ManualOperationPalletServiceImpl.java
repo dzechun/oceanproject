@@ -245,6 +245,7 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
         }
         List<String> barcodeList = new ArrayList<>();
         WanbaoStackingDet stackingDet = stackingDetService.selectByKey(stackingDetId);
+        Long oldId = stackingDet.getStackingId();
 
         Example example = new Example(WanbaoStackingDet.class);
         example.createCriteria().andEqualTo("stackingId", newId);
@@ -268,9 +269,22 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
             if (!aBoolean){
                 throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), response.getMessage());
             }
+        }else {
+            // 切换堆垛为空堆垛，则变更堆垛状态
         }
         stackingDet.setStackingId(newId);
-        return stackingDetService.update(stackingDet);
+        int num = stackingDetService.update(stackingDet);
+
+        // 原堆垛状态判断是否变更
+        example.clear();
+        example.createCriteria().andEqualTo("stackingId", oldId);
+        int count = stackingDetService.selectCountByExample(example);
+        if (count <= 0){
+            WanbaoStacking oldStacking = stackingService.selectByKey(oldId);
+            oldStacking.setUsageStatus((byte) 1);
+            stackingService.update(oldStacking);
+        }
+        return num;
     }
 
     /**
@@ -287,6 +301,13 @@ public class ManualOperationPalletServiceImpl implements ManualOperationPalletSe
             throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "该堆垛已提交，不可移除条码");
         }
         int i = stackingDetService.deleteByKey(stackingDetId);
+        Example example = new Example(WanbaoStackingDet.class);
+        example.createCriteria().andEqualTo("stackingId", stacking.getStackingId());
+        int count = stackingDetService.selectCountByExample(example);
+        if (count <= 0){
+            stacking.setUsageStatus((byte) 1);
+            stackingService.update(stacking);
+        }
         return i;
     }
 
