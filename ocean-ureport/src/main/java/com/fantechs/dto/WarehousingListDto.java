@@ -92,7 +92,7 @@ public class WarehousingListDto implements Serializable {
     private String storageCode;
 
     @ApiModelProperty(name="siteStatus",value = "状态(1未过站，2已打包未入库，3已入库未上架，4正常)")
-    @Excel(name = "状态", height = 20, width = 30, replace = {"未过站_1", "已打包未入库_2", "已入库未上架_3", "正常_3"})
+    @Excel(name = "状态", height = 20, width = 30, replace = {"未过站_1", "已打包未入库_2", "已入库未上架_3", "正常_4"})
     private Byte siteStatus;
 
 }

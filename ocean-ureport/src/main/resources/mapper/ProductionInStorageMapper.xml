@@ -342,38 +342,29 @@
             <if test="proName!=null and proName!=''">
                 and bpl.pro_name = #{proName}
             </if>
-            <if test="site!=null and site!=''">
-                <if test="site==1">
-                    AND msbp.devote_time IS NULL
-                </if>
-                <if test="site==2">
-                    AND msbp.devote_time IS NOT NULL
-                    AND msbp.production_time IS NULL
-                </if>
-                <if test="site==3">
-                    AND msbp.devote_time IS NOT NULL
-                    AND msbp.production_time IS NOT NULL
-                    AND wiid.inventory_det_id IS NULL
-                </if>
-            </if>
             <if test="siteStatus!=null and siteStatus!=''">
                 <if test="siteStatus==1">
                     AND msbp.devote_time IS NULL
                 </if>
                 <if test="siteStatus==2">
                     AND msbp.devote_time IS NOT NULL
+                    AND msbp.production_time IS NULL
                 </if>
                 <if test="siteStatus==3">
+                    AND msbp.devote_time IS NOT NULL
                     AND msbp.production_time IS NOT NULL
+                    AND wiid.inventory_det_id IS NULL
                 </if>
-                <if test="siteStatus==3">
-                    AND  wiid.inventory_det_id IS NOT NULL
+                <if test="siteStatus==4">
+                    AND msbp.devote_time IS NOT NULL
+                    AND msbp.production_time IS NOT NULL
+                    AND wiid.inventory_det_id IS NOT NULL
                 </if>
             </if>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-                AND (date_format(msbp.devote_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-                         or date_format(msbp.production_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-                         or date_format(wiid.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime})
+                AND (date_format(msbp.devote_time, '%Y-%m-%d %H:%i:%s') BETWEEN #{startTime} AND #{endTime}
+                         or date_format(msbp.production_time, '%Y-%m-%d %H:%i:%s') BETWEEN #{startTime} AND #{endTime}
+                         or date_format(wiid.create_time, '%Y-%m-%d %H:%i:%s') BETWEEN #{startTime} AND #{endTime})
             </if>
         </where>
     </select>
@@ -479,9 +470,9 @@
                 </if>
             </if>
             <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
-                AND (date_format(msbp.devote_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-                or date_format(msbp.production_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
-                or date_format(wiid.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime})
+                AND (date_format(msbp.devote_time, '%Y-%m-%d %H:%i:%s') BETWEEN #{startTime} AND #{endTime}
+                or date_format(msbp.production_time, '%Y-%m-%d %H:%i:%s') BETWEEN #{startTime} AND #{endTime}
+                or date_format(wiid.create_time, '%Y-%m-%d %H:%i:%s') BETWEEN #{startTime} AND #{endTime})
             </if>
         </where>
     </select>
