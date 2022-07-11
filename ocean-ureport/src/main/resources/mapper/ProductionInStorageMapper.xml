@@ -339,6 +339,15 @@
             <if test="workShopName!=null and workShopName!=''">
                 and bws.work_shop_name = #{workShopName}
             </if>
+            <if test="barcode!=null and barcode!=''">
+                and msbp.barcode = #{barcode}
+            </if>
+            <if test="salesBarcode!=null and salesBarcode!=''">
+                and mskpr2.part_barcode = #{salesBarcode}
+            </if>
+            <if test="customerBarcode!=null and customerBarcode!=''">
+                and mskpr.part_barcode = #{customerBarcode}
+            </if>
             <if test="proName!=null and proName!=''">
                 and bpl.pro_name = #{proName}
             </if>
@@ -454,6 +463,15 @@
         <where>
             <if test="workShopName!=null and workShopName!=''">
                 and bws.work_shop_name = #{workShopName}
+            </if>
+            <if test="barcode!=null and barcode!=''">
+                and msbp.barcode = #{barcode}
+            </if>
+            <if test="salesBarcode!=null and salesBarcode!=''">
+                and mskpr2.part_barcode = #{salesBarcode}
+            </if>
+            <if test="customerBarcode!=null and customerBarcode!=''">
+                and mskpr.part_barcode = #{customerBarcode}
             </if>
             <if test="proName!=null and proName!=''">
                 and bpl.pro_name = #{proName}
