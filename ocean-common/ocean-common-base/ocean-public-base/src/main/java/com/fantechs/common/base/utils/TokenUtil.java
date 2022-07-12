@@ -6,6 +6,7 @@ import cn.dev33.satoken.strategy.SaStrategy;
 import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.TokenValidationFailedException;
@@ -74,7 +75,7 @@ public class TokenUtil {
             // 重写 Token 生成策略
             SaStrategy.me.createToken = (loginId, loginType) -> {
                 //客户端 + 随机字符串
-                return sb + UUIDUtils.getUUID();
+                return sb + NanoIdUtils.randomNanoId();
             };
             StpUtil.login(user.getUserId());
 

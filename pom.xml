@@ -324,9 +324,14 @@
             <artifactId>seata-spring-boot-starter</artifactId>
             <version>1.2.0</version>
         </dependency>
+
+        <!-- NanoId -->
+        <dependency>
+            <groupId>com.aventrix.jnanoid</groupId>
+            <artifactId>jnanoid</artifactId>
+            <version>2.0.0</version>
+        </dependency>
     </dependencies>
-
-
 
     <build>
         <plugins>
