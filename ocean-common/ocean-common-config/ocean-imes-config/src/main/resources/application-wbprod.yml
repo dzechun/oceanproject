@@ -130,6 +130,8 @@ management:
     env:
       enabled: false
     metrics:
+      enabled:
+    logfile:
       enabled: false
 #提高日志级别为WARN
 logging:
