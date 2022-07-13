@@ -53,7 +53,7 @@ public class WarehousingDetailDto implements Serializable {
     private BigDecimal qty;
 
     @ApiModelProperty(name = "time",value = "时间")
-    @Excel(name = "时间", height = 20, width = 30, importFormat = "yyyy-MM-dd")
+    @Excel(name = "时间", height = 20, width = 30, exportFormat = "yyyy-MM-dd")
     @JSONField(format ="yyyy-MM-dd")
     private Date time;
 

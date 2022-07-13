@@ -24,4 +24,13 @@ public class SearchWarehousingDto extends BaseQuery implements Serializable {
     @ApiModelProperty(name="siteStatus",value = "站点状态(1未过站，2已打包未入库，3已入库未上架，4正常)")
     private Byte siteStatus;
 
+    @ApiModelProperty(name="barcode" ,value="厂内码")
+    private String barcode;
+
+    @ApiModelProperty(name="salesBarcode" ,value="销售条码")
+    private String salesBarcode;
+
+    @ApiModelProperty(name="customerBarcode" ,value="客户条码")
+    private String customerBarcode;
+
 }

@@ -49,7 +49,7 @@ public class WarehousingListDto implements Serializable {
     private String customerBarcode;
 
     @ApiModelProperty(name="cartonTime",value = "打包时间")
-    @Excel(name = "物料编码", height = 20, width = 30, importFormat = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "打包时间", height = 20, width = 30, exportFormat = "yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     private Date cartonTime;
 
@@ -62,7 +62,7 @@ public class WarehousingListDto implements Serializable {
     private BigDecimal cartonCount;
 
     @ApiModelProperty(name="palletTime",value = "入库下线时间")
-    @Excel(name = "入库下线时间", height = 20, width = 30, importFormat = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "入库下线时间", height = 20, width = 30, exportFormat = "yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     private Date palletTime;
 
@@ -75,7 +75,7 @@ public class WarehousingListDto implements Serializable {
     private BigDecimal palletCount;
 
     @ApiModelProperty(name="inventotyTime",value = "入库时间")
-    @Excel(name = "入库时间", height = 20, width = 30, importFormat = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "入库时间", height = 20, width = 30, exportFormat = "yyyy-MM-dd HH:mm:ss")
     @JSONField(format ="yyyy-MM-dd HH:mm:ss")
     private Date inventotyTime;
 
@@ -92,7 +92,7 @@ public class WarehousingListDto implements Serializable {
     private String storageCode;
 
     @ApiModelProperty(name="siteStatus",value = "状态(1未过站，2已打包未入库，3已入库未上架，4正常)")
-    @Excel(name = "状态", height = 20, width = 30, replace = {"未过站_1", "已打包未入库_2", "已入库未上架_3", "正常_3"})
+    @Excel(name = "状态", height = 20, width = 30, replace = {"未过站_1", "已打包未入库_2", "已入库未上架_3", "正常_4"})
     private Byte siteStatus;
 
 }

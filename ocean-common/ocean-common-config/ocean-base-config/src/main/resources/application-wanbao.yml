@@ -111,6 +111,7 @@ management:
     web:
       exposure:
         include: "*"
+        exclude: "logfile"
     enabled-by-default: false
   endpoint:
     health:
@@ -118,7 +119,9 @@ management:
     env:
       enabled: false
     metrics:
-      enabled: true
+      enabled: false
+    loggers:
+      enabled: false
 #提高日志级别为WARN
 logging:
   level:
