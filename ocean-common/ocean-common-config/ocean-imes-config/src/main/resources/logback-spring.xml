@@ -8,8 +8,8 @@
   <!--<jmxConfigurator/>-->
 
   <springProperty scope="context" name="springAppName" source="spring.application.name"/>
-<!--  <property name="LOG_PATH" value="/data/logs/ocean/${springAppName}"/>-->
-  <property name="LOG_PATH" value="/Users/mr.lei/Desktop/data/logs/ocean/${springAppName}"/>
+  <property name="LOG_PATH" value="/data/logs/ocean/${springAppName}"/>
+<!--  <property name="LOG_PATH" value="/Users/mr.lei/Desktop/data/logs/ocean/${springAppName}"/>-->
 <!--  <property name="LOG_PATH" value="/Users/bgkun/Documents/workspace/log/${springAppName}"/>-->
   <property name="LOG_FILE" value="${springAppName}"/>
 

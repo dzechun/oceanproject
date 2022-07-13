@@ -117,7 +117,7 @@ management:
     env:
       enabled: false
     metrics:
-      enabled: true
+      enabled: false
 #提高日志级别为WARN
 logging:
   level:
