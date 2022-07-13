@@ -7,12 +7,14 @@ import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.wms.inner.*;
 import com.fantechs.common.base.general.dto.wms.out.WmsOutDeliveryOrderDetDto;
-import com.fantechs.common.base.general.entity.mes.sfc.MesSfcBarcodeProcess;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventory;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerInventoryDet;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrder;
 import com.fantechs.common.base.general.entity.wms.inner.WmsInnerJobOrderDet;
-import com.fantechs.common.base.general.entity.wms.out.*;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutDeliveryOrder;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrder;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrderReJo;
+import com.fantechs.common.base.general.entity.wms.out.WmsOutDespatchOrderReJoReDet;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.support.BaseService;
 import com.fantechs.common.base.utils.CodeUtils;
@@ -135,7 +137,7 @@ public class WanbaoPlatformServiceImpl extends BaseService<WanbaoPlatform> imple
         if (flag){
             for (String str : barcodeArr){
                 if (str.length() == 23){
-                    Example example = new Example(MesSfcBarcodeProcess.class);
+                    Example example = new Example(WmsInnerInventoryDet.class);
                     Example.Criteria criteria = example.createCriteria();
                     criteria.andEqualTo("barcode", str);
                     List<WmsInnerInventoryDet> wmsInnerInventoryDets = wmsInnerInventoryDetMapper.selectByExample(example);
@@ -187,27 +189,39 @@ public class WanbaoPlatformServiceImpl extends BaseService<WanbaoPlatform> imple
         //校验销售编码
         if(wanbaoPlatform.getIfSaleOrder()==1){
             if(StringUtils.isNotEmpty(cleanBarcodeDto.getSaleCode())) {
-                wmsInnerJobOrderDets = wmsInnerJobOrderDets.stream().filter(y ->StringUtils.isNotEmpty(y.getOption2()) && y.getOption2().equals(cleanBarcodeDto.getSaleCode())).collect(Collectors.toList());
-                if (wmsInnerJobOrderDets.size() < 1) {
+                if(StringUtils.isEmpty(cleanBarcodeDto.getSaleCode())){
                     throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码销售编码与出货单销售编码不一致【出库单无销售编码】");
                 }
+                wmsInnerJobOrderDets = wmsInnerJobOrderDets.stream().filter(y ->StringUtils.isNotEmpty(y.getOption2()) && y.getOption2().equals(cleanBarcodeDto.getSaleCode())).collect(Collectors.toList());
+                if (wmsInnerJobOrderDets.size() < 1) {
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码销售编码与出货单销售编码不一致");
+                }
             }else {
+                if(StringUtils.isNotEmpty(cleanBarcodeDto.getSaleCode())){
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码销售编码与出货单销售编码不一致【库存无销售编码】");
+                }
                 wmsInnerJobOrderDets = wmsInnerJobOrderDets.stream().filter(y -> StringUtils.isEmpty(y.getOption2())).collect(Collectors.toList());
                 if (wmsInnerJobOrderDets.size() < 1) {
-                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码销售编码与出货单销售编码不一致【库存无销售编码】");
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(), "条码销售编码与出货单销售编码不一致");
                 }
             }
         }
         if(wanbaoPlatform.getIfPo()==1){
             if(StringUtils.isNotEmpty(cleanBarcodeDto.getPo())) {
-                wmsInnerJobOrderDets = wmsInnerJobOrderDets.stream().filter(y -> StringUtils.isNotEmpty(y.getOption3()) && y.getOption3().equals(cleanBarcodeDto.getPo())).collect(Collectors.toList());
-                if (wmsInnerJobOrderDets.size()<1){
+                if(StringUtils.isEmpty(cleanBarcodeDto.getPo())){
                     throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"条码PO与出货单PO不一致【出货单无PO】");
                 }
+                wmsInnerJobOrderDets = wmsInnerJobOrderDets.stream().filter(y -> StringUtils.isNotEmpty(y.getOption3()) && y.getOption3().equals(cleanBarcodeDto.getPo())).collect(Collectors.toList());
+                if (wmsInnerJobOrderDets.size()<1){
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"条码PO与出货单PO不一致");
+                }
             }else {
+                if(StringUtils.isNotEmpty(cleanBarcodeDto.getPo())){
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"条码PO与出货单PO不一致【库存无PO】");
+                }
                 wmsInnerJobOrderDets = wmsInnerJobOrderDets.stream().filter(y -> StringUtils.isEmpty(y.getOption3())).collect(Collectors.toList());
                 if (wmsInnerJobOrderDets.size()<1){
-                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"条码PO与出货单PO不一致【库存无PO】");
+                    throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"条码PO与出货单PO不一致");
                 }
             }
         }
@@ -240,7 +254,7 @@ public class WanbaoPlatformServiceImpl extends BaseService<WanbaoPlatform> imple
     @Transactional(rollbackFor = RuntimeException.class)
     public int bindingPlatform(WanbaoPlatform wanbaoPlatform) {
         if(StringUtils.isEmpty(wanbaoPlatform.getPlatformId(),wanbaoPlatform.getJobOrderId())){
-            throw new BizErrorException(ErrorCodeEnum.GL99990100);
+            throw new BizErrorException(ErrorCodeEnum.GL99990100.getCode(),"未选择月台或者拣货单");
         }
         WanbaoPlatform old = wanbaoPlatformMapper.selectByPrimaryKey(wanbaoPlatform.getPlatformId());
 //        if(old.getUsageStatus()==2){
@@ -480,7 +494,8 @@ public class WanbaoPlatformServiceImpl extends BaseService<WanbaoPlatform> imple
     @Override
     public List<WmsInnerJobOrder> findJobOrderList() {
         Example example = new Example(WmsInnerJobOrder.class);
-        example.createCriteria().andEqualTo("jobOrderType",5).andNotEqualTo("orderStatus",6);
+        example.createCriteria().andEqualTo("jobOrderType",4).andNotEqualTo("orderStatus",6);
+        example.orderBy("jobOrderCode").desc();
         return wmsInnerJobOrderMapper.selectByExample(example);
     }
 }

@@ -85,6 +85,7 @@ public class AuthHeaderFilter extends ZuulFilter {
 			"/ocean-guest-callagv/RCSAPI/agvCallback,/ocean-imes-materialapi/productBomApi,/ocean-esop-baseapi/getIssue/getAllIssue,/ocean-esop-baseapi/getWorkOrder/getAllWorkOrder," +
 			"/ocean-guest-wanbao/qmsInspectionOrder/autoAdd,"+
 			"/ocean-mes-sfc/scanBarcode/doScan,/ocean-mes-sfc/scanBarcode/getBasics,/ocean-guest-jinan/rfidAsset/findList,/ocean-guest-jinan/rfidBaseStationLog/checkData," +
+			"/ocean-wms-inner/wanbaoPlatform/findList,/ocean-wms-inner/wanbaoPlatform/bindingPlatform,/ocean-wms-inner/wanbaoPlatform/doScan,/ocean-wms-inner/wanbaoPlatform/findJobOrderList,"+
 			"/ocean-guest-callagv/callAgvVehicleReBarcode/callAgvDistributionRest,/ocean-guest-callagv/service/rest/agvCallbackService/warnCallback";
 
 	/**

@@ -224,6 +224,18 @@ public class WmsOutDespatchOrderServiceImpl extends BaseService<WmsOutDespatchOr
             for (WmsOutDeliveryOrder deliveryOrder : wmsOutDespatchOrder.getDeliveryOrders()) {
                 wmsOutDeliveryOrderMapper.updateByPrimaryKeySelective(deliveryOrder);
                 for (WmsOutDeliveryOrderDetDto wmsOutDeliveryOrderDetDto : deliveryOrder.getWmsOutDeliveryOrderDetList()) {
+                    WmsOutDeliveryOrderDet wmsOutDeliveryOrderDet = wmsOutDeliveryOrderDetMapper.selectByPrimaryKey(wmsOutDeliveryOrderDetDto.getDeliveryOrderDetId());
+                    if(StringUtils.isEmpty(wmsOutDeliveryOrderDet)){
+                        throw new BizErrorException(ErrorCodeEnum.GL9999404.getCode(),"未查询到出货单");
+                    }
+                    if(StringUtils.isEmpty(wmsOutDeliveryOrderDet.getPickingQty())){
+                        wmsOutDeliveryOrderDet.setPickingQty(BigDecimal.ZERO);
+                    }
+                    if(StringUtils.isEmpty(wmsOutDeliveryOrderDet.getDispatchQty())){
+                        wmsOutDeliveryOrderDet.setDispatchQty(BigDecimal.ZERO);
+                    }
+                    wmsOutDeliveryOrderDetDto.setPickingQty(wmsOutDeliveryOrderDet.getPickingQty().add(wmsOutDeliveryOrderDetDto.getPickingQty()));
+                    wmsOutDeliveryOrderDetDto.setDispatchQty(wmsOutDeliveryOrderDet.getDispatchQty().add(wmsOutDeliveryOrderDetDto.getDispatchQty()));
                     wmsOutDeliveryOrderDetMapper.updateByPrimaryKeySelective(wmsOutDeliveryOrderDetDto);
                 }
             }
