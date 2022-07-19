@@ -1,7 +1,6 @@
 package com.fantechs.provider.fileserver.controller;
 
 import com.fantechs.common.base.constants.ErrorCodeEnum;
-import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.*;
@@ -14,7 +13,6 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,7 +24,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -38,12 +35,6 @@ public class FileController {
 
     @Autowired
     private BaidubceConfig baidubceConfig;
-
-    @Value("${minio.endpoint}")
-    private String address;
-    @Value("${minio.bucketName}")
-    private String bucketName;
-
 
     /**
      * 单文件上传

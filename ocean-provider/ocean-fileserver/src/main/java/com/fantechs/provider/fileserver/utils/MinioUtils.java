@@ -153,19 +153,6 @@ public class MinioUtils {
             in = minioClient.getObject(GetObjectArgs.builder().bucket(bucketName).object(fileUrl).build());
             out = new ByteArrayOutputStream();
             IOUtils.copy(in, out);
-
-            //封装返回值
-            // byte[] bytes = out.toByteArray();
-            // HttpHeaders headers = new HttpHeaders();
-            // try {
-            //     headers.add("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
-            // } catch (UnsupportedEncodingException e) {
-            //     e.printStackTrace();
-            // }
-            // headers.setContentLength(bytes.length);
-            // headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            // headers.setAccessControlExposeHeaders(Arrays.asList("*"));
-            // responseEntity = new ResponseEntity<byte[]>(bytes, headers, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
