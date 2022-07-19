@@ -12,3 +12,7 @@ spring:
           - data-id: ocean-common.yaml
         # 指定需要自动刷新的公共配置文件
         refresh-enabled: true
+      discovery:
+        metadata:
+          #该实例在不发送心跳后，被Nacos下掉该实例的时间
+          preserved.ip.delete.timeout: 6000
