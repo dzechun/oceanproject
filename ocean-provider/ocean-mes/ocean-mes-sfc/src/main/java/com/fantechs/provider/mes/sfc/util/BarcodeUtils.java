@@ -1,7 +1,9 @@
 package com.fantechs.provider.mes.sfc.util;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.fantechs.common.base.constants.ErrorCodeEnum;
 import com.fantechs.common.base.entity.security.SysSpecItem;
+import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.exception.BizErrorException;
 import com.fantechs.common.base.general.dto.basic.*;
 import com.fantechs.common.base.general.dto.eam.EamEquipmentDto;
@@ -16,6 +18,7 @@ import com.fantechs.common.base.general.dto.restapi.RestapiChkSNRoutingApiDto;
 import com.fantechs.common.base.general.dto.restapi.RestapiSNDataTransferApiDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseBarcodeRuleSpec;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialPackage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBasePackageSpecification;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseProductBom;
 import com.fantechs.common.base.general.entity.eam.EamEquipmentBarcode;
@@ -30,17 +33,22 @@ import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrde
 import com.fantechs.common.base.general.entity.mes.sfc.*;
 import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
+import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.RedisUtil;
 import com.fantechs.common.base.utils.StringUtils;
 import com.fantechs.provider.api.base.BaseFeignApi;
 import com.fantechs.provider.api.eam.EamFeignApi;
 import com.fantechs.provider.api.guest.leisai.LeisaiFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
+import com.fantechs.provider.mes.sfc.mapper.MesSfcBarcodeOperationMapper;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcBarcodeProcessMapper;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
 import com.fantechs.provider.mes.sfc.service.*;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.PostConstruct;
@@ -92,6 +100,8 @@ public class BarcodeUtils {
     private MesSfcBarcodeProcessMapper mesSfcBarcodeProcessMapper;
     @Resource
     private LeisaiFeignApi leisaiFeignApi;
+    @Resource
+    private MesSfcBarcodeOperationMapper mesSfcBarcodeOperationMapper;
 
     // endregion
 
@@ -137,11 +147,6 @@ public class BarcodeUtils {
         if (mesSfcWorkOrderBarcodeDto.getWorkOrderId() != null) {
             checkOrder(mesSfcWorkOrderBarcodeDto);
         }
-
-        // 4、是否检查排程
-        if (record.getCheckOrNot()) {
-
-        }
         return true;
     }
 
@@ -170,13 +175,12 @@ public class BarcodeUtils {
         MesSfcBarcodeProcess mesSfcBarcodeProcess = barcodeUtils.mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
                 .barcode(dto.getBarCode())
                 .build());
-        ResponseEntity<List<BaseRouteProcess>> responseEntity = barcodeUtils.baseFeignApi.findConfigureRout(dto.getRouteId());
-        if (responseEntity.getCode() != 0) {
+        List<BaseRouteProcess> routeProcessList = barcodeUtils.mesSfcBarcodeOperationMapper.findListRouteProcess(dto.getRouteId());
+        if (CollectionUtils.isEmpty(routeProcessList)) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012008);
         }
-        List<BaseRouteProcess> routeProcessList = responseEntity.getData();
         // 获取当前工单信息
-        MesPmWorkOrder mesPmWorkOrder = barcodeUtils.pmFeignApi.workOrderDetail(dto.getWorkOrderId()).getData();
+        MesPmWorkOrder mesPmWorkOrder = barcodeUtils.mesSfcBarcodeOperationMapper.findWorkOrderDetail(dto.getWorkOrderId());
         // 判断当前工序是否为产出工序,若是产出工序则不用判断下一工序
         if (!mesSfcBarcodeProcess.getNextProcessId().equals(mesPmWorkOrder.getOutputProcessId())) {
             // 若入参当前扫码工序ID跟过站表下一工序ID不一致
@@ -461,18 +465,17 @@ public class BarcodeUtils {
      */
     public static String generatorCartonCode(Long materialId, Long processId, String materialCode, Long workOrderId, String categoryCode) throws Exception {
         BaseBarcodeRule barcodeRule = getBarcodeRule(materialId, processId);
-        BaseLabelCategory labelCategory = barcodeUtils.baseFeignApi.findLabelCategoryDetail(barcodeRule.getLabelCategoryId()).getData();
+        BaseLabelCategory labelCategory = barcodeUtils.mesSfcBarcodeOperationMapper.findLabelCategoryCount(barcodeRule.getLabelCategoryId());
         if(!labelCategory.getLabelCategoryCode().equals(categoryCode)){
             throw new BizErrorException(ErrorCodeEnum.PDA40012021);
         }
         // 获取规则配置列表
         SearchBaseBarcodeRuleSpec baseBarcodeRuleSpec = new SearchBaseBarcodeRuleSpec();
         baseBarcodeRuleSpec.setBarcodeRuleId(barcodeRule.getBarcodeRuleId());
-        ResponseEntity<List<BaseBarcodeRuleSpec>> barcodeRuleSpecResponseEntity = barcodeUtils.baseFeignApi.findSpec(baseBarcodeRuleSpec);
-        if (barcodeRuleSpecResponseEntity.getCode() != 0) {
+        List<BaseBarcodeRuleSpec> barcodeRuleSpecList = barcodeUtils.mesSfcBarcodeOperationMapper.findSpec(baseBarcodeRuleSpec.getBarcodeRuleId());
+        if (CollectionUtils.isEmpty(barcodeRuleSpecList)) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012022);
         }
-        List<BaseBarcodeRuleSpec> barcodeRuleSpecList = barcodeRuleSpecResponseEntity.getData();
         if (barcodeRuleSpecList.isEmpty()) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012023);
         }
@@ -528,8 +531,8 @@ public class BarcodeUtils {
      * @return MesSfcWorkOrderBarcodeDto 条码DTO
      */
     private static MesSfcWorkOrderBarcodeDto checkBarcodeStatus(String barCode, Long workOrderId) {
-        List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtos = barcodeUtils.mesSfcWorkOrderBarcodeService
-                .findList(SearchMesSfcWorkOrderBarcode.builder()
+        List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtos = barcodeUtils.mesSfcWorkOrderBarcodeMapper.findListOrderBarcode(
+                SearchMesSfcWorkOrderBarcode.builder()
                         .barcode(barCode)
                         .workOrderId(workOrderId)
                         .build());
@@ -589,14 +592,13 @@ public class BarcodeUtils {
      */
     private static void checkOrder(MesSfcWorkOrderBarcodeDto mesSfcWorkOrderBarcodeDto) {
         //判断工单是否存在
-        ResponseEntity<MesPmWorkOrder> pmWorkOrderResponseEntity = barcodeUtils.pmFeignApi.workOrderDetail(mesSfcWorkOrderBarcodeDto.getWorkOrderId());
-        if (pmWorkOrderResponseEntity.getCode() != 0) {
+        MesPmWorkOrder mesPmWorkOrder = barcodeUtils.mesSfcBarcodeOperationMapper.workOrderDetail(mesSfcWorkOrderBarcodeDto.getWorkOrderId());
+        if (ObjectUtil.isNull(mesPmWorkOrder)) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012005, mesSfcWorkOrderBarcodeDto.getWorkOrderCode());
         }
         /*
         * 工单状态(1:Initial：下载或手动创建；2:Release：条码打印完成;3:WIP:生产中，4:Hold：异常挂起5:Cancel：取消6:Complete：完工7:Delete：删除)
         */
-        MesPmWorkOrder mesPmWorkOrder = pmWorkOrderResponseEntity.getData();
         if (4 == mesPmWorkOrder.getWorkOrderStatus() || 5 == mesPmWorkOrder.getWorkOrderStatus()) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012006);
         }
@@ -623,7 +625,7 @@ public class BarcodeUtils {
         SearchBasePackageSpecification searchBasePackageSpecification = new SearchBasePackageSpecification();
         searchBasePackageSpecification.setMaterialId(materialId);
         searchBasePackageSpecification.setProcessId(processId);
-        List<BasePackageSpecificationDto> packageSpecificationDtos = barcodeUtils.baseFeignApi.findBasePackageSpecificationList(searchBasePackageSpecification).getData();
+        List<BasePackageSpecificationDto> packageSpecificationDtos = barcodeUtils.findByMaterialProcess(searchBasePackageSpecification);
         if (packageSpecificationDtos.isEmpty()) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "物料匹配的包装规格数据不存在");
         }
@@ -646,8 +648,25 @@ public class BarcodeUtils {
         if(bMaterialPackageDto==null)
             throw new BizErrorException(ErrorCodeEnum.PDA40012036,materialId,processId);
 
-        BaseBarcodeRule baseBarcodeRule = barcodeUtils.baseFeignApi.baseBarcodeRuleDetail(bMaterialPackageDto.getBarcodeRuleId()).getData();
+        BaseBarcodeRule baseBarcodeRule = barcodeUtils.mesSfcBarcodeOperationMapper.findBaseBarcodeRule(bMaterialPackageDto.getBarcodeRuleId());
         return baseBarcodeRule;
+    }
+
+    public List<BasePackageSpecificationDto> findByMaterialProcess(SearchBasePackageSpecification searchBasePackageSpecification) {
+
+        Map<String, Object> map = ControllerUtil.dynamicConditionByEntity(searchBasePackageSpecification);
+        map.put("orgId", CurrentUserInfoUtils.getCurrentUserInfo().getOrganizationId());
+        List<BasePackageSpecificationDto> basePackageSpecificationDtos = mesSfcBarcodeOperationMapper.findByMaterialProcess(map);
+        SearchBaseMaterialPackage searchBaseMaterialPackage = new SearchBaseMaterialPackage();
+
+        for (BasePackageSpecificationDto basePackageSpecificationDto : basePackageSpecificationDtos) {
+            searchBaseMaterialPackage.setPackageSpecificationId(basePackageSpecificationDto.getPackageSpecificationId());
+            List<BaseMaterialPackageDto> baseMaterialPackageDtos = mesSfcBarcodeOperationMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseMaterialPackage));
+            if (StringUtils.isNotEmpty(baseMaterialPackageDtos)){
+                basePackageSpecificationDto.setBaseMaterialPackages(baseMaterialPackageDtos);
+            }
+        }
+        return basePackageSpecificationDtos;
     }
 
     // endregion

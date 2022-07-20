@@ -8,6 +8,7 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
+import com.fantechs.common.base.general.dto.basic.BaseMaterialPackageDto;
 import com.fantechs.common.base.general.dto.basic.BasePackageSpecificationDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderMaterialRePDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderProcessReWoDto;
@@ -15,6 +16,7 @@ import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
 import com.fantechs.common.base.general.dto.om.OmSalesCodeReSpcDto;
 import com.fantechs.common.base.general.entity.basic.*;
+import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialPackage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBasePackageSpecification;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSignature;
 import com.fantechs.common.base.general.entity.leisai.LeisaiWmsCarton;
@@ -24,6 +26,7 @@ import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrde
 import com.fantechs.common.base.general.entity.mes.sfc.*;
 import com.fantechs.common.base.general.entity.om.OmSalesCodeReSpc;
 import com.fantechs.common.base.general.entity.om.search.SearchOmSalesCodeReSpc;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -32,16 +35,20 @@ import com.fantechs.provider.api.guest.leisai.LeisaiFeignApi;
 import com.fantechs.provider.api.mes.pm.PMFeignApi;
 import com.fantechs.provider.api.qms.OMFeignApi;
 import com.fantechs.provider.api.auth.service.AuthFeignApi;
+import com.fantechs.provider.mes.sfc.mapper.MesSfcBarcodeOperationMapper;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcProductCartonMapper;
 import com.fantechs.provider.mes.sfc.service.*;
 import com.fantechs.provider.mes.sfc.util.BarcodeUtils;
 import io.seata.spring.annotation.GlobalTransactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import javax.xml.crypto.Data;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -51,7 +58,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperationService {
-
+    protected static final Logger logger = LoggerFactory.getLogger(MesSfcBarcodeOperationServiceImpl.class);
 
     @Resource
     private MesSfcBarcodeProcessService mesSfcBarcodeProcessService;
@@ -70,11 +77,13 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     @Resource
     private BaseFeignApi baseFeignApi;
     @Resource
-    private AuthFeignApi securityFeignApi;
+    private AuthFeignApi authFeignApi;
     @Resource
     private OMFeignApi omFeignApi;
     @Resource
     private LeisaiFeignApi leisaiFeignApi;
+    @Resource
+    private MesSfcBarcodeOperationMapper mesSfcBarcodeOperationMapper;
 
 
     @Override
@@ -82,6 +91,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
     @GlobalTransactional
     public Boolean pdaCartonWork(PdaCartonWorkDto dto) throws Exception {
         // 获取登录用户
+
+        long startTime = System.currentTimeMillis();
+
         SysUser user = CurrentUserInfoUtils.getCurrentUserInfo();
         if (StringUtils.isEmpty(dto.getBarCode())) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012026);
@@ -95,6 +107,10 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 .packType(dto.getPackType())
                 .proLineId(dto.getProLineId())
                 .build());
+
+
+        logger.info("=========检查条码，执行时长：{}",System.currentTimeMillis() - startTime);
+        long startTime1 = System.currentTimeMillis();
 
         List<MesSfcWorkOrderBarcodeDto> mesSfcWorkOrderBarcodeDtos = mesSfcWorkOrderBarcodeService
                 .findList(SearchMesSfcWorkOrderBarcode.builder()
@@ -110,8 +126,11 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             throw new BizErrorException(ErrorCodeEnum.PDA40012013);
         }
 
+
         // 条码对应工单
-        MesPmWorkOrder mesPmWorkOrder = pmFeignApi.workOrderDetail(orderBarcodeDto.getWorkOrderId()).getData();
+        long add = System.currentTimeMillis();
+        MesPmWorkOrder mesPmWorkOrder = mesSfcBarcodeOperationMapper.findWorkOrderDetail(orderBarcodeDto.getWorkOrderId());
+        logger.info("=========获取工位工序的包箱，执行时长：{}",System.currentTimeMillis() - add);
 
         // 3、获取工位工序的包箱
         map.clear();
@@ -134,6 +153,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 throw new BizErrorException(ErrorCodeEnum.PDA40012019, mesPmWorkOrder.getMaterialId(), mesPmWorkOrderById.getMaterialId());
             }
         }
+
+        logger.info("=========获取工位工序的包箱，执行时长：{}",System.currentTimeMillis() - startTime1);
+        long startTime2 = System.currentTimeMillis();
 
         // 条码对应过站记录信息
         MesSfcBarcodeProcess mesSfcBarcodeProcess = mesSfcBarcodeProcessService.selectOne(MesSfcBarcodeProcess.builder()
@@ -333,7 +355,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                          */
                         SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
                         searchSysSpecItem.setSpecCode("wanbaoAutoClosePallet");
-                        List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+                        List<SysSpecItem> specItems = authFeignApi.findSpecItemList(searchSysSpecItem).getData();
                         if (!specItems.isEmpty() && "1".equals(specItems.get(0).getParaValue())){
                             SearchOmSalesCodeReSpc searchOmSalesCodeReSpc = new SearchOmSalesCodeReSpc();
                             searchOmSalesCodeReSpc.setSamePackageCodeStatus((byte) 1);
@@ -392,6 +414,10 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             // 添加包箱表数据
             sfcProductCarton = saveCarton(cartonCode, user.getUserId(), user.getOrganizationId(), dto.getStationId(), mesPmWorkOrder.getWorkOrderId(), packageSpecificationDto.getPackageSpecificationQuantity(), mesPmWorkOrder.getMaterialId());
         }
+
+        logger.info("=========生成箱码，执行时长：{}",System.currentTimeMillis() - startTime2);
+        long startTime3 = System.currentTimeMillis();
+
         // 7、过站
         UpdateProcessDto updateProcessDto = UpdateProcessDto.builder()
                 .badnessPhenotypeCode("N/A")
@@ -416,8 +442,15 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 .createUserId(user.getUserId())
                 .isDelete((byte) 1)
                 .build());
+
+        logger.info("=========保存条码包箱关系，执行时长：{}",System.currentTimeMillis() - startTime3);
+        long startTime4 = System.currentTimeMillis();
+
         // 更新下一工序，增加工序记录
         BarcodeUtils.updateProcess(updateProcessDto);
+
+        logger.info("=========更新下一工序，增加工序记录，执行时长：{}",System.currentTimeMillis() - startTime4);
+        long startTime5 = System.currentTimeMillis();
 
         // 8、判断是否包箱已满，关箱
         List<MesSfcBarcodeProcess> mesSfcBarcodeProcessList = mesSfcBarcodeProcessService.findBarcode(SearchMesSfcBarcodeProcess.builder()
@@ -444,7 +477,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             //雷赛包箱数据是否同步到WMS开始
             SearchSysSpecItem searchSysSpecItem = new SearchSysSpecItem();
             searchSysSpecItem.setSpecCode("CartonIfToLeisaiWms");
-            List<SysSpecItem> specItems = securityFeignApi.findSpecItemList(searchSysSpecItem).getData();
+            List<SysSpecItem> specItems = authFeignApi.findSpecItemList(searchSysSpecItem).getData();
             if(specItems.size()>0) {
                 SysSpecItem sysSpecItem = specItems.get(0);
                 if(sysSpecItem.getParaValue().equals("1")){
@@ -480,6 +513,14 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
 
             //雷赛包箱数据是否同步到WMS结束
         }
+
+        logger.info("=========包箱过站，执行总时长：{}",System.currentTimeMillis() - startTime);
+
+        // TODO 方便测试使用，测试需要删除
+        if (true) {
+            throw new BizErrorException(ErrorCodeEnum.PDA40012029);
+        }
+
         return true;
     }
 
