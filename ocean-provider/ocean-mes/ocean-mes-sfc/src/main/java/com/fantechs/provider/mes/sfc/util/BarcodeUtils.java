@@ -198,8 +198,8 @@ public class BarcodeUtils {
                 }
             }
         }
-        ResponseEntity<BaseProcess> processResponseEntity = barcodeUtils.baseFeignApi.processDetail(dto.getNowProcessId());
-        if (processResponseEntity.getCode() != 0) {
+        BaseProcess baseProcess = barcodeUtils.mesSfcBarcodeOperationMapper.findBaseProcess(dto.getNowProcessId());
+        if (ObjectUtil.isNull(baseProcess)) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012012, dto.getNowProcessId());
         }
 
@@ -207,15 +207,14 @@ public class BarcodeUtils {
             throw new BizErrorException(ErrorCodeEnum.PDA40012032);
         }
 
-        BaseProcess baseProcess = processResponseEntity.getData();
         // 更新当前工序
         mesSfcBarcodeProcess.setProcessId(dto.getNowProcessId());
         mesSfcBarcodeProcess.setProcessCode(baseProcess.getProcessCode());
         mesSfcBarcodeProcess.setProcessName(baseProcess.getProcessName());
         // 更新工位、工段、产线
         if(StringUtils.isNotEmpty(dto.getNowStationId())) {
-            BaseStation baseStation = barcodeUtils.baseFeignApi.findStationDetail(dto.getNowStationId()).getData();
-            if (baseStation == null) {
+            BaseStation baseStation = barcodeUtils.mesSfcBarcodeOperationMapper.findBaseStation(dto.getNowStationId());
+            if (ObjectUtil.isNull(baseStation)) {
                 throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "没有找到对应的工位");
             }
             mesSfcBarcodeProcess.setStationId(baseStation.getStationId());
@@ -223,10 +222,10 @@ public class BarcodeUtils {
             mesSfcBarcodeProcess.setStationName(baseStation.getStationName());
         }
         //从工段表 base_workshop_section 取出工段编码和工段名称 2021-08-02 huangshuijun
-        ResponseEntity<BaseWorkshopSection> bwssResponseEntity = barcodeUtils.baseFeignApi.sectionDetail(baseProcess.getSectionId());
-        BaseWorkshopSection baseWorkshopSection = bwssResponseEntity.getData();
-        if(baseWorkshopSection == null)
+        BaseWorkshopSection baseWorkshopSection = barcodeUtils.mesSfcBarcodeOperationMapper.findBaseWorkshopSection(baseProcess.getSectionId());
+        if(ObjectUtil.isNull(baseWorkshopSection)) {
             throw new BizErrorException(ErrorCodeEnum.PDA40012035);
+        }
 
 //        mesSfcBarcodeProcess.setStationId(baseStation.getStationId());
 //        mesSfcBarcodeProcess.setStationCode(baseStation.getStationCode());
@@ -237,8 +236,8 @@ public class BarcodeUtils {
 //        mesSfcBarcodeProcess.setSectionName(baseProcess.getSectionName());//工段名称
         mesSfcBarcodeProcess.setSectionCode(baseWorkshopSection.getSectionCode());//工段code
         mesSfcBarcodeProcess.setSectionName(baseWorkshopSection.getSectionName());//工段名称
-        BaseProLine baseProLine = barcodeUtils.baseFeignApi.getProLineDetail(dto.getProLineId()).getData();
-        if (baseProLine == null) {
+        BaseProLine baseProLine = barcodeUtils.mesSfcBarcodeOperationMapper.findBaseProLine(dto.getProLineId());
+        if (ObjectUtil.isNull(baseProLine)) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003.getCode(), "该产线不存在或已被删除");
         }
         mesSfcBarcodeProcess.setProLineId(baseProLine.getProLineId());
@@ -255,13 +254,12 @@ public class BarcodeUtils {
         List<MesSfcBarcodeProcessRecordDto> mesSfcBarcodeProcessRecordDtoList = barcodeUtils.mesSfcBarcodeProcessRecordService.findList(mapExist);
         mesSfcBarcodeProcess.setPassStationCount(mesSfcBarcodeProcessRecordDtoList.size()+1);
         //条码在当前工序有几条过站记录 记录工序过站次数结束 2021-10-18
-
         if (mesPmWorkOrder.getPutIntoProcessId().equals(dto.getNowProcessId())) {
             mesSfcBarcodeProcess.setDevoteTime(new Date());
         }
         if (mesSfcBarcodeProcess.getReworkOrderId() != null){
             // 返工单的工艺路线
-            List<BaseRouteProcess> routeProcesses = barcodeUtils.baseFeignApi.findConfigureRout(mesSfcBarcodeProcess.getRouteId()).getData();
+            List<BaseRouteProcess> routeProcesses = barcodeUtils.mesSfcBarcodeOperationMapper.findConfigureRout(mesSfcBarcodeProcess.getRouteId());
             Optional<BaseRouteProcess> lastRouteProcessOptional = routeProcesses.stream()
                     .filter(item -> item.getIsMustPass().equals(1))
                     .sorted(Comparator.comparing(BaseRouteProcess::getOrderNum).reversed())
@@ -307,11 +305,11 @@ public class BarcodeUtils {
                         throw new BizErrorException(ErrorCodeEnum.PDA40012011, mesSfcBarcodeProcess.getNextProcessId());
                     }
                     BaseRouteProcess routeProcess = routeProcessOptional.get();
-                    processResponseEntity = barcodeUtils.baseFeignApi.processDetail(routeProcess.getNextProcessId());
-                    if (processResponseEntity.getCode() != 0) {
+                    baseProcess = barcodeUtils.mesSfcBarcodeOperationMapper.findBaseProcess(routeProcess.getNextProcessId());
+                    if (ObjectUtil.isNull(baseProcess)) {
                         throw new BizErrorException(ErrorCodeEnum.PDA40012012, routeProcess.getNextProcessId());
                     }
-                    baseProcess = processResponseEntity.getData();
+
                     // 设置下一工序
                     mesSfcBarcodeProcess.setNextProcessId(routeProcess.getNextProcessId());
                     mesSfcBarcodeProcess.setNextProcessCode(baseProcess.getProcessCode());
@@ -341,11 +339,10 @@ public class BarcodeUtils {
                     throw new BizErrorException(ErrorCodeEnum.PDA40012011, mesSfcBarcodeProcess.getNextProcessId());
                 }
                 BaseRouteProcess routeProcess = routeProcessOptional.get();
-                processResponseEntity = barcodeUtils.baseFeignApi.processDetail(routeProcess.getNextProcessId());
-                if (processResponseEntity.getCode() != 0) {
+                baseProcess = barcodeUtils.mesSfcBarcodeOperationMapper.findBaseProcess(routeProcess.getNextProcessId());
+                if (ObjectUtil.isNull(baseProcess)) {
                     throw new BizErrorException(ErrorCodeEnum.PDA40012012, routeProcess.getNextProcessId());
                 }
-                baseProcess = processResponseEntity.getData();
                 // 设置下一工序
                 mesSfcBarcodeProcess.setNextProcessId(routeProcess.getNextProcessId());
                 mesSfcBarcodeProcess.setNextProcessCode(baseProcess.getProcessCode());
@@ -652,16 +649,16 @@ public class BarcodeUtils {
         return baseBarcodeRule;
     }
 
-    public List<BasePackageSpecificationDto> findByMaterialProcess(SearchBasePackageSpecification searchBasePackageSpecification) {
+    public static List<BasePackageSpecificationDto> findByMaterialProcess(SearchBasePackageSpecification searchBasePackageSpecification) {
 
         Map<String, Object> map = ControllerUtil.dynamicConditionByEntity(searchBasePackageSpecification);
         map.put("orgId", CurrentUserInfoUtils.getCurrentUserInfo().getOrganizationId());
-        List<BasePackageSpecificationDto> basePackageSpecificationDtos = mesSfcBarcodeOperationMapper.findByMaterialProcess(map);
+        List<BasePackageSpecificationDto> basePackageSpecificationDtos = barcodeUtils.mesSfcBarcodeOperationMapper.findByMaterialProcess(map);
         SearchBaseMaterialPackage searchBaseMaterialPackage = new SearchBaseMaterialPackage();
 
         for (BasePackageSpecificationDto basePackageSpecificationDto : basePackageSpecificationDtos) {
             searchBaseMaterialPackage.setPackageSpecificationId(basePackageSpecificationDto.getPackageSpecificationId());
-            List<BaseMaterialPackageDto> baseMaterialPackageDtos = mesSfcBarcodeOperationMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseMaterialPackage));
+            List<BaseMaterialPackageDto> baseMaterialPackageDtos = barcodeUtils.mesSfcBarcodeOperationMapper.findList(ControllerUtil.dynamicConditionByEntity(searchBaseMaterialPackage));
             if (StringUtils.isNotEmpty(baseMaterialPackageDtos)){
                 basePackageSpecificationDto.setBaseMaterialPackages(baseMaterialPackageDtos);
             }

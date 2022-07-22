@@ -2,10 +2,7 @@ package com.fantechs.provider.mes.sfc.mapper;
 
 import com.fantechs.common.base.general.dto.basic.BaseMaterialPackageDto;
 import com.fantechs.common.base.general.dto.basic.BasePackageSpecificationDto;
-import com.fantechs.common.base.general.entity.basic.BaseBarcodeRule;
-import com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec;
-import com.fantechs.common.base.general.entity.basic.BaseLabelCategory;
-import com.fantechs.common.base.general.entity.basic.BaseRouteProcess;
+import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -31,4 +28,15 @@ public interface MesSfcBarcodeOperationMapper {
 
     List<BaseRouteProcess> findListRouteProcess(@Param(value="routeId")Long routeId);
 
+    BaseProcess findBaseProcess(@Param("processId")Long processId);
+
+    BaseStation findBaseStation(@Param("stationId")Long stationId);
+
+    BaseWorkshopSection findBaseWorkshopSection(@Param("sectionId")Long sectionId);
+
+    BaseProLine findBaseProLine(@Param("proLineId")Long proLineId);
+
+    List<BaseRouteProcess> findConfigureRout(@Param("routeId")Long routeId);
+
+    MesPmWorkOrder findMesPmWorkOrder(@Param("workOrderId")Long workOrderId);
 }

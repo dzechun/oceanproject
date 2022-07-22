@@ -62,25 +62,30 @@
     </select>
 
     <select id="findSpec" resultType="com.fantechs.common.base.general.entity.basic.BaseBarcodeRuleSpec">
-        select
-            specification,
-            customize_value as customizeValue,
-            barcode_length as barcodeLength,
-            step,
-            customize_value as customizeValue,
-            fill_direction as fillDirection,
-            fill_operator as fillOperator,
-            intercept_direction as interceptDirection,
-            intercept_position as interceptPosition,
-            initial_value as initialValue,
-            customize_name as customizeName
+        select specification,
+               customize_value     as customizeValue,
+               barcode_length      as barcodeLength,
+               step,
+               customize_value     as customizeValue,
+               fill_direction      as fillDirection,
+               fill_operator       as fillOperator,
+               intercept_direction as interceptDirection,
+               intercept_position  as interceptPosition,
+               initial_value       as initialValue,
+               customize_name      as customizeName
         from base_barcode_rule_spec
         where barcode_rule_id = #{barcodeRuleId}
     </select>
 
-    <select id="findByMaterialProcess" resultType="com.fantechs.common.base.general.dto.basic.BasePackageSpecificationDto" parameterType="map">
+    <select id="findByMaterialProcess"
+            resultType="com.fantechs.common.base.general.dto.basic.BasePackageSpecificationDto" parameterType="map">
         select
-        sps.package_specification_id as packageSpecificationId
+        sps.package_specification_id as packageSpecificationId,
+        sps.package_specification_code as packageSpecificationCode,
+        sps.package_specification_name as packageSpecificationName,
+        sps.package_specification_desc as packageSpecificationDesc,
+        sps.package_specification_quantity as packageSpecificationQuantity,
+        sps.status
         from base_package_specification sps
         LEFT JOIN base_material_package smp ON sps.package_specification_id = smp.package_specification_id
         <where>
@@ -129,20 +134,19 @@
     </select>
 
     <select id="findBaseBarcodeRule" resultType="com.fantechs.common.base.general.entity.basic.BaseBarcodeRule">
-        select sbr.barcode_rule_id as barcodeRuleId,
-               sbr.barcode_rule_code as barcodeRuleCode,
-               sbr.barcode_rule_name as barcodeRuleName,
-               sbr.barcode_rule_desc as barcodeRuleDesc,
+        select sbr.barcode_rule_id          as barcodeRuleId,
+               sbr.barcode_rule_code        as barcodeRuleCode,
+               sbr.barcode_rule_name        as barcodeRuleName,
+               sbr.barcode_rule_desc        as barcodeRuleDesc,
                sbr.barcode_rule_category_id as labelCategoryId,
-               sbr.barcode_rule as barcodeRule,
-               sbr.org_id as organizationId,
+               sbr.barcode_rule             as barcodeRule,
+               sbr.org_id                   as organizationId,
                sbr.remark,
                sbr.status,
-               sbr.create_user_id as createUserId,
-               sbr.create_time as createTime,
-               sbr.modified_user_id as modifiedUserId,
-               sbr.modified_time as modifiedTime,
-               sbr.is_delete as isDelete
+               sbr.create_user_id           as createUserId,
+               sbr.create_time              as createTime,
+               sbr.modified_user_id         as modifiedUserId,
+               sbr.modified_time            as modifiedTime
         from base_barcode_rule sbr
         where barcode_rule_id = #{barcodeRuleId}
     </select>
@@ -188,4 +192,117 @@
         order by srp.order_num
     </select>
 
+    <select id="findBaseProcess" resultType="com.fantechs.common.base.general.entity.basic.BaseProcess">
+        select sp.process_id          as processId,
+               sp.process_code        as processCode,
+               sp.process_name        as processName,
+               sp.process_desc        as processDesc,
+               sp.section_id          as sectionId,
+               sp.process_category_id as processCategoryId,
+               sp.is_job_scan         as isJobScan,
+               sp.is_start_scan       as isStartScan,
+               sp.is_quality          as isQuality,
+               sp.finish_time         as finishTime,
+               sp.`status`,
+               sp.org_id              as organizationId,
+               sp.create_user_id      as createUserId,
+               sp.create_time         as createTime,
+               sp.modified_user_id    as modifiedUserId,
+               sp.modified_time       as modifiedTime
+        from base_process sp
+        where sp.process_id = #{processId}
+    </select>
+
+    <select id="findBaseStation" resultType="com.fantechs.common.base.general.entity.basic.BaseStation">
+        select ss.station_id       as stationId,
+               ss.station_code     as stationCode,
+               ss.station_name     as stationName,
+               ss.station_desc     as stationDesc,
+               ss.process_id       as processId,
+               ss.section_id       as sectionId,
+               ss.`status`,
+               ss.org_id,
+               ss.if_pass_station  as ifPassStation,
+               ss.create_user_id   as createUserId,
+               ss.create_time      as createTime,
+               ss.modified_user_id as modifiedUserId,
+               ss.modified_time    as modifiedTime
+        from base_station ss
+        where ss.station_id = #{stationId}
+    </select>
+
+    <select id="findBaseWorkshopSection" resultType="com.fantechs.common.base.general.entity.basic.BaseWorkshopSection">
+        select sws.section_id       as sectionId,
+               sws.section_code     as sectionCode,
+               sws.section_name     as sectionName,
+               sws.section_desc     as sectionDesc,
+               sws.`status`,
+               sws.org_id,
+               sws.create_user_id   as createUserId,
+               sws.create_time      as createTime,
+               sws.modified_user_id as modifiedUserId,
+               sws.modified_time    as modifiedTime
+        from base_workshop_section sws
+        where sws.section_id = #{sectionId}
+    </select>
+
+    <select id="findBaseProLine" resultType="com.fantechs.common.base.general.entity.basic.BaseProLine">
+        select spl.pro_line_id      as proLineId,
+               spl.pro_code         as proCode,
+               spl.pro_name         as proName,
+               spl.pro_desc         as proDesc,
+               spl.factory_id       as factoryId,
+               spl.work_shop_id     as workShopId,
+               spl.status,
+               spl.create_user_id   as createUserId,
+               spl.create_time      as createTime,
+               spl.modified_user_id as modifiedUserId,
+               spl.modified_time    as modifiedTime
+        from base_pro_line spl
+        where spl.pro_line_id = #{proLineId}
+    </select>
+
+    <select id="findConfigureRout" resultType="com.fantechs.common.base.general.entity.basic.BaseRouteProcess">
+        select
+        srp.route_process_id as routeProcessId,
+        srp.route_id as routeId,
+        srp.section_id as sectionId,
+        srp.process_id as processId,
+        srp.next_process_id as nextProcessId,
+        srp.previous_process_id as previousProcessId,
+        srp.standard_time as standardTime,
+        srp.readiness_time as readinessTime,
+        srp.order_num as orderNum,
+        srp.is_pass as isPass,
+        srp.is_must_pass as isMustPass,
+        srp.inspection_time as inspectionTime,
+        srp.qualification_id as qualificationId,
+        bpc.process_category_code as processCategoryCode,
+        sps.process_name as nextProcessName,
+        sr.route_name as routeName,
+        ws.section_name as sectionName,
+        sp.process_name as processName,
+        p.process_name as previousProcessName,
+        bo.organization_name as organizationName
+        from base_route_process srp
+        left join base_route sr on srp.route_id=sr.route_id
+        left join base_workshop_section ws on srp.section_id=ws.section_id
+        left join base_process sp on srp.process_id=sp.process_id
+        left join base_process_category bpc on sp.process_category_id=bpc.process_category_id
+        left join base_process sps on srp.next_process_id=sps.process_id
+        left join base_process p on srp.previous_process_id=p.process_id
+        LEFT JOIN base_organization bo ON srp.org_id = bo.organization_id
+        <where>
+            <if test="routeId != null">
+                and srp.route_id=#{routeId}
+            </if>
+        </where>
+        order by srp.order_num
+    </select>
+
+    <select id="findMesPmWorkOrder" resultType="com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder">
+        select material_id as materialId
+        from mes_pm_work_order
+        where work_order_id = #{workOrderId}
+    </select>
 </mapper>

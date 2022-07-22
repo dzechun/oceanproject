@@ -8,7 +8,6 @@ import com.fantechs.common.base.entity.security.SysSpecItem;
 import com.fantechs.common.base.entity.security.SysUser;
 import com.fantechs.common.base.entity.security.search.SearchSysSpecItem;
 import com.fantechs.common.base.exception.BizErrorException;
-import com.fantechs.common.base.general.dto.basic.BaseMaterialPackageDto;
 import com.fantechs.common.base.general.dto.basic.BasePackageSpecificationDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderMaterialRePDto;
 import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderProcessReWoDto;
@@ -16,7 +15,6 @@ import com.fantechs.common.base.general.dto.mes.sfc.*;
 import com.fantechs.common.base.general.dto.mes.sfc.Search.SearchMesSfcBarcodeProcess;
 import com.fantechs.common.base.general.dto.om.OmSalesCodeReSpcDto;
 import com.fantechs.common.base.general.entity.basic.*;
-import com.fantechs.common.base.general.entity.basic.search.SearchBaseMaterialPackage;
 import com.fantechs.common.base.general.entity.basic.search.SearchBasePackageSpecification;
 import com.fantechs.common.base.general.entity.basic.search.SearchBaseSignature;
 import com.fantechs.common.base.general.entity.leisai.LeisaiWmsCarton;
@@ -26,7 +24,6 @@ import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrde
 import com.fantechs.common.base.general.entity.mes.sfc.*;
 import com.fantechs.common.base.general.entity.om.OmSalesCodeReSpc;
 import com.fantechs.common.base.general.entity.om.search.SearchOmSalesCodeReSpc;
-import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -48,7 +45,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import javax.xml.crypto.Data;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -148,7 +144,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             }
             // 4.2、判断是否同一料号
             // PDA当前作业工单
-            MesPmWorkOrder mesPmWorkOrderById = pmFeignApi.workOrderDetail(sfcProductCarton.getWorkOrderId()).getData();
+            MesPmWorkOrder mesPmWorkOrderById = mesSfcBarcodeOperationMapper.findMesPmWorkOrder(sfcProductCarton.getWorkOrderId());
             if ("2".equals(dto.getPackType()) && !mesPmWorkOrder.getMaterialId().equals(mesPmWorkOrderById.getMaterialId())) {
                 throw new BizErrorException(ErrorCodeEnum.PDA40012019, mesPmWorkOrder.getMaterialId(), mesPmWorkOrderById.getMaterialId());
             }
@@ -730,7 +726,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         SearchBasePackageSpecification searchBasePackageSpecification = new SearchBasePackageSpecification();
         searchBasePackageSpecification.setMaterialId(materialId);
         searchBasePackageSpecification.setProcessId(processId);
-        List<BasePackageSpecificationDto> packageSpecificationDtos = baseFeignApi.findBasePackageSpecificationList(searchBasePackageSpecification).getData();
+        List<BasePackageSpecificationDto> packageSpecificationDtos = BarcodeUtils.findByMaterialProcess(searchBasePackageSpecification);
         if (packageSpecificationDtos.isEmpty()) {
             throw new BizErrorException(ErrorCodeEnum.OPT20012003);
         }
@@ -772,7 +768,5 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             throw new BizErrorException(ErrorCodeEnum.OPT20012006);
         }
     }
-
-    // endregion
 
 }
