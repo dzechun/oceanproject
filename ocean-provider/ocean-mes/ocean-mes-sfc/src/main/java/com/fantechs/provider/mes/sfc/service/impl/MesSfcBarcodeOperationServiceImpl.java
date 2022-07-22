@@ -24,6 +24,7 @@ import com.fantechs.common.base.general.entity.mes.pm.search.SearchMesPmWorkOrde
 import com.fantechs.common.base.general.entity.mes.sfc.*;
 import com.fantechs.common.base.general.entity.om.OmSalesCodeReSpc;
 import com.fantechs.common.base.general.entity.om.search.SearchOmSalesCodeReSpc;
+import com.fantechs.common.base.response.ControllerUtil;
 import com.fantechs.common.base.response.ResponseEntity;
 import com.fantechs.common.base.utils.CurrentUserInfoUtils;
 import com.fantechs.common.base.utils.StringUtils;
@@ -42,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -126,7 +128,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
         // 条码对应工单
         long add = System.currentTimeMillis();
         MesPmWorkOrder mesPmWorkOrder = mesSfcBarcodeOperationMapper.findWorkOrderDetail(orderBarcodeDto.getWorkOrderId());
-        logger.info("=========获取工位工序的包箱，执行时长：{}",System.currentTimeMillis() - add);
+        logger.info("=========获取条码信息，执行时长：{}",System.currentTimeMillis() - add);
 
         // 3、获取工位工序的包箱
         map.clear();
@@ -178,12 +180,11 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
             searchMesPmWorkOrderProcessReWo.setProcessId(dto.getProcessId().toString());
             searchMesPmWorkOrderProcessReWo.setWorkOrderId(mesPmWorkOrder.getWorkOrderId().toString());
             // 产品关键物料清单 有且只有一条
-            List<MesPmWorkOrderProcessReWoDto> pmWorkOrderProcessReWoDtoList = pmFeignApi.findPmWorkOrderProcessReWoList(searchMesPmWorkOrderProcessReWo).getData();
-            if (pmWorkOrderProcessReWoDtoList == null || pmWorkOrderProcessReWoDtoList.size() <= 0) {
+            List<MesPmWorkOrderProcessReWoDto> pmWorkOrderProcessReWoDtoList = mesSfcBarcodeOperationMapper.findPmWorkOrderProcessReWoList(ControllerUtil.dynamicConditionByEntity(searchMesPmWorkOrderProcessReWo));
+            if (CollectionUtils.isEmpty(pmWorkOrderProcessReWoDtoList)) {
                 throw new BizErrorException(ErrorCodeEnum.PDA40012016);
             }
-            MesPmWorkOrderProcessReWoDto pmWorkOrderProcessReWoDto = pmWorkOrderProcessReWoDtoList.get(0);
-            List<MesPmWorkOrderMaterialRePDto> pmWorkOrderMaterialRePDtoList = pmWorkOrderProcessReWoDto.getList();
+            List<MesPmWorkOrderMaterialRePDto> pmWorkOrderMaterialRePDtoList = mesSfcBarcodeOperationMapper.findWorkOrderMaterialReP(pmWorkOrderProcessReWoDtoList.get(0).getWorkOrderProcessReWoId());
             // 零件所有用量
             BigDecimal usageQty = BigDecimal.ZERO;
             for (MesPmWorkOrderMaterialRePDto workOrderMaterialRePDto : pmWorkOrderMaterialRePDtoList) {
@@ -203,9 +204,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 throw new BizErrorException(ErrorCodeEnum.PDA40012020);
             }
 
-            BaseProLine proLine = baseFeignApi.selectProLinesDetail(dto.getProLineId()).getData();
-            BaseProcess baseProcess = baseFeignApi.processDetail(dto.getProcessId()).getData();
-            BaseStation baseStation = baseFeignApi.findStationDetail(dto.getStationId()).getData();
+            BaseProLine proLine = mesSfcBarcodeOperationMapper.findBaseProLine(dto.getProLineId());
+            BaseProcess baseProcess = mesSfcBarcodeOperationMapper.findBaseProcess(dto.getProcessId());
+            BaseStation baseStation = mesSfcBarcodeOperationMapper.findBaseStation(dto.getStationId());
 
             // 查找该附件码是否存在系统中
             List<MesSfcWorkOrderBarcodeDto> sfcWorkOrderAnnexBarcodeDtos = mesSfcWorkOrderBarcodeService
@@ -233,7 +234,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 SearchBaseSignature baseSignature = new SearchBaseSignature();
                 baseSignature.setMaterialIds(materialIds);
                 // 查找物料特征码
-                List<BaseSignature> signatureList = baseFeignApi.findSignatureList(baseSignature).getData();
+                Map<String, Object> mapParam = ControllerUtil.dynamicConditionByEntity(baseSignature);
+                mapParam.put("orgId", user.getOrganizationId());
+                List<BaseSignature> signatureList = mesSfcBarcodeOperationMapper.findSignatureList(mapParam);
                 boolean flag = true;
                 for (BaseSignature signature : signatureList) {
                     int material_count = 0;
@@ -439,7 +442,7 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                 .isDelete((byte) 1)
                 .build());
 
-        logger.info("=========保存条码包箱关系，执行时长：{}",System.currentTimeMillis() - startTime3);
+        logger.info("==========保存条码包箱关系，执行时长：{}",System.currentTimeMillis() - startTime3);
         long startTime4 = System.currentTimeMillis();
 
         // 更新下一工序，增加工序记录

@@ -305,4 +305,171 @@
         from mes_pm_work_order
         where work_order_id = #{workOrderId}
     </select>
+
+    <select id="findPmWorkOrderProcessReWoList" parameterType="map"
+            resultType="com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderProcessReWoDto">
+        select
+        mpwoprw.work_order_process_re_wo_id as workOrderProcessReWoId
+        from mes_pm_work_order_process_re_wo mpwoprw
+        LEFT JOIN sys_user su ON mpwoprw.create_user_id = su.user_id
+        LEFT JOIN sys_user sus ON mpwoprw.modified_user_id = sus.user_id
+        LEFT JOIN base_organization bo ON mpwoprw.org_id = bo.organization_id
+        LEFT JOIN mes_pm_work_order mpwo ON mpwoprw.work_order_id = mpwo.work_order_id
+        LEFT JOIN base_material bm ON mpwo.material_id = bm.material_id
+        LEFT JOIN base_process bp ON bp.process_id = mpwoprw.process_id
+        LEFT JOIN base_workshop_section bws ON bws.section_id = bp.section_id
+        LEFT JOIN base_process_category bpc ON bpc.process_category_id = bp.process_category_id
+        <where>
+            <if test="workOrderId != null">
+                and mpwoprw.work_order_id = #{workOrderId}
+            </if>
+            <if test="workOrderCode != null and workOrderCode != ''">
+                and mpwo.work_order_code like CONCAT('%', #{workOrderCode}, '%')
+            </if>
+            <if test="materialCode != null and materialCode != ''">
+                and bm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="materialId != null">
+                and bm.material_id like CONCAT('%', #{materialId}, '%')
+            </if>
+            <if test="materialDesc != null and materialDesc != ''">
+                and bm.material_desc like CONCAT('%', #{materialDesc}, '%')
+            </if>
+            <if test="processId != null">
+                and bp.process_id = #{processId}
+            </if>
+            <if test="status != null">
+                and mpwoprw.status = #{status}
+            </if>
+            <if test="startTime!= null and startTime!= '' and endTime!= null and endTime!= ''">
+                and date_format(mpwoprw.create_time, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+            </if>
+        </where>
+        order by mpwoprw.create_time desc
+    </select>
+
+    <select id="findWorkOrderMaterialReP" resultType="com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderMaterialRePDto">
+        select
+        mpwomrp.work_order_material_re_p_id as workOrderMaterialRePId,
+        mpwomrp.work_order_process_re_wo_id as workOrderProcessReWoId,
+        mpwomrp.scan_type as scanType,
+        mpwomrp.label_category_id as labelCategoryId,
+        mpwomrp.material_id as materialId,
+        mpwomrp.usage_qty as usageQty,
+        mpwomrp.sub_material_id as subMaterialId,
+        bm.material_code as materialCode,
+        bm.material_version as materialVersion,
+        sbm.material_code AS subMaterialCode
+        from mes_pm_work_order_material_re_p mpwomrp
+        LEFT JOIN sys_user su ON mpwomrp.create_user_id = su.user_id
+        LEFT JOIN sys_user sus ON mpwomrp.modified_user_id = sus.user_id
+        LEFT JOIN base_organization bo ON mpwomrp.org_id = bo.organization_id
+        LEFT JOIN base_material bm ON bm.material_id = mpwomrp.material_id
+        LEFT JOIN base_material sbm ON sbm.material_id = mpwomrp.sub_material_id
+        LEFT JOIN base_label_category blc ON blc.label_category_id = mpwomrp.label_category_id
+        <where>
+            <if test="workOrderProcessReWoId != null">
+                and mpwomrp.work_order_process_re_wo_id = #{workOrderProcessReWoId}
+            </if>
+        </where>
+        order by mpwomrp.create_time desc
+    </select>
+
+    <select id="findSignatureList" parameterType="map" resultType="com.fantechs.common.base.general.entity.basic.BaseSignature">
+        select
+        ss.material_id as materialId,
+        ss.signature_regex as signatureRegex,
+        sm.material_code as materialCode,
+        sm.material_name as materialName,
+        sm.material_version as materialVersion
+        from base_signature ss
+        left join base_material sm on ss.material_id=sm.material_id
+        left join base_supplier ssu on ss.supplier_id=ssu.supplier_id
+        left join sys_user u on ss.create_user_id=u.user_id
+        left join sys_user s on ss.modified_user_id=s.user_id
+        LEFT JOIN base_organization bo ON ss.org_id = bo.organization_id
+        <where>
+            <if test="startTime!= null and endTime!= null">
+                and date_format(ss.create_time, '%Y-%m-%d') BETWEEN date_format(#{startTime}, '%Y-%m-%d') AND date_format(#{endTime}, '%Y-%m-%d')
+            </if>
+            <if test="materialCode!=null and materialCode!=''">
+                and sm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+            <if test="materialName!=null and materialName!=''">
+                and sm.material_name like CONCAT('%', #{materialName}, '%')
+            </if>
+            <if test="signatureCode!=null and signatureCode!=''">
+                and ss.signature_code like CONCAT('%', #{signatureCode}, '%')
+            </if>
+            <if test="status!=null">
+                and ss.status=#{status}
+            </if>
+            <if test="orgId!=null">
+                and ss.org_id=#{orgId}
+            </if>
+            <if test="materialIds!=null">
+                <foreach collection="materialIds" index="index" item="item" open="and ss.material_id in (" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by ss.create_time desc
+    </select>
+
+    <select id="findSalesCodeReSpc" parameterType="map" resultType="com.fantechs.common.base.general.dto.om.OmSalesCodeReSpcDto">
+        SELECT
+        oscrs.sales_code_re_spc_id,
+        oscrs.sales_code,
+        oscrs.same_package_code,
+        oscrs.material_id,
+        oscrs.product_model_id,
+        oscrs.priority,
+        oscrs.same_package_code_status,
+        oscrs.same_package_code_qty,
+        oscrs.matched_qty,
+        oscrs.STATUS,
+        oscrs.is_delete,
+        oscrs.remark,
+        oscrs.org_id,
+        oscrs.create_user_id,
+        oscrs.create_time,
+        oscrs.modified_user_id,
+        oscrs.modified_time,
+        bm.material_code,
+        bm.material_name,
+        bpm.product_model_code,
+        bpm.product_model_name,
+        bo.organization_name,
+        su.user_name AS create_user_name,
+        sus.user_name AS modified_user_name
+        FROM
+        om_sales_code_re_spc oscrs
+        LEFT JOIN base_material bm ON oscrs.material_id = bm.material_id
+        LEFT JOIN base_product_model bpm ON oscrs.product_model_id = bpm.product_model_id
+        LEFT JOIN sys_user su ON oscrs.create_user_id = su.user_id
+        LEFT JOIN sys_user sus ON oscrs.modified_user_id = sus.user_id
+        LEFT JOIN base_organization bo ON oscrs.org_id = bo.organization_id
+        <where>
+            <if test="samePackageCodeStatus != null">
+                and oscrs.same_package_code_status = #{samePackageCodeStatus}
+            </if>
+
+            <if test="orgId != null">
+                and oscrs.org_id = #{orgId}
+            </if>
+
+            <if test="salesCode != null and salesCode != ''">
+                and oscrs.sales_code like CONCAT('%', #{salesCode}, '%')
+            </if>
+
+            <if test="materialCode != null and materialCode != ''">
+                and bm.material_code like CONCAT('%', #{materialCode}, '%')
+            </if>
+
+            <if test="samePackageCode != null and samePackageCode != ''">
+                and oscrs.same_package_code like CONCAT('%', #{samePackageCode}, '%')
+            </if>
+        </where>
+        ORDER BY oscrs.create_time DESC
+    </select>
 </mapper>

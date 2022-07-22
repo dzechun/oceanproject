@@ -2,6 +2,9 @@ package com.fantechs.provider.mes.sfc.mapper;
 
 import com.fantechs.common.base.general.dto.basic.BaseMaterialPackageDto;
 import com.fantechs.common.base.general.dto.basic.BasePackageSpecificationDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderMaterialRePDto;
+import com.fantechs.common.base.general.dto.mes.pm.MesPmWorkOrderProcessReWoDto;
+import com.fantechs.common.base.general.dto.om.OmSalesCodeReSpcDto;
 import com.fantechs.common.base.general.entity.basic.*;
 import com.fantechs.common.base.general.entity.mes.pm.MesPmWorkOrder;
 import org.apache.ibatis.annotations.Mapper;
@@ -39,4 +42,12 @@ public interface MesSfcBarcodeOperationMapper {
     List<BaseRouteProcess> findConfigureRout(@Param("routeId")Long routeId);
 
     MesPmWorkOrder findMesPmWorkOrder(@Param("workOrderId")Long workOrderId);
+
+    List<MesPmWorkOrderProcessReWoDto> findPmWorkOrderProcessReWoList(Map<String, Object> map);
+
+    List<MesPmWorkOrderMaterialRePDto> findWorkOrderMaterialReP(@Param("workOrderProcessReWoId")Long workOrderProcessReWoId);
+
+    List<BaseSignature> findSignatureList(Map<String, Object> map);
+
+    OmSalesCodeReSpcDto findSalesCodeReSpc(Map<String, Object> map);
 }
