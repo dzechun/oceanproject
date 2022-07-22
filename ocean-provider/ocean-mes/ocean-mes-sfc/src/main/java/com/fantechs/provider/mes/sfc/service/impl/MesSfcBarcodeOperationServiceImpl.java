@@ -509,17 +509,9 @@ public class MesSfcBarcodeOperationServiceImpl implements MesSfcBarcodeOperation
                     leisaiFeignApi.syncCartonData(leisaiWmsCarton);
                 }
             }
-
             //雷赛包箱数据是否同步到WMS结束
         }
-
         logger.info("=========包箱过站，执行总时长：{}",System.currentTimeMillis() - startTime);
-
-        // TODO 方便测试使用，测试需要删除
-        if (true) {
-            throw new BizErrorException(ErrorCodeEnum.PDA40012029);
-        }
-
         return true;
     }
 
