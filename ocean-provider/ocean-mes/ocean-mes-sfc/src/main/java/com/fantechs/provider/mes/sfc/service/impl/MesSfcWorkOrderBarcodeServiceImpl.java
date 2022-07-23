@@ -39,6 +39,7 @@ import com.fantechs.provider.mes.sfc.mapper.MesSfcBarcodeProcessMapper;
 import com.fantechs.provider.mes.sfc.mapper.MesSfcWorkOrderBarcodeMapper;
 import com.fantechs.provider.mes.sfc.service.MesSfcWorkOrderBarcodeService;
 import com.fantechs.provider.mes.sfc.util.RabbitProducer;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -305,6 +306,7 @@ public class MesSfcWorkOrderBarcodeServiceImpl extends BaseService<MesSfcWorkOrd
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
+    @GlobalTransactional
     public List<MesSfcWorkOrderBarcode> add(MesSfcWorkOrderBarcode record) {
         SysUser sysUser = currentUser();
 //        if(record.getBarcodeType()==(byte)4){
